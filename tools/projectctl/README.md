@@ -15,7 +15,7 @@ python -B -m pytest tools/projectctl/tests
 Alternatively, set `PYTHONPATH=tools/projectctl/src` and run `python -B -m projectctl`.
 The CLI discovers the repository from the current directory or accepts `--root`.
 `parse` emits JSON; `validate` and `status` also support `--json`.
-Commands emit to stdout, never save generated state, and use no network clients.
+Offline commands emit to stdout, never save generated state, and use no network clients.
 
 Validation covers WBS, schedule/roadmap agreement, dependency topology and registry
 mirrors, canonical requirements and RTM metadata. Architecture references remain
@@ -32,3 +32,15 @@ state or any readiness certification. No optional/unscheduled work is selected.
 Raw expectations and source spans are preserved; lines are locations, not identity.
 Raw `NOT_STARTED` never becomes execution state. No sync, READY or DONE operation
 exists. All default commands write only to stdout and require no network access.
+
+CTRL-PM-006 adds explicit `projectctl plane-audit`: GET-only API **v1** discovery
+using `X-API-Key`. It has no mutation methods or API-version fallback. Configure
+PLANE_BASE_URL, PLANE_API_KEY, PLANE_WORKSPACE_SLUG and PLANE_PROJECT_ID in the
+environment or ignored `project_control/local/plane.env` (environment wins).
+The local file is parsed as literal data, never executed as shell code. Credentials
+and member email addresses are omitted from the stdout audit. HTTP bodies and
+transport exceptions are omitted from errors; redirects are not followed.
+The configured project must resolve to Graduation Project / CAP. A denied direct
+workspace endpoint is recorded, with workspace ID checked through the project
+and the workspace-scoped project listing. Unsupported optional membership
+endpoints produce null, never an assumed empty membership list.

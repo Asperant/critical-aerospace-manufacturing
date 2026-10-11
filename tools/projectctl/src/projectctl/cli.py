@@ -71,3 +71,16 @@ def next_candidates(owner: str = typer.Option(...), cycle: str | None = typer.Op
     except ValueError as exc:
         typer.echo(str(exc), err=True)
         raise typer.Exit(2) from exc
+
+
+@app.command(name="plane-audit")
+def plane_audit(root: Path | None = typer.Option(None)):
+    """Explicit GET-only live API v1 discovery; sanitized JSON to stdout."""
+    from .plane import PlaneError, PlaneReader, load_config
+    try:
+        repo = root if root is not None else find_root(Path.cwd())
+        with PlaneReader(load_config(repo / "project_control/local/plane.env")) as reader:
+            emit_json(reader.audit())
+    except (PlaneError, OSError) as exc:
+        typer.echo(str(exc) if isinstance(exc, PlaneError) else "Plane configuration unavailable", err=True)
+        raise typer.Exit(2) from None
