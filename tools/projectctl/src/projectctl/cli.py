@@ -9,6 +9,7 @@ from .rendering import emit_json, emit_summary, summary
 from .validators.wbs import validate as validate_catalog
 from .validators.schedule import validate_schedule
 from .validators.dependencies import validate_dependencies, hard_cycle
+from .validators.requirements import validate_requirements
 
 sys.dont_write_bytecode = True
 app = typer.Typer(help="Offline canonical WBS tooling (CTRL-PM-001).", add_completion=False)
@@ -43,6 +44,8 @@ def report(root: Path | None, json_output: bool):
         diagnostics.extend(validate_schedule(catalog, catalog.schedule))
     if catalog.dependencies is not None:
         diagnostics.extend(validate_dependencies(catalog.dependencies))
+    if catalog.requirements is not None:
+        diagnostics.extend(validate_requirements(catalog, catalog.requirements))
     payload = summary(catalog, diagnostics)
     if catalog.schedule is not None:
         payload.update(cycle_count=len(catalog.schedule.cycles), milestone_count=len(catalog.schedule.milestones),
@@ -53,6 +56,10 @@ def report(root: Path | None, json_output: bool):
                        hard_edge_count=sum(e.blocking for e in catalog.dependencies.edges),
                        soft_edge_count=sum(not e.blocking for e in catalog.dependencies.edges),
                        hard_cycle_count=int(hard_cycle(catalog.dependencies.edges) is not None))
+    if catalog.requirements is not None:
+        payload.update(requirement_count=len(catalog.requirements.requirements),
+                       fr_count=sum(r.kind == "FR" for r in catalog.requirements.requirements),
+                       nfr_count=sum(r.kind == "NFR" for r in catalog.requirements.requirements))
     if json_output:
         emit_json(payload)
     else:
