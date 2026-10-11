@@ -158,7 +158,7 @@ class PlaneReader:
         allowed = {"id", "name", "identifier", "workspace", "project", "group", "slug", "default",
                    "external_id", "external_source", "description", "description_html", "state",
                    "assignees", "labels", "cycle", "module", "modules", "first_name", "last_name",
-                   "display_name", "start_date", "end_date"}
+                   "display_name", "start_date", "end_date", "parent"}
         cleaned = {k: None if rows is None else [{f: v for f, v in r.items() if f in allowed} for r in rows]
                    for k, rows in resources.items()}
         return {"schema_version": "plane-v1-audit-v1", "api_version": "v1", "mutation_enabled": False,
