@@ -84,3 +84,18 @@ def plane_audit(root: Path | None = typer.Option(None)):
     except (PlaneError, OSError) as exc:
         typer.echo(str(exc) if isinstance(exc, PlaneError) else "Plane configuration unavailable", err=True)
         raise typer.Exit(2) from None
+
+
+@app.command(name="plane-plan")
+def plane_plan(audit: Path = typer.Option(..., help="Explicit sanitized API v1 audit JSON; no network."),
+               root: Path | None = typer.Option(None)):
+    """Emit a pure bootstrap dry-run; findings block live application."""
+    import json
+    from .plane import PlaneError
+    from .plane_plan import bootstrap_plan
+    try:
+        payload = bootstrap_plan(read_project(root), json.loads(audit.read_text()))
+        emit_json(payload)
+    except (PlaneError, OSError, ValueError, KeyError, TypeError) as exc:
+        typer.echo(str(exc) if isinstance(exc, PlaneError) else "Invalid Plane audit input (details redacted)", err=True)
+        raise typer.Exit(2) from None

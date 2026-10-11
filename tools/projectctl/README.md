@@ -44,3 +44,26 @@ The configured project must resolve to Graduation Project / CAP. A denied direct
 workspace endpoint is recorded, with workspace ID checked through the project
 and the workspace-scoped project listing. Unsupported optional membership
 endpoints produce null, never an assumed empty membership list.
+
+CTRL-PM-007 adds an offline dry-run:
+
+```sh
+projectctl plane-plan --audit /explicit/path/to/sanitized-audit.json
+```
+
+It never connects to Plane or reads credentials. Output includes all 29 modules,
+13 cycles, nine milestone labels, BLOCKED and 179 WPs, plus exact desired static
+fields, create/update/unchanged decisions, canonical-ID duplicates, conflicts and
+missing owners. Names of modules use stable capability IDs; titles are descriptions.
+Only exact normalized full names in project membership qualify for assignment.
+Missing members stay unassigned; their canonical names remain in metadata.
+New issues alone initialize BACKLOG; updates never reset execution states.
+Unmanaged existing descriptions are not overwritten. Multi-cycle windows remain
+unresolved; no arbitrary Plane cycle or calendar date is chosen. The generated
+preview uses symbolic references for structures that do not exist yet. Relations
+are intended mappings, not executable requests. It is not an apply manifest;
+re-read identity/membership and verify API relation/date contracts before applying.
+Exit zero means a plan was computed; `ready_for_live_mutation` and findings must
+be inspected. Pure tests simulate static projection application twice to prove
+zero duplicate creates/metadata updates; live relational idempotency is unproven.
+No sync/apply or Plane mutation command exists.
