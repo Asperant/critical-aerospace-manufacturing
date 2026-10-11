@@ -1,4 +1,5 @@
 from pathlib import Path
+import yaml
 
 from .parsers.wbs import Catalog, WBS_PATH, parse_wbs
 
@@ -23,10 +24,10 @@ def load(root: Path) -> Catalog:
         catalog.diagnostics.append(Diagnostic(code="SCHEDULE_INPUT", severity=Severity.ERROR, message=str(exc)))
     try:
         catalog.dependencies = parse_dependencies((root / PATH).read_text())
-    except (OSError, ValueError) as exc:
+    except (OSError, ValueError, yaml.YAMLError) as exc:
         catalog.diagnostics.append(Diagnostic(code="DEPENDENCY_INPUT", severity=Severity.ERROR, message=str(exc)))
     try:
         catalog.requirements = parse_requirements((root / MASTER).read_text(), (root / RTM).read_text())
-    except (OSError, ValueError) as exc:
+    except (OSError, ValueError, yaml.YAMLError) as exc:
         catalog.diagnostics.append(Diagnostic(code="REQUIREMENT_INPUT", severity=Severity.ERROR, message=str(exc)))
     return catalog
