@@ -648,15 +648,17 @@ The coding agent must not:
 
 ## 20. Project Management Boundary
 
-Plane is the execution-management system.
+`docs/` is the canonical specification and governance truth.
 
-GitHub is the code and pull-request truth.
+GitHub is the code, pull-request, review, engineering-work and evidence truth.
 
-The repository is the documentation and evidence truth.
+Plane is the execution planning, coordination and status view. It must not replace GitHub as engineering-work truth.
+
+`projectctl` is the deterministic validation and synchronization bridge.
 
 Canonical Work Package IDs are stable and must not be replaced by Plane-generated IDs such as `CAP-42`.
 
-Plane state must not redefine canonical WP semantics.
+Plane state must not redefine canonical project or WP semantics.
 
 The project-control tooling may synchronize approved static metadata into Plane.
 
