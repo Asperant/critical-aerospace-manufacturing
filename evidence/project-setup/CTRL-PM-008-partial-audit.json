@@ -1,0 +1,309 @@
+{
+  "api_version": "v1",
+  "authenticated_user": {
+    "display_name": "asrindundar14",
+    "first_name": "asrın",
+    "id": "0b4a5417-2ed5-4ac2-95ff-e74104c5d601",
+    "last_name": "dündar"
+  },
+  "cycles": [],
+  "labels": [
+    {
+      "description": "",
+      "external_id": null,
+      "external_source": null,
+      "id": "4cc6bbc1-2aba-49f6-ade7-220b7072df80",
+      "name": "BLOCKED",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    }
+  ],
+  "modules": [
+    {
+      "description": "Event Spine & Integration Contracts",
+      "description_html": null,
+      "external_id": null,
+      "external_source": null,
+      "id": "36ea81bc-2977-4d8d-a0b6-16e384e03b36",
+      "name": "WP-EVT",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "start_date": null,
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    },
+    {
+      "description": "Documentation, Thesis, Demo & Public Release",
+      "description_html": null,
+      "external_id": null,
+      "external_source": null,
+      "id": "66535172-d9c5-4254-897f-8aba367d5197",
+      "name": "WP-DOC",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "start_date": null,
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    },
+    {
+      "description": "AI Orchestrator / RCA",
+      "description_html": null,
+      "external_id": null,
+      "external_source": null,
+      "id": "8bab48fd-a4e3-4fa7-bda8-a212d44f5045",
+      "name": "WP-AI",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "start_date": null,
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    },
+    {
+      "description": "Durable Automation",
+      "description_html": null,
+      "external_id": null,
+      "external_source": null,
+      "id": "9482737d-c1c3-49b3-8055-94b4a8cd3998",
+      "name": "WP-AUTO",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "start_date": null,
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    },
+    {
+      "description": "Final Benchmark Campaign",
+      "description_html": null,
+      "external_id": null,
+      "external_source": null,
+      "id": "965c4168-2926-4573-a288-a044644aec8c",
+      "name": "WP-BENCH",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "start_date": null,
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    },
+    {
+      "description": "Backup & Disaster Recovery",
+      "description_html": null,
+      "external_id": null,
+      "external_source": null,
+      "id": "989f0968-39b7-4b62-bbf8-5fd7fd6edf43",
+      "name": "WP-DR",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "start_date": null,
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    },
+    {
+      "description": "Manufacturing Core / Backend",
+      "description_html": null,
+      "external_id": null,
+      "external_source": null,
+      "id": "dbdd8368-e65c-4706-9d49-ec18bffeafa8",
+      "name": "WP-CORE",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "start_date": null,
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    },
+    {
+      "description": "CI/CD",
+      "description_html": null,
+      "external_id": null,
+      "external_source": null,
+      "id": "e33f2ec6-d25a-4ff7-99af-0d558ff3e3bc",
+      "name": "WP-CICD",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "start_date": null,
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    }
+  ],
+  "mutation_enabled": false,
+  "project": {
+    "id": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+    "identifier": "CAP",
+    "name": "Graduation Project",
+    "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+  },
+  "project_members": [
+    {
+      "display_name": "asrindundar14",
+      "first_name": "asrın",
+      "id": "0b4a5417-2ed5-4ac2-95ff-e74104c5d601",
+      "last_name": "dündar"
+    }
+  ],
+  "reads": [
+    {
+      "method": "GET",
+      "path": "/api/v1/users/me/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/states/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/labels/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/modules/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/cycles/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/issues/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/members/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/members/",
+      "status": 200
+    }
+  ],
+  "schema_version": "plane-v1-audit-v1",
+  "states": [
+    {
+      "default": false,
+      "description": "",
+      "external_id": null,
+      "external_source": null,
+      "group": "started",
+      "id": "09034c4e-4930-4c9b-b747-03ce2b49c6d4",
+      "name": "VALIDATING",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "slug": "validating",
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    },
+    {
+      "default": false,
+      "description": "",
+      "external_id": null,
+      "external_source": null,
+      "group": "started",
+      "id": "56d46f3d-f718-4ee6-96e7-6a67ed64bcd4",
+      "name": "MERGE_READY",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "slug": "merge_ready",
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    },
+    {
+      "default": false,
+      "description": "",
+      "external_id": null,
+      "external_source": null,
+      "group": "cancelled",
+      "id": "5b7de978-6dec-4741-86ad-35e5d591e99a",
+      "name": "CANCELED",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "slug": "canceled",
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    },
+    {
+      "default": false,
+      "description": "",
+      "external_id": null,
+      "external_source": null,
+      "group": "completed",
+      "id": "603623f6-5931-44bc-a44c-3b5c0de58558",
+      "name": "DONE",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "slug": "done",
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    },
+    {
+      "default": false,
+      "description": "",
+      "external_id": null,
+      "external_source": null,
+      "group": "started",
+      "id": "99a0cc57-ec65-4c3d-8db4-694ce31c77fa",
+      "name": "IN_REVIEW",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "slug": "in_review",
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    },
+    {
+      "default": false,
+      "description": "",
+      "external_id": null,
+      "external_source": null,
+      "group": "started",
+      "id": "b86020fd-a959-4d76-901f-c65edc12a5ff",
+      "name": "IN_PROGRESS",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "slug": "in_progress",
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    },
+    {
+      "default": false,
+      "description": "",
+      "external_id": null,
+      "external_source": null,
+      "group": "unstarted",
+      "id": "bcd65f64-aa4f-4f6f-9068-74566fbc3d65",
+      "name": "READY",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "slug": "ready",
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    },
+    {
+      "default": true,
+      "description": "",
+      "external_id": null,
+      "external_source": null,
+      "group": "backlog",
+      "id": "d285bdc3-b05c-4f04-b6e0-c81e1004e706",
+      "name": "BACKLOG",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "slug": "backlog",
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    },
+    {
+      "default": false,
+      "description": "",
+      "external_id": null,
+      "external_source": null,
+      "group": "started",
+      "id": "d511d58f-94ec-495e-9468-61c59017f7bd",
+      "name": "MERGED",
+      "project": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+      "slug": "merged",
+      "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+    }
+  ],
+  "work_items": [],
+  "workspace": {
+    "direct_endpoint_available": false,
+    "id": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb",
+    "slug": "critical-aerospace-manufacturing",
+    "verification": "PROJECT_SCOPE_ONLY"
+  },
+  "workspace_members": [
+    {
+      "display_name": "asrindundar14",
+      "first_name": "asrın",
+      "id": "0b4a5417-2ed5-4ac2-95ff-e74104c5d601",
+      "last_name": "dündar"
+    }
+  ]
+}

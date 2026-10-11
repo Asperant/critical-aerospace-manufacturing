@@ -4,14 +4,11 @@ from pathlib import Path
 import os
 import re
 import shlex
+import math
 from urllib.parse import urlsplit
 from uuid import UUID
 
-import httpx
-
-
-class PlaneError(ValueError):
-    """Safe diagnostics: never include response bodies or credential values."""
+from .plane_transport import PlaneError, PlaneStream
 
 
 @dataclass(frozen=True)
@@ -21,6 +18,7 @@ class PlaneConfig:
     workspace_slug: str
     project_id: str
     api_version: str = "v1"
+    request_interval_seconds: float = 1.25
 
     def __post_init__(self):
         parts = urlsplit(self.base_url)
@@ -37,11 +35,14 @@ class PlaneConfig:
             raise PlaneError("Invalid PLANE_API_KEY")
         if self.api_version != "v1":
             raise PlaneError("This installation supports explicit API v1 only; no version fallback")
+        if not math.isfinite(self.request_interval_seconds) or self.request_interval_seconds < 1.25:
+            raise PlaneError("PLANE_REQUEST_INTERVAL_SECONDS must be finite and at least 1.25")
 
 
 def load_config(path: Path | None = None, environ=None) -> PlaneConfig:
     values = {}
-    keys = {"PLANE_BASE_URL", "PLANE_API_KEY", "PLANE_WORKSPACE_SLUG", "PLANE_PROJECT_ID"}
+    required = {"PLANE_BASE_URL", "PLANE_API_KEY", "PLANE_WORKSPACE_SLUG", "PLANE_PROJECT_ID"}
+    keys = required | {"PLANE_REQUEST_INTERVAL_SECONDS"}
     if path is not None and path.is_file():
         try:
             for line in path.read_text().splitlines():
@@ -60,35 +61,34 @@ def load_config(path: Path | None = None, environ=None) -> PlaneConfig:
             raise PlaneError("Cannot parse local Plane configuration (details redacted)") from None
     env = os.environ if environ is None else environ
     values.update({k: env[k] for k in keys if k in env})
-    missing = sorted(k for k in keys if not values.get(k))
+    missing = sorted(k for k in required if not values.get(k))
     if missing:
         raise PlaneError("PLANE_READ_CREDENTIALS_REQUIRED: missing " + ", ".join(missing))
+    try:
+        interval = float(values.get("PLANE_REQUEST_INTERVAL_SECONDS", "1.25"))
+    except ValueError:
+        raise PlaneError("Invalid PLANE_REQUEST_INTERVAL_SECONDS") from None
     return PlaneConfig(values["PLANE_BASE_URL"], values["PLANE_API_KEY"],
-                       values["PLANE_WORKSPACE_SLUG"], values["PLANE_PROJECT_ID"])
+                       values["PLANE_WORKSPACE_SLUG"], values["PLANE_PROJECT_ID"], request_interval_seconds=interval)
 
 
 class PlaneReader:
     def __init__(self, config: PlaneConfig, transport=None):
         self.config = config
-        self._client = httpx.Client(base_url=config.base_url.rstrip("/") + "/api/v1/",
-                                    headers={"X-API-Key": config.api_key}, timeout=20,
-                                    follow_redirects=False, trust_env=False, transport=transport)
+        self.stream = PlaneStream(config, transport)
         self.reads = []
 
     def __enter__(self):
         return self
 
     def __exit__(self, *args):
-        self._client.close()
+        self.stream.close()
 
     def _get(self, path, params=None, optional=False):
         # Paths are internal fixed v1 routes. Pagination accepts only opaque cursor data.
         if path.startswith("/") or ":" in path or ".." in path:
             raise PlaneError("Unsafe Plane resource path")
-        try:
-            response = self._client.get(path, params=params)
-        except httpx.HTTPError:
-            raise PlaneError("Plane GET transport failure (details redacted)") from None
+        response = self.stream.request("GET", path, params=params)
         self.reads.append({"method": "GET", "path": "/api/v1/" + path, "status": response.status_code})
         if optional and response.status_code in {401, 403, 404, 405}:
             return None

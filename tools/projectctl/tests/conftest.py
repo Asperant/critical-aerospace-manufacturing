@@ -3,6 +3,23 @@ from pathlib import Path
 import pytest
 
 
+@pytest.fixture(autouse=True)
+def mocked_plane_clock(request, monkeypatch):
+    """Plane mock tests exercise pacing with a fake clock, without wall-clock sleeps."""
+    if not request.node.path.name.startswith("test_plane"):
+        return
+    import projectctl.plane_transport as transport
+    class Clock:
+        now = 0.0
+        def sleep(self, seconds):
+            self.now += seconds
+    clock = Clock()
+    monkeypatch.setattr(transport, "monotonic", lambda: clock.now)
+    monkeypatch.setattr(transport, "time", lambda: 1_000 + clock.now)
+    monkeypatch.setattr(transport, "sleep", clock.sleep)
+    monkeypatch.setattr(transport, "GATE", transport.RequestGate())
+
+
 @pytest.fixture
 def root():
     return Path(__file__).resolve().parents[3]

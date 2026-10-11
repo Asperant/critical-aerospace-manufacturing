@@ -1,0 +1,1749 @@
+{
+  "counts": {
+    "multi_cycle": 117,
+    "single_cycle": 57,
+    "unscheduled": 5
+  },
+  "multi_cycle": [
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-AI-001",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-AI-002",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-AI-003",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-AI-004",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-AI-005",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-AI-006",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-AUTO-001",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-AUTO-002",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-AUTO-003",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-AUTO-004",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-AUTO-005",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-AUTO-006",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-AUTO-007",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-CICD-003",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-CICD-004",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-CICD-005",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-CICD-006",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-CORE-002",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-CORE-003",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-CORE-004",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-CORE-008",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-DOC-002",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-DR-001",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-DR-003",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-EVT-003",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-EVT-004",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-EVT-005",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-GOV-002",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-GOV-003",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-HITL-001",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-HITL-002",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-HITL-003",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-HITL-004",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-HITL-005",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-HITL-006",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-HITL-007",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-ML-001",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-ML-002",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-ML-003",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-ML-004",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-ML-005",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-ML-006",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-OBJ-001",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-OBJ-002",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-OBS-002",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-OBS-003",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-OBS-004",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-OBS-005",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-PERF-001",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-PLAT-003",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-PLAT-004",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-PLAT-005",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-RAG-001",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-RAG-002",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-RAG-003",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-RAG-004",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-RAG-005",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-RAG-006",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-RES-001",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-RES-002",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-RES-006",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-SCH-001",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-SCH-002",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-SCH-003",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-SCH-004",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-SCH-005",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-SCH-006",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-SCH-007",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-SEC-001",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-SEC-002",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-SEC-003",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-SEC-004",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-SEC-005",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-SEC-006",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-SEC-007",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-SEC-008",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-SIM-002",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-SIM-003",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-SIM-004",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-SIM-005",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-SIM-006",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-SIM-007",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-TEST-002",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-TEST-003",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-TEST-004",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-TEST-005",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-TEST-006",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-TEST-007",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-TWIN-002",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-TWIN-003",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-TWIN-004",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-TWIN-005",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-TWIN-006",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-UI-002",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-UI-003",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-UI-004",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-UI-005",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-UI-006",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-UI-007",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-UI-008",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-UI-009",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-UI-010",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-VALID-001",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-VALID-002",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-VDATA-001",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-VDATA-002",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-VDATA-003",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S9–S10",
+      "cycle_ids": [
+        "S9",
+        "S10"
+      ],
+      "id": "WP-VDATA-004",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M5 / S9–S10"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-VIS-001",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-VIS-002",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-VIS-003",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-VIS-004",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-VIS-005",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S7–S8",
+      "cycle_ids": [
+        "S7",
+        "S8"
+      ],
+      "id": "WP-VIS-006",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M4 / S7–S8"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-VIS-007",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M3 / S5–S6"
+    },
+    {
+      "canonical_sprint_window": "S3–S4",
+      "cycle_ids": [
+        "S3",
+        "S4"
+      ],
+      "id": "WP-VIS-008",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M2 / S3–S4"
+    },
+    {
+      "canonical_sprint_window": "S5–S6",
+      "cycle_ids": [
+        "S5",
+        "S6"
+      ],
+      "id": "WP-VIS-009",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M3 / S5–S6"
+    }
+  ],
+  "owner_counts": {
+    "Asrın Dündar": 73,
+    "Batuhan Kaya": 32,
+    "Selman Özdemir": 17,
+    "Yavuz Gümüş": 57
+  },
+  "parser_version": "offline-project-v1",
+  "single_cycle": [
+    {
+      "canonical_sprint_window": "S12",
+      "cycle_ids": [
+        "S12"
+      ],
+      "id": "WP-AI-007",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M7 / S12"
+    },
+    {
+      "canonical_sprint_window": "S12",
+      "cycle_ids": [
+        "S12"
+      ],
+      "id": "WP-BENCH-001",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M7 / S12"
+    },
+    {
+      "canonical_sprint_window": "S12",
+      "cycle_ids": [
+        "S12"
+      ],
+      "id": "WP-BENCH-002",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M7 / S12"
+    },
+    {
+      "canonical_sprint_window": "S12",
+      "cycle_ids": [
+        "S12"
+      ],
+      "id": "WP-BENCH-003",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M7 / S12"
+    },
+    {
+      "canonical_sprint_window": "S13",
+      "cycle_ids": [
+        "S13"
+      ],
+      "id": "WP-BENCH-004",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M8 / S13"
+    },
+    {
+      "canonical_sprint_window": "S13",
+      "cycle_ids": [
+        "S13"
+      ],
+      "id": "WP-BENCH-005",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M8 / S13"
+    },
+    {
+      "canonical_sprint_window": "S1",
+      "cycle_ids": [
+        "S1"
+      ],
+      "id": "WP-CICD-001",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M0 / S1"
+    },
+    {
+      "canonical_sprint_window": "S2",
+      "cycle_ids": [
+        "S2"
+      ],
+      "id": "WP-CICD-002",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M1 / S2"
+    },
+    {
+      "canonical_sprint_window": "S2",
+      "cycle_ids": [
+        "S2"
+      ],
+      "id": "WP-CORE-001",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M1 / S2"
+    },
+    {
+      "canonical_sprint_window": "S2",
+      "cycle_ids": [
+        "S2"
+      ],
+      "id": "WP-CORE-005",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M1 / S2"
+    },
+    {
+      "canonical_sprint_window": "S12",
+      "cycle_ids": [
+        "S12"
+      ],
+      "id": "WP-CORE-006",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M7 / S12"
+    },
+    {
+      "canonical_sprint_window": "S2",
+      "cycle_ids": [
+        "S2"
+      ],
+      "id": "WP-CORE-007",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M1 / S2"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-DOC-001",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S13",
+      "cycle_ids": [
+        "S13"
+      ],
+      "id": "WP-DOC-003",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M8 / S13"
+    },
+    {
+      "canonical_sprint_window": "S13",
+      "cycle_ids": [
+        "S13"
+      ],
+      "id": "WP-DOC-004",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M8 / S13"
+    },
+    {
+      "canonical_sprint_window": "S13",
+      "cycle_ids": [
+        "S13"
+      ],
+      "id": "WP-DOC-005",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M8 / S13"
+    },
+    {
+      "canonical_sprint_window": "S13",
+      "cycle_ids": [
+        "S13"
+      ],
+      "id": "WP-DOC-006",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M8 / S13"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-DR-002",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S12",
+      "cycle_ids": [
+        "S12"
+      ],
+      "id": "WP-DR-004",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M7 / S12"
+    },
+    {
+      "canonical_sprint_window": "S2",
+      "cycle_ids": [
+        "S2"
+      ],
+      "id": "WP-EVT-001",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M1 / S2"
+    },
+    {
+      "canonical_sprint_window": "S2",
+      "cycle_ids": [
+        "S2"
+      ],
+      "id": "WP-EVT-002",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M1 / S2"
+    },
+    {
+      "canonical_sprint_window": "S12",
+      "cycle_ids": [
+        "S12"
+      ],
+      "id": "WP-EVT-006",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M7 / S12"
+    },
+    {
+      "canonical_sprint_window": "S1",
+      "cycle_ids": [
+        "S1"
+      ],
+      "id": "WP-GOV-001",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M0 / S1"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-GOV-004",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-ML-007",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S2",
+      "cycle_ids": [
+        "S2"
+      ],
+      "id": "WP-OBS-001",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M1 / S2"
+    },
+    {
+      "canonical_sprint_window": "S12",
+      "cycle_ids": [
+        "S12"
+      ],
+      "id": "WP-OBS-006",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M7 / S12"
+    },
+    {
+      "canonical_sprint_window": "S12",
+      "cycle_ids": [
+        "S12"
+      ],
+      "id": "WP-PERF-002",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M7 / S12"
+    },
+    {
+      "canonical_sprint_window": "S12",
+      "cycle_ids": [
+        "S12"
+      ],
+      "id": "WP-PERF-003",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M7 / S12"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-PERF-004",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S12",
+      "cycle_ids": [
+        "S12"
+      ],
+      "id": "WP-PERF-005",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M7 / S12"
+    },
+    {
+      "canonical_sprint_window": "S12",
+      "cycle_ids": [
+        "S12"
+      ],
+      "id": "WP-PERF-006",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M7 / S12"
+    },
+    {
+      "canonical_sprint_window": "S2",
+      "cycle_ids": [
+        "S2"
+      ],
+      "id": "WP-PLAT-001",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M1 / S2"
+    },
+    {
+      "canonical_sprint_window": "S2",
+      "cycle_ids": [
+        "S2"
+      ],
+      "id": "WP-PLAT-002",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M1 / S2"
+    },
+    {
+      "canonical_sprint_window": "S13",
+      "cycle_ids": [
+        "S13"
+      ],
+      "id": "WP-PLAT-006",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M8 / S13"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-PLAT-007",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-RAG-007",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-RES-003",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-RES-004",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S12",
+      "cycle_ids": [
+        "S12"
+      ],
+      "id": "WP-RES-005",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M7 / S12"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-RES-007",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-RES-008",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-RES-009",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-RES-010",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-RES-011",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S13",
+      "cycle_ids": [
+        "S13"
+      ],
+      "id": "WP-RES-012",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M8 / S13"
+    },
+    {
+      "canonical_sprint_window": "S2",
+      "cycle_ids": [
+        "S2"
+      ],
+      "id": "WP-SIM-001",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M1 / S2"
+    },
+    {
+      "canonical_sprint_window": "S12",
+      "cycle_ids": [
+        "S12"
+      ],
+      "id": "WP-SIM-008",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M7 / S12"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-SIM-009",
+      "owner": "Batuhan Kaya",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S2",
+      "cycle_ids": [
+        "S2"
+      ],
+      "id": "WP-TEST-001",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M1 / S2"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-TEST-008",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S2",
+      "cycle_ids": [
+        "S2"
+      ],
+      "id": "WP-TWIN-001",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M1 / S2"
+    },
+    {
+      "canonical_sprint_window": "S2",
+      "cycle_ids": [
+        "S2"
+      ],
+      "id": "WP-UI-001",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M1 / S2"
+    },
+    {
+      "canonical_sprint_window": "S13",
+      "cycle_ids": [
+        "S13"
+      ],
+      "id": "WP-UI-011",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M8 / S13"
+    },
+    {
+      "canonical_sprint_window": "S13",
+      "cycle_ids": [
+        "S13"
+      ],
+      "id": "WP-UI-012",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "M8 / S13"
+    },
+    {
+      "canonical_sprint_window": "S11",
+      "cycle_ids": [
+        "S11"
+      ],
+      "id": "WP-VDATA-005",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M6 / S11"
+    },
+    {
+      "canonical_sprint_window": "S12",
+      "cycle_ids": [
+        "S12"
+      ],
+      "id": "WP-VIS-010",
+      "owner": "Selman Özdemir",
+      "raw_planning_window": "M7 / S12"
+    }
+  ],
+  "source_manifest": {
+    "docs/01_Master_Project_Specification.md": "14ff9517ca5fc427d9316980a20db1059a628935e5642a4eeca2ffded51572bb",
+    "docs/03_Requirements_Traceability_Matrix.md": "e58e635cacc96f3341b7cb13f54676d3793b82d63cd394d9c260973f23817375",
+    "docs/04_Work_Breakdown_Structure.md": "1f9c2ff532cacac70ff5099a1ff6e4e09d25be990dcbca2071e59e0fa03ed8ac",
+    "docs/05_Dependency_Graph.md": "c693a9b953458d0bcc2be4b2c9fdb4d19d6f21e7ebf8aca8e0fb49be08db30d1",
+    "docs/06A_Asrin_Engineering_Roadmap.md": "4034fbc467766dcaf59aab274bcb6ec2ee944f6c311444f079f589029dc8c92c",
+    "docs/06B_Selman_Engineering_Roadmap.md": "92801ffe6782ec55a096482db1f578b1d75c41278c269ef8c56aaf97e23da2ea",
+    "docs/06C_Batu_Engineering_Roadmap.md": "f12f21dd91c1487c556bd5cbbe24a52fdbda03f9add8d8009463e74cb95f5d2e",
+    "docs/06D_Yavuz_Engineering_Roadmap.md": "a70a3c28b458ccab65e4305675f962b9b6eeb4e84cba4e94e2da53a74d81a961",
+    "docs/07_Milestone_and_Release_Plan.md": "f06243f0e0773b4ebce39b509c6e807bacf698690e8f311d6091087db83272bf"
+  },
+  "unscheduled": [
+    {
+      "canonical_sprint_window": "unscheduled",
+      "cycle_ids": [],
+      "id": "WP-R2-001",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "— / unscheduled"
+    },
+    {
+      "canonical_sprint_window": "unscheduled",
+      "cycle_ids": [],
+      "id": "WP-R2-002",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "— / unscheduled"
+    },
+    {
+      "canonical_sprint_window": "unscheduled",
+      "cycle_ids": [],
+      "id": "WP-R2-003",
+      "owner": "Yavuz Gümüş",
+      "raw_planning_window": "— / unscheduled"
+    },
+    {
+      "canonical_sprint_window": "unscheduled",
+      "cycle_ids": [],
+      "id": "WP-S-001",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "— / unscheduled"
+    },
+    {
+      "canonical_sprint_window": "unscheduled",
+      "cycle_ids": [],
+      "id": "WP-X-001",
+      "owner": "Asrın Dündar",
+      "raw_planning_window": "— / unscheduled"
+    }
+  ]
+}

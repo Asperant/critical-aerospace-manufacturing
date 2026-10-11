@@ -67,3 +67,26 @@ Exit zero means a plan was computed; `ready_for_live_mutation` and findings must
 be inspected. Pure tests simulate static projection application twice to prove
 zero duplicate creates/metadata updates; live relational idempotency is unproven.
 No sync/apply or Plane mutation command exists.
+
+CTRL-PM-008 supplies an approval-gated `StructureBootstrap` helper, deliberately
+outside the CLI. Its allowlist covers only the approved existing state-name PATCH
+and missing capability modules, undated cycles and milestone labels. It never
+writes issues, members, relations or calendar dates. Existing structures are
+matched by exact stable names; duplicates, extra entities and metadata conflicts
+stop the operation. Completed entities survive failures and are skipped on resume.
+
+All Plane API calls use `PlaneStream`, shared by reads and writes. A process-wide
+lock serializes requests across clients, with a default 1.25-second minimum
+start interval (at most 48 requests/minute). Optional non-secret configuration
+`PLANE_REQUEST_INTERVAL_SECONDS` may increase that interval in the environment or
+ignored local file. API v1 and X-API-Key remain explicit; redirects are disabled.
+The client observes Remaining/Reset/Retry-After headers, honors Retry-After seconds
+or HTTP dates, then reset time, then bounded exponential backoff (2–30 seconds).
+Remaining=0 delays subsequent requests. Rate-limited GETs and the approved
+idempotent name PATCH allow at most five attempts. POSTs never blindly replay:
+after a rate limit, transport failure, 5xx or unusable success response, the helper
+waits and reads fresh inventory. One exact match reconciles success; zero permits
+a bounded retry; duplicate/conflicting matches stop. Retry telemetry contains
+only safe method/path/status and parsed timing values, never credentials or bodies.
+Live request budgets may also be consumed by other clients; server waits are
+respected without changing Plane configuration. Offline commands are unchanged.
