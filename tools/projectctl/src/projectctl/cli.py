@@ -8,6 +8,7 @@ from .loader import find_root, load
 from .rendering import emit_json, emit_summary, summary
 from .validators.wbs import validate as validate_catalog
 from .validators.schedule import validate_schedule
+from .validators.dependencies import validate_dependencies, hard_cycle
 
 sys.dont_write_bytecode = True
 app = typer.Typer(help="Offline canonical WBS tooling (CTRL-PM-001).", add_completion=False)
@@ -40,11 +41,18 @@ def report(root: Path | None, json_output: bool):
     diagnostics = validate_catalog(catalog)
     if catalog.schedule is not None:
         diagnostics.extend(validate_schedule(catalog, catalog.schedule))
+    if catalog.dependencies is not None:
+        diagnostics.extend(validate_dependencies(catalog.dependencies))
     payload = summary(catalog, diagnostics)
     if catalog.schedule is not None:
         payload.update(cycle_count=len(catalog.schedule.cycles), milestone_count=len(catalog.schedule.milestones),
                        scheduled_wp_count=len({wp for c in catalog.schedule.cycles for wp in c.work_package_ids}),
                        unscheduled_wp_ids=sorted({wp.id for wp in catalog.work_packages} - {wp for c in catalog.schedule.cycles for wp in c.work_package_ids}))
+    if catalog.dependencies is not None:
+        payload.update(dependency_node_count=len(catalog.dependencies.nodes), dependency_edge_count=len(catalog.dependencies.edges),
+                       hard_edge_count=sum(e.blocking for e in catalog.dependencies.edges),
+                       soft_edge_count=sum(not e.blocking for e in catalog.dependencies.edges),
+                       hard_cycle_count=int(hard_cycle(catalog.dependencies.edges) is not None))
     if json_output:
         emit_json(payload)
     else:

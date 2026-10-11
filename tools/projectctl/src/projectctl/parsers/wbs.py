@@ -24,6 +24,7 @@ class Catalog:
     dor_ids: set[str] = field(default_factory=set)
     dod_ids: set[str] = field(default_factory=set)
     schedule: object | None = None
+    dependencies: object | None = None
 
 
 def references(value: str | None, pattern: str) -> list[str] | None:
