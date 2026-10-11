@@ -1,0 +1,53 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+
+# Node
+node_modules/
+.next/
+dist/
+build/
+coverage/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Runtime / logs
+*.log
+logs/
+tmp/
+.temp/
+
+# Local databases / state
+*.sqlite
+*.sqlite3
+
+# Model / dataset artifacts
+*.pt
+*.pth
+*.onnx
+*.ckpt
+*.safetensors
+
+# Local project-control secrets
+project_control/*.secret.*
+project_control/local/
