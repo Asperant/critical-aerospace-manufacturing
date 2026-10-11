@@ -23,6 +23,7 @@ class Catalog:
     area_rows: list[tuple[list[str], SourceRef]] = field(default_factory=list)
     dor_ids: set[str] = field(default_factory=set)
     dod_ids: set[str] = field(default_factory=set)
+    schedule: object | None = None
 
 
 def references(value: str | None, pattern: str) -> list[str] | None:

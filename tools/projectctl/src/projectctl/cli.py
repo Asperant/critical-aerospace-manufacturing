@@ -7,6 +7,7 @@ from .enums import Severity
 from .loader import find_root, load
 from .rendering import emit_json, emit_summary, summary
 from .validators.wbs import validate as validate_catalog
+from .validators.schedule import validate_schedule
 
 sys.dont_write_bytecode = True
 app = typer.Typer(help="Offline canonical WBS tooling (CTRL-PM-001).", add_completion=False)
@@ -36,7 +37,14 @@ def parse(root: Path | None = typer.Option(None, help="Repository root.")):
 
 def report(root: Path | None, json_output: bool):
     catalog = read_catalog(root)
-    payload = summary(catalog, validate_catalog(catalog))
+    diagnostics = validate_catalog(catalog)
+    if catalog.schedule is not None:
+        diagnostics.extend(validate_schedule(catalog, catalog.schedule))
+    payload = summary(catalog, diagnostics)
+    if catalog.schedule is not None:
+        payload.update(cycle_count=len(catalog.schedule.cycles), milestone_count=len(catalog.schedule.milestones),
+                       scheduled_wp_count=len({wp for c in catalog.schedule.cycles for wp in c.work_package_ids}),
+                       unscheduled_wp_ids=sorted({wp.id for wp in catalog.work_packages} - {wp for c in catalog.schedule.cycles for wp in c.work_package_ids}))
     if json_output:
         emit_json(payload)
     else:
