@@ -17646,9 +17646,9 @@ Exact taxonomy dataset selection sırasında belirlenecektir.
 
 # WM-811K Scope’u
 
-WM-811K veya benzeri serialized component-map dataset:
+WM-811K is a semiconductor wafer-map dataset. It may be retained only as a legacy/cross-domain methodological comparison, never as serialized aerospace-component inspection data. Its limited methodological uses are:
 
-* serialized component-map pattern recognition
+* wafer-map pattern recognition (legacy methodological comparison only)
 * class imbalance research
 * clustering
 * representation learning
@@ -103287,11 +103287,32 @@ kullanılabilir.
 
 # Candidate Dataset Baseline
 
+## CTRL-DOC-003 / CHG-002 — Human-approved dataset-domain reconciliation
+
+This current decision applies to every dataset reference in the canonical set, including earlier candidate/allowed-role wording. Project-domain migration mappings never change an external dataset's physical meaning. Source/license eligibility is separate from scientific role, final portfolio selection, and executed evaluation.
+
+- **Lane A:** real/public experimental machining, tool-wear, machine-health, industrial inspection and X-ray/NDT data. No proprietary aerospace factory data dependency is introduced.
+- **Lane B:** literature/technical-source-grounded manufacturing routes, process/resource models and domain assumptions.
+- **Lane C:** explicitly simulated orders, batches, serialized components, queues, WIP, failures, maintenance, quality events, scheduling, recovery and end-to-end scenarios. Simulator Oracle is evaluation-only and never a runtime model input.
+
+SECOM is semiconductor process data ([UCI source](https://archive.ics.uci.edu/dataset/179/secom)). WM-811K remains semiconductor wafer-map data. MixedWM38 remains mixed-defect wafer-map data, with partially generated samples as described by the [original dataset authors](https://github.com/Junliangwangdhu/WaferMap/blob/master/README.md). They are retained here only as optional legacy/cross-domain methodological material, with no aerospace-domain claim. They are excluded from the primary aerospace evaluation portfolio. Their removal is preferred wherever no necessary methodological comparison is justified. Historical source/license decisions below do not approve a new scientific claim or waive source-specific redistribution conditions.
+
+| Human-approved candidate direction | Potential scientific role | Current selection posture |
+|---|---|---|
+| NASA milling/tool-wear ([institutional record](https://data.nasa.gov/dataset/groups/milling-wear)) | Experimental machining/tool-wear method evaluation | Candidate only; exact acquisition, rights, version, split and claim review pending |
+| Public multi-axis / 5-axis machining | Experimental machining evaluation | Candidate direction only; exact DatasetSourceRecord and rights review pending |
+| Open CNC geometry / NC / energy / machine-health | Source-specific process/resource method evaluation | Candidate direction only; do not imply a continuous real production history |
+| MVTec AD / AD2 ([AD2 source](https://www.mvtec.com/research-teaching/datasets/mvtec-ad-2)) | Auxiliary industrial anomaly evaluation | Source-specific existing license conditions remain; no aerospace-specific evidence claim |
+| GDXray | Casting/weld/X-ray/NDT evaluation candidate | Candidate only; exact source/version, rights, partition and claim review pending |
+| Public scheduling benchmarks | Optimization method comparison | Candidate only; not a factory operational trace or a substitute for simulator operational evaluation |
+
+No exact primary real/public portfolio is frozen by this reconciliation. DatasetCards, DatasetSourceRecords, checksums, rights manifests and leakage-aware held-out partitions must be selected and reviewed before the applicable research freeze. Synthetic-only evaluation never substitutes for held-out real/public evaluation where that claim requires it. These statements preserve localization, segmentation, classification, anomaly/OOD, spatial patterns, clustering, provenance, serving, calibration and task/slice evaluation; they do not replace Vision/NDT with a VLM.
+
 ## 33. UCI SECOM
 
 Canonical role:
 
-> critical-component manufacturing tabular/process-data ML baseline.
+> legacy/cross-domain semiconductor process/tabular ML methodological material only; no aerospace-domain claim.
 
 UCI’nin resmi dataset kaydı SECOM’u CC BY 4.0 altında yayımlamaktadır.
 
@@ -103313,7 +103334,7 @@ Official institutional source + explicit exact license.
 
 # 36. UCI SECOM Allowed Role
 
-Primary candidates:
+Legacy/cross-domain methodological uses only (excluded from the primary aerospace-domain evaluation portfolio):
 
 * process-variable ML
 * classification
@@ -103347,7 +103368,7 @@ Project policy yine de raw bytes’ı Git’e gömmek yerine manifest/acquisitio
 
 Canonical role:
 
-> serialized component-map spatial pattern / defect-classification benchmark.
+> legacy/cross-domain semiconductor wafer-map spatial-pattern / defect-classification comparison only; excluded from the primary aerospace-domain evaluation portfolio.
 
 ---
 
@@ -103357,7 +103378,7 @@ Kaggle WM-811K metadata:
 
 > **CC0: Public Domain**
 
-olarak işaretlenmiştir ve 811,457 component inspection map içerdiğini belirtmektedir.
+olarak işaretlenmiştir ve 811,457 semiconductor wafer maps içerdiğini belirtmektedir.
 
 ---
 
@@ -103385,7 +103406,7 @@ because explicit CC0 evidence verified on widely-used Kaggle mirror, while final
 
 # 44. WM-811K Internal Use
 
-Training/evaluation/benchmark candidate olarak kullanılabilir subject to final registry decision.
+Legacy/cross-domain methodological training/evaluation/comparison only, subject to final registry and rights decision; no aerospace-domain evidence claim.
 
 ---
 
@@ -103408,9 +103429,9 @@ Instead publish:
 
 # 46. WM-811K Scientific Scope
 
-SerializedComponent-map pattern evidence:
+Semiconductor wafer-map pattern evidence (legacy/cross-domain only):
 
-> Facility-wide production-control realism proof’u değildir.
+> Aerospace-component inspection evidence or facility-wide production-control realism proof’u değildir.
 
 ---
 
@@ -103420,13 +103441,13 @@ SerializedComponent-map pattern evidence:
 
 Optional:
 
-> mixed-defect serialized component-map research benchmark.
+> legacy/cross-domain mixed-defect semiconductor wafer-map methodological comparison only; excluded from the primary aerospace-domain evaluation portfolio.
 
 ---
 
 # 48. Verified Source Information
 
-Original project README MixedWM38’i 38,000+ component inspection maps içeren, 38 pattern sınıfını kapsayan bir research dataset olarak tanımlar ve bazı samples’ın GAN-based balancing amacıyla üretildiğini açıklar.
+Original project README MixedWM38’i 38,000+ semiconductor wafer maps içeren, 38 pattern sınıfını kapsayan bir research dataset olarak tanımlar ve bazı samples’ın GAN-based balancing amacıyla üretildiğini açıklar.
 
 ---
 
@@ -103574,9 +103595,9 @@ Official page CC BY-NC-SA 4.0 belirtmektedir.
 
 Core candidate portfolio:
 
-* UCI SECOM — APPROVED
-* WM-811K — APPROVED_WITH_CONDITIONS
-* MixedWM38 — REVIEW_REQUIRED / optional
+* UCI SECOM — APPROVED source/license status; legacy/cross-domain methodological use only, no aerospace-domain claim
+* WM-811K — APPROVED_WITH_CONDITIONS source/license status; legacy/cross-domain wafer-map comparison only, excluded from the primary aerospace portfolio
+* MixedWM38 — REVIEW_REQUIRED / optional; legacy/cross-domain wafer-map comparison only, excluded from the primary aerospace portfolio
 * MVTec AD — APPROVED_WITH_CONDITIONS / auxiliary
 * MVTec AD 2 — optional
 * the Manufacturing Operations Platform own synthetic operational dataset — mandatory
@@ -104230,7 +104251,7 @@ oluşturamaz.
 
 ## 145. Independent Sources Stay Independent
 
-SECOM + WM-811K + MVTec + simulator data can support different subsystems.
+SECOM and WM-811K may support legacy/cross-domain methodological comparisons only; MVTec remains auxiliary industrial anomaly data and simulator outputs remain simulated operational data. These independent sources do not establish aerospace-domain validity.
 
 ---
 
@@ -104567,7 +104588,7 @@ Status:
 
 Role:
 
-> manufacturing process/tabular ML.
+> legacy/cross-domain semiconductor process/tabular ML methodological material only; no aerospace-domain claim.
 
 Rights confidence:
 
@@ -104583,7 +104604,7 @@ Status:
 
 Role:
 
-> primary serialized component-map benchmark candidate.
+> legacy/cross-domain semiconductor wafer-map comparison only; excluded from the primary aerospace-domain evaluation portfolio.
 
 Current mirror license evidence:
 
@@ -104603,7 +104624,7 @@ Status:
 
 Role:
 
-> optional mixed-defect research.
+> optional legacy/cross-domain mixed-defect semiconductor wafer-map methodological comparison only; no aerospace-domain claim.
 
 Public redistribution:
 
@@ -104831,8 +104852,8 @@ Final the Manufacturing Operations Platform minimum:
 27. Model Training-License References
 28. Dataset Revocation
 29. Reverse Impact Analysis
-30. UCI SECOM Approved Baseline
-31. WM-811K Conditional Baseline
+30. UCI SECOM Approved Source/License — Legacy Cross-Domain Methodology Only
+31. WM-811K Conditional Source/License — Legacy Wafer-Map Comparison Only
 32. MixedWM38 Review-Required Status
 33. MVTec Conditional Auxiliary Status
 34. Platform Synthetic Operational Dataset
@@ -104993,8 +105014,8 @@ Madde 55 başarılı uygulanmış sayılabilmek için:
 18. Formal split membership reproducible olmalıdır.
 19. Benchmark/test leakage controls bulunmalıdır.
 20. Real vs synthetic composition final report’ta açık olmalıdır.
-21. UCI SECOM approved tabular critical-component manufacturing baseline olarak kullanılabilmelidir.
-22. WM-811K conditional serialized component-map baseline olarak kullanılabilmelidir.
+21. UCI SECOM may be used only as approved-source/license legacy/cross-domain semiconductor tabular methodology, with no aerospace-domain claim.
+22. WM-811K may be used only as a conditional-source/license legacy/cross-domain semiconductor wafer-map comparison, outside the primary aerospace evaluation portfolio.
 23. MixedWM38 unclear redistribution status ile mandatory dependency olmamalıdır.
 24. MVTec AD auxiliary/noncommercial status ile kullanılmalıdır.
 25. the Manufacturing Operations Platform full operational scenarios team-controlled synthetic data ile üretilebilmelidir.
@@ -114866,11 +114887,11 @@ At least:
 
 # WM-811K Task Governance
 
-## 183. Primary Product-Oriented Setting
+## 183. Legacy Cross-Domain Methodological Setting
 
-If `None` represents labeled normal serialized component class:
+If `None` represents the labeled normal semiconductor wafer class:
 
-> include it in primary product-oriented classification task.
+> include it in the legacy/cross-domain wafer classification task; this is not an aerospace-component class or primary aerospace product evaluation.
 
 ---
 

@@ -2117,7 +2117,7 @@ Candidate pattern taxonomy classes (per Item 16): center, edge, edge-ring, scrat
 
 Random/no-pattern serialized components are a mandatory evaluation case (per Item 30, VIS-E5): the pipeline SHALL NOT hallucinate structured spatial patterns on serialized components with no true pattern.
 
-**Technology note (Item 16)**: WM-811K is named as a candidate public serialized component-map dataset for pattern research, but it is explicitly insufficient alone for pixel-level inspection-image segmentation, which requires a separate real/public inspection-image dataset.
+**Technology note (Item 16; current CHG-002 dataset-domain reconciliation)**: WM-811K is semiconductor wafer-map data and may be retained only as a legacy/cross-domain methodological comparison, outside the primary aerospace-domain evaluation portfolio. It is not serialized aerospace-component inspection data and is insufficient for pixel-level inspection-image segmentation, which requires a separate real/public inspection-image dataset. SECOM and MixedWM38 have the same cross-domain-only scientific-claim boundary; 01 Item 55 controls source-specific rights and candidate selection.
 
 ### InspectionRequest / InspectionResult Contracts
 
