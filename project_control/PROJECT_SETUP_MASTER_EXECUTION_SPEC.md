@@ -1,9 +1,9 @@
 # PROJECT SETUP MASTER EXECUTION SPECIFICATION
 
-**Control Program:** PROJECT-SETUP  
-**Repository:** `Asperant/critical-aerospace-manufacturing`  
-**Local canonical clone:** `/srv/ailab/project`  
-**Intended repository location:** `project_control/PROJECT_SETUP_MASTER_EXECUTION_SPEC.md`  
+**Control Program:** PROJECT-SETUP<br>
+**Repository:** `Asperant/critical-aerospace-manufacturing`<br>
+**Local canonical clone:** `/srv/ailab/project`<br>
+**Intended repository location:** `project_control/PROJECT_SETUP_MASTER_EXECUTION_SPEC.md`<br>
 **Status:** EXECUTION SPECIFICATION
 
 ## 1. Mission
