@@ -99,3 +99,24 @@ def plane_plan(audit: Path = typer.Option(..., help="Explicit sanitized API v1 a
     except (PlaneError, OSError, ValueError, KeyError, TypeError) as exc:
         typer.echo(str(exc) if isinstance(exc, PlaneError) else "Invalid Plane audit input (details redacted)", err=True)
         raise typer.Exit(2) from None
+
+
+def check_gate(wp_id, root, gate):
+    from .gates import evaluate
+    repo = root if root is not None else find_root(Path.cwd())
+    payload = evaluate(read_project(repo), wp_id, gate, repo)
+    emit_json(payload)
+    if payload["result"] != "PASS":
+        raise typer.Exit(1)
+
+
+@app.command(name="check-ready")
+def check_ready(wp_id: str, root: Path | None = typer.Option(None)):
+    """Fail-closed read-only DoR check; UNKNOWN without execution evidence."""
+    check_gate(wp_id, root, "ready")
+
+
+@app.command(name="check-done")
+def check_done(wp_id: str, root: Path | None = typer.Option(None)):
+    """Fail-closed read-only DoD check; merge/tests never imply DONE."""
+    check_gate(wp_id, root, "done")

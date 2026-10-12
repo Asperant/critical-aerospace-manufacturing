@@ -120,3 +120,7 @@ mutation requests, no conflicts and all 179 issues unchanged. The older generic
 `plane-plan` retains its original unapproved multi-cycle behavior; it is not this
 explicitly approved policy's executable import plan. No general apply/sync CLI
 has been introduced. Import conformity does not certify readiness or completion.
+
+## Fail-closed governance checks
+
+`projectctl check-ready <WP-ID>` and `projectctl check-done <WP-ID>` emit deterministic JSON to stdout. PASS exits 0; FAIL and UNKNOWN exit 1; input-loading failures exit 2. Current evidence support is deliberately unavailable: structurally valid canonical WPs return UNKNOWN, invalid identities/baselines return FAIL. No command can currently produce PASS from planning, merged code, test success or a demo. All applicable docs/08 obligations still require actual execution evidence and confirmations. No Plane calls, state writes, automatic transitions or local execution database are introduced.
