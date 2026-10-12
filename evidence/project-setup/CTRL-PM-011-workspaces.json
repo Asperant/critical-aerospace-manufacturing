@@ -1,0 +1,42 @@
+[
+  {
+    "person": "asrin",
+    "clone": "/srv/ailab/workspaces/asrin/project",
+    "profile": "/srv/ailab/user-profiles/asrin",
+    "head": "6bb093cf235104236bdcf81865e8076efbeee1c8",
+    "local_identity": "user.name Asrın Dündar\nuser.email asrindundar14@hotmail.com",
+    "status": "",
+    "profile_files": 0,
+    "ignored_secret_copied": false
+  },
+  {
+    "person": "selman",
+    "clone": "/srv/ailab/workspaces/selman/project",
+    "profile": "/srv/ailab/user-profiles/selman",
+    "head": "6bb093cf235104236bdcf81865e8076efbeee1c8",
+    "local_identity": "user.name Selman Özdemir\nuser.email selmanozdemir430@gmail.com",
+    "status": "",
+    "profile_files": 0,
+    "ignored_secret_copied": false
+  },
+  {
+    "person": "batuhan",
+    "clone": "/srv/ailab/workspaces/batuhan/project",
+    "profile": "/srv/ailab/user-profiles/batuhan",
+    "head": "6bb093cf235104236bdcf81865e8076efbeee1c8",
+    "local_identity": "user.name Batuhan Kaya\nuser.email batuhankaya0204@gmail.com",
+    "status": "",
+    "profile_files": 0,
+    "ignored_secret_copied": false
+  },
+  {
+    "person": "yavuz",
+    "clone": "/srv/ailab/workspaces/yavuz/project",
+    "profile": "/srv/ailab/user-profiles/yavuz",
+    "head": "6bb093cf235104236bdcf81865e8076efbeee1c8",
+    "local_identity": "user.name Yavuz Gümüş\nuser.email yavuzgumus@gmail.com",
+    "status": "",
+    "profile_files": 0,
+    "ignored_secret_copied": false
+  }
+]
