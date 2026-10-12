@@ -58,9 +58,11 @@ Projenin amacı yalnızca bir critical-component manufacturing facility simülat
 
 Ürün:
 
-**Autonomous Critical-Component Manufacturing Facility Operating System**
+**Intelligent Manufacturing Operations Platform for Critical Aerospace Components**
 
 olarak konumlandırılacaktır.
+
+**CTRL-DOC-002 / CHG-001 — current human-approved identity clarification.** This is a research/simulation manufacturing-operations platform. Autonomous behavior in this specification means explicitly human-governed, policy-bounded automation; it never means unrestricted real-factory autonomy. The platform is not a real CNC/PLC controller, certified safety system, certified QMS, certified aerospace manufacturing process, or commercial MES/QMS/ERP replacement. Existing Core/Simulator/Twin/Vision/AI/Scheduler/HITL/Automation authority boundaries remain mandatory.
 
 Sistemin nihai amacı bir fabrikanın yalnızca durumunu görüntülemek değil;
 

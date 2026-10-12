@@ -219,7 +219,7 @@ Restated as the canonical authority-map entry used throughout this document (§"
 
 ### What Platform Is
 
-Intelligent Manufacturing Operations Platform for Critical Aerospace Components is a single, integrated **Autonomous Critical-Component Manufacturing Facility Operating System** (Item 01). It is not a portfolio of four independent student projects glued together at a demo; it is one platform in which visual inspection, AI-driven operational intelligence, dynamic scheduling, automation, and platform engineering are structurally required to interoperate for the product to mean anything at all.
+Intelligent Manufacturing Operations Platform for Critical Aerospace Components is a single, integrated **research/simulation manufacturing-operations platform with human-governed, policy-bounded automation** (Item 01). It is not a portfolio of four independent student projects glued together at a demo; it is one platform in which visual inspection, AI-driven operational intelligence, dynamic scheduling, automation, and platform engineering are structurally required to interoperate for the product to mean anything at all.
 
 `01` is explicit and repeated on this point (Item 01, L15): the project's goal is **not** merely to build a manufacturing simulator, a serialized component-defect classifier, an AI assistant, or a monitoring dashboard. Each of those is a necessary component; none of them, alone, is the product.
 
