@@ -11,3 +11,7 @@ Missing Requirement Revision/Status and120 structured NFR verification/evidence/
 Inspection conflict:01 Item16 describes conceptual possible fields and later schema finalization, while02 labels a projection mandatory/canonical. The source citation now reaches the actual heading, but the semantic labels remain unchanged pending INSPECTION_CONTRACT_CANONICALIZATION and review of later Item22 refinements. Citation repair does not approve a schema.
 
 09's original empty-registry snapshot remains historical, with an additive pointer to the16 current records, all UNDER_REVIEW. Local branch application does not constitute independent peer approval, merge, VERIFIED/CLOSED change status, release acceptance or WP completion. No Plane/GitHub/network mutation.
+
+## CTRL-DOC-009 arithmetic correction
+
+The historical opening count606 is incorrect arithmetic, not missing anchors. Fresh readback verifies306 distinct ViewA anchors and306 distinct YAML anchors: **612 total**, all valid. Historical runs/claims above remain recorded; no requirement count or trace semantics changed.

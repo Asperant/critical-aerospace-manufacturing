@@ -1994,3 +1994,11 @@ Machine findings, exact verification and the consolidated decision list are in `
 | `docs/08_Definition_of_Ready_and_Done.md` | `9b4e00c9666c07a2bf83962a36e5741fbfc6a80fa72a0a9c5341f84f63a62005` |
 | `docs/09_Change_Control_Process.md` | `33e3238e76966f7f5c12373ae00159d9897711719149bffd0186e6c208a96889` |
 | `docs/DOMAIN_MIGRATION_CHANGELOG.md` | `e988c306f889ebf68a28f7359c86e4ecaf84164921ef440fef4860d953c5e3ba` |
+
+## 41. CTRL-DOC-009 — Final independent reassessment
+
+CHG-003 continuation restores the source-derived conceptual/candidate label for the full InspectionResult field list in02.01 Item16 and Item22 sections19/50 explicitly defer the exact schema. Independently mandatory provenance in Items16/17/30 remains mandatory. No contract identity, alias, transformation, schema or authority was selected. RTF-023 remains REQUIRES_HUMAN_DECISION for that narrower identity/schema-freeze question.
+
+All32 dispositions in §40 were reassessed against current source predicates and remain unchanged. Verdict: **NOT_READY_TO_IMPLEMENT**. RTF-019 source completeness/trace confirmation remains STILL_OPEN; missing values are legitimate unknowns, not accepted records. Independent change review remains an existing governance gate, not a new semantic option. Dataset direction approval is not source/version/rights/split approval.
+
+Fresh citation readback is306 distinct ViewA anchors plus306 distinct YAML anchors = **612**, all exact. Earlier evidence's606 is an arithmetic error corrected additively, not manufactured data. Full counts, warning classification and verification are in CTRL-DOC-009-verification.json and FINAL_HUMAN_DECISIONS.md. Historical findings and hashes above remain historical; no product runtime verification or READY/DONE transition is claimed.

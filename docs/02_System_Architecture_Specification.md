@@ -2125,7 +2125,7 @@ Random/no-pattern serialized components are a mandatory evaluation case (per Ite
 
 **InspectionRequest** (derived, candidate fields): inspection_run_id, serialized component_id, artifact_id/reference, requested_by (service/actor), world_id, simulation_run_id, requested_at, inspection type/checkpoint.
 
-**InspectionResult** (canonical, per Item 16 §Structured InspectionResult, L17974) — mandatory fields:
+**InspectionResult** (conceptual field candidates, per Item 16 §Structured InspectionResult, L17974, and Item 22 §19 Primary Vision Output). The full list below is not a frozen mandatory schema: both source sections call these fields conceptual/candidate, and Item 22 §50 defers exact schemas to implementation specification. Explicit provenance and verification obligations in Items 16/17/30 remain mandatory; contract identity/alias reconciliation remains open (GAP-RTM-009).
 
 | Field | Description |
 |---|---|

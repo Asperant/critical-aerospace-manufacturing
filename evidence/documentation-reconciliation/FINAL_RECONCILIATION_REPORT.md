@@ -170,3 +170,15 @@ GIT PUSH: NONE
 GIT MERGE: NONE
 
 Recommended next action: review the consolidated decision list and scoped commits; resolve affected semantic decisions through change control before affected implementation. Do not infer product readiness or setup completion from this documentation reconciliation.
+
+## CTRL-DOC-009 — Final independent pass, 2026-10-13
+
+This addendum supersedes the earlier ten-group decision list for current action; historical results above remain historical. Eight genuine semantic roots remain in FINAL_HUMAN_DECISIONS.md. Source metadata preservation and mandatory peer-review procedure are already determined; actual enrichment/confirmation and reviewer acceptance are still outstanding.
+
+Under CHG-003 continuation,02's full InspectionResult field list is correctly described as conceptual/candidate, as dictated by01 Item16 and Item22 sections19/50. Explicit provenance requirements remain mandatory. Alias/two-contract/schema-freeze decisions remain open; no architecture authority or stable ID changed.
+
+Arithmetic erratum: earlier606 claims above should read **612 catalog anchors**,306 ViewA +306 YAML. Fresh identity-bound audit verifies both sets. Requirement count stays306. Historical audit runs and failures are not erased.
+
+Warning count remains641 (C605/B29/E7; A0 newly removed; D limitations separately disclosed). No warning was hidden or validation weakened. All32 red-team dispositions retain the §40 result and latest §41 refinement; product remains NOT_READY_TO_IMPLEMENT.
+
+Fresh full suite, canonical/class/owner/dependency/schedule/source/trace/citation audits and diff checks are recorded in CTRL-DOC-009-verification.json. The reconciliation branch remains local, unpushed and unmerged. Setup has independently advanced since the historical parent and is not modified from this worktree.

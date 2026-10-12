@@ -71,3 +71,21 @@ CHG-003:
   sprint_context: UNSPECIFIED; no calendar/sprint fabricated
   proposal: Preserve locations; request INSPECTION_CONTRACT_CANONICALIZATION; trace
     schemas/producers/consumers in audit.
+  continuation_CTRL_DOC_009:
+    class: C1
+    review_risk_class: CR-3
+    scope: Restore the source classification of the full candidate InspectionResult
+      field list; retain independently mandatory provenance. No field, contract identity,
+      alias, transformation, producer or authority chosen.
+    authority:
+    - '01 Item16 Structured InspectionResult: conceptual fields; exact schema later
+      finalized'
+    - '01 Item22 sections19/50: candidate fields; exact schemas during implementation
+      specification'
+    application_authority: Explicit final independent-work request authorizes deterministic
+      higher-source propagation on local reconciliation branch
+    decision: SOURCE_DERIVED_LABEL_CORRECTION_APPLIED; C3 identity decision still
+      DEFERRED
+    peer_review: NOT_EXECUTED; record remains UNDER_REVIEW
+    evidence_staleness: No product evidence exists for this label repair; full projectctl
+      suite and source/trace audit rerun; original evidence hashes remain historical
