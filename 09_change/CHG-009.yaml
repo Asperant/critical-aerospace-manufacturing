@@ -1,0 +1,63 @@
+CHG-009:
+  title: DOC-E2E
+  trigger: Current human reconciliation request and baseline audit
+  reason: Scenario semantics and evidence tooling owners do not uniquely name run
+    coordinator.
+  class: C1
+  review_risk_class: CR-2
+  raised_in: null
+  affected_requirements: []
+  affected_architecture: []
+  affected_contracts: []
+  affected_work_packages: []
+  affected_dependencies:
+  - DEP-GAP-13
+  affected_evidence:
+  - Documentation analysis only; no product evidence claimed
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+    - Existing setup evidence remains bound to its original source hashes, not current
+      documentation approval
+    rerun_required:
+    - Full projectctl tests
+    - Offline validation
+    - Documentation consistency audit
+  security_authority_impact: NONE — no authority, Oracle access, credentials or protected
+    execution changed
+  owner: Batu
+  reviewers: []
+  decision: DEFERRED
+  conditions:
+  - Current user explicitly authorizes scoped branch edits; canonical peer-review
+    and merge gates remain outstanding
+  - No historical or team approval inferred
+  - No new semantics beyond documented resolution
+  rollout: Local reconciliation branch only; no deployment/Plane synchronization/merge
+  rollback: Review and revert the atomic CTRL-DOC commit; do not rewrite history
+  required_rerun:
+  - Full projectctl tests
+  - Offline validation
+  - Source/trace consistency
+  - Diff and secret hygiene
+  documentation_updates:
+  - docs/01_Master_Project_Specification.md
+  - docs/05_Dependency_Graph.md
+  - docs/07_Milestone_and_Release_Plan.md
+  freeze_context: PRE_M6
+  status: UNDER_REVIEW
+  human_decision_basis: null
+  source_derived_basis: 01 Item67; 07 PLAN-GAP-04
+  affected_stable_ids:
+  - RTF-029
+  - DEP-GAP-13
+  - PLAN-GAP-04
+  - E2E-01
+  - GS-01
+  consumer_review_status: NOT_EXECUTED
+  required_review_roles: 09 §7.3/7.4 according to declared risk; independent research/data
+    review for CR-4; independent critical review for CR-3
+  application_control_item: CTRL-DOC-005
+  sprint_context: UNSPECIFIED; no calendar/sprint fabricated
+  proposal: 'HUMAN_DECISION_REQUIRED: E2E_COORDINATOR; preserve GS-01 and owner boundaries.'

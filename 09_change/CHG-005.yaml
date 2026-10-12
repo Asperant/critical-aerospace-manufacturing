@@ -1,0 +1,67 @@
+CHG-005:
+  title: DOC-DEPENDENCY
+  trigger: Current human reconciliation request and baseline audit
+  reason: Two required readiness levels outside predecessor ladder; five non-CONTRACT
+    F1 edges; 179 null precision; 29 need-by ambiguities.
+  class: C3
+  review_risk_class: CR-3
+  raised_in: null
+  affected_requirements: []
+  affected_architecture: []
+  affected_contracts: []
+  affected_work_packages: []
+  affected_dependencies:
+  - DEP-060
+  - DEP-194
+  - DEP-RULE-06
+  affected_evidence:
+  - Documentation analysis only; no product evidence claimed
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+    - Existing setup evidence remains bound to its original source hashes, not current
+      documentation approval
+    rerun_required:
+    - Full projectctl tests
+    - Offline validation
+    - Documentation consistency audit
+  security_authority_impact: NONE — no authority, Oracle access, credentials or protected
+    execution changed
+  owner: Batu
+  reviewers: []
+  decision: DEFERRED
+  conditions:
+  - Current user explicitly authorizes scoped branch edits; canonical peer-review
+    and merge gates remain outstanding
+  - No historical or team approval inferred
+  - No new semantics beyond documented resolution
+  rollout: Local reconciliation branch only; no deployment/Plane synchronization/merge
+  rollback: Review and revert the atomic CTRL-DOC commit; do not rewrite history
+  required_rerun:
+  - Full projectctl tests
+  - Offline validation
+  - Source/trace consistency
+  - Diff and secret hygiene
+  documentation_updates:
+  - docs/01_Master_Project_Specification.md
+  - docs/03_Requirements_Traceability_Matrix.md
+  - docs/05_Dependency_Graph.md
+  - docs/07_Milestone_and_Release_Plan.md
+  - docs/08_Definition_of_Ready_and_Done.md
+  freeze_context: PRE_M6
+  status: UNDER_REVIEW
+  human_decision_basis: null
+  source_derived_basis: 01 Item66; 05 node/edge records, fallback and forbidden edge
+    rules; 08 DoR
+  affected_stable_ids:
+  - DEP-060
+  - DEP-194
+  - DEP-RULE-06
+  consumer_review_status: NOT_EXECUTED
+  required_review_roles: 09 §7.3/7.4 according to declared risk; independent research/data
+    review for CR-4; independent critical review for CR-3
+  application_control_item: CTRL-DOC-005
+  sprint_context: UNSPECIFIED; no calendar/sprint fabricated
+  proposal: Keep graph and statuses intact; enumerate exact diagnostics; require owner
+    decisions instead of guessed fallback/readiness.

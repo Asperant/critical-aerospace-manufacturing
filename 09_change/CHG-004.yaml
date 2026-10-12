@@ -1,0 +1,68 @@
+CHG-004:
+  title: DOC-COMMANDS
+  trigger: Current human reconciliation request and baseline audit
+  reason: PlaceLotOnHold vs ApplyMaterialHold not formally bound; DispatchLot and
+    ActivateSchedule are distinct operations.
+  class: C3
+  review_risk_class: CR-3
+  raised_in: null
+  affected_requirements:
+  - FR-CORE-007
+  - FR-AUTO-010
+  - FR-AUTO-014
+  affected_architecture: []
+  affected_contracts: []
+  affected_work_packages: []
+  affected_dependencies: []
+  affected_evidence:
+  - Documentation analysis only; no product evidence claimed
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+    - Existing setup evidence remains bound to its original source hashes, not current
+      documentation approval
+    rerun_required:
+    - Full projectctl tests
+    - Offline validation
+    - Documentation consistency audit
+  security_authority_impact: NONE — no authority, Oracle access, credentials or protected
+    execution changed
+  owner: Asrın
+  reviewers: []
+  decision: DEFERRED
+  conditions:
+  - Current user explicitly authorizes scoped branch edits; canonical peer-review
+    and merge gates remain outstanding
+  - No historical or team approval inferred
+  - No new semantics beyond documented resolution
+  rollout: Local reconciliation branch only; no deployment/Plane synchronization/merge
+  rollback: Review and revert the atomic CTRL-DOC commit; do not rewrite history
+  required_rerun:
+  - Full projectctl tests
+  - Offline validation
+  - Source/trace consistency
+  - Diff and secret hygiene
+  documentation_updates:
+  - docs/01_Master_Project_Specification.md
+  - docs/02_System_Architecture_Specification.md
+  - docs/03_Requirements_Traceability_Matrix.md
+  - docs/05_Dependency_Graph.md
+  - docs/07_Milestone_and_Release_Plan.md
+  freeze_context: PRE_M6
+  status: UNDER_REVIEW
+  human_decision_basis: null
+  source_derived_basis: 01 Items15/34/66/83; 02 R-003 and Core command catalog
+  affected_stable_ids:
+  - RTF-024
+  - GAP-RTM-010
+  - FR-CORE-007
+  - FR-AUTO-010
+  - FR-AUTO-014
+  consumer_review_status: NOT_EXECUTED
+  required_review_roles: 09 §7.3/7.4 according to declared risk; independent research/data
+    review for CR-4; independent critical review for CR-3
+  application_control_item: CTRL-DOC-004
+  sprint_context: UNSPECIFIED; no calendar/sprint fabricated
+  proposal: Preserve unresolved aliases; record known ActivateSchedule/ActivateScheduleCommand
+    reconciliation from R-003; request PROTECTED_COMMAND_NAMING.

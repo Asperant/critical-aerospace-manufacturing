@@ -1,0 +1,64 @@
+CHG-008:
+  title: DOC-HARDWARE
+  trigger: Current human reconciliation request and baseline audit
+  reason: CPU/final Vision/developer hardware identities are unpinned.
+  class: C3
+  review_risk_class: CR-4
+  raised_in: null
+  affected_requirements: []
+  affected_architecture: []
+  affected_contracts: []
+  affected_work_packages: []
+  affected_dependencies: []
+  affected_evidence:
+  - Documentation analysis only; no product evidence claimed
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+    - Existing setup evidence remains bound to its original source hashes, not current
+      documentation approval
+    rerun_required:
+    - Full projectctl tests
+    - Offline validation
+    - Documentation consistency audit
+  security_authority_impact: NONE — no authority, Oracle access, credentials or protected
+    execution changed
+  owner: Yavuz
+  reviewers: []
+  decision: DEFERRED
+  conditions:
+  - Current user explicitly authorizes scoped branch edits; canonical peer-review
+    and merge gates remain outstanding
+  - No historical or team approval inferred
+  - No new semantics beyond documented resolution
+  rollout: Local reconciliation branch only; no deployment/Plane synchronization/merge
+  rollback: Review and revert the atomic CTRL-DOC commit; do not rewrite history
+  required_rerun:
+  - Full projectctl tests
+  - Offline validation
+  - Source/trace consistency
+  - Diff and secret hygiene
+  documentation_updates:
+  - docs/01_Master_Project_Specification.md
+  - docs/02_System_Architecture_Specification.md
+  - docs/03_Requirements_Traceability_Matrix.md
+  - docs/04_Work_Breakdown_Structure.md
+  - docs/05_Dependency_Graph.md
+  - docs/07_Milestone_and_Release_Plan.md
+  - docs/08_Definition_of_Ready_and_Done.md
+  freeze_context: PRE_M6
+  status: UNDER_REVIEW
+  human_decision_basis: null
+  source_derived_basis: 01 Item79/82; 08 Tested≠Verified; 07 F4
+  affected_stable_ids:
+  - RTF-028
+  - GAP-RTM-021
+  - HardwareProfile
+  consumer_review_status: NOT_EXECUTED
+  required_review_roles: 09 §7.3/7.4 according to declared risk; independent research/data
+    review for CR-4; independent critical review for CR-3
+  application_control_item: CTRL-DOC-005
+  sprint_context: UNSPECIFIED; no calendar/sprint fabricated
+  proposal: Require versioned release/environment/hardware/workload identity; no invented
+    measured values or accepted host.
