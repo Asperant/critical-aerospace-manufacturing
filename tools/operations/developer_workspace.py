@@ -9,7 +9,7 @@ IDENTITIES = {
     'asrin': ('Asrın Dündar', 'asrindundar14@hotmail.com', 'Asperant'),
     'selman': ('Selman Özdemir', 'selmanozdemir430@gmail.com', 'selorito'),
     'batuhan': ('Batuhan Kaya', 'batuhankaya0204@gmail.com', 'eilonn'),
-    'yavuz': ('Yavuz Gümüş', 'yavuzgumus@gmail.com', 'Yavuzgmus'),
+    'yavuz': ('Yavuz Gümüş', 'yavuzzgumus@gmail.com', 'Yavuzgmus'),
 }
 
 

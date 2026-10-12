@@ -130,3 +130,7 @@ PLANE MUTATIONS:NONE
 HOST CONFIGURATION MUTATIONS:NONE
 WP ASSIGNMENTS:NONE
 GIT MERGE:NONE
+
+## Current contact correction — CTRL-PM-011
+
+Yavuz’s correct operational email is **yavuzzgumus@gmail.com**; the earlier single-recipient address in this report is historical and incorrect. Future owner-managed sharing/onboarding must use the corrected address. GitHub remainsYavuzgmus. The wrong pending Plane invitation was revoked and one corrected MEMBER invitation was freshly verified; see CTRL-PM-011-yavuz-identity-correction.json. No Tailscale sharing or policy change occurred as part of this identity correction.

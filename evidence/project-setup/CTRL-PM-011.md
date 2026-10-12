@@ -38,3 +38,13 @@ VALIDATION RESULT: PASS;947 warnings retained, execution UNAVAILABLE.
 OBSERVED INVARIANTS:306/186FR/120NFR,179WPs/owners73–17–32–57,29areas,100nodes/217edges/208HARD/9SOFT/0cycles,174scheduled/exact5unscheduled,13cycles/9milestones. Live readback55GETs:179BACKLOG,29modules/179memberships,13cycles/174memberships,10labels,73assigned/106unassigned,zero duplicates.
 PLANE READS: Paced GET-only preflight, invitation/member reconciliation and complete structural/membership readback.
 NETWORK MUTATIONS: Three approved Plane invitation POSTs; three approved GitHub write-permission invitations. No other remote effect in this control checkpoint.
+
+## Yavuz identity correction — current operational record
+
+The latest explicit human correction supersedes Yavuz’s earlier email binding. Current identity: **Yavuz Gümüş**, Plane email **yavuzzgumus@gmail.com**, GitHub **Yavuzgmus**, Git commit email **yavuzzgumus@gmail.com**. Historical invitation and workspace JSON snapshots retain their actual observations; they are not current contact records.
+
+Read-only preflight found exactly one pending wrong-address invitation aff3e366-a5ac-4168-b9ce-e1907f26a784, accepted=false/responded_at=null. Installed APIv1 WorkspaceInvitationsViewset.destroy checks those conditions server-side and scopes the target to the workspace. Under explicit scoped deletion authorization, only that invite was deleted (HTTP204), then its absence was verified. Exactly one MEMBER(role15) invite was created for the corrected email (HTTP201), IDd313768d-7a6d-4bc7-8a93-d9a8f40ac32b, pending and freshly reconciled. No blind retries or duplicates. Email-task delivery is not implemented in the inspected APIv1 create handler and is not certified.
+
+Selman/Batuhan invitation records were compared before/after and remain identical. Full before/after project audit confirms work items, states, labels, modules, cycles and memberships unchanged:179 WPs,73 assigned/106 unassigned. No dummy users, WP assignments or workflow transitions.
+
+Updated onboarding/helper identity and only Yavuz’s existing repository-local user.email; no global/integration/other-developer identity change. Exact verification is recorded in CTRL-PM-011-yavuz-identity-correction.json. Canonical docs/ and AGENTS.md remain untouched. Normal human acceptance/member verification remains required; invitation creation is not active membership or setup completion.

@@ -9,7 +9,9 @@ Use one persistent Ubuntu GUI session, `ailab`, with RustDesk attached. Do not c
 | Asrın Dündar | Asperant | asrindundar14@hotmail.com (existing verified identity) | /srv/ailab/workspaces/asrin/project | /srv/ailab/user-profiles/asrin |
 | Selman Özdemir | selorito | selmanozdemir430@gmail.com | /srv/ailab/workspaces/selman/project | /srv/ailab/user-profiles/selman |
 | Batuhan Kaya | eilonn | batuhankaya0204@gmail.com | /srv/ailab/workspaces/batuhan/project | /srv/ailab/user-profiles/batuhan |
-| Yavuz Gümüş | Yavuzgmus | yavuzgumus@gmail.com | /srv/ailab/workspaces/yavuz/project | /srv/ailab/user-profiles/yavuz |
+| Yavuz Gümüş | Yavuzgmus | yavuzzgumus@gmail.com | /srv/ailab/workspaces/yavuz/project | /srv/ailab/user-profiles/yavuz |
+
+Yavuz’s current operational identity is **Yavuz Gümüş**, Plane email **yavuzzgumus@gmail.com**, GitHub **Yavuzgmus**, and Git commit email **yavuzzgumus@gmail.com**. The corrected MEMBER invitation is pending acceptance; the earlier wrong-address invitation has been revoked. Historical invitation/workspace snapshots retain their original observations.
 
 All four independent clones were prepared from the integrated `main` baseline, with origin set to the canonical GitHub repository, repository-local names/emails and no copied credentials. They will need a normal fetch after individual authentication to receive setup updates. They are not authenticated merely because a clone exists.
 
