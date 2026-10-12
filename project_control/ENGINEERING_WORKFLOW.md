@@ -1,0 +1,11 @@
+# Engineering workflow (CTRL-PM-012)
+
+Use individual developer clones and Git identities. Branches: `wp/<WP-ID>-<short-slug>` for canonical work, `control/<CTRL-ID>-<short-slug>` for approved setup. PR titles: `[WP-...] title` or `[CTRL-...] title`. The existing setup program uses its explicitly approved long-lived `setup/project-management-bootstrap` branch. Retrieve canonical WP context before implementation; control scope comes from the master execution specification.
+
+Use the PR template to declare requirements, architecture surfaces, change class, review risk class, tests, negative paths, evidence, docs/trace impact and Plane references. Review and merge rules remain those in docs/01 Items 63–64, docs/08 and docs/09; independent critical/research review cannot be replaced by green CI or self-approval. Unknown reviewer identities cannot be fabricated into CODEOWNERS. Required ownership routing is pending verified GitHub usernames.
+
+The projectctl workflow runs actual existing tests, offline canonical validation, syntax compilation, whitespace checks and tracked-path hygiene. It makes no product test or evidence certification claim. Pull-request workflows receive read-only contents permissions and no Plane credentials. All checks and required reviews must pass before merge; never bypass failed checks, retry until green or merge setup solely for demonstration.
+
+GitHub currently returns HTTP 403 for main branch protection: “Upgrade to GitHub Pro or make this repository public to enable this feature.” Repository is private and authenticated permissions include admin. Protection is unavailable under the current plan; repository visibility is not changed. A human must enable a supported plan/protection mechanism and configure required checks/reviews. Until then the same governance remains mandatory through manual review; this is an enforcement limitation, not permission to bypass it.
+
+GitHub owns code/PR/review/evidence. Plane owns execution coordination. docs/ owns canonical semantics. projectctl validates deterministic projections. No GitHub project board is created. Merged != Done: post-merge validation and applicable actual DoD evidence are required before closure.
