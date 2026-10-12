@@ -1,0 +1,14 @@
+{
+  "control_item": "CTRL-DOC-008",
+  "tests": "145 passed in63.87s",
+  "validation": "PASS",
+  "warning_count": 641,
+  "consistency_command": [
+    "project_control/documentation-reconciliation/audit.py"
+  ],
+  "consistency_exit": 0,
+  "canonical_edits": 0,
+  "plane_mutations": 0,
+  "github_mutations": 0,
+  "pending_decisions": 10
+}
