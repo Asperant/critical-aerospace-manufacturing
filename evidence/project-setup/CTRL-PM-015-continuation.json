@@ -1,0 +1,58 @@
+{
+  "control_item": "CTRL-PM-015",
+  "result": "PARTIAL",
+  "branch": "setup/project-management-bootstrap",
+  "control_context": "Master execution specification §6 CTRL-PM-015; projectctl context supports canonical WP IDs only",
+  "probes": [
+    {
+      "command": [
+        "context",
+        "WP-AI-007"
+      ],
+      "exit": 0,
+      "result": "CONTEXT_RETRIEVED",
+      "wp_id": "WP-AI-007"
+    },
+    {
+      "command": [
+        "check-ready",
+        "WP-AI-007"
+      ],
+      "exit": 1,
+      "result": "UNKNOWN",
+      "wp_id": "WP-AI-007"
+    },
+    {
+      "command": [
+        "check-done",
+        "WP-AI-007"
+      ],
+      "exit": 1,
+      "result": "UNKNOWN",
+      "wp_id": "WP-AI-007"
+    },
+    {
+      "command": [
+        "context",
+        "CTRL-PM-015"
+      ],
+      "exit": 2,
+      "result": "CONTROL_CONTEXT_NOT_SUPPORTED",
+      "diagnostic": "Invalid complete WP ID"
+    }
+  ],
+  "plane_control_item": "NOT_CREATED: no canonical WP modified for rehearsal",
+  "review": "NOT_FABRICATED; actual GitHub reviews required",
+  "merge": "NOT_AUTHORIZED until current-head independent teammate approval and all gates",
+  "post_merge": "NOT_EXECUTED; requires genuine merge",
+  "done": "WITHHELD",
+  "authority": "docs canonical; GitHub engineering/evidence; Plane coordination; projectctl bridge",
+  "tests": "146 passed in62.82s",
+  "validation": "PASS",
+  "pending": [
+    "external access acceptance",
+    "independent current-head review",
+    "governed merge",
+    "post-merge validation"
+  ]
+}
