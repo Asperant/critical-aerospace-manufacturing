@@ -8,6 +8,7 @@ import subprocess
 import sys
 
 from projectctl.project import load_project
+from projectctl.parsers.requirements import parse_requirements
 
 ROOT = Path(__file__).resolve().parents[2]
 TERMS = re.compile(r'\bfab\b|fab[-_](?:core|simulator|bff)|fabctl|wafer|lithograph|\betch\w*|deposition|semiconductor|SECOM|WM-?811K|MixedWM38|Autonomous Critical-Component Manufacturing Facility Operating System', re.I)
@@ -28,6 +29,7 @@ def audit():
     headings = {}
     occurrences = []
     links = []
+    markdown_links = []
     files = subprocess.check_output(['git', 'ls-files', '-z'], cwd=ROOT).decode().split('\0')
     # Include canonical additions before their first commit, exclude local credentials.
     files = sorted(set(files) | {str(p.relative_to(ROOT)) for p in (ROOT / 'docs').glob('*.md')})
@@ -59,6 +61,15 @@ def audit():
                     category = 'UNRESOLVED_CONTEXT_PRESERVE_FOR_REVIEW'
                 occurrences.append(dict(file=name, line=number, column=match.start()+1, term=match.group(), heading=heading, text=line, classification=category, auto_replace=False))
             if name.startswith('docs/'):
+                for target in re.findall(r'\]\(([^)\s]+)\)', line):
+                    if target.startswith(('https://', 'http://')):
+                        status = 'EXTERNAL_REFERENCE_NOT_AN_AVAILABILITY_OR_RIGHTS_CERTIFICATION'
+                    elif target.startswith('#'):
+                        status = 'LOCAL_HEADING_IDENTITY_REVIEW_REQUIRED'
+                    else:
+                        destination = (path.parent / target.split('#', 1)[0]).resolve()
+                        status = 'FILE_EXISTS' if destination.is_file() else 'MISSING_OR_ILLUSTRATIVE_TARGET'
+                    markdown_links.append(dict(file=name, line=number, target=target, status=status))
                 for target in re.findall(r'`([^`\n]+\.md)`', line):
                     if '/' not in target and not (ROOT / 'docs' / target).exists() and not (ROOT / target).exists():
                         links.append(dict(file=name, line=number, target=target, status='MISSING_OR_PLANNED_ARTIFACT_REQUIRES_CONTEXT'))
@@ -93,8 +104,29 @@ def audit():
     assert {c.id for c in project.catalog.schedule.cycles} == {f'S{i}' for i in range(1,14)}
     assert {m.id for m in project.catalog.schedule.milestones} == {f'M{i}' for i in range(9)}
     assert not [d for d in project.diagnostics() if d.severity.value == 'ERROR']
+    baseline_master = subprocess.check_output(['git', 'show', '644e380:docs/01_Master_Project_Specification.md'], cwd=ROOT).decode()
+    baseline_rtm = subprocess.check_output(['git', 'show', '644e380:docs/03_Requirements_Traceability_Matrix.md'], cwd=ROOT).decode()
+    baseline_traces = parse_requirements(baseline_master, baseline_rtm).traces
+    def trace_semantics(trace):
+        value = json.loads(json.dumps(trace.assertions))
+        value.get('meta', {}).pop('anchor', None)
+        return value
+    assert {t.requirement_id: trace_semantics(t) for t in baseline_traces} == {
+        t.requirement_id: trace_semantics(t) for t in project.catalog.requirements.traces
+    }, 'Trace semantics changed beyond citation locations'
+    index_locations = []
+    for row in project.catalog.requirements.index_assertions:
+        target = re.search(r'\bL(\d+)\b', row[3])
+        index_locations.append(dict(id=row[0], valid=bool(target and int(target[1]) == exact[row[0]])))
+    # L0–L5 can be authority/evidence levels. Keep them distinct from line citations.
+    for reference in numeric_refs:
+        location = re.search(r'01 Item(?:81|82) ((?:FR|NFR)-[A-Z]+-\d{3}) L(\d+)', reference['text'])
+        if location and exact.get(location[1]) == int(location[2]):
+            reference['status'] = 'VERIFIED_EXACT_REQUIREMENT_TARGET'
+        elif not re.search(r'\bL\d{3,}', reference['text']):
+            reference['status'] = 'LEVEL_TOKEN_OR_SHORT_REFERENCE_REQUIRES_CONTEXT'
     # Every dataset/naming occurrence is classified; uncertain contexts are not rewritten.
-    return dict(summary=summary, semantic_model_sha256=sha256(json.dumps(model, sort_keys=True, ensure_ascii=False).encode()).hexdigest(), canonical_sources=sources, headings=headings, occurrences=occurrences, exact_requirement_citations=citations, numeric_reference_review=numeric_refs, missing_or_planned_links=links, diagnostics=snap['diagnostics'])
+    return dict(summary=summary, semantic_model_sha256=sha256(json.dumps(model, sort_keys=True, ensure_ascii=False).encode()).hexdigest(), trace_semantics_unchanged=True, canonical_sources=sources, headings=headings, occurrences=occurrences, exact_requirement_citations=citations, index_citation_locations=index_locations, numeric_reference_review=numeric_refs, markdown_links=markdown_links, missing_or_planned_links=links, diagnostics=snap['diagnostics'])
 
 if __name__ == '__main__':
     json.dump(audit(), sys.stdout, ensure_ascii=False, indent=2)

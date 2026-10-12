@@ -1930,3 +1930,67 @@ After P0 closure, rerun only the affected categories **plus** RT-03, RT-17 and R
 ---
 
 # End of RTR-0 Review
+
+## 40. CTRL-DOC-007 — Current reconciliation delta (CHG-015)
+
+**Disposition scope:** current documentation predicates only. Historical finding identities/statuses and review provenance above remain intact. The current human request authorizes these scoped repairs; no independent peer review, executed product evidence, merged release or VERIFIED/DONE status is claimed.
+
+**Current verdict remains NOT_READY_TO_IMPLEMENT.** Contract, architecture-allocation and other owner decisions below remain unresolved. Future runtime obligations are not falsely closed by prose.
+
+| Finding | Current disposition | Source-bound basis / remaining obligation |
+|---|---|---|
+| RTF-001 | RESOLVED | 04–09 exist and are source-hashed; obsolete missing-source rationale remains historical. |
+| RTF-002 | DEFERRED | Product16GiB feasibility needs actual runtime measurement; setup/Plane resource observations are not product proof. |
+| RTF-003 | RESOLVED | Exact approved identity replaces both active obsolete final branding occurrences; bounded research/automation meaning preserved. |
+| RTF-004 | PARTIALLY_RESOLVED | Planning authority chain is explicit and unchanged; production implementation/contract regression evidence remains future. |
+| RTF-005 | DEFERRED | Protected-action negative runtime suite not executed by documentation repair. |
+| RTF-006 | DEFERRED | Oracle isolation remains mandatory; product runtime negative proof remains future. |
+| RTF-007 | RESOLVED | Planning/evidence honesty preserved; registry delta distinguishes current records from historical empty snapshot and claims no VERIFIED/DONE. |
+| RTF-008 | DEFERRED | Research freeze/campaign/statistical integrity obligations remain future; no final results claimed. |
+| RTF-009 | DEFERRED | Original rights/export gates preserved; final acquisition/export manifests still needed. |
+| RTF-010 | STILL_OPEN | Owner capacity/cross-review pressure not measured; no WP redistribution invented. |
+| RTF-011 | RESOLVED | Two stripped Item43 blocks are identical;02 R-001 retains one logical item; no deletion. |
+| RTF-012 | DEFERRED | External-provider/model reproducibility controls need implementation/runtime evidence. |
+| RTF-013 | DEFERRED | Product restore/DR drill remains required; Plane PostgreSQL backup evidence is not manufacturing-platform restore proof. |
+| RTF-014 | DEFERRED | Final governed demo cannot be certified from prose or management setup. |
+| RTF-015 | PARTIALLY_RESOLVED | Canonical truth boundaries preserved; product implementations must still verify them. |
+| RTF-016 | DEFERRED | Technology/shared-host resource burden awaits product measurements. |
+| RTF-017 | STILL_OPEN | ScheduleValidator implementation independence remains a design/verification obligation; no product validator was built here. |
+| RTF-018 | DEFERRED | Effect verification remains mandatory; command/HTTP success is not proof. |
+| RTF-019 | STILL_OPEN | Precise trace specificity and catalog metadata confirmation remain outstanding; no umbrella evidence closure. |
+| RTF-020 | STILL_OPEN | System-level research claims still require complete sealed empirical evidence, not isolated component results. |
+| RTF-021 | RESOLVED | All identified active dataset physical-domain relabeling corrected; SECOM semiconductor process, WM/Mixed wafer maps; legacy methodological-only scope and rights gates explicit. |
+| RTF-022 | PARTIALLY_RESOLVED | LaneA/B/C and domain-relevant candidate directions explicit; exact approved real/public portfolio, DatasetCards/rights/splits/claims are not frozen. |
+| RTF-023 | REQUIRES_HUMAN_DECISION | INSPECTION_CONTRACT_CANONICALIZATION: one contract/alias vs two artifacts plus transformation, acceptance and schema freeze. |
+| RTF-024 | REQUIRES_HUMAN_DECISION | PROTECTED_COMMAND_NAMING: exact hold/isolation/maintenance identities, payloads and approval/idempotency binding; only existing R-003 schedule alias is deterministic. |
+| RTF-025 | REQUIRES_HUMAN_DECISION | Owner-reviewed append-only ML/MLOps ARCH allocations required; no new architectural home/IDs invented. |
+| RTF-026 | REQUIRES_HUMAN_DECISION | Owner-reviewed runner/evidence/harness/Vision-data ARCH allocations required; no service or infrastructure added. |
+| RTF-027 | REQUIRES_HUMAN_DECISION | MC2_OWNER remains unassigned; not inferred from WP or ChangeRequest accountability. |
+| RTF-028 | REQUIRES_HUMAN_DECISION | Accepted CPU/Vision/developer HardwareProfiles must be pinned with release/environment/resource/workload identity; no measured values invented. |
+| RTF-029 | REQUIRES_HUMAN_DECISION | E2E_COORDINATOR remains unnamed; scenario/evidence owners do not uniquely decide run coordination. |
+| RTF-030 | RESOLVED | Stale OD values repaired from01;120 actual architecture NFR identities/classes;7 missing GOV rows,9 declared owners and Simulator source citation restored. |
+| RTF-031 | RESOLVED | Current tracked tools/ops/.github code/config scan finds no legacy fab deployable identifiers; product services are absent, so no deployment migration claimed. |
+| RTF-032 | RESOLVED | Historical review correction preserved; new source-bound delta does not confuse future runtime obligations with current documentation closure. |
+
+Additional planning findings: DEP-060/194 readiness-ladder incompatibility, non-CONTRACT F1 declarations on DEP-025/045/058/076/094,179 null HARD precise requirements and29 ambiguous need-by expressions remain pending; all graph counts/statuses are unchanged. Remaining requirement/NFR structured metadata stays unspecified. Current catalog citations resolve exactly; other line-only references still need target identification.
+
+Machine findings, exact verification and the consolidated decision list are in `evidence/documentation-reconciliation/`. Change records remain UNDER_REVIEW. Dataset direction approval is not final source/split/rights approval. Product recovery evidence cannot be substituted by Plane management backup evidence.
+
+### Audited source hashes (excluding this report to avoid a self-hash cycle)
+
+| Source | SHA256 |
+|---|---|
+| `docs/00_Downstream_Artifact_Production_Guide.md` | `b2b7955b4c24a9f6cf605c049e136bf0274cc4e0b15cfbddf6d6bf4e0ee2ee3e` |
+| `docs/01_Master_Project_Specification.md` | `6291dec0433fdcda690ee8361b107f11aaa93dc49ad0b3d8b7d90582a8618cf3` |
+| `docs/02_System_Architecture_Specification.md` | `23550aaf758467ed4d128cb3bb08ff2f77a74bb27f2781a3a9ef9af610f205c7` |
+| `docs/03_Requirements_Traceability_Matrix.md` | `3532717c119c0e3bd22d0f4e98878ae74a78ec2312a7b3e27f6907b2ca34ca30` |
+| `docs/04_Work_Breakdown_Structure.md` | `a61e4f4890d60d21bc4bdabf66be8d5b8332419d915dea57255c6caca786d89f` |
+| `docs/05_Dependency_Graph.md` | `c693a9b953458d0bcc2be4b2c9fdb4d19d6f21e7ebf8aca8e0fb49be08db30d1` |
+| `docs/06A_Asrin_Engineering_Roadmap.md` | `4034fbc467766dcaf59aab274bcb6ec2ee944f6c311444f079f589029dc8c92c` |
+| `docs/06B_Selman_Engineering_Roadmap.md` | `92801ffe6782ec55a096482db1f578b1d75c41278c269ef8c56aaf97e23da2ea` |
+| `docs/06C_Batu_Engineering_Roadmap.md` | `f12f21dd91c1487c556bd5cbbe24a52fdbda03f9add8d8009463e74cb95f5d2e` |
+| `docs/06D_Yavuz_Engineering_Roadmap.md` | `a70a3c28b458ccab65e4305675f962b9b6eeb4e84cba4e94e2da53a74d81a961` |
+| `docs/07_Milestone_and_Release_Plan.md` | `af0d04e7e069de6ade7674b309405d61d48c6c40aad990a4126969b49663578d` |
+| `docs/08_Definition_of_Ready_and_Done.md` | `9b4e00c9666c07a2bf83962a36e5741fbfc6a80fa72a0a9c5341f84f63a62005` |
+| `docs/09_Change_Control_Process.md` | `33e3238e76966f7f5c12373ae00159d9897711719149bffd0186e6c208a96889` |
+| `docs/DOMAIN_MIGRATION_CHANGELOG.md` | `e988c306f889ebf68a28f7359c86e4ecaf84164921ef440fef4860d953c5e3ba` |
