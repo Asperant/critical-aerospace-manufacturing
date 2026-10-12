@@ -20,7 +20,7 @@ def test_canonical_requirement_baseline(root, requirements):
     wbs = parse_wbs((root / WBS_PATH).read_text())
     diagnostics = validate_requirements(wbs, requirements)
     assert not [d for d in diagnostics if d.severity == Severity.ERROR]
-    assert sum(d.code == "STALE_CITATION" for d in diagnostics) == 306
+    assert sum(d.code == "STALE_CITATION" for d in diagnostics) == 0
 
 
 def test_missing_fields_and_compound_owners(requirements):
@@ -54,3 +54,13 @@ def test_requirement_yaml_unsafe_tags_rejected(root):
     rtm = (root / RTM).read_text().replace("class: F1", "class: !!python/object:builtins.object {}", 1)
     with pytest.raises(yaml.YAMLError):
         parse_requirements((root / MASTER).read_text(), rtm)
+
+
+def test_stale_citation_still_detected(root, requirements):
+    wbs = parse_wbs((root / WBS_PATH).read_text())
+    trace = requirements.traces[0]
+    trace.assertions["meta"]["anchor"] = "01 Item81 L1"
+    stale = [d for d in validate_requirements(wbs, requirements) if d.code == "STALE_CITATION"]
+    assert len(stale) == 1
+    assert stale[0].record_id == trace.requirement_id
+    assert stale[0].severity == Severity.WARNING

@@ -2125,7 +2125,7 @@ Random/no-pattern serialized components are a mandatory evaluation case (per Ite
 
 **InspectionRequest** (derived, candidate fields): inspection_run_id, serialized component_id, artifact_id/reference, requested_by (service/actor), world_id, simulation_run_id, requested_at, inspection type/checkpoint.
 
-**InspectionResult** (canonical, per Item 16, L17936–17957) — mandatory fields:
+**InspectionResult** (canonical, per Item 16 §Structured InspectionResult, L17974) — mandatory fields:
 
 | Field | Description |
 |---|---|

@@ -15,6 +15,8 @@
 | Registry | `09_change/` companion files; ChangeIDs `CHG-NNN` allocated in order, never reused |
 | Status of the registry today | **empty** — no change request exists; the worked examples in §6.3 are templates, not real changes |
 
+> **CTRL-DOC-006 / CHG-014 registry delta.** The empty-registry counts in this original pre-implementation snapshot are historical. Current reconciliation records are in repository-root `09_change/change_requests.csv` and `CHG-001.yaml` through `CHG-016.yaml`. Current user policy authorizes scoped branch application; formal independent peer reviews and merge gates are not claimed complete. Records remain UNDER_REVIEW and do not certify VERIFIED/CLOSED changes or parent-WP completion.
+
 > **Reading rule.** This process is lightweight but strict. Its purpose is not to slow the team down; it is to guarantee that after 26 weeks every difference between the approved baseline and the delivered system is visible, attributed, reviewed and — where it touches evidence — accounted for.
 
 ---
