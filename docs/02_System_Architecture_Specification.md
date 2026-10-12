@@ -3910,7 +3910,7 @@ Replicas, projections, and analytics copies never change canonical ownership (L5
 | **Events consumed** | None required for its own authority (it is upstream/source of physical truth). |
 | **Dependencies** | REQUIRED: durable persistent storage for snapshot/checkpoint state and simulation clock continuity; Event Backbone for publication. |
 | **World semantics** | Owns Primary-world physical execution *and* Counterfactual/what-if branch execution (via Fork); Oracle truth is a third, fully isolated namespace never exposed to operational consumers, primary or counterfactual (Item 33 Oracle Isolation; Item 36 Oracle Streams; Item 37 Environment/World/Oracle Isolation). |
-| **Owning engineer** | **Batu** — Scheduler Service, Automation Service, and (per the task's assignment) manufacturing-simulator workflow/control-plane behavior fall under Batu's ownership area (Item 34, L54087–L54134 lists Batu as owning "Scheduler Service, Automation Service, workflow/control-plane behavior, ... operational action execution semantics"; manufacturing-simulator ownership is not separately named as a line item in Items 33–38 read here — **Derived Architecture Detail**, following the task's explicit assignment of manufacturing-simulator to Batu). |
+| **Owning engineer** | **Batu** — canonical primary owner of the Operational Simulator (01 Item 62, §59 **Operational Simulator — Primary**). Scheduler and Automation responsibilities remain separately governed by their existing capability boundaries; this citation does not derive ownership from a task assignment (CTRL-DOC-005 / CHG-016). |
 | **Non-Authorities** | Not the business-authority owner for ProductionOrder/Lot/SerializedComponent/Hold/Incident business state (manufacturing-core); does not decide MaterialHold/QualityHold policy; does not receive primary mutations directly from Automation, Scheduler, or AI — only from manufacturing-core after Dual Validation; Oracle truth it holds must never leak into any operational/business-facing API or event. |
 
 ---
@@ -7456,12 +7456,12 @@ Selected architecturally load-bearing entries: `FR-CORE-013` (canonical manufact
 |---|---|---|---|
 | NFR-REP-001 | H0 | Batu | Simulator Determinism: same release/scenario/initial-state/seed → semantically identical final state and deterministic event sequence/hash. |
 | NFR-REP-002 | H0 | Asrın | Analysis Determinism: same frozen raw inputs + AnalysisPackage → identical canonical numerical results. |
-| NFR-REP-003 | A1 | — | Release Reconstruction: clean compatible host deploys exact ReleaseManifest without private dev-machine state. |
-| NFR-REP-004 | A1 | — | Non-Owner Reproduction: **at least one non-owner teammate SHALL reproduce** before M8. |
-| NFR-REP-005 | H0 | — | Generated Artifact Drift: zero known stale generated runtime-required clients/contracts. |
-| NFR-REP-006 | H0 | — | Dependency Locking: locks/pins/digests; unbounded "latest" prohibited. |
-| NFR-REP-007 | H0 | — | Immutable Deployment Identity. |
-| NFR-REP-008 | A1 | — | Public Reproduction: v1 public package passes OSR-3 clean-clone hero reproduction (or sanitized internal equivalent if embargoed). |
+| NFR-REP-003 | A1 | Yavuz | Release Reconstruction: clean compatible host deploys exact ReleaseManifest without private dev-machine state. |
+| NFR-REP-004 | A1 | Yavuz | Non-Owner Reproduction: **at least one non-owner teammate SHALL reproduce** before M8. |
+| NFR-REP-005 | H0 | Yavuz | Generated Artifact Drift: zero known stale generated runtime-required clients/contracts. |
+| NFR-REP-006 | H0 | Yavuz | Dependency Locking: locks/pins/digests; unbounded "latest" prohibited. |
+| NFR-REP-007 | H0 | Yavuz | Immutable Deployment Identity. |
+| NFR-REP-008 | A1 | Yavuz | Public Reproduction: v1 public package passes OSR-3 clean-clone hero reproduction (or sanitized internal equivalent if embargoed). |
 | NFR-REP-009 | C3 | Asrın | External LLM Reproducibility: characterized via provider/model identity, timestamps, preserved raw outputs, repeated trials, aggregate uncertainty (byte-identical output NOT required). |
 
 ##### Resource Efficiency — `NFR-RES` (16 GiB shared-host baseline)
@@ -7473,9 +7473,9 @@ Selected architecturally load-bearing entries: `FR-CORE-013` (canonical manufact
 | NFR-RES-003 | H0 | Yavuz | OOM-Free Soak: final 8-hour soak = **zero OOM kills**. |
 | NFR-RES-004 | A1 | Yavuz | Disk Headroom: preflight requires **≥20% free persistent-filesystem capacity**. |
 | NFR-RES-005 | H0 | Yavuz | Benchmark Resource Isolation: no concurrent undeclared heavy workloads during formal benchmark/demo. |
-| NFR-RES-006 | A1 | — | Bounded Storage Retention: explicit retention/quota limits. |
-| NFR-RES-007 | A1 | — | Core GPU Independence: mandatory product/public quickstart/CPU smoke SHALL NOT require GPU. |
-| NFR-RES-008 | C3 | — | CPU Saturation Characterization: mean/p95 CPU, saturation behavior for WP-NORMAL and stress. |
+| NFR-RES-006 | A1 | Yavuz | Bounded Storage Retention: explicit retention/quota limits. |
+| NFR-RES-007 | A1 | Yavuz | Core GPU Independence: mandatory product/public quickstart/CPU smoke SHALL NOT require GPU. |
+| NFR-RES-008 | C3 | Yavuz | CPU Saturation Characterization: mean/p95 CPU, saturation behavior for WP-NORMAL and stress. |
 
 ##### Deployability / Portability — `NFR-DEP`
 
@@ -7525,13 +7525,22 @@ Selected architecturally load-bearing entries: `FR-CORE-013` (canonical manufact
 | NFR-UX-005 | A1 | Browser Compatibility: Chromium-family + Firefox at M8. |
 | NFR-UX-006 | H0 | Presenter Mode Integrity: Demo/Presenter Mode SHALL NOT conceal/bypass approvals/validation/failures/effect verification. |
 
-##### Governance — `NFR-GOV` (10 total, all H0; specific statements captured)
+##### Governance — `NFR-GOV` (10 total, all H0; exact source identities/owners)
 
-| ID | Class | Statement |
-|---|---|---|
-| NFR-GOV-004 | H0 | Every quantitative NFR result requires an explicit measurement context (ReleaseManifest + EnvironmentManifest + HardwareProfile + ResourceProfile + WorkloadProfile + BenchmarkDefinition). |
-| NFR-GOV-007 | H0 | Every NFR declares a threshold class (H0/A1/S2/C3). |
-| NFR-GOV-010 | H0 | NFR failures SHALL NOT be hidden by averaging unrelated quality attributes into one overall score. |
+Statement/title projections below refer to normative 01 Item82; they do not add requirements (CTRL-DOC-005 / CHG-016).
+
+| ID | Class | Owner | Statement / catalog reference |
+|---|---|---|---|
+| NFR-GOV-001 | H0 | Asrın | Stable Identity; normative source: 01 Item82 `NFR-GOV-001` |
+| NFR-GOV-002 | H0 | Asrın | ID Non-Reuse; normative source: 01 Item82 `NFR-GOV-002` |
+| NFR-GOV-003 | H0 | Asrın | Primary Ownership; normative source: 01 Item82 `NFR-GOV-003` |
+| NFR-GOV-004 | H0 | Yavuz | Every quantitative NFR result requires an explicit measurement context (ReleaseManifest + EnvironmentManifest + HardwareProfile + ResourceProfile + WorkloadProfile + BenchmarkDefinition). |
+| NFR-GOV-005 | H0 | Yavuz | Hardware Binding; normative source: 01 Item82 `NFR-GOV-005` |
+| NFR-GOV-006 | H0 | Yavuz | Load Binding; normative source: 01 Item82 `NFR-GOV-006` |
+| NFR-GOV-007 | H0 | Asrın | Every NFR declares a threshold class (H0/A1/S2/C3). |
+| NFR-GOV-008 | H0 | Asrın | Freeze Change Control; normative source: 01 Item82 `NFR-GOV-008` |
+| NFR-GOV-009 | H0 | Yavuz | Evidence Requirement; normative source: 01 Item82 `NFR-GOV-009` |
+| NFR-GOV-010 | H0 | Asrın | NFR failures SHALL NOT be hidden by averaging unrelated quality attributes into one overall score. |
 
 #### Availability & Real-Time Doctrine
 
@@ -9304,8 +9313,8 @@ This register consolidates every genuine **Architecture Open Decision** distribu
 
 ### Recovery and Shared Host Resources (§"Recovery Architecture", §"Shared Host Resource Architecture")
 
-- **OD-REC-01 — Exact RPO/RTO values per Recovery Priority class.** Only the ≤24h RC-A design target (explicitly non-final) and the RP-1..RP-4 ordering are fixed; final numeric freeze belongs to Item 82.
-- **OD-RES-01 — Exact resource envelope numbers.** The exact numeric memory/CPU envelope per resource group, and the exact CP-SMALL/CP-NORMAL/CP-STRESS workload sizes, are unresolved by design in Item 51 (which freezes methodology and categories only); all numbers are deferred to Item 82.
+- **OD-REC-01 — Remaining RPO/RTO details per Recovery Priority class.** Item 82 `NFR-REC-001` normatively fixes ordinary-project canonical Integration mutable-data **RPO ≤ 24 hours**; this is not a non-final design target. Other explicitly specified Item 82 recovery obligations remain normative. Per-priority values not specified by the current catalog remain open; no additional RTO/RPO number is inferred (CTRL-DOC-005 / CHG-006).
+- **OD-RES-01 — Remaining resource-profile details.** Latest Item 82 controls the `WP-*` operational and `SP-*` scheduling workload namespaces. `NFR-RES-001` fixes the **16 GiB shared-host** mandatory-container `WP-NORMAL` budget at **p95 cgroup-accounted memory ≤ 12 GiB over 30 minutes**; `NFR-RES-002` fixes accepted short peaks at **≤ 14 GiB with no OOM**. These numbers are normative, not deferred. Exact per-resource-group CPU/memory details and HardwareProfile values not specified by the catalog remain open; no measurements or additional limits are fabricated (CTRL-DOC-005 / CHG-006).
 
 ### CI/CD and Testing (§"CI/CD Architecture Interface", §"Testing Architecture")
 

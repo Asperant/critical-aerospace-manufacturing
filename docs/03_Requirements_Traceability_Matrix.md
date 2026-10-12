@@ -101,7 +101,7 @@ Performed programmatically against the 01 catalog tables/headings (Item 81 L1695
 | Requirements with >1 PrimaryOwner | 0 | 0 (2 NFRs carry compound wording that resolves to one PrimaryOwner → GAP-RTM-017) | PASS w/ note |
 | FR/NFR IDs referenced in 01 or 02 that do not exist | 0 | 0 | PASS |
 | 02 NFR class vs 01 class mismatches | 0 | 0 | PASS |
-| 02 NFR projection completeness | 120 rows | 110 rows (NFR-GOV-001…010 partially summarized; 9 owners shown as —) | INFO → GAP-RTM-018 |
+| 02 NFR projection completeness | 120 rows | 120 unique rows after CTRL-DOC-005 / CHG-016 (previous actual113; historical finding stated110); seven missing governance projections and nine owner cells repaired | INFO → GAP-RTM-018 |
 | FR domain counts vs Item 81 count table | 16 domains | 16 domains, all counts equal | PASS |
 | NFR domain counts vs Item 82 count table | 13 domains | 13 domains, all counts equal | PASS |
 
@@ -3211,7 +3211,7 @@ Severity: **B-M4 / B-M5 / B-M6** = blocks the named gate if unresolved; **MAJOR*
 | GAP-RTM-022 | KNOWN_SOURCE_DEFECT (closed) | Item 43 heading duplicated verbatim in 01 (ENV-INV-01…20 appear twice). | — | Treated as one logical Item (02 R-001); trace linter must de-duplicate invariant IDs | — | CLOSED/INFO |
 | GAP-RTM-023 | ADR_IDENTITY_PENDING | Backfill ADRs (02 list of 13) have no minted ADR-NNNN IDs; DECIDED_BY uses `ADR:backfill-NN` placeholders. | FR-CORE-012, FR-SIM-001, FR-SCH-009, FR-AUTO-002, FR-AI-001, FR-SEC-001, FR-PLAT-001/006, FR-RAG-005 | Mint ADR IDs at M1 (02 Milestone ADR Gates); update edges; DECIDED_BY never satisfies VERIFIED_BY | Asrın (index) · decision owners | MINOR |
 
-No finding requires changing an approved requirement, owner, technology or authority boundary. Findings marked CHANGE_CONTROL_REQUIRED must follow 09 Change Control once produced.
+No finding requires changing an approved requirement, owner, technology or authority boundary. Findings marked CHANGE_CONTROL_REQUIRED must follow the existing 09 Change Control process.
 
 ## 15. Milestone Coverage Gate Projection
 

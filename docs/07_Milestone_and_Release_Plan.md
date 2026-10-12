@@ -53,7 +53,7 @@ Make the approved schedule operational: what each milestone means, what must be 
 | Sprint themes and per-role scope per sprint | Per-person execution detail (06A–D) |
 | Release, promotion, migration and rollback semantics | CD implementation work packages (04 WP-CICD-*) |
 | Freeze rules and the research freeze sequence | Experiment design (01 Item 60) and benchmark design (Item 79) |
-| Cut policy and slip response | Change-request mechanics (09, not yet produced) |
+| Cut policy and slip response | Change-request mechanics (09 Change Control) |
 | Go/No-Go procedure and milestone health states | Dependency semantics (05) and requirement wording (01/03) |
 
 ## 2. Sources, Precedence and Date Policy

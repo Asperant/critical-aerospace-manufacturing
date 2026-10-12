@@ -96,7 +96,7 @@ Decomposition: **Program → Capability Area → Work Package → Deliverable �
 
 ## 4. Definition of Ready / Definition of Done (proposed rule sets)
 
-08 will ratify these. Until then the following IDs are referenced by every WP card; they are derived from 01 Items 64, 66, 83, 84 and are marked **proposed**.
+08 §14 ratifies the following rule identities, derived from 01 Items 64, 66, 83, 84. Every WP card references these IDs; 08 governs their readiness/completion meaning and evidence obligations. Ratification does not mark any WP READY or DONE (CTRL-DOC-005 / CHG-016).
 
 ### 4.1 DoR — a work package may start when
 
