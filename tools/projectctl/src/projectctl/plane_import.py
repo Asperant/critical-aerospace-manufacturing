@@ -22,23 +22,45 @@ class _MetadataHTML(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.blocks, self.current = [], None
+        self.code = None
 
     def handle_starttag(self, tag, attrs):
         if tag == "pre":
             if self.current is not None:
                 raise PlaneError("Nested canonical metadata block")
             self.current = []
+            self.code = None
+        elif tag == "code" and self.current is not None:
+            if self.code is not None or "".join(self.current).strip():
+                raise PlaneError("Unexpected canonical code wrapper")
+            self.code = "open"
         elif self.current is not None:
             raise PlaneError("Unexpected markup inside canonical metadata")
 
     def handle_endtag(self, tag):
-        if tag == "pre" and self.current is not None:
+        if tag == "code" and self.current is not None:
+            if self.code != "open":
+                raise PlaneError("Unmatched canonical code wrapper")
+            self.code = "closed"
+        elif tag == "pre" and self.current is not None:
+            if self.code == "open":
+                raise PlaneError("Unclosed canonical code wrapper")
             self.blocks.append("".join(self.current))
             self.current = None
+        elif self.current is not None:
+            raise PlaneError("Unexpected closing markup inside canonical metadata")
 
     def handle_data(self, data):
         if self.current is not None:
+            if self.code == "closed" and data.strip():
+                raise PlaneError("Content outside canonical code wrapper")
             self.current.append(data)
+
+    def handle_comment(self, data):
+        if self.current is not None:
+            raise PlaneError("Unexpected non-data markup inside canonical metadata")
+
+    handle_decl = handle_pi = unknown_decl = handle_comment
 
 
 def canonical_metadata(description):
@@ -51,12 +73,16 @@ def canonical_metadata(description):
             result[key] = value
         return result
     try:
-        parser = _MetadataHTML()
-        parser.feed(description)
-        parser.close()
-        if len(parser.blocks) != 1 or parser.current is not None:
-            raise PlaneError("Expected exactly one complete canonical metadata block")
-        data = json.loads(parser.blocks[0], object_pairs_hook=unique)
+        if isinstance(description, str) and description.lstrip().startswith("{"):
+            payload = description  # Explicit raw JSON object; never strip arbitrary HTML.
+        else:
+            parser = _MetadataHTML()
+            parser.feed(description)
+            parser.close()
+            if len(parser.blocks) != 1 or parser.current is not None:
+                raise PlaneError("Expected exactly one complete canonical metadata block")
+            payload = parser.blocks[0]
+        data = json.loads(payload, object_pairs_hook=unique)
         if not isinstance(data, dict):
             raise PlaneError("Invalid canonical metadata shape")
         return data

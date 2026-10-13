@@ -7,7 +7,7 @@ import pytest
 
 from projectctl.plane import PlaneConfig, PlaneError
 from projectctl.plane_import import (ImportFailure, MILESTONES, UNSCHEDULED, WPImport,
-                                    canonical_metadata, expected_projection, import_plan)
+                                    canonical_metadata, check_issue, expected_projection, import_plan)
 from projectctl.plane_plan import STATES, bootstrap_plan
 from projectctl.project import load_project
 
@@ -234,6 +234,53 @@ def test_metadata_ambiguity_rejected(value):
 def test_metadata_character_roundtrip():
     value = {"owner": "Asrın Dündar", "text": "<tag> & 'quoted' \"double\""}
     assert canonical_metadata("<div><pre>" + html.escape(json.dumps(value, ensure_ascii=False)) + "</pre></div>") == value
+
+
+@pytest.mark.parametrize("wrapper", ["{}", "<pre>{}</pre>", "<pre><code>{}</code></pre>",
+                                    '<div><pre data-id="editor"><code>{}</code></pre></div>'])
+def test_metadata_supported_representations_in_issue_check(project, wrapper):
+    fake = FakePlane(project)
+    expected = next(e for e in expected_projection(project, fake.audit)["projections"]
+                    if e["wp_id"] == "WP-VALID-001")
+    item = {"id": "existing", **deepcopy(expected["create_body"]), "parent": None}
+    payload = json.dumps(expected["metadata"], ensure_ascii=False)
+    item["description_html"] = wrapper.format(payload if wrapper == "{}" else html.escape(payload))
+    check_issue(item, expected)
+    assert canonical_metadata(item["description_html"]) == expected["metadata"]
+
+
+def test_code_wrapper_decodes_entities_once():
+    value = {"owner": "Batuhan Kaya", "text": '<tag> &amp; & "quoted"'}
+    payload = html.escape(json.dumps(value))
+    assert canonical_metadata("<pre>\n<code>" + payload + "</code>\n</pre>") == value
+
+
+@pytest.mark.parametrize("value", [
+    '<pre><code>{"id":}</code></pre>', '<pre><code>{"id":1,"id":2}</code></pre>',
+    '<pre><code>[]</code></pre>', '<pre><code>{}</code></pre><pre>{}</pre>',
+    '<pre><code>{}</pre>', '<pre><code>{}</code>',
+    '<pre><code><code>{}</code></code></pre>', '<pre><code><span>{}</span></code></pre>',
+    '<pre><code>{}</code><code>{}</code></pre>', '<pre>{}<code>{}</code></pre>',
+    '<pre><code>{}</code>{}</pre>', '<pre><code>{}</b></code></pre>',
+    '<pre><code>{<!-- hidden -->}</code></pre>', '<p><code>{}</code></p>',
+    '<pre><code>{<!DOCTYPE hidden>}</code></pre>', '<pre><code>{<?hidden?>}</code></pre>',
+    '{"id":}<b></b>', '{"id":1,"id":2}',
+])
+def test_metadata_code_wrapper_rejects_malformed_or_ambiguous_content(value):
+    with pytest.raises(PlaneError):
+        canonical_metadata(value)
+
+
+def test_code_wrapper_does_not_hide_semantic_metadata_drift(project):
+    fake = FakePlane(project)
+    expected = next(e for e in expected_projection(project, fake.audit)["projections"]
+                    if e["wp_id"] == "WP-VALID-001")
+    changed = {**expected["metadata"], "canonical_owner": "Asrın Dündar"}
+    item = {"id": "existing", **deepcopy(expected["create_body"]), "parent": None}
+    item["description_html"] = "<pre><code>" + html.escape(json.dumps(changed)) + "</code></pre>"
+    assert canonical_metadata(item["description_html"]) == changed
+    with pytest.raises(PlaneError, match="canonical metadata round-trip mismatch"):
+        check_issue(item, expected)
 
 
 def test_second_run_never_resets_real_execution_state(project):
