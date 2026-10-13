@@ -1,6 +1,6 @@
 # Team workflow — CTRL-PM-011
 
-Status: CTRL-PM-011 COMPLETE — all four real team identities have active Plane workspace/CAP memberships, verified GitHub access, separate clean clones/profiles and repository-local Git identities. All 179 canonical WPs are assigned to their owners (73/17/32/57) and remain BACKLOG. CTRL-PM-015 remains IN_PROGRESS; its separate control-only pilot awaits the actual final closure PR, independent review, merge and post-merge validation.
+Status: CTRL-PM-011 COMPLETE — all four real team identities have active Plane workspace/CAP memberships, verified GitHub access, separate clean clones/profiles and repository-local Git identities. All 179 canonical WPs are assigned to their owners (73/17/32/57) and remain BACKLOG. CTRL-PM-015 remains IN_PROGRESS; its separate control-only pilot is IN_REVIEW and the actual final closure PR is #3; independent review, merge and post-merge validation remain outstanding.
 
 Use one persistent Ubuntu GUI session, `ailab`, with RustDesk attached. Do not create GUI users or switch Ubuntu login sessions. `/srv/ailab/project` is the integration/reference clone and must not be used concurrently for developer work.
 
