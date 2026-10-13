@@ -26,12 +26,12 @@ CHG-008:
     execution changed
   owner: Yavuz
   reviewers: []
-  decision: DEFERRED
+  decision: APPROVED_WITH_CONDITIONS
   conditions:
-  - Current user explicitly authorizes scoped branch edits; canonical peer-review
-    and merge gates remain outstanding
-  - No historical or team approval inferred
-  - No new semantics beyond documented resolution
+  - Explicit final human decision authorizes scoped documentation reconciliation;
+    independent qualified review/ratification remains required.
+  - No product/runtime readiness, source/license acquisition, peer approval or VERIFIED
+    state inferred.
   rollout: Local reconciliation branch only; no deployment/Plane synchronization/merge
   rollback: Review and revert the atomic CTRL-DOC commit; do not rewrite history
   required_rerun:
@@ -49,7 +49,14 @@ CHG-008:
   - docs/08_Definition_of_Ready_and_Done.md
   freeze_context: PRE_M6
   status: UNDER_REVIEW
-  human_decision_basis: null
+  human_decision_basis:
+    request_sha256: 96ff255d4431a99a65ced71aa45136937acd7ae5917eaaca7fba764c23901da7
+    group: HARDWARE_PROFILE_PINNING
+    status: DECIDED
+    decision: 'Primary shared host: i7-9700K8c/8t, approximately30GiB usable RAM,
+      RTX2060SUPER8GB, Ubuntu26.04.1LTS, primaryext4; secondaryNVMe not mandatory.'
+    rationale: Known approved shared-host measurement context without invented measurements
+      or extra mandatory hosts.
   source_derived_basis: 01 Item79/82; 08 Tested≠Verified; 07 F4
   affected_stable_ids:
   - RTF-028
@@ -60,5 +67,5 @@ CHG-008:
     review for CR-4; independent critical review for CR-3
   application_control_item: CTRL-DOC-005
   sprint_context: UNSPECIFIED; no calendar/sprint fabricated
-  proposal: Require versioned release/environment/hardware/workload identity; no invented
-    measured values or accepted host.
+  proposal: Bind actual release/environment/resource/workload configuration to every
+    measurement; no performance claim from pinning.

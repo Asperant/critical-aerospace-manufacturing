@@ -111,9 +111,25 @@ def audit():
         value = json.loads(json.dumps(trace.assertions))
         value.get('meta', {}).pop('anchor', None)
         return value
-    assert {t.requirement_id: trace_semantics(t) for t in baseline_traces} == {
-        t.requirement_id: trace_semantics(t) for t in project.catalog.requirements.traces
-    }, 'Trace semantics changed beyond citation locations'
+    baseline_trace = {t.requirement_id: trace_semantics(t) for t in baseline_traces}
+    current_trace = {t.requirement_id: trace_semantics(t) for t in project.catalog.requirements.traces}
+    assert baseline_trace.keys() == current_trace.keys(), 'Requirement trace IDs changed'
+    # The final human decisions explicitly authorize allocations and inspection/command terminology.
+    # Every exact delta is emitted for independent review; all other trace predicates stay identical.
+    approved_trace_changes = []
+    allowed_fields = {'ALLOCATED_TO', 'REALIZED_BY', 'EXPOSED_BY', 'state', 'note'}
+    for identity in sorted(current_trace):
+        before, after = baseline_trace[identity], current_trace[identity]
+        for field in sorted(set(before) | set(after)):
+            if before.get(field) != after.get(field):
+                assert field in allowed_fields, (identity, field, 'Unexpected trace change')
+                if field == 'state':
+                    b, a = dict(before[field]), dict(after[field])
+                    b.pop('flags', None); a.pop('flags', None)
+                    assert b == a, 'Coverage/evidence status may not advance during documentation reconciliation'
+                approved_trace_changes.append({'requirement': identity, 'field': field,
+                                               'before': before.get(field), 'after': after.get(field),
+                                               'authority': 'FINAL_HUMAN_DECISIONS / approved 2026-10-13 request'})
     index_locations = []
     for row in project.catalog.requirements.index_assertions:
         target = re.search(r'\bL(\d+)\b', row[3])
@@ -126,7 +142,7 @@ def audit():
         elif not re.search(r'\bL\d{3,}', reference['text']):
             reference['status'] = 'LEVEL_TOKEN_OR_SHORT_REFERENCE_REQUIRES_CONTEXT'
     # Every dataset/naming occurrence is classified; uncertain contexts are not rewritten.
-    return dict(summary=summary, semantic_model_sha256=sha256(json.dumps(model, sort_keys=True, ensure_ascii=False).encode()).hexdigest(), trace_semantics_unchanged=True, canonical_sources=sources, headings=headings, occurrences=occurrences, exact_requirement_citations=citations, index_citation_locations=index_locations, numeric_reference_review=numeric_refs, markdown_links=markdown_links, missing_or_planned_links=links, diagnostics=snap['diagnostics'])
+    return dict(summary=summary, semantic_model_sha256=sha256(json.dumps(model, sort_keys=True, ensure_ascii=False).encode()).hexdigest(), trace_semantics_unchanged=not approved_trace_changes, approved_trace_changes=approved_trace_changes, canonical_sources=sources, headings=headings, occurrences=occurrences, exact_requirement_citations=citations, index_citation_locations=index_locations, numeric_reference_review=numeric_refs, markdown_links=markdown_links, missing_or_planned_links=links, diagnostics=snap['diagnostics'])
 
 if __name__ == '__main__':
     json.dump(audit(), sys.stdout, ensure_ascii=False, indent=2)

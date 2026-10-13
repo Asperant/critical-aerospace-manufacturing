@@ -26,12 +26,12 @@ CHG-007:
     execution changed
   owner: Asrın
   reviewers: []
-  decision: DEFERRED
+  decision: APPROVED_WITH_CONDITIONS
   conditions:
-  - Current user explicitly authorizes scoped branch edits; canonical peer-review
-    and merge gates remain outstanding
-  - No historical or team approval inferred
-  - No new semantics beyond documented resolution
+  - Explicit final human decision authorizes scoped documentation reconciliation;
+    independent qualified review/ratification remains required.
+  - No product/runtime readiness, source/license acquisition, peer approval or VERIFIED
+    state inferred.
   rollout: Local reconciliation branch only; no deployment/Plane synchronization/merge
   rollback: Review and revert the atomic CTRL-DOC commit; do not rewrite history
   required_rerun:
@@ -51,7 +51,13 @@ CHG-007:
   - docs/07_Milestone_and_Release_Plan.md
   freeze_context: PRE_M6
   status: UNDER_REVIEW
-  human_decision_basis: null
+  human_decision_basis:
+    request_sha256: 96ff255d4431a99a65ced71aa45136937acd7ae5917eaaca7fba764c23901da7
+    group: MC2_OWNER
+    status: DECIDED
+    decision: Asrın Dündar accountable for MC-2.
+    rationale: Cross-cutting project/integration research accountability; no underlying
+      WP reassignment.
   source_derived_basis: 01 research contribution ownership; 10 RTF-027 explicitly
     prohibits inferring WP owner
   affected_stable_ids:
@@ -63,4 +69,4 @@ CHG-007:
     review for CR-4; independent critical review for CR-3
   application_control_item: CTRL-DOC-005
   sprint_context: UNSPECIFIED; no calendar/sprint fabricated
-  proposal: 'HUMAN_DECISION_REQUIRED: MC2_OWNER; preserve unspecified owner.'
+  proposal: Bind contribution accountability, retain canonical implementation owners73/17/32/57.

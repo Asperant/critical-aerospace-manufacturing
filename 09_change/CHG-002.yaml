@@ -31,10 +31,10 @@ CHG-002:
   reviewers: []
   decision: APPROVED_WITH_CONDITIONS
   conditions:
-  - Current user explicitly authorizes scoped branch edits; canonical peer-review
-    and merge gates remain outstanding
-  - No historical or team approval inferred
-  - No new semantics beyond documented resolution
+  - Explicit final human decision authorizes scoped documentation reconciliation;
+    independent qualified review/ratification remains required.
+  - No product/runtime readiness, source/license acquisition, peer approval or VERIFIED
+    state inferred.
   rollout: Local reconciliation branch only; no deployment/Plane synchronization/merge
   rollback: Review and revert the atomic CTRL-DOC commit; do not rewrite history
   required_rerun:
@@ -48,9 +48,13 @@ CHG-002:
   freeze_context: PRE_M6
   status: UNDER_REVIEW
   human_decision_basis:
-    request: Deferred documentation reconciliation program
-    sha256: 73bb0a487008dabbdbe8e1eabf026762d705c3115ff954ed357bc2c920619acd
-    basis: Explicit current human instruction; not a historical team approval
+    request_sha256: 96ff255d4431a99a65ced71aa45136937acd7ae5917eaaca7fba764c23901da7
+    group: REAL_PUBLIC_PORTFOLIO_SELECTION
+    status: DECIDED
+    decision: LaneA NASA/Leibniz-Mendeley/CNC sources, auxiliaryMVTecAD/AD2, applicableGDXray;
+      LaneB literature; LaneC controlledSimulator; public scheduling benchmark support.
+    rationale: No single source covers all modalities; no semiconductor-to-aerospace
+      relabeling or synthetic substitute for real/public held-out claims.
   source_derived_basis: Current human-approved dataset policy; 01 Item55
   affected_stable_ids:
   - RTF-021
@@ -62,5 +66,6 @@ CHG-002:
     review for CR-4; independent critical review for CR-3
   application_control_item: CTRL-DOC-003
   sprint_context: UNSPECIFIED; no calendar/sprint fabricated
-  proposal: Correct source identities and cross-domain-only roles; append Lane A/B/C
-    policy and candidate-only portfolio; retain rights gates.
+  proposal: Source cards need role/modality/provenance/rights/evaluation/limits; exact
+    unverified metadata NEEDS_SOURCE_VERIFICATION. SECOM/WM/Mixed legacy-methodological
+    only.

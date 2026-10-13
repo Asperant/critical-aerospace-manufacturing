@@ -545,9 +545,11 @@ ile bağlanır.
 
 ayrı gösterilir.
 
-## Trace state baseline
+## PlanningState baseline
 
-Pre-implementation için uygun states:
+Pre-implementation planning projections only. CoverageState is independently governed by01 Item83: VERIFY_PLANNED in CoverageState requires an existing verification asset; a planned asset is insufficient. BLOCKED is an orthogonal flag, never a workflow state.
+
+Pre-implementation için uygun planning states:
 
 - `UNALLOCATED`
 - `ALLOCATED`
@@ -720,11 +722,11 @@ Platform → Core Contracts → Event Spine → Simulator/Core → Twin → Visi
 
 #### CP-2 — Research Evidence
 
-Operational System → Data/Scenarios → Baselines → Evaluation → Calibration → Freeze → Protocol → Stable Release/Environment → Benchmark → Analysis → Claims
+Operational System → Datasets / Scenarios → Baselines → Evaluation Harnesses → Calibration → Data/Scenario/Seed Freeze → Model/Policy Freeze → ExperimentProtocolFreeze → Stable Release / Environment → Final Benchmark → Statistical Analysis → ResearchClaims
 
 #### CP-3 — Reproducibility
 
-Git/CI → Runtime → CD → Observability/Security → Backup/Recovery → Experiment Runner → Release/Hardware → Clean Reproduction → Benchmark
+Git / CI → Integration Runtime → CD → Observability / Security → Backup / Recovery → Failure Validation → Experiment Runner → ReleaseManifest / HardwareProfile → Clean Reproduction → Benchmark Execution
 
 ### Dependency diagrams
 
@@ -1992,3 +1994,14 @@ Kalite ölçütü doküman uzunluğu değil:
 > **source fidelity + engineering specificity + traceability + implementation utility + evidence honesty + cross-document consistency**
 
 olacaktır.
+
+
+## Final human reconciliation binding — 2026-10-13
+
+01 §Final Human Reconciliation and02 §Final human reconciliation govern this projection. Vision/NDT publishes immutable InspectionObservation (existing EVT-InspectionObservation-v1); Core normalizes separate InspectionResult (existing IC-VIS-002) and owns canonical manufacturing/quality state. PlaceLotOnHold / CMD-PlaceLotOnHold-v1 is the single hold-placement command; ApplyMaterialHold is deprecated terminology, never a second contract. Other protected identities follow the01 action table, with exact approval/revision/freshness/idempotency binding. Simulator/Oracle, Twin/Qdrant projections, AI READ/SIMULATE/PROPOSE, Scheduler candidates, HITL, identity and UI boundaries remain unchanged.
+
+ARCH-AUTO-WORKFLOW (durable Automation/Temporal layer) coordinates GS-01/E2E across Inspection/NDT→Core quality→RCA→recovery→HITL→governed Core commands→verified effect→Twin/Audit. It does not acquire Core authority. MC-2 accountable owner is Asrın Dündar; contributing WP owners remain73/17/32/57. The primary shared-host HardwareProfile and accepted LaneA/B/C portfolio are pinned in01; acquisition/rights/source fields not locally verified are NEEDS_SOURCE_VERIFICATION, not invented facts or performance results. Real/public held-out evaluation and source-specific limitations remain mandatory where claimed.
+
+HARD/SOFT refer to declared work/readiness consumers, not automatic runtime/deployment/import relations. Non-CONTRACT F1 entries DEP-025/045/058/076/094 have no fixture fallback: real producer readiness at the declared stage is required, while development stubs are not satisfaction evidence. DN-VIS-MODELS now declares INTEGRATION_READY for DEP-060/194; operational serving must load promoted required-mode artifacts with provenance. Source-supported deadlines and per-consumer scope are defined in05, without shifting canonical ownership or schedules.
+
+GAP-RTM-004/005 remain ACCEPTED_WITH_RATIONALE for this pre-implementation baseline: missing canonical record metadata is not fabricated. FR-GOV-001/004 and the relevant NFR owners must supply/review actual fields and measurement definitions before their declared gates; projectctl retains nulls/warnings and never grants READY/VERIFIED from planned prose. Owner trace confirmation GAP-RTM-006 and final schema/version/card specifics remain ordinary implementation/review prerequisites, not unresolved choices among the eight approved policy groups.

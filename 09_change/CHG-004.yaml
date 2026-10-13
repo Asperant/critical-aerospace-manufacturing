@@ -30,12 +30,12 @@ CHG-004:
     execution changed
   owner: Asrın
   reviewers: []
-  decision: DEFERRED
+  decision: APPROVED_WITH_CONDITIONS
   conditions:
-  - Current user explicitly authorizes scoped branch edits; canonical peer-review
-    and merge gates remain outstanding
-  - No historical or team approval inferred
-  - No new semantics beyond documented resolution
+  - Explicit final human decision authorizes scoped documentation reconciliation;
+    independent qualified review/ratification remains required.
+  - No product/runtime readiness, source/license acquisition, peer approval or VERIFIED
+    state inferred.
   rollout: Local reconciliation branch only; no deployment/Plane synchronization/merge
   rollback: Review and revert the atomic CTRL-DOC commit; do not rewrite history
   required_rerun:
@@ -51,7 +51,14 @@ CHG-004:
   - docs/07_Milestone_and_Release_Plan.md
   freeze_context: PRE_M6
   status: UNDER_REVIEW
-  human_decision_basis: null
+  human_decision_basis:
+    request_sha256: 96ff255d4431a99a65ced71aa45136937acd7ae5917eaaca7fba764c23901da7
+    group: PROTECTED_COMMAND_NAMING
+    status: DECIDED
+    decision: PlaceLotOnHold / existing CMD-PlaceLotOnHold-v1; one canonical identity
+      per action using01 action table.
+    rationale: Stable command identity precedes lower-precedence aliases; hold is
+      not lifecycle.
   source_derived_basis: 01 Items15/34/66/83; 02 R-003 and Core command catalog
   affected_stable_ids:
   - RTF-024
@@ -64,5 +71,5 @@ CHG-004:
     review for CR-4; independent critical review for CR-3
   application_control_item: CTRL-DOC-004
   sprint_context: UNSPECIFIED; no calendar/sprint fabricated
-  proposal: Preserve unresolved aliases; record known ActivateSchedule/ActivateScheduleCommand
-    reconciliation from R-003; request PROTECTED_COMMAND_NAMING.
+  proposal: Freeze exact target/payload/version/approval/idempotency binding in contract
+    WPs; deprecated names are not additional commands.

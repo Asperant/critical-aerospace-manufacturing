@@ -1,4 +1,4 @@
-# Final documentation reconciliation report
+# Historical documentation reconciliation report — superseded by FINAL_CLOSURE_REPORT.md
 
 DOCUMENTATION RECONCILIATION RESULT: DOCUMENTATION RECONCILIATION PARTIALLY COMPLETE
 

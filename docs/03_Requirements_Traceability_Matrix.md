@@ -826,8 +826,8 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 | FR-VIS-008 | ARCH-VIS-INFER, ARCH-VIS-OOD | vision-service | EXACT |
 | FR-VIS-009 | ARCH-VIS-INFER, ARCH-CTR-EVTSCHEMA | vision-service | EXACT |
 | FR-VIS-010 | ARCH-VIS-INFER, ARCH-VIS-EVAL | vision-service | EXACT |
-| FR-VIS-011 | ARCH-DATA-LINEAGE, ARCH-VIS-MODEL | Vision dataset pipeline (GAP-RTM-003 allocation) | COARSE (GAP-RTM-003) |
-| FR-VIS-012 | ARCH-DATA-LINEAGE, ARCH-DATA-OBJ | Vision dataset pipeline (GAP-RTM-003 allocation) | COARSE (GAP-RTM-003) |
+| FR-VIS-011 | ARCH-DATA-LINEAGE, ARCH-VIS-MODEL, ARCH-VIS-DATA | Vision dataset pipeline (GAP-RTM-003 allocation) | EXPLICIT — append-only02 allocation |
+| FR-VIS-012 | ARCH-DATA-LINEAGE, ARCH-DATA-OBJ, ARCH-VIS-DATA | Vision dataset pipeline (GAP-RTM-003 allocation) | EXPLICIT — append-only02 allocation |
 | FR-VIS-013 | ARCH-VIS-INFER, ARCH-WORLD-EVALZONE | vision-service | EXACT |
 | FR-VIS-014 | ARCH-VIS-INFER, ARCH-PLAT-CLI | vision-service | EXACT |
 | FR-VIS-015 | ARCH-VIS-MODEL, ARCH-DATA-OBJ | vision-service + MLflow support tooling | EXACT |
@@ -837,14 +837,14 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 
 | ID | ALLOCATED_TO (02 ARCH IDs) | Deployable / runtime surface | Allocation quality |
 |---|---|---|---|
-| FR-ML-001 | ARCH-AI-ORCH, ARCH-DATA-LINEAGE | ai-intelligence-service (predictive intelligence) — GAP-RTM-001 | COARSE (GAP-RTM-001) |
-| FR-ML-002 | ARCH-AI-ORCH, ARCH-DATA-LINEAGE | ai-intelligence-service (predictive intelligence) — GAP-RTM-001 | COARSE (GAP-RTM-001) |
-| FR-ML-003 | ARCH-AI-ORCH, ARCH-DATA-LINEAGE | ai-intelligence-service (predictive intelligence) — GAP-RTM-001 | COARSE (GAP-RTM-001) |
-| FR-ML-004 | ARCH-CTR-EVTSCHEMA, ARCH-AI-ORCH | ai-intelligence-service | EXACT |
-| FR-ML-005 | ARCH-CTR-EVTSCHEMA, ARCH-DATA-LINEAGE | ai-intelligence-service | EXACT |
-| FR-ML-006 | ARCH-AI-ORCH | ai-intelligence-service | EXACT |
-| FR-ML-007 | ARCH-DATA-LINEAGE | MLOps/data pipeline — GAP-RTM-001 | COARSE (GAP-RTM-001) |
-| FR-ML-008 | ARCH-DATA-LINEAGE | MLOps/data pipeline — GAP-RTM-001 | COARSE (GAP-RTM-001) |
+| FR-ML-001 | ARCH-AI-ORCH, ARCH-DATA-LINEAGE, ARCH-AI-ML, ARCH-AI-MLOPS | ai-intelligence-service (predictive intelligence) — GAP-RTM-001 | EXPLICIT — append-only02 allocation |
+| FR-ML-002 | ARCH-AI-ORCH, ARCH-DATA-LINEAGE, ARCH-AI-ML, ARCH-AI-MLOPS | ai-intelligence-service (predictive intelligence) — GAP-RTM-001 | EXPLICIT — append-only02 allocation |
+| FR-ML-003 | ARCH-AI-ORCH, ARCH-DATA-LINEAGE, ARCH-AI-ML, ARCH-AI-MLOPS | ai-intelligence-service (predictive intelligence) — GAP-RTM-001 | EXPLICIT — append-only02 allocation |
+| FR-ML-004 | ARCH-CTR-EVTSCHEMA, ARCH-AI-ORCH, ARCH-AI-ML, ARCH-AI-MLOPS | ai-intelligence-service | EXPLICIT — append-only02 allocation |
+| FR-ML-005 | ARCH-CTR-EVTSCHEMA, ARCH-DATA-LINEAGE, ARCH-AI-ML, ARCH-AI-MLOPS | ai-intelligence-service | EXPLICIT — append-only02 allocation |
+| FR-ML-006 | ARCH-AI-ORCH, ARCH-AI-ML, ARCH-AI-MLOPS | ai-intelligence-service | EXPLICIT — append-only02 allocation |
+| FR-ML-007 | ARCH-DATA-LINEAGE, ARCH-AI-ML, ARCH-AI-MLOPS | MLOps/data pipeline — GAP-RTM-001 | EXPLICIT — append-only02 allocation |
+| FR-ML-008 | ARCH-DATA-LINEAGE, ARCH-AI-ML, ARCH-AI-MLOPS | MLOps/data pipeline — GAP-RTM-001 | EXPLICIT — append-only02 allocation |
 
 ### 7.FH FR-RAG — Documentary RAG
 
@@ -892,8 +892,8 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 | FR-SCH-007 | ARCH-SCH-PLAN, ARCH-TWIN-FRESHNESS | scheduler-service | EXACT |
 | FR-SCH-008 | ARCH-SCH-PLAN, ARCH-CTR-EVTSCHEMA | scheduler-service | EXACT |
 | FR-SCH-009 | ARCH-SCH-ENGINE | scheduler-service | EXACT |
-| FR-SCH-010 | ARCH-SCH-HEURISTIC, ARCH-VIS-EVAL | scheduling evaluation harness — GAP-RTM-002 | COARSE (GAP-RTM-002) |
-| FR-SCH-011 | ARCH-SCH-ENGINE | scheduling evaluation harness — GAP-RTM-002 | COARSE (GAP-RTM-002) |
+| FR-SCH-010 | ARCH-SCH-HEURISTIC, ARCH-VIS-EVAL, ARCH-SCH-EVAL | scheduling evaluation harness — GAP-RTM-002 | EXPLICIT — append-only02 allocation |
+| FR-SCH-011 | ARCH-SCH-ENGINE, ARCH-SCH-EVAL | scheduling evaluation harness — GAP-RTM-002 | EXPLICIT — append-only02 allocation |
 | FR-SCH-012 | ARCH-SCH-HEURISTIC, ARCH-SCH-ENGINE | scheduler-service | EXACT |
 | FR-SCH-013 | ARCH-SCH-ENGINE, ARCH-WORLD-FORK, ARCH-SIM-SNAPSHOT | scheduler-service + manufacturing-simulator | EXACT |
 | FR-SCH-014 | ARCH-SCH-VALIDATOR, ARCH-AI-PROPOSAL | scheduler-service ↔ ai-intelligence-service | EXACT |
@@ -982,16 +982,16 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 
 | ID | ALLOCATED_TO (02 ARCH IDs) | Deployable / runtime surface | Allocation quality |
 |---|---|---|---|
-| FR-EVAL-001 | ARCH-PLAT-RELEASE, ARCH-DATA-LINEAGE, ARCH-PLAT-CLI | experiment runner — GAP-RTM-002 | COARSE (GAP-RTM-002) |
-| FR-EVAL-002 | ARCH-DATA-LINEAGE | experiment definitions — GAP-RTM-002 | COARSE (GAP-RTM-002) |
-| FR-EVAL-003 | ARCH-DATA-LINEAGE, ARCH-DATA-PG | benchmark run registry — GAP-RTM-002 | COARSE (GAP-RTM-002) |
-| FR-EVAL-004 | ARCH-DATA-LINEAGE | benchmark run registry — GAP-RTM-002 | COARSE (GAP-RTM-002) |
-| FR-EVAL-005 | ARCH-DATA-LINEAGE | benchmark run registry — GAP-RTM-002 | COARSE (GAP-RTM-002) |
-| FR-EVAL-006 | ARCH-DATA-LINEAGE, ARCH-DATA-OBJ | AnalysisPackage — GAP-RTM-002 | COARSE (GAP-RTM-002) |
-| FR-EVAL-007 | ARCH-DATA-OBJ, ARCH-DATA-LINEAGE | evidence sealing tooling — GAP-RTM-002 | COARSE (GAP-RTM-002) |
-| FR-EVAL-008 | ARCH-PLAT-BACKUP, ARCH-DATA-OBJ | backup/restore automation | EXACT |
-| FR-EVAL-009 | ARCH-DATA-LINEAGE | AnalysisPackage — GAP-RTM-002 | COARSE (GAP-RTM-002) |
-| FR-EVAL-010 | ARCH-DATA-LINEAGE | AnalysisPackage exports — GAP-RTM-002 | COARSE (GAP-RTM-002) |
+| FR-EVAL-001 | ARCH-PLAT-RELEASE, ARCH-DATA-LINEAGE, ARCH-PLAT-CLI, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE | experiment runner — GAP-RTM-002 | EXPLICIT — append-only02 allocation |
+| FR-EVAL-002 | ARCH-DATA-LINEAGE, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE | experiment definitions — GAP-RTM-002 | EXPLICIT — append-only02 allocation |
+| FR-EVAL-003 | ARCH-DATA-LINEAGE, ARCH-DATA-PG, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE | benchmark run registry — GAP-RTM-002 | EXPLICIT — append-only02 allocation |
+| FR-EVAL-004 | ARCH-DATA-LINEAGE, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE | benchmark run registry — GAP-RTM-002 | EXPLICIT — append-only02 allocation |
+| FR-EVAL-005 | ARCH-DATA-LINEAGE, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE | benchmark run registry — GAP-RTM-002 | EXPLICIT — append-only02 allocation |
+| FR-EVAL-006 | ARCH-DATA-LINEAGE, ARCH-DATA-OBJ, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE | AnalysisPackage — GAP-RTM-002 | EXPLICIT — append-only02 allocation |
+| FR-EVAL-007 | ARCH-DATA-OBJ, ARCH-DATA-LINEAGE, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE | evidence sealing tooling — GAP-RTM-002 | EXPLICIT — append-only02 allocation |
+| FR-EVAL-008 | ARCH-PLAT-BACKUP, ARCH-DATA-OBJ, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE | backup/restore automation | EXPLICIT — append-only02 allocation |
+| FR-EVAL-009 | ARCH-DATA-LINEAGE, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE | AnalysisPackage — GAP-RTM-002 | EXPLICIT — append-only02 allocation |
+| FR-EVAL-010 | ARCH-DATA-LINEAGE, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE | AnalysisPackage exports — GAP-RTM-002 | EXPLICIT — append-only02 allocation |
 
 ### 7.NA NFR-GOV — NFR Governance
 
@@ -1230,7 +1230,7 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 | FR-CORE-004 | command precondition/revision validator (STALE/CONFLICT outcomes) | CONTRACT:Core Command Acceptance API | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-005 | command idempotency-key store (Item 83 example: core app + idempotency package) | CONTRACT:IC-AUTO-003 Typed Operational Command | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-006 | durable CommandOutcome record (completed/rejected/unresolved) | CONTRACT:Core Command Acceptance API | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-CORE-007 | ApplyMaterialHold command handler (contract name reconciliation: GAP-RTM-010) | CONTRACT:hold command (ApplyMaterialHold / PlaceLotOnHold — RECONCILIATION_REQUIRED) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
+| FR-CORE-007 | PlaceLotOnHold command handler (CMD-PlaceLotOnHold-v1) | CONTRACT:PlaceLotOnHold / CMD-PlaceLotOnHold-v1 | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-008 | ReleaseMaterialHold eligibility handler | CONTRACT:ReleaseMaterialHold command | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-009 | ReworkDirective + append-only route-visit history | CONTRACT:ExecuteApprovedReworkDirective command | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-010 | lot split relation model | CONTRACT:Core Query API (genealogy) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
@@ -1302,7 +1302,7 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 | FR-VIS-006 | UNKNOWN/OOD outcome + ThresholdPolicyVersion | POLICY:ThresholdPolicyVersion | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-VIS-007 | provenance fields (ModelVersion, PreprocessingVersion) on InspectionResult | CONTRACT:IC-VIS-002 InspectionResult | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-VIS-008 | confidence/uncertainty fields + calibration artifact | CONTRACT:IC-VIS-002 InspectionResult | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-VIS-009 | InspectionObservation/InspectionResult publisher (name reconciliation GAP-RTM-009) | CONTRACT:IC-VIS-002 InspectionResult (≙ InspectionObservation — RECONCILIATION_REQUIRED) · IC-VIS-003..005 | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
+| FR-VIS-009 | InspectionObservation publisher; Core normalizes separate InspectionResult | CONTRACT:EVT-InspectionObservation-v1; IC-VIS-002 is separate normalized InspectionResult · IC-VIS-003..005 | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-VIS-010 | serialized component spatial-pattern / cluster analysis module | CONTRACT:IC-VIS-004 DefectPattern · IC-VIS-005 DefectCluster | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-VIS-011 | dataset card + provenance class field (SYNTHETIC/PUBLIC) | DATA:Vision DatasetVersion | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-VIS-012 | sealed DatasetVersion + SplitManifest (train/calibration/final) | DATA:Vision DatasetVersion · DATA:SplitManifest | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
@@ -2796,7 +2796,7 @@ Item 83 #86 / RTM-INV-32: every F0 must appear in at least one **real integrated
 | FR-SIM-002 | Batu | Sense · Execute (physical) | Simulator/Core Integration | reentrant routing executed under Core legality | E2E-01, AV-SCEN-02 | REAL (mocks/stubs cannot solely verify, #114) | EV-L3 (INTEGRATION) min; EV-L5 for FBC-01 E2E matrix | E2EEvidenceBundle — NOT_YET_EXECUTED |
 | FR-TWIN-001 | Asrın | Understand · Observe | Twin → Twin Verification | NATS consumer → Twin projection → Twin Query API | E2E-01, AV-SCEN-01, BENCH-E2E-001 | REAL (mocks/stubs cannot solely verify, #114) | EV-L3 (INTEGRATION) min; EV-L5 for FBC-01 E2E matrix | E2EEvidenceBundle — NOT_YET_EXECUTED |
 | FR-EVT-001 | Asrın | all boundaries | Operational Event Spine | every cross-service command/event/query via IC-* contracts | AV-SCEN-01, BENCH-E2E-001 | REAL (mocks/stubs cannot solely verify, #114) | EV-L3 (INTEGRATION) min; EV-L5 for FBC-01 E2E matrix | E2EEvidenceBundle — NOT_YET_EXECUTED |
-| FR-VIS-001 | Selman | Sense | Vision Evidence | SeaweedFS ArtifactRef → vision-service → InspectionResult event | E2E-01, AV-SCEN-01, BENCH-E2E-001 | REAL (mocks/stubs cannot solely verify, #114) | EV-L3 (INTEGRATION) min; EV-L5 for FBC-01 E2E matrix | E2EEvidenceBundle — NOT_YET_EXECUTED |
+| FR-VIS-001 | Selman | Sense | Vision Evidence | SeaweedFS ArtifactRef → vision-service → InspectionObservation event → Core normalized InspectionResult | E2E-01, AV-SCEN-01, BENCH-E2E-001 | REAL (mocks/stubs cannot solely verify, #114) | EV-L3 (INTEGRATION) min; EV-L5 for FBC-01 E2E matrix | E2EEvidenceBundle — NOT_YET_EXECUTED |
 | FR-VIS-016 | Selman | Sense → Understand | Vision Evidence → AI/RCA Proposal | Vision observation consumed as RCA evidence (no hardcoded flag) | E2E-01, AV-SCEN-01, DEMO-GS01-001, BENCH-E2E-001 | REAL (mocks/stubs cannot solely verify, #114) | EV-L3 (INTEGRATION) min; EV-L5 for FBC-01 E2E matrix | E2EEvidenceBundle — NOT_YET_EXECUTED |
 | FR-AI-001 | Asrın | Understand · Predict | AI/RCA Proposal | AI tools → Core/Twin Query APIs → structured RCA | E2E-01, AV-SCEN-01, BENCH-E2E-001 | REAL (mocks/stubs cannot solely verify, #114) | EV-L3 (INTEGRATION) min; EV-L5 for FBC-01 E2E matrix | E2EEvidenceBundle — NOT_YET_EXECUTED |
 | FR-AI-004 | Asrın | Decide (proposal-only) | AI/RCA Proposal ↔ Authority | AI principal holds no Core mutation credential (negative path exercised on real runtime) | AV-SCEN-01 | REAL (mocks/stubs cannot solely verify, #114) | EV-L3 (INTEGRATION) min; EV-L5 for FBC-01 E2E matrix | E2EEvidenceBundle — NOT_YET_EXECUTED |
@@ -2857,7 +2857,7 @@ Canonical chain (Item 83 GS-01 Trace View; 02 Sequence A): Artifact → Vision �
 |---|---|---|---|
 | 1 | Inspection artifact (ArtifactRef, SeaweedFS) | manufacturing-simulator → vision-service | FR-SIM-014, FR-VIS-001, FR-EVT-004, NFR-DATA-001 |
 | 2 | Vision inference (classification / localization / segmentation / anomaly / OOD) | vision-service | FR-VIS-002, FR-VIS-003, FR-VIS-004, FR-VIS-005, FR-VIS-006, FR-VIS-007, FR-VIS-008, FR-VIS-010, FR-VIS-013 |
-| 3 | InspectionObservation / InspectionResult event (name: GAP-RTM-009) | vision-service → NATS → manufacturing-core, digital-twin-service | FR-VIS-009, FR-EVT-001, FR-EVT-002, FR-EVT-003, FR-EVT-005, FR-EVT-006, FR-CORE-014, FR-CORE-015, NFR-PERF-003, NFR-PERF-004 |
+| 3 | InspectionObservation / InspectionResult event (EVT-InspectionObservation-v1, distinct from IC-VIS-002) | vision-service → NATS → manufacturing-core, digital-twin-service | FR-VIS-009, FR-EVT-001, FR-EVT-002, FR-EVT-003, FR-EVT-005, FR-EVT-006, FR-CORE-014, FR-CORE-015, NFR-PERF-003, NFR-PERF-004 |
 | 4 | Evidence-grounded RCA | ai-intelligence-service ↔ Core/Twin Query APIs, RAG | FR-VIS-016, FR-AI-001, FR-AI-002, FR-AI-003, FR-AI-005, FR-AI-006, FR-AI-007, FR-AI-008, FR-AI-011, FR-AI-012, FR-AI-013, FR-RAG-001, FR-RAG-005, FR-RAG-006, FR-RAG-010, FR-CORE-012, FR-TWIN-004, FR-TWIN-008, NFR-PERF-006, NFR-PERF-007, NFR-SEC-009 |
 | 5 | ActionProposal / Recommendation (proposal-only) | ai-intelligence-service → automation-service | FR-AI-004, FR-AI-009, FR-AI-010 |
 | 6 | Recovery planning + counterfactual forks | scheduler-service ↔ Twin snapshot, manufacturing-simulator forks | FR-SCH-001, FR-SCH-003, FR-SCH-004, FR-SCH-007, FR-SCH-008, FR-SCH-009, FR-SCH-013, FR-SCH-015, FR-SIM-010, FR-SIM-011, FR-TWIN-007, NFR-PERF-008 |
@@ -2872,7 +2872,7 @@ Canonical chain (Item 83 GS-01 Trace View; 02 Sequence A): Artifact → Vision �
 
 ```mermaid
 flowchart TD
-  A1["1 ArtifactRef"] --> A2["2 Vision inference"] --> A3["3 InspectionResult event"] --> A4["4 RCA"] --> A5["5 Proposal"] --> A6["6 Scheduler + forks"] --> A7["7 ScheduleValidator"] --> A8["8 HITL approval"] --> A9["9 Temporal workflow"] --> A10["10 Core commands"] --> A11["11 Simulator execution"] --> A12["12 Twin projection"] --> A13["13 Effect verification"] --> A14["14 UI · Audit · Trace"]
+  A1["1 ArtifactRef"] --> A2["2 Vision inference"] --> A3["3 InspectionObservation → Core InspectionResult"] --> A4["4 RCA"] --> A5["5 Proposal"] --> A6["6 Scheduler + forks"] --> A7["7 ScheduleValidator"] --> A8["8 HITL approval"] --> A9["9 Temporal workflow"] --> A10["10 Core commands"] --> A11["11 Simulator execution"] --> A12["12 Twin projection"] --> A13["13 Effect verification"] --> A14["14 UI · Audit · Trace"]
   A7 -. "FAIL ⇒ not execution-eligible (FR-SCH-006)" .-> STOP1(["stop: no execution"])
   A9 -. "stale/replay ⇒ reject (FR-AUTO-004, FR-HITL-006)" .-> STOP2(["safe non-success"])
   A13 -. "lost ACK ⇒ UNKNOWN_VERIFY_REQUIRED (FR-AUTO-009)" .-> STOP3(["verify before success"])
@@ -3149,7 +3149,7 @@ Canonical direction: Claim ← Evidence ← Benchmark/Run ← Requirements/Syste
 | RQ-3 — Bounded AI authority, risk-tiered HITL, execution verification | Asrın | BENCH-RQ3-001 | 150 frozen cases, L0–L4 × 30, ≥40% adversarial (stale, revision mismatch, duplicate, replay, malformed, forbidden, lost ACK, expired approval); same proposal set across policies | FR-HITL-001…010, FR-AI-003/004/009/010, FR-AUTO-004/012/013, FR-SCH-014, FR-SEC-003/009/010, NFR-REL-001/002, NFR-SEC-004/005/010 | Authority scenario set frozen before RQ-3 final (HARD); AuthorityPolicy + ActionCatalog frozen at M6; safety gate: zero executed high-risk invariant violations | FinalBenchmarkEvidenceBundle — RQ3 + authority/security lane (EV-L5) |
 | RQ-4 — Perception coupled with spatial/operational context | Selman | BENCH-RQ4-001, BENCH-VIS-001 | 120 episodes; 5 deep-training seeds; 10,000 bootstrap resamples; downstream perception-to-operations evaluation mandatory | FR-VIS-001…016, FR-UI-003, FR-AI-006, NFR-DATA-002/006, NFR-PERF-010 | Vision split freeze before final RQ-4 (HARD); ModelPackage + ThresholdPolicyVersion frozen at M6 | FinalBenchmarkEvidenceBundle — RQ4 + Vision lanes (EV-L5) |
 | MC-1 — End-to-end closed-loop evaluation | Asrın | BENCH-E2E-001 | 4 frozen scenario definitions × 20 seeds = 80 base instances; families: Normal Production, Equipment Failure, Visual Excursion, Workflow/Runtime Failure, Authority Negative Case | all 17 F0; NFR-PERF-013, NFR-OBS-003, NFR-REL-010 | Stable release before E2E formal experiment (HARD) | FinalBenchmarkEvidenceBundle — final E2E lane (EV-L5) |
-| MC-2 — Governed Oracle-separated synthetic manufacturing benchmark | **UNASSIGNED in Item 58** (GAP-RTM-020) | BENCH-SIMVAL-001, BENCH-FBC-001 | versioned Oracle-separated scenarios (normal flow, bottlenecks, failures, degradation, excursion, rework, holds, ambiguous RCA, insufficient evidence, dynamic recovery) | FR-SIM-007/008/012/014, FR-SEC-010, FR-VIS-011/013, NFR-DATA-001/006, NFR-REP-001 | ScenarioVersion/SeedSet freeze | FinalBenchmarkEvidenceBundle + BenchmarkReproductionPackage |
+| MC-2 — Governed Oracle-separated synthetic manufacturing benchmark | Asrın Dündar (accountable; underlying WP owners unchanged) | BENCH-SIMVAL-001, BENCH-FBC-001 | versioned Oracle-separated scenarios (normal flow, bottlenecks, failures, degradation, excursion, rework, holds, ambiguous RCA, insufficient evidence, dynamic recovery) | FR-SIM-007/008/012/014, FR-SEC-010, FR-VIS-011/013, NFR-DATA-001/006, NFR-REP-001 | ScenarioVersion/SeedSet freeze | FinalBenchmarkEvidenceBundle + BenchmarkReproductionPackage |
 | Simulator realism claim (RL-3, literature/public-evidence calibrated) | Batu | BENCH-SIMVAL-001 | V-MICRO-01…06, RV-01…15, IndependentKPIRecalculator, multi-KPI calibration, replications 30 (≤60) | FR-SIM-001…014, NFR-REP-001, NFR-CAP-003 | RealismProfile LITERATURE_CALIBRATED frozen | RealismReport within FBC-01 evidence |
 | Product acceptance (PRODUCT_PASS / PRODUCT_FAIL) | Asrın (semantics) · Yavuz (generation) | INSP-GOV-ACCEPT, ENG-A…ENG-G lanes | binary; not averaged; all F0/F1/R1 VERIFIED, H0/A1 PASS, S2 measured, C3 measured | all 306 | M8 final disposition | ReleaseAcceptanceRecord + AcceptanceCoverageReport (generated) |
 | Reproducibility claim (R-EXP-3 for key experiments; OSR-3 public) | Yavuz | REPRO-NONOWNER-001, REPRO-CLEANHOST-001, REPRO-OSR3-001, RESTORE-EVID-001 | ≥1 cross-owner rerun per domain key experiment; non-owner reproduction before M8 | NFR-REP-001…008, NFR-DEP-005, NFR-DX-007, FR-EVAL-001/008 | BenchmarkReproductionPackage frozen with campaign | ENG-G / ENG-I evidence |
@@ -3179,7 +3179,7 @@ Canonical direction: Claim ← Evidence ← Benchmark/Run ← Requirements/Syste
 | ORPHAN-CLAIM | major claim lacking EvidenceRef | n/a | ThesisClaimRegister not yet created |
 | ORPHAN-IMPL | material implementation without requirement/architecture rationale | n/a | No implementation exists |
 | Unresolved owner (requirements) | requirement without exactly one PrimaryOwner | 0 | — |
-| Unresolved owner (research contribution) | approved research contribution without primary owner | 1 (MC-2) | GAP-RTM-020 |
+| Unresolved owner (research contribution) | approved research contribution without primary owner | 0 | MC-2 accountable owner: Asrın Dündar |
 
 ### 14.2 Finding register
 
@@ -3187,27 +3187,27 @@ Severity: **B-M4 / B-M5 / B-M6** = blocks the named gate if unresolved; **MAJOR*
 
 | ID | Class | Finding | Affected requirements | Required resolution (no decision taken here) | Resolution owner | Severity |
 |---|---|---|---|---|---|---|
-| GAP-RTM-001 | UNRESOLVED_ARCH_ALLOCATION | 02 ARCH registry has no component IDs for predictive ML (M1/M2/M3 training/inference/calibration) or MLOps registry binding; `ai-intelligence-service` owns predictive intelligence (02 Service Catalog) but only ARCH-AI-ORCH/RAG/TOOLS/PROPOSAL/PROVIDER exist. | FR-ML-001, FR-ML-002, FR-ML-003, FR-ML-007, FR-ML-008 | Append IDs under existing `ARCH-AI-*` / `ARCH-DATA-*` prefixes in 02 (append-only, 02 registry rule) — CHANGE_CONTROL_REQUIRED | Asrın (semantics) · Yavuz (MLflow runtime) | B-M4 |
-| GAP-RTM-002 | UNRESOLVED_ARCH_ALLOCATION | No ARCH IDs for experiment runner, BenchmarkRun registry, AnalysisPackage, evidence sealing, scheduling evaluation harness. | FR-SCH-010, FR-SCH-011, FR-EVAL-001, FR-EVAL-002, FR-EVAL-003, FR-EVAL-004, FR-EVAL-005, FR-EVAL-006, FR-EVAL-007, FR-EVAL-009, FR-EVAL-010 | Append IDs (e.g., under `ARCH-PLAT-*`, `ARCH-DATA-*`, `ARCH-SCH-*`) via 02 change control; do not invent in 03 | Yavuz (runner/evidence) · Asrın (AnalysisPackage) · Batu (harness) | B-M4 (FR-SCH) / B-M5 (R1) |
-| GAP-RTM-003 | UNRESOLVED_ARCH_ALLOCATION | No ARCH ID for Vision dataset pipeline (DatasetVersion/SplitManifest, synthetic generation); ARCH-DATA-LINEAGE is generic. | FR-VIS-011, FR-VIS-012 | Append `ARCH-VIS-*` dataset component via 02 change control | Selman | B-M4 |
+| GAP-RTM-001 | RESOLVED_BY_FINAL_HUMAN_DECISION | RESOLVED — ARCH-AI-ML / ARCH-AI-MLOPS are append-only allocations in02; no new service | FR-ML-001, FR-ML-002, FR-ML-003, FR-ML-007, FR-ML-008 | 01/02 final reconciliation binding; peer review pending | Asrın (semantics) · Yavuz (MLflow runtime) | INFO — implementation/evidence gates remain |
+| GAP-RTM-002 | RESOLVED_BY_FINAL_HUMAN_DECISION | RESOLVED — ARCH-PLAT-EXPERIMENT / ARCH-DATA-EVIDENCE / ARCH-SCH-EVAL in02 | FR-SCH-010, FR-SCH-011, FR-EVAL-001, FR-EVAL-002, FR-EVAL-003, FR-EVAL-004, FR-EVAL-005, FR-EVAL-006, FR-EVAL-007, FR-EVAL-009, FR-EVAL-010 | 01/02 final reconciliation binding; peer review pending | Yavuz (runner/evidence) · Asrın (AnalysisPackage) · Batu (harness) | INFO — implementation/evidence gates remain |
+| GAP-RTM-003 | RESOLVED_BY_FINAL_HUMAN_DECISION | RESOLVED — ARCH-VIS-DATA in02; DatasetVersion/SplitManifest responsibility retained | FR-VIS-011, FR-VIS-012 | 01/02 final reconciliation binding; peer review pending | Selman | INFO — implementation/evidence gates remain |
 | GAP-RTM-004 | SOURCE_GAP | Item 82 NFR Record Model requires VerificationMethod, AcceptanceEvidence, WorkloadProfile, HardwareProfile, DerivedFrom per NFR, but NFR entries carry only Class/Owner/Statement. View D/E/G values for all 120 NFRs are derived. | all 120 NFR | Owner confirmation of View G row per NFR before M4 measurement-strategy gate | each NFR PrimaryOwner | B-M4 |
 | GAP-RTM-005 | SOURCE_GAP | Item 81 Requirement Record Model requires Revision, DerivedFrom, TargetGate, Status per FR; catalog rows carry ID/Class/Owner/Statement/Verify/Evidence only. Gate projection in §15 is class-level + Item 66 hooks. | all 186 FR | Populate machine-readable catalog fields (FR-GOV-001/004) during M0–M2 | Asrın · Yavuz (tooling) | B-M2 (spine) / B-M4 |
 | GAP-RTM-006 | TRACE_CONFIRMATION_REQUIRED | DERIVED_FROM edges in this Draft are an RTM projection at Item + invariant granularity; Item 83 #122 assigns semantic correctness to capability owners. | all 306 | Owner review per domain; record as trace_edges `LastValidatedIn` | all four owners | B-M6 (FRC-INV-06) |
 | GAP-RTM-007 | TRACKING | Verification families are Derived Planning Detail; numeric TestID allocation is an Item 83 open detail. | 173 families | Allocate TEST-<DOMAIN>-NNN when assets are created; keep family→ID map in registry | Yavuz (tooling) · owners | INFO (B-M5 if unresolved) |
 | GAP-RTM-008 | COARSE_REGISTRY | 02 registry is "representative, not exhaustive"; Command Center views share ARCH-EDGE-WEB (persona-split ownership, Item 33). | FR-UI-002…010 | Optional append of per-view ARCH IDs if review needs finer allocation | Asrın · Selman · Batu · Yavuz | MINOR |
-| GAP-RTM-009 | RECONCILIATION_REQUIRED | Perception fact is named `InspectionObservation` (Item 81 FR-VIS-009, Item 62, Item 83 example `EVT-InspectionObservation-v1`) and `InspectionResult` (Item 22/34, 02 IC-VIS-002, 02 Sequence A). Same artifact or two contracts? | FR-VIS-009, FR-VIS-016, FR-UI-003, NFR-DATA-005 | Contract-registry decision (Selman owner, Asrın required reviewer); if two artifacts, update 02 catalog; else record alias | Selman | MAJOR (before contract freeze, M1/M2) |
-| GAP-RTM-010 | RECONCILIATION_REQUIRED | Hold command named `PlaceLotOnHold` (Item 66 #42, Item 83 `CMD-PlaceLotOnHold-v1`, 02 AVG-03 note) and `ApplyMaterialHold` (Items 15/34, 02 Service Catalog, GS-01 chain). | FR-CORE-007, FR-AUTO-010, FR-AUTO-014 | Single canonical command name in contract registry (Asrın), Batu review (execution contracts) | Asrın | MAJOR (before Automation integration) |
-| GAP-RTM-011 | SOURCE_CONFLICT (terminology) | 00 §11 trace states (IMPLEMENTATION_PLANNED, BLOCKED; VERIFY_PLANNED = planned) differ from Item 83 coverage states (IMPLEMENTED, FAILED, STALE; VERIFY_PLANNED = asset exists). | all 306 (state fields) | 01 controls; this RTM separates CoverageState vs PlanningState (§4.3). Align 00 or record convention in 08 DoR/DoD | Asrın · Yavuz | MINOR |
+| GAP-RTM-009 | RESOLVED_BY_FINAL_HUMAN_DECISION | RESOLVED — distinct EVT-InspectionObservation-v1 and IC-VIS-002 InspectionResult; Vision observation / Core quality authority | FR-VIS-009, FR-VIS-016, FR-UI-003, NFR-DATA-005 | 01/02 final reconciliation binding; peer review pending | Selman | INFO — implementation/evidence gates remain |
+| GAP-RTM-010 | RESOLVED_BY_FINAL_HUMAN_DECISION | RESOLVED — PlaceLotOnHold / existing CMD-PlaceLotOnHold-v1; ApplyMaterialHold deprecated | FR-CORE-007, FR-AUTO-010, FR-AUTO-014 | 01/02 final reconciliation binding; peer review pending | Asrın | INFO — implementation/evidence gates remain |
+| GAP-RTM-011 | RESOLVED | 00 explicitly distinguishes PlanningState from01 CoverageState; planning never creates verification evidence. | all 306 (state fields) | 01 controls; this RTM separates CoverageState vs PlanningState (§4.3). Align 00 or record convention in 08 DoR/DoD | Asrın · Yavuz | INFO — future implementation evidence remains required |
 | GAP-RTM-012 | OWNERSHIP_BOUNDARY_NOTE | FR-HITL PrimaryOwner is Asrın (authority semantics, Item 62) while ApprovalRequest/ExecutionAuthorization runtime authority sits in automation-service (Batu, 02 Canonical Authority Matrix); FR-HITL-007/010 are Yavuz. Not a conflict; ARCH-HITL-* has no deployable binding in 02. | FR-HITL-001…010, NFR-PERF-012 | State in 04/06: policy semantics (Asrın) vs runtime enforcement (Batu) vs identity (Yavuz); CR-3 review Batu+Yavuz | Asrın | MINOR |
 | GAP-RTM-013 | NAMESPACE_COLLISION — RESOLVED BY CONVENTION | 00 §8 suggests WBS IDs `WP-CORE-001`; Item 82 uses `WP-SMALL/NORMAL/STRESS` for workload profiles. Recorded here before 04 existed. | downstream 04 | Resolved in 04 §2 / WBS-GAP-01 by pattern-based disambiguation: work packages keep `WP-<AREA>-NNN` and always match the full pattern `WP-[A-Z0-9]+-[0-9]{3}`, workload profiles carry no numeric suffix. Remaining obligation: every tool parses the full pattern, never a bare `WP-` prefix match. | Yavuz (tooling) | RESOLVED — MINOR (tooling rule stands) |
-| GAP-RTM-014 | NAMESPACE_COLLISION / SUPERSEDED_TERM | Item 51 capacity profiles `CP-SMALL/NORMAL/STRESS` (unquantified) vs Item 82 quantified `WP-*`; `CP-*` also names critical paths CP-1/2/3. | NFR-PERF/CAP/RES | Use Item 82 `WP-*`/`SP-*` (latest refinement); 02 OD-RES-01 should be updated | Yavuz | MINOR |
-| GAP-RTM-015 | STALE_IN_02 | 02 OD-REC-01 and OD-RES-01 still describe RPO and resource envelope numbers as deferred to Item 82, but Item 82 has frozen them (RPO ≤ 24 h; 12/14 GiB). | NFR-REC-001, NFR-RES-001, NFR-RES-002 | Close OD-REC-01/OD-RES-01 in 02 by editorial update (C0/C1) | Yavuz | MINOR |
+| GAP-RTM-014 | RESOLVED | CHG-006 updated02 workload/capacity nomenclature to01 Item82 WP/SP profiles. | NFR-PERF/CAP/RES | Use Item 82 `WP-*`/`SP-*` (latest refinement); 02 OD-RES-01 should be updated | Yavuz | INFO — future implementation evidence remains required |
+| GAP-RTM-015 | RESOLVED | CHG-006 updated02 RPO/resource references to the existing01 Item82 limits. | NFR-REC-001, NFR-RES-001, NFR-RES-002 | Close OD-REC-01/OD-RES-01 in 02 by editorial update (C0/C1) | Yavuz | INFO — future implementation evidence remains required |
 | GAP-RTM-016 | NAMESPACE_OVERLOAD | `RES-*` drills vs `NFR-RES-*` vs `RES-INV-*`; 01 Item 34 two-digit `ARCH-INV-nn` vs 02 global `ARCH-INV-nnn` (02 audit issue 4). | tooling | Trace linter must match full IDs with prefix boundaries; never parse by suffix | Yavuz | MINOR |
 | GAP-RTM-017 | OWNER_WORDING | NFR-DX-003 ("relevant capability owner; PrimaryOwner Yavuz") and NFR-DATA-002 ("relevant model owner; PrimaryOwner Asrın") use compound wording. | NFR-DX-003, NFR-DATA-002 | RTM records PrimaryOwner only; supporting owners listed as reviewers in 06 | Yavuz · Asrın | INFO |
-| GAP-RTM-018 | INCOMPLETE_PROJECTION_IN_02 | 02 NFR tables summarize only 3 of 10 NFR-GOV rows and omit owners for NFR-REP-003…008 and NFR-RES-006…008 (01 assigns Yavuz). | 13 NFRs | Editorial update of 02 (C0); 01 remains authoritative meanwhile | Yavuz | INFO |
-| GAP-RTM-019 | WEAK_SOURCE_CITATION_IN_02 | 02 Service Catalog marks manufacturing-simulator ownership as a Derived Architecture Detail ("task assignment"), although Item 62 explicitly names Batu primary owner of the Operational Simulator. | FR-SIM-* | Editorial citation fix in 02 (C0); no ownership change | Batu | INFO |
-| GAP-RTM-020 | UNRESOLVED_OWNER (research) | MC-2 (Governed Synthetic Manufacturing Benchmark) has no primary owner in Item 58 Team Research Responsibilities; 02 Research interface also omits it. | MC-2 claim trace (View H) | Owner assignment via change control before M6 protocol freeze; do not assign in 03 | team (change control) | B-M6 |
-| GAP-RTM-021 | MEASUREMENT_CONTEXT_OPEN | Documented CPU baseline (NFR-PERF-009, **A1**), final Vision HardwareProfile (NFR-PERF-010) and normal developer hardware (NFR-DX-001…005) are not pinned (Item 82 open questions; OD-EVID-01). | NFR-PERF-009, NFR-PERF-010, NFR-DX-001…005 | Record HardwareProfiles before M6 NFR freeze; an A1 without its HardwareProfile cannot PASS | Selman · Yavuz | B-M6 |
+| GAP-RTM-018 | RESOLVED | CHG-016 restored all120 distinct02 NFR rows/classes and their canonical owners. | 13 NFRs | Editorial update of 02 (C0); 01 remains authoritative meanwhile | Yavuz | INFO — future implementation evidence remains required |
+| GAP-RTM-019 | RESOLVED | CHG-016 cites01 Item62 for simulator ownership; no owner was reassigned. | FR-SIM-* | Editorial citation fix in 02 (C0); no ownership change | Batu | INFO — future implementation evidence remains required |
+| GAP-RTM-020 | RESOLVED_BY_FINAL_HUMAN_DECISION | RESOLVED — Asrın Dündar accountable for MC-2; underlying WP owners unchanged | MC-2 claim trace (View H) | 01/02 final reconciliation binding; peer review pending | team (change control) | INFO — implementation/evidence gates remain |
+| GAP-RTM-021 | RESOLVED_BY_FINAL_HUMAN_DECISION | RESOLVED — primary shared-host profile pinned in01; actual run measurement/identity remains required | NFR-PERF-009, NFR-PERF-010, NFR-DX-001…005 | 01/02 final reconciliation binding; peer review pending | Selman · Yavuz | INFO — implementation/evidence gates remain |
 | GAP-RTM-022 | KNOWN_SOURCE_DEFECT (closed) | Item 43 heading duplicated verbatim in 01 (ENV-INV-01…20 appear twice). | — | Treated as one logical Item (02 R-001); trace linter must de-duplicate invariant IDs | — | CLOSED/INFO |
 | GAP-RTM-023 | ADR_IDENTITY_PENDING | Backfill ADRs (02 list of 13) have no minted ADR-NNNN IDs; DECIDED_BY uses `ADR:backfill-NN` placeholders. | FR-CORE-012, FR-SIM-001, FR-SCH-009, FR-AUTO-002, FR-AI-001, FR-SEC-001, FR-PLAT-001/006, FR-RAG-005 | Mint ADR IDs at M1 (02 Milestone ADR Gates); update edges; DECIDED_BY never satisfies VERIFIED_BY | Asrın (index) · decision owners | MINOR |
 
@@ -3640,14 +3640,14 @@ FR-CORE-007:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-007 L169855"}
   DERIVED_FROM: [ITEM-09, ITEM-15, ITEM-23, WL-INV-06]
   ALLOCATED_TO: [ARCH-CORE-CMD, ARCH-CORE-DOMAIN]
-  REALIZED_BY: {surface: "ApplyMaterialHold command handler (contract name reconciliation: GAP-RTM-010)", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
-  EXPOSED_BY: ["hold command (ApplyMaterialHold / PlaceLotOnHold — RECONCILIATION_REQUIRED)"]
+  REALIZED_BY: {surface: "PlaceLotOnHold command handler (CMD-PlaceLotOnHold-v1)", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  EXPOSED_BY: ["PlaceLotOnHold / CMD-PlaceLotOnHold-v1"]
   VERIFIED_BY: [TEST-CORE-STATEMACHINE]
   EXERCISED_IN: [E2E-01, AV-SCEN-01]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [CONTRACT-RECON]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-CORE-008:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-008 L169856"}
   DERIVED_FROM: [ITEM-09, ITEM-24, HITL-INV-03]
@@ -4284,14 +4284,14 @@ FR-VIS-009:
   meta: {class: F1, owner: Selman, anchor: "01 Item81 FR-VIS-009 L169935"}
   DERIVED_FROM: [ITEM-16, ITEM-22, ITEM-62]
   ALLOCATED_TO: [ARCH-VIS-INFER, ARCH-CTR-EVTSCHEMA]
-  REALIZED_BY: {surface: "InspectionObservation/InspectionResult publisher (name reconciliation GAP-RTM-009)", deployable: "vision-service", ref: TBD_BY_IMPLEMENTATION}
-  EXPOSED_BY: ["IC-VIS-002 InspectionResult (≙ InspectionObservation — RECONCILIATION_REQUIRED)", "IC-VIS-003..005"]
+  REALIZED_BY: {surface: "InspectionObservation publisher; Core normalizes separate InspectionResult", deployable: "vision-service", ref: TBD_BY_IMPLEMENTATION}
+  EXPOSED_BY: ["EVT-InspectionObservation-v1; IC-VIS-002 is separate normalized InspectionResult", "IC-VIS-003..005"]
   VERIFIED_BY: [TEST-VIS-PIPELINE, TEST-EVT-SCHEMA]
   EXERCISED_IN: [AV-SCEN-01, E2E-01]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [CONTRACT-RECON]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-VIS-010:
   meta: {class: F1, owner: Selman, anchor: "01 Item81 FR-VIS-010 L169936"}
   DERIVED_FROM: [ITEM-16, CV-INV-07]
@@ -4306,7 +4306,7 @@ FR-VIS-010:
 FR-VIS-011:
   meta: {class: F1, owner: Selman, anchor: "01 Item81 FR-VIS-011 L169937"}
   DERIVED_FROM: [ITEM-17, ITEM-55, ITEM-56, VMLOPS-INV-03, SYN-INV-01]
-  ALLOCATED_TO: [ARCH-DATA-LINEAGE, ARCH-VIS-MODEL]
+  ALLOCATED_TO: [ARCH-DATA-LINEAGE, ARCH-VIS-MODEL, ARCH-VIS-DATA]
   REALIZED_BY: {surface: "dataset card + provenance class field (SYNTHETIC/PUBLIC)", deployable: "Vision dataset pipeline (GAP-RTM-003 allocation)", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["Vision DatasetVersion"]
   VERIFIED_BY: [INSP-VIS-DATASET, BENCH-VIS-001]
@@ -4314,11 +4314,11 @@ FR-VIS-011:
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-VIS-012:
   meta: {class: F1, owner: Selman, anchor: "01 Item81 FR-VIS-012 L169938"}
   DERIVED_FROM: [ITEM-17, ITEM-45, VMLOPS-INV-01, MLOPS-INV-04, VMLOPS-INV-04]
-  ALLOCATED_TO: [ARCH-DATA-LINEAGE, ARCH-DATA-OBJ]
+  ALLOCATED_TO: [ARCH-DATA-LINEAGE, ARCH-DATA-OBJ, ARCH-VIS-DATA]
   REALIZED_BY: {surface: "sealed DatasetVersion + SplitManifest (train/calibration/final)", deployable: "Vision dataset pipeline (GAP-RTM-003 allocation)", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["Vision DatasetVersion", "SplitManifest"]
   VERIFIED_BY: [INSP-VIS-DATASET, TEST-DATA-SPLITLEAK, BENCH-VIS-001]
@@ -4326,7 +4326,7 @@ FR-VIS-012:
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-VIS-013:
   meta: {class: F1, owner: Selman, anchor: "01 Item81 FR-VIS-013 L169939"}
   DERIVED_FROM: [ITEM-16, CV-INV-02, CVEVAL-INV-13, DATA-INV-20]
@@ -4386,7 +4386,7 @@ FR-VIS-016:
 FR-ML-001:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-ML-001 L169950"}
   DERIVED_FROM: [ITEM-27, ML-INV-02, ML-INV-12]
-  ALLOCATED_TO: [ARCH-AI-ORCH, ARCH-DATA-LINEAGE]
+  ALLOCATED_TO: [ARCH-AI-ORCH, ARCH-DATA-LINEAGE, ARCH-AI-ML, ARCH-AI-MLOPS]
   REALIZED_BY: {surface: "M1 equipment-risk model training/inference", deployable: "ai-intelligence-service (predictive intelligence) — GAP-RTM-001", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["DatasetVersion/SplitManifest"]
   USES_MODEL: ["M1 ModelPackage"]
@@ -4395,11 +4395,11 @@ FR-ML-001:
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "CI + EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-ML-002:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-ML-002 L169951"}
   DERIVED_FROM: [ITEM-27, ML-INV-08]
-  ALLOCATED_TO: [ARCH-AI-ORCH, ARCH-DATA-LINEAGE]
+  ALLOCATED_TO: [ARCH-AI-ORCH, ARCH-DATA-LINEAGE, ARCH-AI-ML, ARCH-AI-MLOPS]
   REALIZED_BY: {surface: "M2 cycle-time/tardiness model", deployable: "ai-intelligence-service (predictive intelligence) — GAP-RTM-001", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["DatasetVersion/SplitManifest"]
   USES_MODEL: ["M2 ModelPackage"]
@@ -4408,11 +4408,11 @@ FR-ML-002:
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "CI + EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-ML-003:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-ML-003 L169952"}
   DERIVED_FROM: [ITEM-27, ML-INV-09, ML-INV-10]
-  ALLOCATED_TO: [ARCH-AI-ORCH, ARCH-DATA-LINEAGE]
+  ALLOCATED_TO: [ARCH-AI-ORCH, ARCH-DATA-LINEAGE, ARCH-AI-ML, ARCH-AI-MLOPS]
   REALIZED_BY: {surface: "M3 pre-inspection quality model", deployable: "ai-intelligence-service (predictive intelligence) — GAP-RTM-001", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["DatasetVersion/SplitManifest"]
   USES_MODEL: ["M3 ModelPackage"]
@@ -4421,11 +4421,11 @@ FR-ML-003:
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "CI + EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-ML-004:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-ML-004 L169953"}
   DERIVED_FROM: [ITEM-27, ITEM-22, INT-INV-04]
-  ALLOCATED_TO: [ARCH-CTR-EVTSCHEMA, ARCH-AI-ORCH]
+  ALLOCATED_TO: [ARCH-CTR-EVTSCHEMA, ARCH-AI-ORCH, ARCH-AI-ML, ARCH-AI-MLOPS]
   REALIZED_BY: {surface: "common Prediction contract + PredictionCreated event", deployable: "ai-intelligence-service", ref: TBD_BY_IMPLEMENTATION}
   EXPOSED_BY: ["IC-AI-002 Prediction"]
   VERIFIED_BY: [TEST-ML-CONTRACT, TEST-EVT-SCHEMA]
@@ -4436,7 +4436,7 @@ FR-ML-004:
 FR-ML-005:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-ML-005 L169954"}
   DERIVED_FROM: [ITEM-27, ITEM-45, MLOPS-INV-08, INT-INV-07]
-  ALLOCATED_TO: [ARCH-CTR-EVTSCHEMA, ARCH-DATA-LINEAGE]
+  ALLOCATED_TO: [ARCH-CTR-EVTSCHEMA, ARCH-DATA-LINEAGE, ARCH-AI-ML, ARCH-AI-MLOPS]
   REALIZED_BY: {surface: "ModelPackage/version + input revision fields", deployable: "ai-intelligence-service", ref: TBD_BY_IMPLEMENTATION}
   EXPOSED_BY: ["IC-AI-002 Prediction"]
   USES_MODEL: ["M1/M2/M3 ModelPackage"]
@@ -4448,7 +4448,7 @@ FR-ML-005:
 FR-ML-006:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-ML-006 L169955"}
   DERIVED_FROM: [ITEM-27, ML-INV-06, MLOPS-INV-11]
-  ALLOCATED_TO: [ARCH-AI-ORCH]
+  ALLOCATED_TO: [ARCH-AI-ORCH, ARCH-AI-ML, ARCH-AI-MLOPS]
   REALIZED_BY: {surface: "calibration step + calibrated probability output", deployable: "ai-intelligence-service", ref: TBD_BY_IMPLEMENTATION}
   USES_MODEL: ["calibration artifact bound to ModelPackage"]
   VERIFIED_BY: [BENCH-ML-M1-001, BENCH-ML-M2-001, BENCH-ML-M3-001]
@@ -4459,18 +4459,18 @@ FR-ML-006:
 FR-ML-007:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-ML-007 L169956"}
   DERIVED_FROM: [ITEM-27, ITEM-45, ITEM-46, DA-INV-10, DATA-INV-24]
-  ALLOCATED_TO: [ARCH-DATA-LINEAGE]
+  ALLOCATED_TO: [ARCH-DATA-LINEAGE, ARCH-AI-ML, ARCH-AI-MLOPS]
   REALIZED_BY: {surface: "DatasetVersion/SplitManifest binding in training/eval runs", deployable: "MLOps/data pipeline — GAP-RTM-001", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["DatasetVersion", "SplitManifest"]
   VERIFIED_BY: [INSP-DATA-PROVENANCE, BENCH-ML-M1-001, BENCH-ML-M2-001, BENCH-ML-M3-001]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-ML-008:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-ML-008 L169957"}
   DERIVED_FROM: [ITEM-27, ITEM-60, MLOPS-INV-09, EXP-INV-04, ML-INV-04]
-  ALLOCATED_TO: [ARCH-DATA-LINEAGE]
+  ALLOCATED_TO: [ARCH-DATA-LINEAGE, ARCH-AI-ML, ARCH-AI-MLOPS]
   REALIZED_BY: {surface: "FINAL-partition access guard in training/tuning jobs", deployable: "MLOps/data pipeline — GAP-RTM-001", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["SplitManifest (FINAL sealed)"]
   VERIFIED_BY: [TEST-ML-LEAKAGE, TEST-DATA-SPLITLEAK, INSP-EVAL-PARTITION, BENCH-ML-M1-001, BENCH-ML-M2-001, BENCH-ML-M3-001]
@@ -4478,7 +4478,7 @@ FR-ML-008:
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "CI + EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 ```
 
 ### 17.FH FR-RAG
@@ -4883,7 +4883,7 @@ FR-SCH-009:
 FR-SCH-010:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SCH-010 L170011"}
   DERIVED_FROM: [ITEM-59, ITEM-31, BASE-INV-13]
-  ALLOCATED_TO: [ARCH-SCH-HEURISTIC, ARCH-VIS-EVAL]
+  ALLOCATED_TO: [ARCH-SCH-HEURISTIC, ARCH-VIS-EVAL, ARCH-SCH-EVAL]
   REALIZED_BY: {surface: "FIFO/EDD/CR/SPT/SRPT baseline implementations (BaselineDefinition)", deployable: "scheduling evaluation harness — GAP-RTM-002", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["BaselineDefinition"]
   VERIFIED_BY: [BENCH-SCH-001, BENCH-RQ2-001]
@@ -4891,12 +4891,12 @@ FR-SCH-010:
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
-  note: "ARCH-VIS-EVAL is not a fit; harness lacks dedicated ARCH ID (GAP-RTM-002)."
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
+  note: "ARCH-SCH-EVAL is the dedicated scheduling-evaluation component; ARCH-VIS-EVAL is Vision-specific."
 FR-SCH-011:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SCH-011 L170012"}
   DERIVED_FROM: [ITEM-31, SCH-INV-12]
-  ALLOCATED_TO: [ARCH-SCH-ENGINE]
+  ALLOCATED_TO: [ARCH-SCH-ENGINE, ARCH-SCH-EVAL]
   REALIZED_BY: {surface: "churn/stability metric calculators separate from objective", deployable: "scheduling evaluation harness — GAP-RTM-002", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["MetricDefinitions"]
   VERIFIED_BY: [BENCH-SCH-001, BENCH-RQ2-001]
@@ -4904,7 +4904,7 @@ FR-SCH-011:
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-SCH-012:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SCH-012 L170013"}
   DERIVED_FROM: [ITEM-19, ITEM-51, PERF-INV-10, RES-INV-11]
@@ -5643,7 +5643,7 @@ FR-SEC-010:
 FR-EVAL-001:
   meta: {class: R1, owner: Yavuz, anchor: "01 Item81 FR-EVAL-001 L170119"}
   DERIVED_FROM: [ITEM-60, ITEM-79, EXP-INV-30, PERF-INV-01]
-  ALLOCATED_TO: [ARCH-PLAT-RELEASE, ARCH-DATA-LINEAGE, ARCH-PLAT-CLI]
+  ALLOCATED_TO: [ARCH-PLAT-RELEASE, ARCH-DATA-LINEAGE, ARCH-PLAT-CLI, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE]
   REALIZED_BY: {surface: "ExperimentRun manifest binding + runner CLI", deployable: "experiment runner — GAP-RTM-002", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["ExperimentDefinition", "SeedSet", "HardwareProfile"]
   VERIFIED_BY: [TEST-EVAL-RUNNER, REPRO-NONOWNER-001, BENCH-FBC-001]
@@ -5651,11 +5651,11 @@ FR-EVAL-001:
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "CI + EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-EVAL-002:
   meta: {class: R1, owner: Asrın, anchor: "01 Item81 FR-EVAL-002 L170120"}
   DERIVED_FROM: [ITEM-60, EXP-INV-04, EXP-INV-07]
-  ALLOCATED_TO: [ARCH-DATA-LINEAGE]
+  ALLOCATED_TO: [ARCH-DATA-LINEAGE, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE]
   REALIZED_BY: {surface: "partition + seed namespace fields in ExperimentDefinition", deployable: "experiment definitions — GAP-RTM-002", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["ExperimentDefinition", "SplitManifest"]
   VERIFIED_BY: [INSP-EVAL-PARTITION, TEST-DATA-SPLITLEAK, BENCH-FBC-001]
@@ -5663,22 +5663,22 @@ FR-EVAL-002:
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-EVAL-003:
   meta: {class: R1, owner: Yavuz, anchor: "01 Item81 FR-EVAL-003 L170121"}
   DERIVED_FROM: [ITEM-79, BENCH-INV-12]
-  ALLOCATED_TO: [ARCH-DATA-LINEAGE, ARCH-DATA-PG]
+  ALLOCATED_TO: [ARCH-DATA-LINEAGE, ARCH-DATA-PG, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE]
   REALIZED_BY: {surface: "BenchmarkRunRecord persistence", deployable: "benchmark run registry — GAP-RTM-002", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["BenchmarkRunRecord"]
   VERIFIED_BY: [TEST-EVAL-RUNRECORD, BENCH-FBC-001]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-EVAL-004:
   meta: {class: R1, owner: Yavuz, anchor: "01 Item81 FR-EVAL-004 L170122"}
   DERIVED_FROM: [ITEM-79, EXP-INV-18, BENCH-INV-54, ENV-INV-17]
-  ALLOCATED_TO: [ARCH-DATA-LINEAGE]
+  ALLOCATED_TO: [ARCH-DATA-LINEAGE, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE]
   REALIZED_BY: {surface: "append-only run status incl. failed/invalid attempts", deployable: "benchmark run registry — GAP-RTM-002", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["BenchmarkRunRecord", "RunDispositionRegister"]
   VERIFIED_BY: [TEST-EVAL-RUNRECORD, TEST-DATA-ACCOUNTING, BENCH-FBC-001]
@@ -5686,11 +5686,11 @@ FR-EVAL-004:
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-EVAL-005:
   meta: {class: R1, owner: Yavuz, anchor: "01 Item81 FR-EVAL-005 L170123"}
   DERIVED_FROM: [ITEM-79, EXP-INV-17, BENCH-INV-15]
-  ALLOCATED_TO: [ARCH-DATA-LINEAGE]
+  ALLOCATED_TO: [ARCH-DATA-LINEAGE, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE]
   REALIZED_BY: {surface: "RetryOf + disposition provenance", deployable: "benchmark run registry — GAP-RTM-002", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["RunDispositionRegister"]
   VERIFIED_BY: [TEST-EVAL-RUNRECORD, BENCH-FBC-001]
@@ -5698,11 +5698,11 @@ FR-EVAL-005:
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-EVAL-006:
   meta: {class: R1, owner: Asrın, anchor: "01 Item81 FR-EVAL-006 L170124"}
   DERIVED_FROM: [ITEM-60, ITEM-79, BENCH-INV-43, DATA-INV-12]
-  ALLOCATED_TO: [ARCH-DATA-LINEAGE, ARCH-DATA-OBJ]
+  ALLOCATED_TO: [ARCH-DATA-LINEAGE, ARCH-DATA-OBJ, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE]
   REALIZED_BY: {surface: "versioned AnalysisPackage (metric calculators, tests, tables, figures)", deployable: "AnalysisPackage — GAP-RTM-002", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["AnalysisPackage"]
   VERIFIED_BY: [TEST-EVAL-ANALYSIS, INSP-EVAL-CLAIMS, BENCH-FBC-001]
@@ -5710,22 +5710,22 @@ FR-EVAL-006:
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-EVAL-007:
   meta: {class: R1, owner: Yavuz, anchor: "01 Item81 FR-EVAL-007 L170125"}
   DERIVED_FROM: [ITEM-79, BENCH-INV-51, BENCH-INV-53]
-  ALLOCATED_TO: [ARCH-DATA-OBJ, ARCH-DATA-LINEAGE]
+  ALLOCATED_TO: [ARCH-DATA-OBJ, ARCH-DATA-LINEAGE, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE]
   REALIZED_BY: {surface: "EvidenceSeal + FinalBenchmarkEvidenceBundle assembly", deployable: "evidence sealing tooling — GAP-RTM-002", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["FinalBenchmarkEvidenceBundle"]
   VERIFIED_BY: [INSP-EVAL-SEAL, TEST-DATA-REFINTEGRITY, BENCH-FBC-001]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-EVAL-008:
   meta: {class: R1, owner: Yavuz, anchor: "01 Item81 FR-EVAL-008 L170126"}
   DERIVED_FROM: [ITEM-53, ITEM-79, DR-INV-05, BENCH-INV-77]
-  ALLOCATED_TO: [ARCH-PLAT-BACKUP, ARCH-DATA-OBJ]
+  ALLOCATED_TO: [ARCH-PLAT-BACKUP, ARCH-DATA-OBJ, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE]
   REALIZED_BY: {surface: "off-host evidence copy + restore test job", deployable: "backup/restore automation", ref: TBD_BY_IMPLEMENTATION}
   GOVERNED_BY: ["BackupPolicy (RC-B)"]
   VERIFIED_BY: [RESTORE-EVID-001, INSP-REC-BACKUP]
@@ -5737,18 +5737,18 @@ FR-EVAL-008:
 FR-EVAL-009:
   meta: {class: R1, owner: Asrın, anchor: "01 Item81 FR-EVAL-009 L170127"}
   DERIVED_FROM: [ITEM-58, ITEM-79, EXP-INV-29, BENCH-INV-46]
-  ALLOCATED_TO: [ARCH-DATA-LINEAGE]
+  ALLOCATED_TO: [ARCH-DATA-LINEAGE, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE]
   REALIZED_BY: {surface: "RQ outcome derivation step (SUPPORTED/PARTIAL/NOT/INCONCLUSIVE) from sealed evidence", deployable: "AnalysisPackage — GAP-RTM-002", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["AnalysisPackage", "ResearchHypothesis"]
   VERIFIED_BY: [INSP-EVAL-CLAIMS, TEST-EVAL-ANALYSIS, BENCH-FBC-001]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 FR-EVAL-010:
   meta: {class: R1, owner: Asrın, anchor: "01 Item81 FR-EVAL-010 L170128"}
   DERIVED_FROM: [ITEM-76, ITEM-77, ITEM-79, BENCH-INV-68]
-  ALLOCATED_TO: [ARCH-DATA-LINEAGE]
+  ALLOCATED_TO: [ARCH-DATA-LINEAGE, ARCH-PLAT-EXPERIMENT, ARCH-DATA-EVIDENCE]
   REALIZED_BY: {surface: "PortfolioMetricExport / thesis tables generated from sealed analysis", deployable: "AnalysisPackage exports — GAP-RTM-002", ref: TBD_BY_IMPLEMENTATION}
   USES_DATA: ["PortfolioMetricExport"]
   VERIFIED_BY: [INSP-EVAL-CLAIMS, BENCH-FBC-001]
@@ -5756,7 +5756,7 @@ FR-EVAL-010:
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
 ```
 
 ### 17.NA NFR-GOV
@@ -7141,7 +7141,7 @@ Planned query surface (syntax may evolve, Item 83): `mfgctl trace validate | cov
 | Invent EvidenceIDs / observed metrics / PASS | RTM-INV-68; 00 §23 |
 | GS-01 as universal verification | Item 83 #85; §11.4 lists what it cannot prove |
 | Allocate ML/Evaluation requirements to invented ARCH IDs | 02 registry is append-only under change control; recorded as GAP-RTM-001/002/003 |
-| Resolve InspectionObservation/InspectionResult or PlaceLotOnHold/ApplyMaterialHold by picking one | silent resolution forbidden (00 §2.1); GAP-RTM-009/010 |
+| Resolve InspectionObservation → separate Core InspectionResult or PlaceLotOnHold/PlaceLotOnHold by picking one | silent resolution forbidden (00 §2.1); GAP-RTM-009/010 |
 | Assign MC-2 owner in RTM | owner assignment is not a derived detail (00 §3.2); GAP-RTM-020 |
 | Treat ADR as verification | RTM-INV-17; DECIDED_BY kept separate |
 | Count S2 MISS as trace failure | Item 83 #68; View G allows MISS |
@@ -7158,7 +7158,7 @@ Planned query surface (syntax may evolve, Item 83): `mfgctl trace validate | cov
 | 5 | controlled relation vocabulary | MET | §4.2, schema enum |
 | 6 | stable TestID conventions | DEFINED; numeric allocation TBD | §5, GAP-RTM-007 |
 | 7 | every F0/F1 traced to source decision | MET (pending owner confirmation) | View A, GAP-RTM-006 |
-| 8 | every F0/F1 architecture allocation | MET (19 coarse) | View B, GAP-RTM-001/002/003 |
+| 8 | every F0/F1 architecture allocation | MET (0 previously identified ML/evaluation/dataset coarse allocations; shared UI components remain valid) | View B, GAP-RTM-001/002/003 |
 | 9 | F0/F1 implementation mapping by M4 | PLANNED | View C |
 | 10 | F0/F1 verification mapping by M5 | PLANNED (design 100%) | View D |
 | 11 | F0/F1 final evidence mapping by M8 | NOT_YET_EXECUTED | View E |
@@ -7242,7 +7242,7 @@ Planned query surface (syntax may evolve, Item 83): `mfgctl trace validate | cov
 |---|---|
 | New decision contrary to 01/02? | None. All non-derived items escalated to View I. |
 | Latest approved technology/authority used? | Yes (Item 61 baseline; 02 R-002 active-schedule reading; R-007 Qdrant). |
-| Role ownership changed? | No. PrimaryOwner copied from 01; MC-2 left unassigned. |
+| Role ownership changed? | No. PrimaryOwner copied from01; MC-2 accountability explicitly assigned by the final human decision. |
 | Copy-paste of 01/02? | No SHALL text; thresholds are short index forms with Item 82 as canonical. |
 | F0/F1/R1 complete; negative paths present? | Yes; negative assets required and audited (C-08…C-14). |
 | Implementation/evidence invented? | No. Paths TBD_BY_IMPLEMENTATION; no Run/Evidence/Claim IDs. |
@@ -7268,3 +7268,14 @@ Catalog identity is the stable RequirementID and Item/heading; a line number is 
 Missing catalog Revision/Status and structured NFR VerificationMethod/AcceptanceEvidence/WorkloadProfile/HardwareProfile/DerivedFrom fields remain null/unspecified where01 does not provide them. Derived planning expectations here are not canonical field population, TestRun/EvidenceID, executed results or VERIFIED coverage. Null is a source gap requiring owner confirmation, never an implicit default or permission to pass readiness. The306 requirement-field and120 NFR-metadata diagnostics remain.
 
 Line-only citations without a unique stable-ID/Item/heading target remain review findings; a repaired RTM catalog location does not certify every numeric reference in02 or other artifacts. DOMAIN_MIGRATION_CHANGELOG.md is a current source reconstruction, not evidence of historical approval or product deployment.
+
+
+## Final human reconciliation binding — 2026-10-13
+
+01 §Final Human Reconciliation and02 §Final human reconciliation govern this projection. Vision/NDT publishes immutable InspectionObservation (existing EVT-InspectionObservation-v1); Core normalizes separate InspectionResult (existing IC-VIS-002) and owns canonical manufacturing/quality state. PlaceLotOnHold / CMD-PlaceLotOnHold-v1 is the single hold-placement command; ApplyMaterialHold is deprecated terminology, never a second contract. Other protected identities follow the01 action table, with exact approval/revision/freshness/idempotency binding. Simulator/Oracle, Twin/Qdrant projections, AI READ/SIMULATE/PROPOSE, Scheduler candidates, HITL, identity and UI boundaries remain unchanged.
+
+ARCH-AUTO-WORKFLOW (durable Automation/Temporal layer) coordinates GS-01/E2E across Inspection/NDT→Core quality→RCA→recovery→HITL→governed Core commands→verified effect→Twin/Audit. It does not acquire Core authority. MC-2 accountable owner is Asrın Dündar; contributing WP owners remain73/17/32/57. The primary shared-host HardwareProfile and accepted LaneA/B/C portfolio are pinned in01; acquisition/rights/source fields not locally verified are NEEDS_SOURCE_VERIFICATION, not invented facts or performance results. Real/public held-out evaluation and source-specific limitations remain mandatory where claimed.
+
+HARD/SOFT refer to declared work/readiness consumers, not automatic runtime/deployment/import relations. Non-CONTRACT F1 entries DEP-025/045/058/076/094 have no fixture fallback: real producer readiness at the declared stage is required, while development stubs are not satisfaction evidence. DN-VIS-MODELS now declares INTEGRATION_READY for DEP-060/194; operational serving must load promoted required-mode artifacts with provenance. Source-supported deadlines and per-consumer scope are defined in05, without shifting canonical ownership or schedules.
+
+GAP-RTM-004/005 remain ACCEPTED_WITH_RATIONALE for this pre-implementation baseline: missing canonical record metadata is not fabricated. FR-GOV-001/004 and the relevant NFR owners must supply/review actual fields and measurement definitions before their declared gates; projectctl retains nulls/warnings and never grants READY/VERIFIED from planned prose. Owner trace confirmation GAP-RTM-006 and final schema/version/card specifics remain ordinary implementation/review prerequisites, not unresolved choices among the eight approved policy groups.

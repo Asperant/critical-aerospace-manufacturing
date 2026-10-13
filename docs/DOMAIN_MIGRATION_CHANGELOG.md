@@ -46,6 +46,19 @@ CTRL-DOC-003 / CHG-002 corrects false source-domain relabeling: SECOM remains se
 
 The01 notice describes docs-only deployable mappings `fab-core`→`manufacturing-core`, `fab-simulator`→`manufacturing-simulator`, `fab-bff`→`operations-bff`, `fabctl`→`mfgctl`. Repository bootstrap currently implements projectctl and management support, not those product deployables. A current code/config scan is recorded in the final audit; it cannot prove deployment of absent product services.
 
-## Pending semantics and acceptance
+## Historical pending semantics and acceptance — superseded by the final decisions
 
 InspectionObservation/InspectionResult transformation/schema acceptance, protected hold/dispatch aliases, new ARCH allocations, graph readiness/fallback/precision/need-by decisions, MC-2 ownership, hardware pinning, E2E coordinator and final dataset selection remain pending where no unique approved decision exists. Current CHG peer reviews remain outstanding. Documentation repair is not executed verification, release acceptance, or a READY/DONE transition.
+
+
+## Final approved semantic reconciliation — 2026-10-13
+
+The eight final human decisions are DECIDED and applied normatively in01/02 and the downstream03–08 projections. InspectionObservation and InspectionResult remain distinct; IC-VIS-002 and EVT-InspectionObservation-v1 are retained. CMD-PlaceLotOnHold-v1 is the canonical hold identity, while ApplyMaterialHold is deprecated rather than another contract; ActivateScheduleCommand/RequestMaintenance likewise resolve to existing canonical actions. No lifecycle-as-hold or route-pointer-as-rework substitution.
+
+Existing-service component allocations are appended in02 (ML/MLOps, experiment/evidence, scheduling evaluation, Vision data) and traced in03; no new infrastructure. DN-VIS-MODELS gains a genuine operational-serving INTEGRATION_READY predicate for DEP-060/194; five non-CONTRACT F1 fallbacks are removed in table/YAML/aggregate mirrors. Topology remains100nodes/217edges/208HARD/9SOFT/0HARDcycles. Consumer field-level unknowns and raw deadline windows remain diagnostic-visible with explicit per-consumer/§18 interpretation, never automatic authorization.
+
+MC-2 accountable owner is Asrın; WP owners73/17/32/57 unchanged. Shared-host hardware is pinned without performance claims or a mandatory secondaryNVMe. Durable Automation/Temporal coordinates GS-01 with Core authority intact. The accepted real/public+literature+simulator portfolio is explicit; semiconductor references remain optional legacy/cross-domain only and unverified source metadata is NEEDS_SOURCE_VERIFICATION.
+
+The DoR mapping is lossless but may be many-to-one (DOR-WP-03/04→DOR-TASK-04). WP-X-001 remains an optional unscheduled boundary-maintenance documentation/claim guardrail, not implementation of an excluded product capability. All306requirement IDs and179WP IDs remain stable. Item43 duplicate copies remain one logical item under02R-001; they are not competing contracts.
+
+This is docs-only branch reconciliation pending independent qualified change review and integration. No Plane/setup/product state mutation, scientific result, dataset acquisition or runtime verification is claimed. Existing setup evidence remains bound to its original source hashes and observed events; changed canonical source hashes do not rewrite that history.

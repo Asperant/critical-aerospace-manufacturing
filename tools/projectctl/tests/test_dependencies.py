@@ -18,9 +18,9 @@ def test_dependency_baseline_and_findings(graph):
     assert hard_cycle(graph.edges) is None
     findings = validate_dependencies(graph)
     assert not [d for d in findings if d.severity == Severity.ERROR]
-    assert {d.record_id for d in findings if d.code == "READINESS_INCOMPATIBLE"} == {"DEP-060", "DEP-194"}
+    assert {d.record_id for d in findings if d.code == "READINESS_INCOMPATIBLE"} == set()
     assert len([d for d in findings if d.code == "PRECISION_MISSING"]) == 179
-    assert {d.record_id for d in findings if d.code == "FIXTURE_SEMANTICS"} == {"DEP-025", "DEP-045", "DEP-058", "DEP-076", "DEP-094"}
+    assert {d.record_id for d in findings if d.code == "FIXTURE_SEMANTICS"} == set()
 
 
 def test_cycle_witness_and_soft_nonblocking(graph):
@@ -51,3 +51,17 @@ def test_need_by_keeps_ambiguity(graph):
     edge = next(e for e in graph.edges if e.id == "DEP-002")
     assert edge.need_by == "M0→M1"
     assert any(d.code == "NEED_BY_AMBIGUOUS" and d.record_id == edge.id for d in validate_dependencies(graph))
+
+
+def test_reintroduced_readiness_and_fixture_findings_are_detected(graph):
+    # Recreate the former document defects; reconciliation must not weaken validation.
+    from projectctl.dependency_models import Readiness
+    node = next(n for n in graph.nodes if n.id == "DN-VIS-MODELS")
+    graph.nodes[graph.nodes.index(node)] = node.model_copy(update={
+        "readiness_levels": [r for r in node.readiness_levels if r != Readiness.INTEGRATION_READY]
+    })
+    fixture_ids = {"DEP-025", "DEP-045", "DEP-058", "DEP-076", "DEP-094"}
+    graph.edges[:] = [e.model_copy(update={"fallback": "F1"}) if e.id in fixture_ids else e for e in graph.edges]
+    findings = validate_dependencies(graph)
+    assert {d.record_id for d in findings if d.code == "READINESS_INCOMPATIBLE"} == {"DEP-060", "DEP-194"}
+    assert {d.record_id for d in findings if d.code == "FIXTURE_SEMANTICS"} == fixture_ids

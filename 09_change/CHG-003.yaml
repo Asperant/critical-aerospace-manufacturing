@@ -31,12 +31,12 @@ CHG-003:
     execution changed
   owner: Selman
   reviewers: []
-  decision: DEFERRED
+  decision: APPROVED_WITH_CONDITIONS
   conditions:
-  - Current user explicitly authorizes scoped branch edits; canonical peer-review
-    and merge gates remain outstanding
-  - No historical or team approval inferred
-  - No new semantics beyond documented resolution
+  - Explicit final human decision authorizes scoped documentation reconciliation;
+    independent qualified review/ratification remains required.
+  - No product/runtime readiness, source/license acquisition, peer approval or VERIFIED
+    state inferred.
   rollout: Local reconciliation branch only; no deployment/Plane synchronization/merge
   rollback: Review and revert the atomic CTRL-DOC commit; do not rewrite history
   required_rerun:
@@ -53,7 +53,13 @@ CHG-003:
   - docs/07_Milestone_and_Release_Plan.md
   freeze_context: PRE_M6
   status: UNDER_REVIEW
-  human_decision_basis: null
+  human_decision_basis:
+    request_sha256: 96ff255d4431a99a65ced71aa45136937acd7ae5917eaaca7fba764c23901da7
+    group: INSPECTION_CONTRACT_CANONICALIZATION
+    status: DECIDED
+    decision: Distinct immutable Vision InspectionObservation (existing EVT identity)
+      and normalized Core InspectionResult (IC-VIS-002).
+    rationale: Perception evidence is not canonical manufacturing acceptance.
   source_derived_basis: 01 Items16/22/62/81/83; 02 IC-VIS-002 and canonical perception
     facts
   affected_stable_ids:
@@ -69,8 +75,8 @@ CHG-003:
     review for CR-4; independent critical review for CR-3
   application_control_item: CTRL-DOC-004
   sprint_context: UNSPECIFIED; no calendar/sprint fabricated
-  proposal: Preserve locations; request INSPECTION_CONTRACT_CANONICALIZATION; trace
-    schemas/producers/consumers in audit.
+  proposal: Separate schemas and provenance-preserving normalization; never alias
+    observation and result.
   continuation_CTRL_DOC_009:
     class: C1
     review_risk_class: CR-3

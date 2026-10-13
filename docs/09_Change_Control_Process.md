@@ -6,14 +6,14 @@
 | Document | `09_Change_Control_Process.md` |
 | Status | **Draft — Derived from Approved 01/02 Baseline** (requires team ratification before first use) |
 | Version | v0.1.0-draft |
-| Generated | pre-implementation (no change request has been raised) |
+| Generated | pre-implementation; original empty-registry snapshot retained historically |
 | Governing doctrine | **Change Is Allowed; Silent Change Is Not.** |
 | Canonical sources | 01 Items 22, 35, 40–43, 60, 63, 65, 68, 73, 79, 81–85; 02 (contract registry, reconciliation register, open decisions) |
 | Upstream artifacts governed | 01, 02 and the downstream set 03 RTM · 04 WBS · 05 Dependency Graph · 06A–D Roadmaps · 07 Milestone & Release Plan · 08 DoR/DoD |
 | Change classes | C0 Editorial · C1 Compatible · C2 Behavior-Affecting · C3 Protocol / Scope / Architecture |
 | Review risk classes | CR-0 … CR-4 (01 Item 63), applied on top of the change class |
 | Registry | `09_change/` companion files; ChangeIDs `CHG-NNN` allocated in order, never reused |
-| Status of the registry today | **empty** — no change request exists; the worked examples in §6.3 are templates, not real changes |
+| Status of the registry today | **16 reconciliation records UNDER_REVIEW**; eight final human policy groups DECIDED, independent change review/ratification pending |
 
 > **CTRL-DOC-006 / CHG-014 registry delta.** The empty-registry counts in this original pre-implementation snapshot are historical. Current reconciliation records are in repository-root `09_change/change_requests.csv` and `CHG-001.yaml` through `CHG-016.yaml`. Current user policy authorizes scoped branch application; formal independent peer reviews and merge gates are not claimed complete. Records remain UNDER_REVIEW and do not certify VERIFIED/CLOSED changes or parent-WP completion.
 

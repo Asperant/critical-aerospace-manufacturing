@@ -7137,7 +7137,7 @@ Inspection gereken RouteStep’lerde temel akış:
 → Inspection Required
 → InspectionRequest
 → InspectionRun
-→ InspectionResult
+→ InspectionObservation → Core-normalized InspectionResult
 → QualityDisposition**
 
 Temel disposition sınıfları:
@@ -7767,7 +7767,7 @@ Aday command’lar:
 * StartProcessExecution
 * CompleteProcessExecution
 * FailProcessExecution
-* ApplyMaterialHold
+* PlaceLotOnHold
 * ReleaseMaterialHold
 * CreateReworkDirective
 * SplitLot
@@ -11129,7 +11129,7 @@ Anlamı:
 
 * IsolateMachine
 * DispatchLot
-* ApplyMaterialHold
+* PlaceLotOnHold
 * ActivateSchedule
 
 Command’ın başarılı olacağı garanti değildir.
@@ -11207,7 +11207,7 @@ Aday command’lar:
 * ReleaseLot
 * DispatchLot
 * StartProcess
-* ApplyMaterialHold
+* PlaceLotOnHold
 * ReleaseMaterialHold
 * CreateReworkDirective
 * SplitLot
@@ -12841,19 +12841,19 @@ Her authoritative business fact için canonical owner bulunacaktır.
 
 ## ProcessExecution
 
-Production / Simulator authority
+Core manufacturing authority; Simulator owns simulated physical execution only
 
 ## InspectionResult / Defect
 
-Inspection / Quality authority
+Core normalized InspectionResult; Vision owns distinct InspectionObservation/Defect evidence
 
 ## ScheduleVersion
 
-Scheduling authority
+Core active schedule authority; Scheduler owns candidate plans
 
 ## Approval
 
-Workflow / Governance authority
+Authenticated HITL approval; Automation stores/binds/co-ordinates under policy
 
 ## Prediction
 
@@ -13760,7 +13760,7 @@ Başlangıç conceptual mapping:
 
 | Data                             | Canonical / Authoritative Source  |
 | -------------------------------- | --------------------------------- |
-| Lot execution                    | Production / Simulator authority  |
+| Lot execution                    | Core manufacturing authority; Simulator owns simulated physical execution only  |
 | Machine actual operational state | Simulator                         |
 | Inspection result                | Inspection / Quality              |
 | Schedule                         | Scheduling domain                 |
@@ -16040,7 +16040,7 @@ Operational intent gönderir.
 Aday commands:
 
 * ReleaseLot
-* ApplyMaterialHold
+* PlaceLotOnHold
 * ReleaseMaterialHold
 * DispatchLot
 * ApproveRecoveryPlan
@@ -17492,7 +17492,7 @@ Ana pipeline:
 → Defect Classification
 → Visual Anomaly Detection
 → Visual Embedding
-→ Structured InspectionResult**
+→ Structured InspectionObservation**
 
 ---
 
@@ -17971,11 +17971,11 @@ Architecture model topology yerine stable output contract üzerinden tasarlanaca
 
 ---
 
-# Structured InspectionResult
+# Structured InspectionObservation
 
 Vision output yalnız text veya prediction label olmayacaktır.
 
-Conceptual `InspectionResult`:
+Conceptual `InspectionObservation`:
 
 * inspection_run_id
 * serialized component_id
@@ -18100,7 +18100,7 @@ Quality/RCA systems bu iki sinyali ayırmak için model-health metadata kullanab
 
 # Inference Provenance
 
-Her InspectionResult appropriate şekilde:
+Her InspectionObservation appropriate şekilde:
 
 * model_id
 * model_version
@@ -18139,7 +18139,7 @@ Operational pipeline:
 **InspectionRequested
 → Artifact Retrieval
 → Inference
-→ Structured InspectionResult
+→ Structured InspectionObservation
 → InspectionCompleted / Quality Events**
 
 şeklinde service olarak çalışacaktır.
@@ -18432,7 +18432,7 @@ Golden Scenario içerisinde Selman subsystem’i:
 → Classification
 → Anomaly Assessment
 → Pattern Representation
-→ Structured InspectionResult
+→ Structured InspectionObservation
 → DefectDetected
 → Cross-SerializedComponent Pattern/Cluster Update
 → Quality Excursion Evidence**
@@ -18467,7 +18467,7 @@ Final release için aşağıdaki capability’ler mandatory kabul edilmiştir:
 7. Open-Set / Unknown Handling
 8. SerializedComponent Spatial Pattern Recognition
 9. Cross-Component Defect Clustering
-10. Structured InspectionResult
+10. Structured InspectionObservation
 11. Visual Embeddings / Similarity support
 12. Dataset Versioning Integration
 13. Synthetic Data Support
@@ -18523,7 +18523,7 @@ Vision model QualityHold veya manufacturing facility recovery action’ını do�
 
 ## CV-INV-05
 
-Model inference model/preprocessing provenance olmadan canonical InspectionResult üretemez.
+Model inference model/preprocessing provenance olmadan canonical InspectionObservation üretemez.
 
 ## CV-INV-06
 
@@ -19386,7 +19386,7 @@ Yeni model evaluation/promotion sürecini bypass edemez.
 
 # 12. Production Inference Provenance
 
-Her canonical InspectionResult uygun şekilde aşağıdaki bilgileri taşıyacaktır:
+Her canonical InspectionObservation uygun şekilde aşağıdaki bilgileri taşıyacaktır:
 
 * input artifact reference
 * model version
@@ -19610,7 +19610,7 @@ Bu debugging, rollback ve audit açısından zorunludur.
 
 # Model Contract Compatibility
 
-Yeni model downstream `InspectionResult` contract’ını sessizce bozamaz.
+Yeni model downstream `InspectionObservation` contract’ını sessizce bozamaz.
 
 Promotion sırasında:
 
@@ -19636,7 +19636,7 @@ Training-serving mismatch silent şekilde oluşmamalıdır.
 
 Final sistem aşağıdaki lineage query’sini destekleyecektir:
 
-**InspectionResult
+**InspectionObservation
 → ModelVersion
 → ExperimentRun
 → DatasetVersion
@@ -20946,7 +20946,7 @@ bulunacaktır.
 
 Aday actions:
 
-* ApplyMaterialHold
+* PlaceLotOnHold
 * ReleaseMaterialHold
 * IsolateMachine
 * ReleaseMachineIsolation
@@ -21106,7 +21106,7 @@ Bu Golden Scenario’nun ana workflow’udur.
 
 **Hold Requested
 → Policy Validation
-→ ApplyMaterialHold
+→ PlaceLotOnHold
 → MaterialHeld**
 
 Release flow:
@@ -27141,7 +27141,7 @@ Amaç:
 
 Aday examples:
 
-* ApplyMaterialHold
+* PlaceLotOnHold
 * IsolateMachine
 * ActivateSchedule
 * ReleaseLot
@@ -27749,7 +27749,7 @@ Aday fields:
 
 # Primary Vision Output
 
-> **InspectionResult**
+> **InspectionObservation**
 
 Aday fields:
 
@@ -27784,7 +27784,7 @@ AI Vision’ın private inference state’ini okumayacaktır.
 
 Asrın canonical:
 
-* InspectionResult
+* InspectionObservation
 * Defect
 * DefectPattern
 * DefectCluster
@@ -28057,11 +28057,11 @@ Automation yalnız controlled Action Catalog üzerinden typed commands kullanaca
 
 Aday:
 
-* ApplyMaterialHoldCommand
+* PlaceLotOnHold
 * ReleaseMaterialHoldCommand
 * IsolateMachineCommand
 * ReleaseMachineIsolationCommand
-* ActivateScheduleCommand
+* ActivateSchedule
 * CreateMaintenanceWorkOrderCommand
 * ExecuteReworkDirectiveCommand
 
@@ -28078,7 +28078,7 @@ Examples:
 **IsolateMachineCommand
 → MachineIsolated**
 
-**ActivateScheduleCommand
+**ActivateSchedule
 → ScheduleActivated**
 
 Command/event correlation korunacaktır.
@@ -28189,7 +28189,7 @@ Externally consumed contracts explicit version-identifiable olacaktır.
 
 Examples:
 
-* InspectionResult v2
+* InspectionObservation v2
 * Recommendation v1
 * SchedulingSnapshot v3
 
@@ -28301,7 +28301,7 @@ Major contracts için canonical test/example fixtures tutulacaktır.
 
 Aday:
 
-* valid InspectionResult
+* valid InspectionObservation
 * quality-excursion Recommendation
 * Recovery ScheduleCandidate
 * stale-state error
@@ -28670,7 +28670,7 @@ Exact schemas implementation specification sırasında oluşturulacaktır.
 | Producer            | Consumer               | Ana Contract                        |
 | ------------------- | ---------------------- | ----------------------------------- |
 | Simulator / Backend | Vision                 | InspectionRequest                   |
-| Vision              | Quality / AI           | InspectionResult / Defect / Pattern |
+| Vision              | Core / Quality / AI    | InspectionObservation / Defect / Pattern |
 | Quality / Twin      | AI                     | Evidence / Operational Context      |
 | AI                  | Scheduler / Automation | Prediction / Recommendation         |
 | Twin / Backend      | Scheduler              | SchedulingSnapshot                  |
@@ -28690,7 +28690,7 @@ GS-01 contract-level flow:
 → InspectionRequest**
 
 **Vision
-→ InspectionResult
+→ InspectionObservation → Core-normalized InspectionResult
 → DefectDetected
 → DefectClusterUpdated**
 
@@ -28717,7 +28717,7 @@ GS-01 contract-level flow:
 ← Approval
 → IsolateMachineCommand
 ← MachineIsolated
-→ ActivateScheduleCommand
+→ ActivateSchedule
 ← ScheduleActivated**
 
 **Twin
@@ -29325,7 +29325,7 @@ AI service principal aşağıdaki operational mutation authority’lerini taşı
 
 * IsolateMachine
 * ReleaseMachineIsolation
-* ApplyMaterialHold
+* PlaceLotOnHold
 * ReleaseMaterialHold
 * ActivateSchedule
 * ExecuteReworkDirective
@@ -30836,7 +30836,7 @@ AI candidate rationale/ranking üretebilir.
 → Final State Revalidation
 → IsolateMachineCommand
 → MachineIsolated
-→ ActivateScheduleCommand
+→ ActivateSchedule
 → ScheduleActivated
 → Verify Outcome**
 
@@ -33615,7 +33615,7 @@ Conceptual chain:
 
 **SerializedComponent
 → InspectionRun
-→ InspectionResult
+→ InspectionObservation → Core-normalized InspectionResult
 → Defect / DefectPattern / DefectCluster**
 
 Visual quality production history’den kopuk tutulmayacaktır.
@@ -44796,7 +44796,7 @@ Serving latency:
 → Preprocessing
 → Model Inference
 → Postprocessing
-→ InspectionResult Emitted**
+→ InspectionObservation Emitted**
 
 aralığında ölçülecektir.
 
@@ -44915,7 +44915,7 @@ Runtime reliability model predictive quality’den ayrı raporlanacaktır.
 
 # VIS-E11 — End-to-End Operational Vision
 
-## 72. InspectionResult Contract Correctness
+## 72. InspectionObservation Contract Correctness
 
 Evaluation final structured output’u da doğrulayacaktır.
 
@@ -44958,7 +44958,7 @@ GS-01’de Vision success minimum:
 → Anomaly Score
 → Spatial Pattern
 → Cross-SerializedComponent Cluster Update
-→ Structured InspectionResult
+→ Structured InspectionObservation
 → Quality Evidence**
 
 chain’i ile gösterilecektir.
@@ -45312,7 +45312,7 @@ Final release için aşağıdaki capabilities mandatory kabul edilmiştir:
 40. Optimized-Artifact Parity
 41. Batch/Online Parity
 42. Runtime Failure Metrics
-43. Structured InspectionResult Validation
+43. Structured InspectionObservation Validation
 44. Vision Authority Contract Tests
 45. Golden Scenario Vision Chain
 46. Oracle Leakage Tests
@@ -45416,7 +45416,7 @@ Madde 30 başarılı uygulanmış sayılabilmek için:
 15. End-to-end Vision latency p50/p95 olarak ölçülmelidir.
 16. Optimized serving artifact parity testinden geçmelidir.
 17. Batch/online results compatible olmalıdır.
-18. InspectionResult contract validation çalışmalıdır.
+18. InspectionObservation contract validation çalışmalıdır.
 19. Oracle input leakage engellenmelidir.
 20. Candidate model champion ve shadow baselines’a karşı compare edilmeden production’a geçmemelidir.
 
@@ -46807,7 +46807,7 @@ Her operational action/workflow expected canonical outcomes tanımlayacaktır.
 
 Aday:
 
-## ApplyMaterialHold
+## PlaceLotOnHold
 
 Expected:
 
@@ -52645,7 +52645,7 @@ Primary operational mutations bu boundary üzerinden business validation alacakt
 
 Aday commands:
 
-* ApplyMaterialHold
+* PlaceLotOnHold
 * ReleaseMaterialHold
 * ActivateSchedule
 * UpdateLotPriority
@@ -52799,7 +52799,7 @@ Bu independent scaling/failure isolation sağlar.
 * preprocessing
 * inference
 * postprocessing
-* InspectionResult
+* InspectionObservation
 * Defect evidence
 * Pattern
 * Cluster
@@ -52813,7 +52813,7 @@ Core production inspection flow primarily:
 
 **InspectionRequested
 → async Vision work
-→ InspectionResult
+→ InspectionObservation
 → canonical integration event**
 
 olacaktır.
@@ -53442,7 +53442,7 @@ Official authority matrix:
 | Simulated Physical Machine State              | Simulator       |
 | Simulation Clock / Oracle                     | Simulator       |
 | Digital Twin View                             | Twin — Derived  |
-| InspectionResult / Visual Evidence            | Vision          |
+| InspectionObservation / Visual Evidence       | Vision          |
 | Prediction / RCA / Recommendation             | AI              |
 | ScheduleCandidate / RecoveryPlan              | Scheduler       |
 | Workflow / Approval / Execution Authorization | Automation      |
@@ -54148,7 +54148,7 @@ Owns:
 * Vision Service
 * Vision inference contracts
 * Vision metadata/provenance persistence semantics
-* InspectionResult publication
+* InspectionObservation publication
 
 ## Batu
 
@@ -54966,7 +54966,7 @@ Large model artifacts external artifact/model storage’a gider.
 Vision relational persistence:
 
 * InspectionRequest metadata
-* InspectionResult
+* InspectionObservation
 * Defect metadata
 * Pattern metadata
 * Cluster metadata
@@ -56104,7 +56104,7 @@ Owns/co-owns:
 Owns:
 
 * Vision metadata schema
-* InspectionResult/Defect persistence semantics
+* InspectionObservation/Defect persistence semantics
 * Vision artifact metadata linkage
 
 ## Batu
@@ -58274,7 +58274,7 @@ Owns:
 
 * Vision event contracts
 * Vision work queue semantics
-* InspectionResult publication
+* InspectionObservation publication
 * Vision consumer idempotency
 
 ## Batu
@@ -59921,7 +59921,7 @@ Reconstructable chain örneği:
 → DatasetVersion
 → Training Run
 → ModelVersion
-→ InspectionResult
+→ InspectionObservation
 → Operational Evidence**
 
 olacaktır.
@@ -67601,7 +67601,7 @@ Model/preprocess/input-output schema compatibility validate edilecektir.
 
 # 113. Vision Contract
 
-InspectionResult canonical contract’a uymalıdır.
+InspectionObservation canonical contract’a uymalıdır.
 
 ---
 
@@ -67873,7 +67873,7 @@ ve:
 
 **Inspection Fixture
 → Vision
-→ InspectionResult
+→ InspectionObservation
 → Projection**
 
 ---
@@ -70663,7 +70663,7 @@ Vision worker replacement queued accepted inspection work’ünü kaybettirmeyec
 
 ---
 
-# 177. InspectionResult Model Identity
+# 177. InspectionObservation Model Identity
 
 Result hangi exact ModelVersion ile üretildiyse kayıt edilecektir.
 
@@ -103299,12 +103299,12 @@ SECOM is semiconductor process data ([UCI source](https://archive.ics.uci.edu/da
 
 | Human-approved candidate direction | Potential scientific role | Current selection posture |
 |---|---|---|
-| NASA milling/tool-wear ([institutional record](https://data.nasa.gov/dataset/groups/milling-wear)) | Experimental machining/tool-wear method evaluation | Candidate only; exact acquisition, rights, version, split and claim review pending |
+| NASA milling/tool-wear ([institutional record](https://data.nasa.gov/dataset/groups/milling-wear)) | Experimental machining/tool-wear method evaluation | Accepted source family; exact acquisition, rights, version, split and claim review remain implementation gates (NEEDS_SOURCE_VERIFICATION) |
 | Public multi-axis / 5-axis machining | Experimental machining evaluation | Candidate direction only; exact DatasetSourceRecord and rights review pending |
 | Open CNC geometry / NC / energy / machine-health | Source-specific process/resource method evaluation | Candidate direction only; do not imply a continuous real production history |
 | MVTec AD / AD2 ([AD2 source](https://www.mvtec.com/research-teaching/datasets/mvtec-ad-2)) | Auxiliary industrial anomaly evaluation | Source-specific existing license conditions remain; no aerospace-specific evidence claim |
-| GDXray | Casting/weld/X-ray/NDT evaluation candidate | Candidate only; exact source/version, rights, partition and claim review pending |
-| Public scheduling benchmarks | Optimization method comparison | Candidate only; not a factory operational trace or a substitute for simulator operational evaluation |
+| GDXray | Casting/weld/X-ray/NDT evaluation candidate | Accepted source family; exact source/version, rights, partition and claim metadata NEEDS_SOURCE_VERIFICATION before acquisition/evaluation |
+| Public scheduling benchmarks | Optimization method comparison | Accepted benchmark family; exact release/access metadata NEEDS_SOURCE_VERIFICATION; not a factory operational trace or a substitute for simulator operational evaluation |
 
 No exact primary real/public portfolio is frozen by this reconciliation. DatasetCards, DatasetSourceRecords, checksums, rights manifests and leakage-aware held-out partitions must be selected and reviewed before the applicable research freeze. Synthetic-only evaluation never substitutes for held-out real/public evaluation where that claim requires it. These statements preserve localization, segmentation, classification, anomaly/OOD, spatial patterns, clustering, provenance, serving, calibration and task/slice evaluation; they do not replace Vision/NDT with a VLM.
 
@@ -103314,7 +103314,7 @@ Canonical role:
 
 > legacy/cross-domain semiconductor process/tabular ML methodological material only; no aerospace-domain claim.
 
-UCI’nin resmi dataset kaydı SECOM’u CC BY 4.0 altında yayımlamaktadır.
+UCI’nin resmi dataset kaydı SECOM’u CC BY 4.0 altında yayımlamaktadır. Historical source-note claim: NEEDS_SOURCE_VERIFICATION before current acquisition/redistribution; not a certified rights decision.
 
 ---
 
@@ -103531,7 +103531,7 @@ Critical-Component Manufacturing inspection realism evidence olarak sunulmayacak
 
 # 60. MVTec License
 
-MVTec’in official dataset pages datasetlerini CC BY-NC-SA 4.0 altında yayımlar ve commercial use’ın permitted olmadığını açıkça belirtir.
+MVTec’in official dataset pages datasetlerini CC BY-NC-SA 4.0 altında yayımlar ve commercial use’ın permitted olmadığını açıkça belirtir. Historical source-note claim: NEEDS_SOURCE_VERIFICATION before current acquisition/redistribution; not a certified rights decision.
 
 ---
 
@@ -111758,7 +111758,7 @@ Formal system evaluation can include:
 
 # Supporting Methodological Contribution 2
 
-# MC-2 — Governed Synthetic Manufacturing Benchmark
+# MC-2 — Governed Synthetic Manufacturing Benchmark — accountable owner: Asrın Dündar
 
 Madde 56/57 artifacts research benchmark contribution’a dönüştürülecektir.
 
@@ -123062,7 +123062,7 @@ Canonical producer.
 
 Examples:
 
-* VisionInspectionResult → Selman
+* VisionInspectionObservation → Selman
 * ScheduleProposal → Batu
 * LotSnapshot → Asrın.
 
@@ -130776,7 +130776,7 @@ Examples conceptually:
 * PlaceLotOnHold
 * ReleaseLot
 * DispatchLot
-* RequestMaintenance.
+* CreateMaintenanceWorkOrder.
 
 ---
 
@@ -181634,3 +181634,62 @@ olarak kabul edilmiştir.
 ## Karar Tarihi
 
 **13 Eylül 2026**
+
+
+# Final Human Reconciliation — approved documentation baseline (2026-10-13)
+
+This normative clarification records the eight explicit product-owner decisions in evidence/documentation-reconciliation/FINAL_HUMAN_DECISIONS.md. It applies to the existing stable identities and supersedes the identified ambiguous formulations, not unrelated requirements or scientific thresholds. No product implementation/evaluation or peer approval is claimed. Future semantic changes require 09 change control.
+
+## Inspection identity and quality authority
+
+InspectionObservation is immutable perception evidence produced by Vision/NDT: localization, segmentation, classification, anomaly/OOD score, confidence/calibration, spatial maps, embeddings and model/preprocessing/threshold/artifact provenance as applicable. A human review is an attributed additional observation, not destructive rewriting of evidence. The existing EVT-InspectionObservation-v1 identity represents this observation contract. InspectionResult is a distinct normalized domain-level outcome that references one or more observations and any manual review. Existing IC-VIS-002 remains InspectionResult: it is not renamed or treated as an alias of the observation event. Core's quality normalization/workflow owns the domain result and any resulting canonical quality/manufacturing transitions; Vision never performs final manufacturing acceptance. The existing InspectionRequest contract IC-VIS-001 is unchanged. Raw model-output passages formerly called “Structured InspectionResult” mean InspectionObservation; genealogy and quality-facing normalized outcomes retain InspectionResult. Both artifacts preserve provenance and are separately versioned at contract freeze.
+
+## One identity per protected action
+
+| Action | Canonical command / existing stable identity | Deprecated wording, not a parallel contract |
+|---|---|---|
+| Place material hold | PlaceLotOnHold / CMD-PlaceLotOnHold-v1 | ApplyMaterialHold; ApplyMaterialHoldCommand |
+| Release material hold | ReleaseMaterialHold | none; ReleaseLot is a separate dispatch/lifecycle action |
+| Resource isolation / eligibility restriction | IsolateMachine | aliases must not create another command identity |
+| Release isolation / restore eligible status under policy | ReleaseMachineIsolation | eligibility is not lifecycle |
+| Protected route control | RerouteLot | only where the existing route-control action is authorized |
+| Activate schedule plan | ActivateSchedule | ActivateScheduleCommand |
+| Governed maintenance work creation | CreateMaintenanceWorkOrder | RequestMaintenance |
+| Create rework directive | CreateReworkDirective | not a route-pointer reset |
+| Apply approved rework directive | ExecuteApprovedReworkDirective | distinct from directive creation |
+
+These names do not invent command payloads, widen target scope or conflate dispatch with hold release. MaterialHold and ReworkDirective remain first-class concepts. Exact existing target scope, actor, WorldID, proposal/plan version, state revision, expiry, policy and idempotency binding must be frozen in the applicable contract WP before protected execution. Hold activation/release never mutates component lifecycle as a substitute. Core owns acceptance and authoritative transitions.
+
+## Authority and end-to-end coordination
+
+Core alone owns canonical manufacturing/business/quality state. Simulator owns simulated execution and hidden Oracle for evaluation; Oracle is never operational model input. Digital Twin and Qdrant are rebuildable projections. Vision/NDT owns perception observations. AI/RCA/RAG may READ, SIMULATE and PROPOSE only; Scheduler emits candidate/counterfactual plans. HITL supplies authenticated approval, not self-approval. Keycloak owns identity/authentication, not business authorization. UI has no direct database/broker mutation.
+
+The GS-01/E2E coordination component is the durable Automation/workflow layer (Temporal-style), ARCH-AUTO-WORKFLOW. It coordinates InspectionObservation → Core InspectionResult/Quality Excursion → RCA → counterfactual recovery → HITL → governed Core commands → canonical state change → effect verification → Twin/Audit. It checks exact proposal/plan binding, approval, freshness/expiry and policy, prevents self-approval, invokes Core and waits for canonical events/state; HTTP acceptance or workflow COMPLETED alone is not success. Batu retains workflow implementation/scenario responsibilities, Asrın Core/policy semantics and Yavuz run/evidence infrastructure. This coordinator allocation does not transfer canonical authority or any WP ownership.
+
+## Dependency consumer semantics
+
+HARD is a work/readiness constraint: the consumer cannot pass the declared blocking stage until the producer provides the stated readiness and consumer-facing artifact/evidence. SOFT is useful context/sequencing, not a hard readiness blocker. Neither implies a runtime service dependency, deployment dependency or direct import. Only an actual CONTRACT edge can use an F1 contract fixture as development-stage satisfaction; no fixture can prove real integration, milestone exit or freeze. DN-VIS-MODELS includes INTEGRATION_READY between COMPONENT_READY and EVALUATION_READY: promoted ModelPackages for required modes are loadable and exercised with provenance by standalone artifact/inference-adapter integration checks, without requiring the downstream serving WP to be DONE; this is the consumer-facing level required by DEP-060/DEP-194, not merely trained weights. Per-consumer scope and source-supported deadline interpretation are declared in 05; absent field-level implementation precision remains unknown until its WP DoR, not automatically satisfied.
+
+## MC-2 accountability and accepted hardware
+
+Asrın Dündar is accountable for MC-2 as cross-cutting integration/project research accountability. Underlying scenario, Vision, scheduling, workflow, platform and evidence WPs retain their canonical owners and independent review obligations.
+
+The primary accepted development/integration/evaluation HardwareProfile is the shared Ubuntu workstation: Intel Core i7-9700K (8 cores/8 threads), approximately30GiB usable RAM, NVIDIA RTX2060SUPER with8GB VRAM, Ubuntu26.04.1LTS, primary ext4 project volume. The secondary NVMe is not mandatory until an explicit stable-mount decision. Each actual run records this profile plus its observed resource configuration, release/environment/workload identity; pinning is not a performance result or certified production claim. Existing CPU-only/fallback evaluation paths remain optional configurations of this profile, not additional mandatory hosts. Numerical NFR limits remain unchanged.
+
+## Accepted source portfolio and acquisition gates
+
+Lane A is open real/public experimental machining/tool-wear/health/inspection/NDT data. Lane B is literature/technical/public-source process grounding, never measurements from “our factory”. Lane C is explicitly controlled simulated orders, lots/components, WIP, queues, degradation/failures, maintenance, quality events, scheduling, recovery and E2E orchestration. No one source contains all modalities. Synthetic augmentation never substitutes for appropriate real/public held-out evaluation.
+
+| Retained source | Role / modality | Provenance/source | License/access note | Intended evaluation / explicit limitation |
+|---|---|---|---|---|
+| NASA milling/tool-wear | Lane A experimental machining/tool wear | Existing institutional source reference in Item55; exact version NEEDS_SOURCE_VERIFICATION | NEEDS_SOURCE_VERIFICATION before acquisition/redistribution | Tool-wear/health evaluation with source-bound split; not full aerospace-factory operations |
+| Leibniz/Mendeley 5-axis machining-center datasets | Lane A experimental CNC telemetry | Named human-approved source family; exact record/DOI NEEDS_SOURCE_VERIFICATION | NEEDS_SOURCE_VERIFICATION | Appropriate machining/health evaluation only; acquisition/version/partition remains an implementation task |
+| Open CNC geometry / NC / high-frequency energy | Lane A geometry/program/energy support | Suitable public sources; exact retained record NEEDS_SOURCE_VERIFICATION | NEEDS_SOURCE_VERIFICATION | Modality-specific support, not automatic defect/quality labels |
+| MVTec AD / AD2 | Auxiliary visual anomaly images | Existing Item55 official source references; acquisition/version NEEDS_SOURCE_VERIFICATION | Source-specific rights must be verified; NEEDS_SOURCE_VERIFICATION | Auxiliary visual evaluation only; no aerospace-specific performance claim |
+| GDXray | Lane A X-ray/casting/weld inspection support where applicable | Human-approved source family; exact record/version NEEDS_SOURCE_VERIFICATION | NEEDS_SOURCE_VERIFICATION | Appropriate X-ray/NDT task-specific held-out evaluation; no CNC tool-wear/factory realism inference |
+| JSPLib / ScheduleOpt or approved equivalent | Public scheduling benchmark/support instances | Exact suite/version/source NEEDS_SOURCE_VERIFICATION | NEEDS_SOURCE_VERIFICATION | Algorithm/baseline support, not execution-aware factory realism proof |
+| Public literature / technical documentation | Lane B route/resource/process assumptions | Every retained claim needs a source record; NEEDS_SOURCE_VERIFICATION if unavailable | Source-specific access/quotation restrictions | Literature-grounded assumptions, not factory measurements |
+| Controlled Simulator artifacts | Lane C operational worlds/scenarios | ScenarioVersion/SeedSet/WorldID/configuration bound in each run | Project artifact/export policy | Operational/E2E/scheduling evaluation with explicit simulated provenance and hidden Oracle isolation |
+| UCI SECOM / WM-811K / MixedWM38 | Optional legacy cross-domain methodological references only | Existing external source identities, semiconductor process / wafer-map data | Historical license decisions are not current acquisition/redistribution verification | Excluded from primary aerospace portfolio; never aerospace defect performance, critical-component quality, CNC tool-wear or NDT realism evidence |
+
+Source selection is DECIDED; exact acquisition cards, rights checks, leakage-aware partitions and claims are required implementation/evaluation artifacts before the applicable source-use/freeze gate. Existing unverified bibliographic/license/sample claims are not accepted facts: they remain NEEDS_SOURCE_VERIFICATION. This does not create another undecided source-portfolio policy.

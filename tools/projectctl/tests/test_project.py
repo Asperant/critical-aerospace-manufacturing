@@ -32,7 +32,8 @@ def test_context_preserves_all_windows_and_findings(project):
     assert payload["milestone_id"] == "M2"
     assert payload["work_package"]["primary_owner"]["canonical_name"] == "Selman Özdemir"
     assert payload["requirements"] and payload["dependency_edges"]
-    assert any(d["code"] == "READINESS_INCOMPATIBLE" for d in payload["diagnostics"])
+    assert not any(d["code"] == "READINESS_INCOMPATIBLE" for d in payload["diagnostics"])
+    assert any(d["code"] == "PRECISION_MISSING" for d in payload["diagnostics"])
     assert payload["work_package"]["dor_refs"] and payload["work_package"]["dod_refs"]
     assert payload["work_package"]["provenance"]["path"].startswith("docs/")
 

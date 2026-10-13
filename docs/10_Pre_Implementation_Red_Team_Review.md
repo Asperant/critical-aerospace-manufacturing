@@ -9,8 +9,8 @@
 | Review baseline | Current migrated 00–09 set listed and hashed in §3 |
 | Review mode | **Zero-optimism / source-bound / no invented closure** |
 | Verdict vocabulary | `READY_TO_IMPLEMENT` / `NOT_READY_TO_IMPLEMENT` |
-| **Current verdict** | **`NOT_READY_TO_IMPLEMENT`** |
-| Reason in one sentence | The architecture and execution plan are broadly coherent, but the current canonical baseline still contains an unresolved product-identity collision and scientifically unsafe dataset-domain migration, plus several pre-contract/architecture reconciliations that must be closed before unrestricted heavy implementation. |
+| **Current verdict** | **`READY_TO_IMPLEMENT` — pending independent review/integration of this documentation branch** |
+| Reason in one sentence | The eight human policy choices are decided and normative contradictions reconciled; future implementation, source acquisition, measurement and runtime evidence obligations remain at their proper gates. |
 
 > **Important scope rule for this revision.** RTR-0 judges whether the *approved plan* is coherent, feasible and safe enough to justify heavy implementation. It does **not** require runtime evidence that can only exist after implementation. Future resource measurements, security negative tests, restore drills, benchmark runs and final demo evidence remain mandatory at their declared gates, but their mere non-existence at pre-implementation time is not by itself an RTR-0 failure.
 
@@ -22,11 +22,11 @@
 
 ### 1.1 Decision
 
-# NOT_READY_TO_IMPLEMENT
+# READY_TO_IMPLEMENT — documentation baseline pending review/integration
 
 The current baseline is **not rejected**. Its main architecture, authority model, 306-requirement baseline, 179-work-package plan, dependency topology, role ownership and governance model are strong enough to continue as the project foundation.
 
-However, unrestricted heavy implementation should not start until the immediate RTR-0 closure set in §38 is resolved.
+The original RTR-0 findings and closure set below are historical, preserved evidence. The final reassessment at the end records current dispositions; this unmerged documentation PR does not itself authorize product implementation.
 
 Work that **may proceed while this verdict is open**:
 
@@ -1931,7 +1931,7 @@ After P0 closure, rerun only the affected categories **plus** RT-03, RT-17 and R
 
 # End of RTR-0 Review
 
-## 40. CTRL-DOC-007 — Current reconciliation delta (CHG-015)
+## 40. CTRL-DOC-007 — Historical reconciliation delta (CHG-015)
 
 **Disposition scope:** current documentation predicates only. Historical finding identities/statuses and review provenance above remain intact. The current human request authorizes these scoped repairs; no independent peer review, executed product evidence, merged release or VERIFIED/DONE status is claimed.
 
@@ -1995,10 +1995,52 @@ Machine findings, exact verification and the consolidated decision list are in `
 | `docs/09_Change_Control_Process.md` | `33e3238e76966f7f5c12373ae00159d9897711719149bffd0186e6c208a96889` |
 | `docs/DOMAIN_MIGRATION_CHANGELOG.md` | `e988c306f889ebf68a28f7359c86e4ecaf84164921ef440fef4860d953c5e3ba` |
 
-## 41. CTRL-DOC-009 — Final independent reassessment
+## 41. CTRL-DOC-009 — Historical snapshot — Final independent reassessment
 
 CHG-003 continuation restores the source-derived conceptual/candidate label for the full InspectionResult field list in02.01 Item16 and Item22 sections19/50 explicitly defer the exact schema. Independently mandatory provenance in Items16/17/30 remains mandatory. No contract identity, alias, transformation, schema or authority was selected. RTF-023 remains REQUIRES_HUMAN_DECISION for that narrower identity/schema-freeze question.
 
 All32 dispositions in §40 were reassessed against current source predicates and remain unchanged. Verdict: **NOT_READY_TO_IMPLEMENT**. RTF-019 source completeness/trace confirmation remains STILL_OPEN; missing values are legitimate unknowns, not accepted records. Independent change review remains an existing governance gate, not a new semantic option. Dataset direction approval is not source/version/rights/split approval.
 
 Fresh citation readback is306 distinct ViewA anchors plus306 distinct YAML anchors = **612**, all exact. Earlier evidence's606 is an arithmetic error corrected additively, not manufactured data. Full counts, warning classification and verification are in CTRL-DOC-009-verification.json and FINAL_HUMAN_DECISIONS.md. Historical findings and hashes above remain historical; no product runtime verification or READY/DONE transition is claimed.
+
+
+## Final human-decision reassessment — current, 13 October2026
+
+This section supersedes historical §40/41 verdicts. The approved eight policy decisions are recorded in FINAL_HUMAN_DECISIONS.md; the current baseline is **READY_TO_IMPLEMENT**, conditional on independent review/integration of this branch. It grants no product WP READY/DONE state and no runtime/evaluation acceptance. Historical source hashes remain historical; final hashes and actual validation are recorded in the final reconciliation evidence.
+
+| Finding | Current disposition | Source-bound rationale |
+|---|---|---|
+| RTF-001 | RESOLVED | 04–09 exist and are source-hashed; obsolete missing-source rationale remains historical. |
+| RTF-002 | ACCEPTED_WITH_RATIONALE | Product16GiB feasibility needs actual runtime measurement; setup/Plane resource observations are not product proof. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof. |
+| RTF-003 | RESOLVED | Exact approved identity replaces both active obsolete final branding occurrences; bounded research/automation meaning preserved. |
+| RTF-004 | RESOLVED | 01/02 explicitly allocate canonical Core, Simulator physical/Oracle, Vision observations, candidates, authenticated HITL and governed Automation authority; implementation verification remains future. |
+| RTF-005 | ACCEPTED_WITH_RATIONALE | Protected-action negative runtime suite not executed by documentation repair. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof. |
+| RTF-006 | ACCEPTED_WITH_RATIONALE | Oracle isolation remains mandatory; product runtime negative proof remains future. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof. |
+| RTF-007 | RESOLVED | Planning/evidence honesty preserved; registry delta distinguishes current records from historical empty snapshot and claims no VERIFIED/DONE. |
+| RTF-008 | ACCEPTED_WITH_RATIONALE | Research freeze/campaign/statistical integrity obligations remain future; no final results claimed. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof. |
+| RTF-009 | ACCEPTED_WITH_RATIONALE | Original rights/export gates preserved; final acquisition/export manifests still needed. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof. |
+| RTF-010 | ACCEPTED_WITH_RATIONALE | Owner capacity/cross-review pressure not measured; no WP redistribution invented. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof. |
+| RTF-011 | RESOLVED | Two stripped Item43 blocks are identical;02 R-001 retains one logical item; no deletion. |
+| RTF-012 | ACCEPTED_WITH_RATIONALE | External-provider/model reproducibility controls need implementation/runtime evidence. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof. |
+| RTF-013 | ACCEPTED_WITH_RATIONALE | Product restore/DR drill remains required; Plane PostgreSQL backup evidence is not manufacturing-platform restore proof. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof. |
+| RTF-014 | ACCEPTED_WITH_RATIONALE | Final governed demo cannot be certified from prose or management setup. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof. |
+| RTF-015 | RESOLVED | All protected authority boundaries are explicit in01/02; no UI/AI/Vision/Scheduler direct canonical mutation is permitted. |
+| RTF-016 | ACCEPTED_WITH_RATIONALE | Technology/shared-host resource burden awaits product measurements. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof. |
+| RTF-017 | ACCEPTED_WITH_RATIONALE | ScheduleValidator implementation independence remains a design/verification obligation; no product validator was built here. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof. |
+| RTF-018 | ACCEPTED_WITH_RATIONALE | Effect verification remains mandatory; command/HTTP success is not proof. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof. |
+| RTF-019 | ACCEPTED_WITH_RATIONALE | Precise trace specificity and catalog metadata confirmation remain outstanding; no umbrella evidence closure. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof. |
+| RTF-020 | ACCEPTED_WITH_RATIONALE | System-level research claims still require complete sealed empirical evidence, not isolated component results. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof. |
+| RTF-021 | RESOLVED | SECOM/WM-811K are optional cross-domain legacy references, never aerospace evidence;01/02 selected LaneA/B/C portfolio and rights gates are explicit. |
+| RTF-022 | RESOLVED | The final human decision selects source families; exact release/license/split metadata remains NEEDS_SOURCE_VERIFICATION until acquired. |
+| RTF-023 | RESOLVED | EVT-InspectionObservation-v1 and normalized Core IC-VIS-002 are distinct in01/02 and propagated to planning/traces. |
+| RTF-024 | RESOLVED | Protected-action identities use stable canonical commands; deprecated aliases cannot create parallel protected contracts. |
+| RTF-025 | RESOLVED | 02 now assigns ARCH-AI-ML/ARCH-AI-MLOPS within existing services;03 allocation traces follow. |
+| RTF-026 | RESOLVED | 02 now assigns runner, evidence, scheduler harness and visual dataset components within existing services; no infrastructure added. |
+| RTF-027 | RESOLVED | MC-2 accountable owner is Asrın Dündar; WP ownership is unchanged. |
+| RTF-028 | RESOLVED | 01 pins the human-approved primary host; actual performance measurements are not claimed. |
+| RTF-029 | RESOLVED | ARCH-AUTO-WORKFLOW is the durable coordinator; Core remains authority and effect verification is mandatory. |
+| RTF-030 | RESOLVED | Prior CHG-006/016 repairs remain after byte-equivalent rebase; all120 NFR class rows match01. |
+| RTF-031 | RESOLVED | No legacy/product implementation was started; source-specific legacy dataset identities remain historical. |
+| RTF-032 | RESOLVED | Current decisions and change registry are reconciled with immutable historical evidence; independent review is still required. |
+
+All RTM/WBS/dependency/milestone gap rows and additional named reconciliation findings are individually classified in [FINAL_FINDINGS.json](../evidence/documentation-reconciliation/FINAL_FINDINGS.json). Current implementation-blocking documentation findings: **none**. Remaining concrete obligations include owner trace review, exact contract/consumer binding before READY, dataset rights/source verification before acquisition, Oracle/protected-action negative tests, runtime measurements, research freeze and release/effect verification. None is falsely represented as executed product evidence. Independent C2/C3 consumer review remains the integration gate; human policy decisions do not substitute for that review.

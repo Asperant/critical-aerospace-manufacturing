@@ -78,7 +78,7 @@ Granularity rule (00 §12 "avoid"): a node exists only if at least one consumer 
 | 02 | ARCH anchors per node; Runtime Dependency Model (REQUIRED/DEGRADABLE/OPTIONAL); startup Sequence I; Failure Authority Principle |
 | 03 RTM | requirement IDs per node; verification families used as dependency acceptance tests |
 
-**Deviation handling.** 00 §12 abbreviates CP-2 and CP-3. 00 is a production guide; 01 Item 66 is normative, so the **Item 66 chains are reproduced verbatim** (§10) and the difference is logged as DEP-GAP-01. Where Item 67 requires a runtime earlier than Item 66 prose states (Keycloak, Temporal, SeaweedFS), the earlier Item 67 need-by is used because E2E-01 must precede M3 (Item 67 #7) — logged as DEP-GAP-04, not treated as a conflict.
+**Deviation handling.** The historical00 §12 abbreviated CP-2 and CP-3; its current chains now match01. 00 is a production guide; 01 Item 66 is normative, so the **Item 66 chains are reproduced verbatim** (§10) and the difference is logged as DEP-GAP-01. Where Item 67 requires a runtime earlier than Item 66 prose states (Keycloak, Temporal, SeaweedFS), the earlier Item 67 need-by is used because E2E-01 must precede M3 (Item 67 #7) — logged as DEP-GAP-04, not treated as a conflict.
 
 ## 3. Canonical Dependency Semantics
 
@@ -216,12 +216,12 @@ for each target (node S, stage X, environment class ENV):
 | DN-RT-OBS | OTel SDK + Collector + OpenObserve | RUNTIME | Yavuz | DEFINED→SKELETON_READY(health, M1)→INTEGRATION_READY(traceability, M3)→EVALUATION_READY(reliability telemetry, M5) | ARCH-OBS-TELEMETRY, ARCH-OBS-STORE, ARCH-OBS-TRACE | FR-PLAT-006, FR-PLAT-007, NFR-OBS-001, NFR-OBS-003 |
 | DN-RT-TEMPORAL | Temporal server runtime | RUNTIME | Yavuz | DEFINED→SKELETON_READY(local profile)→INTEGRATION_READY(shared host)→EVALUATION_READY | ARCH-AUTO-WORKFLOW | FR-AUTO-002 |
 | DN-RT-QDRANT | Qdrant runtime | RUNTIME | Yavuz | DEFINED→SKELETON_READY(local profile)→INTEGRATION_READY(shared host)→EVALUATION_READY | ARCH-DATA-VECTOR | FR-RAG-003, FR-RAG-004, FR-RAG-005, NFR-REC-009 |
-| DN-RT-MLFLOW | MLflow tracking/registry support tooling | RUNTIME | Yavuz | DEFINED→SKELETON_READY(local profile)→INTEGRATION_READY(shared host)→EVALUATION_READY | — (no 02 ARCH ID,  GAP-RTM-001) | FR-VIS-015, FR-ML-005, FR-ML-007 |
+| DN-RT-MLFLOW | MLflow tracking/registry support tooling | RUNTIME | Yavuz | DEFINED→SKELETON_READY(local profile)→INTEGRATION_READY(shared host)→EVALUATION_READY | ARCH-AI-MLOPS | FR-VIS-015, FR-ML-005, FR-ML-007 |
 | DN-RT-VALKEY | Valkey (optional cache; R2/S, correctness-independent) | RUNTIME | Yavuz | DEFINED→SKELETON_READY | ARCH-DATA-CACHE | — |
 | DN-SEC-BASE | Security baseline: service identities, secrets sourcing, backend authz enforcement points | CAPABILITY | Yavuz | DEFINED→COMPONENT_READY→INTEGRATION_READY→EVALUATION_READY | ARCH-SEC-SECRET, ARCH-SEC-AUTHZ | FR-SEC-002, FR-SEC-006, FR-SEC-008, NFR-SEC-001 |
 | DN-PLAT-BACKUP | Backup / restore / rebuild automation | CAPABILITY | Yavuz | DEFINED→COMPONENT_READY→INTEGRATION_READY→EVALUATION_READY | ARCH-PLAT-BACKUP | FR-PLAT-008, FR-PLAT-009, NFR-REC-003, NFR-REC-004, NFR-REC-007 |
 | DN-PLAT-FAILVAL | Failure validation (resilience drills, AV-SCEN-05…12) | EVIDENCE | Yavuz | DEFINED→COMPONENT_READY→EVALUATION_READY | ARCH-OBS-HEALTH | NFR-REL-003, NFR-REL-005, NFR-REL-006, NFR-REL-007 |
-| DN-PLAT-RUNNER | Experiment runner (manifest binding, BenchmarkRun registry) | CAPABILITY | Yavuz | DEFINED→SKELETON_READY→COMPONENT_READY→EVALUATION_READY→FROZEN | — (no 02 ARCH ID,  GAP-RTM-002) | FR-EVAL-001, FR-EVAL-003, FR-EVAL-004, FR-EVAL-005, FR-PLAT-010 |
+| DN-PLAT-RUNNER | Experiment runner (manifest binding, BenchmarkRun registry) | CAPABILITY | Yavuz | DEFINED→SKELETON_READY→COMPONENT_READY→EVALUATION_READY→FROZEN | ARCH-PLAT-EXPERIMENT | FR-EVAL-001, FR-EVAL-003, FR-EVAL-004, FR-EVAL-005, FR-PLAT-010 |
 | DN-ART-RELEASE | ReleaseManifest + EnvironmentManifest (stable release) | ARTIFACT | Yavuz | DEFINED→COMPONENT_READY→EVALUATION_READY→FROZEN | ARCH-PLAT-RELEASE | FR-PLAT-005, NFR-REP-003, NFR-REP-007 |
 | DN-ART-HWPROF | HardwareProfile records (EVALUATION host, CPU baseline, Vision GPU/CPU) | ARTIFACT | Yavuz | DEFINED→COMPONENT_READY→EVALUATION_READY→FROZEN | ARCH-PLAT-RELEASE | NFR-GOV-005, NFR-PERF-009, NFR-PERF-010 |
 | DN-PLAT-CLEANREPRO | Clean reproduction (clean host, non-owner rerun) | EVIDENCE | Yavuz | DEFINED→EVALUATION_READY | ARCH-PLAT-RELEASE | NFR-REP-003, NFR-REP-004, NFR-DEP-005 |
@@ -270,10 +270,10 @@ for each target (node S, stage X, environment class ENV):
 | DN-VIS-SYNTH | Synthetic Vision generator (owned data) | DATA | Selman | DEFINED→COMPONENT_READY→EVALUATION_READY→FROZEN | ARCH-DATA-LINEAGE | FR-VIS-011 |
 | DN-VIS-SPLIT | Vision DatasetVersion / SplitManifest | ARTIFACT | Selman | DEFINED→COMPONENT_READY→EVALUATION_READY→FROZEN | ARCH-DATA-LINEAGE | FR-VIS-012, NFR-DATA-002 |
 | DN-VIS-BASELINES | Vision baselines | CAPABILITY | Selman | DEFINED→COMPONENT_READY→EVALUATION_READY→FROZEN | ARCH-VIS-EVAL | FR-VIS-002 |
-| DN-VIS-MODELS | Deep Vision models (classification/localization/segmentation/anomaly) as ModelPackages | ARTIFACT | Selman | DEFINED→COMPONENT_READY→EVALUATION_READY→FROZEN | ARCH-VIS-MODEL, ARCH-VIS-INFER | FR-VIS-002, FR-VIS-003, FR-VIS-004, FR-VIS-005, FR-VIS-015 |
+| DN-VIS-MODELS | Deep Vision models (classification/localization/segmentation/anomaly) as ModelPackages | ARTIFACT | Selman | DEFINED→COMPONENT_READY→INTEGRATION_READY→EVALUATION_READY→FROZEN | ARCH-VIS-MODEL, ARCH-VIS-INFER | FR-VIS-002, FR-VIS-003, FR-VIS-004, FR-VIS-005, FR-VIS-015 |
 | DN-VIS-OOD | OOD/UNKNOWN + spatial pattern evaluation | CAPABILITY | Selman | DEFINED→CONTRACT_READY→SKELETON_READY→COMPONENT_READY→INTEGRATION_READY→EVALUATION_READY→FROZEN | ARCH-VIS-OOD, ARCH-VIS-EVAL | FR-VIS-006, FR-VIS-010 |
 | DN-VIS-ARTCON | Inspection artifact identity contract (ArtifactRef, Lot/SerializedComponent refs, model metadata) | CONTRACT | Selman | DEFINED→CONTRACT_READY→INTEGRATION_READY→FROZEN | ARCH-VIS-ARTIFACT, ARCH-CTR-API | FR-VIS-001, FR-VIS-007 |
-| DN-VIS-OBSCON | InspectionObservation contract + fixtures (name: GAP-RTM-009) | CONTRACT | Selman | DEFINED→CONTRACT_READY→INTEGRATION_READY→FROZEN | ARCH-CTR-EVTSCHEMA | FR-VIS-009 |
+| DN-VIS-OBSCON | InspectionObservation contract + fixtures (EVT-InspectionObservation-v1, distinct from IC-VIS-002) | CONTRACT | Selman | DEFINED→CONTRACT_READY→INTEGRATION_READY→FROZEN | ARCH-CTR-EVTSCHEMA | FR-VIS-009 |
 | DN-VIS-SERVING | Operational Vision inference over real artifacts | CAPABILITY | Selman | DEFINED→CONTRACT_READY→SKELETON_READY→COMPONENT_READY→INTEGRATION_READY→EVALUATION_READY→FROZEN | ARCH-VIS-INFER, ARCH-VIS-ARTIFACT | FR-VIS-001, FR-VIS-016, FR-VIS-014 |
 | DN-VIS-EPISODES | Operational inspection episodes (ScenarioEpisodes with genealogy/state) | DATA | Selman | DEFINED→COMPONENT_READY→EVALUATION_READY→FROZEN | ARCH-DATA-LINEAGE | FR-VIS-016 |
 
@@ -288,7 +288,7 @@ for each target (node S, stage X, environment class ENV):
 | DN-AI-PROVIDER | LLM provider abstraction + deterministic non-LLM baseline | CAPABILITY | Asrın | DEFINED→CONTRACT_READY→SKELETON_READY→COMPONENT_READY→INTEGRATION_READY→EVALUATION_READY→FROZEN | ARCH-AI-PROVIDER | FR-AI-011 |
 | DN-RAG-CORPUS | Documentary corpus (DocumentVersion/CorpusVersion) | DATA | Asrın | DEFINED→COMPONENT_READY→EVALUATION_READY→FROZEN | ARCH-AI-RAG | FR-RAG-001, FR-RAG-009 |
 | DN-RAG | RAG retrieval capability (sparse/dense/hybrid, citations, rights filter) | CAPABILITY | Asrın | DEFINED→CONTRACT_READY→SKELETON_READY→COMPONENT_READY→INTEGRATION_READY→EVALUATION_READY→FROZEN | ARCH-AI-RAG, ARCH-DATA-VECTOR | FR-RAG-003, FR-RAG-004, FR-RAG-005, FR-RAG-006, FR-RAG-010 |
-| DN-ML | Predictive ML M1/M2/M3 (Prediction contract, calibration) | CAPABILITY | Asrın | DEFINED→CONTRACT_READY→SKELETON_READY→COMPONENT_READY→INTEGRATION_READY→EVALUATION_READY→FROZEN | ARCH-AI-ORCH (coarse, GAP-RTM-001) | FR-ML-001, FR-ML-002, FR-ML-003, FR-ML-004, FR-ML-006 |
+| DN-ML | Predictive ML M1/M2/M3 (Prediction contract, calibration) | CAPABILITY | Asrın | DEFINED→CONTRACT_READY→SKELETON_READY→COMPONENT_READY→INTEGRATION_READY→EVALUATION_READY→FROZEN | ARCH-AI-ORCH (coarse, GAP-RTM-001), ARCH-AI-ML | FR-ML-001, FR-ML-002, FR-ML-003, FR-ML-004, FR-ML-006 |
 
 ### 5.7 SCHED (6)
 
@@ -331,7 +331,7 @@ for each target (node S, stage X, environment class ENV):
 |---|---|---|---|---|---|---|
 | DN-RES-DATASCEN | Evaluation datasets / scenario families (DEV/CAL/FINAL partitions) | DATA | Asrın | DEFINED→COMPONENT_READY→EVALUATION_READY→FROZEN | ARCH-DATA-LINEAGE | FR-EVAL-002, NFR-DATA-002 |
 | DN-RES-BASELINES | Baselines (RCA-B*, scheduler/Vision/ML baselines, BaselineRuns) | EVIDENCE | Asrın | DEFINED→COMPONENT_READY→EVALUATION_READY→FROZEN | ARCH-DATA-LINEAGE | FR-SCH-010, FR-EVAL-002 |
-| DN-RES-HARNESS | Evaluation harnesses (per lane) | CAPABILITY | Yavuz | DEFINED→CONTRACT_READY→SKELETON_READY→COMPONENT_READY→INTEGRATION_READY→EVALUATION_READY→FROZEN | — (GAP-RTM-002) | FR-EVAL-001, FR-EVAL-006 |
+| DN-RES-HARNESS | Evaluation harnesses (per lane) | CAPABILITY | Yavuz | DEFINED→CONTRACT_READY→SKELETON_READY→COMPONENT_READY→INTEGRATION_READY→EVALUATION_READY→FROZEN | — (GAP-RTM-002), ARCH-SCH-EVAL, ARCH-DATA-EVIDENCE | FR-EVAL-001, FR-EVAL-006 |
 | DN-RES-CALIB | Calibration (thresholds, budgets, policies on CAL partitions) | EVIDENCE | Asrın | DEFINED→EVALUATION_READY→FROZEN | ARCH-DATA-LINEAGE | FR-ML-006, FR-VIS-008 |
 | DN-FRZ-DATA | Data / scenario / seed freeze (SplitManifests, ScenarioSet, SeedSet) | FREEZE | Batu | DEFINED→FROZEN | ARCH-DATA-LINEAGE, ARCH-SIM-SCENARIO | NFR-DATA-002, FR-SIM-007 |
 | DN-FRZ-MODEL | Model / policy freeze (ModelPackages, AIBehaviorBundle, RetrievalProfile, SchedulerPolicy, WorkflowBundle, AuthorityPolicy) | FREEZE | Asrın | DEFINED→FROZEN | ARCH-VIS-MODEL, ARCH-AI-PROVIDER, ARCH-AI-RAG, ARCH-SCH-ENGINE, ARCH-AUTO-WORKFLOW | FR-AI-011, FR-RAG-009 |
@@ -358,7 +358,7 @@ for each target (node S, stage X, environment class ENV):
 | MS-M6 | M6 — Research Freeze | MILESTONE | — | PASS/FAIL (Item 65) | — | — |
 | MS-M7 | M7 — Final Benchmark Complete | MILESTONE | — | PASS/FAIL (Item 65) | — | — |
 | MS-M8 | M8 — Final Release Candidate | MILESTONE | — | PASS/FAIL (Item 65) | — | — |
-| CK-E2E01 | E2E-01 First E2E Checkpoint (end S5) | CHECKPOINT | N/A — no single owner (Item 67 #213) | PASS/FAIL (Item 67) | — | all F0 (precursor) |
+| CK-E2E01 | E2E-01 First E2E Checkpoint (end S5) | CHECKPOINT | N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW | PASS/FAIL (Item 67) | — | all F0 (precursor) |
 
 ## 6. Dependency Registry
 
@@ -408,7 +408,7 @@ All 217 edges. Columns follow Item 66 "Dependency Registry" fields. *Pred owner*
 | DEP-022 | DN-CORE-LIFECYCLE → DN-CORE-OUTBOX | CAPABILITY | HARD | INTEGRATION | COMPONENT_READY | M1 (S2) | Asrın | Asrın | — | atomic mutation+outbox test on real PostgreSQL | DR-1 |
 | DEP-023 | DN-EVT-CONTRACTS → DN-EVT-SPINE | CONTRACT | HARD | INTEGRATION | CONTRACT_READY | M1 (S2) | Asrın | Asrın | F1 | contract merged + contract tests green + example fixture published | DR-2 |
 | DEP-024 | DN-CORE-OUTBOX → DN-EVT-SPINE | CAPABILITY | HARD | INTEGRATION | INTEGRATION_READY | M1 (S2) | Asrın | Asrın | — | real cross-boundary integration test green on INTEGRATION (outbox → NATS → consumer) | DR-1 |
-| DEP-025 | DN-RT-NATS → DN-EVT-SPINE | RUNTIME | HARD | INTEGRATION | INTEGRATION_READY | M1 (S2) | Yavuz | Asrın | F1 | real JetStream in CI + INTEGRATION (no fake bus, CI-INV-07) | DR-3 |
+| DEP-025 | DN-RT-NATS → DN-EVT-SPINE | RUNTIME | HARD | INTEGRATION | INTEGRATION_READY | M1 (S2) | Yavuz | Asrın | — | real JetStream in CI + INTEGRATION (no fake bus, CI-INV-07) | DR-3 |
 | DEP-026 | DN-CORE-CONTRACTS → DN-CORE-CMDCON | CONTRACT | HARD | START | CONTRACT_READY | S2 | Asrın | Asrın | F1 | contract merged + contract tests green + example fixture published | DR-1 |
 | DEP-027 | DN-CORE-CMDCON → DN-CORE-CMDEXEC | CONTRACT | HARD | START | CONTRACT_READY | S2–S3 | Asrın | Asrın | F1 | contract merged + contract tests green + example fixture published | DR-2 |
 | DEP-028 | DN-CORE-TRANSITIONS → DN-CORE-CMDEXEC | CAPABILITY | HARD | INTEGRATION | INTEGRATION_READY | E2E-01 readiness (end S4) | Asrın | Asrın | — | legal/illegal transition suite green incl. negatives | DR-1 |
@@ -433,7 +433,7 @@ All 217 edges. Columns follow Item 66 "Dependency Registry" fields. *Pred owner*
 | DEP-042 | DN-EVT-SPINE → DN-SIM-COREINT | CAPABILITY | HARD | INTEGRATION | INTEGRATION_READY | M2 (S4) | Asrın | Batu | — | real cross-boundary integration test green on INTEGRATION | DR-1 |
 | DEP-043 | DN-SIM-KERNEL → DN-SIM-DISPIF | CAPABILITY | HARD | START | COMPONENT_READY | S2 | Batu | Batu | — | baseline dispatch interface callable | DR-1 |
 | DEP-044 | DN-SIM-KERNEL → DN-SIM-SNAPFORK | CAPABILITY | HARD | START | COMPONENT_READY | S3 | Batu | Batu | — | snapshot/restore tests green | DR-1 |
-| DEP-045 | DN-RT-OBJ → DN-SIM-SNAPFORK | RUNTIME | SOFT | INTEGRATION | INTEGRATION_READY | M2 (S4) | Yavuz | Batu | F1 | snapshot checkpoints stored as object artifacts | DR-3 |
+| DEP-045 | DN-RT-OBJ → DN-SIM-SNAPFORK | RUNTIME | SOFT | INTEGRATION | INTEGRATION_READY | M2 (S4) | Yavuz | Batu | — | snapshot checkpoints stored as object artifacts | DR-3 |
 | DEP-046 | DN-SIM-KERNEL → DN-SIM-ORACLE | CAPABILITY | HARD | START | COMPONENT_READY | S3 | Batu | Batu | F0 | Oracle stream namespace separated | DR-1 |
 | DEP-047 | DN-SEC-BASE → DN-SIM-ORACLE | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Yavuz | Batu | F0 | normal runtime credentials denied Oracle access (negative test) | DR-3 |
 | DEP-048 | DN-SIM-OPSEM → DN-SIM-SYNTH | CAPABILITY | HARD | START | COMPONENT_READY | S3–S4 | Batu | Batu | F4 | ScenarioInstances generated with versioned ScenarioVersion/SeedSet | DR-4 |
@@ -451,7 +451,7 @@ All 217 edges. Columns follow Item 66 "Dependency Registry" fields. *Pred owner*
 | DEP-055 | DN-RT-MLFLOW → DN-VIS-MODELS | RUNTIME | HARD | MILESTONE_EXIT | INTEGRATION_READY | M4/M5 | Yavuz | Selman | — | ModelPackage promotion recorded in MLflow + artifact store | DR-3 |
 | DEP-056 | DN-CORE-CONTRACTS → DN-VIS-ARTCON | CONTRACT | HARD | START | CONTRACT_READY | S3 | Asrın | Selman | F1 | contract merged + contract tests green + example fixture published | DR-1 |
 | DEP-057 | DN-VIS-ARTCON → DN-VIS-SERVING | CONTRACT | HARD | INTEGRATION | CONTRACT_READY | E2E-01 readiness (end S4) | Selman | Selman | F1 | contract merged + contract tests green + example fixture published | DR-1 |
-| DEP-058 | DN-RT-OBJ → DN-VIS-SERVING | RUNTIME | HARD | INTEGRATION | INTEGRATION_READY | E2E-01 (end S5) | Yavuz | Selman | F1 | artifact read via ArtifactRef on SeaweedFS | DR-3 |
+| DEP-058 | DN-RT-OBJ → DN-VIS-SERVING | RUNTIME | HARD | INTEGRATION | INTEGRATION_READY | E2E-01 (end S5) | Yavuz | Selman | — | artifact read via ArtifactRef on SeaweedFS | DR-3 |
 | DEP-059 | DN-VIS-BASELINES → DN-VIS-SERVING | CAPABILITY | SOFT | INTEGRATION | COMPONENT_READY | E2E-01 (end S5) | Selman | Selman | F2 | simple generic algorithm computes observation (no injected label) | DR-1 |
 | DEP-060 | DN-VIS-MODELS → DN-VIS-SERVING | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | M4 (S8) | Selman | Selman | — | required Vision modes served from promoted ModelPackages | DR-1 |
 | DEP-061 | DN-VIS-ARTCON → DN-VIS-OBSCON | CONTRACT | HARD | START | CONTRACT_READY | S3–S4 | Selman | Selman | F1 | contract merged + contract tests green + example fixture published | DR-1 |
@@ -474,7 +474,7 @@ All 217 edges. Columns follow Item 66 "Dependency Registry" fields. *Pred owner*
 | DEP-073 | DN-AI-PROVIDER → DN-AI-RCA | CAPABILITY | SOFT | INTEGRATION | COMPONENT_READY | M4 | Asrın | Asrın | F2 | deterministic non-LLM baseline path green without paid provider | DR-5 |
 | DEP-074 | DN-SIM-SYNTH → DN-ML | DATA | HARD | MILESTONE_EXIT | EVALUATION_READY | M4 (S8) | Batu | Asrın | F4 | sufficient historical data/features/labels generated | DR-4 |
 | DEP-075 | DN-RT-MLFLOW → DN-ML | RUNTIME | HARD | MILESTONE_EXIT | INTEGRATION_READY | M4/M5 | Yavuz | Asrın | — | ML ModelPackage governance in MLflow | DR-3 |
-| DEP-076 | DN-HITL-POLICY → DN-AI-ACTCON | CAPABILITY | HARD | START | COMPONENT_READY | S3–S4 | Asrın | Asrın | F1 | risk class/approval requirement defined per action | DR-1 |
+| DEP-076 | DN-HITL-POLICY → DN-AI-ACTCON | CAPABILITY | HARD | START | COMPONENT_READY | S3–S4 | Asrın | Asrın | — | risk class/approval requirement defined per action | DR-1 |
 | DEP-077 | DN-AI-ACTCON → DN-AI-RCA | CONTRACT | HARD | INTEGRATION | CONTRACT_READY | E2E-01 readiness (end S4) | Asrın | Asrın | F1 | contract merged + contract tests green + example fixture published | DR-1 |
 
 ### 6.6 Scheduler (12)
@@ -502,7 +502,7 @@ All 217 edges. Columns follow Item 66 "Dependency Registry" fields. *Pred owner*
 | DEP-091 | DN-HITL-POLICY → DN-HITL-APPROVAL | CAPABILITY | HARD | INTEGRATION | INTEGRATION_READY | E2E-01 (end S5) | Asrın | Asrın | F0 | policy evaluation independent of AI text | DR-1 |
 | DEP-092 | DN-SCH-PLANCON → DN-HITL-APPROVAL | CONTRACT | HARD | INTEGRATION | CONTRACT_READY | E2E-01 readiness (end S4) | Batu | Asrın | F1 | contract merged + contract tests green + example fixture published | DR-1 |
 | DEP-093 | DN-UI-APPROVAL → DN-HITL-APPROVAL | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Asrın | Asrın | — | operator sees bound context and approves via real UI | DR-1 |
-| DEP-094 | DN-AUTO-DESIGN → DN-AUTO-DURABLE | CAPABILITY | HARD | START | COMPONENT_READY | S3 | Batu | Batu | F1 | workflow tests with stub activities | DR-1 |
+| DEP-094 | DN-AUTO-DESIGN → DN-AUTO-DURABLE | CAPABILITY | HARD | START | COMPONENT_READY | S3 | Batu | Batu | — | workflow tests with stub activities | DR-1 |
 | DEP-095 | DN-RT-TEMPORAL → DN-AUTO-DURABLE | RUNTIME | HARD | INTEGRATION | INTEGRATION_READY | E2E-01 formal run (end S5) | Yavuz | Batu | — | workflow persists through worker restart on real Temporal | DR-3 |
 | DEP-096 | DN-AI-ACTCON → DN-AUTO-EXEC | CONTRACT | HARD | INTEGRATION | CONTRACT_READY | E2E-01 readiness (end S4) | Asrın | Batu | F1 | contract merged + contract tests green + example fixture published | DR-1 |
 | DEP-097 | DN-CORE-CMDCON → DN-AUTO-EXEC | CONTRACT | HARD | INTEGRATION | CONTRACT_READY | E2E-01 readiness (end S4) | Asrın | Batu | F1 | contract merged + contract tests green + example fixture published (typed command client) | DR-2 |
@@ -589,18 +589,18 @@ All 217 edges. Columns follow Item 66 "Dependency Registry" fields. *Pred owner*
 | DEP-174 | DN-SCH-DYN → MS-M2 | CAPABILITY | HARD | MILESTONE_EXIT | COMPONENT_READY | M2 (S4) | Batu | — | — | milestone evidence (Item 65) | DR-1 |
 | DEP-175 | DN-RT-OBJ → MS-M2 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | M2 (S4) | Yavuz | — | — | milestone evidence (Item 65) | DR-1 |
 | DEP-176 | DN-PLAT-FAILVAL → MS-M2 | CAPABILITY | HARD | MILESTONE_EXIT | COMPONENT_READY | M2 (S4) | Yavuz | — | — | milestone evidence (Item 65) | DR-1 |
-| DEP-177 | MS-M2 → CK-E2E01 | EVIDENCE | HARD | MILESTONE_EXIT | — | E2E-01 (S5) | — | N/A — no single owner (Item 67 #213) | — | contract readiness table satisfied end S4 | — |
-| DEP-178 | DN-VIS-SERVING → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Selman | N/A — no single owner (Item 67 #213) | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
-| DEP-179 | DN-AI-RCA → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Asrın | N/A — no single owner (Item 67 #213) | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
-| DEP-180 | DN-SCH-PLANCON → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Batu | N/A — no single owner (Item 67 #213) | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
-| DEP-181 | DN-SCH-VALID → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Batu | N/A — no single owner (Item 67 #213) | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
-| DEP-182 | DN-HITL-APPROVAL → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Asrın | N/A — no single owner (Item 67 #213) | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
-| DEP-183 | DN-AUTO-DURABLE → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Batu | N/A — no single owner (Item 67 #213) | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
-| DEP-184 | DN-AUTO-EXEC → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Batu | N/A — no single owner (Item 67 #213) | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
-| DEP-185 | DN-AUTO-VERIFY → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Batu | N/A — no single owner (Item 67 #213) | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
-| DEP-186 | DN-UI-APPROVAL → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Asrın | N/A — no single owner (Item 67 #213) | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
-| DEP-187 | DN-SIM-ORACLE → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Batu | N/A — no single owner (Item 67 #213) | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
-| DEP-188 | CK-E2E01 → MS-M3 | EVIDENCE | HARD | MILESTONE_EXIT | — | M3 (S6) | N/A — no single owner (Item 67 #213) | — | — | E2E-01 PASS (precursor; waives nothing) | — |
+| DEP-177 | MS-M2 → CK-E2E01 | EVIDENCE | HARD | MILESTONE_EXIT | — | E2E-01 (S5) | — | N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW | — | contract readiness table satisfied end S4 | — |
+| DEP-178 | DN-VIS-SERVING → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Selman | N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
+| DEP-179 | DN-AI-RCA → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Asrın | N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
+| DEP-180 | DN-SCH-PLANCON → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Batu | N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
+| DEP-181 | DN-SCH-VALID → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Batu | N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
+| DEP-182 | DN-HITL-APPROVAL → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Asrın | N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
+| DEP-183 | DN-AUTO-DURABLE → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Batu | N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
+| DEP-184 | DN-AUTO-EXEC → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Batu | N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
+| DEP-185 | DN-AUTO-VERIFY → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Batu | N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
+| DEP-186 | DN-UI-APPROVAL → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Asrın | N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
+| DEP-187 | DN-SIM-ORACLE → CK-E2E01 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | E2E-01 (end S5) | Batu | N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW | — | E2E-RUN-A/B/C evidence (Item 67 #157–#159) | DR-1 |
+| DEP-188 | CK-E2E01 → MS-M3 | EVIDENCE | HARD | MILESTONE_EXIT | — | M3 (S6) | N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW | — | — | E2E-01 PASS (precursor; waives nothing) | — |
 | DEP-189 | DN-RT-OBS → MS-M3 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | M3 (S6) | Yavuz | — | — | milestone evidence (Item 65) | DR-1 |
 | DEP-190 | DN-TWIN-VERIFY → MS-M3 | CAPABILITY | HARD | MILESTONE_EXIT | INTEGRATION_READY | M3 (S6) | Asrın | — | — | milestone evidence (Item 65) | DR-1 |
 | DEP-191 | MS-M3 → MS-M4 | EVIDENCE | HARD | MILESTONE_EXIT | — | M4 | — | — | — | M3 PASS | — |
@@ -722,13 +722,13 @@ Exact names/subjects may be refined (#76) but semantic boundaries cannot disappe
 | Logical contract (Item 67) | Producer node | Consumer nodes | 02 / IC catalog counterpart | Readiness by S4 | Naming status |
 |---|---|---|---|---|---|
 | InspectionRequested.v1 | DN-SIM-COREINT (Simulator/Core flow) | DN-VIS-SERVING | IC-VIS-001 InspectionRequest | CONTRACT_READY | aligned |
-| InspectionObservation.v1 | DN-VIS-OBSCON | DN-AI-RCA, DN-TWIN-PROJ | IC-VIS-002 InspectionResult | CONTRACT_READY | RECONCILIATION_REQUIRED (GAP-RTM-009) |
+| InspectionObservation.v1 | DN-VIS-OBSCON | DN-AI-RCA, DN-TWIN-PROJ | EVT-InspectionObservation-v1 (IC-VIS-002 is a separate normalized outcome) | CONTRACT_READY | DECIDED; exact schema freeze remains assigned WP work |
 | OperationalActionProposal.v1 | DN-AI-RCA | DN-SCH-DYN, DN-HITL-APPROVAL | IC-AI-004 Recommendation | CONTRACT_READY | alias to confirm |
 | RecoveryScheduleRequested.v1 | operational control flow | DN-SCH-DYN | IC-SCH-002 SchedulingRequest | CONTRACT_READY | alias to confirm |
 | RecoveryPlanProposed.v1 | DN-SCH-PLANCON | DN-HITL-APPROVAL, DN-AUTO-EXEC | IC-SCH-004 RecoveryPlan | CONTRACT_READY | aligned |
 | ApprovalDecision.v1 | DN-HITL-APPROVAL | DN-AUTO-EXEC | IC-AUTO-002 ApprovalRequest (decision) | CONTRACT_READY | aligned |
-| PlaceLotOnHold.v1 | DN-CORE-CMDCON (Core semantic owner) | DN-AUTO-EXEC (invoker) | ApplyMaterialHold (02) | INTEGRATION_READY | RECONCILIATION_REQUIRED (GAP-RTM-010) |
-| DispatchLot.v1 | DN-CORE-CMDCON | DN-AUTO-EXEC | IC-SCH-005 DispatchDecision / ActivateSchedule (02) | INTEGRATION_READY | RECONCILIATION_REQUIRED (GAP-RTM-010 scope) |
+| PlaceLotOnHold.v1 | DN-CORE-CMDCON (Core semantic owner) | DN-AUTO-EXEC (invoker) | CMD-PlaceLotOnHold-v1 (01/02) | INTEGRATION_READY | RESOLVED — schema/evidence freeze remains implementation work |
+| DispatchLot.v1 | DN-CORE-CMDCON | DN-AUTO-EXEC | DispatchLot.v1 (01 Item71); IC-SCH-005 is decision data, ActivateSchedule is a different action | INTEGRATION_READY | RESOLVED — dispatch execution is distinct from plan activation |
 | LotHeld.v1 | DN-CORE-OUTBOX | DN-TWIN-PROJ, DN-SIM-COREINT, DN-AUTO-VERIFY | Core domain event | CONTRACT_READY | aligned |
 | LotDispatchAuthorized.v1 | DN-CORE-OUTBOX | DN-SIM-COREINT | Core domain event | CONTRACT_READY | aligned |
 | OperationStarted.v1 | DN-SIM-COREINT | DN-CORE-LIFECYCLE, DN-TWIN-PROJ | physical execution event | CONTRACT_READY | aligned |
@@ -763,7 +763,7 @@ Shared envelope obligations for all async E2E contracts (Item 67 #78–#87): Mes
 | RQ-3 bounded authority | Asrın | DN-HITL-POLICY → DN-FRZ-RQ3AUTH → DN-FRZ-PROTOCOL → … → DN-RES-CLAIMS | M6 |
 | RQ-4 perception-to-operations | Selman | Vision research chain (§10.4) + DN-VIS-EPISODES → DN-FRZ-PROTOCOL | M6 |
 | MC-1 end-to-end | Asrın | CP-1 complete (M3) → M4 → M5 → DN-FRZ-RELEASE → DN-RES-BENCH (E2E lane) | M6/M7 |
-| MC-2 governed synthetic benchmark | **unassigned** (DEP-GAP-10) | DN-SIM-SYNTH → DN-FRZ-SCENSET → DN-FRZ-DATA → … → DN-RES-BENCH | M6 |
+| MC-2 governed synthetic benchmark | Asrın Dündar (accountable) | DN-SIM-SYNTH → DN-FRZ-SCENSET → DN-FRZ-DATA → … → DN-RES-BENCH | M6 |
 ## 10. Critical Paths CP-1 · CP-2 · CP-3
 
 The three chains below are reproduced **verbatim from 01 Item 66 #107/#110/#112** and are not re-sequenced. They are *flow-ordered* paths: consecutive nodes are connected by dependency edges that may point in either direction (e.g., Core command execution must be ready *before* Automation, although in runtime flow Automation invokes Core). Each link is resolved to real edges below; "INDIRECT" means the canonical neighbours are connected through intermediate nodes.
@@ -786,7 +786,7 @@ The three chains below are reproduced **verbatim from 01 Item 66 #107/#110/#112*
 | 10 | Durable Automation | DN-AUTO-DURABLE, DN-AUTO-EXEC | Batu |
 | 11 | Core Effect | DN-CORE-CMDEXEC | Asrın |
 | 12 | Twin Verification | DN-TWIN-VERIFY, DN-AUTO-VERIFY | Asrın, Batu |
-| 13 | Closed-Loop Alpha | CK-E2E01, MS-M3 | N/A — no single owner (Item 67 #213), — |
+| 13 | Closed-Loop Alpha | CK-E2E01, MS-M3 | N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW, — |
 
 | Link | Link strength | Cross-owner handoff | Carrying edges (id pred→succ strength/stage@readiness, need-by) |
 |---|---|---|---|
@@ -899,7 +899,7 @@ flowchart LR
   class G,IR,CD,OS,BR,FV,ER,RH,CR,BE y
 ```
 
-CP-3 is almost entirely Yavuz-owned (runtime/reproducibility edges, Item 66 #190); its consumers are every CP-2 lane. The Experiment Runner node has no 02 ARCH anchor (DEP-GAP-09).
+CP-3 is almost entirely Yavuz-owned (runtime/reproducibility edges, Item 66 #190); its consumers are every CP-2 lane. The Experiment Runner node is allocated to ARCH-PLAT-EXPERIMENT in02 (DEP-GAP-09 resolved).
 
 ### 10.4 Vision Research Critical Chain (Item 66 #114)
 
@@ -999,7 +999,7 @@ Note: `DN-VIS-SERVING → DN-AI-RCA` is HARD only at MILESTONE_EXIT for M3 (real
 | Fallback | #Edges | Edges |
 |---|---|---|
 | F0 | 7 | DEP-046, DEP-047, DEP-084, DEP-090, DEP-091, DEP-099, DEP-103 |
-| F1 | 25 | DEP-018, DEP-021, DEP-023, DEP-025, DEP-026, DEP-027, DEP-030, DEP-031, DEP-038, DEP-045, DEP-056, DEP-057, DEP-058, DEP-061, DEP-064, DEP-065, DEP-076, DEP-077, DEP-079, DEP-092, DEP-094, DEP-096, DEP-097, DEP-101, DEP-105 |
+| F1 | 20 | DEP-018, DEP-021, DEP-023, DEP-026, DEP-027, DEP-030, DEP-031, DEP-038, DEP-056, DEP-057, DEP-061, DEP-064, DEP-065, DEP-077, DEP-079, DEP-092, DEP-096, DEP-097, DEP-101, DEP-105 |
 | F2 | 9 | DEP-059, DEP-073, DEP-078, DEP-083, DEP-085, DEP-086, DEP-088, DEP-089, DEP-104 |
 | F3 | 5 | DEP-011, DEP-015, DEP-071, DEP-072, DEP-112 |
 | F4 | 5 | DEP-048, DEP-050, DEP-062, DEP-074, DEP-121 |
@@ -1106,7 +1106,7 @@ Operational guidance derived from the overlay: avoid unrelated architecture migr
 | DEP-038 | Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity) → Operational semantics (reentrant routing, queues, failures, maintenance, rework) | S2 | CONTRACT_READY | Asrın | DN-SIM-OPSEM (Batu) | NOT_READY |
 | DEP-008 | Integration runtime (shared Linux host bootstrap) → NATS JetStream runtime | M1 (S2) | INTEGRATION_READY | Yavuz | DN-RT-NATS (Yavuz) | NOT_READY |
 | DEP-007 | Integration runtime (shared Linux host bootstrap) → PostgreSQL runtime | M1 (S2) | INTEGRATION_READY | Yavuz | DN-RT-PG (Yavuz) | NOT_READY |
-| DEP-065 | InspectionObservation contract + fixtures (name: GAP-RTM-009) → Structured evidence-grounded RCA on real operational evidence | E2E-01 readiness (end S4) | CONTRACT_READY | Selman | DN-AI-RCA (Asrın) | NOT_READY |
+| DEP-065 | InspectionObservation contract + fixtures (EVT-InspectionObservation-v1, distinct from IC-VIS-002) → Structured evidence-grounded RCA on real operational evidence | E2E-01 readiness (end S4) | CONTRACT_READY | Selman | DN-AI-RCA (Asrın) | NOT_READY |
 | DEP-068 | Operational Vision inference over real artifacts → Structured evidence-grounded RCA on real operational evidence | M3 (S6) | INTEGRATION_READY | Selman | DN-AI-RCA (Asrın) | NOT_READY |
 | DEP-095 | Temporal server runtime → Durable workflows on real Temporal (approval wait, restart safety) | E2E-01 formal run (end S5) | INTEGRATION_READY | Yavuz | DN-AUTO-DURABLE (Batu) | NOT_READY |
 | DEP-096 | ActionCatalog + ActionProposal contract (authority semantics) → Protected execution via Core typed commands (final revalidation) | E2E-01 readiness (end S4) | CONTRACT_READY | Asrın | DN-AUTO-EXEC (Batu) | NOT_READY |
@@ -1171,23 +1171,23 @@ Severity: **B-E2E01 / B-M4 / B-M5 / B-M6** = blocks the named gate if unresolved
 
 | ID | Class | Finding | Affected edges | Required resolution (not decided here) | Resolution owner | Severity |
 |---|---|---|---|---|---|---|
-| DEP-GAP-01 | SOURCE_DRIFT (00 vs 01) | 00 §12 abbreviates CP-2 (omits Evaluation Harnesses, splits of freeze into Data/Scenario/Seed and Model/Policy, ExperimentProtocolFreeze, Statistical Analysis wording) and CP-3 (omits Failure Validation). 01 Item 66 is normative. | CP-2, CP-3 | Item 66 chains used verbatim; editorial update of 00 recommended | Asrın (guide maintenance) | MINOR |
+| DEP-GAP-01 | RESOLVED | 00 critical paths now reproduce canonical01/05 CP-2 and CP-3 without missing stages. | CP-2, CP-3 | Item 66 chains used verbatim; editorial update of 00 recommended | Asrın (guide maintenance) | INFO — future implementation evidence remains required |
 | DEP-GAP-02 | OWNERSHIP_AMBIGUITY in source | Item 66 dependency board lists "Qdrant RAG — Asrın/Yavuz", conflicting with #141 / DEP-INV-07 (no vague/shared blocker owner). | DEP-013, DEP-071 | Modeled as two nodes: DN-RT-QDRANT (Yavuz, runtime) and DN-RAG (Asrın, capability); confirm in review | Asrın · Yavuz | MINOR |
 | DEP-GAP-03 | PERSON-AS-CONSUMER in source | Item 66 board names consumers as people/groups ("Batu", "All", "Research", "Asrın"), contrary to #26 / DEP-INV-01. | board rows | Re-expressed as capability consumers (§19.1) | — | INFO |
 | DEP-GAP-04 | TIMING_TIGHTENING | Item 66 prose places Keycloak "before serious HITL / M4", Temporal "by M3", SeaweedFS "HARD for real artifact flow"; Item 67 requires Keycloak READY for actual login and SeaweedFS READY by end S4, Temporal READY by formal E2E (end S5). E2E-01 precedes M3, so the earlier dates govern. | DEP-010, DEP-009, DEP-012, DEP-090 | 04/06/07 must schedule these runtimes for S4/S5, not M3/M4 | Yavuz | MAJOR (B-E2E01) |
 | DEP-GAP-05 | TIMING_INVERSION (computed) | DEP-047 requires DN-SEC-BASE INTEGRATION_READY by E2E-01 (end S5) for the Oracle-access negative test (Item 67 #98–#99), while DN-SEC-BASE's own identity edge DEP-016 is due only at M4 (S8). | DEP-047, DEP-016 | Plan a S5 subset of the security baseline (normal-runtime vs evaluator credential separation) ahead of the full M4 baseline; recorded here, decided in 04/06D | Yavuz (identity) · Batu (Oracle stream) | MAJOR (B-E2E01) |
-| DEP-GAP-06 | RECONCILIATION_REQUIRED (inherits GAP-RTM-010) | Hold/dispatch command naming: `PlaceLotOnHold`/`DispatchLot`/`ReleaseLot`/`RequestMaintenance` (Items 66 #42, 67) vs `ApplyMaterialHold`/`ReleaseMaterialHold`/`ActivateSchedule` (Items 15/34, 02). DN-CORE-CMDCON must be CONTRACT_READY and command execution INTEGRATION_READY by end S4. | DEP-026, DEP-097, DEP-098 | Canonical command names fixed in contract registry before S3 review | Asrın | B-E2E01 |
-| DEP-GAP-07 | RECONCILIATION_REQUIRED (inherits GAP-RTM-009) | `InspectionObservation` (Items 66 #58/#117, 67) vs `InspectionResult` (02 IC-VIS-002). Item 66 #117 requires this contract to freeze early to break the Vision↔AI cycle. | DEP-061, DEP-065 | Decide alias vs two artifacts in contract registry before S3–S4 | Selman (Asrın review) | B-E2E01 |
-| DEP-GAP-08 | UNANCHORED_NODE (inherits GAP-RTM-001) | DN-RT-MLFLOW and DN-ML have no dedicated 02 ARCH ID. | DEP-014, DEP-055, DEP-075 | 02 registry append via change control | Yavuz · Asrın | B-M4 |
-| DEP-GAP-09 | UNANCHORED_NODE (inherits GAP-RTM-002) | CP-3 node Experiment Runner (DN-PLAT-RUNNER) and CP-2 node Evaluation Harnesses (DN-RES-HARNESS) have no 02 ARCH ID. | DEP-114, DEP-126, DEP-125 | 02 registry append before M5 | Yavuz | B-M5 |
-| DEP-GAP-10 | UNRESOLVED_OWNER (inherits GAP-RTM-020) | MC-2 has no primary research owner (Item 58); the MC-2 lane of CP-2 (DN-FRZ-SCENSET → … → DN-RES-BENCH) lacks an accountable claim owner. | DEP-149, DEP-130 | Owner assignment via change control before M6 | team (change control) | B-M6 |
-| DEP-GAP-11 | MEASUREMENT_CONTEXT_OPEN (inherits GAP-RTM-021) | HardwareProfile for the Vision CPU baseline (A1 NFR-PERF-009) and final Vision GPU/CPU profile not pinned; HARD FREEZE edges into benchmark depend on them. | DEP-117, DEP-142, DEP-119 | Record HardwareProfiles before M6 | Selman · Yavuz | B-M6 |
+| DEP-GAP-06 | RESOLVED | PlaceLotOnHold / CMD-PlaceLotOnHold-v1 is canonical; deprecated aliases do not define parallel commands. | DEP-026, DEP-097, DEP-098 | Apply explicit final human decision in01/02; exact artifacts remain implementation work | Asrın | INFO — governed implementation gates retained |
+| DEP-GAP-07 | RESOLVED | EVT-InspectionObservation-v1 is distinct from normalized IC-VIS-002; both preserve immutable provenance. | DEP-061, DEP-065 | Apply explicit final human decision in01/02; exact artifacts remain implementation work | Selman (Asrın review) | INFO — governed implementation gates retained |
+| DEP-GAP-08 | RESOLVED | Dedicated ARCH-AI-ML/ARCH-AI-MLOPS allocations exist in02; existing MLflow runtime and AI semantics stay distinct. | DEP-014, DEP-055, DEP-075 | Use explicit01/02 final binding; future change requires09 | Yavuz · Asrın | INFO |
+| DEP-GAP-09 | RESOLVED | ARCH-PLAT-EXPERIMENT/ARCH-DATA-EVIDENCE/ARCH-SCH-EVAL now allocate existing runner/evidence/harness responsibilities. | DEP-114, DEP-126, DEP-125 | Use explicit01/02 final binding; future change requires09 | Yavuz | INFO |
+| DEP-GAP-10 | RESOLVED | MC-2 accountable owner: Asrın Dündar; contributing WP owners unchanged. | DEP-149, DEP-130 | Apply explicit final human decision in01/02; exact artifacts remain implementation work | team (change control) | INFO — governed implementation gates retained |
+| DEP-GAP-11 | RESOLVED | Primary shared-host HardwareProfile pinned in01; actual run resource/environment/workload identity remains required. | DEP-117, DEP-142, DEP-119 | Use explicit01/02 final binding; future change requires09 | Selman · Yavuz | INFO |
 | DEP-GAP-12 | SEMANTIC_CLARIFICATION | CP-1 lists AI/RCA before Recovery Scheduling; as dependencies, AI→Scheduler and AI→Automation are SOFT (DEP-INV-14/15). CP-1 is a flow path for M3, not a chain of HARD START edges. The computed HARD longest path to M3 bypasses AI. | DEP-089, DEP-104 | None required; 04/06 must not schedule Scheduler/Automation start after AI | — | INFO |
-| DEP-GAP-13 | OWNERLESS_CHECKPOINT | E2E-01 has no single capability owner (Item 67 #213). Entry edges keep predecessor owners, but the checkpoint run coordination role is not named. | CK-E2E01 entry edges | 07 Milestone & Release Plan should name a run coordinator (Item 67 lists Batu for scenario semantics, Yavuz for evidence execution tooling) without changing capability ownership | 07 authors | MINOR |
+| DEP-GAP-13 | RESOLVED | E2E coordination: durable Automation/Temporal ARCH-AUTO-WORKFLOW; scenario/evidence owners unchanged. | CK-E2E01 entry edges | Apply explicit final human decision in01/02; exact artifacts remain implementation work | 07 authors | INFO — governed implementation gates retained |
 | DEP-GAP-14 | PARTIAL_EARLY_REQUIREMENT | Item 65/66 M2 includes "restart recovery" while resilience validation is an M5 capability. Modeled as DN-PLAT-FAILVAL COMPONENT_READY at M2, EVALUATION_READY at M5. | DEP-176, DEP-203 | 07 to state M2 restart-recovery evidence scope explicitly | Yavuz | MINOR |
 | DEP-GAP-15 | VOCABULARY_ORTHOGONALITY | 02 runtime classes (REQUIRED/DEGRADABLE/OPTIONAL) and Item 66 planning strength (HARD/SOFT) coexist; conflating them would e.g. make Vision DEGRADABLE-at-runtime look optional for M3. | §16 | DEP-RULE-20; tooling keeps separate fields | Yavuz (tooling) | INFO |
 | DEP-GAP-16 | OWNERSHIP_BOUNDARY (inherits GAP-RTM-012) | DN-HITL-APPROVAL is Asrın-owned (authority semantics) but its runtime realization sits in automation-service (Batu) and depends on Keycloak (Yavuz): a three-owner convergence point on the E2E-01 critical path. | DEP-090, DEP-091, DEP-099 | Name policy vs runtime vs identity deliverables separately in 04 | Asrın | MINOR |
-| DEP-GAP-17 | EARLY_ARTIFACT_STORE_USE | Simulator snapshots are stored as SeaweedFS artifacts (02) but SeaweedFS is not required before S4; modeled SOFT with F1 local files. | DEP-045 | None; confirm in review | Batu · Yavuz | INFO |
+| DEP-GAP-17 | RESOLVED | SOFT/local development supports are non-binding; DEP-045 has no F1 fallback and never satisfies artifact integration evidence. | DEP-045 | None; confirm in review | Batu · Yavuz | INFO — future implementation evidence remains required |
 
 ## 23. Edge Records
 
@@ -1591,7 +1591,7 @@ DEP-025:
   successor: {node: DN-EVT-SPINE, owner: "Asrın"}
   semantics: {kind: RUNTIME, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}
   need_by: "M1 (S2)"   # sprint 2
-  fallback: F1
+  fallback: null
   unblock_evidence: "real JetStream in CI + INTEGRATION (no fake bus, CI-INV-07)"
   precise_requirement: null
   risk_class: DR-3
@@ -1816,7 +1816,7 @@ DEP-045:
   successor: {node: DN-SIM-SNAPFORK, owner: "Batu"}
   semantics: {kind: RUNTIME, strength: SOFT, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}
   need_by: "M2 (S4)"   # sprint 4
-  fallback: F1
+  fallback: null
   unblock_evidence: "snapshot checkpoints stored as object artifacts"
   precise_requirement: "local files for development only"
   risk_class: DR-3
@@ -1964,7 +1964,7 @@ DEP-058:
   successor: {node: DN-VIS-SERVING, owner: "Selman"}
   semantics: {kind: RUNTIME, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}
   need_by: "E2E-01 (end S5)"   # sprint 5
-  fallback: F1
+  fallback: null
   unblock_evidence: "artifact read via ArtifactRef on SeaweedFS"
   precise_requirement: "local files unblock development only (#57)"
   risk_class: DR-3
@@ -2167,7 +2167,7 @@ DEP-076:
   successor: {node: DN-AI-ACTCON, owner: "Asrın"}
   semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}
   need_by: "S3–S4"   # sprint 4
-  fallback: F1
+  fallback: null
   unblock_evidence: "risk class/approval requirement defined per action"
   precise_requirement: null
   risk_class: DR-1
@@ -2375,7 +2375,7 @@ DEP-094:
   successor: {node: DN-AUTO-DURABLE, owner: "Batu"}
   semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}
   need_by: "S3"   # sprint 3
-  fallback: F1
+  fallback: null
   unblock_evidence: "workflow tests with stub activities"
   precise_requirement: null
   risk_class: DR-1
@@ -3179,7 +3179,7 @@ DEP-176:
   status: NOT_READY
 DEP-177:
   predecessor: {node: MS-M2, owner: "—"}
-  successor: {node: CK-E2E01, owner: "N/A — no single owner (Item 67 #213)"}
+  successor: {node: CK-E2E01, owner: "N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW"}
   semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: null}
   need_by: "E2E-01 (S5)"   # sprint 5
   fallback: null
@@ -3190,7 +3190,7 @@ DEP-177:
   status: NOT_READY
 DEP-178:
   predecessor: {node: DN-VIS-SERVING, owner: "Selman"}
-  successor: {node: CK-E2E01, owner: "N/A — no single owner (Item 67 #213)"}
+  successor: {node: CK-E2E01, owner: "N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW"}
   semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}
   need_by: "E2E-01 (end S5)"   # sprint 5
   fallback: null
@@ -3201,7 +3201,7 @@ DEP-178:
   status: NOT_READY
 DEP-179:
   predecessor: {node: DN-AI-RCA, owner: "Asrın"}
-  successor: {node: CK-E2E01, owner: "N/A — no single owner (Item 67 #213)"}
+  successor: {node: CK-E2E01, owner: "N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW"}
   semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}
   need_by: "E2E-01 (end S5)"   # sprint 5
   fallback: null
@@ -3212,7 +3212,7 @@ DEP-179:
   status: NOT_READY
 DEP-180:
   predecessor: {node: DN-SCH-PLANCON, owner: "Batu"}
-  successor: {node: CK-E2E01, owner: "N/A — no single owner (Item 67 #213)"}
+  successor: {node: CK-E2E01, owner: "N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW"}
   semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}
   need_by: "E2E-01 (end S5)"   # sprint 5
   fallback: null
@@ -3223,7 +3223,7 @@ DEP-180:
   status: NOT_READY
 DEP-181:
   predecessor: {node: DN-SCH-VALID, owner: "Batu"}
-  successor: {node: CK-E2E01, owner: "N/A — no single owner (Item 67 #213)"}
+  successor: {node: CK-E2E01, owner: "N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW"}
   semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}
   need_by: "E2E-01 (end S5)"   # sprint 5
   fallback: null
@@ -3234,7 +3234,7 @@ DEP-181:
   status: NOT_READY
 DEP-182:
   predecessor: {node: DN-HITL-APPROVAL, owner: "Asrın"}
-  successor: {node: CK-E2E01, owner: "N/A — no single owner (Item 67 #213)"}
+  successor: {node: CK-E2E01, owner: "N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW"}
   semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}
   need_by: "E2E-01 (end S5)"   # sprint 5
   fallback: null
@@ -3245,7 +3245,7 @@ DEP-182:
   status: NOT_READY
 DEP-183:
   predecessor: {node: DN-AUTO-DURABLE, owner: "Batu"}
-  successor: {node: CK-E2E01, owner: "N/A — no single owner (Item 67 #213)"}
+  successor: {node: CK-E2E01, owner: "N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW"}
   semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}
   need_by: "E2E-01 (end S5)"   # sprint 5
   fallback: null
@@ -3256,7 +3256,7 @@ DEP-183:
   status: NOT_READY
 DEP-184:
   predecessor: {node: DN-AUTO-EXEC, owner: "Batu"}
-  successor: {node: CK-E2E01, owner: "N/A — no single owner (Item 67 #213)"}
+  successor: {node: CK-E2E01, owner: "N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW"}
   semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}
   need_by: "E2E-01 (end S5)"   # sprint 5
   fallback: null
@@ -3267,7 +3267,7 @@ DEP-184:
   status: NOT_READY
 DEP-185:
   predecessor: {node: DN-AUTO-VERIFY, owner: "Batu"}
-  successor: {node: CK-E2E01, owner: "N/A — no single owner (Item 67 #213)"}
+  successor: {node: CK-E2E01, owner: "N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW"}
   semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}
   need_by: "E2E-01 (end S5)"   # sprint 5
   fallback: null
@@ -3278,7 +3278,7 @@ DEP-185:
   status: NOT_READY
 DEP-186:
   predecessor: {node: DN-UI-APPROVAL, owner: "Asrın"}
-  successor: {node: CK-E2E01, owner: "N/A — no single owner (Item 67 #213)"}
+  successor: {node: CK-E2E01, owner: "N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW"}
   semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}
   need_by: "E2E-01 (end S5)"   # sprint 5
   fallback: null
@@ -3289,7 +3289,7 @@ DEP-186:
   status: NOT_READY
 DEP-187:
   predecessor: {node: DN-SIM-ORACLE, owner: "Batu"}
-  successor: {node: CK-E2E01, owner: "N/A — no single owner (Item 67 #213)"}
+  successor: {node: CK-E2E01, owner: "N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW"}
   semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}
   need_by: "E2E-01 (end S5)"   # sprint 5
   fallback: null
@@ -3299,7 +3299,7 @@ DEP-187:
   source: "Item 67"
   status: NOT_READY
 DEP-188:
-  predecessor: {node: CK-E2E01, owner: "N/A — no single owner (Item 67 #213)"}
+  predecessor: {node: CK-E2E01, owner: "N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW"}
   successor: {node: MS-M3, owner: "—"}
   semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: null}
   need_by: "M3 (S6)"   # sprint 6
@@ -3732,3 +3732,234 @@ Planned CLI surface (syntax may evolve): `mfgctl deps check <node> --stage <X>` 
 ---
 
 *End of 05 — Dependency Graph (Draft — Derived from Approved 01/02 Baseline).*
+
+## Final human reconciliation binding — 2026-10-13
+
+01 §Final Human Reconciliation and02 §Final human reconciliation govern this projection. Vision/NDT publishes immutable InspectionObservation (existing EVT-InspectionObservation-v1); Core normalizes separate InspectionResult (existing IC-VIS-002) and owns canonical manufacturing/quality state. PlaceLotOnHold / CMD-PlaceLotOnHold-v1 is the single hold-placement command; ApplyMaterialHold is deprecated terminology, never a second contract. Other protected identities follow the01 action table, with exact approval/revision/freshness/idempotency binding. Simulator/Oracle, Twin/Qdrant projections, AI READ/SIMULATE/PROPOSE, Scheduler candidates, HITL, identity and UI boundaries remain unchanged.
+
+ARCH-AUTO-WORKFLOW (durable Automation/Temporal layer) coordinates GS-01/E2E across Inspection/NDT→Core quality→RCA→recovery→HITL→governed Core commands→verified effect→Twin/Audit. It does not acquire Core authority. MC-2 accountable owner is Asrın Dündar; contributing WP owners remain73/17/32/57. The primary shared-host HardwareProfile and accepted LaneA/B/C portfolio are pinned in01; acquisition/rights/source fields not locally verified are NEEDS_SOURCE_VERIFICATION, not invented facts or performance results. Real/public held-out evaluation and source-specific limitations remain mandatory where claimed.
+
+HARD/SOFT refer to declared work/readiness consumers, not automatic runtime/deployment/import relations. Non-CONTRACT F1 entries DEP-025/045/058/076/094 have no fixture fallback: real producer readiness at the declared stage is required, while development stubs are not satisfaction evidence. DN-VIS-MODELS now declares INTEGRATION_READY for DEP-060/194; operational serving must load promoted required-mode artifacts with provenance. Source-supported deadlines and per-consumer scope are defined in05, without shifting canonical ownership or schedules.
+
+GAP-RTM-004/005 remain ACCEPTED_WITH_RATIONALE for this pre-implementation baseline: missing canonical record metadata is not fabricated. FR-GOV-001/004 and the relevant NFR owners must supply/review actual fields and measurement definitions before their declared gates; projectctl retains nulls/warnings and never grants READY/VERIFIED from planned prose. Owner trace confirmation GAP-RTM-006 and final schema/version/card specifics remain ordinary implementation/review prerequisites, not unresolved choices among the eight approved policy groups.
+
+
+## Consumer binding and source-supported need-by interpretation
+
+This section applies DEP-RULE-06/Item66 consumer specificity without fabricating future schema fields or converting readiness edges into runtime imports. Each edge’s canonical predecessor, successor, kind, strength, blocking stage, readiness and unblock_evidence are its declared planning predicate. A downstream owner must bind the exact consumed version/artifact/fields when its implementation task becomes READY. Unknown precise_requirement remains null and diagnostic-visible; no gate satisfaction is inferred. The null justification is per-edge below, not a waiver of field-level DoR. This resolves the planning-vs-implementation tension in §23: precise implementation contracts are delivered by their canonical contract WPs.
+
+For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §18 sprint overlay supplies the latest due sprint for that edge; it does not permit actual consumption earlier than required readiness. START readiness is checked at actual start, INTEGRATION at the integration boundary, MILESTONE_EXIT at the named milestone, FREEZE before freeze. The original string remains provenance/planning context and parser ambiguity warnings remain visible. SOFT R2/S has no mandatory deadline or mandatory-path blocker. M4/M5 edges are due at the M4/S8 gate when §18 says S8, not deferred to M5 merely because their display label mentions both.
+
+| Edge with window label | Original label | Existing §18 latest due sprint | Blocking-stage interpretation |
+|---|---|---|---|
+| DEP-002 | M0→M1 | S1 | START; actual consumer cannot pass stage before required producer readiness |
+| DEP-014 | M4/M5 | S8 | MILESTONE_EXIT; actual consumer cannot pass stage before required producer readiness |
+| DEP-015 | — (R2/S) | none — optional R2/S | INTEGRATION; actual consumer cannot pass stage before required producer readiness |
+| DEP-018 | S1–S2 | S2 | START; actual consumer cannot pass stage before required producer readiness |
+| DEP-020 | S2–S3 | S3 | START; actual consumer cannot pass stage before required producer readiness |
+| DEP-021 | S1–S2 | S2 | START; actual consumer cannot pass stage before required producer readiness |
+| DEP-027 | S2–S3 | S3 | START; actual consumer cannot pass stage before required producer readiness |
+| DEP-048 | S3–S4 | S4 | START; actual consumer cannot pass stage before required producer readiness |
+| DEP-049 | M5→M6 | S10 | FREEZE; actual consumer cannot pass stage before required producer readiness |
+| DEP-050 | S2–S4 | S4 | START; actual consumer cannot pass stage before required producer readiness |
+| DEP-051 | S2–S3 | S3 | START; actual consumer cannot pass stage before required producer readiness |
+| DEP-055 | M4/M5 | S8 | MILESTONE_EXIT; actual consumer cannot pass stage before required producer readiness |
+| DEP-061 | S3–S4 | S4 | START; actual consumer cannot pass stage before required producer readiness |
+| DEP-064 | S2–S3 | S3 | START; actual consumer cannot pass stage before required producer readiness |
+| DEP-070 | S3–S4 | S4 | START; actual consumer cannot pass stage before required producer readiness |
+| DEP-072 | M4/M5 | S8 | MILESTONE_EXIT; actual consumer cannot pass stage before required producer readiness |
+| DEP-075 | M4/M5 | S8 | MILESTONE_EXIT; actual consumer cannot pass stage before required producer readiness |
+| DEP-076 | S3–S4 | S4 | START; actual consumer cannot pass stage before required producer readiness |
+| DEP-085 | S5–S8 | S8 | START; actual consumer cannot pass stage before required producer readiness |
+| DEP-105 | S1–S2 | S2 | START; actual consumer cannot pass stage before required producer readiness |
+| DEP-118 | M6→M7 | S11 | MILESTONE_EXIT; actual consumer cannot pass stage before required producer readiness |
+| DEP-119 | M6→M7 | S11 | MILESTONE_EXIT; actual consumer cannot pass stage before required producer readiness |
+| DEP-127 | M5→M6 | S10 | FREEZE; actual consumer cannot pass stage before required producer readiness |
+| DEP-128 | M5→M6 | S10 | FREEZE; actual consumer cannot pass stage before required producer readiness |
+| DEP-145 | M7→M8 | S12 | MILESTONE_EXIT; actual consumer cannot pass stage before required producer readiness |
+| DEP-146 | M5→M6 | S10 | FREEZE; actual consumer cannot pass stage before required producer readiness |
+| DEP-147 | M5→M6 | S10 | FREEZE; actual consumer cannot pass stage before required producer readiness |
+| DEP-148 | M5→M6 | S10 | FREEZE; actual consumer cannot pass stage before required producer readiness |
+| DEP-149 | M5→M6 | S10 | FREEZE; actual consumer cannot pass stage before required producer readiness |
+
+| HARD edge with unknown field-level precision | Declared consumer | Required producer artifact/readiness and existing evidence predicate | Null justification / remaining DoR |
+|---|---|---|---|
+| DEP-002 | DN-PLAT-CD at START | DN-PLAT-REPO: Repository, protected main, CI baseline; INTEGRATION_READY; CI builds immutable images to GHCR | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-003 | DN-PLAT-COMPOSE at START | DN-PLAT-TOOLING: Runtime language/tooling baseline + mfgctl; SKELETON_READY; `mfgctl bootstrap/doctor` runs on dev host | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-005 | DN-PLAT-CD at INTEGRATION | DN-PLAT-INTEG: Integration runtime (shared Linux host bootstrap); INTEGRATION_READY; runtime healthy on shared host + smoke check in CI/INTEGRATION | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-007 | DN-RT-PG at INTEGRATION | DN-PLAT-INTEG: Integration runtime (shared Linux host bootstrap); INTEGRATION_READY; runtime healthy on shared host + smoke check in CI/INTEGRATION | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-008 | DN-RT-NATS at INTEGRATION | DN-PLAT-INTEG: Integration runtime (shared Linux host bootstrap); INTEGRATION_READY; runtime healthy on shared host + smoke check in CI/INTEGRATION | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-009 | DN-RT-OBJ at INTEGRATION | DN-PLAT-INTEG: Integration runtime (shared Linux host bootstrap); INTEGRATION_READY; runtime healthy on shared host + smoke check in CI/INTEGRATION | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-010 | DN-RT-IDP at INTEGRATION | DN-PLAT-INTEG: Integration runtime (shared Linux host bootstrap); INTEGRATION_READY; Keycloak realm/clients deployed; real login works | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-012 | DN-RT-TEMPORAL at INTEGRATION | DN-PLAT-INTEG: Integration runtime (shared Linux host bootstrap); INTEGRATION_READY; runtime healthy on shared host + smoke check in CI/INTEGRATION | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-013 | DN-RT-QDRANT at INTEGRATION | DN-PLAT-INTEG: Integration runtime (shared Linux host bootstrap); INTEGRATION_READY; runtime healthy on shared host + smoke check in CI/INTEGRATION | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-014 | DN-RT-MLFLOW at MILESTONE_EXIT | DN-PLAT-INTEG: Integration runtime (shared Linux host bootstrap); INTEGRATION_READY; runtime healthy on shared host + smoke check in CI/INTEGRATION | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-016 | DN-SEC-BASE at INTEGRATION | DN-RT-IDP: Keycloak identity runtime; INTEGRATION_READY; service identities issued; anonymous mutation rejected | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-017 | DN-SEC-BASE at MILESTONE_EXIT | DN-PLAT-CD: CD to INTEGRATION (immutable GHCR artifacts, DeploymentRecord); INTEGRATION_READY; non-Git secret sourcing in deploy path | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-018 | DN-CORE-LIFECYCLE at START | DN-CORE-CONTRACTS: Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-019 | DN-CORE-LIFECYCLE at INTEGRATION | DN-RT-PG: PostgreSQL runtime; SKELETON_READY; Core migrations apply on PostgreSQL | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-020 | DN-CORE-TRANSITIONS at START | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; lifecycle component tests green | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-021 | DN-EVT-CONTRACTS at START | DN-CORE-CONTRACTS: Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-022 | DN-CORE-OUTBOX at INTEGRATION | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; atomic mutation+outbox test on real PostgreSQL | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-023 | DN-EVT-SPINE at INTEGRATION | DN-EVT-CONTRACTS: Event contracts (envelope + domain events, IC registry); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-024 | DN-EVT-SPINE at INTEGRATION | DN-CORE-OUTBOX: Transactional outbox + relay; INTEGRATION_READY; real cross-boundary integration test green on INTEGRATION (outbox → NATS → consumer) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-025 | DN-EVT-SPINE at INTEGRATION | DN-RT-NATS: NATS JetStream runtime; INTEGRATION_READY; real JetStream in CI + INTEGRATION (no fake bus, CI-INV-07) | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-026 | DN-CORE-CMDCON at START | DN-CORE-CONTRACTS: Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-027 | DN-CORE-CMDEXEC at START | DN-CORE-CMDCON: Core command contracts (hold / release / dispatch / maintenance request); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-029 | DN-CORE-GENEALOGY at INTEGRATION | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; genealogy queries over real lineage | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-031 | DN-TWIN-SKELETON at START | DN-EVT-CONTRACTS: Event contracts (envelope + domain events, IC registry); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-032 | DN-TWIN-SKELETON at INTEGRATION | DN-EVT-SPINE: Operational event spine (outbox → NATS → idempotent consumers); INTEGRATION_READY; Twin revision advances from real events | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-033 | DN-TWIN-SKELETON at INTEGRATION | DN-RT-PG: PostgreSQL runtime; INTEGRATION_READY; `twin` schema migrated | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-034 | DN-TWIN-PROJ at START | DN-TWIN-SKELETON: Twin skeleton (projector + query API); COMPONENT_READY; skeleton projector tests green | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-036 | DN-TWIN-VERIFY at INTEGRATION | DN-TWIN-PROJ: Meaningful Twin projection (revision/freshness/epistemic/STALE); INTEGRATION_READY; Twin revision semantics INTEGRATION_READY | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-037 | DN-SIM-OPSEM at START | DN-SIM-KERNEL: DES kernel (event queue, clock, named RNG); COMPONENT_READY; kernel tests + deterministic replay green | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-040 | DN-SIM-COREINT at INTEGRATION | DN-SIM-OPSEM: Operational semantics (reentrant routing, queues, failures, maintenance, rework); COMPONENT_READY; reentrant world runs end-to-end locally | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-041 | DN-SIM-COREINT at INTEGRATION | DN-CORE-CMDEXEC: Core command execution (idempotent, revision-checked, outcome persisted); INTEGRATION_READY; Core-validated physical commands executed by Simulator | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-042 | DN-SIM-COREINT at INTEGRATION | DN-EVT-SPINE: Operational event spine (outbox → NATS → idempotent consumers); INTEGRATION_READY; real cross-boundary integration test green on INTEGRATION | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-043 | DN-SIM-DISPIF at START | DN-SIM-KERNEL: DES kernel (event queue, clock, named RNG); COMPONENT_READY; baseline dispatch interface callable | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-044 | DN-SIM-SNAPFORK at START | DN-SIM-KERNEL: DES kernel (event queue, clock, named RNG); COMPONENT_READY; snapshot/restore tests green | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-046 | DN-SIM-ORACLE at START | DN-SIM-KERNEL: DES kernel (event queue, clock, named RNG); COMPONENT_READY; Oracle stream namespace separated | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-047 | DN-SIM-ORACLE at MILESTONE_EXIT | DN-SEC-BASE: Security baseline: service identities, secrets sourcing, backend authz enforcement points; INTEGRATION_READY; normal runtime credentials denied Oracle access (negative test) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-048 | DN-SIM-SYNTH at START | DN-SIM-OPSEM: Operational semantics (reentrant routing, queues, failures, maintenance, rework); COMPONENT_READY; ScenarioInstances generated with versioned ScenarioVersion/SeedSet | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-049 | DN-SIM-REALISM at FREEZE | DN-SIM-OPSEM: Operational semantics (reentrant routing, queues, failures, maintenance, rework); EVALUATION_READY; RealismReport RL-3 target recorded | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-051 | DN-VIS-SPLIT at START | DN-VIS-SYNTH: Synthetic Vision generator (owned data); COMPONENT_READY; versioned synthetic DatasetVersion | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-052 | DN-VIS-BASELINES at START | DN-VIS-SPLIT: Vision DatasetVersion / SplitManifest; COMPONENT_READY; SplitManifest committed | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-053 | DN-VIS-MODELS at MILESTONE_EXIT | DN-VIS-BASELINES: Vision baselines; EVALUATION_READY; baseline results recorded for comparison | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-054 | DN-VIS-OOD at MILESTONE_EXIT | DN-VIS-MODELS: Deep Vision models (classification/localization/segmentation/anomaly) as ModelPackages; COMPONENT_READY; OOD/UNKNOWN path + spatial evaluation implemented | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-055 | DN-VIS-MODELS at MILESTONE_EXIT | DN-RT-MLFLOW: MLflow tracking/registry support tooling; INTEGRATION_READY; ModelPackage promotion recorded in MLflow + artifact store | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-057 | DN-VIS-SERVING at INTEGRATION | DN-VIS-ARTCON: Inspection artifact identity contract (ArtifactRef, Lot/SerializedComponent refs, model metadata); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-060 | DN-VIS-SERVING at MILESTONE_EXIT | DN-VIS-MODELS: Deep Vision models (classification/localization/segmentation/anomaly) as ModelPackages; INTEGRATION_READY; required Vision modes served from promoted ModelPackages | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-061 | DN-VIS-OBSCON at START | DN-VIS-ARTCON: Inspection artifact identity contract (ArtifactRef, Lot/SerializedComponent refs, model metadata); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-062 | DN-VIS-EPISODES at MILESTONE_EXIT | DN-SIM-COREINT: Simulator/Core integration (Core-validated physical commands, events); INTEGRATION_READY; ScenarioEpisodes with genealogy/state generated | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-063 | DN-VIS-EPISODES at MILESTONE_EXIT | DN-CORE-GENEALOGY: Temporal genealogy / exposure queries; INTEGRATION_READY; genealogy linked to episodes | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-064 | DN-AI-ORCH at START | DN-AI-TOOLCON: AI typed tool schemas + fixtures; CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-066 | DN-AI-RCA at START | DN-AI-ORCH: Deterministic AI orchestrator; COMPONENT_READY; orchestrator state machine tests green | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-070 | DN-RAG at START | DN-RAG-CORPUS: Documentary corpus (DocumentVersion/CorpusVersion); COMPONENT_READY; versioned CorpusVersion ingested | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-074 | DN-ML at MILESTONE_EXIT | DN-SIM-SYNTH: Synthetic operational data / generated history (ScenarioInstances); EVALUATION_READY; sufficient historical data/features/labels generated | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-075 | DN-ML at MILESTONE_EXIT | DN-RT-MLFLOW: MLflow tracking/registry support tooling; INTEGRATION_READY; ML ModelPackage governance in MLflow | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-076 | DN-AI-ACTCON at START | DN-HITL-POLICY: Authority policy semantics (L0–L4, deterministic evaluation); COMPONENT_READY; risk class/approval requirement defined per action | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-079 | DN-SCH-DYN at INTEGRATION | DN-CORE-SNAPCON: ManufacturingStateSnapshot / SchedulingSnapshot contract; CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-080 | DN-SCH-DYN at INTEGRATION | DN-TWIN-PROJ: Meaningful Twin projection (revision/freshness/epistemic/STALE); INTEGRATION_READY; SchedulingSnapshot exported from real Twin | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-081 | DN-SCH-DYN at MILESTONE_EXIT | DN-EVT-SPINE: Operational event spine (outbox → NATS → idempotent consumers); INTEGRATION_READY; event-triggered replanning on failures/holds/excursions | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-082 | DN-SCH-VALID at INTEGRATION | DN-CORE-TRANSITIONS: Legal manufacturing transitions (hold/release/rework/split/merge) stable; INTEGRATION_READY; validator uses canonical domain rules (no unilateral legality) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-083 | DN-SCH-PLANCON at INTEGRATION | DN-SCH-DYN: Dynamic / event-triggered rescheduling on real state; COMPONENT_READY; RecoveryPlan computed from state (no hardcoded result) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-084 | DN-SCH-PLANCON at INTEGRATION | DN-SCH-VALID: Independent ScheduleValidator; INTEGRATION_READY; planner ≠ validator; eligibility only after validation | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-086 | DN-SCH-DYN at MILESTONE_EXIT | DN-SCH-CPSAT: CP-SAT recovery scheduling; INTEGRATION_READY; CP-SAT recovery plans validated on SP-NORMAL | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-087 | DN-SCH-CF at INTEGRATION | DN-SIM-SNAPFORK: Snapshot / Fork / counterfactual worlds; INTEGRATION_READY; fork WorldIDs usable by scheduler | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-088 | DN-SCH-DYN at INTEGRATION | DN-SIM-DISPIF: Simulator dispatch-decision interface + deterministic baseline dispatch; CONTRACT_READY; Scheduler plugs into Simulator dispatch interface | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-090 | DN-HITL-APPROVAL at INTEGRATION | DN-RT-IDP: Keycloak identity runtime; INTEGRATION_READY; authenticated approval bound to actor | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-091 | DN-HITL-APPROVAL at INTEGRATION | DN-HITL-POLICY: Authority policy semantics (L0–L4, deterministic evaluation); INTEGRATION_READY; policy evaluation independent of AI text | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-093 | DN-HITL-APPROVAL at MILESTONE_EXIT | DN-UI-APPROVAL: Approval Center + incident timeline; INTEGRATION_READY; operator sees bound context and approves via real UI | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-094 | DN-AUTO-DURABLE at START | DN-AUTO-DESIGN: Workflow design with stub activities; COMPONENT_READY; workflow tests with stub activities | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-095 | DN-AUTO-DURABLE at INTEGRATION | DN-RT-TEMPORAL: Temporal server runtime; INTEGRATION_READY; workflow persists through worker restart on real Temporal | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-096 | DN-AUTO-EXEC at INTEGRATION | DN-AI-ACTCON: ActionCatalog + ActionProposal contract (authority semantics); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-098 | DN-AUTO-EXEC at INTEGRATION | DN-CORE-CMDEXEC: Core command execution (idempotent, revision-checked, outcome persisted); INTEGRATION_READY; Core applies approved command idempotently and emits result (#187) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-099 | DN-AUTO-EXEC at INTEGRATION | DN-HITL-APPROVAL: Real HITL approval bound to identity + exact revision/WorldID/expiry; INTEGRATION_READY; valid approval required for protected execution — no fallback | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-100 | DN-AUTO-EXEC at INTEGRATION | DN-AUTO-DURABLE: Durable workflows on real Temporal (approval wait, restart safety); INTEGRATION_READY; workflow creates authorized executable steps (#186) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-101 | DN-AUTO-EXEC at INTEGRATION | DN-SCH-PLANCON: RecoveryPlan contract; CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-102 | DN-AUTO-VERIFY at INTEGRATION | DN-AUTO-EXEC: Protected execution via Core typed commands (final revalidation); COMPONENT_READY; effect verification step in workflow | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-103 | DN-AUTO-VERIFY at INTEGRATION | DN-TWIN-VERIFY: Twin verification view for effect verification; INTEGRATION_READY; verified Core/Twin effect (HTTP success insufficient) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-105 | DN-UI-SHELL at START | DN-UI-BFFCON: BFF/OpenAPI contracts + UI fixtures; CONTRACT_READY; contract merged + contract tests green + example fixture published (OpenAPI + fixtures) | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-106 | DN-UI-SHELL at MILESTONE_EXIT | DN-TWIN-SKELETON: Twin skeleton (projector + query API); INTEGRATION_READY; UI shows real Twin state via BFF | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-107 | DN-UI-APPROVAL at START | DN-UI-SHELL: Command Center shell via BFF; COMPONENT_READY; shell routing + auth session in place | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-108 | DN-UI-APPROVAL at INTEGRATION | DN-RT-IDP: Keycloak identity runtime; INTEGRATION_READY; real login in Approval Center | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-109 | DN-RT-OBS at MILESTONE_EXIT | DN-PLAT-CD: CD to INTEGRATION (immutable GHCR artifacts, DeploymentRecord); INTEGRATION_READY; distributed traceability across closed-loop boundaries | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-110 | DN-PLAT-FAILVAL at MILESTONE_EXIT | DN-RT-OBS: OTel SDK + Collector + OpenObserve; EVALUATION_READY; reliability/evaluation telemetry HARD | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-111 | DN-PLAT-BACKUP at MILESTONE_EXIT | DN-SEC-BASE: Security baseline: service identities, secrets sourcing, backend authz enforcement points; INTEGRATION_READY; secrets/keys restorable or rotatable | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-113 | DN-PLAT-FAILVAL at MILESTONE_EXIT | DN-PLAT-BACKUP: Backup / restore / rebuild automation; EVALUATION_READY; restore proof executed (RESTORE-PG-001) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-114 | DN-PLAT-RUNNER at MILESTONE_EXIT | DN-PLAT-FAILVAL: Failure validation (resilience drills, AV-SCEN-05…12); EVALUATION_READY; resilience suites operational before formal experiments | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-115 | DN-PLAT-RUNNER at INTEGRATION | DN-PLAT-CD: CD to INTEGRATION (immutable GHCR artifacts, DeploymentRecord); INTEGRATION_READY; runner deploys exact release to EVALUATION | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-116 | DN-ART-RELEASE at FREEZE | DN-PLAT-RUNNER: Experiment runner (manifest binding, BenchmarkRun registry); EVALUATION_READY; runner binds ReleaseManifest/EnvironmentManifest to runs | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-117 | DN-ART-HWPROF at FREEZE | DN-PLAT-RUNNER: Experiment runner (manifest binding, BenchmarkRun registry); EVALUATION_READY; HardwareProfile captured per run | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-118 | DN-PLAT-CLEANREPRO at MILESTONE_EXIT | DN-ART-RELEASE: ReleaseManifest + EnvironmentManifest (stable release); FROZEN; clean-host deploy of exact manifest PASS | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-119 | DN-PLAT-CLEANREPRO at MILESTONE_EXIT | DN-ART-HWPROF: HardwareProfile records (EVALUATION host, CPU baseline, Vision GPU/CPU); FROZEN; HardwareProfile recorded for reproduction host | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-120 | DN-RES-BENCH at FREEZE | DN-PLAT-CLEANREPRO: Clean reproduction (clean host, non-owner rerun); EVALUATION_READY; clean reproduction evidence precedes benchmark execution | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-121 | DN-RES-DATASCEN at MILESTONE_EXIT | DN-SIM-SYNTH: Synthetic operational data / generated history (ScenarioInstances); EVALUATION_READY; evaluation-ready scenarios/data with partitions | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-122 | DN-RES-DATASCEN at MILESTONE_EXIT | DN-VIS-SPLIT: Vision DatasetVersion / SplitManifest; EVALUATION_READY; Vision splits evaluation-ready | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-123 | DN-RES-DATASCEN at MILESTONE_EXIT | DN-RAG-CORPUS: Documentary corpus (DocumentVersion/CorpusVersion); EVALUATION_READY; governed RCA case set + corpus | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-124 | DN-RES-BASELINES at START | DN-RES-DATASCEN: Evaluation datasets / scenario families (DEV/CAL/FINAL partitions); EVALUATION_READY; baselines executed on DEV/CAL partitions | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-125 | DN-RES-HARNESS at INTEGRATION | DN-RES-BASELINES: Baselines (RCA-B*, scheduler/Vision/ML baselines, BaselineRuns); EVALUATION_READY; harness reproduces baseline numbers | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-126 | DN-RES-HARNESS at INTEGRATION | DN-PLAT-RUNNER: Experiment runner (manifest binding, BenchmarkRun registry); COMPONENT_READY; harness runs through experiment runner | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-127 | DN-RES-CALIB at FREEZE | DN-RES-HARNESS: Evaluation harnesses (per lane); EVALUATION_READY; calibration on CAL partition recorded | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-128 | DN-RES-CALIB at FREEZE | DN-RES-BASELINES: Baselines (RCA-B*, scheduler/Vision/ML baselines, BaselineRuns); EVALUATION_READY; baselines precede calibration (HARD) | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-129 | DN-FRZ-DATA at FREEZE | DN-RES-CALIB: Calibration (thresholds, budgets, policies on CAL partitions); FROZEN; calibration closed before freeze | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-130 | DN-FRZ-DATA at FREEZE | DN-FRZ-SCENSET: Scenario set (FBC-01 scenario families); FROZEN; ScenarioSet FROZEN | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-131 | DN-FRZ-DATA at FREEZE | DN-FRZ-RQ4SPLIT: Vision split freeze (RQ-4); FROZEN; Vision split frozen before final RQ-4 training/evaluation | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-132 | DN-FRZ-MODEL at FREEZE | DN-FRZ-DATA: Data / scenario / seed freeze (SplitManifests, ScenarioSet, SeedSet); FROZEN; model/policy selection on frozen data | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-133 | DN-FRZ-MODEL at FREEZE | DN-FRZ-RQ1CORPUS: RCA final corpus (RQ-1); FROZEN; RCA final corpus + RetrievalProfile frozen | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-134 | DN-FRZ-MODEL at FREEZE | DN-RES-CALIB: Calibration (thresholds, budgets, policies on CAL partitions); FROZEN; calibration precedes model/policy freeze | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-135 | DN-FRZ-PROTOCOL at FREEZE | DN-FRZ-DATA: Data / scenario / seed freeze (SplitManifests, ScenarioSet, SeedSet); FROZEN; dataset/scenario selection before protocol freeze | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-136 | DN-FRZ-PROTOCOL at FREEZE | DN-FRZ-MODEL: Model / policy freeze (ModelPackages, AIBehaviorBundle, RetrievalProfile, SchedulerPolicy, WorkflowBundle, AuthorityPolicy); FROZEN; model/policy selection before protocol freeze | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-137 | DN-FRZ-PROTOCOL at FREEZE | DN-FRZ-RQ3AUTH: Authority scenario set (RQ-3); FROZEN; authority scenario set frozen before RQ-3 final | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-138 | DN-FRZ-PROTOCOL at FREEZE | DN-SIM-REALISM: Simulation validation evidence (RL-3, RealismBenchmarkSuite); EVALUATION_READY; Simulation validation before final RQ-2 claim | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-139 | DN-FRZ-RELEASE at FREEZE | DN-FRZ-PROTOCOL: ExperimentProtocolFreeze (metrics, analysis plan, hypotheses); FROZEN; ExperimentProtocolFreeze recorded | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-140 | DN-FRZ-RELEASE at FREEZE | DN-ART-RELEASE: ReleaseManifest + EnvironmentManifest (stable release); FROZEN; stable ReleaseManifest selected | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-141 | DN-RES-BENCH at FREEZE | DN-FRZ-RELEASE: Stable release / environment freeze for formal runs; FROZEN; all M6 freeze dependencies satisfied | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-142 | DN-RES-BENCH at FREEZE | DN-ART-HWPROF: HardwareProfile records (EVALUATION host, CPU baseline, Vision GPU/CPU); FROZEN; HardwareProfile before performance claims | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-143 | DN-RES-ANALYSIS at FREEZE | DN-RES-BENCH: Final Benchmark Campaign FBC-01 (sealed evidence); FROZEN; sealed FBC-01 evidence | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-144 | DN-RES-ANALYSIS at FREEZE | DN-FRZ-PROTOCOL: ExperimentProtocolFreeze (metrics, analysis plan, hypotheses); FROZEN; analysis plan frozen before results | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-145 | DN-RES-CLAIMS at MILESTONE_EXIT | DN-RES-ANALYSIS: Statistical analysis / AnalysisPackage; FROZEN; claims classified from sealed analysis (#93) | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-146 | DN-FRZ-RQ1CORPUS at FREEZE | DN-RAG: RAG retrieval capability (sparse/dense/hybrid, citations, rights filter); EVALUATION_READY; RetrievalProfile evaluated | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-147 | DN-FRZ-RQ3AUTH at FREEZE | DN-HITL-POLICY: Authority policy semantics (L0–L4, deterministic evaluation); EVALUATION_READY; authority policy stable for scenario set | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-148 | DN-FRZ-RQ4SPLIT at FREEZE | DN-VIS-SPLIT: Vision DatasetVersion / SplitManifest; EVALUATION_READY; split validated for leakage | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-149 | DN-FRZ-SCENSET at FREEZE | DN-SIM-SYNTH: Synthetic operational data / generated history (ScenarioInstances); EVALUATION_READY; scenario families evaluation-ready | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-150 | DN-FRZ-MODEL at FREEZE | DN-VIS-OOD: OOD/UNKNOWN + spatial pattern evaluation; EVALUATION_READY; OOD/spatial evaluation complete before model freeze | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-151 | DN-FRZ-PROTOCOL at FREEZE | DN-VIS-EPISODES: Operational inspection episodes (ScenarioEpisodes with genealogy/state); EVALUATION_READY; operational episodes available for RQ-4 perception-to-operations | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-152 | DN-FRZ-MODEL at FREEZE | DN-ML: Predictive ML M1/M2/M3 (Prediction contract, calibration); EVALUATION_READY; M1/M2/M3 evaluated and selected | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-153 | DN-FRZ-MODEL at FREEZE | DN-SCH-CPSAT: CP-SAT recovery scheduling; EVALUATION_READY; SchedulerPolicy selected | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-154 | DN-FRZ-PROTOCOL at FREEZE | DN-SCH-CF: Counterfactual schedule evaluation; EVALUATION_READY; counterfactual recovery evaluation ready (CRN) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-155 | MS-M0 at MILESTONE_EXIT | DN-PLAT-REPO: Repository, protected main, CI baseline; INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-156 | MS-M0 at MILESTONE_EXIT | DN-PLAT-TOOLING: Runtime language/tooling baseline + mfgctl; COMPONENT_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-157 | MS-M0 at MILESTONE_EXIT | DN-PLAT-COMPOSE: Docker Compose local capability profiles; INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-158 | MS-M0 at MILESTONE_EXIT | DN-PLAT-INTEG: Integration runtime (shared Linux host bootstrap); INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-159 | MS-M1 at MILESTONE_EXIT | MS-M0: M0 — Engineering Foundation Ready; declared checkpoint outcome; M0 PASS | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-160 | MS-M1 at MILESTONE_EXIT | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-161 | MS-M1 at MILESTONE_EXIT | DN-RT-PG: PostgreSQL runtime; INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-162 | MS-M1 at MILESTONE_EXIT | DN-RT-NATS: NATS JetStream runtime; INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-163 | MS-M1 at MILESTONE_EXIT | DN-CORE-OUTBOX: Transactional outbox + relay; INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-164 | MS-M1 at MILESTONE_EXIT | DN-TWIN-SKELETON: Twin skeleton (projector + query API); INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-165 | MS-M1 at MILESTONE_EXIT | DN-UI-SHELL: Command Center shell via BFF; INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-166 | MS-M1 at MILESTONE_EXIT | DN-PLAT-CD: CD to INTEGRATION (immutable GHCR artifacts, DeploymentRecord); INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-167 | MS-M1 at MILESTONE_EXIT | DN-EVT-SPINE: Operational event spine (outbox → NATS → idempotent consumers); INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-168 | MS-M2 at MILESTONE_EXIT | MS-M1: M1 — Integrated Spine; declared checkpoint outcome; M1 PASS | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-177 | CK-E2E01 at MILESTONE_EXIT | MS-M2: M2 — Operational Manufacturing Alpha; declared checkpoint outcome; contract readiness table satisfied end S4 | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-178 | CK-E2E01 at MILESTONE_EXIT | DN-VIS-SERVING: Operational Vision inference over real artifacts; INTEGRATION_READY; E2E-RUN-A/B/C evidence (Item 67 #157–#159) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-179 | CK-E2E01 at MILESTONE_EXIT | DN-AI-RCA: Structured evidence-grounded RCA on real operational evidence; INTEGRATION_READY; E2E-RUN-A/B/C evidence (Item 67 #157–#159) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-180 | CK-E2E01 at MILESTONE_EXIT | DN-SCH-PLANCON: RecoveryPlan contract; INTEGRATION_READY; E2E-RUN-A/B/C evidence (Item 67 #157–#159) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-181 | CK-E2E01 at MILESTONE_EXIT | DN-SCH-VALID: Independent ScheduleValidator; INTEGRATION_READY; E2E-RUN-A/B/C evidence (Item 67 #157–#159) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-182 | CK-E2E01 at MILESTONE_EXIT | DN-HITL-APPROVAL: Real HITL approval bound to identity + exact revision/WorldID/expiry; INTEGRATION_READY; E2E-RUN-A/B/C evidence (Item 67 #157–#159) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-183 | CK-E2E01 at MILESTONE_EXIT | DN-AUTO-DURABLE: Durable workflows on real Temporal (approval wait, restart safety); INTEGRATION_READY; E2E-RUN-A/B/C evidence (Item 67 #157–#159) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-184 | CK-E2E01 at MILESTONE_EXIT | DN-AUTO-EXEC: Protected execution via Core typed commands (final revalidation); INTEGRATION_READY; E2E-RUN-A/B/C evidence (Item 67 #157–#159) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-185 | CK-E2E01 at MILESTONE_EXIT | DN-AUTO-VERIFY: Effect verification (ACK ≠ effect; UNKNOWN_VERIFY_REQUIRED); INTEGRATION_READY; E2E-RUN-A/B/C evidence (Item 67 #157–#159) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-186 | CK-E2E01 at MILESTONE_EXIT | DN-UI-APPROVAL: Approval Center + incident timeline; INTEGRATION_READY; E2E-RUN-A/B/C evidence (Item 67 #157–#159) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-187 | CK-E2E01 at MILESTONE_EXIT | DN-SIM-ORACLE: Oracle isolation (evaluator-only stream/credentials); INTEGRATION_READY; E2E-RUN-A/B/C evidence (Item 67 #157–#159) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-188 | MS-M3 at MILESTONE_EXIT | CK-E2E01: E2E-01 First E2E Checkpoint (end S5); declared checkpoint outcome; E2E-01 PASS (precursor; waives nothing) | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-189 | MS-M3 at MILESTONE_EXIT | DN-RT-OBS: OTel SDK + Collector + OpenObserve; INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-190 | MS-M3 at MILESTONE_EXIT | DN-TWIN-VERIFY: Twin verification view for effect verification; INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-191 | MS-M4 at MILESTONE_EXIT | MS-M3: M3 — Closed-Loop Alpha; declared checkpoint outcome; M3 PASS | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-192 | MS-M4 at MILESTONE_EXIT | DN-ML: Predictive ML M1/M2/M3 (Prediction contract, calibration); INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-193 | MS-M4 at MILESTONE_EXIT | DN-RAG: RAG retrieval capability (sparse/dense/hybrid, citations, rights filter); INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-194 | MS-M4 at MILESTONE_EXIT | DN-VIS-MODELS: Deep Vision models (classification/localization/segmentation/anomaly) as ModelPackages; INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-195 | MS-M4 at MILESTONE_EXIT | DN-VIS-OOD: OOD/UNKNOWN + spatial pattern evaluation; INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-196 | MS-M4 at MILESTONE_EXIT | DN-SCH-CPSAT: CP-SAT recovery scheduling; INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-197 | MS-M4 at MILESTONE_EXIT | DN-SCH-CF: Counterfactual schedule evaluation; INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-198 | MS-M4 at MILESTONE_EXIT | DN-SEC-BASE: Security baseline: service identities, secrets sourcing, backend authz enforcement points; INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-199 | MS-M4 at MILESTONE_EXIT | DN-RT-QDRANT: Qdrant runtime; INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-200 | MS-M4 at MILESTONE_EXIT | DN-RT-MLFLOW: MLflow tracking/registry support tooling; INTEGRATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-201 | MS-M5 at MILESTONE_EXIT | MS-M4: M4 — Mandatory Core Feature Complete; declared checkpoint outcome; M4 PASS | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-202 | MS-M5 at MILESTONE_EXIT | DN-RES-BASELINES: Baselines (RCA-B*, scheduler/Vision/ML baselines, BaselineRuns); EVALUATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-203 | MS-M5 at MILESTONE_EXIT | DN-PLAT-FAILVAL: Failure validation (resilience drills, AV-SCEN-05…12); EVALUATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-204 | MS-M5 at MILESTONE_EXIT | DN-PLAT-BACKUP: Backup / restore / rebuild automation; EVALUATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-205 | MS-M5 at MILESTONE_EXIT | DN-PLAT-RUNNER: Experiment runner (manifest binding, BenchmarkRun registry); EVALUATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-206 | MS-M5 at MILESTONE_EXIT | DN-RES-DATASCEN: Evaluation datasets / scenario families (DEV/CAL/FINAL partitions); EVALUATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-207 | MS-M5 at MILESTONE_EXIT | DN-RES-HARNESS: Evaluation harnesses (per lane); EVALUATION_READY; milestone evidence (Item 65) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-208 | MS-M6 at MILESTONE_EXIT | MS-M5: M5 — Reliability & Evaluation Ready; declared checkpoint outcome; M5 PASS | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-209 | MS-M6 at MILESTONE_EXIT | DN-FRZ-DATA: Data / scenario / seed freeze (SplitManifests, ScenarioSet, SeedSet); FROZEN; freeze records | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-210 | MS-M6 at MILESTONE_EXIT | DN-FRZ-MODEL: Model / policy freeze (ModelPackages, AIBehaviorBundle, RetrievalProfile, SchedulerPolicy, WorkflowBundle, AuthorityPolicy); FROZEN; freeze records | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-211 | MS-M6 at MILESTONE_EXIT | DN-FRZ-PROTOCOL: ExperimentProtocolFreeze (metrics, analysis plan, hypotheses); FROZEN; freeze records | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-212 | MS-M6 at MILESTONE_EXIT | DN-FRZ-RELEASE: Stable release / environment freeze for formal runs; FROZEN; freeze records | Existing FREEZE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-213 | MS-M7 at MILESTONE_EXIT | MS-M6: M6 — Research Freeze; declared checkpoint outcome; M6 PASS | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-214 | MS-M7 at MILESTONE_EXIT | DN-RES-BENCH: Final Benchmark Campaign FBC-01 (sealed evidence); FROZEN; EvidenceSeal | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-215 | MS-M8 at MILESTONE_EXIT | MS-M7: M7 — Final Benchmark Complete; declared checkpoint outcome; M7 PASS | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-216 | MS-M8 at MILESTONE_EXIT | DN-RES-CLAIMS: ResearchClaims classification (RQ-1…RQ-4, MC-1, MC-2); FROZEN; final evidence / reproduction | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-217 | MS-M8 at MILESTONE_EXIT | DN-PLAT-CLEANREPRO: Clean reproduction (clean host, non-owner rerun); EVALUATION_READY; final evidence / reproduction | Existing EVIDENCE planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |

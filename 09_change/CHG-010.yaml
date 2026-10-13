@@ -27,12 +27,12 @@ CHG-010:
     execution changed
   owner: Asrın
   reviewers: []
-  decision: DEFERRED
+  decision: APPROVED_WITH_CONDITIONS
   conditions:
-  - Current user explicitly authorizes scoped branch edits; canonical peer-review
-    and merge gates remain outstanding
-  - No historical or team approval inferred
-  - No new semantics beyond documented resolution
+  - Explicit final human decision authorizes scoped documentation reconciliation;
+    independent qualified review/ratification remains required.
+  - No product/runtime readiness, source/license acquisition, peer approval or VERIFIED
+    state inferred.
   rollout: Local reconciliation branch only; no deployment/Plane synchronization/merge
   rollback: Review and revert the atomic CTRL-DOC commit; do not rewrite history
   required_rerun:
@@ -47,7 +47,15 @@ CHG-010:
   - docs/05_Dependency_Graph.md
   freeze_context: PRE_M6
   status: UNDER_REVIEW
-  human_decision_basis: null
+  human_decision_basis:
+    request_sha256: 96ff255d4431a99a65ced71aa45136937acd7ae5917eaaca7fba764c23901da7
+    group: ARCHITECTURE_ANCHOR_ALLOCATION
+    status: DECIDED
+    decision: Core canonical; Simulator/Oracle isolated; Twin/Qdrant projections;
+      Vision observations; AI propose; Scheduler candidates; HITL approval; Automation
+      coordination; Keycloak identity; UI no DB/broker writes.
+    rationale: One authoritative manufacturing state owner; missing component traces
+      allocated within existing services, no infrastructure expansion.
   source_derived_basis: 02 append-only registry; 03 allocation findings
   affected_stable_ids:
   - RTF-025
@@ -60,5 +68,5 @@ CHG-010:
     review for CR-4; independent critical review for CR-3
   application_control_item: CTRL-DOC-004
   sprint_context: UNSPECIFIED; no calendar/sprint fabricated
-  proposal: Record required owner-reviewed append-only allocation proposal; no new
-    architecture IDs/services invented.
+  proposal: Append-only ML/MLOps, experiment/evidence, scheduler-evaluation and Vision-data
+    component IDs in02; do not mint competing services/authorities.

@@ -1,0 +1,595 @@
+{
+  "control_item": "CTRL-DOC-009 final continuation",
+  "verdict": "READY_TO_IMPLEMENT",
+  "integration_gate": "Independent final documentation PR review and integration required; no product start authorized by this task.",
+  "findings": [
+    {
+      "id": "RTF-001",
+      "disposition": "RESOLVED",
+      "basis": "04–09 exist and are source-hashed; obsolete missing-source rationale remains historical.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-002",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Product16GiB feasibility needs actual runtime measurement; setup/Plane resource observations are not product proof. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-003",
+      "disposition": "RESOLVED",
+      "basis": "Exact approved identity replaces both active obsolete final branding occurrences; bounded research/automation meaning preserved.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-004",
+      "disposition": "RESOLVED",
+      "basis": "01/02 explicitly allocate canonical Core, Simulator physical/Oracle, Vision observations, candidates, authenticated HITL and governed Automation authority; implementation verification remains future.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-005",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Protected-action negative runtime suite not executed by documentation repair. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-006",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Oracle isolation remains mandatory; product runtime negative proof remains future. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-007",
+      "disposition": "RESOLVED",
+      "basis": "Planning/evidence honesty preserved; registry delta distinguishes current records from historical empty snapshot and claims no VERIFIED/DONE.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-008",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Research freeze/campaign/statistical integrity obligations remain future; no final results claimed. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-009",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Original rights/export gates preserved; final acquisition/export manifests still needed. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-010",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Owner capacity/cross-review pressure not measured; no WP redistribution invented. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-011",
+      "disposition": "RESOLVED",
+      "basis": "Two stripped Item43 blocks are identical;02 R-001 retains one logical item; no deletion.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-012",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "External-provider/model reproducibility controls need implementation/runtime evidence. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-013",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Product restore/DR drill remains required; Plane PostgreSQL backup evidence is not manufacturing-platform restore proof. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-014",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Final governed demo cannot be certified from prose or management setup. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-015",
+      "disposition": "RESOLVED",
+      "basis": "All protected authority boundaries are explicit in01/02; no UI/AI/Vision/Scheduler direct canonical mutation is permitted.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-016",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Technology/shared-host resource burden awaits product measurements. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-017",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "ScheduleValidator implementation independence remains a design/verification obligation; no product validator was built here. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-018",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Effect verification remains mandatory; command/HTTP success is not proof. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-019",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Precise trace specificity and catalog metadata confirmation remain outstanding; no umbrella evidence closure. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-020",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "System-level research claims still require complete sealed empirical evidence, not isolated component results. This is a normal assigned implementation/acquisition/review evidence obligation, not an unresolved policy choice or a reason to require pre-implementation runtime proof.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-021",
+      "disposition": "RESOLVED",
+      "basis": "SECOM/WM-811K are optional cross-domain legacy references, never aerospace evidence;01/02 selected LaneA/B/C portfolio and rights gates are explicit.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-022",
+      "disposition": "RESOLVED",
+      "basis": "The final human decision selects source families; exact release/license/split metadata remains NEEDS_SOURCE_VERIFICATION until acquired.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-023",
+      "disposition": "RESOLVED",
+      "basis": "EVT-InspectionObservation-v1 and normalized Core IC-VIS-002 are distinct in01/02 and propagated to planning/traces.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-024",
+      "disposition": "RESOLVED",
+      "basis": "Protected-action identities use stable canonical commands; deprecated aliases cannot create parallel protected contracts.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-025",
+      "disposition": "RESOLVED",
+      "basis": "02 now assigns ARCH-AI-ML/ARCH-AI-MLOPS within existing services;03 allocation traces follow.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-026",
+      "disposition": "RESOLVED",
+      "basis": "02 now assigns runner, evidence, scheduler harness and visual dataset components within existing services; no infrastructure added.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-027",
+      "disposition": "RESOLVED",
+      "basis": "MC-2 accountable owner is Asrın Dündar; WP ownership is unchanged.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-028",
+      "disposition": "RESOLVED",
+      "basis": "01 pins the human-approved primary host; actual performance measurements are not claimed.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-029",
+      "disposition": "RESOLVED",
+      "basis": "ARCH-AUTO-WORKFLOW is the durable coordinator; Core remains authority and effect verification is mandatory.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-030",
+      "disposition": "RESOLVED",
+      "basis": "Prior CHG-006/016 repairs remain after byte-equivalent rebase; all120 NFR class rows match01.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-031",
+      "disposition": "RESOLVED",
+      "basis": "No legacy/product implementation was started; source-specific legacy dataset identities remain historical.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "RTF-032",
+      "disposition": "RESOLVED",
+      "basis": "Current decisions and change registry are reconciled with immutable historical evidence; independent review is still required.",
+      "scope": "Documentation coherence only; product verification remains at its canonical gate."
+    },
+    {
+      "id": "GAP-RTM-001",
+      "disposition": "RESOLVED",
+      "basis": "RESOLVED — ARCH-AI-ML / ARCH-AI-MLOPS are append-only allocations in02; no new service | FR-ML-001, FR-ML-002, FR-ML-003, FR-ML-007, FR-ML-008 | 01/02 final reconciliation binding; peer review pending | Asrın (semantics) · Yavuz (MLflow runtime)",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-002",
+      "disposition": "RESOLVED",
+      "basis": "RESOLVED — ARCH-PLAT-EXPERIMENT / ARCH-DATA-EVIDENCE / ARCH-SCH-EVAL in02 | FR-SCH-010, FR-SCH-011, FR-EVAL-001, FR-EVAL-002, FR-EVAL-003, FR-EVAL-004, FR-EVAL-005, FR-EVAL-006, FR-EVAL-007, FR-EVAL-009, FR-EVAL-010 | 01/02 final reconciliation binding; peer review pending | Yavuz (runner/evidence) · Asrın (AnalysisPackage) · Batu (harness)",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-003",
+      "disposition": "RESOLVED",
+      "basis": "RESOLVED — ARCH-VIS-DATA in02; DatasetVersion/SplitManifest responsibility retained | FR-VIS-011, FR-VIS-012 | 01/02 final reconciliation binding; peer review pending | Selman",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-004",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Item 82 NFR Record Model requires VerificationMethod, AcceptanceEvidence, WorkloadProfile, HardwareProfile, DerivedFrom per NFR, but NFR entries carry only Class/Owner/Statement. View D/E/G values for all 120 NFRs are derived. | all 120 NFR | Owner confirmation of View G row per NFR before M4 measurement-strategy gate | each NFR PrimaryOwner Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-005",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Item 81 Requirement Record Model requires Revision, DerivedFrom, TargetGate, Status per FR; catalog rows carry ID/Class/Owner/Statement/Verify/Evidence only. Gate projection in §15 is class-level + Item 66 hooks. | all 186 FR | Populate machine-readable catalog fields (FR-GOV-001/004) during M0–M2 | Asrın · Yavuz (tooling) Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-006",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "DERIVED_FROM edges in this Draft are an RTM projection at Item + invariant granularity; Item 83 #122 assigns semantic correctness to capability owners. | all 306 | Owner review per domain; record as trace_edges `LastValidatedIn` | all four owners Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-007",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Verification families are Derived Planning Detail; numeric TestID allocation is an Item 83 open detail. | 173 families | Allocate TEST-<DOMAIN>-NNN when assets are created; keep family→ID map in registry | Yavuz (tooling) · owners Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-008",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "02 registry is \"representative, not exhaustive\"; Command Center views share ARCH-EDGE-WEB (persona-split ownership, Item 33). | FR-UI-002…010 | Optional append of per-view ARCH IDs if review needs finer allocation | Asrın · Selman · Batu · Yavuz Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-009",
+      "disposition": "RESOLVED",
+      "basis": "RESOLVED — distinct EVT-InspectionObservation-v1 and IC-VIS-002 InspectionResult; Vision observation / Core quality authority | FR-VIS-009, FR-VIS-016, FR-UI-003, NFR-DATA-005 | 01/02 final reconciliation binding; peer review pending | Selman",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-010",
+      "disposition": "RESOLVED",
+      "basis": "RESOLVED — PlaceLotOnHold / existing CMD-PlaceLotOnHold-v1; ApplyMaterialHold deprecated | FR-CORE-007, FR-AUTO-010, FR-AUTO-014 | 01/02 final reconciliation binding; peer review pending | Asrın",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-011",
+      "disposition": "RESOLVED",
+      "basis": "00 explicitly distinguishes PlanningState from01 CoverageState; planning never creates verification evidence. | all 306 (state fields) | 01 controls; this RTM separates CoverageState vs PlanningState (§4.3). Align 00 or record convention in 08 DoR/DoD | Asrın · Yavuz",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-012",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "FR-HITL PrimaryOwner is Asrın (authority semantics, Item 62) while ApprovalRequest/ExecutionAuthorization runtime authority sits in automation-service (Batu, 02 Canonical Authority Matrix); FR-HITL-007/010 are Yavuz. Not a conflict; ARCH-HITL-* has no deployable binding in 02. | FR-HITL-001…010, NFR-PERF-012 | State in 04/06: policy semantics (Asrın) vs runtime enforcement (Batu) vs identity (Yavuz); CR-3 review Batu+Yavuz | Asrın Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-013",
+      "disposition": "RESOLVED",
+      "basis": "00 §8 suggests WBS IDs `WP-CORE-001`; Item 82 uses `WP-SMALL/NORMAL/STRESS` for workload profiles. Recorded here before 04 existed. | downstream 04 | Resolved in 04 §2 / WBS-GAP-01 by pattern-based disambiguation: work packages keep `WP-<AREA>-NNN` and always match the full pattern `WP-[A-Z0-9]+-[0-9]{3}`, workload profiles carry no numeric suffix. Remaining obligation: every tool parses the full pattern, never a bare `WP-` prefix match. | Yavuz (tooling)",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-014",
+      "disposition": "RESOLVED",
+      "basis": "CHG-006 updated02 workload/capacity nomenclature to01 Item82 WP/SP profiles. | NFR-PERF/CAP/RES | Use Item 82 `WP-*`/`SP-*` (latest refinement); 02 OD-RES-01 should be updated | Yavuz",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-015",
+      "disposition": "RESOLVED",
+      "basis": "CHG-006 updated02 RPO/resource references to the existing01 Item82 limits. | NFR-REC-001, NFR-RES-001, NFR-RES-002 | Close OD-REC-01/OD-RES-01 in 02 by editorial update (C0/C1) | Yavuz",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-016",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "`RES-*` drills vs `NFR-RES-*` vs `RES-INV-*`; 01 Item 34 two-digit `ARCH-INV-nn` vs 02 global `ARCH-INV-nnn` (02 audit issue 4). | tooling | Trace linter must match full IDs with prefix boundaries; never parse by suffix | Yavuz Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-017",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "NFR-DX-003 (\"relevant capability owner; PrimaryOwner Yavuz\") and NFR-DATA-002 (\"relevant model owner; PrimaryOwner Asrın\") use compound wording. | NFR-DX-003, NFR-DATA-002 | RTM records PrimaryOwner only; supporting owners listed as reviewers in 06 | Yavuz · Asrın Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-018",
+      "disposition": "RESOLVED",
+      "basis": "CHG-016 restored all120 distinct02 NFR rows/classes and their canonical owners. | 13 NFRs | Editorial update of 02 (C0); 01 remains authoritative meanwhile | Yavuz",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-019",
+      "disposition": "RESOLVED",
+      "basis": "CHG-016 cites01 Item62 for simulator ownership; no owner was reassigned. | FR-SIM-* | Editorial citation fix in 02 (C0); no ownership change | Batu",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-020",
+      "disposition": "RESOLVED",
+      "basis": "RESOLVED — Asrın Dündar accountable for MC-2; underlying WP owners unchanged | MC-2 claim trace (View H) | 01/02 final reconciliation binding; peer review pending | team (change control)",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-021",
+      "disposition": "RESOLVED",
+      "basis": "RESOLVED — primary shared-host profile pinned in01; actual run measurement/identity remains required | NFR-PERF-009, NFR-PERF-010, NFR-DX-001…005 | 01/02 final reconciliation binding; peer review pending | Selman · Yavuz",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-022",
+      "disposition": "RESOLVED",
+      "basis": "Item 43 heading duplicated verbatim in 01 (ENV-INV-01…20 appear twice). | — | Treated as one logical Item (02 R-001); trace linter must de-duplicate invariant IDs | —",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "GAP-RTM-023",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Backfill ADRs (02 list of 13) have no minted ADR-NNNN IDs; DECIDED_BY uses `ADR:backfill-NN` placeholders. | FR-CORE-012, FR-SIM-001, FR-SCH-009, FR-AUTO-002, FR-AI-001, FR-SEC-001, FR-PLAT-001/006, FR-RAG-005 | Mint ADR IDs at M1 (02 Milestone ADR Gates); update edges; DECIDED_BY never satisfies VERIFIED_BY | Asrın (index) · decision owners Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/03_Requirements_Traceability_Matrix.md"
+    },
+    {
+      "id": "WBS-GAP-01",
+      "disposition": "RESOLVED",
+      "basis": "`WP-<AREA>-NNN` work packages vs Item 82 `WP-SMALL/NORMAL/STRESS` workload profiles. | Pattern-based disambiguation adopted (§2); tooling must match the full pattern `WP-[A-Z0-9]+-[0-9]{3}`, which also covers digit-bearing area segments such as `WP-R2-001`. Alternative (renaming the WBS namespace) rejected because the user-facing convention in 00 §8 uses `WP-CORE-001`.",
+      "source": "docs/04_Work_Breakdown_Structure.md"
+    },
+    {
+      "id": "WBS-GAP-02",
+      "disposition": "RESOLVED",
+      "basis": "08 now defines and ratifies the referenced DoR/DoD IDs; lossless many-to-one task mapping is explicit. | Ratify or replace in 08; WP cards reference IDs, not wording, so ratification does not require re-editing every card.",
+      "source": "docs/04_Work_Breakdown_Structure.md"
+    },
+    {
+      "id": "WBS-GAP-03",
+      "disposition": "RESOLVED",
+      "basis": "02 append-only existing-service ARCH allocations and03 traces now cover ML, evaluation and dataset capabilities. | 02 registry append via change control before M4/M5 (05 DEP-GAP-08/09).",
+      "source": "docs/04_Work_Breakdown_Structure.md"
+    },
+    {
+      "id": "WBS-GAP-04",
+      "disposition": "RESOLVED",
+      "basis": "Distinct observation/result and canonical command identities are DECIDED in01/02; contract field/version freeze remains assigned implementation work. | Resolve in the contract registry before S3–S4 so the E2E-01 readiness gate is not the first forcing function.",
+      "source": "docs/04_Work_Breakdown_Structure.md"
+    },
+    {
+      "id": "WBS-GAP-05",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "WP-PLAT-003, WP-SEC-001 and WP-HITL-004 must deliver Keycloak/SeaweedFS by end S4 and Temporal by end S5 — earlier than the Item 66 prose implies; WP-SEC-002 additionally needs an S5 subset for the Oracle negative test. | Roadmaps (06) must schedule these in S3–S5, not M4. Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/04_Work_Breakdown_Structure.md"
+    },
+    {
+      "id": "WBS-GAP-06",
+      "disposition": "RESOLVED",
+      "basis": "MC-2 accountability is Asrın Dündar in01; all179 WP owners remain unchanged. | Assign via change control before M6.",
+      "source": "docs/04_Work_Breakdown_Structure.md"
+    },
+    {
+      "id": "WBS-GAP-07",
+      "disposition": "RESOLVED",
+      "basis": "01 final human decision pins the shared-host profile; actual benchmark measurements remain future evidence. | Record profiles in WP-PLAT-005 before M6.",
+      "source": "docs/04_Work_Breakdown_Structure.md"
+    },
+    {
+      "id": "WBS-GAP-08",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Asrın owns 73 and Yavuz 57 of 179 packages; S9–S11 concentrates Yavuz-owned evidence infrastructure. | 06 roadmaps must sequence contract-first delivery and move research-lane execution to lane owners; not solved by reassigning ownership (Item 62 is fixed). Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/04_Work_Breakdown_Structure.md"
+    },
+    {
+      "id": "WBS-GAP-09",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Size bands are indicative and derived from deliverable/task counts, not from estimation sessions. | Owners re-band their packages at DoR; bands never become hour commitments. Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/04_Work_Breakdown_Structure.md"
+    },
+    {
+      "id": "WBS-GAP-10",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Major tasks are listed but not individually identified (`TASK-<AREA>-NNN` unallocated) to avoid a micro-task registry before implementation. | Allocate TaskIDs only where a task needs independent tracking (00 §8). Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/04_Work_Breakdown_Structure.md"
+    },
+    {
+      "id": "DEP-GAP-01",
+      "disposition": "RESOLVED",
+      "basis": "00 critical paths now reproduce canonical01/05 CP-2 and CP-3 without missing stages. | CP-2, CP-3 | Item 66 chains used verbatim; editorial update of 00 recommended | Asrın (guide maintenance)",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "DEP-GAP-02",
+      "disposition": "RESOLVED",
+      "basis": "Item 66 dependency board lists \"Qdrant RAG — Asrın/Yavuz\", conflicting with #141 / DEP-INV-07 (no vague/shared blocker owner). | DEP-013, DEP-071 | Modeled as two nodes: DN-RT-QDRANT (Yavuz, runtime) and DN-RAG (Asrın, capability); confirm in review | Asrın · Yavuz",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "DEP-GAP-03",
+      "disposition": "RESOLVED",
+      "basis": "Item 66 board names consumers as people/groups (\"Batu\", \"All\", \"Research\", \"Asrın\"), contrary to #26 / DEP-INV-01. | board rows | Re-expressed as capability consumers (§19.1) | —",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "DEP-GAP-04",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Item 66 prose places Keycloak \"before serious HITL / M4\", Temporal \"by M3\", SeaweedFS \"HARD for real artifact flow\"; Item 67 requires Keycloak READY for actual login and SeaweedFS READY by end S4, Temporal READY by formal E2E (end S5). E2E-01 precedes M3, so the earlier dates govern. | DEP-010, DEP-009, DEP-012, DEP-090 | 04/06/07 must schedule these runtimes for S4/S5, not M3/M4 | Yavuz Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "DEP-GAP-05",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "DEP-047 requires DN-SEC-BASE INTEGRATION_READY by E2E-01 (end S5) for the Oracle-access negative test (Item 67 #98–#99), while DN-SEC-BASE's own identity edge DEP-016 is due only at M4 (S8). | DEP-047, DEP-016 | Plan a S5 subset of the security baseline (normal-runtime vs evaluator credential separation) ahead of the full M4 baseline; recorded here, decided in 04/06D | Yavuz (identity) · Batu (Oracle stream) Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "DEP-GAP-06",
+      "disposition": "RESOLVED",
+      "basis": "PlaceLotOnHold / CMD-PlaceLotOnHold-v1 is canonical; deprecated aliases do not define parallel commands. | DEP-026, DEP-097, DEP-098 | Apply explicit final human decision in01/02; exact artifacts remain implementation work | Asrın",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "DEP-GAP-07",
+      "disposition": "RESOLVED",
+      "basis": "EVT-InspectionObservation-v1 is distinct from normalized IC-VIS-002; both preserve immutable provenance. | DEP-061, DEP-065 | Apply explicit final human decision in01/02; exact artifacts remain implementation work | Selman (Asrın review)",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "DEP-GAP-08",
+      "disposition": "RESOLVED",
+      "basis": "Dedicated ARCH-AI-ML/ARCH-AI-MLOPS allocations exist in02; existing MLflow runtime and AI semantics stay distinct. | DEP-014, DEP-055, DEP-075 | Use explicit01/02 final binding; future change requires09 | Yavuz · Asrın",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "DEP-GAP-09",
+      "disposition": "RESOLVED",
+      "basis": "ARCH-PLAT-EXPERIMENT/ARCH-DATA-EVIDENCE/ARCH-SCH-EVAL now allocate existing runner/evidence/harness responsibilities. | DEP-114, DEP-126, DEP-125 | Use explicit01/02 final binding; future change requires09 | Yavuz",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "DEP-GAP-10",
+      "disposition": "RESOLVED",
+      "basis": "MC-2 accountable owner: Asrın Dündar; contributing WP owners unchanged. | DEP-149, DEP-130 | Apply explicit final human decision in01/02; exact artifacts remain implementation work | team (change control)",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "DEP-GAP-11",
+      "disposition": "RESOLVED",
+      "basis": "Primary shared-host HardwareProfile pinned in01; actual run resource/environment/workload identity remains required. | DEP-117, DEP-142, DEP-119 | Use explicit01/02 final binding; future change requires09 | Selman · Yavuz",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "DEP-GAP-12",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "CP-1 lists AI/RCA before Recovery Scheduling; as dependencies, AI→Scheduler and AI→Automation are SOFT (DEP-INV-14/15). CP-1 is a flow path for M3, not a chain of HARD START edges. The computed HARD longest path to M3 bypasses AI. | DEP-089, DEP-104 | None required; 04/06 must not schedule Scheduler/Automation start after AI | — Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "DEP-GAP-13",
+      "disposition": "RESOLVED",
+      "basis": "E2E coordination: durable Automation/Temporal ARCH-AUTO-WORKFLOW; scenario/evidence owners unchanged. | CK-E2E01 entry edges | Apply explicit final human decision in01/02; exact artifacts remain implementation work | 07 authors",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "DEP-GAP-14",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Item 65/66 M2 includes \"restart recovery\" while resilience validation is an M5 capability. Modeled as DN-PLAT-FAILVAL COMPONENT_READY at M2, EVALUATION_READY at M5. | DEP-176, DEP-203 | 07 to state M2 restart-recovery evidence scope explicitly | Yavuz Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "DEP-GAP-15",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "02 runtime classes (REQUIRED/DEGRADABLE/OPTIONAL) and Item 66 planning strength (HARD/SOFT) coexist; conflating them would e.g. make Vision DEGRADABLE-at-runtime look optional for M3. | §16 | DEP-RULE-20; tooling keeps separate fields | Yavuz (tooling) Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "DEP-GAP-16",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "DN-HITL-APPROVAL is Asrın-owned (authority semantics) but its runtime realization sits in automation-service (Batu) and depends on Keycloak (Yavuz): a three-owner convergence point on the E2E-01 critical path. | DEP-090, DEP-091, DEP-099 | Name policy vs runtime vs identity deliverables separately in 04 | Asrın Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "DEP-GAP-17",
+      "disposition": "RESOLVED",
+      "basis": "SOFT/local development supports are non-binding; DEP-045 has no F1 fallback and never satisfies artifact integration evidence. | DEP-045 | None; confirm in review | Batu · Yavuz",
+      "source": "docs/05_Dependency_Graph.md"
+    },
+    {
+      "id": "PLAN-GAP-01",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Item 65 sprint scopes place Keycloak and Temporal at S2/S4 as \"skeleton\", while Item 67 requires Keycloak READY for actual login by end S4 and Temporal READY for the formal E2E run by end S5. | S4/S5 dates govern; WP-PLAT-003, WP-SEC-001 and WP-HITL-004 are scheduled accordingly in §6. Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/07_Milestone_and_Release_Plan.md"
+    },
+    {
+      "id": "PLAN-GAP-02",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "The E2E-01 oracle-access negative test needs runtime credential separation by S5, while the full security baseline targets M4 (S8). | Plan an S5 subset of WP-SEC-002; recorded here, decided by the owners. Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/07_Milestone_and_Release_Plan.md"
+    },
+    {
+      "id": "PLAN-GAP-03",
+      "disposition": "RESOLVED",
+      "basis": "RESOLVED: distinct observation/result and canonical protected command identities in01/02 | Apply01/02 final human decisions; no WP owner/count change",
+      "source": "docs/07_Milestone_and_Release_Plan.md"
+    },
+    {
+      "id": "PLAN-GAP-04",
+      "disposition": "RESOLVED",
+      "basis": "RESOLVED: durable Automation/workflow ARCH-AUTO-WORKFLOW coordinates E2E; implementation owners unchanged | Apply01/02 final human decisions; no WP owner/count change",
+      "source": "docs/07_Milestone_and_Release_Plan.md"
+    },
+    {
+      "id": "PLAN-GAP-05",
+      "disposition": "RESOLVED",
+      "basis": "RESOLVED: Asrın Dündar accountable for MC-2 | Apply01/02 final human decisions; no WP owner/count change",
+      "source": "docs/07_Milestone_and_Release_Plan.md"
+    },
+    {
+      "id": "PLAN-GAP-06",
+      "disposition": "RESOLVED",
+      "basis": "RESOLVED: primary shared-host HardwareProfile pinned in01; actual run identity/measurements still required | Apply01/02 final human decisions; no WP owner/count change",
+      "source": "docs/07_Milestone_and_Release_Plan.md"
+    },
+    {
+      "id": "PLAN-GAP-07",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "The 65/20/15 capacity model and the milestone package distribution (M4 carries 39 packages, the largest window) have not been validated against real throughput, because no sprint has been executed. | Rebaseline the distribution after S2 using observed integration cost, not velocity points. Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/07_Milestone_and_Release_Plan.md"
+    },
+    {
+      "id": "PLAN-GAP-08",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Package counts per window are uneven by design; S9–S11 concentrate platform and evidence work on one owner. | 06 roadmaps keep research lane execution with lane owners; review capacity is reserved in S3–S5 and S11. Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/07_Milestone_and_Release_Plan.md"
+    },
+    {
+      "id": "PLAN-GAP-09",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "No academic calendar exists in the sources, so effective weeks cannot be mapped to dates. | Map W2–W26 to real dates when the team fixes the semester calendar; milestone semantics stay fixed (Item 65 #4). Accepted as an explicit implementation/readiness/review obligation; no evidence, estimation certainty, identity or metadata is fabricated.",
+      "source": "docs/07_Milestone_and_Release_Plan.md"
+    },
+    {
+      "id": "READINESS-060-194",
+      "disposition": "RESOLVED",
+      "basis": "DN-VIS-MODELS declares independently achievable artifact/inference-adapter INTEGRATION_READY; consumer readiness remains required, without waiting for downstream service completion."
+    },
+    {
+      "id": "F1-NONCONTRACT",
+      "disposition": "RESOLVED",
+      "basis": "DEP-025/045/058/076/094 fallback is null in YAML and registry; their strength/kind/stage/topology is unchanged."
+    },
+    {
+      "id": "HARD-PRECISION-NULL",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "All179 nulls remain visible to projectctl.05 per-edge consumer predicates identify the expected artifact/readiness; actual exact versions/fields must be bound before DOR-WP-04 permits consumer work."
+    },
+    {
+      "id": "NEED-BY-29",
+      "disposition": "ACCEPTED_WITH_RATIONALE",
+      "basis": "Raw29 planning windows remain unchanged and diagnostics visible;05 gives source-supported per-edge latest sprint from existing overlay. No deadline or producer completion is invented."
+    },
+    {
+      "id": "DOR-MAPPING",
+      "disposition": "RESOLVED",
+      "basis": "08 explicitly uses lossless many-to-one mapping; no readiness obligation is dropped."
+    },
+    {
+      "id": "WP-X-001-SCOPE",
+      "disposition": "RESOLVED",
+      "basis": "Bounded optional documentation/review guardrail remains unscheduled; no out-of-scope product delivery introduced."
+    },
+    {
+      "id": "RTM-CITATIONS",
+      "disposition": "RESOLVED",
+      "basis": "Exact catalog identities/citations/index are rechecked, not fuzzy matched."
+    },
+    {
+      "id": "MIGRATION-CHANGELOG",
+      "disposition": "RESOLVED",
+      "basis": "Current eight decisions and exact dependency/contract changes appended; historical trail preserved."
+    }
+  ],
+  "implementation_blocking_findings": [],
+  "unresolved_human_policy_decisions": []
+}

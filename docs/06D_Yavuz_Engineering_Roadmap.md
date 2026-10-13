@@ -85,12 +85,12 @@ Architecture components (02 registry) reached through this role's work packages,
 | DN-PLAT-FAILVAL | Failure validation (resilience drills, AV-SCEN-05…12) | EVIDENCE | ARCH-OBS-HEALTH | EVALUATION_READY |
 | DN-PLAT-INTEG | Integration runtime (shared Linux host bootstrap) | RUNTIME | ARCH-PLAT-COMPOSE | EVALUATION_READY |
 | DN-PLAT-REPO | Repository, protected main, CI baseline | CAPABILITY | ARCH-PLAT-CICD | INTEGRATION_READY |
-| DN-PLAT-RUNNER | Experiment runner (manifest binding, BenchmarkRun registry) | CAPABILITY | — (no 02 ARCH ID,  GAP-RTM-002) | FROZEN |
+| DN-PLAT-RUNNER | Experiment runner (manifest binding, BenchmarkRun registry) | CAPABILITY | ARCH-PLAT-EXPERIMENT | FROZEN |
 | DN-PLAT-TOOLING | Runtime language/tooling baseline + mfgctl | CAPABILITY | ARCH-PLAT-CLI | COMPONENT_READY |
 | DN-RES-BENCH | Final Benchmark Campaign FBC-01 (sealed evidence) | EVIDENCE | ARCH-PLAT-RELEASE, ARCH-DATA-OBJ | FROZEN |
 | DN-RES-HARNESS | Evaluation harnesses (per lane) | CAPABILITY | — (GAP-RTM-002) | FROZEN |
 | DN-RT-IDP | Keycloak identity runtime | RUNTIME | ARCH-SEC-IDP | EVALUATION_READY |
-| DN-RT-MLFLOW | MLflow tracking/registry support tooling | RUNTIME | — (no 02 ARCH ID,  GAP-RTM-001) | EVALUATION_READY |
+| DN-RT-MLFLOW | MLflow tracking/registry support tooling | RUNTIME | ARCH-AI-MLOPS | EVALUATION_READY |
 | DN-RT-NATS | NATS JetStream runtime | RUNTIME | ARCH-EVT-BROKER | EVALUATION_READY |
 | DN-RT-OBJ | SeaweedFS object storage | RUNTIME | ARCH-DATA-OBJ | EVALUATION_READY |
 | DN-RT-OBS | OTel SDK + Collector + OpenObserve | RUNTIME | ARCH-OBS-TELEMETRY, ARCH-OBS-STORE, ARCH-OBS-TRACE | EVALUATION_READY(reliability telemetry, M5) |
@@ -3809,3 +3809,13 @@ This role is complete at M8 when every line below is true and demonstrable from 
 ---
 
 *End of 06D_Yavuz_Engineering_Roadmap.md (Draft — Derived from Approved 01/02 Baseline).*
+
+## Final human reconciliation binding — 2026-10-13
+
+01 §Final Human Reconciliation and02 §Final human reconciliation govern this projection. Vision/NDT publishes immutable InspectionObservation (existing EVT-InspectionObservation-v1); Core normalizes separate InspectionResult (existing IC-VIS-002) and owns canonical manufacturing/quality state. PlaceLotOnHold / CMD-PlaceLotOnHold-v1 is the single hold-placement command; ApplyMaterialHold is deprecated terminology, never a second contract. Other protected identities follow the01 action table, with exact approval/revision/freshness/idempotency binding. Simulator/Oracle, Twin/Qdrant projections, AI READ/SIMULATE/PROPOSE, Scheduler candidates, HITL, identity and UI boundaries remain unchanged.
+
+ARCH-AUTO-WORKFLOW (durable Automation/Temporal layer) coordinates GS-01/E2E across Inspection/NDT→Core quality→RCA→recovery→HITL→governed Core commands→verified effect→Twin/Audit. It does not acquire Core authority. MC-2 accountable owner is Asrın Dündar; contributing WP owners remain73/17/32/57. The primary shared-host HardwareProfile and accepted LaneA/B/C portfolio are pinned in01; acquisition/rights/source fields not locally verified are NEEDS_SOURCE_VERIFICATION, not invented facts or performance results. Real/public held-out evaluation and source-specific limitations remain mandatory where claimed.
+
+HARD/SOFT refer to declared work/readiness consumers, not automatic runtime/deployment/import relations. Non-CONTRACT F1 entries DEP-025/045/058/076/094 have no fixture fallback: real producer readiness at the declared stage is required, while development stubs are not satisfaction evidence. DN-VIS-MODELS now declares INTEGRATION_READY for DEP-060/194; operational serving must load promoted required-mode artifacts with provenance. Source-supported deadlines and per-consumer scope are defined in05, without shifting canonical ownership or schedules.
+
+GAP-RTM-004/005 remain ACCEPTED_WITH_RATIONALE for this pre-implementation baseline: missing canonical record metadata is not fabricated. FR-GOV-001/004 and the relevant NFR owners must supply/review actual fields and measurement definitions before their declared gates; projectctl retains nulls/warnings and never grants READY/VERIFIED from planned prose. Owner trace confirmation GAP-RTM-006 and final schema/version/card specifics remain ordinary implementation/review prerequisites, not unresolved choices among the eight approved policy groups.
