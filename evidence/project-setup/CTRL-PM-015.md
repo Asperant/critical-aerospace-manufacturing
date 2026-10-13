@@ -146,3 +146,12 @@ GIT STRATEGY: One coherent validated checkpoint on control/CTRL-PM-015-final-set
 
 SPEC CONFLICTS: The pilot ambiguity was resolved explicitly by the human decision, not by editing canonical documents. No newly blocking conflict.
 NEXT CONTROL ITEM: Complete verified Selman CAP membership/17 canonical assignments under appropriate authorization, then one final PR and genuine review/merge/post-merge rehearsal.
+
+
+## Selman-complete final closure preparation — 2026-10-13
+
+CTRL-PM-011 is COMPLETE against its actual team identity/clone discipline acceptance: four verified active workspace/CAP identities, GitHub permissions, independent clones/profiles and local Git identities. Selman’s exact verified UUID now owns precisely his17canonicalWPs. Canonical assignment distribution is73/17/32/57;179assigned/0unassigned;179/179BACKLOG. Historical Yavuz and pilot evidence is retained.
+
+CTRL-PM-015 remainsIN_PROGRESS. The represented control-only pilot CTRL-PM-015-PILOT-001 (7ad50c84-34af-4df4-8e08-7e2e3e781ac9) remainsIN_PROGRESS before a genuine final PR exists. Valid population stays179canonical+1control=180; no canonical WP readiness or completion is inferred. One closure PR will be opened only after the prepared branch commit is pushed and its CI is green. Actual PR creation will be reflected by a separately recorded pilot IN_REVIEW transition, then a final evidence commit and fresh CI. No independent review, merge, MERGE_READY, MERGED, VALIDATING or DONE is claimed.
+
+Final pre-PR checks executed:203tests passed in64.75seconds; validatePASS (947existing warnings retained); statusPASS with executionUNAVAILABLE(documentation only); git diff --checkPASS; docs/ and AGENTS.md unchanged againstmain. Fresh complete API v1 audit verifies306requirements(186FR/120NFR),179canonical+1control=180,all179BACKLOG,assignments73/17/32/57,29modules/179relationships,13cycles/174relationships,10labels,exact5unscheduled identities,zero duplicate/unknown entities. Strict source-bound import plan with the approved verified-owner assignment overlay:179unchanged,0conflicts,0mutation requests. Pilot remainsIN_PROGRESS. No parser/test/validation rule weakened; no PR/merge/approval yet.

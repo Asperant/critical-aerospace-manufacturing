@@ -1,6 +1,6 @@
 # Team workflow — CTRL-PM-011
 
-Status: PARTIAL — Asrın, Batuhan and Yavuz have active Plane workspace/CAP memberships and their canonical WPs assigned (73/32/57). Selman is now an active workspace MEMBER; CAP membership and his 17 canonical assignments remain pending. PR #2 is merged; the separate control-only CTRL-PM-015 pilot is IN_PROGRESS. The final closure PR awaits Selman onboarding and then genuine review/merge/post-merge validation.
+Status: CTRL-PM-011 COMPLETE — all four real team identities have active Plane workspace/CAP memberships, verified GitHub access, separate clean clones/profiles and repository-local Git identities. All 179 canonical WPs are assigned to their owners (73/17/32/57) and remain BACKLOG. CTRL-PM-015 remains IN_PROGRESS; its separate control-only pilot awaits the actual final closure PR, independent review, merge and post-merge validation.
 
 Use one persistent Ubuntu GUI session, `ailab`, with RustDesk attached. Do not create GUI users or switch Ubuntu login sessions. `/srv/ailab/project` is the integration/reference clone and must not be used concurrently for developer work.
 
@@ -41,3 +41,6 @@ Log into Plane yourself using the supplied invitation email. API invitation reco
 After authentication, fetch the remote normally, inspect its baseline, and use an existing local environment or install the documented projectctl dependencies in your own clone. Run `projectctl validate`, retrieve `projectctl context <WP-ID>`, check readiness, and create `wp/<WP-ID>-<short-slug>` only for an approved canonical WP. Product implementation has not been authorized by setup. Use `control/<CTRL-ID>-<short-slug>` for approved controls; the long-lived setup branch is the approved exception.
 
 Canonical owners never change to compensate for missing accounts. No dummy users, substituted owners, shared tokens, global Git identity, automatic READY/DONE, self-approval or shared concurrent working tree. See ENGINEERING_WORKFLOW.md and canonical docs/08 for review and post-merge evidence rules.
+
+
+Selman’s verified operational identity is **Selman Özdemir**, Plane/Git commit email **selmanozdemir430@gmail.com**, GitHub **selorito**, Plane user **a3d25336-e7d0-43f8-bfef-c0b5c2137a60**. Fresh API v1 reads confirm active workspace and CAP MEMBER (15), all 17 canonical Selman WPs assigned and BACKLOG, and no pending invitation. GitHub WRITE access is active. The account profile currently has first name Selman and an empty last name: these assignments bind the verified exact email/user UUID rather than guessing from display names. Historical pending observations remain preserved.
