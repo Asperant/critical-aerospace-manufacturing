@@ -1,0 +1,27 @@
+schema_version: control-plane-items-v1
+items:
+  - control_id: CTRL-PM-015-PILOT-001
+    title: '[CONTROL] CTRL-PM-015-PILOT-001 — Governed Lifecycle Rehearsal'
+    external_source: projectctl-control
+    control_only: true
+    canonical_wp: false
+    related_control: CTRL-PM-015
+    purpose: governed Plane lifecycle rehearsal
+    owner: Asrın Dündar
+    module: null
+    cycle: null
+    lifecycle:
+      BACKLOG: explicit human model decision and exact representation
+      READY: approved scope, verified owner, clean baseline, test plan and evidence path
+      IN_PROGRESS: closure branch exists and implementation work has actually begun
+      IN_REVIEW: final closure PR opened
+      MERGE_READY: required CI passes and genuine independent approval binds to current PR head
+      MERGED: final closure PR actually merged
+      VALIDATING: validation starts on actual merged main
+      DONE: all pilot DoD evidence passes and is recorded
+    evidence_expectations:
+      - exact live representation and canonical inventory audit
+      - focused negative tests and full projectctl suite
+      - validation and idempotency readback
+      - final PR and current-head independent review
+      - actual merge and post-merge validation evidence

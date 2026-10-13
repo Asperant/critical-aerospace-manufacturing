@@ -1,0 +1,8 @@
+# Verified independent reviewer for the setup closure / projectctl pilot scope.
+# Routing does not grant approval or replace current-head review and CI gates.
+/.github/CODEOWNERS @Ejlonn
+/tools/projectctl/ @Ejlonn
+/project_control/control_plane_items.yaml @Ejlonn
+/project_control/TEAM_WORKFLOW.md @Ejlonn
+/evidence/project-setup/CTRL-PM-011* @Ejlonn
+/evidence/project-setup/CTRL-PM-015* @Ejlonn

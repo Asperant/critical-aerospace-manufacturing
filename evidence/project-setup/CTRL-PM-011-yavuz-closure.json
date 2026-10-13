@@ -1,0 +1,1211 @@
+{
+  "control_item": "CTRL-PM-011",
+  "observed_at": "2026-10-13T18:57:09.106955+00:00",
+  "baseline": "feb255df0311d95e278369f04f2e22c0c971e70c",
+  "authorization": "Final setup closure batch: verify active Yavuz identity and assign exactly his 57 canonical WPs; leave Selman untouched",
+  "identity": {
+    "name": "Yavuz Gümüş",
+    "email": "yavuzzgumus@gmail.com",
+    "github": "Yavuzgmus",
+    "git_commit_email": "yavuzzgumus@gmail.com",
+    "plane_user_id": "3ccd9ad8-99e9-4b75-ae65-2325503d347f",
+    "workspace_role": 15,
+    "project_role": 15,
+    "workspace_active": true,
+    "project_active": true,
+    "pending_invitation": false,
+    "github_user_id": 149728130,
+    "github_permission": "write"
+  },
+  "canonical_summary": {
+    "source": "docs/04_Work_Breakdown_Structure.md",
+    "parser": "offline-project-v1",
+    "execution_status": "UNAVAILABLE (documentation only)",
+    "wp_count": 179,
+    "owner_distribution": {
+      "Asrın Dündar": 73,
+      "Batuhan Kaya": 32,
+      "Selman Özdemir": 17,
+      "Yavuz Gümüş": 57
+    },
+    "capability_count": 29,
+    "validation": "PASS",
+    "source_manifest": {
+      "docs/01_Master_Project_Specification.md": "14ff9517ca5fc427d9316980a20db1059a628935e5642a4eeca2ffded51572bb",
+      "docs/03_Requirements_Traceability_Matrix.md": "e58e635cacc96f3341b7cb13f54676d3793b82d63cd394d9c260973f23817375",
+      "docs/04_Work_Breakdown_Structure.md": "1f9c2ff532cacac70ff5099a1ff6e4e09d25be990dcbca2071e59e0fa03ed8ac",
+      "docs/05_Dependency_Graph.md": "c693a9b953458d0bcc2be4b2c9fdb4d19d6f21e7ebf8aca8e0fb49be08db30d1",
+      "docs/06A_Asrin_Engineering_Roadmap.md": "4034fbc467766dcaf59aab274bcb6ec2ee944f6c311444f079f589029dc8c92c",
+      "docs/06B_Selman_Engineering_Roadmap.md": "92801ffe6782ec55a096482db1f578b1d75c41278c269ef8c56aaf97e23da2ea",
+      "docs/06C_Batu_Engineering_Roadmap.md": "f12f21dd91c1487c556bd5cbbe24a52fdbda03f9add8d8009463e74cb95f5d2e",
+      "docs/06D_Yavuz_Engineering_Roadmap.md": "a70a3c28b458ccab65e4305675f962b9b6eeb4e84cba4e94e2da53a74d81a961",
+      "docs/07_Milestone_and_Release_Plan.md": "f06243f0e0773b4ebce39b509c6e807bacf698690e8f311d6091087db83272bf"
+    },
+    "cycle_count": 13,
+    "milestone_count": 9,
+    "scheduled_wp_count": 174,
+    "unscheduled_wp_ids": [
+      "WP-R2-001",
+      "WP-R2-002",
+      "WP-R2-003",
+      "WP-S-001",
+      "WP-X-001"
+    ],
+    "dependency_node_count": 100,
+    "dependency_edge_count": 217,
+    "hard_edge_count": 208,
+    "soft_edge_count": 9,
+    "hard_cycle_count": 0,
+    "requirement_count": 306,
+    "fr_count": 186,
+    "nfr_count": 120
+  },
+  "preview": [
+    {
+      "wp_id": "WP-BENCH-001",
+      "plane_id": "471abd4d-37ac-4f8f-a8d4-6bbe4b4ec078",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-BENCH-003",
+      "plane_id": "6566afaa-a49d-4aaf-8e3d-f1fb3c9b82be",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-BENCH-004",
+      "plane_id": "60231e97-e1b0-48b8-a020-575b204d714e",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-BENCH-005",
+      "plane_id": "a63e52bf-0865-46ee-b63e-53de2cf13152",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-CICD-001",
+      "plane_id": "ab9cae7c-63da-4e34-9e59-11aab004b2d2",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-CICD-002",
+      "plane_id": "9830048a-89b3-430a-8c1f-5281a17fce15",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-CICD-003",
+      "plane_id": "493688dc-e75b-4084-a71f-01e16c8c8ffa",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-CICD-004",
+      "plane_id": "31c13808-1ea7-4eef-a229-c5aee2ffadd3",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-CICD-005",
+      "plane_id": "5b259e11-61f2-4c9f-bdb3-3ad1a212f80e",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-CICD-006",
+      "plane_id": "3b98d52f-ddfe-4989-8c73-96b7cc29213f",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-DOC-001",
+      "plane_id": "67c75e16-3d78-4bff-b9fd-69322c72d267",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-DOC-005",
+      "plane_id": "9890972d-8817-4b41-968b-7d55d864f8a5",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-DR-001",
+      "plane_id": "d168d7a8-99b4-46fe-bf66-ca1e0590dde7",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-DR-002",
+      "plane_id": "b1da0656-0f23-4106-9ba4-35138a7e32d0",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-DR-003",
+      "plane_id": "7cd22023-0fdb-45a9-a7da-fd31d03d7866",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-DR-004",
+      "plane_id": "29ec3895-a525-45d3-9cdd-973a43127397",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-EVT-004",
+      "plane_id": "157148d6-2e04-4442-9e31-0bc597b649ef",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-EVT-006",
+      "plane_id": "762d1a70-b90c-4d37-a75a-0807f50adb2d",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-GOV-002",
+      "plane_id": "7f00e9f4-a2c5-4850-b0ff-77c6d5b39f35",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-GOV-003",
+      "plane_id": "920f7309-151f-4ccc-8374-801adf0b05ac",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-HITL-004",
+      "plane_id": "6b932002-bada-4bea-b8b5-3cbfa68b2f13",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-HITL-007",
+      "plane_id": "71c8a67a-7907-4d6e-80fb-9293e96a47de",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-OBJ-001",
+      "plane_id": "a2929ad7-6990-4e93-91b9-e99855bdb350",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-OBJ-002",
+      "plane_id": "57b3c1a8-3181-44e6-b887-1da28eb5bc4f",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-OBS-001",
+      "plane_id": "6bc81e08-2861-4160-8c4e-5e9449504ea3",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-OBS-002",
+      "plane_id": "7f2515f4-e8d5-43ae-8eef-1c61089f0dfb",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-OBS-003",
+      "plane_id": "5c1e51b4-e112-42e4-871f-a90d5099e06b",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-OBS-004",
+      "plane_id": "6895d625-7525-4ea7-8006-a5b141eeb5a3",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-OBS-005",
+      "plane_id": "4edc0f34-d895-4d80-854b-3e3eada4e3f5",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-OBS-006",
+      "plane_id": "810673eb-1a20-4e6a-bea1-ff25da2b4567",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-PERF-001",
+      "plane_id": "5d63b318-c9c3-4f31-ae5c-f2ae1a3fb143",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-PERF-002",
+      "plane_id": "fc080202-03a6-4f06-92e0-1a0220e96171",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-PERF-004",
+      "plane_id": "838e20bd-a7b3-471e-928f-7dc8c5842d4d",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-PERF-005",
+      "plane_id": "c712fde7-36fc-49ea-b4b9-0dc811aaf222",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-PLAT-001",
+      "plane_id": "30c72c8a-3b69-4198-b295-48879e376594",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-PLAT-002",
+      "plane_id": "b883637f-11f6-4c04-8d58-0e8b2152e0ed",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-PLAT-003",
+      "plane_id": "dcab38bd-9c4a-4779-8265-29d33ec4705b",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-PLAT-004",
+      "plane_id": "e45b8c2d-30d7-4310-a61f-d6189a2109e7",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-PLAT-005",
+      "plane_id": "acc33c30-1a46-485b-940e-18dc03126bf4",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-PLAT-006",
+      "plane_id": "e9428312-7d5b-4132-aa54-90f9bc003421",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-PLAT-007",
+      "plane_id": "80d88868-d1c4-4030-90b1-b232f9d41d57",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-R2-003",
+      "plane_id": "88b06cf1-80d2-437b-bbbc-c2dd9e87b4e9",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-RES-001",
+      "plane_id": "96a66847-fd4b-4450-9575-218fae33e992",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-RES-003",
+      "plane_id": "ffaeb1d3-fc25-460f-b889-83ac36a2eb2e",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-RES-005",
+      "plane_id": "8ff40333-69f4-4124-81a3-84e259d52a47",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-SEC-001",
+      "plane_id": "52d49489-adad-49d2-b157-3cce1851a67c",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-SEC-002",
+      "plane_id": "1532f9b7-c1a0-4a3b-9385-6fa36ae9363f",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-SEC-004",
+      "plane_id": "4886b0b8-b8b5-464b-9ec3-1828183d7013",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-SEC-005",
+      "plane_id": "9c2c74ec-8eb5-4e87-a9b8-d15e37644a9e",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-SEC-006",
+      "plane_id": "aac98908-1895-41bd-9337-1f8123e11c69",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-SEC-007",
+      "plane_id": "1ede60d0-b44f-4839-9f0c-2af69b1117ca",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-SEC-008",
+      "plane_id": "a2c3f173-d1d7-4814-9640-0de349817bff",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-TEST-001",
+      "plane_id": "c8a9aa7b-e591-4ba8-85ef-6c4c1adc40cf",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-TEST-004",
+      "plane_id": "3f36ecd6-ca34-4703-9807-b46799514cba",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-TEST-007",
+      "plane_id": "772fbf83-5cdf-4cb3-8502-7ff5f18bafd7",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-TEST-008",
+      "plane_id": "2fd3285b-a369-47db-b4bc-a0220e373fff",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    },
+    {
+      "wp_id": "WP-UI-009",
+      "plane_id": "53d6d38c-b5cd-4d74-85f0-f83d5a259da4",
+      "owner": "Yavuz Gümüş",
+      "old_assignees": [],
+      "new_assignees": [
+        "3ccd9ad8-99e9-4b75-ae65-2325503d347f"
+      ]
+    }
+  ],
+  "mutations": [
+    {
+      "wp_id": "WP-BENCH-001",
+      "plane_id": "471abd4d-37ac-4f8f-a8d4-6bbe4b4ec078",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-BENCH-003",
+      "plane_id": "6566afaa-a49d-4aaf-8e3d-f1fb3c9b82be",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-BENCH-004",
+      "plane_id": "60231e97-e1b0-48b8-a020-575b204d714e",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-BENCH-005",
+      "plane_id": "a63e52bf-0865-46ee-b63e-53de2cf13152",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-CICD-001",
+      "plane_id": "ab9cae7c-63da-4e34-9e59-11aab004b2d2",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-CICD-002",
+      "plane_id": "9830048a-89b3-430a-8c1f-5281a17fce15",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-CICD-003",
+      "plane_id": "493688dc-e75b-4084-a71f-01e16c8c8ffa",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-CICD-004",
+      "plane_id": "31c13808-1ea7-4eef-a229-c5aee2ffadd3",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-CICD-005",
+      "plane_id": "5b259e11-61f2-4c9f-bdb3-3ad1a212f80e",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-CICD-006",
+      "plane_id": "3b98d52f-ddfe-4989-8c73-96b7cc29213f",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-DOC-001",
+      "plane_id": "67c75e16-3d78-4bff-b9fd-69322c72d267",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-DOC-005",
+      "plane_id": "9890972d-8817-4b41-968b-7d55d864f8a5",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-DR-001",
+      "plane_id": "d168d7a8-99b4-46fe-bf66-ca1e0590dde7",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-DR-002",
+      "plane_id": "b1da0656-0f23-4106-9ba4-35138a7e32d0",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-DR-003",
+      "plane_id": "7cd22023-0fdb-45a9-a7da-fd31d03d7866",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-DR-004",
+      "plane_id": "29ec3895-a525-45d3-9cdd-973a43127397",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-EVT-004",
+      "plane_id": "157148d6-2e04-4442-9e31-0bc597b649ef",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-EVT-006",
+      "plane_id": "762d1a70-b90c-4d37-a75a-0807f50adb2d",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-GOV-002",
+      "plane_id": "7f00e9f4-a2c5-4850-b0ff-77c6d5b39f35",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-GOV-003",
+      "plane_id": "920f7309-151f-4ccc-8374-801adf0b05ac",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-HITL-004",
+      "plane_id": "6b932002-bada-4bea-b8b5-3cbfa68b2f13",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-HITL-007",
+      "plane_id": "71c8a67a-7907-4d6e-80fb-9293e96a47de",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-OBJ-001",
+      "plane_id": "a2929ad7-6990-4e93-91b9-e99855bdb350",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-OBJ-002",
+      "plane_id": "57b3c1a8-3181-44e6-b887-1da28eb5bc4f",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-OBS-001",
+      "plane_id": "6bc81e08-2861-4160-8c4e-5e9449504ea3",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-OBS-002",
+      "plane_id": "7f2515f4-e8d5-43ae-8eef-1c61089f0dfb",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-OBS-003",
+      "plane_id": "5c1e51b4-e112-42e4-871f-a90d5099e06b",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-OBS-004",
+      "plane_id": "6895d625-7525-4ea7-8006-a5b141eeb5a3",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-OBS-005",
+      "plane_id": "4edc0f34-d895-4d80-854b-3e3eada4e3f5",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-OBS-006",
+      "plane_id": "810673eb-1a20-4e6a-bea1-ff25da2b4567",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-PERF-001",
+      "plane_id": "5d63b318-c9c3-4f31-ae5c-f2ae1a3fb143",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-PERF-002",
+      "plane_id": "fc080202-03a6-4f06-92e0-1a0220e96171",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-PERF-004",
+      "plane_id": "838e20bd-a7b3-471e-928f-7dc8c5842d4d",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-PERF-005",
+      "plane_id": "c712fde7-36fc-49ea-b4b9-0dc811aaf222",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-PLAT-001",
+      "plane_id": "30c72c8a-3b69-4198-b295-48879e376594",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-PLAT-002",
+      "plane_id": "b883637f-11f6-4c04-8d58-0e8b2152e0ed",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-PLAT-003",
+      "plane_id": "dcab38bd-9c4a-4779-8265-29d33ec4705b",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-PLAT-004",
+      "plane_id": "e45b8c2d-30d7-4310-a61f-d6189a2109e7",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-PLAT-005",
+      "plane_id": "acc33c30-1a46-485b-940e-18dc03126bf4",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-PLAT-006",
+      "plane_id": "e9428312-7d5b-4132-aa54-90f9bc003421",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-PLAT-007",
+      "plane_id": "80d88868-d1c4-4030-90b1-b232f9d41d57",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-R2-003",
+      "plane_id": "88b06cf1-80d2-437b-bbbc-c2dd9e87b4e9",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-RES-001",
+      "plane_id": "96a66847-fd4b-4450-9575-218fae33e992",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-RES-003",
+      "plane_id": "ffaeb1d3-fc25-460f-b889-83ac36a2eb2e",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-RES-005",
+      "plane_id": "8ff40333-69f4-4124-81a3-84e259d52a47",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-SEC-001",
+      "plane_id": "52d49489-adad-49d2-b157-3cce1851a67c",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-SEC-002",
+      "plane_id": "1532f9b7-c1a0-4a3b-9385-6fa36ae9363f",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-SEC-004",
+      "plane_id": "4886b0b8-b8b5-464b-9ec3-1828183d7013",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-SEC-005",
+      "plane_id": "9c2c74ec-8eb5-4e87-a9b8-d15e37644a9e",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-SEC-006",
+      "plane_id": "aac98908-1895-41bd-9337-1f8123e11c69",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-SEC-007",
+      "plane_id": "1ede60d0-b44f-4839-9f0c-2af69b1117ca",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-SEC-008",
+      "plane_id": "a2c3f173-d1d7-4814-9640-0de349817bff",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-TEST-001",
+      "plane_id": "c8a9aa7b-e591-4ba8-85ef-6c4c1adc40cf",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-TEST-004",
+      "plane_id": "3f36ecd6-ca34-4703-9807-b46799514cba",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-TEST-007",
+      "plane_id": "772fbf83-5cdf-4cb3-8502-7ff5f18bafd7",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-TEST-008",
+      "plane_id": "2fd3285b-a369-47db-b4bc-a0220e373fff",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    },
+    {
+      "wp_id": "WP-UI-009",
+      "plane_id": "53d6d38c-b5cd-4d74-85f0-f83d5a259da4",
+      "attempt": 1,
+      "http_status": 200,
+      "fresh_readback": "PASS",
+      "changed_fields": [
+        "assignees"
+      ]
+    }
+  ],
+  "readback": {
+    "canonical_wp_count": 179,
+    "canonical_duplicates": 0,
+    "all_backlog": true,
+    "assignments": {
+      "Asrın Dündar": 73,
+      "Batuhan Kaya": 32,
+      "Yavuz Gümüş": 57
+    },
+    "selman_assignments": 0,
+    "assigned": 162,
+    "unassigned": 17,
+    "yavuz_remaining_mutations": 0,
+    "unintended_changes": 0
+  },
+  "before_audit_sha256": "6723d9991e54ede59c45c1fdd776e6fe6ac87085351af12a9b1af1cdcd93113c",
+  "after_audit_sha256": "fddfa5e916408984e7def2c86017d9df9d540971b17815963d3029c9b0d8e9ac",
+  "structural_readback": {
+    "result": "PASS",
+    "read_count": 54,
+    "module_relationships": 179,
+    "cycle_relationships": 174,
+    "canonical_unchanged": 179,
+    "remaining_mutation_requests": 0,
+    "conflicts": [],
+    "unscheduled_ids": [
+      "WP-R2-001",
+      "WP-R2-002",
+      "WP-R2-003",
+      "WP-S-001",
+      "WP-X-001"
+    ],
+    "source_manifest": {
+      "docs/01_Master_Project_Specification.md": "14ff9517ca5fc427d9316980a20db1059a628935e5642a4eeca2ffded51572bb",
+      "docs/03_Requirements_Traceability_Matrix.md": "e58e635cacc96f3341b7cb13f54676d3793b82d63cd394d9c260973f23817375",
+      "docs/04_Work_Breakdown_Structure.md": "1f9c2ff532cacac70ff5099a1ff6e4e09d25be990dcbca2071e59e0fa03ed8ac",
+      "docs/05_Dependency_Graph.md": "c693a9b953458d0bcc2be4b2c9fdb4d19d6f21e7ebf8aca8e0fb49be08db30d1",
+      "docs/06A_Asrin_Engineering_Roadmap.md": "4034fbc467766dcaf59aab274bcb6ec2ee944f6c311444f079f589029dc8c92c",
+      "docs/06B_Selman_Engineering_Roadmap.md": "92801ffe6782ec55a096482db1f578b1d75c41278c269ef8c56aaf97e23da2ea",
+      "docs/06C_Batu_Engineering_Roadmap.md": "f12f21dd91c1487c556bd5cbbe24a52fdbda03f9add8d8009463e74cb95f5d2e",
+      "docs/06D_Yavuz_Engineering_Roadmap.md": "a70a3c28b458ccab65e4305675f962b9b6eeb4e84cba4e94e2da53a74d81a961",
+      "docs/07_Milestone_and_Release_Plan.md": "f06243f0e0773b4ebce39b509c6e807bacf698690e8f311d6091087db83272bf"
+    }
+  },
+  "control_011_status": "PARTIAL — Selman onboarding remains",
+  "control_015_status": "PARTIAL — HUMAN_DECISION_REQUIRED_FOR_CONTROL_PILOT_MODEL",
+  "post_checks": {
+    "tests_passed": 170,
+    "tests_duration_seconds": 63.35,
+    "tests_exit": 0,
+    "validate": "PASS",
+    "validate_exit": 0,
+    "warning_count": 947,
+    "status_exit": 0,
+    "execution_status": "UNAVAILABLE (documentation only)",
+    "git_diff_check": "PASS",
+    "docs_and_agents_unchanged": true,
+    "new_tests": "NONE — evidence/onboarding metadata only; no implementation changed"
+  },
+  "git_mutations": "Local batch branch/worktree only; no commit, push, PR or merge",
+  "repository_evidence_is": "Immutable observation and mutation log, not a management state database"
+}

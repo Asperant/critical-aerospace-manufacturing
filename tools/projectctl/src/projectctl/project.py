@@ -1,7 +1,11 @@
 """Unified offline view. No persistent management or execution state."""
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from hashlib import sha256
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .control_plane import ControlItem
 
 from .diagnostics import Diagnostic, ordered
 from .enums import Severity
@@ -20,6 +24,7 @@ PARSER_VERSION = "offline-project-v1"
 class ProjectModel:
     catalog: Catalog
     source_manifest: dict[str, str]
+    control_items: list["ControlItem"] = field(default_factory=list)
 
     def diagnostics(self) -> list[Diagnostic]:
         result = validate(self.catalog)
@@ -72,9 +77,10 @@ class ProjectModel:
 
 
 def load_project(root: Path) -> ProjectModel:
+    from .control_plane import load_registry
     catalog = load(root)
     paths = ["docs/01_Master_Project_Specification.md", "docs/03_Requirements_Traceability_Matrix.md",
              "docs/04_Work_Breakdown_Structure.md", "docs/05_Dependency_Graph.md",
              "docs/06A_Asrin_Engineering_Roadmap.md", "docs/06B_Selman_Engineering_Roadmap.md",
              "docs/06C_Batu_Engineering_Roadmap.md", "docs/06D_Yavuz_Engineering_Roadmap.md", "docs/07_Milestone_and_Release_Plan.md"]
-    return ProjectModel(catalog=catalog, source_manifest={p: sha256((root / p).read_bytes()).hexdigest() for p in sorted(paths) if (root / p).is_file()})
+    return ProjectModel(catalog=catalog, control_items=load_registry(root), source_manifest={p: sha256((root / p).read_bytes()).hexdigest() for p in sorted(paths) if (root / p).is_file()})

@@ -91,3 +91,34 @@ Final live assignment result: Asrın73/Batuhan32/Selman0/Yavuz0;105assigned/74un
 CTRL-PM-011 remains globally PARTIAL. Batuhan onboarding/assignment portion verified; review closure for the new correction HEAD remains human-owned. Product implementation, reconciliation merge/push, network policy changes and PR merge are not performed. Current operational metadata in TEAM_WORKFLOW/helper uses Ejlonn; old historical references remain explicitly superseded here.
 
 Final correction checkpoint checks executed:146tests passed in63.20s; projectctl validatePASS with947preserved warnings; status execution UNAVAILABLE(documentation only); git diff --checkPASS; canonical docs unchanged frommain and AGENTS.md unchanged fromHEAD; tracked-path and changed-file API-key checksPASS. New current-head Ejlonn review is required after this commit/push. No merge/post-merge claim.
+
+
+## Fresh activation observation after setup merge — 2026-10-13
+
+Status remainsPARTIAL. Batuhan identity/member/32assignment and genuine reviewed setup closure verified; Asrın73assignments retained. During read-only post-merge audit, Yavuz independently appeared as active workspace MEMBER15, user3ccd9ad8-99e9-4b75-ae65-2325503d347f, exact corrected emailyavuzzgumus@gmail.com; pending Yavuz workspace invitation now absent. No Yavuz CAP project membership and0Yavuzassignments. Selman invitation still pending with no project membership/assignments. This supersedes historical all-three/then-two Plane invitation observations without rewriting history. No teammate membership or assignment was changed by this merge pass. See CTRL-PM-015-post-merge.json for fresh verified identity/count evidence.
+
+
+## Yavuz onboarding / approved canonical assignment — 2026-10-13
+
+RESULT: PARTIAL — Yavuz portion COMPLETE; Selman onboarding remains unfinished. Historical pending-Yavuz records above are retained observations, superseded by this fresh checkpoint. Latest explicit owner authorization permits exactly Yavuz's 57 canonical assignments; no Selman WP or membership change.
+
+Fresh APIv1 workspace/project members-lite verifies exactly one active non-bot MEMBER(15) for yavuzzgumus@gmail.com, user 3ccd9ad8-99e9-4b75-ae65-2325503d347f; no pending Yavuz invitation. His existing CAP membership was added in the preceding explicitly requested access task, not this batch. GitHub binding remains Yavuzgmus; separate clone local user.name/user.email read back as Yavuz Gümüş/yavuzzgumus@gmail.com. No authentication/acceptance, new account, admin role or dummy identity is fabricated.
+
+Preflight main feb255df0311d95e278369f04f2e22c0c971e70c equals fresh origin main, integration tree clean. PR2 freshly confirmed MERGED to that baseline. Existing control/evidence worktree 711c6cd contains valid historical post-merge evidence; its three files are preserved on this single batch branch without blindly cherry-picking or rewriting history. Reconciliation worktree untouched. Full preflight suite:170 passed in63.34s; validatePASS with947warnings retained; status executionUNAVAILABLE(documentation only).
+
+The one-shot read-only preview initially referenced nonexistent WorkPackage.owner and failed before any mutation. It was corrected to primary_owner.canonical_name; no repository parser/model/test change or canonical repair occurred. Every preview target resolves to Yavuz in WBS and expected embedded metadata, is BACKLOG and unassigned. Exact 57 WP/Plane identities, source manifest, before/after audit hashes and each PATCH/readback result are in CTRL-PM-011-yavuz-closure.json.
+
+Exactly57 serialized APIv1 PATCH requests set only assignees to that verified Yavuz UUID. Each target was freshly read before mutation and reconciled afterward through the existing >=1.25s, Retry-After/reset-aware RequestGate. All57 succeeded on first attempt; no ambiguous response or retry. Full fresh before/after comparison verifies precisely those57assignee deltas and no other item field, workflow, structure, membership or invitation change.
+
+Final assignment result:Asrın73/Batuhan32/Yavuz57/Selman0;162assigned/17unassigned;179unique,allBACKLOG,0duplicates;canonical owner metadata73/17/32/57. Recomputed Yavuz assignment needs0mutations. Existing Selman invitation remains pending and no active Selman workspace/project membership exists. Product implementation and WP readiness/DONE are not authorized or asserted.
+
+PLANE MUTATIONS:57 assignee-only PATCH requests; no membership/invitation/state/structure mutation in this batch.
+SPEC GATE:CTRL-PM-015 pilot representation remains undefined; no pilot creation or completion claim. Final checks and evidence/PR disposition are recorded in the corresponding CTRL-PM-015 batch section.
+
+
+## Control pilot preparation follow-up — 2026-10-13
+
+Yavuz COMPLETE / Selman PENDING remains the current team truth. This follow-up adds a separate allowlisted control-only pilot owned by Asrın, without changing any canonical WP assignment or teammate membership/invitation. Canonical assignment totals remain73/0/32/57 (162assigned/17unassigned), excluding the control item. Historical711c6cd observations and the five prior closure files are preserved in the same batch branch; no duplicate historical report is created. See CTRL-PM-015-control-pilot.json for the separate pilot's live evidence.
+
+
+Concurrent live observation during pilot preparation:Selman's real account a3d25336-e7d0-43f8-bfef-c0b5c2137a60 (exact emailselmanozdemir430@gmail.com, active non-bot MEMBER15) independently appeared in workspace members. Fresh project-members-lite contains no matching account and the previous workspace invitation is now absent. This is observed active membership, not an agent-created account or fabricated acceptance. No membership/invitation/assignment request forSelman was sent. His17WPs remainunassigned; CAPmembership/onboarding completion remains pending. The conservative snapshot equality check initially stopped on this single newly appearing workspace member; fresh targeted identity reads and a new full structural audit preserve/report that live truth without reverting it or forcing stale invitation counts.

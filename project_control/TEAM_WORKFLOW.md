@@ -1,6 +1,6 @@
 # Team workflow — CTRL-PM-011
 
-Status: PARTIAL — Batuhan identity, active Plane membership and GitHub collaborator access verified; Selman/Yavuz Plane acceptance remains pending. A new current-head review is required after the identity/evidence correction commit.
+Status: PARTIAL — Asrın, Batuhan and Yavuz have active Plane workspace/CAP memberships and their canonical WPs assigned (73/32/57). Selman is now an active workspace MEMBER; CAP membership and his 17 canonical assignments remain pending. PR #2 is merged; the separate control-only CTRL-PM-015 pilot is IN_PROGRESS. The final closure PR awaits Selman onboarding and then genuine review/merge/post-merge validation.
 
 Use one persistent Ubuntu GUI session, `ailab`, with RustDesk attached. Do not create GUI users or switch Ubuntu login sessions. `/srv/ailab/project` is the integration/reference clone and must not be used concurrently for developer work.
 
@@ -11,7 +11,7 @@ Use one persistent Ubuntu GUI session, `ailab`, with RustDesk attached. Do not c
 | Batuhan Kaya | Ejlonn | batuhankaya0204@gmail.com | /srv/ailab/workspaces/batuhan/project | /srv/ailab/user-profiles/batuhan |
 | Yavuz Gümüş | Yavuzgmus | yavuzzgumus@gmail.com | /srv/ailab/workspaces/yavuz/project | /srv/ailab/user-profiles/yavuz |
 
-Yavuz’s current operational identity is **Yavuz Gümüş**, Plane email **yavuzzgumus@gmail.com**, GitHub **Yavuzgmus**, and Git commit email **yavuzzgumus@gmail.com**. The corrected MEMBER invitation is pending acceptance; the earlier wrong-address invitation has been revoked. Historical invitation/workspace snapshots retain their original observations.
+Yavuz’s current operational identity is **Yavuz Gümüş**, Plane email **yavuzzgumus@gmail.com**, GitHub **Yavuzgmus**, and Git commit email **yavuzzgumus@gmail.com**. His real Plane account `3ccd9ad8-99e9-4b75-ae65-2325503d347f` is an active workspace/CAP MEMBER (15), with all 57 canonical Yavuz WPs assigned and still BACKLOG. No pending Yavuz invitation remains. The earlier wrong-address invitation was revoked. Historical invitation/workspace snapshots retain their original observations; see the source-bound CTRL-PM-011-yavuz-closure evidence.
 
 Batuhan’s current operational identity is **Batuhan Kaya**, Plane email and Git commit email **batuhankaya0204@gmail.com**, Plane user ID **51137169-2989-42bd-9260-997b26e7e6dd**, GitHub **Ejlonn**. The earlier `eilonn` binding was incorrect and identifies a different account; historical snapshots are retained as history. His workspace/project memberships are active MEMBER (15), and he personally confirmed remote CAP project visibility. His genuine approval on `ee32f2c` is historical once this correction is pushed; a new approval must bind to the new current HEAD.
 

@@ -34,6 +34,8 @@ def bootstrap_plan(project, audit):
     for key in ["states", "labels", "modules", "cycles", "work_items"]:
         if not isinstance(audit.get(key), list):
             raise PlaneError("Required discovery resource unavailable: " + key)
+    from .control_plane import canonical_audit
+    audit, control_items = canonical_audit(audit, project.control_items)
     c = project.catalog
     conflicts, ambiguities, missing, operations = [], [], [], []
     prefix = f"/api/v1/workspaces/{audit['workspace']['slug']}/projects/{audit['project']['id']}/"
@@ -160,6 +162,7 @@ def bootstrap_plan(project, audit):
     counts = Counter(o["action"] for o in operations)
     body = {"schema_version": "plane-bootstrap-plan-v1", "api_version": "v1", "dry_run": True,
             "mutation_enabled": False, "ready_for_live_mutation": not conflicts and not ambiguities,
+            "control_item_count": len(control_items),
             "source_manifest": project.source_manifest, "parser_version": PARSER_VERSION,
             "workspace": audit["workspace"], "project": audit["project"],
             "audit_sha256": sha256(json.dumps(audit, sort_keys=True, ensure_ascii=False).encode()).hexdigest(),
@@ -177,4 +180,5 @@ def bootstrap_plan(project, audit):
                             "Relationship entries are intended mappings, not executable request bodies",
                             "Calendar dates absent in canonical sources; API acceptance of undated cycles must be checked before apply",
                             "All canonical diagnostics remain visible through projectctl validate; planning is not evidence"]}
+    body["ready_for_live_mutation"] = not conflicts and not ambiguities and not body["unmanaged_work_items"]
     return body
