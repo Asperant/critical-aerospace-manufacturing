@@ -1,6 +1,6 @@
 # Team workflow — CTRL-PM-011
 
-Status: PARTIAL — Batuhan identity, active Plane membership and GitHub collaborator access verified; Selman/Yavuz Plane acceptance remains pending. A new current-head review is required after the identity/evidence correction commit.
+Status: CTRL-PM-011 COMPLETE — all four real team identities have active Plane workspace/CAP memberships, verified GitHub access, separate clean clones/profiles and repository-local Git identities. All 179 canonical WPs are assigned to their owners (73/17/32/57) and remain BACKLOG. CTRL-PM-015 remains IN_PROGRESS; its separate control-only pilot is IN_REVIEW and the actual final closure PR is #3; independent review, merge and post-merge validation remain outstanding.
 
 Use one persistent Ubuntu GUI session, `ailab`, with RustDesk attached. Do not create GUI users or switch Ubuntu login sessions. `/srv/ailab/project` is the integration/reference clone and must not be used concurrently for developer work.
 
@@ -11,7 +11,7 @@ Use one persistent Ubuntu GUI session, `ailab`, with RustDesk attached. Do not c
 | Batuhan Kaya | Ejlonn | batuhankaya0204@gmail.com | /srv/ailab/workspaces/batuhan/project | /srv/ailab/user-profiles/batuhan |
 | Yavuz Gümüş | Yavuzgmus | yavuzzgumus@gmail.com | /srv/ailab/workspaces/yavuz/project | /srv/ailab/user-profiles/yavuz |
 
-Yavuz’s current operational identity is **Yavuz Gümüş**, Plane email **yavuzzgumus@gmail.com**, GitHub **Yavuzgmus**, and Git commit email **yavuzzgumus@gmail.com**. The corrected MEMBER invitation is pending acceptance; the earlier wrong-address invitation has been revoked. Historical invitation/workspace snapshots retain their original observations.
+Yavuz’s current operational identity is **Yavuz Gümüş**, Plane email **yavuzzgumus@gmail.com**, GitHub **Yavuzgmus**, and Git commit email **yavuzzgumus@gmail.com**. His real Plane account `3ccd9ad8-99e9-4b75-ae65-2325503d347f` is an active workspace/CAP MEMBER (15), with all 57 canonical Yavuz WPs assigned and still BACKLOG. No pending Yavuz invitation remains. The earlier wrong-address invitation was revoked. Historical invitation/workspace snapshots retain their original observations; see the source-bound CTRL-PM-011-yavuz-closure evidence.
 
 Batuhan’s current operational identity is **Batuhan Kaya**, Plane email and Git commit email **batuhankaya0204@gmail.com**, Plane user ID **51137169-2989-42bd-9260-997b26e7e6dd**, GitHub **Ejlonn**. The earlier `eilonn` binding was incorrect and identifies a different account; historical snapshots are retained as history. His workspace/project memberships are active MEMBER (15), and he personally confirmed remote CAP project visibility. His genuine approval on `ee32f2c` is historical once this correction is pushed; a new approval must bind to the new current HEAD.
 
@@ -41,3 +41,6 @@ Log into Plane yourself using the supplied invitation email. API invitation reco
 After authentication, fetch the remote normally, inspect its baseline, and use an existing local environment or install the documented projectctl dependencies in your own clone. Run `projectctl validate`, retrieve `projectctl context <WP-ID>`, check readiness, and create `wp/<WP-ID>-<short-slug>` only for an approved canonical WP. Product implementation has not been authorized by setup. Use `control/<CTRL-ID>-<short-slug>` for approved controls; the long-lived setup branch is the approved exception.
 
 Canonical owners never change to compensate for missing accounts. No dummy users, substituted owners, shared tokens, global Git identity, automatic READY/DONE, self-approval or shared concurrent working tree. See ENGINEERING_WORKFLOW.md and canonical docs/08 for review and post-merge evidence rules.
+
+
+Selman’s verified operational identity is **Selman Özdemir**, Plane/Git commit email **selmanozdemir430@gmail.com**, GitHub **selorito**, Plane user **a3d25336-e7d0-43f8-bfef-c0b5c2137a60**. Fresh API v1 reads confirm active workspace and CAP MEMBER (15), all 17 canonical Selman WPs assigned and BACKLOG, and no pending invitation. GitHub WRITE access is active. The account profile currently has first name Selman and an empty last name: these assignments bind the verified exact email/user UUID rather than guessing from display names. Historical pending observations remain preserved.

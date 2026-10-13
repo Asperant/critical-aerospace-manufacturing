@@ -1,0 +1,105 @@
+{
+  "control_item": "CTRL-PM-015",
+  "status": "PARTIAL",
+  "pr": 2,
+  "pre_merge_head": "e953b84ff9f6c908cf552cfd47e3881b17af0a0c",
+  "reviewer": "Ejlonn",
+  "review_state": "APPROVED",
+  "review_commit": "e953b84ff9f6c908cf552cfd47e3881b17af0a0c",
+  "review_id": "PRR_kwDOVFI_4c8AAAABSFES2A",
+  "merge_method": "squash",
+  "merge_commit": "feb255df0311d95e278369f04f2e22c0c971e70c",
+  "merged_at_utc": "2026-10-13T18:38:17Z",
+  "post_merge_tests": {
+    "passed": 170,
+    "seconds": 63.69
+  },
+  "validation": "PASS",
+  "status_execution": "UNAVAILABLE (documentation only)",
+  "main_ci": {
+    "run_id": 38448367552,
+    "head": "feb255df0311d95e278369f04f2e22c0c971e70c",
+    "conclusion": "success"
+  },
+  "plane_audit": {
+    "wp_count": 179,
+    "unique_count": 179,
+    "duplicates": 0,
+    "backlog": 179,
+    "assignments": {
+      "Asrın Dündar": 73,
+      "Batuhan Kaya": 32
+    },
+    "assigned": 105,
+    "unassigned": 74,
+    "canonical_owners": {
+      "Asrın Dündar": 73,
+      "Batuhan Kaya": 32,
+      "Yavuz Gümüş": 57,
+      "Selman Özdemir": 17
+    },
+    "modules": 29,
+    "cycles": 13,
+    "labels": 10,
+    "unchanged_project_work_items_workflow_structures": true,
+    "audit_changes": [
+      "workspace_members"
+    ],
+    "workspace_members": [
+      {
+        "id": "0b4a5417-2ed5-4ac2-95ff-e74104c5d601",
+        "email": "asrindundar14@hotmail.com",
+        "role": 20,
+        "is_active": true,
+        "is_bot": false
+      },
+      {
+        "id": "3ccd9ad8-99e9-4b75-ae65-2325503d347f",
+        "email": "yavuzzgumus@gmail.com",
+        "role": 15,
+        "is_active": true,
+        "is_bot": false
+      },
+      {
+        "id": "51137169-2989-42bd-9260-997b26e7e6dd",
+        "email": "batuhankaya0204@gmail.com",
+        "role": 15,
+        "is_active": true,
+        "is_bot": false
+      }
+    ],
+    "project_members": [
+      {
+        "id": "0b4a5417-2ed5-4ac2-95ff-e74104c5d601",
+        "email": "asrindundar14@hotmail.com",
+        "role": 20,
+        "is_active": true
+      },
+      {
+        "id": "51137169-2989-42bd-9260-997b26e7e6dd",
+        "email": "batuhankaya0204@gmail.com",
+        "role": 15,
+        "is_active": true
+      }
+    ],
+    "pending_invitation_emails": [
+      "selmanozdemir430@gmail.com"
+    ],
+    "plane_mutations": 0,
+    "source_manifest": {
+      "docs/01_Master_Project_Specification.md": "14ff9517ca5fc427d9316980a20db1059a628935e5642a4eeca2ffded51572bb",
+      "docs/03_Requirements_Traceability_Matrix.md": "e58e635cacc96f3341b7cb13f54676d3793b82d63cd394d9c260973f23817375",
+      "docs/04_Work_Breakdown_Structure.md": "1f9c2ff532cacac70ff5099a1ff6e4e09d25be990dcbca2071e59e0fa03ed8ac",
+      "docs/05_Dependency_Graph.md": "c693a9b953458d0bcc2be4b2c9fdb4d19d6f21e7ebf8aca8e0fb49be08db30d1",
+      "docs/06A_Asrin_Engineering_Roadmap.md": "4034fbc467766dcaf59aab274bcb6ec2ee944f6c311444f079f589029dc8c92c",
+      "docs/06B_Selman_Engineering_Roadmap.md": "92801ffe6782ec55a096482db1f578b1d75c41278c269ef8c56aaf97e23da2ea",
+      "docs/06C_Batu_Engineering_Roadmap.md": "f12f21dd91c1487c556bd5cbbe24a52fdbda03f9add8d8009463e74cb95f5d2e",
+      "docs/06D_Yavuz_Engineering_Roadmap.md": "a70a3c28b458ccab65e4305675f962b9b6eeb4e84cba4e94e2da53a74d81a961",
+      "docs/07_Milestone_and_Release_Plan.md": "f06243f0e0773b4ebce39b509c6e807bacf698690e8f311d6091087db83272bf"
+    },
+    "merge_commit": "feb255df0311d95e278369f04f2e22c0c971e70c"
+  },
+  "plane_mutations": 0,
+  "remaining_rehearsal_requirement": "CTRL-PM-015 step1: non-destructive setup/control pilot represented in Plane; historical WP context probe does not certify this. No control-pilot state/transition representation implemented.",
+  "setup_complete": false
+}

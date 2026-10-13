@@ -80,7 +80,10 @@ def plane_audit(root: Path | None = typer.Option(None)):
     try:
         repo = root if root is not None else find_root(Path.cwd())
         with PlaneReader(load_config(repo / "project_control/local/plane.env")) as reader:
-            emit_json(reader.audit())
+            audit = reader.audit()
+            from .control_plane import classify_inventory
+            audit["item_classification"] = classify_inventory(read_project(repo), audit)
+            emit_json(audit)
     except (PlaneError, OSError) as exc:
         typer.echo(str(exc) if isinstance(exc, PlaneError) else "Plane configuration unavailable", err=True)
         raise typer.Exit(2) from None

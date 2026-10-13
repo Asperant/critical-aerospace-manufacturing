@@ -152,7 +152,8 @@ def expected_projection(project, audit):
     pilot = next(o["wp_id"] for o in projected if o["metadata"]["canonical_owner"] == ASRIN
                  and len(o["metadata"]["cycle_ids"]) == 1 and o["create_body"]["labels"])
     return {"schema_version": "plane-wp-projection-v1", "api_version": "v1", "policy": POLICY,
-            "source_manifest": project.source_manifest, "pilot_wp_id": pilot, "projections": projected,
+            "source_manifest": project.source_manifest,
+            "control_registry": [s.model_dump() for s in project.control_items], "pilot_wp_id": pilot, "projections": projected,
             "missing_owners": base["missing_owners"], "assignment_policy": "73 exact Asrın assignments; 106 unassigned",
             "semantic_end_state": {"work_items": 179, "modules": 179, "cycles": 174, "milestones": 174, "assignees": 73},
             "single_cycle": single, "multi_cycle": multi, "unscheduled_ids": unscheduled,
@@ -177,7 +178,13 @@ def check_issue(item, expected):
 def import_plan(projection, inventory):
     """No mutation; all updates and conflicting relationships fail closed."""
     expected = projection["projections"]
-    index = identity_index(inventory["audit"]["work_items"], {e["wp_id"] for e in expected})
+    from .control_plane import ControlItem, canonical_audit
+    registry = [ControlItem.model_validate(s) for s in projection.get("control_registry", [])]
+    audit, controls = canonical_audit(inventory["audit"], registry)
+    for item in controls:
+        if any(inventory["memberships"][f].get(item["id"], []) for f in ("modules", "cycles")):
+            raise PlaneError("Control-only Plane item has module/cycle relationship")
+    index = identity_index(audit["work_items"], {e["wp_id"] for e in expected})
     operations, conflicts = [], []
     for e in expected:
         item = index.get(e["wp_id"])
@@ -303,7 +310,11 @@ class WPImport:
         raise PlaneError(f"WP import POST rejected: HTTP {response.status_code} (body redacted)")
 
     def _issues(self):
-        return identity_index(self.reader._list(self.prefix + "issues/"), set(self.allowed))
+        from .control_plane import canonical_audit
+        audit = dict(self.working_inventory["audit"])
+        audit["work_items"] = self.reader._list(self.prefix + "issues/")
+        canonical, _ = canonical_audit(audit, self.project.control_items)
+        return identity_index(canonical["work_items"], set(self.allowed))
 
     def _create(self, expected):
         wp_id = expected["wp_id"]
@@ -390,11 +401,14 @@ class WPImport:
         for resource in ("states", "labels", "modules", "cycles"):
             if fresh["audit"][resource] != before[resource]:
                 raise PlaneError("Unapproved structural drift: " + resource)
-        index = identity_index(fresh["audit"]["work_items"], set(self.allowed))
+        from .control_plane import canonical_audit
+        canonical, controls = canonical_audit(fresh["audit"], self.project.control_items)
+        index = identity_index(canonical["work_items"], set(self.allowed))
         for family in ("modules", "cycles"):
             if set(fresh["memberships"][family]) - {i["id"] for i in index.values()}:
                 raise PlaneError("Unexpected noncanonical relationship member")
-        summary = {"result": "PASS", "wp_count": len(index), "backlog": len(index), "ready_or_later": 0,
+        summary = {"result": "PASS", "wp_count": len(index), "control_item_count": len(controls),
+                   "total_work_item_count": len(fresh["audit"]["work_items"]), "backlog": len(index), "ready_or_later": 0,
                    "duplicate_canonical_ids": [], "module_relationships": 179, "cycle_relationships": 174,
                    "milestone_relationships": 174, "asrin_assigned": 73, "unassigned": 106,
                    "module_distribution": dict(sorted(Counter(e["metadata"]["capability_area"] for e in projection["projections"]).items())),

@@ -1,0 +1,229 @@
+{
+  "control_item": "CTRL-PM-015",
+  "result": "IN_PROGRESS — pending Selman completion and actual final PR/review/merge/post-merge lifecycle",
+  "observed_at": "2026-10-13T19:21:59.541134+00:00",
+  "baseline": "feb255df0311d95e278369f04f2e22c0c971e70c",
+  "branch": "control/CTRL-PM-015-final-setup-closure",
+  "human_decision": {
+    "model": "Separate NON-CANONICAL CONTROL-ONLY Plane work item",
+    "control_id": "CTRL-PM-015-PILOT-001",
+    "owner": "Asrın Dündar",
+    "module": null,
+    "cycle": null,
+    "additional_label": null,
+    "canonical_wp_count": 179,
+    "approved_max_state_this_task": "IN_PROGRESS",
+    "attachment_sha256": "9659e82e0b8324a3e3297dcf78b5dcea8f0145ce5e8018af488b410a10795d5a"
+  },
+  "registry": {
+    "path": "project_control/control_plane_items.yaml",
+    "sha256": "97f3761cae52993ce45ff57bf972dc783b602200b9a066c1dd4947b88071375c"
+  },
+  "dor_assessment": {
+    "control_item": "CTRL-PM-015",
+    "pilot_id": "CTRL-PM-015-PILOT-001",
+    "evaluated_at": "2026-10-13T19:10:11.240253+00:00",
+    "result": "PASS",
+    "scope": "Control pilot readiness only; not canonical product WP readiness",
+    "criteria": {
+      "outcome": "Explicit approved separate allowlisted control-only Plane representation; canonical179 unchanged",
+      "requirements": "NONE — management/bootstrap control, no product requirement or canonical readiness node/milestone added",
+      "owner": "Verified Asrın active project account0b4a5417-2ed5-4ac2-95ff-e74104c5d601",
+      "reviewer": "Verified Ejlonn143555644 WRITE; scoped .github/CODEOWNERS exists; no review requested yet",
+      "dependencies": "CTRL-PM-002 through016 implementation integrated in main feb255d; Selman onboarding blocks final PR, not this explicitly approved preparation",
+      "contract": "Human-approved static control registry plus installed APIv1 issues create/state PATCH; strict existing PRE/JSON parser",
+      "acceptance": "179canonical+1control; exact assignee/nullmodule/nullcycle/noadditionallabels; unknown extras/duplicates fail; pilot maximum IN_PROGRESS; no product transitions",
+      "verification": "28new negative/positive tests;84focused passed;198full tests passed; validationPASS; real APIv1 boundary readback planned",
+      "change_risk": "Compatible project-control extension; canonical product contracts/authority untouched; independent review remains required",
+      "fundamental_questions": "Pilot model explicitly resolved by current human instruction; no architecture improvisation",
+      "size": "Single scoped setup/control increment; no product implementation",
+      "blockers": "Selman onboarding and later real PR/review/merge/postmerge events remain human-owned; they do not justify IN_REVIEW/MERGE_READY now",
+      "research": "NOT_APPLICABLE — no datasets/models/FINAL partitions involved"
+    },
+    "implementation_start": {
+      "branch": "control/CTRL-PM-015-final-setup-closure",
+      "worktree": "/srv/ailab/project-setup-closure",
+      "actual_files": [
+        "project_control/control_plane_items.yaml",
+        "tools/projectctl/src/projectctl/control_plane.py",
+        "tools/projectctl/tests/test_control_plane.py"
+      ],
+      "started": true
+    },
+    "human_decision_attachment_sha256": "9659e82e0b8324a3e3297dcf78b5dcea8f0145ce5e8018af488b410a10795d5a"
+  },
+  "mutations": [
+    {
+      "method": "POST",
+      "control_id": "CTRL-PM-015-PILOT-001",
+      "plane_id": "7ad50c84-34af-4df4-8e08-7e2e3e781ac9",
+      "target_state": "BACKLOG",
+      "http_status": "NOT_RECORDED — helper assertion interrupted log capture; exact creation verified by fresh full audit",
+      "attempt": 1,
+      "fresh_readback": "PASS",
+      "event": "explicit human model decision"
+    },
+    {
+      "method": "PATCH",
+      "control_id": "CTRL-PM-015-PILOT-001",
+      "plane_id": "7ad50c84-34af-4df4-8e08-7e2e3e781ac9",
+      "from_state": "BACKLOG",
+      "target_state": "READY",
+      "http_status": 200,
+      "attempt": 1,
+      "fresh_readback": "PASS",
+      "event": "pilot DoR criteria evaluated PASS with source-bound evidence",
+      "observed_at": "2026-10-13T19:12:49.007589+00:00"
+    },
+    {
+      "method": "PATCH",
+      "control_id": "CTRL-PM-015-PILOT-001",
+      "plane_id": "7ad50c84-34af-4df4-8e08-7e2e3e781ac9",
+      "from_state": "READY",
+      "target_state": "IN_PROGRESS",
+      "http_status": 200,
+      "attempt": 1,
+      "fresh_readback": "PASS",
+      "event": "closure branch implementation actually begun; new code/tests exist",
+      "observed_at": "2026-10-13T19:13:06.507788+00:00"
+    }
+  ],
+  "live_readback": {
+    "result": "PASS",
+    "classification": {
+      "canonical_wp_count": 179,
+      "control_item_count": 1,
+      "total_work_item_count": 180,
+      "canonical_owner_distribution": {
+        "Asrın Dündar": 73,
+        "Batuhan Kaya": 32,
+        "Selman Özdemir": 17,
+        "Yavuz Gümüş": 57
+      },
+      "canonical_assigned": 162,
+      "canonical_unassigned": 17,
+      "controls": [
+        {
+          "control_id": "CTRL-PM-015-PILOT-001",
+          "plane_id": "7ad50c84-34af-4df4-8e08-7e2e3e781ac9",
+          "state_id": "b86020fd-a959-4d76-901f-c65edc12a5ff"
+        }
+      ]
+    },
+    "modules": 29,
+    "cycles": 13,
+    "labels": 10,
+    "module_relationships": 179,
+    "cycle_relationships": 174,
+    "all_canonical_backlog": 179,
+    "assignments": {
+      "Asrın Dündar": 73,
+      "Batuhan Kaya": 32,
+      "Yavuz Gümüş": 57
+    },
+    "selman_assigned": 0,
+    "unscheduled_ids": [
+      "WP-R2-001",
+      "WP-R2-002",
+      "WP-R2-003",
+      "WP-S-001",
+      "WP-X-001"
+    ],
+    "pilot_module_memberships": [],
+    "pilot_cycle_memberships": [],
+    "pilot_labels": [],
+    "idempotency": {
+      "canonical_import_mutations": 0,
+      "pilot_create_mutations": 0,
+      "pilot_preparation_state_mutations": 0
+    },
+    "read_count": 53,
+    "independent_membership_delta": {
+      "workspace_member": "a3d25336-e7d0-43f8-bfef-c0b5c2137a60",
+      "email": "selmanozdemir430@gmail.com",
+      "project_membership": "ABSENT",
+      "invitation": "ABSENT",
+      "agent_membership_writes": 0
+    },
+    "unintended_agent_mutations": 0
+  },
+  "cli_plane_audit": {
+    "result": "PASS",
+    "classification": {
+      "canonical_assigned": 162,
+      "canonical_owner_distribution": {
+        "Asrın Dündar": 73,
+        "Batuhan Kaya": 32,
+        "Selman Özdemir": 17,
+        "Yavuz Gümüş": 57
+      },
+      "canonical_unassigned": 17,
+      "canonical_wp_count": 179,
+      "control_item_count": 1,
+      "controls": [
+        {
+          "control_id": "CTRL-PM-015-PILOT-001",
+          "plane_id": "7ad50c84-34af-4df4-8e08-7e2e3e781ac9",
+          "state_id": "b86020fd-a959-4d76-901f-c65edc12a5ff"
+        }
+      ],
+      "total_work_item_count": 180
+    },
+    "mutation_enabled": false
+  },
+  "tests": {
+    "focused_new_tests": 33,
+    "focused_seconds": 1.29,
+    "full_tests": 203,
+    "full_seconds": 64.98,
+    "full_exit": 0,
+    "pre_mutation_full_tests": 198,
+    "pre_mutation_full_seconds": 64.64,
+    "validation": "PASS",
+    "validation_warnings": 947,
+    "status": "PASS",
+    "execution_status": "UNAVAILABLE (documentation only)",
+    "syntax": "PASS",
+    "diff_check": "PASS",
+    "canonical_docs_unchanged": true,
+    "agents_unchanged": true
+  },
+  "diagnostics": [
+    {
+      "result": "FAILED_HELPER_ASSERTION_RECONCILED",
+      "stage": "after original create",
+      "cause": "raw API dictionary versus sanitized canonical audit equality assertion",
+      "create_http_status": "NOT_RECORDED",
+      "repeated_create_requests": 0,
+      "resolution": "fresh full sanitized audit confirmed one BACKLOG control and identical canonical179, then two state PATCHes were verified"
+    },
+    {
+      "result": "INDEPENDENT_MEMBERSHIP_OBSERVED",
+      "stage": "initial final audit",
+      "cause": "Selman workspace MEMBER independently appeared",
+      "identity": "a3d25336-e7d0-43f8-bfef-c0b5c2137a60",
+      "email": "selmanozdemir430@gmail.com",
+      "project_membership": "ABSENT",
+      "assignment_count": 0,
+      "agent_membership_writes": 0,
+      "resolution": "fresh identity reads and full audit account for real delta; no reverted/fabricated membership or assignment"
+    }
+  ],
+  "future_events": {
+    "IN_REVIEW": "final closure PR actually opened after Selman onboarding/17assignments",
+    "MERGE_READY": "required CI and genuine independent approval of actual current head",
+    "MERGED": "final closure PR actually merged",
+    "VALIDATING": "validation starts on actual merged main",
+    "DONE": "all real pilot/closure DoD evidence passes and is recorded"
+  },
+  "control_011": "PARTIAL — Asrin/Batuhan/Yavuz complete; Selman workspace active, CAP membership and17assignments pending",
+  "control_015": "IN_PROGRESS, not COMPLETE_PENDING_INTEGRATION",
+  "final_pr_opened": false,
+  "review_requested": false,
+  "merge_performed": false,
+  "product_workflow_mutations": 0,
+  "requirements_created_as_items": 0,
+  "new_labels": 0,
+  "secrets_committed": false,
+  "evidence_policy": "Immutable observation only, not a persistent management-state database"
+}

@@ -1,0 +1,394 @@
+{
+  "operation": "PATCH_CONTROL_STATE",
+  "plane_id": "7ad50c84-34af-4df4-8e08-7e2e3e781ac9",
+  "control_id": "CTRL-PM-015-PILOT-001",
+  "from": "IN_PROGRESS",
+  "to": "IN_REVIEW",
+  "actual_pr": {
+    "headRefName": "control/CTRL-PM-015-final-setup-closure",
+    "headRefOid": "822c2e0fb95b2d235e7d4bc5b9b981d0fa47c646",
+    "isDraft": true,
+    "number": 3,
+    "state": "OPEN",
+    "url": "https://github.com/Asperant/critical-aerospace-manufacturing/pull/3"
+  },
+  "body": {
+    "state": "99a0cc57-ec65-4c3d-8db4-694ce31c77fa"
+  },
+  "http_status": 200,
+  "fresh_readback": "VERIFIED",
+  "classification": {
+    "canonical_wp_count": 179,
+    "control_item_count": 1,
+    "total_work_item_count": 180,
+    "canonical_owner_distribution": {
+      "Asrın Dündar": 73,
+      "Batuhan Kaya": 32,
+      "Selman Özdemir": 17,
+      "Yavuz Gümüş": 57
+    },
+    "canonical_assigned": 179,
+    "canonical_unassigned": 0,
+    "controls": [
+      {
+        "control_id": "CTRL-PM-015-PILOT-001",
+        "plane_id": "7ad50c84-34af-4df4-8e08-7e2e3e781ac9",
+        "state_id": "99a0cc57-ec65-4c3d-8db4-694ce31c77fa"
+      }
+    ]
+  },
+  "canonical_backlog": 179,
+  "canonical_assigned": 179,
+  "canonical_unassigned": 0,
+  "other_entities_unchanged": true,
+  "reads": [
+    {
+      "method": "GET",
+      "path": "/api/v1/users/me/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 59.0,
+        "reset_epoch": 1791920587.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.7192804813385
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 58.0,
+        "reset_epoch": 1791920588.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.43589448928833
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/",
+      "attempt": 1,
+      "status": 401,
+      "rate_limit": {
+        "remaining": null,
+        "reset_epoch": null,
+        "retry_after_seconds": null,
+        "delay_seconds": 2
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 57.0,
+        "reset_epoch": 1791920591.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.95205807685852
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/states/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 56.0,
+        "reset_epoch": 1791920592.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.71701979637146
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/labels/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 55.0,
+        "reset_epoch": 1791920593.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.45949578285217
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/modules/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 54.0,
+        "reset_epoch": 1791920594.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.19465780258179
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/cycles/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 53.0,
+        "reset_epoch": 1791920596.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.94655132293701
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/issues/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 52.0,
+        "reset_epoch": 1791920597.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.350802421569824
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/members/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 51.0,
+        "reset_epoch": 1791920598.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.47367835044861
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/members/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 50.0,
+        "reset_epoch": 1791920599.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.224045276641846
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/issues/7ad50c84-34af-4df4-8e08-7e2e3e781ac9/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 49.0,
+        "reset_epoch": 1791920601.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.9510657787323
+      }
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/issues/7ad50c84-34af-4df4-8e08-7e2e3e781ac9/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 48.0,
+        "reset_epoch": 1791920602.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.68721342086792
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/issues/7ad50c84-34af-4df4-8e08-7e2e3e781ac9/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 47.0,
+        "reset_epoch": 1791920603.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.46933674812317
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/users/me/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 46.0,
+        "reset_epoch": 1791920604.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.226017236709595
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 45.0,
+        "reset_epoch": 1791920606.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.94212198257446
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/",
+      "attempt": 1,
+      "status": 401,
+      "rate_limit": {
+        "remaining": null,
+        "reset_epoch": null,
+        "retry_after_seconds": null,
+        "delay_seconds": 2
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 44.0,
+        "reset_epoch": 1791920608.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.44713354110718
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/states/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 43.0,
+        "reset_epoch": 1791920609.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.214433431625366
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/labels/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 42.0,
+        "reset_epoch": 1791920611.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.95731163024902
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/modules/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 41.0,
+        "reset_epoch": 1791920612.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.692898988723755
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/cycles/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 40.0,
+        "reset_epoch": 1791920613.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.44561171531677
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/issues/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 39.0,
+        "reset_epoch": 1791920614.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 58.84569787979126
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/members/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 38.0,
+        "reset_epoch": 1791920616.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.9741644859314
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspaces/critical-aerospace-manufacturing/members/",
+      "attempt": 1,
+      "status": 200,
+      "rate_limit": {
+        "remaining": 37.0,
+        "reset_epoch": 1791920617.0,
+        "retry_after_seconds": null,
+        "delay_seconds": 59.71425700187683
+      }
+    }
+  ],
+  "remaining_lifecycle": [
+    "genuine current-head independent review and green checks",
+    "MERGE_READY",
+    "actual merge / MERGED",
+    "merged-main validation / VALIDATING",
+    "real DoD evidence / DONE"
+  ],
+  "control_item": "CTRL-PM-015",
+  "result": "IN_REVIEW; independent review/merge/post-merge outstanding",
+  "pre_pr_ci": {
+    "head": "822c2e0fb95b2d235e7d4bc5b9b981d0fa47c646",
+    "run": 38456615500,
+    "conclusion": "success"
+  },
+  "pr_number": 3,
+  "pr_url": "https://github.com/Asperant/critical-aerospace-manufacturing/pull/3",
+  "review_requested_by_agent": false,
+  "approval_fabricated": false,
+  "merge_performed": false,
+  "product_workflow_mutations": 0,
+  "historical_evidence_policy": "Prior snapshots remain immutable historical observations; this checkpoint supersedes pilot IN_PROGRESS and final_pr_opened=false observations.",
+  "final_repository_checks": {
+    "tests": "203 passed in 64.63s (0:01:04)",
+    "validate": "PASS;947 warnings retained",
+    "status": "PASS;execution UNAVAILABLE (documentation only)",
+    "diff_check": "PASS",
+    "docs_and_agents_unchanged": true,
+    "cli_plane_audit": {
+      "canonical_assigned": 179,
+      "canonical_owner_distribution": {
+        "Asrın Dündar": 73,
+        "Batuhan Kaya": 32,
+        "Selman Özdemir": 17,
+        "Yavuz Gümüş": 57
+      },
+      "canonical_unassigned": 0,
+      "canonical_wp_count": 179,
+      "control_item_count": 1,
+      "controls": [
+        {
+          "control_id": "CTRL-PM-015-PILOT-001",
+          "plane_id": "7ad50c84-34af-4df4-8e08-7e2e3e781ac9",
+          "state_id": "99a0cc57-ec65-4c3d-8db4-694ce31c77fa"
+        }
+      ],
+      "total_work_item_count": 180
+    }
+  }
+}
