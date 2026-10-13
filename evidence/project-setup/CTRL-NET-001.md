@@ -207,3 +207,8 @@ WP ASSIGNMENTS/WORKFLOW MUTATIONS: NONE
 CANONICAL DOC MODIFICATIONS: NONE
 TAILSCALE POLICY MUTATIONS: NONE
 PR APPROVAL/MERGE: NONE
+
+
+## Human browser confirmation — 2026-10-13
+
+The latest owner instruction attests successful owner-browser authentication at http://ailab.taila966e9.ts.net:8080 and viewing Graduation Project/CAP. Batuhan also personally confirmed actual remote project visibility through the Tailscale/shared access path with his own account. These observations close the earlier owner-browser retest gap; they do not certify all teammates, denied-port tests or least-privilege policy. No network, Tailscale policy or deployment configuration changed in this continuation.

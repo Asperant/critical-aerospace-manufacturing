@@ -8,7 +8,7 @@ REPO = 'https://github.com/Asperant/critical-aerospace-manufacturing.git'
 IDENTITIES = {
     'asrin': ('Asrın Dündar', 'asrindundar14@hotmail.com', 'Asperant'),
     'selman': ('Selman Özdemir', 'selmanozdemir430@gmail.com', 'selorito'),
-    'batuhan': ('Batuhan Kaya', 'batuhankaya0204@gmail.com', 'eilonn'),
+    'batuhan': ('Batuhan Kaya', 'batuhankaya0204@gmail.com', 'Ejlonn'),
     'yavuz': ('Yavuz Gümüş', 'yavuzzgumus@gmail.com', 'Yavuzgmus'),
 }
 

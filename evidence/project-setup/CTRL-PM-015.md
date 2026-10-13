@@ -39,3 +39,16 @@ KNOWN LIMITATIONS: External invitation acceptance, individual authentication and
 SPEC CONFLICTS: NONE resolved or silently repaired. Latest human conditional merge authorization requires accepted teammate access, genuine current-head approval and all master gates. No review currently exists.
 COMMIT SHA: Resolve the checkpoint commit containing this appended section; it explicitly preserves partial status.
 NEXT CONTROL ITEM:015 genuine review/merge/post-merge gates;011 external acceptance remains pending independently.
+
+
+## Governed Batuhan review / correction checkpoint — 2026-10-13
+
+Status: PARTIAL — HUMAN_REVIEW_REQUIRED_AFTER_IDENTITY_CORRECTION. Historical absent-identity/review findings above are superseded where freshly verified, not erased. Batuhan's verified real GitHub identity is Ejlonn/143555644, not the historical wrong eilonn binding. He has accepted write collaborator access, active Plane MEMBER workspace/CAP membership and personally confirmed remote browser visibility. Canonical32BatuhanWPs are now assigned under explicit owner authorization; see CTRL-PM-011-batuhan-closure.json.
+
+PR2 preflight head ee32f2c201b72f51c4e99782d868adbf214c2075 is open/non-draft/MERGEABLE with both push/PR checks successful. Genuine Ejlonn APPROVED review commit matches that head; no agent approval was generated. Existing uncommitted identity/helper/evidence correction now requires a smallest coherent CTRL-PM-011 checkpoint commit and push. Under the latest explicit Phase5 requirement, old-head approval cannot certify the new current head. New genuine Ejlonn current-head review is the next gate; no merge, automatic merge, self-approval or post-merge result is claimed. Post-merge validation: NOT_EXECUTED (PR not merged).
+
+Master §13 Team workflow explicitly permits completed memberships OR explicit human-owned outstanding invitations; Selman/Yavuz pending Plane onboarding is documented, not silently treated as complete. This does not waive independent current-head review, other applicable required reviewers/checks or remaining rehearsal acceptance. Master CTRL-PM-015 still requires represented pilot, governed merge/post-merge audit and DONE withholding; historical missing control-pilot Plane representation/transition adapter limitations remain unresolved. This checkpoint is not setup completion or a definitive future merge approval.
+
+Human action after correction push: Ejlonn opens PR2 Files changed, verifies the latest head including identity correction and32assignment evidence, reviews the complete setup diff, then submits a new genuine Approve review on that exact head. Do not merely reuse the older approval. Resume merge evaluation after this gate; do not begin product work or merge the separate reconciliation branch.
+
+Final correction checkpoint checks executed:146tests passed in63.20s; projectctl validatePASS with947preserved warnings; status execution UNAVAILABLE(documentation only); git diff --checkPASS; canonical docs unchanged frommain and AGENTS.md unchanged fromHEAD; tracked-path and changed-file API-key checksPASS. New current-head Ejlonn review is required after this commit/push. No merge/post-merge claim.

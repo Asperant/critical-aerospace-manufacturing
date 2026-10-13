@@ -1,0 +1,673 @@
+{
+  "control_item": "CTRL-PM-011",
+  "identity": {
+    "name": "Batuhan Kaya",
+    "email": "batuhankaya0204@gmail.com",
+    "plane_user_id": "51137169-2989-42bd-9260-997b26e7e6dd",
+    "github": "Ejlonn",
+    "github_id": 143555644,
+    "git_commit_email": "batuhankaya0204@gmail.com"
+  },
+  "preview": {
+    "control_item": "CTRL-PM-011",
+    "api_version": "v1",
+    "source_manifest": {
+      "docs/01_Master_Project_Specification.md": "14ff9517ca5fc427d9316980a20db1059a628935e5642a4eeca2ffded51572bb",
+      "docs/03_Requirements_Traceability_Matrix.md": "e58e635cacc96f3341b7cb13f54676d3793b82d63cd394d9c260973f23817375",
+      "docs/04_Work_Breakdown_Structure.md": "1f9c2ff532cacac70ff5099a1ff6e4e09d25be990dcbca2071e59e0fa03ed8ac",
+      "docs/05_Dependency_Graph.md": "c693a9b953458d0bcc2be4b2c9fdb4d19d6f21e7ebf8aca8e0fb49be08db30d1",
+      "docs/06A_Asrin_Engineering_Roadmap.md": "4034fbc467766dcaf59aab274bcb6ec2ee944f6c311444f079f589029dc8c92c",
+      "docs/06B_Selman_Engineering_Roadmap.md": "92801ffe6782ec55a096482db1f578b1d75c41278c269ef8c56aaf97e23da2ea",
+      "docs/06C_Batu_Engineering_Roadmap.md": "f12f21dd91c1487c556bd5cbbe24a52fdbda03f9add8d8009463e74cb95f5d2e",
+      "docs/06D_Yavuz_Engineering_Roadmap.md": "a70a3c28b458ccab65e4305675f962b9b6eeb4e84cba4e94e2da53a74d81a961",
+      "docs/07_Milestone_and_Release_Plan.md": "f06243f0e0773b4ebce39b509c6e807bacf698690e8f311d6091087db83272bf"
+    },
+    "operations": [
+      {
+        "wp_id": "WP-AUTO-001",
+        "plane_id": "968d0193-51bf-46a7-9278-90c7af9c804a",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-AUTO-002",
+        "plane_id": "acde1e84-c83e-4ac8-b1bb-b25b0d46d2d4",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-AUTO-003",
+        "plane_id": "cd03bd85-8ec8-4e18-a91a-0895c1c0f14a",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-AUTO-004",
+        "plane_id": "220baa8e-1ae3-4bd0-8a85-8b862a85e65d",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-AUTO-005",
+        "plane_id": "8e5e7c98-e379-488e-a335-d4ae9408897d",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-AUTO-006",
+        "plane_id": "69581ce7-fee2-4462-8dee-1ac467a4e05a",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-AUTO-007",
+        "plane_id": "eab41b82-6323-4c66-b61d-9686f42886c3",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-PERF-003",
+        "plane_id": "6ddbbe30-9621-466a-8ab7-673fac139e16",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-PERF-006",
+        "plane_id": "e3f95c3c-8cf0-4b4c-87c2-6fe4a53b8e13",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-RES-008",
+        "plane_id": "7c95b5cd-bd9e-4199-bd34-e621c0ff62f2",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-SCH-001",
+        "plane_id": "0a538141-a7b9-419a-948d-ef67e8995bcf",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-SCH-002",
+        "plane_id": "64430fab-fc72-4cfb-9eac-882b31df20c3",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-SCH-003",
+        "plane_id": "7cbae435-63e3-4b7f-8df8-de6b00f9aef6",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-SCH-004",
+        "plane_id": "2bce49d6-9144-4ba6-8d32-1b6b0e7302e3",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-SCH-005",
+        "plane_id": "b853ec46-c87b-4aa8-9b22-ce08ef468201",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-SCH-006",
+        "plane_id": "6506e413-7139-4fa6-a762-a5508622a014",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-SCH-007",
+        "plane_id": "be3bb8f9-f6b6-4619-abb5-3837697467a3",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-SIM-001",
+        "plane_id": "491a554f-2fd3-492c-bc04-3fb572113fde",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-SIM-002",
+        "plane_id": "1334dfae-3dc5-4ded-adc3-ffc3f9f823b3",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-SIM-003",
+        "plane_id": "842221d4-75c3-46ef-9fa2-7c5c40e1fcb2",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-SIM-004",
+        "plane_id": "04887d72-252d-4fc7-944b-69dda3b3de08",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-SIM-005",
+        "plane_id": "8edde201-2e9a-4a6c-90e5-ceb10b7d80c0",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-SIM-006",
+        "plane_id": "9b5c6b5d-5436-4f4b-a37d-18d828d33301",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-SIM-007",
+        "plane_id": "671a67ca-d387-4c47-b4e9-2a71a687afe7",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-SIM-008",
+        "plane_id": "95719bbe-f5eb-402c-bc44-756278b1b772",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-SIM-009",
+        "plane_id": "d8c93824-4764-4721-b06b-251190f8dc1c",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-TEST-005",
+        "plane_id": "e61864b7-63b9-498c-bf17-0deb642ece7b",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-TEST-006",
+        "plane_id": "c07b9e63-048d-4cd6-8296-fdb010c913e6",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-UI-005",
+        "plane_id": "b6f45f0a-4af3-4b45-ba94-102297465643",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-UI-007",
+        "plane_id": "4dd33ca7-9612-44ad-9715-20c0733df967",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-VALID-001",
+        "plane_id": "11f2bdb1-c9a7-46e3-8b9d-2ada47576979",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      },
+      {
+        "wp_id": "WP-VALID-002",
+        "plane_id": "bede844d-3f6f-4140-8a94-cc0b9fedaa2b",
+        "canonical_owner": "Batuhan Kaya",
+        "state": "BACKLOG",
+        "before_assignees": [],
+        "after_assignees": [
+          "51137169-2989-42bd-9260-997b26e7e6dd"
+        ],
+        "action": "PATCH"
+      }
+    ],
+    "mutation_count": 32
+  },
+  "execution": [
+    {
+      "wp_id": "WP-AUTO-001",
+      "plane_id": "968d0193-51bf-46a7-9278-90c7af9c804a",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-AUTO-002",
+      "plane_id": "acde1e84-c83e-4ac8-b1bb-b25b0d46d2d4",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-AUTO-003",
+      "plane_id": "cd03bd85-8ec8-4e18-a91a-0895c1c0f14a",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-AUTO-004",
+      "plane_id": "220baa8e-1ae3-4bd0-8a85-8b862a85e65d",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-AUTO-005",
+      "plane_id": "8e5e7c98-e379-488e-a335-d4ae9408897d",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-AUTO-006",
+      "plane_id": "69581ce7-fee2-4462-8dee-1ac467a4e05a",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-AUTO-007",
+      "plane_id": "eab41b82-6323-4c66-b61d-9686f42886c3",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-PERF-003",
+      "plane_id": "6ddbbe30-9621-466a-8ab7-673fac139e16",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-PERF-006",
+      "plane_id": "e3f95c3c-8cf0-4b4c-87c2-6fe4a53b8e13",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-RES-008",
+      "plane_id": "7c95b5cd-bd9e-4199-bd34-e621c0ff62f2",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-SCH-001",
+      "plane_id": "0a538141-a7b9-419a-948d-ef67e8995bcf",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-SCH-002",
+      "plane_id": "64430fab-fc72-4cfb-9eac-882b31df20c3",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-SCH-003",
+      "plane_id": "7cbae435-63e3-4b7f-8df8-de6b00f9aef6",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-SCH-004",
+      "plane_id": "2bce49d6-9144-4ba6-8d32-1b6b0e7302e3",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-SCH-005",
+      "plane_id": "b853ec46-c87b-4aa8-9b22-ce08ef468201",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-SCH-006",
+      "plane_id": "6506e413-7139-4fa6-a762-a5508622a014",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-SCH-007",
+      "plane_id": "be3bb8f9-f6b6-4619-abb5-3837697467a3",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-SIM-001",
+      "plane_id": "491a554f-2fd3-492c-bc04-3fb572113fde",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-SIM-002",
+      "plane_id": "1334dfae-3dc5-4ded-adc3-ffc3f9f823b3",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-SIM-003",
+      "plane_id": "842221d4-75c3-46ef-9fa2-7c5c40e1fcb2",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-SIM-004",
+      "plane_id": "04887d72-252d-4fc7-944b-69dda3b3de08",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-SIM-005",
+      "plane_id": "8edde201-2e9a-4a6c-90e5-ceb10b7d80c0",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-SIM-006",
+      "plane_id": "9b5c6b5d-5436-4f4b-a37d-18d828d33301",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-SIM-007",
+      "plane_id": "671a67ca-d387-4c47-b4e9-2a71a687afe7",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-SIM-008",
+      "plane_id": "95719bbe-f5eb-402c-bc44-756278b1b772",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-SIM-009",
+      "plane_id": "d8c93824-4764-4721-b06b-251190f8dc1c",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-TEST-005",
+      "plane_id": "e61864b7-63b9-498c-bf17-0deb642ece7b",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-TEST-006",
+      "plane_id": "c07b9e63-048d-4cd6-8296-fdb010c913e6",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-UI-005",
+      "plane_id": "b6f45f0a-4af3-4b45-ba94-102297465643",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-UI-007",
+      "plane_id": "4dd33ca7-9612-44ad-9715-20c0733df967",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-VALID-001",
+      "plane_id": "11f2bdb1-c9a7-46e3-8b9d-2ada47576979",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    },
+    {
+      "wp_id": "WP-VALID-002",
+      "plane_id": "bede844d-3f6f-4140-8a94-cc0b9fedaa2b",
+      "http_status": 200,
+      "verified_assignees": [
+        "51137169-2989-42bd-9260-997b26e7e6dd"
+      ]
+    }
+  ],
+  "verified_wp_count": 179,
+  "canonical_owner_distribution": {
+    "Asrın Dündar": 73,
+    "Batuhan Kaya": 32,
+    "Selman Özdemir": 17,
+    "Yavuz Gümüş": 57
+  },
+  "assigned_by_canonical_owner": {
+    "Asrın Dündar": 73,
+    "Batuhan Kaya": 32
+  },
+  "assigned_total": 105,
+  "unassigned_total": 74,
+  "all_backlog": true,
+  "duplicates": 0,
+  "second_plan_batuhan_mutations": 0,
+  "unrelated_fields_and_entities_unchanged": true,
+  "selman_yavuz_invitations_unchanged": true,
+  "member_status": "ACTIVE MEMBER role15",
+  "browser_visibility": "HUMAN_CONFIRMED",
+  "preflight_approved_head": "ee32f2c201b72f51c4e99782d868adbf214c2075",
+  "fresh_head_review_required_after_commit": true,
+  "full_control_status": "PARTIAL",
+  "source_manifest": {
+    "docs/01_Master_Project_Specification.md": "14ff9517ca5fc427d9316980a20db1059a628935e5642a4eeca2ffded51572bb",
+    "docs/03_Requirements_Traceability_Matrix.md": "e58e635cacc96f3341b7cb13f54676d3793b82d63cd394d9c260973f23817375",
+    "docs/04_Work_Breakdown_Structure.md": "1f9c2ff532cacac70ff5099a1ff6e4e09d25be990dcbca2071e59e0fa03ed8ac",
+    "docs/05_Dependency_Graph.md": "c693a9b953458d0bcc2be4b2c9fdb4d19d6f21e7ebf8aca8e0fb49be08db30d1",
+    "docs/06A_Asrin_Engineering_Roadmap.md": "4034fbc467766dcaf59aab274bcb6ec2ee944f6c311444f079f589029dc8c92c",
+    "docs/06B_Selman_Engineering_Roadmap.md": "92801ffe6782ec55a096482db1f578b1d75c41278c269ef8c56aaf97e23da2ea",
+    "docs/06C_Batu_Engineering_Roadmap.md": "f12f21dd91c1487c556bd5cbbe24a52fdbda03f9add8d8009463e74cb95f5d2e",
+    "docs/06D_Yavuz_Engineering_Roadmap.md": "a70a3c28b458ccab65e4305675f962b9b6eeb4e84cba4e94e2da53a74d81a961",
+    "docs/07_Milestone_and_Release_Plan.md": "f06243f0e0773b4ebce39b509c6e807bacf698690e8f311d6091087db83272bf"
+  }
+}
