@@ -91,3 +91,8 @@ Final live assignment result: Asrın73/Batuhan32/Selman0/Yavuz0;105assigned/74un
 CTRL-PM-011 remains globally PARTIAL. Batuhan onboarding/assignment portion verified; review closure for the new correction HEAD remains human-owned. Product implementation, reconciliation merge/push, network policy changes and PR merge are not performed. Current operational metadata in TEAM_WORKFLOW/helper uses Ejlonn; old historical references remain explicitly superseded here.
 
 Final correction checkpoint checks executed:146tests passed in63.20s; projectctl validatePASS with947preserved warnings; status execution UNAVAILABLE(documentation only); git diff --checkPASS; canonical docs unchanged frommain and AGENTS.md unchanged fromHEAD; tracked-path and changed-file API-key checksPASS. New current-head Ejlonn review is required after this commit/push. No merge/post-merge claim.
+
+
+## Fresh activation observation after setup merge — 2026-10-13
+
+Status remainsPARTIAL. Batuhan identity/member/32assignment and genuine reviewed setup closure verified; Asrın73assignments retained. During read-only post-merge audit, Yavuz independently appeared as active workspace MEMBER15, user3ccd9ad8-99e9-4b75-ae65-2325503d347f, exact corrected emailyavuzzgumus@gmail.com; pending Yavuz workspace invitation now absent. No Yavuz CAP project membership and0Yavuzassignments. Selman invitation still pending with no project membership/assignments. This supersedes historical all-three/then-two Plane invitation observations without rewriting history. No teammate membership or assignment was changed by this merge pass. See CTRL-PM-015-post-merge.json for fresh verified identity/count evidence.

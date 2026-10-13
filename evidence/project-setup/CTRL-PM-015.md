@@ -72,3 +72,31 @@ Next action: a scoped, tested parser-compatibility correction for the observed P
 The historical live HTML contract failure immediately above is now resolved by the scoped PRE/CODE parser compatibility correction, not by a Plane rewrite. Final focused49tests and full170tests pass; offline validationPASS; fresh live179WP exact metadata checksPASS, including WP-VALID-001. Plane snapshot unchanged:179BACKLOG,105assigned/74unassigned,29modules/13cycles/10labels,0duplicates; no mutation. See CTRL-PM-016.md for implementation, negative tests and actual timings.
 
 CTRL-PM-015 remainsPARTIAL. Ejlonn's genuine approval on c3aeca335a95adfac4ebb5a5d694b91da2f0e015 becomes stale for the new parser commit. Explicit latest instruction forbids merge in this task; stop after new-head CI with HUMAN_REVIEW_REQUIRED_AFTER_PARSER_FIX. Renewed human approval, actual merge/post-merge validation and previously documented pilot-representation limitations are not fabricated as complete. CTRL-PM-011 remainsPARTIAL for other teammates; Batuhan identity/member/assignment remains verified.
+
+
+## Actual governed merge and post-merge validation — 2026-10-13
+
+CONTROL ITEM: CTRL-PM-015
+GOAL: Merge the genuinely approved setup PR and validate the real merged main baseline.
+RESULT: Governed merge/post-merge checks PASS; whole control remainsPARTIAL against its actual rehearsal DoD.
+
+Fresh preflight PR2 OPEN/non-draft/MERGEABLE at e953b84ff9f6c908cf552cfd47e3881b17af0a0c; genuine Ejlonn COLLABORATOR APPROVED review PRR_kwDOVFI_4c8AAAABSFES2A at2026-10-13T18:35:21Z bound to that exact head; WRITE permission verified. Both current-head CI checks SUCCESS, no review threads or unexamined pagination. Local working tree clean; fresh full170tests passed in64.60s,offline validationPASS,diff hygienePASS,canonical docs unchanged. Read-only live metadata check_issue audit passed all179WPs including WP-VALID-001 with approved real assignments. Master §13 allows explicit human-owned outstanding invitations; other-teammate completion was not fabricated as a merge condition or waived.
+
+Under latest explicit conditional merge authorization, gh pr merge used --squash and --match-head-commit e953b84ff9f6c908cf552cfd47e3881b17af0a0c, without admin bypass, force or auto-approval. PR2 stateMERGED,2026-10-13T18:38:17Z (21:38:17 Europe/Istanbul),squash commitfeb255df0311d95e278369f04f2e22c0c971e70c. Integration clone switched safely to main and fast-forwarded origin/main; no reset/stash/discard. Merged main verified clean at that SHA. The long-lived setup branch is retained; no destructive branch cleanup was requested or executed. Reconciliation worktree/branch untouched.
+
+TESTS RUN: Full actual merged-main projectctl suite; projectctl validate/status;git diff --check/status;fresh PlaneAPIv1 audit;new main GitHubActions.
+TEST RESULTS:170passed in63.69s. Main CI run38448367552 SUCCESS on the exact merge commit.
+VALIDATION RESULT:PASS;306requirements,186FR/120NFR,179WPs/owners73–17–32–57,29areas,100nodes/217edges/208HARD/9SOFT/0HARDcycles,174scheduled/exact5unscheduled,13cycles/9milestones. All947warnings remain,executionUNAVAILABLE(documentation only). No silent canonical reconciliation.
+
+PLANE READS: Fresh GET-only before/after audits and exact check_issue metadata checks.179unique/allBACKLOG,0duplicates,Asrın73/Batuhan32/Selman0/Yavuz0;105assigned/74unassigned;29modules/13cycles/10labels;workflow unchanged. The first conservative full snapshot equality assertion detected an independently appearing workspace member during validation. Investigation found the sole audit delta was Yavuz's real active MEMBER15 workspace identity3ccd9ad8-99e9-4b75-ae65-2325503d347f with exact corrected emailyavuzzgumus@gmail.com. His pending invite is now absent; no CAP project member or assignment exists. Subsequent fresh verification passes all required project/work-item/state/structure checks exactly against preflight. This real activation is reported rather than forced back to stale counts. Selman invitation still pending. No dummy user, invitation acceptance or assignment was executed by this agent.
+PLANE MUTATIONS:NONE.
+GITHUB MUTATIONS:Authorized squash merge ofPR2; evidence-only control-branch checkpoint follows, without merging it into main.
+NETWORK MUTATIONS:GitHub merge/checkpoint operations only;PlaneGETs only. No runtime/Tailscale policy/config change.
+
+DoD re-evaluation: genuine review, actual merge and real post-merge checks are now complete; the historical corresponding blockers are superseded. CTRL-PM-015 step1 still requires the setup/control pilot represented in Plane. Historical canonicalWP context probes are read-only, not an actual represented control pilot; no control-pilot transition representation/adapter is implemented or claimed. Therefore CTRL-PM-015 remainsPARTIAL and SETUP COMPLETE is not reported. DONE/VERIFIED is withheld for every productWP. No product implementation or manufactured Plane transition.
+
+FILES CHANGED:This append-only report,CTRL-PM-015-post-merge.json and truthful CTRL-PM-011 activation note, on a separate control/CTRL-PM-015-post-merge-evidence worktree; main itself remains the validated merge baseline.
+KNOWN LIMITATIONS:Remaining pilot representation/rehearsal,Selman onboarding,Yavuz CAP membership,private-plan enforcement limitation,previously documented bounded operations limitations. No DoD was redefined.
+SPEC CONFLICTS:NONE repaired or newly hidden.
+COMMIT SHA:Resolve the evidence-only control checkpoint containing this section;actual reviewed setup merge commit isfeb255df0311d95e278369f04f2e22c0c971e70c.
+NEXT CONTROL ITEM:Approve a non-destructive represented control pilot to complete the remaining rehearsal;continue actual teammate onboarding separately. No Plane mutation is implicit in this merge/validation task.
