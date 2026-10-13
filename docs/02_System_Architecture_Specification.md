@@ -87,15 +87,15 @@ This is the most architecturally significant reconciliation in the document, bec
 1. **Item 11 (Digital Twin), "Scheduling State"** (approx. source L9812–9857): the Twin's state model lists a field named **"Active Schedule Version"** among the things "the Twin may carry" (Planned Assignments, Current Dispatch State, Schedule Status, Known Constraint Violations, Affected Assignments), with a `Schedule Status` enum {ACTIVE, DEGRADED, INVALIDATED, SUPERSEDED} and a worked example ("Schedule v43 → DEGRADED → … → Schedule v44 aktif hale gelebilir"). Read in isolation, this could suggest the Digital Twin is where "what is active" is decided.
 2. **Item 12 (Event Model)**: the event `ScheduleActivated`'s canonical producer is given generically as **"Scheduling / Automation Authority"** — a compound label that does not yet distinguish the Scheduler subsystem from the Automation subsystem.
 3. **Item 13 (Data Architecture), Canonical Data Ownership table**: states plainly **"ScheduleVersion → Scheduling authority"**, without yet addressing whether the *activation* of a given version (i.e., which version is currently live) is itself a Scheduling-authority act or an Automation-authority act.
-4. **Item 15 (Asrın: Backend scope), Command API candidates**: lists `ActivateSchedule` as one ordinary command alongside `ReleaseLot`, `ApplyMaterialHold`, etc., with no stated restriction on who may issue it — flat, undifferentiated Command-API semantics.
+4. **Item 15 (Asrın: Backend scope), Command API candidates**: lists `ActivateSchedule` as one ordinary command alongside `ReleaseLot`, `PlaceLotOnHold`, etc., with no stated restriction on who may issue it — flat, undifferentiated Command-API semantics.
 5. **Item 22 (Integration Contracts), Canonical Authority Examples table**: the row `| Active schedule fact | Operational authority via Automation |` is the *only* place across Items 9–24 where the exact phrase "active schedule fact" appears with an assigned canonical authority, and it assigns that authority to **"Operational authority via Automation"** — a compound phrase that itself hedges between "Automation alone" and "the operational-truth layer, reached via Automation."
 
 #### Later refining statements
 
 6. **Item 19 (Batu: Scheduling & Optimization), "Schedule Activation Boundary"**: *"Scheduler `ScheduleCandidate` / `ScheduleProposed` üretir. Scheduler doğrudan active production schedule state'ini değiştirmez. `ScheduleActivated` authority: **Automation Engine** olacaktır."* Restated as invariant **SCH-INV-11**: "Schedule activation authority belongs to Automation Engine, not the Scheduler."
-7. **Item 18 (Batu: Automation Engine), WF-06 "Approved Schedule Activation"**: the concrete gated flow is `ScheduleProposed → Validate State/Policy → Approval if Required → ActivateSchedule → Wait for ScheduleActivated → Verify Active Version` — i.e., Automation is the mechanism that executes `ActivateScheduleCommand` and waits for the canonical `ScheduleActivated` event before treating the change as real.
+7. **Item 18 (Batu: Automation Engine), WF-06 "Approved Schedule Activation"**: the concrete gated flow is `ScheduleProposed → Validate State/Policy → Approval if Required → ActivateSchedule → Wait for ScheduleActivated → Verify Active Version` — i.e., Automation is the mechanism that executes `ActivateSchedule` and waits for the canonical `ScheduleActivated` event before treating the change as real.
 8. **Item 22, "Scheduler Outputs" §26**, verbatim: *"Scheduler plan önerir. Scheduler production active schedule'ı doğrudan değiştirmez. Schedule activation authority Automation/operational execution path'tedir."* — and **INT-INV-12**: *"Scheduler ScheduleCandidate'ı doğrudan active schedule yapamaz."*
-9. **Item 22, Golden Scenario Contract Chain**: shows `Automation ← RecoveryPlan ← Approval → IsolateMachineCommand ← MachineIsolated → ActivateScheduleCommand ← ScheduleActivated` followed by `Twin ← Canonical Domain Events → Updated State` — i.e., after Automation executes the activation and the canonical event fires, the Digital Twin (built on Manufacturing Core / backend canonical state, per Item 11's Simulator/Twin authority split and Item 15's backend domain-logic ownership of "schedule activation" as one of Asrın's explicit backend domain concerns) is where the resulting fact becomes durable, queryable operational truth — and the very next `SchedulingSnapshot` the Scheduler reads (produced by "Twin / Backend," per Item 22's High-Level Contract Ownership Matrix) carries that fact forward as input to the next planning cycle.
+9. **Item 22, Golden Scenario Contract Chain**: shows `Automation ← RecoveryPlan ← Approval → IsolateMachineCommand ← MachineIsolated → ActivateSchedule ← ScheduleActivated` followed by `Twin ← Canonical Domain Events → Updated State` — i.e., after Automation executes the activation and the canonical event fires, the Digital Twin (built on Manufacturing Core / backend canonical state, per Item 11's Simulator/Twin authority split and Item 15's backend domain-logic ownership of "schedule activation" as one of Asrın's explicit backend domain concerns) is where the resulting fact becomes durable, queryable operational truth — and the very next `SchedulingSnapshot` the Scheduler reads (produced by "Twin / Backend," per Item 22's High-Level Contract Ownership Matrix) carries that fact forward as input to the next planning cycle.
 10. **Item 24 (HITL), Default Action-Level Mapping**: the row *"Routine dispatch under active validated schedule → Level 2"* treats "the active validated schedule" as an already-settled, referenceable governing fact that routine actions operate *under* — consistent with the schedule, once activated, becoming a standing business fact rather than something re-asserted per dispatch.
 
 #### Apparent tension
@@ -107,7 +107,7 @@ Read superficially, (1)–(5) could be misconstrued as three competing candidate
 This architecture resolves the apparent three-way tension as a **three-layer pipeline describing three different moments of the same fact's lifecycle, not three competing owners**:
 
 1. **Scheduler** (`scheduler-service`, Batu) is the sole producer of `ScheduleCandidate` / `RecoveryPlan` / `DispatchDecision` — proposals only. It never has activation authority (Item 19 Quote 6, Item 22 Quote 8, invariant `SCH-INV-11`).
-2. **Automation** (`automation-service`, Batu) is the sole **execution/activation authority**: it accepts `ActivateScheduleCommand` (after policy/approval/precondition gates), and the resulting `ScheduleActivated` event is the canonical, immutable fact of activation (Item 18 WF-06, Item 22 Quote 8–9).
+2. **Automation** (`automation-service`, Batu) is the sole **execution/activation authority**: it accepts `ActivateSchedule` (after policy/approval/precondition gates), and the resulting `ScheduleActivated` event is the canonical, immutable fact of activation (Item 18 WF-06, Item 22 Quote 8–9).
 3. **Manufacturing Core** (the backend transactional/business-authority layer, Asrın; materialized to readers via the Digital Twin's projection) is the **system of record that durably holds "what the currently active `ScheduleVersion` is"** once Automation has activated it, and that the Scheduler subsequently reads back as part of its next `SchedulingSnapshot` input (Item 22's contract-ownership matrix row `Twin/Backend → Scheduler: SchedulingSnapshot`; Item 15's listing of "schedule activation" among Asrın's first-class backend domain-logic concerns; Item 11's Twin field "Active Schedule Version" as a *projection* of this fact, explicitly not itself the authority per Twin invariant `DT-INV-01`/`DT-INV-09`).
 
 Restated as the canonical authority-map entry used throughout this document (§"Data / Semantic Authority Map"): **Scheduler proposes; Automation activates; Manufacturing Core owns the resulting active `ScheduleVersion` business fact; Digital Twin projects it for readers.** This is not a contradiction of Item 22's "Operational authority via Automation" — it is this architecture's naming of *which* system constitutes "operational authority" and *how* Automation's "via" is realized (Automation is the gate the transition must pass through; Manufacturing Core is where the fact then lives).
@@ -127,10 +127,10 @@ Restated as the canonical authority-map entry used throughout this document (§"
 
 ### R-003 — `ActivateSchedule`'s Command-API status (Item 15) vs. its Action-Catalog-gated status (Items 18/22/23)
 
-- **Earlier statement**: Item 15 (L15998–16012) lists `ActivateSchedule` in a flat "candidate commands" list (`ReleaseLot`, `ApplyMaterialHold`, `ReleaseMaterialHold`, `DispatchLot`, `ApproveRecoveryPlan`, `ActivateSchedule`, `IsolateMachine`) with only the generic Command-Contract semantics ("intent, not fact; may be rejected").
-- **Later refining statement**: Item 22 §27 places `ActivateScheduleCommand` specifically under Automation's controlled **Action Catalog** ("Automation yalnız controlled Action Catalog üzerinden typed commands kullanacaktır"), and Item 18 assigns it explicit metadata (risk level, preconditions, idempotency, valid world types) like every other Action-Catalog member; Item 23 places it among the AI-forbidden direct-execution credentials.
+- **Earlier statement**: Item 15 (L15998–16012) lists `ActivateSchedule` in a flat "candidate commands" list (`ReleaseLot`, `PlaceLotOnHold`, `ReleaseMaterialHold`, `DispatchLot`, `ApproveRecoveryPlan`, `ActivateSchedule`, `IsolateMachine`) with only the generic Command-Contract semantics ("intent, not fact; may be rejected").
+- **Later refining statement**: Item 22 §27 places `ActivateSchedule` specifically under Automation's controlled **Action Catalog** ("Automation yalnız controlled Action Catalog üzerinden typed commands kullanacaktır"), and Item 18 assigns it explicit metadata (risk level, preconditions, idempotency, valid world types) like every other Action-Catalog member; Item 23 places it among the AI-forbidden direct-execution credentials.
 - **Apparent tension**: Item 15's flat listing could be misread as meaning any authorized backend caller may issue `ActivateSchedule` directly.
-- **Canonical interpretation used by 02**: `ActivateSchedule`/`ActivateScheduleCommand` is a single logical command whose **only legitimate caller is the Automation Control Plane**, gated by the full Action-Catalog metadata (risk level, preconditions, idempotency semantics, valid world types) defined in Items 18/20/22/23. Item 15's listing is read as "this command exists in the backend's command surface," not "any actor may call it unrestricted."
+- **Canonical interpretation used by 02**: `ActivateSchedule`/`ActivateSchedule` is a single logical command whose **only legitimate caller is the Automation Control Plane**, gated by the full Action-Catalog metadata (risk level, preconditions, idempotency semantics, valid world types) defined in Items 18/20/22/23. Item 15's listing is read as "this command exists in the backend's command surface," not "any actor may call it unrestricted."
 - **Reason**: Items 18/22/23 postdate and specialize Item 15's generic backend scope; they are also each backed by explicit invariants (`AUTO-INV-9` "AI cannot create arbitrary operational actions outside the Action Catalog"; `INT-INV-12`; `AUTH-INV-8` "AI cannot hold operational mutation service credentials").
 - **Residual risk**: none material — no later Item contradicts the Action-Catalog gating.
 
@@ -219,7 +219,7 @@ Restated as the canonical authority-map entry used throughout this document (§"
 
 ### What Platform Is
 
-Intelligent Manufacturing Operations Platform for Critical Aerospace Components is a single, integrated **Autonomous Critical-Component Manufacturing Facility Operating System** (Item 01). It is not a portfolio of four independent student projects glued together at a demo; it is one platform in which visual inspection, AI-driven operational intelligence, dynamic scheduling, automation, and platform engineering are structurally required to interoperate for the product to mean anything at all.
+Intelligent Manufacturing Operations Platform for Critical Aerospace Components is a single, integrated **research/simulation manufacturing-operations platform with human-governed, policy-bounded automation** (Item 01). It is not a portfolio of four independent student projects glued together at a demo; it is one platform in which visual inspection, AI-driven operational intelligence, dynamic scheduling, automation, and platform engineering are structurally required to interoperate for the product to mean anything at all.
 
 `01` is explicit and repeated on this point (Item 01, L15): the project's goal is **not** merely to build a manufacturing simulator, a serialized component-defect classifier, an AI assistant, or a monitoring dashboard. Each of those is a necessary component; none of them, alone, is the product.
 
@@ -244,7 +244,7 @@ This architecture makes each loop stage concrete at every layer the rest of this
 
 | Loop stage | Capability-level meaning | Primary service(s) | Primary data/event artifact |
 |---|---|---|---|
-| Sense | Simulated physical state + visual inspection produce raw operational fact | `manufacturing-simulator`, `vision-service` | Domain events (`ProcessingCompleted`, `MachineFailed`), `InspectionResult` |
+| Sense | Simulated physical state + visual inspection produce raw operational fact | `manufacturing-simulator`, `vision-service` | Domain events (`ProcessingCompleted`, `MachineFailed`), `InspectionObservation` |
 | Understand | Facts are correlated into facility-wide context | `digital-twin-service`, event backbone | Canonical domain events, Twin projections |
 | Predict | Future operational risk is estimated from current/historical evidence | `ai-intelligence-service` (M1/M2/M3 models) | `Prediction` |
 | Decide | Evidence-grounded hypotheses and proposed actions are produced | `ai-intelligence-service` | `RootCauseAssessment`, `Recommendation`, `ActionProposal` |
@@ -510,7 +510,7 @@ It must be **rebuildable** from canonical sources (a Twin snapshot plus subseque
 
 `vision-service` (Selman; Item 16) is the canonical authority for **observed visual inspection evidence**:
 
-- Inspection inference outputs (`InspectionResult`).
+- Inspection inference outputs (`InspectionObservation`).
 - Defect observations (`Defect`, `DefectDetected`), localization, and segmentation masks.
 - Anomaly/OOD ("UNKNOWN"/"REVIEW_REQUIRED") classification.
 - Visual pattern/spatial results (`DefectPattern`, `DefectCluster`) from the SerializedComponent Spatial Pattern lane.
@@ -539,7 +539,7 @@ The Scheduler **does not directly mutate manufacturing state** and does not dire
 `automation-service` (Batu; Item 18) owns:
 
 - Durable workflow execution state (`WorkflowInstance`, its lifecycle CREATED→RUNNING→WAITING→…→COMPLETED/FAILED/COMPENSATING/MANUAL_INTERVENTION_REQUIRED).
-- Policy-enforced orchestration through the **Action Catalog** (the closed set of typed, versioned, risk-classified operational commands — `ApplyMaterialHold`, `IsolateMachine`, `ActivateSchedule`, `CreateMaintenanceWorkOrder`, `ExecuteReworkDirective`, etc.).
+- Policy-enforced orchestration through the **Action Catalog** (the closed set of typed, versioned, risk-classified operational commands — `PlaceLotOnHold`, `IsolateMachine`, `ActivateSchedule`, `CreateMaintenanceWorkOrder`, `ExecuteReworkDirective`, etc.).
 - Retries, timeouts, approval waits (`WAITING_FOR_APPROVAL`), and saga/compensation semantics (compensation ≠ rollback — a real `MachineFailure` fact cannot be undone; compensation reverses *workflow-initiated* effects only, and only where `COMPENSATABLE`).
 - Effect verification: Automation treats **command acceptance and action completion as two different facts** (`AUTO-INV-3`) and confirms real effect via the canonical domain event (e.g. `IsolateMachineCommand → ACCEPTED` is not the same claim as `MachineIsolated`).
 
@@ -586,7 +586,7 @@ These govern how `manufacturing-core` and the backend/API layer generally implem
 | Manufacturing business/transactional state, active `ScheduleVersion` | Manufacturing Core | Twin (projects it), Scheduler (proposes only), Automation (activates it, doesn't own the resulting fact) |
 | Simulated physical state, hidden Oracle truth | Manufacturing Simulator | Digital Twin, AI, Vision, Scheduler (none may read Oracle truth operationally) |
 | Current operational read-projection | Digital Twin | — (Twin is itself never authoritative for anything it projects) |
-| Inspection observations (`InspectionResult`, `Defect*`) | Vision Service | AI (consumes, doesn't reproduce), Scheduler (never consumes raw Vision output directly) |
+| Inspection observations (`InspectionObservation`, `Defect*`) | Vision Service | AI (consumes, doesn't reproduce), Scheduler (never consumes raw Vision output directly) |
 | `Investigation`, `Prediction`, `RootCauseAssessment`, `Recommendation`, `ActionProposal` | AI Intelligence Service | Automation (executes proposals, doesn't generate them), Manufacturing Core (never mutated directly by AI) |
 | `ScheduleCandidate`, `RecoveryPlan`, `DispatchDecision` | Scheduler Service | Automation (activates candidates, doesn't produce them) |
 | Workflow execution state, Action-Catalog command execution | Automation Service | Manufacturing Core (never bypassed via private writes) |
@@ -641,7 +641,7 @@ AI's capability verbs are exactly (Item 23, verbatim list) — no others exist f
 
 `READ`, `ANALYZE`, `PREDICT`, `EXPLAIN`, `RECOMMEND`, `REQUEST_SIMULATION`, `REQUEST_OPTIMIZATION`, `PROPOSE_WORKFLOW`.
 
-AI's service principal **does not carry** these operational-mutation credentials, under any circumstance (Item 23 §4, exact verbatim list): `IsolateMachine`, `ReleaseMachineIsolation`, `ApplyMaterialHold`, `ReleaseMaterialHold`, `ActivateSchedule`, `ExecuteReworkDirective`, `ScrapMaterial`, `ReturnMachineToService`, "and similar state-changing commands."
+AI's service principal **does not carry** these operational-mutation credentials, under any circumstance (Item 23 §4, exact verbatim list): `IsolateMachine`, `ReleaseMachineIsolation`, `PlaceLotOnHold`, `ReleaseMaterialHold`, `ActivateSchedule`, `ExecuteReworkDirective`, `ScrapMaterial`, `ReturnMachineToService`, "and similar state-changing commands."
 
 AI **is** permitted to write to its own intelligence/governance records (Item 23 §5): creating an `Investigation`, storing a `Prediction`, creating a `RootCauseAssessment`, generating a `Recommendation`. It is **forbidden** from manufacturing-operational mutation: material hold, machine isolation, active-schedule change, rework execution, disposition, equipment return-to-service.
 
@@ -969,7 +969,7 @@ Cross-subsystem integration **shall not** occur via: direct access to another su
 | Class | Purpose | Examples | Key properties |
 |---|---|---|---|
 | **Query Contract** | Ask for current/historical state | `GetComponentGenealogy`, `GetMachineState`, `GetIncidentContext` | No mutation; sync or bounded-async; may carry revision/freshness metadata |
-| **Command Contract** | Request a state transition | `ApplyMaterialHold`, `IsolateMachine`, `ActivateSchedule` | Is intent, not fact; may be rejected |
+| **Command Contract** | Request a state transition | `PlaceLotOnHold`, `IsolateMachine`, `ActivateSchedule` | Is intent, not fact; may be rejected |
 | **Event Contract** | An occurred, immutable fact | `MachineIsolated`, `ScheduleActivated`, `InspectionCompleted` | Past-tense semantics; immutable |
 | **Snapshot Contract** | Internally-consistent bulk state for a heavy consumer | `SchedulingSnapshot`, `InvestigationContextSnapshot` | Immutable view; revision-bound; world-bound; freshness-aware |
 | **Artifact Contract** | Reference to a large binary/derived artifact | inspection image, segmentation mask, model artifact, simulator snapshot | Bytes never embedded in normal payloads; referenced only |
@@ -983,7 +983,7 @@ the Manufacturing Operations Platform maintains a version-controlled **Integrati
 
 Contract ID · Name · Contract Type · Version · Semantic Owner · Canonical Producer · Declared Consumers · Purpose · Input Schema · Output/Payload Schema · Authority Level · Sync/Async Semantics · World Semantics · Revision Semantics · Freshness Semantics · Idempotency · Ordering · Errors · Replay Semantics · Artifact References · Security Classification · Dependency Criticality · Deprecation Status.
 
-**Semantic owner ≠ implementation owner**: e.g. `InspectionResult`'s semantic owner is Vision/Selman, but its schema-validation runtime infrastructure may be provided by another subsystem (Yavuz's platform layer).
+**Semantic owner ≠ implementation owner**: e.g. `InspectionObservation`'s semantic owner is Vision/Selman, but its schema-validation runtime infrastructure may be provided by another subsystem (Yavuz's platform layer).
 
 #### Canonical Producer Rule
 
@@ -1018,7 +1018,7 @@ Exact schemas are produced during implementation; this registry fixes the namesp
 | Producer | Consumer | Main contract |
 |---|---|---|
 | Simulator / Backend | Vision | `InspectionRequest` |
-| Vision | Quality / AI | `InspectionResult` / `Defect` / `Pattern` |
+| Vision | Quality / AI | `InspectionObservation` / `Defect` / `Pattern` |
 | Quality / Twin | AI | `Evidence` / operational context |
 | AI | Scheduler / Automation | `Prediction` / `Recommendation` |
 | Twin / Backend | Scheduler | `SchedulingSnapshot` |
@@ -1065,7 +1065,7 @@ These are never used interchangeably; one incident/correlation may span many dis
 | Long-running computation | Async request → job/result lifecycle |
 | High-impact state mutation | Command + completion event (never a bare synchronous "success") |
 
-**Command completion pattern**: command acknowledgement is never treated as completion (`INT-INV-08`). Example: `ActivateScheduleCommand → ACCEPTED → ScheduleActivated` — Automation confirms actual completion via the canonical event, not via the initial acknowledgement.
+**Command completion pattern**: command acknowledgement is never treated as completion (`INT-INV-08`). Example: `ActivateSchedule → ACCEPTED → ScheduleActivated` — Automation confirms actual completion via the canonical event, not via the initial acknowledgement.
 
 **Long-running operations** follow a request-ID lifecycle, e.g. `StartInvestigation → investigation_id → InvestigationCompleted`, `RequestRecoverySchedule → request_id → RecoveryPlanCreated` (see §"Long-Running Operations" for the general pattern).
 
@@ -1160,7 +1160,7 @@ Change process: (1) the semantic owner proposes a change; (2) known consumers re
 
 ### Command ≠ Event
 
-**Command**: requests behavior — "do this." Examples: `IsolateMachine`, `DispatchLot`, `ApplyMaterialHold`, `ActivateSchedule`. Success is never guaranteed.
+**Command**: requests behavior — "do this." Examples: `IsolateMachine`, `DispatchLot`, `PlaceLotOnHold`, `ActivateSchedule`. Success is never guaranteed.
 **Event**: expresses a realized operational fact — "this happened." Examples: `MachineIsolated`, `LotDispatched`, `MaterialHeld`, `ScheduleActivated`. Events use past-tense naming (`EV-INV-01`).
 
 ### The Required Pattern
@@ -1761,7 +1761,7 @@ SerializedComponent fabrication completion requires: all mandatory route steps d
 
 ### Domain Command Discipline
 
-State mutation happens only through explicit domain commands, never generic CRUD/PATCH (the anti-pattern `PATCH /lot/{id} {"state":"COMPLETED"}` is explicitly rejected). Canonical commands include: `ReleaseProductionOrder`, `ReleaseLot`, `QueueLot`, `DispatchLot`, `StartProcessExecution`, `CompleteProcessExecution`, `FailProcessExecution`, `ApplyMaterialHold`, `ReleaseMaterialHold`, `CreateReworkDirective`, `SplitLot`, `MergeLots`, `ScrapComponent`, `ScrapLot`, `CompleteComponentManufacturing`, `CompleteLot`.
+State mutation happens only through explicit domain commands, never generic CRUD/PATCH (the anti-pattern `PATCH /lot/{id} {"state":"COMPLETED"}` is explicitly rejected). Canonical commands include: `ReleaseProductionOrder`, `ReleaseLot`, `QueueLot`, `DispatchLot`, `StartProcessExecution`, `CompleteProcessExecution`, `FailProcessExecution`, `PlaceLotOnHold`, `ReleaseMaterialHold`, `CreateReworkDirective`, `SplitLot`, `MergeLots`, `ScrapComponent`, `ScrapLot`, `CompleteComponentManufacturing`, `CompleteLot`.
 
 **Illegal transitions** (explicitly forbidden, enforced by Manufacturing Core and re-validated by the Simulator per §"Simulator Architecture" §11.10): `CREATED→COMPLETED` (skipping route execution); `QUEUED→PROCESSING` without dispatch/resource validation; dispatching an actively-held material (unless policy explicitly allows); `SCRAPPED→PROCESSING` (terminal, no return); starting a new `ProcessExecution` on a `DOWN` machine; reworking already-`Completed` material without an explicit, governed reopen.
 
@@ -2077,13 +2077,13 @@ flowchart LR
     D --> E[Defect\nClassification]
     E --> F[Visual Anomaly\nDetection]
     F --> G[Visual\nEmbedding]
-    G --> H[Structured\nInspectionResult]
+    G --> H[Structured\nInspectionObservation]
     H --> I{{InspectionCompleted /\nQuality Events}}
 ```
 
-Each stage produces a typed intermediate result that is carried forward into the final `InspectionResult` (§18.4); no stage is permitted to silently discard its provenance. The serving-level framing of the same pipeline (per Item 16) is:
+Each stage produces a typed intermediate result that is carried forward into the final `InspectionObservation` (§18.4); no stage is permitted to silently discard its provenance. The serving-level framing of the same pipeline (per Item 16) is:
 
-`InspectionRequested → Artifact Retrieval → Inference → Structured InspectionResult → InspectionCompleted / Quality Events`
+`InspectionRequested → Artifact Retrieval → Inference → Structured InspectionObservation → InspectionCompleted / Quality Events`
 
 **ARCH-INV-VIS-01** (restated from CV-INV-01, Item 16): global image classification alone SHALL NOT count as a complete inspection capability — localization, segmentation, classification, and anomaly detection are each mandatory pipeline stages, not optional enhancements.
 
@@ -2107,7 +2107,7 @@ Candidate pattern taxonomy classes (per Item 16): center, edge, edge-ring, scrat
 | Field | Description |
 |---|---|
 | cluster_id | Unique cluster identity |
-| member inspections | InspectionResult references belonging to the cluster |
+| member inspections | InspectionObservation references belonging to the cluster |
 | member serialized components | SerializedComponent identities belonging to the cluster |
 | representative pattern | Representative spatial pattern class |
 | embedding centroid | Cluster centroid in embedding space |
@@ -2117,15 +2117,15 @@ Candidate pattern taxonomy classes (per Item 16): center, edge, edge-ring, scrat
 
 Random/no-pattern serialized components are a mandatory evaluation case (per Item 30, VIS-E5): the pipeline SHALL NOT hallucinate structured spatial patterns on serialized components with no true pattern.
 
-**Technology note (Item 16)**: WM-811K is named as a candidate public serialized component-map dataset for pattern research, but it is explicitly insufficient alone for pixel-level inspection-image segmentation, which requires a separate real/public inspection-image dataset.
+**Technology note (Item 16; current CHG-002 dataset-domain reconciliation)**: WM-811K is semiconductor wafer-map data and may be retained only as a legacy/cross-domain methodological comparison, outside the primary aerospace-domain evaluation portfolio. It is not serialized aerospace-component inspection data and is insufficient for pixel-level inspection-image segmentation, which requires a separate real/public inspection-image dataset. SECOM and MixedWM38 have the same cross-domain-only scientific-claim boundary; 01 Item 55 controls source-specific rights and candidate selection.
 
-### InspectionRequest / InspectionResult Contracts
+### InspectionRequest / InspectionObservation Contracts
 
-**Derived Architecture Detail**: the source names the triggering event `InspectionRequested` (Item 16) but does not enumerate an explicit `InspectionRequest` field schema in the extracted notes; the field list below is inferred from the serving pipeline and the symmetric `InspectionResult` schema, and MUST be reconciled against the authoritative Item 16/22 contract text during implementation.
+**Derived Architecture Detail**: the source names the triggering event `InspectionRequested` (Item 16) but does not enumerate an explicit `InspectionRequest` field schema in the extracted notes; the field list below is inferred from the serving pipeline and the symmetric `InspectionObservation` schema, and MUST be reconciled against the authoritative Item 16/22 contract text during implementation.
 
 **InspectionRequest** (derived, candidate fields): inspection_run_id, serialized component_id, artifact_id/reference, requested_by (service/actor), world_id, simulation_run_id, requested_at, inspection type/checkpoint.
 
-**InspectionResult** (canonical, per Item 16, L17936–17957) — mandatory fields:
+**InspectionObservation** (conceptual field candidates, per Item 16 §Structured InspectionObservation, L17974, and Item 22 §19 Primary Vision Output). The full list below is not a frozen mandatory schema: both source sections call these fields conceptual/candidate, and Item 22 §50 defers exact schemas to implementation specification. Explicit provenance and verification obligations in Items 16/17/30 remain mandatory; The approved two-artifact identity is defined in §Final human reconciliation; exact schema fields are frozen by the assigned contract WPs.
 
 | Field | Description |
 |---|---|
@@ -2150,7 +2150,7 @@ Per Item 30 (VIS-E11, "Evaluated Pipeline Identity"), the identity of what actua
 
 > `ModelVersion + PreprocessingVersion + ThresholdPolicyVersion + OutputSchemaVersion`
 
-This tuple SHALL be carried on every `InspectionResult` so that any downstream consumer (RCA, Genealogy, Command Center) can reconstruct exactly which pipeline configuration produced it. `ModelVersion` and `ThresholdPolicyVersion` are versioned independently (Model/Threshold Separation, Item 30 VIS-E8) — a threshold-policy change (e.g., a stricter review-required boundary) does not require retraining or re-releasing the model.
+This tuple SHALL be carried on every `InspectionObservation` so that any downstream consumer (RCA, Genealogy, Command Center) can reconstruct exactly which pipeline configuration produced it. `ModelVersion` and `ThresholdPolicyVersion` are versioned independently (Model/Threshold Separation, Item 30 VIS-E8) — a threshold-policy change (e.g., a stricter review-required boundary) does not require retraining or re-releasing the model.
 
 Canonical Vision facts/events emitted downstream (per Item 16): `DefectDetected`, `DefectPatternDetected`, `DefectClusterUpdated`, `InspectionStarted`, `InspectionCompleted`.
 
@@ -2203,7 +2203,7 @@ Vision produces canonical **observations**, not canonical **governance decisions
 
 | Vision IS the authority for | Vision is NOT the authority for |
 |---|---|
-| `DefectDetected`, `DefectPattern`, `DefectCluster`, `InspectionResult` (canonical observation facts) | `QualityExcursionConfirmed` / `QualityHold` — these require broader Quality Analytics, temporal/population trend context, policy, and human governance |
+| `DefectDetected`, `DefectPattern`, `DefectCluster`, `InspectionObservation` (canonical observation facts) | `QualityExcursionConfirmed` / `QualityHold` — these require broader Quality Analytics, temporal/population trend context, policy, and human governance |
 | Per-artifact and per-serialized component visual evidence quality | `MaterialHold`, rework/disposition decisions |
 | Open-set novelty flagging (`UNKNOWN`/`REVIEW_REQUIRED`) | Scheduling or machine-isolation decisions — Vision is explicitly not the authority for rescheduling or machine-isolation policy |
 | Model/threshold provenance on its own outputs | Root-cause determination (`RootCause`/`RootCauseAssessment` — an AI/RCA output, see Item 21 predictive-ML/AI architecture files) |
@@ -2222,7 +2222,7 @@ Restated from Item 16's `CV-INV-01..10` (L18466–18504) at architecture scope, 
 | ARCH-INV-VIS-02 | Simulator Oracle labels cannot leak into operational Vision input. |
 | ARCH-INV-VIS-03 | Synthetic test performance cannot substitute for real held-out performance. |
 | ARCH-INV-VIS-04 | The Vision model cannot directly execute QualityHold or manufacturing facility recovery actions. |
-| ARCH-INV-VIS-05 | Model inference cannot produce a canonical InspectionResult without model/preprocessing/threshold-policy provenance. |
+| ARCH-INV-VIS-05 | Model inference cannot produce a canonical InspectionObservation without model/preprocessing/threshold-policy provenance. |
 | ARCH-INV-VIS-06 | Unknown / high-anomaly samples need not be forced into a known class. |
 | ARCH-INV-VIS-07 | SerializedComponent-map pattern data cannot be treated as the same modality as inspection-image segmentation data. |
 | ARCH-INV-VIS-08 | Overall accuracy alone cannot be the final model-selection criterion. |
@@ -2241,11 +2241,11 @@ flowchart LR
     D --> E[Anomaly Score]
     E --> F[Spatial Pattern]
     F --> G[Cross-SerializedComponent\nCluster Update]
-    G --> H[Structured\nInspectionResult]
+    G --> H[Structured\nInspectionObservation]
     H --> I[Quality Evidence]
 ```
 
-This chain instantiates §18.2/§18.3 against the canonical at-risk machine CNC-5AX-07 and canonical incident INC-2041: Vision output (`DefectPatternDetected` → cluster update → `InspectionResult`) becomes the first Evidence class consumed by the Quality Analytics/Excursion-confirmation layer and, subsequently, by AI RCA (Item 25/28) — but Vision's own responsibility ends at producing structured, provenance-carrying Quality Evidence, per §18.7.
+This chain instantiates §18.2/§18.3 against the canonical at-risk machine CNC-5AX-07 and canonical incident INC-2041: Vision output (`DefectPatternDetected` → cluster update → `InspectionObservation`) becomes the first Evidence class consumed by the Quality Analytics/Excursion-confirmation layer and, subsequently, by AI RCA (Item 25/28) — but Vision's own responsibility ends at producing structured, provenance-carrying Quality Evidence, per §18.7.
 
 **Oracle isolation for artifact generation** (per Item 30): the Simulator MAY use Oracle truth (hidden fault type, hidden machine health, scenario root cause) when *generating* an inspection artifact; the operational Vision model itself only ever sees the operational artifact/context — it never receives latent defect flags or hidden fault/health/root-cause fields as input (ARCH-INV-VIS-02).
 
@@ -2355,7 +2355,7 @@ Exact statement: **"ModelVersion ≠ Weights Only"** — a `ModelVersion` carrie
 This is a mandatory semantic split, restated identically in Item 14 (L14406, "Pre-Inspection Quality Prediction ≠ Visual Defect Detection"): M3 is a production-history-based *prior*, computed *before* inspection occurs; Vision (Item 18) is the canonical, observation-based authority *after* the artifact exists.
 
 - **Prediction checkpoint chain** (Item 27, L38010–38020): `Process Execution → PRE_INSPECTION_RISK_CHECKPOINT → M3 Prediction → Inspection → Vision`. The M3 prediction is generated strictly before the InspectionResult exists.
-- **Forbidden upcoming-inspection features** (exact list, Item 27, L38024–38035): `InspectionResult`, `DefectDetected`, segmentation result, classification result, current inspection image embedding, future Vision result. Earlier (pre-prediction-timestamp) inspection outcomes may be used as historical features, with explicit temporal lineage.
+- **Forbidden upcoming-inspection features** (exact list, Item 27, L38024–38035): `InspectionObservation`, `InspectionResult`, `DefectDetected`, segmentation result, classification result, current inspection image embedding, future Vision result. Earlier (pre-prediction-timestamp) inspection outcomes may be used as historical features, with explicit temporal lineage.
 - **Primary target — exact name** (Item 27, L38045–38054): `defect_present_at_next_inspection`.
 - **Ground truth**: the primary benchmark label is the Simulator Oracle/generated-artifact defect truth, kept in an offline label/evaluation plane so it never contaminates with Vision's own model error; comparison against operational Vision-observed results is a possible secondary analysis, kept separate from benchmark truth.
 - **M3's target is explicitly NOT a governance decision** (Item 27, L38079–38092): the primary target is **not** `QualityHold`, `QualityExcursionConfirmed`, or human disposition — those are downstream policy/decision outcomes, not material-quality facts. M3 predicts material defect *risk*, nothing more.
@@ -3045,7 +3045,7 @@ Consequences of this rule that SHALL be enforced architecturally:
 - This status semantics is reused directly in the System KPI catalog: REL-04 (Scheduling Response Reliability) defines "valid semantic result" as exactly `OPTIMAL`/`FEASIBLE`/explicit `INFEASIBLE`.
 - This is reinforced as a named invariant: SA-EVAL-INV-03, "`OPTIMAL` may only be used for a proven optimum" (Item 31).
 
-An analogous honesty requirement applies on the Automation side: **workflow `COMPLETED` status ≠ success**. A workflow SHALL only be counted as successfully completed once its intended canonical business effect is independently verified (e.g., `ApplyMaterialHold` → verified `MaterialHoldActivated` + dispatch-blocked + Twin convergence) — not merely because its state machine reached `COMPLETED`. "False Completion" (workflow `COMPLETED` but intended effect absent) is a release-blocking zero-tolerance metric for critical workflows (Item 31, §"Business Effect Verification"; SA-EVAL-INV-07).
+An analogous honesty requirement applies on the Automation side: **workflow `COMPLETED` status ≠ success**. A workflow SHALL only be counted as successfully completed once its intended canonical business effect is independently verified (e.g., `PlaceLotOnHold` → verified `MaterialHoldActivated` + dispatch-blocked + Twin convergence) — not merely because its state machine reached `COMPLETED`. "False Completion" (workflow `COMPLETED` but intended effect absent) is a release-blocking zero-tolerance metric for critical workflows (Item 31, §"Business Effect Verification"; SA-EVAL-INV-07).
 
 ### Counterfactual Comparison Methodology for Scheduling Evaluation
 
@@ -3383,7 +3383,7 @@ Automation treats every command's acknowledgement and its canonical completion e
 
 ### The Action Catalog
 
-The closed, versioned, risk-classified set of operational commands Automation is permitted to issue. Candidate members: `ApplyMaterialHold`, `ReleaseMaterialHold`, `IsolateMachine`, `ReleaseMachineIsolation`, `ActivateSchedule`, `CreateMaintenanceWorkOrder`, `UpdateLotPriority`, `ExecuteApprovedReworkDirective`.
+The closed, versioned, risk-classified set of operational commands Automation is permitted to issue. Candidate members: `PlaceLotOnHold`, `ReleaseMaterialHold`, `IsolateMachine`, `ReleaseMachineIsolation`, `ActivateSchedule`, `CreateMaintenanceWorkOrder`, `UpdateLotPriority`, `ExecuteApprovedReworkDirective`.
 
 **Per-action metadata**: action name/version, required permission, risk level, required preconditions, idempotency semantics, timeout policy, retry policy, possible compensation, expected canonical events, valid world types.
 
@@ -3785,7 +3785,7 @@ flowchart TB
     BFF -.query.-> AI[ai-intelligence-service]
     BFF -.query.-> VIS[vision-service]
 
-    CORE -->|ApplyMaterialHold, ActivateSchedule, ...| SIM[manufacturing-simulator]
+    CORE -->|approved simulated execution adapter commands; Core retains hold/plan authority| SIM[manufacturing-simulator]
     AUTO -->|Policy/Approval -> Typed Action| CORE
     AUTO -->|Physical Commands via Core boundary| SIM
     SCHED -->|SchedulingSnapshot request| TWIN
@@ -3794,7 +3794,7 @@ flowchart TB
     AI -.read-only.-> TWIN
     AI -.read-only.-> CORE
     AI -.optimization request.-> SCHED
-    VIS -->|InspectionResult event| CORE
+    VIS -->|InspectionObservation event| CORE
     SIM -->|Domain Events| TWIN
     CORE -->|Domain Events| TWIN
     TWIN -.SchedulingSnapshot.-> SCHED
@@ -3823,7 +3823,7 @@ Canonical Authority Matrix (Item 34, L53388–L53409 — "this matrix is officia
 | Simulated Physical Machine State | manufacturing-simulator |
 | Simulation Clock / Oracle | manufacturing-simulator |
 | Digital Twin View | digital-twin-service — Derived |
-| InspectionResult / Visual Evidence | vision-service |
+| InspectionObservation / Visual Evidence | vision-service |
 | Prediction / RCA / Recommendation | ai-intelligence-service |
 | ScheduleCandidate / RecoveryPlan | scheduler-service |
 | Workflow / Approval / Execution Authorization | automation-service |
@@ -3879,14 +3879,14 @@ Replicas, projections, and analytics copies never change canonical ownership (L5
 |---|---|
 | **Purpose** | Canonical manufacturing/business transactional application core (L52377). Explicitly **not** the Simulator, not the Twin, not the Scheduler, not a workflow engine, and not AI (L52385–L52392). |
 | **Semantic Authority** | Factory & Process Definition (manufacturing facility topology, Areas, ToolGroups, Machine definitions/capabilities/eligibility, Product, ProcessRoute, RouteStep, OperationDefinition, RecipeVersion metadata); Production Management (ProductionOrder, Lot, SerializedComponent identity/release/business lifecycle, split/merge business records); Production Execution *business records* (ProcessExecution records, route visit history, material production history — derived from, not invented independently of, Simulator canonical events); Equipment Governance business side (isolation governance, return-to-service governance, maintenance work, availability control records); Quality Governance (Inspection lifecycle coordination, QualityExcursionSuspected/Confirmed governance, MaterialHold, QualityHold, disposition business state); Manufacturing Incident (as distinct from AI's Investigation/RootCauseAssessment); Material Control (MaterialHold, ReworkDirective, Scrap/disposition, split/merge governance); **the currently active `ScheduleVersion` business fact**, which becomes canonical here only after Scheduler proposes a candidate and Automation/Approval activates it (Schedule Authority Separation, L52547–L52570: Scheduler → ScheduleCandidate → Automation/Approval → `ActivateSchedule` Command → manufacturing-core → `ScheduleActivated`). |
-| **Inputs** | Commands from `operations-bff` and `automation-service`; canonical physical-execution Domain Events from `manufacturing-simulator`; `InspectionResult`/Vision Domain Events from `vision-service`; `ActivateSchedule` command originating from the Scheduler→Automation chain. |
+| **Inputs** | Commands from `operations-bff` and `automation-service`; simulated physical-execution Domain Events from `manufacturing-simulator`; `InspectionObservation`/Vision Domain Events from `vision-service`; `ActivateSchedule` command originating from the Scheduler→Automation chain. |
 | **Outputs** | Domain Events (e.g., `LotReleased`, `MaterialHoldApplied`, `QualityExcursionConfirmed`, `ScheduleActivated`) published via Transactional Outbox; Query API responses; Command Acceptance responses. |
 | **Sync APIs exposed** | Query API (entity detail, current business state); Command Acceptance API (Operational Command Gateway, L52590–L52667) returning ACCEPTED/REJECTED/CONFLICT/STALE. |
 | **Sync APIs consumed** | None required synchronously in the preferred flow — reverse propagation from Simulator/Vision/Scheduler arrives via Domain Events, not sync callbacks (Cycle-Free Goal, L52960–L52987). |
 | **Commands issued** | Physical Commands to `manufacturing-simulator` only after its own business validation (Dual Validation pattern, L52631–L52647): Automation → manufacturing-core validation → Simulator physical command → Simulator validation → canonical event. |
-| **Commands consumed** | `ApplyMaterialHold`, `ReleaseMaterialHold`, `ActivateSchedule`, `UpdateLotPriority`, `ExecuteApprovedReworkDirective`, `CreateMaintenanceWorkOrder` (candidate list, L52604–L52614) — primarily from `automation-service`. |
+| **Commands consumed** | `PlaceLotOnHold`, `ReleaseMaterialHold`, `ActivateSchedule`, `UpdateLotPriority`, `ExecuteApprovedReworkDirective`, `CreateMaintenanceWorkOrder` (candidate list, L52604–L52614) — primarily from `automation-service`. |
 | **Events produced** | Canonical business Domain Events for every logical module it owns (Production, Equipment, Quality, Material Control, Incident, Schedule namespaces — Item 36, L56497–L56536). |
-| **Events consumed** | Simulator physical-execution events (to derive `ProcessExecution` business records); Vision `InspectionResult`-integration events (to drive Quality governance transitions). |
+| **Events consumed** | Simulator physical-execution events (to derive `ProcessExecution` business records); Vision `InspectionObservation`-integration events (to drive Quality governance transitions). |
 | **Dependencies** | REQUIRED: PostgreSQL `core` schema, Event Backbone (Outbox publication). DEGRADABLE: `manufacturing-simulator` (execution progression stalls without it, but manufacturing-core does not fabricate physical facts — L57523–L57528). |
 | **World semantics** | Owns Primary-world canonical business state; does not own Counterfactual business state (Simulator/Scheduler counterfactual runs are evaluated separately and only enter manufacturing-core as canonical facts after Approval/Activation). |
 | **Owning engineer** | **Asrın** — Manufacturing Core app/domain architecture, command/query semantics, operational command boundary (Item 34, L54087–L54134; also Item 35 relational-model ownership, L56047–L56089). |
@@ -3910,7 +3910,7 @@ Replicas, projections, and analytics copies never change canonical ownership (L5
 | **Events consumed** | None required for its own authority (it is upstream/source of physical truth). |
 | **Dependencies** | REQUIRED: durable persistent storage for snapshot/checkpoint state and simulation clock continuity; Event Backbone for publication. |
 | **World semantics** | Owns Primary-world physical execution *and* Counterfactual/what-if branch execution (via Fork); Oracle truth is a third, fully isolated namespace never exposed to operational consumers, primary or counterfactual (Item 33 Oracle Isolation; Item 36 Oracle Streams; Item 37 Environment/World/Oracle Isolation). |
-| **Owning engineer** | **Batu** — Scheduler Service, Automation Service, and (per the task's assignment) manufacturing-simulator workflow/control-plane behavior fall under Batu's ownership area (Item 34, L54087–L54134 lists Batu as owning "Scheduler Service, Automation Service, workflow/control-plane behavior, ... operational action execution semantics"; manufacturing-simulator ownership is not separately named as a line item in Items 33–38 read here — **Derived Architecture Detail**, following the task's explicit assignment of manufacturing-simulator to Batu). |
+| **Owning engineer** | **Batu** — canonical primary owner of the Operational Simulator (01 Item 62, §59 **Operational Simulator — Primary**). Scheduler and Automation responsibilities remain separately governed by their existing capability boundaries; this citation does not derive ownership from a task assignment (CTRL-DOC-005 / CHG-016). |
 | **Non-Authorities** | Not the business-authority owner for ProductionOrder/Lot/SerializedComponent/Hold/Incident business state (manufacturing-core); does not decide MaterialHold/QualityHold policy; does not receive primary mutations directly from Automation, Scheduler, or AI — only from manufacturing-core after Dual Validation; Oracle truth it holds must never leak into any operational/business-facing API or event. |
 
 ---
@@ -3941,18 +3941,18 @@ Replicas, projections, and analytics copies never change canonical ownership (L5
 | Field | Detail |
 |---|---|
 | **Purpose** | Machine-vision inspection pipeline: request processing, artifact access, preprocessing, inference, postprocessing, and canonical publication of inspection results (L52751–L52795). |
-| **Semantic Authority** | `InspectionRequest` processing; `ArtifactReference` access for inspection artifacts; `InspectionResult`; `Defect` evidence; `Pattern`; `Cluster`; model provenance (ModelVersion, PreprocessingVersion, ThresholdPolicyVersion). Canonical Authority Matrix: "InspectionResult / Visual Evidence — Vision." |
+| **Semantic Authority** | `InspectionRequest` processing; `ArtifactReference` access for inspection artifacts; `InspectionObservation`; `Defect` evidence; `Pattern`; `Cluster`; model provenance (ModelVersion, PreprocessingVersion, ThresholdPolicyVersion). Canonical Authority Matrix: "InspectionObservation / Visual Evidence — Vision." |
 | **Inputs** | `InspectionRequested` fact (from manufacturing-core Quality module) and/or `RunInspection` work request (Work/Command semantic class, Item 36 L56409–L56427); raw inspection images/artifacts via `ArtifactReference`. |
-| **Outputs** | `InspectionResult` canonical integration event; Defect/Pattern/Cluster metadata; masks/overlays/anomaly maps as Object Storage artifacts with lightweight structured metadata in DB/event (Item 37, Vision Artifacts, L58994–L59049). |
-| **Sync APIs exposed** | Primary flow is asynchronous (InspectionRequested → async Vision work → InspectionResult → canonical event, L52768–L52780) so that variable inference latency never blocks a core transaction chain. A bounded **Vision Sync API** exists but is explicitly restricted to engineering/testing/debug use, not normal manufacturing flow (L52783–L52794). |
+| **Outputs** | `InspectionObservation` canonical integration event; Defect/Pattern/Cluster metadata; masks/overlays/anomaly maps as Object Storage artifacts with lightweight structured metadata in DB/event (Item 37, Vision Artifacts, L58994–L59049). |
+| **Sync APIs exposed** | Primary flow is asynchronous (InspectionRequested → async Vision work → InspectionObservation → canonical event, L52768–L52780) so that variable inference latency never blocks a core transaction chain. A bounded **Vision Sync API** exists but is explicitly restricted to engineering/testing/debug use, not normal manufacturing flow (L52783–L52794). |
 | **Sync APIs consumed** | Object Storage (via ArtifactStore abstraction) for raw image retrieval. |
 | **Commands issued** | None to business-authority services; publishes results as events. |
 | **Commands consumed** | `RunInspection` (Work/Command class, competing-consumer semantics; Item 36 L56409–L56427). |
-| **Events produced** | `InspectionCompleted`/`InspectionResult`-integration events (Domain Event class); Vision events are ACL-scoped — Vision can publish its own Vision-namespace events but explicitly **cannot** publish `MaterialHoldApplied` or `ScheduleActivated` (Canonical Producer Ownership, L56605–L56649). |
+| **Events produced** | `InspectionCompleted`/`InspectionObservation`-integration events (Domain Event class); Vision events are ACL-scoped — Vision can publish its own Vision-namespace events but explicitly **cannot** publish `MaterialHoldApplied` or `ScheduleActivated` (Canonical Producer Ownership, L56605–L56649). |
 | **Events consumed** | `InspectionRequested` fact events; work-queue `RunInspection` messages. |
 | **Dependencies** | REQUIRED: Object Storage (artifact access), Event Backbone, PostgreSQL `vision` schema (Item 35; canonical naming resolved below). DEGRADABLE: none upstream — Vision's own unavailability degrades Quality awareness facility-wide without producing fabricated "no defect" results (L59591–L59636; L57482–L57496). |
 | **World semantics** | Shadow-model output kept separate from canonical production Vision results (Shadow Vision Separation, Item 33 L50315–L50324); world/branch context (world_id, simulation_run_id, branch_id) attached to inspection artifacts (Item 37 L58940–L58992). |
-| **Owning engineer** | **Selman** (Item 34, L54087–L54134: "Vision Service, Vision inference contracts, Vision metadata/provenance persistence semantics, InspectionResult publication"). |
+| **Owning engineer** | **Selman** (Item 34, L54087–L54134: "Vision Service, Vision inference contracts, Vision metadata/provenance persistence semantics, InspectionObservation publication"). |
 | **Non-Authorities** | Not the owner of QualityExcursionSuspected/Confirmed governance, MaterialHold, QualityHold, or disposition business state (all manufacturing-core); a raw visual anomaly detected by Vision is never itself a confirmed business Quality state (Quality State Separation, Item 33 L50344–L50352); cannot publish MaterialHoldApplied/ScheduleActivated or any event outside its ACL-scoped namespace. |
 
 **Canonical schema naming**: Item 34 names the Vision logical PostgreSQL schema `vision-metadata` at one point, while Item 35 and the default physical topology name it `vision`. This document standardizes on **`vision`** throughout (§"Data Store, Event Backbone, Object Storage, and Local Development Bindings") — `vision-metadata` is not a second schema.
@@ -5670,7 +5670,7 @@ CI SHALL be **Tiered + Risk-Aware + Dependency-Aware + Evidence-Producing** (Ite
 | **Integration** | Real PostgreSQL migration tests (fresh-install and upgrade paths); real broker publish/consume/ordering/duplicate-handling tests; real S3-compatible object storage tests; authorization positive/negative tests; **Oracle Isolation Hard Gate**; cross-world (primary/counterfactual) isolation tests; Automation state-machine and idempotency tests; Scheduler constraint/feasibility tests; Simulator determinism tests; Twin projection tests | Item 41 §44-94 |
 | **Security** | Secret scanning; dependency vulnerability scan; container image scan; license/manifest checks; SBOM production for canonical release builds; build provenance | Item 41 §130-136 |
 | **Build** | Changed-service image build as a PR validation artifact (not the canonical release artifact); the canonical build ("Build Once") happens only on `main`; scoped Docker build context; image startup smoke after build | Item 41 §122-129 |
-| **Smoke** | Small deterministic E2E chains (e.g., Simulator → Domain Event → Twin → Query; Inspection Fixture → Vision → InspectionResult → Projection) in T1/T2; full Golden Scenario (GS-01) deferred to T3/release validation | Item 41 §147-149 |
+| **Smoke** | Small deterministic E2E chains (e.g., Simulator → Domain Event → Twin → Query; Inspection Fixture → Vision → InspectionObservation → Projection) in T1/T2; full Golden Scenario (GS-01) deferred to T3/release validation | Item 41 §147-149 |
 | **Specialized (CI-T3, expensive/heavy)** | Multi-seed Simulator regressions, Scheduler benchmarks, Automation crash/recovery matrix, broker outage tests, backup/restore tests, full AI evaluation, full Vision evaluation, performance/load tests, extended security scans, full GS-01/scenario matrix | Item 41 §154-159 |
 
 #### Fast-vs-Heavy pipeline separation
@@ -7456,12 +7456,12 @@ Selected architecturally load-bearing entries: `FR-CORE-013` (canonical manufact
 |---|---|---|---|
 | NFR-REP-001 | H0 | Batu | Simulator Determinism: same release/scenario/initial-state/seed → semantically identical final state and deterministic event sequence/hash. |
 | NFR-REP-002 | H0 | Asrın | Analysis Determinism: same frozen raw inputs + AnalysisPackage → identical canonical numerical results. |
-| NFR-REP-003 | A1 | — | Release Reconstruction: clean compatible host deploys exact ReleaseManifest without private dev-machine state. |
-| NFR-REP-004 | A1 | — | Non-Owner Reproduction: **at least one non-owner teammate SHALL reproduce** before M8. |
-| NFR-REP-005 | H0 | — | Generated Artifact Drift: zero known stale generated runtime-required clients/contracts. |
-| NFR-REP-006 | H0 | — | Dependency Locking: locks/pins/digests; unbounded "latest" prohibited. |
-| NFR-REP-007 | H0 | — | Immutable Deployment Identity. |
-| NFR-REP-008 | A1 | — | Public Reproduction: v1 public package passes OSR-3 clean-clone hero reproduction (or sanitized internal equivalent if embargoed). |
+| NFR-REP-003 | A1 | Yavuz | Release Reconstruction: clean compatible host deploys exact ReleaseManifest without private dev-machine state. |
+| NFR-REP-004 | A1 | Yavuz | Non-Owner Reproduction: **at least one non-owner teammate SHALL reproduce** before M8. |
+| NFR-REP-005 | H0 | Yavuz | Generated Artifact Drift: zero known stale generated runtime-required clients/contracts. |
+| NFR-REP-006 | H0 | Yavuz | Dependency Locking: locks/pins/digests; unbounded "latest" prohibited. |
+| NFR-REP-007 | H0 | Yavuz | Immutable Deployment Identity. |
+| NFR-REP-008 | A1 | Yavuz | Public Reproduction: v1 public package passes OSR-3 clean-clone hero reproduction (or sanitized internal equivalent if embargoed). |
 | NFR-REP-009 | C3 | Asrın | External LLM Reproducibility: characterized via provider/model identity, timestamps, preserved raw outputs, repeated trials, aggregate uncertainty (byte-identical output NOT required). |
 
 ##### Resource Efficiency — `NFR-RES` (16 GiB shared-host baseline)
@@ -7473,9 +7473,9 @@ Selected architecturally load-bearing entries: `FR-CORE-013` (canonical manufact
 | NFR-RES-003 | H0 | Yavuz | OOM-Free Soak: final 8-hour soak = **zero OOM kills**. |
 | NFR-RES-004 | A1 | Yavuz | Disk Headroom: preflight requires **≥20% free persistent-filesystem capacity**. |
 | NFR-RES-005 | H0 | Yavuz | Benchmark Resource Isolation: no concurrent undeclared heavy workloads during formal benchmark/demo. |
-| NFR-RES-006 | A1 | — | Bounded Storage Retention: explicit retention/quota limits. |
-| NFR-RES-007 | A1 | — | Core GPU Independence: mandatory product/public quickstart/CPU smoke SHALL NOT require GPU. |
-| NFR-RES-008 | C3 | — | CPU Saturation Characterization: mean/p95 CPU, saturation behavior for WP-NORMAL and stress. |
+| NFR-RES-006 | A1 | Yavuz | Bounded Storage Retention: explicit retention/quota limits. |
+| NFR-RES-007 | A1 | Yavuz | Core GPU Independence: mandatory product/public quickstart/CPU smoke SHALL NOT require GPU. |
+| NFR-RES-008 | C3 | Yavuz | CPU Saturation Characterization: mean/p95 CPU, saturation behavior for WP-NORMAL and stress. |
 
 ##### Deployability / Portability — `NFR-DEP`
 
@@ -7525,13 +7525,22 @@ Selected architecturally load-bearing entries: `FR-CORE-013` (canonical manufact
 | NFR-UX-005 | A1 | Browser Compatibility: Chromium-family + Firefox at M8. |
 | NFR-UX-006 | H0 | Presenter Mode Integrity: Demo/Presenter Mode SHALL NOT conceal/bypass approvals/validation/failures/effect verification. |
 
-##### Governance — `NFR-GOV` (10 total, all H0; specific statements captured)
+##### Governance — `NFR-GOV` (10 total, all H0; exact source identities/owners)
 
-| ID | Class | Statement |
-|---|---|---|
-| NFR-GOV-004 | H0 | Every quantitative NFR result requires an explicit measurement context (ReleaseManifest + EnvironmentManifest + HardwareProfile + ResourceProfile + WorkloadProfile + BenchmarkDefinition). |
-| NFR-GOV-007 | H0 | Every NFR declares a threshold class (H0/A1/S2/C3). |
-| NFR-GOV-010 | H0 | NFR failures SHALL NOT be hidden by averaging unrelated quality attributes into one overall score. |
+Statement/title projections below refer to normative 01 Item82; they do not add requirements (CTRL-DOC-005 / CHG-016).
+
+| ID | Class | Owner | Statement / catalog reference |
+|---|---|---|---|
+| NFR-GOV-001 | H0 | Asrın | Stable Identity; normative source: 01 Item82 `NFR-GOV-001` |
+| NFR-GOV-002 | H0 | Asrın | ID Non-Reuse; normative source: 01 Item82 `NFR-GOV-002` |
+| NFR-GOV-003 | H0 | Asrın | Primary Ownership; normative source: 01 Item82 `NFR-GOV-003` |
+| NFR-GOV-004 | H0 | Yavuz | Every quantitative NFR result requires an explicit measurement context (ReleaseManifest + EnvironmentManifest + HardwareProfile + ResourceProfile + WorkloadProfile + BenchmarkDefinition). |
+| NFR-GOV-005 | H0 | Yavuz | Hardware Binding; normative source: 01 Item82 `NFR-GOV-005` |
+| NFR-GOV-006 | H0 | Yavuz | Load Binding; normative source: 01 Item82 `NFR-GOV-006` |
+| NFR-GOV-007 | H0 | Asrın | Every NFR declares a threshold class (H0/A1/S2/C3). |
+| NFR-GOV-008 | H0 | Asrın | Freeze Change Control; normative source: 01 Item82 `NFR-GOV-008` |
+| NFR-GOV-009 | H0 | Yavuz | Evidence Requirement; normative source: 01 Item82 `NFR-GOV-009` |
+| NFR-GOV-010 | H0 | Asrın | NFR failures SHALL NOT be hidden by averaging unrelated quality attributes into one overall score. |
 
 #### Availability & Real-Time Doctrine
 
@@ -8932,7 +8941,7 @@ Vision Evidence + Genealogy/Twin + Telemetry/Maintenance + RAG Corpus
 - MLflow: initial experimentation can precede it; proper model promotion/eval governance requires it by M4/M5 (item 38).
 - **"Full Core Implementation Does Not Block Simulator Start"** — Simulator may proceed on reviewed contract fixtures (item 40).
 - **"Legal Manufacturing Transitions Must Be Stable Before Real Execution"** — HARD for Simulator manufacturing-validity claims, Scheduler validation, and Automation execution (item 41).
-- **"Command Contracts Precede Automation Integration"** (PlaceLotOnHold, ReleaseLot, DispatchLot, RequestMaintenance); Automation cannot invent manufacturing command semantics (items 42-43).
+- **"Command Contracts Precede Automation Integration"** (PlaceLotOnHold, ReleaseLot, DispatchLot, CreateMaintenanceWorkOrder); Automation cannot invent manufacturing command semantics (items 42-43).
 - **"Event Contracts Precede Twin Integration"**; Twin must be INTEGRATION_READY before serious operational RCA — "AI cannot create its own shadow manufacturing truth" (items 44, 46).
 - **"Counterfactual Planning Requires Snapshot/Fork"** — HARD (item 52).
 - **"AI Must Not Wait for Final Vision Accuracy"** — stable fixtures/baseline outputs permitted during development, but final AI evaluation must use real tool boundaries (items 59, 63).
@@ -9037,7 +9046,7 @@ sequenceDiagram
     Sim->>Sim: Telemetry drift, increased latent defect risk
     Sim->>Vis: InspectionRequest (artifact reference)
     Vis->>Vis: Inference (segmentation/classification/anomaly)
-    Vis-->>Core: InspectionResult, DefectDetected, DefectPatternDetected
+    Vis-->>Core: InspectionObservation, DefectDetected, DefectPatternDetected
     Core-->>Obs: canonical events (correlation_id assigned)
     Core->>Core: Quality Analytics: ExcursionSuspected → ExcursionConfirmed
     Core-->>Twin: canonical events applied (Twin revision advances)
@@ -9061,7 +9070,7 @@ sequenceDiagram
     Auto->>Core: IsolateMachineCommand
     Core->>Sim: validated isolation command
     Sim-->>Core: MachineIsolated (canonical event)
-    Auto->>Core: ActivateScheduleCommand
+    Auto->>Core: ActivateSchedule
     Core-->>Twin: ScheduleActivated (canonical event; active ScheduleVersion fact recorded — see Reconciliation R-002)
     Auto->>Core: CreateMaintenanceWorkOrder
     Auto->>Twin: verify outcome (post-conditions met)
@@ -9096,7 +9105,7 @@ sequenceDiagram
     Val-->>Sch: FEASIBLE
     Sch-->>Auto: ScheduleCandidate (no RecoveryPlan/incident needed — routine disruption)
     Auto->>Auto: Policy check: routine dispatch under bounded local repair = Level 2 eligible
-    Auto->>Core: ActivateScheduleCommand
+    Auto->>Core: ActivateSchedule
     Core-->>Twin: ScheduleActivated
 ```
 
@@ -9217,7 +9226,7 @@ sequenceDiagram
     Note over Sim: Every WHAT_IF_* world remains permanently isolated from PRIMARY;<br/>only the recommended candidate proceeds to Sequence A's<br/>approval/activation path against the PRIMARY world.
 ```
 
-This sequence is the concrete implementation of §"World Isolation": counterfactual worlds are read-only inputs to a decision about the primary world; none of them can become the primary world's state by any implicit mechanism — only an explicit `ActivateScheduleCommand` against `PRIMARY`, following its own approval, can do that.
+This sequence is the concrete implementation of §"World Isolation": counterfactual worlds are read-only inputs to a decision about the primary world; none of them can become the primary world's state by any implicit mechanism — only an explicit `ActivateSchedule` against `PRIMARY`, following its own approval, can do that.
 
 ### Sequence H — Digital Twin Rebuild
 
@@ -9304,8 +9313,8 @@ This register consolidates every genuine **Architecture Open Decision** distribu
 
 ### Recovery and Shared Host Resources (§"Recovery Architecture", §"Shared Host Resource Architecture")
 
-- **OD-REC-01 — Exact RPO/RTO values per Recovery Priority class.** Only the ≤24h RC-A design target (explicitly non-final) and the RP-1..RP-4 ordering are fixed; final numeric freeze belongs to Item 82.
-- **OD-RES-01 — Exact resource envelope numbers.** The exact numeric memory/CPU envelope per resource group, and the exact CP-SMALL/CP-NORMAL/CP-STRESS workload sizes, are unresolved by design in Item 51 (which freezes methodology and categories only); all numbers are deferred to Item 82.
+- **OD-REC-01 — Remaining RPO/RTO details per Recovery Priority class.** Item 82 `NFR-REC-001` normatively fixes ordinary-project canonical Integration mutable-data **RPO ≤ 24 hours**; this is not a non-final design target. Other explicitly specified Item 82 recovery obligations remain normative. Per-priority values not specified by the current catalog remain open; no additional RTO/RPO number is inferred (CTRL-DOC-005 / CHG-006).
+- **OD-RES-01 — Remaining resource-profile details.** Latest Item 82 controls the `WP-*` operational and `SP-*` scheduling workload namespaces. `NFR-RES-001` fixes the **16 GiB shared-host** mandatory-container `WP-NORMAL` budget at **p95 cgroup-accounted memory ≤ 12 GiB over 30 minutes**; `NFR-RES-002` fixes accepted short peaks at **≤ 14 GiB with no OOM**. These numbers are normative, not deferred. Exact per-resource-group CPU/memory details and HardwareProfile values not specified by the catalog remain open; no measurements or additional limits are fabricated (CTRL-DOC-005 / CHG-006).
 
 ### CI/CD and Testing (§"CI/CD Architecture Interface", §"Testing Architecture")
 
@@ -9387,3 +9396,21 @@ This pass touched only technology-product staleness, cross-reference mechanics, 
 ### Status
 
 With the fixes above applied, this document is internally consistent with respect to Item 61's technology decisions, free of authoring/assembly residue, and free of the specific contradiction and dangling-reference classes checked above. It is issued as **Approved architecture baseline, v1.0**.
+
+
+## Final human reconciliation — architecture and contract binding
+
+01 §Final Human Reconciliation is normative. Vision produces immutable EVT-InspectionObservation-v1; Core normalizes distinct IC-VIS-002 InspectionResult and alone owns canonical quality/manufacturing transitions. IC-VIS-001 and all prior stable IDs are preserved. PlaceLotOnHold / CMD-PlaceLotOnHold-v1 is the sole hold-placement identity; aliases in the 01 table are deprecated. ARCH-AUTO-WORKFLOW coordinates E2E/GS-01 under approved binding/freshness/effect verification, not canonical state authority. MC-2 accountability and the primary hardware profile are exactly those pinned in01.
+
+### Append-only component allocations (CHG-010)
+
+These are subcomponents of already-approved services/tooling, not new deployables, databases or authority domains. Items27/30/60/73/79 and the existing service catalog supply the responsibilities.
+
+| ID | Existing architectural home and ownership |
+|---|---|
+| ARCH-AI-ML | Predictive M1/M2/M3 training/inference/calibration within ai-intelligence-service; Asrın |
+| ARCH-AI-MLOPS | Model/data provenance and MLflow registry binding within existing AI/data tooling; Asrın semantics, Yavuz runtime |
+| ARCH-PLAT-EXPERIMENT | Experiment runner and BenchmarkRun accounting within existing CLI/evidence tooling; Yavuz |
+| ARCH-DATA-EVIDENCE | AnalysisPackage/evidence sealing/export on existing PostgreSQL/object artifacts; Asrın analysis, Yavuz infrastructure |
+| ARCH-SCH-EVAL | Scheduling evaluation harness within Scheduler tooling; Batu |
+| ARCH-VIS-DATA | DatasetVersion/SplitManifest and synthetic/real dataset pipeline within Vision tooling; Selman |

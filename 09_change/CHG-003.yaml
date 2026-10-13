@@ -1,0 +1,123 @@
+CHG-003:
+  title: DOC-INSPECTION
+  trigger: Current human reconciliation request and baseline audit
+  reason: InspectionObservation and InspectionResult overlap in perception authority;
+    transformation/acceptance contract unspecified.
+  class: C3
+  review_risk_class: CR-2
+  raised_in: null
+  affected_requirements:
+  - FR-VIS-009
+  - FR-VIS-016
+  - FR-UI-003
+  - NFR-DATA-005
+  affected_architecture: []
+  affected_contracts: []
+  affected_work_packages: []
+  affected_dependencies: []
+  affected_evidence:
+  - Documentation analysis only; no product evidence claimed
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+    - Existing setup evidence remains bound to its original source hashes, not current
+      documentation approval
+    rerun_required:
+    - Full projectctl tests
+    - Offline validation
+    - Documentation consistency audit
+  security_authority_impact: NONE — no authority, Oracle access, credentials or protected
+    execution changed
+  owner: Selman
+  reviewers: &id001 []
+  decision: APPROVED_WITH_CONDITIONS
+  conditions:
+  - Product/runtime/source acquisition evidence remains subject to its actual gates;
+    no product DONE/VERIFIED is inferred.
+  - Owner-approved development policy applies; genuine historical review and bounded
+    migration authorization remain separately attributed.
+  rollout: Local reconciliation branch only; no deployment/Plane synchronization/merge
+  rollback: Review and revert the atomic CTRL-DOC commit; do not rewrite history
+  required_rerun:
+  - Full projectctl tests
+  - Offline validation
+  - Source/trace consistency
+  - Diff and secret hygiene
+  documentation_updates:
+  - docs/01_Master_Project_Specification.md
+  - docs/02_System_Architecture_Specification.md
+  - docs/03_Requirements_Traceability_Matrix.md
+  - docs/05_Dependency_Graph.md
+  - docs/06B_Selman_Engineering_Roadmap.md
+  - docs/07_Milestone_and_Release_Plan.md
+  freeze_context: PRE_M6
+  status: UNDER_REVIEW
+  human_decision_basis:
+    request_sha256: 96ff255d4431a99a65ced71aa45136937acd7ae5917eaaca7fba764c23901da7
+    group: INSPECTION_CONTRACT_CANONICALIZATION
+    status: DECIDED
+    decision: Distinct immutable Vision InspectionObservation (existing EVT identity)
+      and normalized Core InspectionResult (IC-VIS-002).
+    rationale: Perception evidence is not canonical manufacturing acceptance.
+  source_derived_basis: 01 Items16/22/62/81/83; 02 IC-VIS-002 and canonical perception
+    facts
+  affected_stable_ids:
+  - RTF-023
+  - GAP-RTM-009
+  - IC-VIS-002
+  - FR-VIS-009
+  - FR-VIS-016
+  - FR-UI-003
+  - NFR-DATA-005
+  consumer_review_status: Historical Ejlonn review verified; current migration/closure
+    explicitly owner-authorized without additional review.
+  required_review_roles: One qualified independent reviewer for this normal-risk documentation
+    scope; two only for actual high-risk triggers in01/09; no mandatory all-owner/consumer
+    quorum.
+  application_control_item: CTRL-DOC-004
+  sprint_context: UNSPECIFIED; no calendar/sprint fabricated
+  proposal: Separate schemas and provenance-preserving normalization; never alias
+    observation and result.
+  continuation_CTRL_DOC_009:
+    class: C1
+    review_risk_class: CR-3
+    scope: Restore the source classification of the full candidate InspectionResult
+      field list; retain independently mandatory provenance. No field, contract identity,
+      alias, transformation, producer or authority chosen.
+    authority:
+    - '01 Item16 Structured InspectionResult: conceptual fields; exact schema later
+      finalized'
+    - '01 Item22 sections19/50: candidate fields; exact schemas during implementation
+      specification'
+    application_authority: Explicit final independent-work request authorizes deterministic
+      higher-source propagation on local reconciliation branch
+    decision: SOURCE_DERIVED_LABEL_CORRECTION_APPLIED; C3 identity decision still
+      DEFERRED
+    peer_review: NOT_EXECUTED; record remains UNDER_REVIEW
+    evidence_staleness: No product evidence exists for this label repair; full projectctl
+      suite and source/trace audit rerun; original evidence hashes remain historical
+  review_policy_migration:
+    authority: Explicit project-owner instruction14 October2026; PR#4 closure
+    previous_review_risk_class: CR-3
+    previous_reviewers: *id001
+    previous_consumer_review_status: NOT_EXECUTED
+    actual_high_risk_triggers: []
+    rationale: Scoped reconciliation of owner-approved documentation within retained
+      product authority; no auth/security runtime change, destructive migration, protected
+      execution or major authority transfer.
+    required_independent_approvals: 1
+    historical_review:
+      reviewer: Ejlonn
+      review_id: 5509773739
+      commit: 219439364757473c8450959a3af06bdc237cd439
+      state: APPROVED
+    policy_migration_review: 'No new review requested: bounded explicit owner authorization;
+      historical approval is not a new-head approval.'
+    previous_conditions:
+    - Explicit final human decision authorizes scoped documentation reconciliation;
+      independent qualified review/ratification remains required.
+    - No product/runtime readiness, source/license acquisition, peer approval or VERIFIED
+      state inferred.
+    previous_required_review_roles: 09 §7.3/7.4 according to declared risk; independent
+      research/data review for CR-4; independent critical review for CR-3

@@ -1,0 +1,289 @@
+{
+  "result": "DOCUMENTATION RECONCILIATION PARTIALLY COMPLETE",
+  "verdict": "NOT_READY_TO_IMPLEMENT",
+  "findings": [
+    {
+      "id": "RTF-001",
+      "disposition": "RESOLVED",
+      "basis": "04–09 exist and are source-hashed; obsolete missing-source rationale remains historical.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-002",
+      "disposition": "DEFERRED",
+      "basis": "Product16GiB feasibility needs actual runtime measurement; setup/Plane resource observations are not product proof.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-003",
+      "disposition": "RESOLVED",
+      "basis": "Exact approved identity replaces both active obsolete final branding occurrences; bounded research/automation meaning preserved.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-004",
+      "disposition": "PARTIALLY_RESOLVED",
+      "basis": "Planning authority chain is explicit and unchanged; production implementation/contract regression evidence remains future.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-005",
+      "disposition": "DEFERRED",
+      "basis": "Protected-action negative runtime suite not executed by documentation repair.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-006",
+      "disposition": "DEFERRED",
+      "basis": "Oracle isolation remains mandatory; product runtime negative proof remains future.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-007",
+      "disposition": "RESOLVED",
+      "basis": "Planning/evidence honesty preserved; registry delta distinguishes current records from historical empty snapshot and claims no VERIFIED/DONE.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-008",
+      "disposition": "DEFERRED",
+      "basis": "Research freeze/campaign/statistical integrity obligations remain future; no final results claimed.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-009",
+      "disposition": "DEFERRED",
+      "basis": "Original rights/export gates preserved; final acquisition/export manifests still needed.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-010",
+      "disposition": "STILL_OPEN",
+      "basis": "Owner capacity/cross-review pressure not measured; no WP redistribution invented.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-011",
+      "disposition": "RESOLVED",
+      "basis": "Two stripped Item43 blocks are identical;02 R-001 retains one logical item; no deletion.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-012",
+      "disposition": "DEFERRED",
+      "basis": "External-provider/model reproducibility controls need implementation/runtime evidence.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-013",
+      "disposition": "DEFERRED",
+      "basis": "Product restore/DR drill remains required; Plane PostgreSQL backup evidence is not manufacturing-platform restore proof.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-014",
+      "disposition": "DEFERRED",
+      "basis": "Final governed demo cannot be certified from prose or management setup.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-015",
+      "disposition": "PARTIALLY_RESOLVED",
+      "basis": "Canonical truth boundaries preserved; product implementations must still verify them.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-016",
+      "disposition": "DEFERRED",
+      "basis": "Technology/shared-host resource burden awaits product measurements.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-017",
+      "disposition": "STILL_OPEN",
+      "basis": "ScheduleValidator implementation independence remains a design/verification obligation; no product validator was built here.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-018",
+      "disposition": "DEFERRED",
+      "basis": "Effect verification remains mandatory; command/HTTP success is not proof.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-019",
+      "disposition": "STILL_OPEN",
+      "basis": "Precise trace specificity and catalog metadata confirmation remain outstanding; no umbrella evidence closure.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-020",
+      "disposition": "STILL_OPEN",
+      "basis": "System-level research claims still require complete sealed empirical evidence, not isolated component results.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-021",
+      "disposition": "RESOLVED",
+      "basis": "All identified active dataset physical-domain relabeling corrected; SECOM semiconductor process, WM/Mixed wafer maps; legacy methodological-only scope and rights gates explicit.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-022",
+      "disposition": "PARTIALLY_RESOLVED",
+      "basis": "LaneA/B/C and domain-relevant candidate directions explicit; exact approved real/public portfolio, DatasetCards/rights/splits/claims are not frozen.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-023",
+      "disposition": "REQUIRES_HUMAN_DECISION",
+      "basis": "INSPECTION_CONTRACT_CANONICALIZATION: one contract/alias vs two artifacts plus transformation, acceptance and schema freeze.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-024",
+      "disposition": "REQUIRES_HUMAN_DECISION",
+      "basis": "PROTECTED_COMMAND_NAMING: exact hold/isolation/maintenance identities, payloads and approval/idempotency binding; only existing R-003 schedule alias is deterministic.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-025",
+      "disposition": "REQUIRES_HUMAN_DECISION",
+      "basis": "Owner-reviewed append-only ML/MLOps ARCH allocations required; no new architectural home/IDs invented.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-026",
+      "disposition": "REQUIRES_HUMAN_DECISION",
+      "basis": "Owner-reviewed runner/evidence/harness/Vision-data ARCH allocations required; no service or infrastructure added.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-027",
+      "disposition": "REQUIRES_HUMAN_DECISION",
+      "basis": "MC2_OWNER remains unassigned; not inferred from WP or ChangeRequest accountability.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-028",
+      "disposition": "REQUIRES_HUMAN_DECISION",
+      "basis": "Accepted CPU/Vision/developer HardwareProfiles must be pinned with release/environment/resource/workload identity; no measured values invented.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-029",
+      "disposition": "REQUIRES_HUMAN_DECISION",
+      "basis": "E2E_COORDINATOR remains unnamed; scenario/evidence owners do not uniquely decide run coordination.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-030",
+      "disposition": "RESOLVED",
+      "basis": "Stale OD values repaired from01;120 actual architecture NFR identities/classes;7 missing GOV rows,9 declared owners and Simulator source citation restored.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-031",
+      "disposition": "RESOLVED",
+      "basis": "Current tracked tools/ops/.github code/config scan finds no legacy fab deployable identifiers; product services are absent, so no deployment migration claimed.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    },
+    {
+      "id": "RTF-032",
+      "disposition": "RESOLVED",
+      "basis": "Historical review correction preserved; new source-bound delta does not confuse future runtime obligations with current documentation closure.",
+      "scope": "Documentation predicate evaluation only; no independent peer approval, product completion or executed runtime proof inferred"
+    }
+  ],
+  "pending_human_decisions": [
+    {
+      "id": "INSPECTION_CONTRACT_CANONICALIZATION",
+      "sources": [
+        "01 Items16/22/62/81/83",
+        "02 IC-VIS-002 / serving / canonical perception facts",
+        "GAP-RTM-009",
+        "RTF-023"
+      ],
+      "decision": "Freeze observation/result meaning, one-vs-two contract model, transformation/acceptance authority, API/event/schema identities. Item16 conceptual fields vs02 mandatory wording remains unresolved."
+    },
+    {
+      "id": "PROTECTED_COMMAND_NAMING",
+      "sources": [
+        "01 Items15/34/66/83",
+        "02 R-003/Core commands/ActionCatalog",
+        "GAP-RTM-010",
+        "RTF-024"
+      ],
+      "decision": "Freeze hold/isolation/maintenance canonical identities and payload/approval/idempotency bindings; do not alias DispatchLot or ReleaseLot to ActivateSchedule."
+    },
+    {
+      "id": "ARCHITECTURE_ANCHOR_ALLOCATION",
+      "sources": [
+        "GAP-RTM-001/002/003",
+        "RTF-025/026"
+      ],
+      "decision": "Approve exact append-only allocations for ML/MLOps, experiment runner/evidence, scheduler evaluation harness, Vision dataset pipeline under existing architecture."
+    },
+    {
+      "id": "DEPENDENCY_CONSUMER_SEMANTICS",
+      "sources": [
+        "01 Item66",
+        "05 DN-VIS-MODELS / DEP-060 / DEP-194 / DEP-RULE-04/06 / §23"
+      ],
+      "decision": "Resolve2 ladder mismatches,5 non-CONTRACT F1 declarations,179 null HARD consumer precision records and29 ambiguous need-by expressions. Source general null justification does not certify exact artifact/field needs."
+    },
+    {
+      "id": "MC2_OWNER",
+      "sources": [
+        "GAP-RTM-020",
+        "RTF-027",
+        "01 research responsibilities"
+      ],
+      "decision": "Assign the accountable MC-2 research owner without changing canonical WP ownership."
+    },
+    {
+      "id": "HARDWARE_PROFILE_PINNING",
+      "sources": [
+        "GAP-RTM-021",
+        "RTF-028",
+        "07 F4",
+        "08 measurement identity"
+      ],
+      "decision": "Approve actual CPU/final Vision/developer profiles before measurement freeze; no performance results inferred."
+    },
+    {
+      "id": "E2E_COORDINATOR",
+      "sources": [
+        "01 Item67",
+        "DEP-GAP-13",
+        "PLAN-GAP-04",
+        "RTF-029"
+      ],
+      "decision": "Name one formal run coordinator, preserving scenario/evidence/semantic authority boundaries."
+    },
+    {
+      "id": "REAL_PUBLIC_PORTFOLIO_SELECTION",
+      "sources": [
+        "01 Item55 CHG-002",
+        "RTF-022"
+      ],
+      "decision": "Select exact domain-relevant DatasetSourceRecords/Cards, versions, rights, partitions and bounded claims; optional cross-domain materials need explicit methodological justification."
+    },
+    {
+      "id": "SOURCE_METADATA_AND_CITATION_CONFIRMATION",
+      "sources": [
+        "GAP-RTM-004/005/006",
+        "CTRL-DOC-006-citation-audit.json"
+      ],
+      "decision": "Owners confirm missing canonical fields and trace projections, and identify semantic targets for remaining line-only citations; preserve nulls/unknown evidence until then."
+    },
+    {
+      "id": "CHANGE_CONTROL_PEER_REVIEW",
+      "sources": [
+        "09 §7/8",
+        "09_change/CHG-001…016"
+      ],
+      "decision": "Complete required independent reviews/ratification and normal merge gates; current user policy is branch-application authority, not fabricated peer acceptance."
+    }
+  ]
+}

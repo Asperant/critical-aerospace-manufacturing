@@ -1,0 +1,86 @@
+{
+  "control_item": "CTRL-DOC-002",
+  "test_command": "PYTHONPATH=tools/projectctl/src python -m pytest tools/projectctl/tests -q",
+  "test_result": "........................................................................ [ 50%]\n........................................................................ [100%]\n144 passed in 62.15s (0:01:02)",
+  "validation_result": "PASS",
+  "observed_invariants": {
+    "source": "docs/04_Work_Breakdown_Structure.md",
+    "parser": "offline-project-v1",
+    "execution_status": "UNAVAILABLE (documentation only)",
+    "wp_count": 179,
+    "owner_distribution": {
+      "Asrın Dündar": 73,
+      "Batuhan Kaya": 32,
+      "Selman Özdemir": 17,
+      "Yavuz Gümüş": 57
+    },
+    "capability_count": 29,
+    "validation": "PASS",
+    "cycle_count": 13,
+    "milestone_count": 9,
+    "scheduled_wp_count": 174,
+    "unscheduled_wp_ids": [
+      "WP-R2-001",
+      "WP-R2-002",
+      "WP-R2-003",
+      "WP-S-001",
+      "WP-X-001"
+    ],
+    "dependency_node_count": 100,
+    "dependency_edge_count": 217,
+    "hard_edge_count": 208,
+    "soft_edge_count": 9,
+    "hard_cycle_count": 0,
+    "requirement_count": 306,
+    "fr_count": 186,
+    "nfr_count": 120,
+    "class_counts": {
+      "F0": 17,
+      "F1": 159,
+      "R1": 10,
+      "A1": 41,
+      "S2": 23,
+      "C3": 4,
+      "H0": 52
+    },
+    "diagnostic_counts": {
+      "FIXTURE_SEMANTICS": 5,
+      "NEED_BY_AMBIGUOUS": 29,
+      "NFR_METADATA_MISSING": 120,
+      "PRECISION_MISSING": 179,
+      "READINESS_INCOMPATIBLE": 2,
+      "REQUIREMENT_FIELDS_MISSING": 306,
+      "STALE_CITATION": 306
+    }
+  },
+  "semantic_model_sha256": "412aec44223838fdeb149c706c855f212501c78e7660f8a35a61e9703b6e608f",
+  "semantic_model_unchanged": true,
+  "canonical_source_manifest": {
+    "docs/00_Downstream_Artifact_Production_Guide.md": "b2b7955b4c24a9f6cf605c049e136bf0274cc4e0b15cfbddf6d6bf4e0ee2ee3e",
+    "docs/01_Master_Project_Specification.md": "ed9793fb12e7c19bc120e239988289038fd90e8c46ba61b62ecd391a5e211714",
+    "docs/02_System_Architecture_Specification.md": "4e045f77f02388e972f0ed6eb490309756844d37366666eb23e04c9b40d728bf",
+    "docs/03_Requirements_Traceability_Matrix.md": "e58e635cacc96f3341b7cb13f54676d3793b82d63cd394d9c260973f23817375",
+    "docs/04_Work_Breakdown_Structure.md": "1f9c2ff532cacac70ff5099a1ff6e4e09d25be990dcbca2071e59e0fa03ed8ac",
+    "docs/05_Dependency_Graph.md": "c693a9b953458d0bcc2be4b2c9fdb4d19d6f21e7ebf8aca8e0fb49be08db30d1",
+    "docs/06A_Asrin_Engineering_Roadmap.md": "4034fbc467766dcaf59aab274bcb6ec2ee944f6c311444f079f589029dc8c92c",
+    "docs/06B_Selman_Engineering_Roadmap.md": "92801ffe6782ec55a096482db1f578b1d75c41278c269ef8c56aaf97e23da2ea",
+    "docs/06C_Batu_Engineering_Roadmap.md": "f12f21dd91c1487c556bd5cbbe24a52fdbda03f9add8d8009463e74cb95f5d2e",
+    "docs/06D_Yavuz_Engineering_Roadmap.md": "a70a3c28b458ccab65e4305675f962b9b6eeb4e84cba4e94e2da53a74d81a961",
+    "docs/07_Milestone_and_Release_Plan.md": "f06243f0e0773b4ebce39b509c6e807bacf698690e8f311d6091087db83272bf",
+    "docs/08_Definition_of_Ready_and_Done.md": "9b4e00c9666c07a2bf83962a36e5741fbfc6a80fa72a0a9c5341f84f63a62005",
+    "docs/09_Change_Control_Process.md": "e6380561b80bd345ba72b9901f19c7c1cfaa5627054a40d219737cfc3a8569cb",
+    "docs/10_Pre_Implementation_Red_Team_Review.md": "f2edeaacbab1d5d20e36bfaab6da3583bcd419bb0f23651e7725e84406b6be63"
+  },
+  "exact_requirement_citation_valid_count": 0,
+  "git_diff_check": "PASS",
+  "secret_and_generated_file_check": "PASS",
+  "files_in_scope": [
+    "docs/01_Master_Project_Specification.md",
+    "docs/02_System_Architecture_Specification.md"
+  ],
+  "plane_reads": 0,
+  "plane_mutations": 0,
+  "github_mutations": 0,
+  "network_mutations": 0,
+  "review_status": "Local branch verification only; no peer approval, merge or runtime acceptance claimed"
+}

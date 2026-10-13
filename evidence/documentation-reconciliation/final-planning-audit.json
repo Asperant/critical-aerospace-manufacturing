@@ -1,0 +1,2802 @@
+{
+  "forbidden_hard_rules": [
+    {
+      "id": "NDEP-01",
+      "source_row": "| NDEP-01 | Vision model training | Full Simulator | #156; DEP-INV-12 | DN-SIM-COREINT ↛ DN-VIS-MODELS | absent ✓ |",
+      "violations": [],
+      "result": "PASS"
+    },
+    {
+      "id": "NDEP-02",
+      "source_row": "| NDEP-02 | Simulator | AI | #157 | DN-AI-RCA ↛ DN-SIM-KERNEL | absent ✓ |",
+      "violations": [],
+      "result": "PASS"
+    },
+    {
+      "id": "NDEP-03",
+      "source_row": "| NDEP-03 | Scheduler | LLM / AI | #158; DEP-INV-14 | DN-AI-RCA ↛ DN-SCH-DYN | allowed as SOFT: DEP-089 |",
+      "violations": [],
+      "result": "PASS"
+    },
+    {
+      "id": "NDEP-04",
+      "source_row": "| NDEP-04 | Automation testing | AI | #159; DEP-INV-15 | DN-AI-RCA ↛ DN-AUTO-EXEC | allowed as SOFT: DEP-104 |",
+      "violations": [],
+      "result": "PASS"
+    },
+    {
+      "id": "NDEP-05",
+      "source_row": "| NDEP-05 | AI (start) | Final Vision model | #160; DEP-INV-13 | DN-VIS-MODELS ↛ DN-AI-ORCH | absent ✓ |",
+      "violations": [],
+      "result": "PASS"
+    },
+    {
+      "id": "NDEP-06",
+      "source_row": "| NDEP-06 | Platform | Final application logic | #161 | DN-AI-RCA ↛ DN-PLAT-INTEG | absent ✓ |",
+      "violations": [],
+      "result": "PASS"
+    },
+    {
+      "id": "NDEP-07",
+      "source_row": "| NDEP-07 | Frontend | Completed backend | #162 | DN-CORE-CMDEXEC ↛ DN-UI-SHELL | absent ✓ |",
+      "violations": [],
+      "result": "PASS"
+    },
+    {
+      "id": "NDEP-08",
+      "source_row": "| NDEP-08 | Core product | Public dataset availability | #123, #163; DEP-INV-19 | DN-VIS-PUBLIC ↛ DN-VIS-SERVING | absent ✓ |",
+      "violations": [],
+      "result": "PASS"
+    },
+    {
+      "id": "NDEP-09",
+      "source_row": "| NDEP-09 | Core product | ColBERT | #164; DEP-INV-20 | (ColBERT, R2 — not a node) ↛ DN-RAG | absent ✓ |",
+      "violations": [],
+      "result": "PASS"
+    },
+    {
+      "id": "NDEP-10",
+      "source_row": "| NDEP-10 | Core product | Paid LLM/API | #127–#129, #165 | (paid provider) ↛ DN-AI-RCA | absent ✓ |",
+      "violations": [],
+      "result": "PASS"
+    },
+    {
+      "id": "NDEP-11",
+      "source_row": "| NDEP-11 | Integration runtime | Kubernetes | #166; Item 68 X-293 | (Kubernetes) ↛ DN-PLAT-INTEG | absent ✓ |",
+      "violations": [],
+      "result": "PASS"
+    },
+    {
+      "id": "NDEP-12",
+      "source_row": "| NDEP-12 | Simulator | Predictive ML (direction is Simulator/Data → ML) | #50 | DN-ML ↛ DN-SIM-KERNEL | absent ✓ |",
+      "violations": [],
+      "result": "PASS"
+    },
+    {
+      "id": "NDEP-13",
+      "source_row": "| NDEP-13 | AI Orchestrator (start) | RAG | #66 | DN-RAG ↛ DN-AI-ORCH | absent ✓ |",
+      "violations": [],
+      "result": "PASS"
+    },
+    {
+      "id": "NDEP-14",
+      "source_row": "| NDEP-14 | Any operational service | Oracle Data Plane | 02 Runtime Dependency Model | DN-SIM-ORACLE ↛ (any operational node) | absent ✓ |",
+      "violations": [],
+      "result": "PASS"
+    }
+  ],
+  "oracle_checkpoint_exception": "DEP-187 gates CK-E2E01 isolation proof; not operational Oracle input",
+  "architecture_nfr_rows": 120,
+  "architecture_class_agreement": "PASS",
+  "diagnostics_preserved": [
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: M0→M1",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-002",
+        "line_start": 1210,
+        "line_end": 1220,
+        "raw_context": "DEP-002:\n  predecessor: {node: DN-PLAT-REPO, owner: \"Yavuz\"}\n  successor: {node: DN-PLAT-CD, owner: \"Yavuz\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: INTEGRATION_READY}\n  need_by: \"M0→M1\"   # sprint 1\n  fallback: null\n  unblock_evidence: \"CI builds immutable images to GHCR\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #94, #96\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-002"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: M4/M5",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-014",
+        "line_start": 1342,
+        "line_end": 1352,
+        "raw_context": "DEP-014:\n  predecessor: {node: DN-PLAT-INTEG, owner: \"Yavuz\"}\n  successor: {node: DN-RT-MLFLOW, owner: \"Yavuz\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4/M5\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"runtime healthy on shared host + smoke check in CI/INTEGRATION\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #38\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-014"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: — (R2/S)",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-015",
+        "line_start": 1353,
+        "line_end": 1363,
+        "raw_context": "DEP-015:\n  predecessor: {node: DN-PLAT-INTEG, owner: \"Yavuz\"}\n  successor: {node: DN-RT-VALKEY, owner: \"Yavuz\"}\n  semantics: {kind: RUNTIME, strength: SOFT, blocking_stage: INTEGRATION, required_readiness: SKELETON_READY}\n  need_by: \"— (R2/S)\"   # sprint n/a\n  fallback: F3\n  unblock_evidence: \"—\"\n  precise_requirement: \"never correctness-bearing\"\n  risk_class: DR-6\n  source: \"Item 68 #238; 02 R-008\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-015"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: S1–S2",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-018",
+        "line_start": 1512,
+        "line_end": 1522,
+        "raw_context": "DEP-018:\n  predecessor: {node: DN-CORE-CONTRACTS, owner: \"Asrın\"}\n  successor: {node: DN-CORE-LIFECYCLE, owner: \"Asrın\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: START, required_readiness: CONTRACT_READY}\n  need_by: \"S1–S2\"   # sprint 2\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #39\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-018"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: S2–S3",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-020",
+        "line_start": 1534,
+        "line_end": 1544,
+        "raw_context": "DEP-020:\n  predecessor: {node: DN-CORE-LIFECYCLE, owner: \"Asrın\"}\n  successor: {node: DN-CORE-TRANSITIONS, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S2–S3\"   # sprint 3\n  fallback: null\n  unblock_evidence: \"lifecycle component tests green\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #41\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-020"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: S1–S2",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-021",
+        "line_start": 1545,
+        "line_end": 1555,
+        "raw_context": "DEP-021:\n  predecessor: {node: DN-CORE-CONTRACTS, owner: \"Asrın\"}\n  successor: {node: DN-EVT-CONTRACTS, owner: \"Asrın\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: START, required_readiness: CONTRACT_READY}\n  need_by: \"S1–S2\"   # sprint 2\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #44; Item 22\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-021"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: S2–S3",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-027",
+        "line_start": 1611,
+        "line_end": 1621,
+        "raw_context": "DEP-027:\n  predecessor: {node: DN-CORE-CMDCON, owner: \"Asrın\"}\n  successor: {node: DN-CORE-CMDEXEC, owner: \"Asrın\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: START, required_readiness: CONTRACT_READY}\n  need_by: \"S2–S3\"   # sprint 3\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-2\n  source: \"Item 66 #42\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-027"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: S3–S4",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-048",
+        "line_start": 1847,
+        "line_end": 1857,
+        "raw_context": "DEP-048:\n  predecessor: {node: DN-SIM-OPSEM, owner: \"Batu\"}\n  successor: {node: DN-SIM-SYNTH, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S3–S4\"   # sprint 4\n  fallback: F4\n  unblock_evidence: \"ScenarioInstances generated with versioned ScenarioVersion/SeedSet\"\n  precise_requirement: null\n  risk_class: DR-4\n  source: \"Item 66 #49\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-048"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: M5→M6",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-049",
+        "line_start": 1858,
+        "line_end": 1868,
+        "raw_context": "DEP-049:\n  predecessor: {node: DN-SIM-OPSEM, owner: \"Batu\"}\n  successor: {node: DN-SIM-REALISM, owner: \"Batu\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M5→M6\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"RealismReport RL-3 target recorded\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #54, #87\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-049"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: S2–S4",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-050",
+        "line_start": 1874,
+        "line_end": 1884,
+        "raw_context": "DEP-050:\n  predecessor: {node: DN-VIS-PUBLIC, owner: \"Selman\"}\n  successor: {node: DN-VIS-SPLIT, owner: \"Selman\"}\n  semantics: {kind: DATA, strength: SOFT, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S2–S4\"   # sprint 4\n  fallback: F4\n  unblock_evidence: \"rights/version recorded; else synthetic path proceeds\"\n  precise_requirement: \"public data SOFT for product, HARD for public-benchmark claim\"\n  risk_class: DR-5\n  source: \"Item 66 #55, #124, #163\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-050"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: S2–S3",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-051",
+        "line_start": 1885,
+        "line_end": 1895,
+        "raw_context": "DEP-051:\n  predecessor: {node: DN-VIS-SYNTH, owner: \"Selman\"}\n  successor: {node: DN-VIS-SPLIT, owner: \"Selman\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S2–S3\"   # sprint 3\n  fallback: null\n  unblock_evidence: \"versioned synthetic DatasetVersion\"\n  precise_requirement: null\n  risk_class: DR-4\n  source: \"Item 66 #55; Item 68 #59\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-051"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: M4/M5",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-055",
+        "line_start": 1929,
+        "line_end": 1939,
+        "raw_context": "DEP-055:\n  predecessor: {node: DN-RT-MLFLOW, owner: \"Yavuz\"}\n  successor: {node: DN-VIS-MODELS, owner: \"Selman\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4/M5\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"ModelPackage promotion recorded in MLflow + artifact store\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #38\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-055"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: S3–S4",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-061",
+        "line_start": 1995,
+        "line_end": 2005,
+        "raw_context": "DEP-061:\n  predecessor: {node: DN-VIS-ARTCON, owner: \"Selman\"}\n  successor: {node: DN-VIS-OBSCON, owner: \"Selman\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: START, required_readiness: CONTRACT_READY}\n  need_by: \"S3–S4\"   # sprint 4\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #58, #117\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-061"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: S2–S3",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-064",
+        "line_start": 2033,
+        "line_end": 2043,
+        "raw_context": "DEP-064:\n  predecessor: {node: DN-AI-TOOLCON, owner: \"Asrın\"}\n  successor: {node: DN-AI-ORCH, owner: \"Asrın\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: START, required_readiness: CONTRACT_READY}\n  need_by: \"S2–S3\"   # sprint 3\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #62\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-064"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: S3–S4",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-070",
+        "line_start": 2099,
+        "line_end": 2109,
+        "raw_context": "DEP-070:\n  predecessor: {node: DN-RAG-CORPUS, owner: \"Asrın\"}\n  successor: {node: DN-RAG, owner: \"Asrın\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S3–S4\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"versioned CorpusVersion ingested\"\n  precise_requirement: null\n  risk_class: DR-4\n  source: \"Item 66 #65\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-070"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: M4/M5",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-072",
+        "line_start": 2121,
+        "line_end": 2131,
+        "raw_context": "DEP-072:\n  predecessor: {node: DN-RAG, owner: \"Asrın\"}\n  successor: {node: DN-AI-RCA, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4/M5\"   # sprint 8\n  fallback: F3\n  unblock_evidence: \"full RCA configuration uses RAG with citations\"\n  precise_requirement: \"NOT a START dependency for orchestrator (#66)\"\n  risk_class: DR-1\n  source: \"Item 66 #66, #67\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-072"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: M4/M5",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-075",
+        "line_start": 2154,
+        "line_end": 2164,
+        "raw_context": "DEP-075:\n  predecessor: {node: DN-RT-MLFLOW, owner: \"Yavuz\"}\n  successor: {node: DN-ML, owner: \"Asrın\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4/M5\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"ML ModelPackage governance in MLflow\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #38\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-075"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: S3–S4",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-076",
+        "line_start": 2165,
+        "line_end": 2175,
+        "raw_context": "DEP-076:\n  predecessor: {node: DN-HITL-POLICY, owner: \"Asrın\"}\n  successor: {node: DN-AI-ACTCON, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S3–S4\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"risk class/approval requirement defined per action\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #69, #78\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-076"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: S5–S8",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-085",
+        "line_start": 2269,
+        "line_end": 2279,
+        "raw_context": "DEP-085:\n  predecessor: {node: DN-SCH-HEUR, owner: \"Batu\"}\n  successor: {node: DN-SCH-CPSAT, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: SOFT, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S5–S8\"   # sprint 8\n  fallback: F2\n  unblock_evidence: \"baseline comparison harness available\"\n  precise_requirement: \"OR-Tools not mandatory for E2E-01 (Item 67 #112)\"\n  risk_class: DR-1\n  source: \"Item 66 #132\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-085"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: S1–S2",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-105",
+        "line_start": 2499,
+        "line_end": 2509,
+        "raw_context": "DEP-105:\n  predecessor: {node: DN-UI-BFFCON, owner: \"Asrın\"}\n  successor: {node: DN-UI-SHELL, owner: \"Asrın\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: START, required_readiness: CONTRACT_READY}\n  need_by: \"S1–S2\"   # sprint 2\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published (OpenAPI + fixtures)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #121, #162\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-105"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: M6→M7",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-118",
+        "line_start": 1485,
+        "line_end": 1495,
+        "raw_context": "DEP-118:\n  predecessor: {node: DN-ART-RELEASE, owner: \"Yavuz\"}\n  successor: {node: DN-PLAT-CLEANREPRO, owner: \"Yavuz\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: FROZEN}\n  need_by: \"M6→M7\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"clean-host deploy of exact manifest PASS\"\n  precise_requirement: null\n  risk_class: DR-10\n  source: \"Item 66 #112\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-118"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: M6→M7",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-119",
+        "line_start": 1496,
+        "line_end": 1506,
+        "raw_context": "DEP-119:\n  predecessor: {node: DN-ART-HWPROF, owner: \"Yavuz\"}\n  successor: {node: DN-PLAT-CLEANREPRO, owner: \"Yavuz\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: FROZEN}\n  need_by: \"M6→M7\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"HardwareProfile recorded for reproduction host\"\n  precise_requirement: null\n  risk_class: DR-10\n  source: \"Item 66 #112\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-119"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: M5→M6",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-127",
+        "line_start": 2625,
+        "line_end": 2635,
+        "raw_context": "DEP-127:\n  predecessor: {node: DN-RES-HARNESS, owner: \"Yavuz\"}\n  successor: {node: DN-RES-CALIB, owner: \"Asrın\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M5→M6\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"calibration on CAL partition recorded\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #83–#84\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-127"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: M5→M6",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-128",
+        "line_start": 2636,
+        "line_end": 2646,
+        "raw_context": "DEP-128:\n  predecessor: {node: DN-RES-BASELINES, owner: \"Asrın\"}\n  successor: {node: DN-RES-CALIB, owner: \"Asrın\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M5→M6\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"baselines precede calibration (HARD)\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #83\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-128"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: M7→M8",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-145",
+        "line_start": 2823,
+        "line_end": 2833,
+        "raw_context": "DEP-145:\n  predecessor: {node: DN-RES-ANALYSIS, owner: \"Asrın\"}\n  successor: {node: DN-RES-CLAIMS, owner: \"Asrın\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: FROZEN}\n  need_by: \"M7→M8\"   # sprint 12\n  fallback: null\n  unblock_evidence: \"claims classified from sealed analysis (#93)\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #93; DEP-INV-23\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-145"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: M5→M6",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-146",
+        "line_start": 2834,
+        "line_end": 2844,
+        "raw_context": "DEP-146:\n  predecessor: {node: DN-RAG, owner: \"Asrın\"}\n  successor: {node: DN-FRZ-RQ1CORPUS, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M5→M6\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"RetrievalProfile evaluated\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #167 (M5 EVALUATION_READY)\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-146"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: M5→M6",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-147",
+        "line_start": 2845,
+        "line_end": 2855,
+        "raw_context": "DEP-147:\n  predecessor: {node: DN-HITL-POLICY, owner: \"Asrın\"}\n  successor: {node: DN-FRZ-RQ3AUTH, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M5→M6\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"authority policy stable for scenario set\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #90\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-147"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: M5→M6",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-148",
+        "line_start": 2856,
+        "line_end": 2866,
+        "raw_context": "DEP-148:\n  predecessor: {node: DN-VIS-SPLIT, owner: \"Selman\"}\n  successor: {node: DN-FRZ-RQ4SPLIT, owner: \"Selman\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M5→M6\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"split validated for leakage\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #88\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-148"
+    },
+    {
+      "code": "NEED_BY_AMBIGUOUS",
+      "severity": "WARNING",
+      "message": "Unresolved need-by expression retained: M5→M6",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-149",
+        "line_start": 2867,
+        "line_end": 2877,
+        "raw_context": "DEP-149:\n  predecessor: {node: DN-SIM-SYNTH, owner: \"Batu\"}\n  successor: {node: DN-FRZ-SCENSET, owner: \"Batu\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M5→M6\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"scenario families evaluation-ready\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 board\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-149"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-002",
+        "line_start": 1210,
+        "line_end": 1220,
+        "raw_context": "DEP-002:\n  predecessor: {node: DN-PLAT-REPO, owner: \"Yavuz\"}\n  successor: {node: DN-PLAT-CD, owner: \"Yavuz\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: INTEGRATION_READY}\n  need_by: \"M0→M1\"   # sprint 1\n  fallback: null\n  unblock_evidence: \"CI builds immutable images to GHCR\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #94, #96\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-002"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-003",
+        "line_start": 1221,
+        "line_end": 1231,
+        "raw_context": "DEP-003:\n  predecessor: {node: DN-PLAT-TOOLING, owner: \"Yavuz\"}\n  successor: {node: DN-PLAT-COMPOSE, owner: \"Yavuz\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: SKELETON_READY}\n  need_by: \"M0 (S1)\"   # sprint 1\n  fallback: null\n  unblock_evidence: \"`mfgctl bootstrap/doctor` runs on dev host\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #94; Item 74\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-003"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-005",
+        "line_start": 1243,
+        "line_end": 1253,
+        "raw_context": "DEP-005:\n  predecessor: {node: DN-PLAT-INTEG, owner: \"Yavuz\"}\n  successor: {node: DN-PLAT-CD, owner: \"Yavuz\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"runtime healthy on shared host + smoke check in CI/INTEGRATION\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #96\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-005"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-007",
+        "line_start": 1265,
+        "line_end": 1275,
+        "raw_context": "DEP-007:\n  predecessor: {node: DN-PLAT-INTEG, owner: \"Yavuz\"}\n  successor: {node: DN-RT-PG, owner: \"Yavuz\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"runtime healthy on shared host + smoke check in CI/INTEGRATION\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #31\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-007"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-008",
+        "line_start": 1276,
+        "line_end": 1286,
+        "raw_context": "DEP-008:\n  predecessor: {node: DN-PLAT-INTEG, owner: \"Yavuz\"}\n  successor: {node: DN-RT-NATS, owner: \"Yavuz\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"runtime healthy on shared host + smoke check in CI/INTEGRATION\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #32\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-008"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-009",
+        "line_start": 1287,
+        "line_end": 1297,
+        "raw_context": "DEP-009:\n  predecessor: {node: DN-PLAT-INTEG, owner: \"Yavuz\"}\n  successor: {node: DN-RT-OBJ, owner: \"Yavuz\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 readiness (end S4)\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"runtime healthy on shared host + smoke check in CI/INTEGRATION\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #33; Item 67 readiness table\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-009"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-010",
+        "line_start": 1298,
+        "line_end": 1308,
+        "raw_context": "DEP-010:\n  predecessor: {node: DN-PLAT-INTEG, owner: \"Yavuz\"}\n  successor: {node: DN-RT-IDP, owner: \"Yavuz\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 readiness (end S4)\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"Keycloak realm/clients deployed; real login works\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #34; Item 67 readiness table\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-010"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-012",
+        "line_start": 1320,
+        "line_end": 1330,
+        "raw_context": "DEP-012:\n  predecessor: {node: DN-PLAT-INTEG, owner: \"Yavuz\"}\n  successor: {node: DN-RT-TEMPORAL, owner: \"Yavuz\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 formal run (end S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"runtime healthy on shared host + smoke check in CI/INTEGRATION\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #36; Item 67 readiness table\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-012"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-013",
+        "line_start": 1331,
+        "line_end": 1341,
+        "raw_context": "DEP-013:\n  predecessor: {node: DN-PLAT-INTEG, owner: \"Yavuz\"}\n  successor: {node: DN-RT-QDRANT, owner: \"Yavuz\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"runtime healthy on shared host + smoke check in CI/INTEGRATION\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #37, #167\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-013"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-014",
+        "line_start": 1342,
+        "line_end": 1352,
+        "raw_context": "DEP-014:\n  predecessor: {node: DN-PLAT-INTEG, owner: \"Yavuz\"}\n  successor: {node: DN-RT-MLFLOW, owner: \"Yavuz\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4/M5\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"runtime healthy on shared host + smoke check in CI/INTEGRATION\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #38\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-014"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-016",
+        "line_start": 1364,
+        "line_end": 1374,
+        "raw_context": "DEP-016:\n  predecessor: {node: DN-RT-IDP, owner: \"Yavuz\"}\n  successor: {node: DN-SEC-BASE, owner: \"Yavuz\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"service identities issued; anonymous mutation rejected\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #34; Item 48\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-016"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-017",
+        "line_start": 1375,
+        "line_end": 1385,
+        "raw_context": "DEP-017:\n  predecessor: {node: DN-PLAT-CD, owner: \"Yavuz\"}\n  successor: {node: DN-SEC-BASE, owner: \"Yavuz\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"non-Git secret sourcing in deploy path\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 48–49\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-017"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-018",
+        "line_start": 1512,
+        "line_end": 1522,
+        "raw_context": "DEP-018:\n  predecessor: {node: DN-CORE-CONTRACTS, owner: \"Asrın\"}\n  successor: {node: DN-CORE-LIFECYCLE, owner: \"Asrın\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: START, required_readiness: CONTRACT_READY}\n  need_by: \"S1–S2\"   # sprint 2\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #39\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-018"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-019",
+        "line_start": 1523,
+        "line_end": 1533,
+        "raw_context": "DEP-019:\n  predecessor: {node: DN-RT-PG, owner: \"Yavuz\"}\n  successor: {node: DN-CORE-LIFECYCLE, owner: \"Asrın\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: INTEGRATION, required_readiness: SKELETON_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"Core migrations apply on PostgreSQL\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #31, #96\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-019"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-020",
+        "line_start": 1534,
+        "line_end": 1544,
+        "raw_context": "DEP-020:\n  predecessor: {node: DN-CORE-LIFECYCLE, owner: \"Asrın\"}\n  successor: {node: DN-CORE-TRANSITIONS, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S2–S3\"   # sprint 3\n  fallback: null\n  unblock_evidence: \"lifecycle component tests green\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #41\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-020"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-021",
+        "line_start": 1545,
+        "line_end": 1555,
+        "raw_context": "DEP-021:\n  predecessor: {node: DN-CORE-CONTRACTS, owner: \"Asrın\"}\n  successor: {node: DN-EVT-CONTRACTS, owner: \"Asrın\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: START, required_readiness: CONTRACT_READY}\n  need_by: \"S1–S2\"   # sprint 2\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #44; Item 22\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-021"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-022",
+        "line_start": 1556,
+        "line_end": 1566,
+        "raw_context": "DEP-022:\n  predecessor: {node: DN-CORE-LIFECYCLE, owner: \"Asrın\"}\n  successor: {node: DN-CORE-OUTBOX, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: COMPONENT_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"atomic mutation+outbox test on real PostgreSQL\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #96\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-022"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-023",
+        "line_start": 1567,
+        "line_end": 1577,
+        "raw_context": "DEP-023:\n  predecessor: {node: DN-EVT-CONTRACTS, owner: \"Asrın\"}\n  successor: {node: DN-EVT-SPINE, owner: \"Asrın\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: INTEGRATION, required_readiness: CONTRACT_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-2\n  source: \"Item 66 spine\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-023"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-024",
+        "line_start": 1578,
+        "line_end": 1588,
+        "raw_context": "DEP-024:\n  predecessor: {node: DN-CORE-OUTBOX, owner: \"Asrın\"}\n  successor: {node: DN-EVT-SPINE, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"real cross-boundary integration test green on INTEGRATION (outbox → NATS → consumer)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 spine; #96\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-024"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-025",
+        "line_start": 1589,
+        "line_end": 1599,
+        "raw_context": "DEP-025:\n  predecessor: {node: DN-RT-NATS, owner: \"Yavuz\"}\n  successor: {node: DN-EVT-SPINE, owner: \"Asrın\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"real JetStream in CI + INTEGRATION (no fake bus, CI-INV-07)\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #32\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-025"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-026",
+        "line_start": 1600,
+        "line_end": 1610,
+        "raw_context": "DEP-026:\n  predecessor: {node: DN-CORE-CONTRACTS, owner: \"Asrın\"}\n  successor: {node: DN-CORE-CMDCON, owner: \"Asrın\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: START, required_readiness: CONTRACT_READY}\n  need_by: \"S2\"   # sprint 2\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #42\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-026"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-027",
+        "line_start": 1611,
+        "line_end": 1621,
+        "raw_context": "DEP-027:\n  predecessor: {node: DN-CORE-CMDCON, owner: \"Asrın\"}\n  successor: {node: DN-CORE-CMDEXEC, owner: \"Asrın\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: START, required_readiness: CONTRACT_READY}\n  need_by: \"S2–S3\"   # sprint 3\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-2\n  source: \"Item 66 #42\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-027"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-029",
+        "line_start": 1633,
+        "line_end": 1643,
+        "raw_context": "DEP-029:\n  predecessor: {node: DN-CORE-LIFECYCLE, owner: \"Asrın\"}\n  successor: {node: DN-CORE-GENEALOGY, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: COMPONENT_READY}\n  need_by: \"M2 (S4)\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"genealogy queries over real lineage\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #98\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-029"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-031",
+        "line_start": 1655,
+        "line_end": 1665,
+        "raw_context": "DEP-031:\n  predecessor: {node: DN-EVT-CONTRACTS, owner: \"Asrın\"}\n  successor: {node: DN-TWIN-SKELETON, owner: \"Asrın\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: START, required_readiness: CONTRACT_READY}\n  need_by: \"S2\"   # sprint 2\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #44\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-031"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-032",
+        "line_start": 1666,
+        "line_end": 1676,
+        "raw_context": "DEP-032:\n  predecessor: {node: DN-EVT-SPINE, owner: \"Asrın\"}\n  successor: {node: DN-TWIN-SKELETON, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"Twin revision advances from real events\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #96, #188\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-032"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-033",
+        "line_start": 1677,
+        "line_end": 1687,
+        "raw_context": "DEP-033:\n  predecessor: {node: DN-RT-PG, owner: \"Yavuz\"}\n  successor: {node: DN-TWIN-SKELETON, owner: \"Asrın\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"`twin` schema migrated\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #31\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-033"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-034",
+        "line_start": 1688,
+        "line_end": 1698,
+        "raw_context": "DEP-034:\n  predecessor: {node: DN-TWIN-SKELETON, owner: \"Asrın\"}\n  successor: {node: DN-TWIN-PROJ, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S3\"   # sprint 3\n  fallback: null\n  unblock_evidence: \"skeleton projector tests green\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #98\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-034"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-036",
+        "line_start": 1710,
+        "line_end": 1720,
+        "raw_context": "DEP-036:\n  predecessor: {node: DN-TWIN-PROJ, owner: \"Asrın\"}\n  successor: {node: DN-TWIN-VERIFY, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 readiness (end S4)\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"Twin revision semantics INTEGRATION_READY\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67 readiness table\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-036"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-037",
+        "line_start": 1726,
+        "line_end": 1736,
+        "raw_context": "DEP-037:\n  predecessor: {node: DN-SIM-KERNEL, owner: \"Batu\"}\n  successor: {node: DN-SIM-OPSEM, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S2\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"kernel tests + deterministic replay green\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #47\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-037"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-040",
+        "line_start": 1759,
+        "line_end": 1769,
+        "raw_context": "DEP-040:\n  predecessor: {node: DN-SIM-OPSEM, owner: \"Batu\"}\n  successor: {node: DN-SIM-COREINT, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: COMPONENT_READY}\n  need_by: \"M2 (S4)\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"reentrant world runs end-to-end locally\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #98\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-040"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-041",
+        "line_start": 1770,
+        "line_end": 1780,
+        "raw_context": "DEP-041:\n  predecessor: {node: DN-CORE-CMDEXEC, owner: \"Asrın\"}\n  successor: {node: DN-SIM-COREINT, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"M2 (S4)\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"Core-validated physical commands executed by Simulator\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67 #136–#138\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-041"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-042",
+        "line_start": 1781,
+        "line_end": 1791,
+        "raw_context": "DEP-042:\n  predecessor: {node: DN-EVT-SPINE, owner: \"Asrın\"}\n  successor: {node: DN-SIM-COREINT, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"M2 (S4)\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"real cross-boundary integration test green on INTEGRATION\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 spine\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-042"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-043",
+        "line_start": 1792,
+        "line_end": 1802,
+        "raw_context": "DEP-043:\n  predecessor: {node: DN-SIM-KERNEL, owner: \"Batu\"}\n  successor: {node: DN-SIM-DISPIF, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S2\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"baseline dispatch interface callable\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #118\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-043"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-044",
+        "line_start": 1803,
+        "line_end": 1813,
+        "raw_context": "DEP-044:\n  predecessor: {node: DN-SIM-KERNEL, owner: \"Batu\"}\n  successor: {node: DN-SIM-SNAPFORK, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S3\"   # sprint 3\n  fallback: null\n  unblock_evidence: \"snapshot/restore tests green\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #52\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-044"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-046",
+        "line_start": 1825,
+        "line_end": 1835,
+        "raw_context": "DEP-046:\n  predecessor: {node: DN-SIM-KERNEL, owner: \"Batu\"}\n  successor: {node: DN-SIM-ORACLE, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S3\"   # sprint 3\n  fallback: F0\n  unblock_evidence: \"Oracle stream namespace separated\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67 #94–#99\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-046"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-047",
+        "line_start": 1836,
+        "line_end": 1846,
+        "raw_context": "DEP-047:\n  predecessor: {node: DN-SEC-BASE, owner: \"Yavuz\"}\n  successor: {node: DN-SIM-ORACLE, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: F0\n  unblock_evidence: \"normal runtime credentials denied Oracle access (negative test)\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 67 #98–#99\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-047"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-048",
+        "line_start": 1847,
+        "line_end": 1857,
+        "raw_context": "DEP-048:\n  predecessor: {node: DN-SIM-OPSEM, owner: \"Batu\"}\n  successor: {node: DN-SIM-SYNTH, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S3–S4\"   # sprint 4\n  fallback: F4\n  unblock_evidence: \"ScenarioInstances generated with versioned ScenarioVersion/SeedSet\"\n  precise_requirement: null\n  risk_class: DR-4\n  source: \"Item 66 #49\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-048"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-049",
+        "line_start": 1858,
+        "line_end": 1868,
+        "raw_context": "DEP-049:\n  predecessor: {node: DN-SIM-OPSEM, owner: \"Batu\"}\n  successor: {node: DN-SIM-REALISM, owner: \"Batu\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M5→M6\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"RealismReport RL-3 target recorded\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #54, #87\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-049"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-051",
+        "line_start": 1885,
+        "line_end": 1895,
+        "raw_context": "DEP-051:\n  predecessor: {node: DN-VIS-SYNTH, owner: \"Selman\"}\n  successor: {node: DN-VIS-SPLIT, owner: \"Selman\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S2–S3\"   # sprint 3\n  fallback: null\n  unblock_evidence: \"versioned synthetic DatasetVersion\"\n  precise_requirement: null\n  risk_class: DR-4\n  source: \"Item 66 #55; Item 68 #59\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-051"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-052",
+        "line_start": 1896,
+        "line_end": 1906,
+        "raw_context": "DEP-052:\n  predecessor: {node: DN-VIS-SPLIT, owner: \"Selman\"}\n  successor: {node: DN-VIS-BASELINES, owner: \"Selman\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S3\"   # sprint 3\n  fallback: null\n  unblock_evidence: \"SplitManifest committed\"\n  precise_requirement: null\n  risk_class: DR-4\n  source: \"Item 66 #114\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-052"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-053",
+        "line_start": 1907,
+        "line_end": 1917,
+        "raw_context": "DEP-053:\n  predecessor: {node: DN-VIS-BASELINES, owner: \"Selman\"}\n  successor: {node: DN-VIS-MODELS, owner: \"Selman\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: EVALUATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"baseline results recorded for comparison\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #114; #83\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-053"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-054",
+        "line_start": 1918,
+        "line_end": 1928,
+        "raw_context": "DEP-054:\n  predecessor: {node: DN-VIS-MODELS, owner: \"Selman\"}\n  successor: {node: DN-VIS-OOD, owner: \"Selman\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: COMPONENT_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"OOD/UNKNOWN path + spatial evaluation implemented\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #101, #114\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-054"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-055",
+        "line_start": 1929,
+        "line_end": 1939,
+        "raw_context": "DEP-055:\n  predecessor: {node: DN-RT-MLFLOW, owner: \"Yavuz\"}\n  successor: {node: DN-VIS-MODELS, owner: \"Selman\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4/M5\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"ModelPackage promotion recorded in MLflow + artifact store\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #38\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-055"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-057",
+        "line_start": 1951,
+        "line_end": 1961,
+        "raw_context": "DEP-057:\n  predecessor: {node: DN-VIS-ARTCON, owner: \"Selman\"}\n  successor: {node: DN-VIS-SERVING, owner: \"Selman\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: INTEGRATION, required_readiness: CONTRACT_READY}\n  need_by: \"E2E-01 readiness (end S4)\"   # sprint 4\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #56; Item 67 table (InspectionArtifact CONTRACT_READY)\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-057"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-060",
+        "line_start": 1984,
+        "line_end": 1994,
+        "raw_context": "DEP-060:\n  predecessor: {node: DN-VIS-MODELS, owner: \"Selman\"}\n  successor: {node: DN-VIS-SERVING, owner: \"Selman\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"required Vision modes served from promoted ModelPackages\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #101\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-060"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-061",
+        "line_start": 1995,
+        "line_end": 2005,
+        "raw_context": "DEP-061:\n  predecessor: {node: DN-VIS-ARTCON, owner: \"Selman\"}\n  successor: {node: DN-VIS-OBSCON, owner: \"Selman\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: START, required_readiness: CONTRACT_READY}\n  need_by: \"S3–S4\"   # sprint 4\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #58, #117\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-061"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-062",
+        "line_start": 2006,
+        "line_end": 2016,
+        "raw_context": "DEP-062:\n  predecessor: {node: DN-SIM-COREINT, owner: \"Batu\"}\n  successor: {node: DN-VIS-EPISODES, owner: \"Selman\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M5\"   # sprint 10\n  fallback: F4\n  unblock_evidence: \"ScenarioEpisodes with genealogy/state generated\"\n  precise_requirement: null\n  risk_class: DR-4\n  source: \"Item 66 #61\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-062"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-063",
+        "line_start": 2017,
+        "line_end": 2027,
+        "raw_context": "DEP-063:\n  predecessor: {node: DN-CORE-GENEALOGY, owner: \"Asrın\"}\n  successor: {node: DN-VIS-EPISODES, owner: \"Selman\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M5\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"genealogy linked to episodes\"\n  precise_requirement: null\n  risk_class: DR-4\n  source: \"Item 66 #61\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-063"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-064",
+        "line_start": 2033,
+        "line_end": 2043,
+        "raw_context": "DEP-064:\n  predecessor: {node: DN-AI-TOOLCON, owner: \"Asrın\"}\n  successor: {node: DN-AI-ORCH, owner: \"Asrın\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: START, required_readiness: CONTRACT_READY}\n  need_by: \"S2–S3\"   # sprint 3\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #62\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-064"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-066",
+        "line_start": 2055,
+        "line_end": 2065,
+        "raw_context": "DEP-066:\n  predecessor: {node: DN-AI-ORCH, owner: \"Asrın\"}\n  successor: {node: DN-AI-RCA, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S4\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"orchestrator state machine tests green\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #62\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-066"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-070",
+        "line_start": 2099,
+        "line_end": 2109,
+        "raw_context": "DEP-070:\n  predecessor: {node: DN-RAG-CORPUS, owner: \"Asrın\"}\n  successor: {node: DN-RAG, owner: \"Asrın\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S3–S4\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"versioned CorpusVersion ingested\"\n  precise_requirement: null\n  risk_class: DR-4\n  source: \"Item 66 #65\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-070"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-074",
+        "line_start": 2143,
+        "line_end": 2153,
+        "raw_context": "DEP-074:\n  predecessor: {node: DN-SIM-SYNTH, owner: \"Batu\"}\n  successor: {node: DN-ML, owner: \"Asrın\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: EVALUATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: F4\n  unblock_evidence: \"sufficient historical data/features/labels generated\"\n  precise_requirement: null\n  risk_class: DR-4\n  source: \"Item 66 #49, #68\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-074"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-075",
+        "line_start": 2154,
+        "line_end": 2164,
+        "raw_context": "DEP-075:\n  predecessor: {node: DN-RT-MLFLOW, owner: \"Yavuz\"}\n  successor: {node: DN-ML, owner: \"Asrın\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4/M5\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"ML ModelPackage governance in MLflow\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #38\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-075"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-076",
+        "line_start": 2165,
+        "line_end": 2175,
+        "raw_context": "DEP-076:\n  predecessor: {node: DN-HITL-POLICY, owner: \"Asrın\"}\n  successor: {node: DN-AI-ACTCON, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S3–S4\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"risk class/approval requirement defined per action\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #69, #78\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-076"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-079",
+        "line_start": 2203,
+        "line_end": 2213,
+        "raw_context": "DEP-079:\n  predecessor: {node: DN-CORE-SNAPCON, owner: \"Asrın\"}\n  successor: {node: DN-SCH-DYN, owner: \"Batu\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: INTEGRATION, required_readiness: CONTRACT_READY}\n  need_by: \"E2E-01 readiness (end S4)\"   # sprint 4\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #26, #71\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-079"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-080",
+        "line_start": 2214,
+        "line_end": 2224,
+        "raw_context": "DEP-080:\n  predecessor: {node: DN-TWIN-PROJ, owner: \"Asrın\"}\n  successor: {node: DN-SCH-DYN, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"M2 (S4)\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"SchedulingSnapshot exported from real Twin\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #71; 02 IC-SCH-001\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-080"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-081",
+        "line_start": 2225,
+        "line_end": 2235,
+        "raw_context": "DEP-081:\n  predecessor: {node: DN-EVT-SPINE, owner: \"Asrın\"}\n  successor: {node: DN-SCH-DYN, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"event-triggered replanning on failures/holds/excursions\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #73, #101\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-081"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-082",
+        "line_start": 2236,
+        "line_end": 2246,
+        "raw_context": "DEP-082:\n  predecessor: {node: DN-CORE-TRANSITIONS, owner: \"Asrın\"}\n  successor: {node: DN-SCH-VALID, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"validator uses canonical domain rules (no unilateral legality)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #72; DEP-INV-10\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-082"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-083",
+        "line_start": 2247,
+        "line_end": 2257,
+        "raw_context": "DEP-083:\n  predecessor: {node: DN-SCH-DYN, owner: \"Batu\"}\n  successor: {node: DN-SCH-PLANCON, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: COMPONENT_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: F2\n  unblock_evidence: \"RecoveryPlan computed from state (no hardcoded result)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67 #113–#115\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-083"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-084",
+        "line_start": 2258,
+        "line_end": 2268,
+        "raw_context": "DEP-084:\n  predecessor: {node: DN-SCH-VALID, owner: \"Batu\"}\n  successor: {node: DN-SCH-PLANCON, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: F0\n  unblock_evidence: \"planner ≠ validator; eligibility only after validation\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67 #116–#117; FR-SCH-006\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-084"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-086",
+        "line_start": 2280,
+        "line_end": 2290,
+        "raw_context": "DEP-086:\n  predecessor: {node: DN-SCH-CPSAT, owner: \"Batu\"}\n  successor: {node: DN-SCH-DYN, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: F2\n  unblock_evidence: \"CP-SAT recovery plans validated on SP-NORMAL\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #101; Item 68 #100\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-086"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-087",
+        "line_start": 2291,
+        "line_end": 2301,
+        "raw_context": "DEP-087:\n  predecessor: {node: DN-SIM-SNAPFORK, owner: \"Batu\"}\n  successor: {node: DN-SCH-CF, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"fork WorldIDs usable by scheduler\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #52, #75; DEP-INV-17\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-087"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-088",
+        "line_start": 2302,
+        "line_end": 2312,
+        "raw_context": "DEP-088:\n  predecessor: {node: DN-SIM-DISPIF, owner: \"Batu\"}\n  successor: {node: DN-SCH-DYN, owner: \"Batu\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: INTEGRATION, required_readiness: CONTRACT_READY}\n  need_by: \"M2 (S4)\"   # sprint 4\n  fallback: F2\n  unblock_evidence: \"Scheduler plugs into Simulator dispatch interface\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #118\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-088"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-090",
+        "line_start": 2329,
+        "line_end": 2339,
+        "raw_context": "DEP-090:\n  predecessor: {node: DN-RT-IDP, owner: \"Yavuz\"}\n  successor: {node: DN-HITL-APPROVAL, owner: \"Asrın\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 readiness (end S4)\"   # sprint 4\n  fallback: F0\n  unblock_evidence: \"authenticated approval bound to actor\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #34, #81; Item 67 #118–#119\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-090"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-091",
+        "line_start": 2340,
+        "line_end": 2350,
+        "raw_context": "DEP-091:\n  predecessor: {node: DN-HITL-POLICY, owner: \"Asrın\"}\n  successor: {node: DN-HITL-APPROVAL, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: F0\n  unblock_evidence: \"policy evaluation independent of AI text\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #78; FR-HITL-001\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-091"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-093",
+        "line_start": 2362,
+        "line_end": 2372,
+        "raw_context": "DEP-093:\n  predecessor: {node: DN-UI-APPROVAL, owner: \"Asrın\"}\n  successor: {node: DN-HITL-APPROVAL, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"operator sees bound context and approves via real UI\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67 #120, #143\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-093"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-094",
+        "line_start": 2373,
+        "line_end": 2383,
+        "raw_context": "DEP-094:\n  predecessor: {node: DN-AUTO-DESIGN, owner: \"Batu\"}\n  successor: {node: DN-AUTO-DURABLE, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S3\"   # sprint 3\n  fallback: null\n  unblock_evidence: \"workflow tests with stub activities\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #76\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-094"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-095",
+        "line_start": 2384,
+        "line_end": 2394,
+        "raw_context": "DEP-095:\n  predecessor: {node: DN-RT-TEMPORAL, owner: \"Yavuz\"}\n  successor: {node: DN-AUTO-DURABLE, owner: \"Batu\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 formal run (end S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"workflow persists through worker restart on real Temporal\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #36, #77; Item 67 #124\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-095"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-096",
+        "line_start": 2395,
+        "line_end": 2405,
+        "raw_context": "DEP-096:\n  predecessor: {node: DN-AI-ACTCON, owner: \"Asrın\"}\n  successor: {node: DN-AUTO-EXEC, owner: \"Batu\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: INTEGRATION, required_readiness: CONTRACT_READY}\n  need_by: \"E2E-01 readiness (end S4)\"   # sprint 4\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #78, #119\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-096"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-098",
+        "line_start": 2417,
+        "line_end": 2427,
+        "raw_context": "DEP-098:\n  predecessor: {node: DN-CORE-CMDEXEC, owner: \"Asrın\"}\n  successor: {node: DN-AUTO-EXEC, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 readiness (end S4)\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"Core applies approved command idempotently and emits result (#187)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #79, #187\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-098"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-099",
+        "line_start": 2428,
+        "line_end": 2438,
+        "raw_context": "DEP-099:\n  predecessor: {node: DN-HITL-APPROVAL, owner: \"Asrın\"}\n  successor: {node: DN-AUTO-EXEC, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: F0\n  unblock_evidence: \"valid approval required for protected execution — no fallback\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #130\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-099"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-100",
+        "line_start": 2439,
+        "line_end": 2449,
+        "raw_context": "DEP-100:\n  predecessor: {node: DN-AUTO-DURABLE, owner: \"Batu\"}\n  successor: {node: DN-AUTO-EXEC, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"workflow creates authorized executable steps (#186)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #186\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-100"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-101",
+        "line_start": 2450,
+        "line_end": 2460,
+        "raw_context": "DEP-101:\n  predecessor: {node: DN-SCH-PLANCON, owner: \"Batu\"}\n  successor: {node: DN-AUTO-EXEC, owner: \"Batu\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: INTEGRATION, required_readiness: CONTRACT_READY}\n  need_by: \"E2E-01 readiness (end S4)\"   # sprint 4\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #186\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-101"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-102",
+        "line_start": 2461,
+        "line_end": 2471,
+        "raw_context": "DEP-102:\n  predecessor: {node: DN-AUTO-EXEC, owner: \"Batu\"}\n  successor: {node: DN-AUTO-VERIFY, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: COMPONENT_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"effect verification step in workflow\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67 #127–#130\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-102"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-103",
+        "line_start": 2472,
+        "line_end": 2482,
+        "raw_context": "DEP-103:\n  predecessor: {node: DN-TWIN-VERIFY, owner: \"Asrın\"}\n  successor: {node: DN-AUTO-VERIFY, owner: \"Batu\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: F0\n  unblock_evidence: \"verified Core/Twin effect (HTTP success insufficient)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #80; DEP-INV-16\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-103"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-105",
+        "line_start": 2499,
+        "line_end": 2509,
+        "raw_context": "DEP-105:\n  predecessor: {node: DN-UI-BFFCON, owner: \"Asrın\"}\n  successor: {node: DN-UI-SHELL, owner: \"Asrın\"}\n  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: START, required_readiness: CONTRACT_READY}\n  need_by: \"S1–S2\"   # sprint 2\n  fallback: F1\n  unblock_evidence: \"contract merged + contract tests green + example fixture published (OpenAPI + fixtures)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #121, #162\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-105"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-106",
+        "line_start": 2510,
+        "line_end": 2520,
+        "raw_context": "DEP-106:\n  predecessor: {node: DN-TWIN-SKELETON, owner: \"Asrın\"}\n  successor: {node: DN-UI-SHELL, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"UI shows real Twin state via BFF\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #96 (frontend shell); Item 65 M1 “real Core/event/Twin/UI path”\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-106"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-107",
+        "line_start": 2521,
+        "line_end": 2531,
+        "raw_context": "DEP-107:\n  predecessor: {node: DN-UI-SHELL, owner: \"Asrın\"}\n  successor: {node: DN-UI-APPROVAL, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}\n  need_by: \"S4\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"shell routing + auth session in place\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67 #143\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-107"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-108",
+        "line_start": 2532,
+        "line_end": 2542,
+        "raw_context": "DEP-108:\n  predecessor: {node: DN-RT-IDP, owner: \"Yavuz\"}\n  successor: {node: DN-UI-APPROVAL, owner: \"Asrın\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 readiness (end S4)\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"real login in Approval Center\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 67 #119\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-108"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-109",
+        "line_start": 1386,
+        "line_end": 1396,
+        "raw_context": "DEP-109:\n  predecessor: {node: DN-PLAT-CD, owner: \"Yavuz\"}\n  successor: {node: DN-RT-OBS, owner: \"Yavuz\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M3 (S6)\"   # sprint 6\n  fallback: null\n  unblock_evidence: \"distributed traceability across closed-loop boundaries\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #35 (M3)\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-109"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-110",
+        "line_start": 1397,
+        "line_end": 1407,
+        "raw_context": "DEP-110:\n  predecessor: {node: DN-RT-OBS, owner: \"Yavuz\"}\n  successor: {node: DN-PLAT-FAILVAL, owner: \"Yavuz\"}\n  semantics: {kind: RUNTIME, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: EVALUATION_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"reliability/evaluation telemetry HARD\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #35 (M5), #112\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-110"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-111",
+        "line_start": 1408,
+        "line_end": 1418,
+        "raw_context": "DEP-111:\n  predecessor: {node: DN-SEC-BASE, owner: \"Yavuz\"}\n  successor: {node: DN-PLAT-BACKUP, owner: \"Yavuz\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"secrets/keys restorable or rotatable\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #112; Item 69 DR-R05\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-111"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-113",
+        "line_start": 1430,
+        "line_end": 1440,
+        "raw_context": "DEP-113:\n  predecessor: {node: DN-PLAT-BACKUP, owner: \"Yavuz\"}\n  successor: {node: DN-PLAT-FAILVAL, owner: \"Yavuz\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: EVALUATION_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"restore proof executed (RESTORE-PG-001)\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #102, #112\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-113"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-114",
+        "line_start": 1441,
+        "line_end": 1451,
+        "raw_context": "DEP-114:\n  predecessor: {node: DN-PLAT-FAILVAL, owner: \"Yavuz\"}\n  successor: {node: DN-PLAT-RUNNER, owner: \"Yavuz\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: EVALUATION_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"resilience suites operational before formal experiments\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #112\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-114"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-115",
+        "line_start": 1452,
+        "line_end": 1462,
+        "raw_context": "DEP-115:\n  predecessor: {node: DN-PLAT-CD, owner: \"Yavuz\"}\n  successor: {node: DN-PLAT-RUNNER, owner: \"Yavuz\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: INTEGRATION_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"runner deploys exact release to EVALUATION\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #102\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-115"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-116",
+        "line_start": 1463,
+        "line_end": 1473,
+        "raw_context": "DEP-116:\n  predecessor: {node: DN-PLAT-RUNNER, owner: \"Yavuz\"}\n  successor: {node: DN-ART-RELEASE, owner: \"Yavuz\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"runner binds ReleaseManifest/EnvironmentManifest to runs\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #112\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-116"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-117",
+        "line_start": 1474,
+        "line_end": 1484,
+        "raw_context": "DEP-117:\n  predecessor: {node: DN-PLAT-RUNNER, owner: \"Yavuz\"}\n  successor: {node: DN-ART-HWPROF, owner: \"Yavuz\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"HardwareProfile captured per run\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #92, #112\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-117"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-118",
+        "line_start": 1485,
+        "line_end": 1495,
+        "raw_context": "DEP-118:\n  predecessor: {node: DN-ART-RELEASE, owner: \"Yavuz\"}\n  successor: {node: DN-PLAT-CLEANREPRO, owner: \"Yavuz\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: FROZEN}\n  need_by: \"M6→M7\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"clean-host deploy of exact manifest PASS\"\n  precise_requirement: null\n  risk_class: DR-10\n  source: \"Item 66 #112\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-118"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-119",
+        "line_start": 1496,
+        "line_end": 1506,
+        "raw_context": "DEP-119:\n  predecessor: {node: DN-ART-HWPROF, owner: \"Yavuz\"}\n  successor: {node: DN-PLAT-CLEANREPRO, owner: \"Yavuz\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: FROZEN}\n  need_by: \"M6→M7\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"HardwareProfile recorded for reproduction host\"\n  precise_requirement: null\n  risk_class: DR-10\n  source: \"Item 66 #112\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-119"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-120",
+        "line_start": 2548,
+        "line_end": 2558,
+        "raw_context": "DEP-120:\n  predecessor: {node: DN-PLAT-CLEANREPRO, owner: \"Yavuz\"}\n  successor: {node: DN-RES-BENCH, owner: \"Yavuz\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M7 (S12)\"   # sprint 12\n  fallback: null\n  unblock_evidence: \"clean reproduction evidence precedes benchmark execution\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #112–#113\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-120"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-121",
+        "line_start": 2559,
+        "line_end": 2569,
+        "raw_context": "DEP-121:\n  predecessor: {node: DN-SIM-SYNTH, owner: \"Batu\"}\n  successor: {node: DN-RES-DATASCEN, owner: \"Asrın\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: EVALUATION_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: F4\n  unblock_evidence: \"evaluation-ready scenarios/data with partitions\"\n  precise_requirement: null\n  risk_class: DR-4\n  source: \"Item 66 #102, #110\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-121"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-122",
+        "line_start": 2570,
+        "line_end": 2580,
+        "raw_context": "DEP-122:\n  predecessor: {node: DN-VIS-SPLIT, owner: \"Selman\"}\n  successor: {node: DN-RES-DATASCEN, owner: \"Asrın\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: EVALUATION_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"Vision splits evaluation-ready\"\n  precise_requirement: null\n  risk_class: DR-4\n  source: \"Item 66 #110\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-122"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-123",
+        "line_start": 2581,
+        "line_end": 2591,
+        "raw_context": "DEP-123:\n  predecessor: {node: DN-RAG-CORPUS, owner: \"Asrın\"}\n  successor: {node: DN-RES-DATASCEN, owner: \"Asrın\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: EVALUATION_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"governed RCA case set + corpus\"\n  precise_requirement: null\n  risk_class: DR-4\n  source: \"Item 66 #110\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-123"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-124",
+        "line_start": 2592,
+        "line_end": 2602,
+        "raw_context": "DEP-124:\n  predecessor: {node: DN-RES-DATASCEN, owner: \"Asrın\"}\n  successor: {node: DN-RES-BASELINES, owner: \"Asrın\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: START, required_readiness: EVALUATION_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"baselines executed on DEV/CAL partitions\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #83, #110\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-124"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-125",
+        "line_start": 2603,
+        "line_end": 2613,
+        "raw_context": "DEP-125:\n  predecessor: {node: DN-RES-BASELINES, owner: \"Asrın\"}\n  successor: {node: DN-RES-HARNESS, owner: \"Yavuz\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: INTEGRATION, required_readiness: EVALUATION_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"harness reproduces baseline numbers\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #110\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-125"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-126",
+        "line_start": 2614,
+        "line_end": 2624,
+        "raw_context": "DEP-126:\n  predecessor: {node: DN-PLAT-RUNNER, owner: \"Yavuz\"}\n  successor: {node: DN-RES-HARNESS, owner: \"Yavuz\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: INTEGRATION, required_readiness: COMPONENT_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"harness runs through experiment runner\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #102\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-126"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-127",
+        "line_start": 2625,
+        "line_end": 2635,
+        "raw_context": "DEP-127:\n  predecessor: {node: DN-RES-HARNESS, owner: \"Yavuz\"}\n  successor: {node: DN-RES-CALIB, owner: \"Asrın\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M5→M6\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"calibration on CAL partition recorded\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #83–#84\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-127"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-128",
+        "line_start": 2636,
+        "line_end": 2646,
+        "raw_context": "DEP-128:\n  predecessor: {node: DN-RES-BASELINES, owner: \"Asrın\"}\n  successor: {node: DN-RES-CALIB, owner: \"Asrın\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M5→M6\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"baselines precede calibration (HARD)\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #83\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-128"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-129",
+        "line_start": 2647,
+        "line_end": 2657,
+        "raw_context": "DEP-129:\n  predecessor: {node: DN-RES-CALIB, owner: \"Asrın\"}\n  successor: {node: DN-FRZ-DATA, owner: \"Batu\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: FREEZE, required_readiness: FROZEN}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"calibration closed before freeze\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #84\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-129"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-130",
+        "line_start": 2658,
+        "line_end": 2668,
+        "raw_context": "DEP-130:\n  predecessor: {node: DN-FRZ-SCENSET, owner: \"Batu\"}\n  successor: {node: DN-FRZ-DATA, owner: \"Batu\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: FREEZE, required_readiness: FROZEN}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"ScenarioSet FROZEN\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 board (Scenario set M6 FROZEN)\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-130"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-131",
+        "line_start": 2669,
+        "line_end": 2679,
+        "raw_context": "DEP-131:\n  predecessor: {node: DN-FRZ-RQ4SPLIT, owner: \"Selman\"}\n  successor: {node: DN-FRZ-DATA, owner: \"Batu\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: FREEZE, required_readiness: FROZEN}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"Vision split frozen before final RQ-4 training/evaluation\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #88, #114\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-131"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-132",
+        "line_start": 2680,
+        "line_end": 2690,
+        "raw_context": "DEP-132:\n  predecessor: {node: DN-FRZ-DATA, owner: \"Batu\"}\n  successor: {node: DN-FRZ-MODEL, owner: \"Asrın\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: FREEZE, required_readiness: FROZEN}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"model/policy selection on frozen data\"\n  precise_requirement: null\n  risk_class: DR-10\n  source: \"Item 66 #86, #110\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-132"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-133",
+        "line_start": 2691,
+        "line_end": 2701,
+        "raw_context": "DEP-133:\n  predecessor: {node: DN-FRZ-RQ1CORPUS, owner: \"Asrın\"}\n  successor: {node: DN-FRZ-MODEL, owner: \"Asrın\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: FREEZE, required_readiness: FROZEN}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"RCA final corpus + RetrievalProfile frozen\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #89, #167\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-133"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-134",
+        "line_start": 2702,
+        "line_end": 2712,
+        "raw_context": "DEP-134:\n  predecessor: {node: DN-RES-CALIB, owner: \"Asrın\"}\n  successor: {node: DN-FRZ-MODEL, owner: \"Asrın\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: FREEZE, required_readiness: FROZEN}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"calibration precedes model/policy freeze\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #84\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-134"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-135",
+        "line_start": 2713,
+        "line_end": 2723,
+        "raw_context": "DEP-135:\n  predecessor: {node: DN-FRZ-DATA, owner: \"Batu\"}\n  successor: {node: DN-FRZ-PROTOCOL, owner: \"Asrın\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: FREEZE, required_readiness: FROZEN}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"dataset/scenario selection before protocol freeze\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #85; DEP-INV-21\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-135"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-136",
+        "line_start": 2724,
+        "line_end": 2734,
+        "raw_context": "DEP-136:\n  predecessor: {node: DN-FRZ-MODEL, owner: \"Asrın\"}\n  successor: {node: DN-FRZ-PROTOCOL, owner: \"Asrın\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: FREEZE, required_readiness: FROZEN}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"model/policy selection before protocol freeze\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #86; DEP-INV-21\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-136"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-137",
+        "line_start": 2735,
+        "line_end": 2745,
+        "raw_context": "DEP-137:\n  predecessor: {node: DN-FRZ-RQ3AUTH, owner: \"Asrın\"}\n  successor: {node: DN-FRZ-PROTOCOL, owner: \"Asrın\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: FREEZE, required_readiness: FROZEN}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"authority scenario set frozen before RQ-3 final\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #90\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-137"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-138",
+        "line_start": 2746,
+        "line_end": 2756,
+        "raw_context": "DEP-138:\n  predecessor: {node: DN-SIM-REALISM, owner: \"Batu\"}\n  successor: {node: DN-FRZ-PROTOCOL, owner: \"Asrın\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"Simulation validation before final RQ-2 claim\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #87; DEP-INV-18\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-138"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-139",
+        "line_start": 2757,
+        "line_end": 2767,
+        "raw_context": "DEP-139:\n  predecessor: {node: DN-FRZ-PROTOCOL, owner: \"Asrın\"}\n  successor: {node: DN-FRZ-RELEASE, owner: \"Yavuz\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: FREEZE, required_readiness: FROZEN}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"ExperimentProtocolFreeze recorded\"\n  precise_requirement: null\n  risk_class: DR-10\n  source: \"Item 66 #110\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-139"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-140",
+        "line_start": 2768,
+        "line_end": 2778,
+        "raw_context": "DEP-140:\n  predecessor: {node: DN-ART-RELEASE, owner: \"Yavuz\"}\n  successor: {node: DN-FRZ-RELEASE, owner: \"Yavuz\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: FREEZE, required_readiness: FROZEN}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"stable ReleaseManifest selected\"\n  precise_requirement: null\n  risk_class: DR-10\n  source: \"Item 66 #91\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-140"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-141",
+        "line_start": 2779,
+        "line_end": 2789,
+        "raw_context": "DEP-141:\n  predecessor: {node: DN-FRZ-RELEASE, owner: \"Yavuz\"}\n  successor: {node: DN-RES-BENCH, owner: \"Yavuz\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: FREEZE, required_readiness: FROZEN}\n  need_by: \"M7 (S12)\"   # sprint 12\n  fallback: null\n  unblock_evidence: \"all M6 freeze dependencies satisfied\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #91, #105; DEP-INV-22\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-141"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-142",
+        "line_start": 2790,
+        "line_end": 2800,
+        "raw_context": "DEP-142:\n  predecessor: {node: DN-ART-HWPROF, owner: \"Yavuz\"}\n  successor: {node: DN-RES-BENCH, owner: \"Yavuz\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: FREEZE, required_readiness: FROZEN}\n  need_by: \"M7 (S12)\"   # sprint 12\n  fallback: null\n  unblock_evidence: \"HardwareProfile before performance claims\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #92\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-142"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-143",
+        "line_start": 2801,
+        "line_end": 2811,
+        "raw_context": "DEP-143:\n  predecessor: {node: DN-RES-BENCH, owner: \"Yavuz\"}\n  successor: {node: DN-RES-ANALYSIS, owner: \"Asrın\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: FREEZE, required_readiness: FROZEN}\n  need_by: \"M7 (S12)\"   # sprint 12\n  fallback: null\n  unblock_evidence: \"sealed FBC-01 evidence\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #110\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-143"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-144",
+        "line_start": 2812,
+        "line_end": 2822,
+        "raw_context": "DEP-144:\n  predecessor: {node: DN-FRZ-PROTOCOL, owner: \"Asrın\"}\n  successor: {node: DN-RES-ANALYSIS, owner: \"Asrın\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: FREEZE, required_readiness: FROZEN}\n  need_by: \"M7 (S12)\"   # sprint 12\n  fallback: null\n  unblock_evidence: \"analysis plan frozen before results\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #103; Item 60\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-144"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-145",
+        "line_start": 2823,
+        "line_end": 2833,
+        "raw_context": "DEP-145:\n  predecessor: {node: DN-RES-ANALYSIS, owner: \"Asrın\"}\n  successor: {node: DN-RES-CLAIMS, owner: \"Asrın\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: FROZEN}\n  need_by: \"M7→M8\"   # sprint 12\n  fallback: null\n  unblock_evidence: \"claims classified from sealed analysis (#93)\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #93; DEP-INV-23\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-145"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-146",
+        "line_start": 2834,
+        "line_end": 2844,
+        "raw_context": "DEP-146:\n  predecessor: {node: DN-RAG, owner: \"Asrın\"}\n  successor: {node: DN-FRZ-RQ1CORPUS, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M5→M6\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"RetrievalProfile evaluated\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #167 (M5 EVALUATION_READY)\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-146"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-147",
+        "line_start": 2845,
+        "line_end": 2855,
+        "raw_context": "DEP-147:\n  predecessor: {node: DN-HITL-POLICY, owner: \"Asrın\"}\n  successor: {node: DN-FRZ-RQ3AUTH, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M5→M6\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"authority policy stable for scenario set\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #90\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-147"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-148",
+        "line_start": 2856,
+        "line_end": 2866,
+        "raw_context": "DEP-148:\n  predecessor: {node: DN-VIS-SPLIT, owner: \"Selman\"}\n  successor: {node: DN-FRZ-RQ4SPLIT, owner: \"Selman\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M5→M6\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"split validated for leakage\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #88\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-148"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-149",
+        "line_start": 2867,
+        "line_end": 2877,
+        "raw_context": "DEP-149:\n  predecessor: {node: DN-SIM-SYNTH, owner: \"Batu\"}\n  successor: {node: DN-FRZ-SCENSET, owner: \"Batu\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M5→M6\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"scenario families evaluation-ready\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 board\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-149"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-150",
+        "line_start": 2878,
+        "line_end": 2888,
+        "raw_context": "DEP-150:\n  predecessor: {node: DN-VIS-OOD, owner: \"Selman\"}\n  successor: {node: DN-FRZ-MODEL, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M6\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"OOD/spatial evaluation complete before model freeze\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #114\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-150"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-151",
+        "line_start": 2889,
+        "line_end": 2899,
+        "raw_context": "DEP-151:\n  predecessor: {node: DN-VIS-EPISODES, owner: \"Selman\"}\n  successor: {node: DN-FRZ-PROTOCOL, owner: \"Asrın\"}\n  semantics: {kind: DATA, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M6\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"operational episodes available for RQ-4 perception-to-operations\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #61, #114\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-151"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-152",
+        "line_start": 2900,
+        "line_end": 2910,
+        "raw_context": "DEP-152:\n  predecessor: {node: DN-ML, owner: \"Asrın\"}\n  successor: {node: DN-FRZ-MODEL, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M6\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"M1/M2/M3 evaluated and selected\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #86\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-152"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-153",
+        "line_start": 2911,
+        "line_end": 2921,
+        "raw_context": "DEP-153:\n  predecessor: {node: DN-SCH-CPSAT, owner: \"Batu\"}\n  successor: {node: DN-FRZ-MODEL, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M6\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"SchedulerPolicy selected\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #86, #103\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-153"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-154",
+        "line_start": 2922,
+        "line_end": 2932,
+        "raw_context": "DEP-154:\n  predecessor: {node: DN-SCH-CF, owner: \"Batu\"}\n  successor: {node: DN-FRZ-PROTOCOL, owner: \"Asrın\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: FREEZE, required_readiness: EVALUATION_READY}\n  need_by: \"M6\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"counterfactual recovery evaluation ready (CRN)\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #53\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-154"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-155",
+        "line_start": 2938,
+        "line_end": 2948,
+        "raw_context": "DEP-155:\n  predecessor: {node: DN-PLAT-REPO, owner: \"Yavuz\"}\n  successor: {node: MS-M0, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M0 (S1)\"   # sprint 1\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #94\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-155"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-156",
+        "line_start": 2949,
+        "line_end": 2959,
+        "raw_context": "DEP-156:\n  predecessor: {node: DN-PLAT-TOOLING, owner: \"Yavuz\"}\n  successor: {node: MS-M0, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: COMPONENT_READY}\n  need_by: \"M0 (S1)\"   # sprint 1\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #94\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-156"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-157",
+        "line_start": 2960,
+        "line_end": 2970,
+        "raw_context": "DEP-157:\n  predecessor: {node: DN-PLAT-COMPOSE, owner: \"Yavuz\"}\n  successor: {node: MS-M0, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M0 (S1)\"   # sprint 1\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #94\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-157"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-158",
+        "line_start": 2971,
+        "line_end": 2981,
+        "raw_context": "DEP-158:\n  predecessor: {node: DN-PLAT-INTEG, owner: \"Yavuz\"}\n  successor: {node: MS-M0, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M0 (S1)\"   # sprint 1\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-3\n  source: \"Item 66 #94\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-158"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-159",
+        "line_start": 2982,
+        "line_end": 2992,
+        "raw_context": "DEP-159:\n  predecessor: {node: MS-M0, owner: \"—\"}\n  successor: {node: MS-M1, owner: \"—\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: null}\n  need_by: \"M1\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"M0 PASS\"\n  precise_requirement: null\n  risk_class: null\n  source: \"Item 66 #96\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-159"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-160",
+        "line_start": 2993,
+        "line_end": 3003,
+        "raw_context": "DEP-160:\n  predecessor: {node: DN-CORE-LIFECYCLE, owner: \"Asrın\"}\n  successor: {node: MS-M1, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #96\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-160"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-161",
+        "line_start": 3004,
+        "line_end": 3014,
+        "raw_context": "DEP-161:\n  predecessor: {node: DN-RT-PG, owner: \"Yavuz\"}\n  successor: {node: MS-M1, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #96\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-161"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-162",
+        "line_start": 3015,
+        "line_end": 3025,
+        "raw_context": "DEP-162:\n  predecessor: {node: DN-RT-NATS, owner: \"Yavuz\"}\n  successor: {node: MS-M1, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #96\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-162"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-163",
+        "line_start": 3026,
+        "line_end": 3036,
+        "raw_context": "DEP-163:\n  predecessor: {node: DN-CORE-OUTBOX, owner: \"Asrın\"}\n  successor: {node: MS-M1, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #96\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-163"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-164",
+        "line_start": 3037,
+        "line_end": 3047,
+        "raw_context": "DEP-164:\n  predecessor: {node: DN-TWIN-SKELETON, owner: \"Asrın\"}\n  successor: {node: MS-M1, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #96\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-164"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-165",
+        "line_start": 3048,
+        "line_end": 3058,
+        "raw_context": "DEP-165:\n  predecessor: {node: DN-UI-SHELL, owner: \"Asrın\"}\n  successor: {node: MS-M1, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #96\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-165"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-166",
+        "line_start": 3059,
+        "line_end": 3069,
+        "raw_context": "DEP-166:\n  predecessor: {node: DN-PLAT-CD, owner: \"Yavuz\"}\n  successor: {node: MS-M1, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #96\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-166"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-167",
+        "line_start": 3070,
+        "line_end": 3080,
+        "raw_context": "DEP-167:\n  predecessor: {node: DN-EVT-SPINE, owner: \"Asrın\"}\n  successor: {node: MS-M1, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M1 (S2)\"   # sprint 2\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #96\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-167"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-168",
+        "line_start": 3081,
+        "line_end": 3091,
+        "raw_context": "DEP-168:\n  predecessor: {node: MS-M1, owner: \"—\"}\n  successor: {node: MS-M2, owner: \"—\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: null}\n  need_by: \"M2\"   # sprint 4\n  fallback: null\n  unblock_evidence: \"M1 PASS\"\n  precise_requirement: null\n  risk_class: null\n  source: \"Item 66 #98\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-168"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-177",
+        "line_start": 3180,
+        "line_end": 3190,
+        "raw_context": "DEP-177:\n  predecessor: {node: MS-M2, owner: \"—\"}\n  successor: {node: CK-E2E01, owner: \"N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: null}\n  need_by: \"E2E-01 (S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"contract readiness table satisfied end S4\"\n  precise_requirement: null\n  risk_class: null\n  source: \"Item 67 readiness table\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-177"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-178",
+        "line_start": 3191,
+        "line_end": 3201,
+        "raw_context": "DEP-178:\n  predecessor: {node: DN-VIS-SERVING, owner: \"Selman\"}\n  successor: {node: CK-E2E01, owner: \"N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"E2E-RUN-A/B/C evidence (Item 67 #157–#159)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-178"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-179",
+        "line_start": 3202,
+        "line_end": 3212,
+        "raw_context": "DEP-179:\n  predecessor: {node: DN-AI-RCA, owner: \"Asrın\"}\n  successor: {node: CK-E2E01, owner: \"N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"E2E-RUN-A/B/C evidence (Item 67 #157–#159)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-179"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-180",
+        "line_start": 3213,
+        "line_end": 3223,
+        "raw_context": "DEP-180:\n  predecessor: {node: DN-SCH-PLANCON, owner: \"Batu\"}\n  successor: {node: CK-E2E01, owner: \"N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"E2E-RUN-A/B/C evidence (Item 67 #157–#159)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-180"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-181",
+        "line_start": 3224,
+        "line_end": 3234,
+        "raw_context": "DEP-181:\n  predecessor: {node: DN-SCH-VALID, owner: \"Batu\"}\n  successor: {node: CK-E2E01, owner: \"N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"E2E-RUN-A/B/C evidence (Item 67 #157–#159)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-181"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-182",
+        "line_start": 3235,
+        "line_end": 3245,
+        "raw_context": "DEP-182:\n  predecessor: {node: DN-HITL-APPROVAL, owner: \"Asrın\"}\n  successor: {node: CK-E2E01, owner: \"N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"E2E-RUN-A/B/C evidence (Item 67 #157–#159)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-182"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-183",
+        "line_start": 3246,
+        "line_end": 3256,
+        "raw_context": "DEP-183:\n  predecessor: {node: DN-AUTO-DURABLE, owner: \"Batu\"}\n  successor: {node: CK-E2E01, owner: \"N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"E2E-RUN-A/B/C evidence (Item 67 #157–#159)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-183"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-184",
+        "line_start": 3257,
+        "line_end": 3267,
+        "raw_context": "DEP-184:\n  predecessor: {node: DN-AUTO-EXEC, owner: \"Batu\"}\n  successor: {node: CK-E2E01, owner: \"N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"E2E-RUN-A/B/C evidence (Item 67 #157–#159)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-184"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-185",
+        "line_start": 3268,
+        "line_end": 3278,
+        "raw_context": "DEP-185:\n  predecessor: {node: DN-AUTO-VERIFY, owner: \"Batu\"}\n  successor: {node: CK-E2E01, owner: \"N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"E2E-RUN-A/B/C evidence (Item 67 #157–#159)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-185"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-186",
+        "line_start": 3279,
+        "line_end": 3289,
+        "raw_context": "DEP-186:\n  predecessor: {node: DN-UI-APPROVAL, owner: \"Asrın\"}\n  successor: {node: CK-E2E01, owner: \"N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"E2E-RUN-A/B/C evidence (Item 67 #157–#159)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-186"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-187",
+        "line_start": 3290,
+        "line_end": 3300,
+        "raw_context": "DEP-187:\n  predecessor: {node: DN-SIM-ORACLE, owner: \"Batu\"}\n  successor: {node: CK-E2E01, owner: \"N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"E2E-01 (end S5)\"   # sprint 5\n  fallback: null\n  unblock_evidence: \"E2E-RUN-A/B/C evidence (Item 67 #157–#159)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 67\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-187"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-188",
+        "line_start": 3301,
+        "line_end": 3311,
+        "raw_context": "DEP-188:\n  predecessor: {node: CK-E2E01, owner: \"N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW\"}\n  successor: {node: MS-M3, owner: \"—\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: null}\n  need_by: \"M3 (S6)\"   # sprint 6\n  fallback: null\n  unblock_evidence: \"E2E-01 PASS (precursor; waives nothing)\"\n  precise_requirement: null\n  risk_class: null\n  source: \"Item 67 #7; E2E-INV-01\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-188"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-189",
+        "line_start": 3312,
+        "line_end": 3322,
+        "raw_context": "DEP-189:\n  predecessor: {node: DN-RT-OBS, owner: \"Yavuz\"}\n  successor: {node: MS-M3, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M3 (S6)\"   # sprint 6\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #99, #35\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-189"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-190",
+        "line_start": 3323,
+        "line_end": 3333,
+        "raw_context": "DEP-190:\n  predecessor: {node: DN-TWIN-VERIFY, owner: \"Asrın\"}\n  successor: {node: MS-M3, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M3 (S6)\"   # sprint 6\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #99, #35\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-190"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-191",
+        "line_start": 3334,
+        "line_end": 3344,
+        "raw_context": "DEP-191:\n  predecessor: {node: MS-M3, owner: \"—\"}\n  successor: {node: MS-M4, owner: \"—\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: null}\n  need_by: \"M4\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"M3 PASS\"\n  precise_requirement: null\n  risk_class: null\n  source: \"Item 66 #101\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-191"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-192",
+        "line_start": 3345,
+        "line_end": 3355,
+        "raw_context": "DEP-192:\n  predecessor: {node: DN-ML, owner: \"Asrın\"}\n  successor: {node: MS-M4, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #101\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-192"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-193",
+        "line_start": 3356,
+        "line_end": 3366,
+        "raw_context": "DEP-193:\n  predecessor: {node: DN-RAG, owner: \"Asrın\"}\n  successor: {node: MS-M4, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #101\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-193"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-194",
+        "line_start": 3367,
+        "line_end": 3377,
+        "raw_context": "DEP-194:\n  predecessor: {node: DN-VIS-MODELS, owner: \"Selman\"}\n  successor: {node: MS-M4, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #101\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-194"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-195",
+        "line_start": 3378,
+        "line_end": 3388,
+        "raw_context": "DEP-195:\n  predecessor: {node: DN-VIS-OOD, owner: \"Selman\"}\n  successor: {node: MS-M4, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #101\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-195"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-196",
+        "line_start": 3389,
+        "line_end": 3399,
+        "raw_context": "DEP-196:\n  predecessor: {node: DN-SCH-CPSAT, owner: \"Batu\"}\n  successor: {node: MS-M4, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #101\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-196"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-197",
+        "line_start": 3400,
+        "line_end": 3410,
+        "raw_context": "DEP-197:\n  predecessor: {node: DN-SCH-CF, owner: \"Batu\"}\n  successor: {node: MS-M4, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #101\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-197"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-198",
+        "line_start": 3411,
+        "line_end": 3421,
+        "raw_context": "DEP-198:\n  predecessor: {node: DN-SEC-BASE, owner: \"Yavuz\"}\n  successor: {node: MS-M4, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #101\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-198"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-199",
+        "line_start": 3422,
+        "line_end": 3432,
+        "raw_context": "DEP-199:\n  predecessor: {node: DN-RT-QDRANT, owner: \"Yavuz\"}\n  successor: {node: MS-M4, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #101\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-199"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-200",
+        "line_start": 3433,
+        "line_end": 3443,
+        "raw_context": "DEP-200:\n  predecessor: {node: DN-RT-MLFLOW, owner: \"Yavuz\"}\n  successor: {node: MS-M4, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: INTEGRATION_READY}\n  need_by: \"M4 (S8)\"   # sprint 8\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-1\n  source: \"Item 66 #101\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-200"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-201",
+        "line_start": 3444,
+        "line_end": 3454,
+        "raw_context": "DEP-201:\n  predecessor: {node: MS-M4, owner: \"—\"}\n  successor: {node: MS-M5, owner: \"—\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: null}\n  need_by: \"M5\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"M4 PASS\"\n  precise_requirement: null\n  risk_class: null\n  source: \"Item 66 #102\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-201"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-202",
+        "line_start": 3455,
+        "line_end": 3465,
+        "raw_context": "DEP-202:\n  predecessor: {node: DN-RES-BASELINES, owner: \"Asrın\"}\n  successor: {node: MS-M5, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: EVALUATION_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #102\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-202"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-203",
+        "line_start": 3466,
+        "line_end": 3476,
+        "raw_context": "DEP-203:\n  predecessor: {node: DN-PLAT-FAILVAL, owner: \"Yavuz\"}\n  successor: {node: MS-M5, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: EVALUATION_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #102\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-203"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-204",
+        "line_start": 3477,
+        "line_end": 3487,
+        "raw_context": "DEP-204:\n  predecessor: {node: DN-PLAT-BACKUP, owner: \"Yavuz\"}\n  successor: {node: MS-M5, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: EVALUATION_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #102\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-204"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-205",
+        "line_start": 3488,
+        "line_end": 3498,
+        "raw_context": "DEP-205:\n  predecessor: {node: DN-PLAT-RUNNER, owner: \"Yavuz\"}\n  successor: {node: MS-M5, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: EVALUATION_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #102\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-205"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-206",
+        "line_start": 3499,
+        "line_end": 3509,
+        "raw_context": "DEP-206:\n  predecessor: {node: DN-RES-DATASCEN, owner: \"Asrın\"}\n  successor: {node: MS-M5, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: EVALUATION_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #102\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-206"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-207",
+        "line_start": 3510,
+        "line_end": 3520,
+        "raw_context": "DEP-207:\n  predecessor: {node: DN-RES-HARNESS, owner: \"Yavuz\"}\n  successor: {node: MS-M5, owner: \"—\"}\n  semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: EVALUATION_READY}\n  need_by: \"M5 (S10)\"   # sprint 10\n  fallback: null\n  unblock_evidence: \"milestone evidence (Item 65)\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #102\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-207"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-208",
+        "line_start": 3521,
+        "line_end": 3531,
+        "raw_context": "DEP-208:\n  predecessor: {node: MS-M5, owner: \"—\"}\n  successor: {node: MS-M6, owner: \"—\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: null}\n  need_by: \"M6\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"M5 PASS\"\n  precise_requirement: null\n  risk_class: null\n  source: \"Item 66 #103\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-208"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-209",
+        "line_start": 3532,
+        "line_end": 3542,
+        "raw_context": "DEP-209:\n  predecessor: {node: DN-FRZ-DATA, owner: \"Batu\"}\n  successor: {node: MS-M6, owner: \"—\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: FROZEN}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"freeze records\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #103–#104\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-209"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-210",
+        "line_start": 3543,
+        "line_end": 3553,
+        "raw_context": "DEP-210:\n  predecessor: {node: DN-FRZ-MODEL, owner: \"Asrın\"}\n  successor: {node: MS-M6, owner: \"—\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: FROZEN}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"freeze records\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #103–#104\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-210"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-211",
+        "line_start": 3554,
+        "line_end": 3564,
+        "raw_context": "DEP-211:\n  predecessor: {node: DN-FRZ-PROTOCOL, owner: \"Asrın\"}\n  successor: {node: MS-M6, owner: \"—\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: FROZEN}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"freeze records\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #103–#104\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-211"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-212",
+        "line_start": 3565,
+        "line_end": 3575,
+        "raw_context": "DEP-212:\n  predecessor: {node: DN-FRZ-RELEASE, owner: \"Yavuz\"}\n  successor: {node: MS-M6, owner: \"—\"}\n  semantics: {kind: FREEZE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: FROZEN}\n  need_by: \"M6 (S11)\"   # sprint 11\n  fallback: null\n  unblock_evidence: \"freeze records\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #103–#104\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-212"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-213",
+        "line_start": 3576,
+        "line_end": 3586,
+        "raw_context": "DEP-213:\n  predecessor: {node: MS-M6, owner: \"—\"}\n  successor: {node: MS-M7, owner: \"—\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: null}\n  need_by: \"M7\"   # sprint 12\n  fallback: null\n  unblock_evidence: \"M6 PASS\"\n  precise_requirement: null\n  risk_class: null\n  source: \"Item 66 #105\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-213"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-214",
+        "line_start": 3587,
+        "line_end": 3597,
+        "raw_context": "DEP-214:\n  predecessor: {node: DN-RES-BENCH, owner: \"Yavuz\"}\n  successor: {node: MS-M7, owner: \"—\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: FROZEN}\n  need_by: \"M7 (S12)\"   # sprint 12\n  fallback: null\n  unblock_evidence: \"EvidenceSeal\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #105\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-214"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-215",
+        "line_start": 3598,
+        "line_end": 3608,
+        "raw_context": "DEP-215:\n  predecessor: {node: MS-M7, owner: \"—\"}\n  successor: {node: MS-M8, owner: \"—\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: null}\n  need_by: \"M8\"   # sprint 13\n  fallback: null\n  unblock_evidence: \"M7 PASS\"\n  precise_requirement: null\n  risk_class: null\n  source: \"Item 66 #106\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-215"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-216",
+        "line_start": 3609,
+        "line_end": 3619,
+        "raw_context": "DEP-216:\n  predecessor: {node: DN-RES-CLAIMS, owner: \"Asrın\"}\n  successor: {node: MS-M8, owner: \"—\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: FROZEN}\n  need_by: \"M8 (S13)\"   # sprint 13\n  fallback: null\n  unblock_evidence: \"final evidence / reproduction\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #106; NFR-REP-004\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-216"
+    },
+    {
+      "code": "PRECISION_MISSING",
+      "severity": "WARNING",
+      "message": "Precise requirement absent; section 23's general justification is retained but not certified",
+      "source": {
+        "path": "docs/05_Dependency_Graph.md",
+        "heading": "DEP-217",
+        "line_start": 3620,
+        "line_end": 3630,
+        "raw_context": "DEP-217:\n  predecessor: {node: DN-PLAT-CLEANREPRO, owner: \"Yavuz\"}\n  successor: {node: MS-M8, owner: \"—\"}\n  semantics: {kind: EVIDENCE, strength: HARD, blocking_stage: MILESTONE_EXIT, required_readiness: EVALUATION_READY}\n  need_by: \"M8 (S13)\"   # sprint 13\n  fallback: null\n  unblock_evidence: \"final evidence / reproduction\"\n  precise_requirement: null\n  risk_class: DR-7\n  source: \"Item 66 #106; NFR-REP-004\"\n  status: NOT_READY"
+      },
+      "record_id": "DEP-217"
+    }
+  ],
+  "owner_decisions": [],
+  "hardware_pinning": "DECIDED primary shared-host profile in01; actual run identities/measurements still required",
+  "timing": "Keycloak/SeaweedFS endS4; Temporal formal endS5; Oracle isolation/credentials subset endS5 ahead of full M4 baseline",
+  "topology_unchanged": true,
+  "approved_semantic_changes": "DN-VIS-MODELS INTEGRATION_READY; five non-CONTRACT F1 removed; source-supported deadlines/consumer scope clarified"
+}

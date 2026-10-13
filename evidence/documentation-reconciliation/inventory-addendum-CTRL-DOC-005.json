@@ -1,0 +1,41 @@
+{
+  "finding_id": "DOC-NFR-PROJECTION",
+  "control_item": "CTRL-DOC-005",
+  "affected_files": [
+    "docs/02_System_Architecture_Specification.md",
+    "docs/03_Requirements_Traceability_Matrix.md",
+    "docs/04_Work_Breakdown_Structure.md",
+    "docs/07_Milestone_and_Release_Plan.md"
+  ],
+  "affected_stable_ids": [
+    "GAP-RTM-018",
+    "GAP-RTM-019",
+    "RTF-030",
+    "NFR-GOV-001",
+    "NFR-GOV-002",
+    "NFR-GOV-003",
+    "NFR-GOV-005",
+    "NFR-GOV-006",
+    "NFR-GOV-008",
+    "NFR-GOV-009",
+    "NFR-REP-003",
+    "NFR-REP-004",
+    "NFR-REP-005",
+    "NFR-REP-006",
+    "NFR-REP-007",
+    "NFR-REP-008",
+    "NFR-RES-006",
+    "NFR-RES-007",
+    "NFR-RES-008"
+  ],
+  "current_assertion": "02 contains113 distinct NFR rows (03 says110); seven NFR-GOV projections missing; nine existing owners absent; Simulator owner incorrectly derived; references call existing08/09 future artifacts.",
+  "governing_source": "Exact01 Item82 catalog IDs/classes/PrimaryOwners;01 Item62 §59 Operational Simulator—Primary;08§14 ratification;09 existing file",
+  "proposed_resolution": "Add seven identity/title projections; retain three GOV statements and add source-declared owners; fill nine exact Yavuz owner cells; replace Simulator ownership derivation by stable Item62§59 citation; update03 row-count projection to actual120; repair04/07/03 artifact-existence wording. No normative statements or owners are changed.",
+  "change_control_class": "C0",
+  "review_risk_class": "CR-0",
+  "decision_basis": "SOURCE_DERIVED",
+  "semantic_impact": "NONE; downstream fidelity to existing source",
+  "traceability_impact": "Preserve every ID; exact projections only",
+  "validation_impact": "Canonical semantic model unchanged; independently assert actual120 unique architecture NFR rows and matching classes",
+  "safe_to_auto_apply": true
+}

@@ -1,0 +1,87 @@
+CHG-001:
+  title: DOC-IDENTITY
+  trigger: Current human reconciliation request and baseline audit
+  reason: Obsolete final Autonomous Critical-Component Manufacturing Facility Operating
+    System branding contradicts approved name.
+  class: C1
+  review_risk_class: CR-2
+  raised_in: null
+  affected_requirements: []
+  affected_architecture: []
+  affected_contracts: []
+  affected_work_packages: []
+  affected_dependencies: []
+  affected_evidence:
+  - Documentation analysis only; no product evidence claimed
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+    - Existing setup evidence remains bound to its original source hashes, not current
+      documentation approval
+    rerun_required:
+    - Full projectctl tests
+    - Offline validation
+    - Documentation consistency audit
+  security_authority_impact: NONE — no authority, Oracle access, credentials or protected
+    execution changed
+  owner: Asrın
+  reviewers: &id001 []
+  decision: APPROVED_WITH_CONDITIONS
+  conditions:
+  - Product/runtime/source acquisition evidence remains subject to its actual gates;
+    no product DONE/VERIFIED is inferred.
+  - Owner-approved development policy applies; genuine historical review and bounded
+    migration authorization remain separately attributed.
+  rollout: Local reconciliation branch only; no deployment/Plane synchronization/merge
+  rollback: Review and revert the atomic CTRL-DOC commit; do not rewrite history
+  required_rerun:
+  - Full projectctl tests
+  - Offline validation
+  - Source/trace consistency
+  - Diff and secret hygiene
+  documentation_updates:
+  - docs/01_Master_Project_Specification.md
+  - docs/02_System_Architecture_Specification.md
+  freeze_context: PRE_M6
+  status: UNDER_REVIEW
+  human_decision_basis:
+    request: Deferred documentation reconciliation program
+    sha256: 73bb0a487008dabbdbe8e1eabf026762d705c3115ff954ed357bc2c920619acd
+    basis: Explicit current human instruction; not a historical team approval
+  source_derived_basis: Current human-approved exact identity; AGENTS §1,14; 01 title
+  affected_stable_ids:
+  - RTF-003
+  consumer_review_status: Historical Ejlonn review verified; current migration/closure
+    explicitly owner-authorized without additional review.
+  required_review_roles: One qualified independent reviewer for this normal-risk documentation
+    scope; two only for actual high-risk triggers in01/09; no mandatory all-owner/consumer
+    quorum.
+  application_control_item: CTRL-DOC-002
+  sprint_context: UNSPECIFIED; no calendar/sprint fabricated
+  proposal: Replace exactly two final branding occurrences; preserve governed automation
+    and anti-patterns.
+  review_policy_migration:
+    authority: Explicit project-owner instruction14 October2026; PR#4 closure
+    previous_review_risk_class: CR-2
+    previous_reviewers: *id001
+    previous_consumer_review_status: NOT_EXECUTED
+    actual_high_risk_triggers: []
+    rationale: Scoped reconciliation of owner-approved documentation within retained
+      product authority; no auth/security runtime change, destructive migration, protected
+      execution or major authority transfer.
+    required_independent_approvals: 1
+    historical_review:
+      reviewer: Ejlonn
+      review_id: 5509773739
+      commit: 219439364757473c8450959a3af06bdc237cd439
+      state: APPROVED
+    policy_migration_review: 'No new review requested: bounded explicit owner authorization;
+      historical approval is not a new-head approval.'
+    previous_conditions:
+    - Current user explicitly authorizes scoped branch edits; canonical peer-review
+      and merge gates remain outstanding
+    - No historical or team approval inferred
+    - No new semantics beyond documented resolution
+    previous_required_review_roles: 09 §7.3/7.4 according to declared risk; independent
+      research/data review for CR-4; independent critical review for CR-3

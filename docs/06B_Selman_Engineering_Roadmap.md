@@ -78,7 +78,7 @@ Architecture components (02 registry) reached through this role's work packages,
 | DN-VIS-BASELINES | Vision baselines | CAPABILITY | ARCH-VIS-EVAL | FROZEN |
 | DN-VIS-EPISODES | Operational inspection episodes (ScenarioEpisodes with genealogy/state) | DATA | ARCH-DATA-LINEAGE | FROZEN |
 | DN-VIS-MODELS | Deep Vision models (classification/localization/segmentation/anomaly) as ModelPackages | ARTIFACT | ARCH-VIS-MODEL, ARCH-VIS-INFER | FROZEN |
-| DN-VIS-OBSCON | InspectionObservation contract + fixtures (name: GAP-RTM-009) | CONTRACT | ARCH-CTR-EVTSCHEMA | FROZEN |
+| DN-VIS-OBSCON | InspectionObservation contract + fixtures (EVT-InspectionObservation-v1, distinct from IC-VIS-002) | CONTRACT | ARCH-CTR-EVTSCHEMA | FROZEN |
 | DN-VIS-OOD | OOD/UNKNOWN + spatial pattern evaluation | CAPABILITY | ARCH-VIS-OOD, ARCH-VIS-EVAL | FROZEN |
 | DN-VIS-PUBLIC | Public Vision dataset (rights/version) | DATA | ARCH-DATA-LINEAGE | FROZEN |
 | DN-VIS-SERVING | Operational Vision inference over real artifacts | CAPABILITY | ARCH-VIS-INFER, ARCH-VIS-ARTIFACT | FROZEN |
@@ -130,7 +130,7 @@ Ownership here means PrimaryOwner in the 01 catalogue: this role is accountable 
 | Node | Contract surface | Readiness deadline | Consumers (owner, edge) |
 |---|---|---|---|
 | DN-VIS-ARTCON | Inspection artifact identity contract (ArtifactRef, Lot/SerializedComponent refs, model metadata) | CONTRACT_READY by E2E-01 readiness (end S4) | DN-VIS-SERVING (Selman, DEP-057); DN-VIS-OBSCON (Selman, DEP-061) |
-| DN-VIS-OBSCON | InspectionObservation contract + fixtures (name: GAP-RTM-009) | CONTRACT_READY by E2E-01 readiness (end S4) | DN-AI-RCA (Asrın, DEP-065) |
+| DN-VIS-OBSCON | InspectionObservation contract + fixtures (EVT-InspectionObservation-v1, distinct from IC-VIS-002) | CONTRACT_READY by E2E-01 readiness (end S4) | DN-AI-RCA (Asrın, DEP-065) |
 
 Contract obligations follow 05 DEP-RULE-04: a fixture satisfies development-stage consumption only; milestone and final evidence require the real capability behind the contract.
 
@@ -1071,7 +1071,7 @@ FR-VIS-009:
   work_packages: [WP-VIS-001]
   target_milestone: M2
   architecture: [ARCH-VIS-INFER, ARCH-CTR-EVTSCHEMA]
-  planned_surface: "InspectionObservation/InspectionResult publisher (name reconciliation GAP-RTM-009)"
+  planned_surface: "InspectionObservation publisher; Core normalizes separate InspectionResult"
   boundary_mode_final: REAL
   verification: [TEST-VIS-PIPELINE, TEST-EVT-SCHEMA, AV-SCEN-01, E2E-01]
   evidence_env: "CI + INTEGRATION"
@@ -1211,3 +1211,13 @@ This role is complete at M8 when every line below is true and demonstrable from 
 ---
 
 *End of 06B_Selman_Engineering_Roadmap.md (Draft — Derived from Approved 01/02 Baseline).*
+
+## Final human reconciliation binding — 2026-10-13
+
+01 §Final Human Reconciliation and02 §Final human reconciliation govern this projection. Vision/NDT publishes immutable InspectionObservation (existing EVT-InspectionObservation-v1); Core normalizes separate InspectionResult (existing IC-VIS-002) and owns canonical manufacturing/quality state. PlaceLotOnHold / CMD-PlaceLotOnHold-v1 is the single hold-placement command; ApplyMaterialHold is deprecated terminology, never a second contract. Other protected identities follow the01 action table, with exact approval/revision/freshness/idempotency binding. Simulator/Oracle, Twin/Qdrant projections, AI READ/SIMULATE/PROPOSE, Scheduler candidates, HITL, identity and UI boundaries remain unchanged.
+
+ARCH-AUTO-WORKFLOW (durable Automation/Temporal layer) coordinates GS-01/E2E across Inspection/NDT→Core quality→RCA→recovery→HITL→governed Core commands→verified effect→Twin/Audit. It does not acquire Core authority. MC-2 accountable owner is Asrın Dündar; contributing WP owners remain73/17/32/57. The primary shared-host HardwareProfile and accepted LaneA/B/C portfolio are pinned in01; acquisition/rights/source fields not locally verified are NEEDS_SOURCE_VERIFICATION, not invented facts or performance results. Real/public held-out evaluation and source-specific limitations remain mandatory where claimed.
+
+HARD/SOFT refer to declared work/readiness consumers, not automatic runtime/deployment/import relations. Non-CONTRACT F1 entries DEP-025/045/058/076/094 have no fixture fallback: real producer readiness at the declared stage is required, while development stubs are not satisfaction evidence. DN-VIS-MODELS now declares INTEGRATION_READY for DEP-060/194; operational serving must load promoted required-mode artifacts with provenance. Source-supported deadlines and per-consumer scope are defined in05, without shifting canonical ownership or schedules.
+
+GAP-RTM-004/005 remain ACCEPTED_WITH_RATIONALE for this pre-implementation baseline: missing canonical record metadata is not fabricated. FR-GOV-001/004 and the relevant NFR owners must supply/review actual fields and measurement definitions before their declared gates; projectctl retains nulls/warnings and never grants READY/VERIFIED from planned prose. Owner trace confirmation GAP-RTM-006 and final schema/version/card specifics remain ordinary implementation/review prerequisites, not unresolved choices among the eight approved policy groups.

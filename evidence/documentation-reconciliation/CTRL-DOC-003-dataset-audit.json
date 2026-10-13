@@ -1,0 +1,542 @@
+{
+  "references": [
+    {
+      "file": "docs/02_System_Architecture_Specification.md",
+      "line": 2120,
+      "text": "**Technology note (Item 16; current CHG-002 dataset-domain reconciliation)**: WM-811K is semiconductor wafer-map data and may be retained only as a legacy/cross-domain methodological comparison, outside the primary aerospace-domain evaluation portfolio. It is not serialized aerospace-component inspection data and is insufficient for pixel-level inspection-image segmentation, which requires a separate real/public inspection-image dataset. SECOM and MixedWM38 have the same cross-domain-only scientific-claim boundary; 01 Item 55 controls source-specific rights and candidate selection.",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/02_System_Architecture_Specification.md",
+      "line": 8672,
+      "text": "**Split defaults**: an external dataset with no official split uses 70% train / 15% validation / 15% `FINAL_TEST`, with group-aware isolation preferred over row randomization. A small tabular dataset (SECOM-like) uses a 20% untouched `FINAL_TEST` with the remaining 80% split via 5-fold stratified cross-validation for development/selection — a cross-validation result is never presented as a final holdout result.",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 17647,
+      "text": "# WM-811K Scope’u",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 17649,
+      "text": "WM-811K is a semiconductor wafer-map dataset. It may be retained only as a legacy/cross-domain methodological comparison, never as serialized aerospace-component inspection data. Its limited methodological uses are:",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 18654,
+      "text": "## WM-811K’yi Tüm Vision Problemi İçin Kullanmak",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103298,
+      "text": "SECOM is semiconductor process data ([UCI source](https://archive.ics.uci.edu/dataset/179/secom)). WM-811K remains semiconductor wafer-map data. MixedWM38 remains mixed-defect wafer-map data, with partially generated samples as described by the [original dataset authors](https://github.com/Junliangwangdhu/WaferMap/blob/master/README.md). They are retained here only as optional legacy/cross-domain methodological material, with no aerospace-domain claim. They are excluded from the primary aerospace evaluation portfolio. Their removal is preferred wherever no necessary methodological comparison is justified. Historical source/license decisions below do not approve a new scientific claim or waive source-specific redistribution conditions.",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103302,
+      "text": "| NASA milling/tool-wear ([institutional record](https://data.nasa.gov/dataset/groups/milling-wear)) | Experimental machining/tool-wear method evaluation | Candidate only; exact acquisition, rights, version, split and claim review pending |",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103305,
+      "text": "| MVTec AD / AD2 ([AD2 source](https://www.mvtec.com/research-teaching/datasets/mvtec-ad-2)) | Auxiliary industrial anomaly evaluation | Source-specific existing license conditions remain; no aerospace-specific evidence claim |",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103306,
+      "text": "| GDXray | Casting/weld/X-ray/NDT evaluation candidate | Candidate only; exact source/version, rights, partition and claim review pending |",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103311,
+      "text": "## 33. UCI SECOM",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103317,
+      "text": "UCI’nin resmi dataset kaydı SECOM’u CC BY 4.0 altında yayımlamaktadır.",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103321,
+      "text": "# 34. UCI SECOM LicenseDecision",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103327,
+      "text": "# 35. UCI SECOM LicenseConfidence",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103335,
+      "text": "# 36. UCI SECOM Allowed Role",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103347,
+      "text": "# 37. UCI SECOM Is Not Manufacturing Operational Ground Truth",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103349,
+      "text": "SECOM:",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103357,
+      "text": "# 38. UCI SECOM Redistribution",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103365,
+      "text": "# WM-811K",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103367,
+      "text": "## 39. WM-811K Role",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103377,
+      "text": "Kaggle WM-811K metadata:",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103391,
+      "text": "# 42. WM-811K LicenseDecision",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103397,
+      "text": "# 43. WM-811K LicenseConfidence",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103407,
+      "text": "# 44. WM-811K Internal Use",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103413,
+      "text": "# 45. WM-811K Public Raw Redistribution",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103430,
+      "text": "# 46. WM-811K Scientific Scope",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103438,
+      "text": "# MixedWM38",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103440,
+      "text": "## 47. MixedWM38 Role",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103450,
+      "text": "Original project README MixedWM38’i 38,000+ semiconductor wafer maps içeren, 38 pattern sınıfını kapsayan bir research dataset olarak tanımlar ve bazı samples’ın GAN-based balancing amacıyla üretildiğini açıklar.",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103466,
+      "text": "# 51. MixedWM38 LicenseDecision",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103472,
+      "text": "# 52. MixedWM38 LicenseConfidence",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103480,
+      "text": "# 53. MixedWM38 Mandatory Dataset Değildir",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103482,
+      "text": "Final project success MixedWM38 availability/use-rights clarification’ına bağlı olmayacaktır.",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103486,
+      "text": "# 54. MixedWM38 Raw Public Redistribution",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103494,
+      "text": "# 55. MixedWM38 Derivatives",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103506,
+      "text": "# 57. MixedWM38 Synthetic Composition Disclosure",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103516,
+      "text": "# MVTec AD",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103518,
+      "text": "## 58. MVTec AD Role",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103532,
+      "text": "# 60. MVTec License",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103534,
+      "text": "MVTec’in official dataset pages datasetlerini CC BY-NC-SA 4.0 altında yayımlar ve commercial use’ın permitted olmadığını açıkça belirtir.",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103538,
+      "text": "# 61. MVTec AD LicenseDecision",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103554,
+      "text": "# 63. MVTec LicenseConfidence",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103562,
+      "text": "# 64. MVTec Raw Redistribution",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103570,
+      "text": "# 65. MVTec Derived Publication",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103576,
+      "text": "# MVTec AD 2",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103578,
+      "text": "## 66. MVTec AD 2",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103598,
+      "text": "* UCI SECOM — APPROVED source/license status; legacy/cross-domain methodological use only, no aerospace-domain claim",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103599,
+      "text": "* WM-811K — APPROVED_WITH_CONDITIONS source/license status; legacy/cross-domain wafer-map comparison only, excluded from the primary aerospace portfolio",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103600,
+      "text": "* MixedWM38 — REVIEW_REQUIRED / optional; legacy/cross-domain wafer-map comparison only, excluded from the primary aerospace portfolio",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103601,
+      "text": "* MVTec AD — APPROVED_WITH_CONDITIONS / auxiliary",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103602,
+      "text": "* MVTec AD 2 — optional",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103626,
+      "text": "SECOM + WM-811K + MVTec + Simulator outputs:",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 103680,
+      "text": "MVTec industrial anomaly results critical-component manufacturing manufacturing facility realism kanıtı olmayacaktır.",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 104254,
+      "text": "SECOM and WM-811K may support legacy/cross-domain methodological comparisons only; MVTec remains auxiliary industrial anomaly data and simulator outputs remain simulated operational data. These independent sources do not establish aerospace-domain validity.",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 104583,
+      "text": "## 195. UCI SECOM",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 104599,
+      "text": "# 196. WM-811K",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 104619,
+      "text": "# 197. MixedWM38",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 104635,
+      "text": "# 198. MVTec AD",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 104655,
+      "text": "# 199. MVTec AD 2",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 104762,
+      "text": "* SECOM/tabular data",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 104855,
+      "text": "30. UCI SECOM Approved Source/License — Legacy Cross-Domain Methodology Only",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 104856,
+      "text": "31. WM-811K Conditional Source/License — Legacy Wafer-Map Comparison Only",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 104857,
+      "text": "32. MixedWM38 Review-Required Status",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 104858,
+      "text": "33. MVTec Conditional Auxiliary Status",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 105017,
+      "text": "21. UCI SECOM may be used only as approved-source/license legacy/cross-domain semiconductor tabular methodology, with no aerospace-domain claim.",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 105018,
+      "text": "22. WM-811K may be used only as a conditional-source/license legacy/cross-domain semiconductor wafer-map comparison, outside the primary aerospace evaluation portfolio.",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 105019,
+      "text": "23. MixedWM38 unclear redistribution status ile mandatory dependency olmamalıdır.",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 105020,
+      "text": "24. MVTec AD auxiliary/noncommercial status ile kullanılmalıdır.",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 105137,
+      "text": "## MixedWM38 Mandatory Dependency Before Rights Clarification",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 105143,
+      "text": "## MVTec as Critical-Component Manufacturing-Specific Ground Truth",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 105173,
+      "text": "* exact final WM-811K upstream-rights evidence",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 105174,
+      "text": "* MixedWM38 permission/license clarification if pursued",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 106973,
+      "text": "# 228. Synthetic Telemetry Forced to Match SECOM Blindly Değil",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 114888,
+      "text": "# WM-811K Task Governance",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 116393,
+      "text": "## 39. SECOM-Like Dataset",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 162427,
+      "text": "## 18. UCI SECOM",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 162439,
+      "text": "# 19. WM-811K",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 162451,
+      "text": "# 20. MixedWM38",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 162461,
+      "text": "# 21. MVTec AD / AD2",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 179550,
+      "text": "* UCI SECOM",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 179551,
+      "text": "* WM-811K",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 179552,
+      "text": "* MixedWM38",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 179553,
+      "text": "* MVTec datasets",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/01_Master_Project_Specification.md",
+      "line": 180304,
+      "text": "* MVTec auxiliary use",
+      "scope": "01 CHG-002 governs scientific role; exact selected version/split/rights not inferred"
+    },
+    {
+      "file": "docs/10_Pre_Implementation_Red_Team_Review.md",
+      "line": 718,
+      "text": "- **Observed weakness:** 01 calls UCI SECOM a `critical-component manufacturing tabular/process-data ML baseline`, calls WM-811K a `serialized component-map` benchmark and describes its samples as `component inspection map`; MixedWM38 is similarly relabeled. The underlying dataset identity is not transformed by the project-domain migration.",
+      "scope": "Historical finding retained"
+    },
+    {
+      "file": "docs/10_Pre_Implementation_Red_Team_Review.md",
+      "line": 719,
+      "text": "- **Counterexample:** A reviewer asks what physical component/process the WM-811K maps or SECOM variables represent in the aerospace scenario. The document wording implies new-domain evidence that the source does not establish.",
+      "scope": "Historical finding retained"
+    },
+    {
+      "file": "docs/10_Pre_Implementation_Red_Team_Review.md",
+      "line": 735,
+      "text": "- **Observed weakness:** The portfolio is still dominated by SECOM/WM-811K/MixedWM38 plus generic MVTec. Item 55 contains no selected public milling/tool-wear/5-axis time-series or public X-ray/NDT/composite-damage source aligned to the new process flow.",
+      "scope": "Historical finding retained"
+    },
+    {
+      "file": "docs/10_Pre_Implementation_Red_Team_Review.md",
+      "line": 740,
+      "text": "- **Required remediation:** Before dataset/model implementation freeze, select and register at least one domain-relevant public/real machining/resource-health source where predictive ML uses such claims, and one defensible inspection/NDT lane for Vision claims; keep MVTec auxiliary if useful. Rights must pass Item 55 governance. Full project must still not depend on one proprietary end-to-end dataset.",
+      "scope": "Historical finding retained"
+    }
+  ],
+  "source_checks": [
+    {
+      "url": "https://archive.ics.uci.edu/dataset/179/secom",
+      "observation": "Semiconductor process data; source CC BY4.0 confirmed"
+    },
+    {
+      "url": "https://github.com/Junliangwangdhu/WaferMap/blob/master/README.md",
+      "observation": "MixedWM38 wafer maps; generated balancing samples; no new rights approval"
+    },
+    {
+      "url": "https://www.kaggle.com/qingyi/wm811k-wafer-map/metadata",
+      "observation": "WM-811K source identity remains wafer maps; original conditional rights decision retained"
+    }
+  ],
+  "primary_real_public_portfolio": "CANDIDATE_ONLY; exact records/partitions/rights/claim approval pending",
+  "rtf_022": "PARTIALLY_RESOLVED; no frozen portfolio invented"
+}

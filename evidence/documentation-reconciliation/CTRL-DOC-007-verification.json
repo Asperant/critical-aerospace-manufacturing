@@ -1,0 +1,87 @@
+{
+  "control_item": "CTRL-DOC-007",
+  "test_command": "PYTHONPATH=tools/projectctl/src python -m pytest tools/projectctl/tests -q",
+  "test_result": "........................................................................ [ 49%]\n........................................................................ [ 99%]\n.                                                                        [100%]\n145 passed in 62.69s (0:01:02)",
+  "validation_result": "PASS",
+  "observed_invariants": {
+    "source": "docs/04_Work_Breakdown_Structure.md",
+    "parser": "offline-project-v1",
+    "execution_status": "UNAVAILABLE (documentation only)",
+    "wp_count": 179,
+    "owner_distribution": {
+      "Asrın Dündar": 73,
+      "Batuhan Kaya": 32,
+      "Selman Özdemir": 17,
+      "Yavuz Gümüş": 57
+    },
+    "capability_count": 29,
+    "validation": "PASS",
+    "cycle_count": 13,
+    "milestone_count": 9,
+    "scheduled_wp_count": 174,
+    "unscheduled_wp_ids": [
+      "WP-R2-001",
+      "WP-R2-002",
+      "WP-R2-003",
+      "WP-S-001",
+      "WP-X-001"
+    ],
+    "dependency_node_count": 100,
+    "dependency_edge_count": 217,
+    "hard_edge_count": 208,
+    "soft_edge_count": 9,
+    "hard_cycle_count": 0,
+    "requirement_count": 306,
+    "fr_count": 186,
+    "nfr_count": 120,
+    "class_counts": {
+      "F0": 17,
+      "F1": 159,
+      "R1": 10,
+      "A1": 41,
+      "S2": 23,
+      "C3": 4,
+      "H0": 52
+    },
+    "diagnostic_counts": {
+      "FIXTURE_SEMANTICS": 5,
+      "NEED_BY_AMBIGUOUS": 29,
+      "NFR_METADATA_MISSING": 120,
+      "PRECISION_MISSING": 179,
+      "READINESS_INCOMPATIBLE": 2,
+      "REQUIREMENT_FIELDS_MISSING": 306
+    }
+  },
+  "semantic_model_sha256": "412aec44223838fdeb149c706c855f212501c78e7660f8a35a61e9703b6e608f",
+  "semantic_model_unchanged": true,
+  "canonical_source_manifest": {
+    "docs/00_Downstream_Artifact_Production_Guide.md": "b2b7955b4c24a9f6cf605c049e136bf0274cc4e0b15cfbddf6d6bf4e0ee2ee3e",
+    "docs/01_Master_Project_Specification.md": "6291dec0433fdcda690ee8361b107f11aaa93dc49ad0b3d8b7d90582a8618cf3",
+    "docs/02_System_Architecture_Specification.md": "23550aaf758467ed4d128cb3bb08ff2f77a74bb27f2781a3a9ef9af610f205c7",
+    "docs/03_Requirements_Traceability_Matrix.md": "3532717c119c0e3bd22d0f4e98878ae74a78ec2312a7b3e27f6907b2ca34ca30",
+    "docs/04_Work_Breakdown_Structure.md": "a61e4f4890d60d21bc4bdabf66be8d5b8332419d915dea57255c6caca786d89f",
+    "docs/05_Dependency_Graph.md": "c693a9b953458d0bcc2be4b2c9fdb4d19d6f21e7ebf8aca8e0fb49be08db30d1",
+    "docs/06A_Asrin_Engineering_Roadmap.md": "4034fbc467766dcaf59aab274bcb6ec2ee944f6c311444f079f589029dc8c92c",
+    "docs/06B_Selman_Engineering_Roadmap.md": "92801ffe6782ec55a096482db1f578b1d75c41278c269ef8c56aaf97e23da2ea",
+    "docs/06C_Batu_Engineering_Roadmap.md": "f12f21dd91c1487c556bd5cbbe24a52fdbda03f9add8d8009463e74cb95f5d2e",
+    "docs/06D_Yavuz_Engineering_Roadmap.md": "a70a3c28b458ccab65e4305675f962b9b6eeb4e84cba4e94e2da53a74d81a961",
+    "docs/07_Milestone_and_Release_Plan.md": "af0d04e7e069de6ade7674b309405d61d48c6c40aad990a4126969b49663578d",
+    "docs/08_Definition_of_Ready_and_Done.md": "9b4e00c9666c07a2bf83962a36e5741fbfc6a80fa72a0a9c5341f84f63a62005",
+    "docs/09_Change_Control_Process.md": "33e3238e76966f7f5c12373ae00159d9897711719149bffd0186e6c208a96889",
+    "docs/10_Pre_Implementation_Red_Team_Review.md": "978f92a80b60776c1bf2a2150035b9a82e3d1891bbae5dd7787a60ceb47e171d",
+    "docs/DOMAIN_MIGRATION_CHANGELOG.md": "e988c306f889ebf68a28f7359c86e4ecaf84164921ef440fef4860d953c5e3ba"
+  },
+  "exact_requirement_citation_valid_count": 306,
+  "git_diff_check": "PASS",
+  "secret_and_generated_file_check": "PASS",
+  "files_in_scope": [
+    "docs/10_Pre_Implementation_Red_Team_Review.md",
+    "project_control/documentation-reconciliation/audit.py",
+    "evidence/documentation-reconciliation/red-team-findings.json"
+  ],
+  "plane_reads": 0,
+  "plane_mutations": 0,
+  "github_mutations": 0,
+  "network_mutations": 0,
+  "review_status": "Local branch verification only; no peer approval, merge or runtime acceptance claimed"
+}

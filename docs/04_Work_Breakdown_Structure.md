@@ -96,7 +96,7 @@ Decomposition: **Program → Capability Area → Work Package → Deliverable �
 
 ## 4. Definition of Ready / Definition of Done (proposed rule sets)
 
-08 will ratify these. Until then the following IDs are referenced by every WP card; they are derived from 01 Items 64, 66, 83, 84 and are marked **proposed**.
+08 §14 ratifies the following rule identities, derived from 01 Items 64, 66, 83, 84. Every WP card references these IDs; 08 governs their readiness/completion meaning and evidence obligations. Ratification does not mark any WP READY or DONE (CTRL-DOC-005 / CHG-016).
 
 ### 4.1 DoR — a work package may start when
 
@@ -459,7 +459,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 **Major tasks.**
 - enumerate legal transitions per entity state
 - implement guards with explicit rejection reasons
-- implement ApplyMaterialHold / ReleaseMaterialHold handlers (naming per 05 DEP-GAP-06)
+- implement PlaceLotOnHold / ReleaseMaterialHold handlers (naming per 05 DEP-GAP-06)
 - write negative tests as first-class cases (not afterthoughts)
 
 **Verification work (03 planned families).** AV-SCEN-01, E2E-01, TEST-AUTH-NEG, TEST-CORE-STATEMACHINE
@@ -9264,7 +9264,7 @@ Item 68 scope classes are carried verbatim. R2 candidates and stretch enhancemen
 | R1 | mandatory research/evidence | 23 packages | mechanism must exist and run; outcome direction is free |
 | R2 | evidence-gated candidate | WP-R2-001, WP-R2-002, WP-R2-003 | unscheduled; cannot be a HARD predecessor of any mandatory package without formal promotion (05 DEP-RULE-11) |
 | S | stretch | WP-S-001 | register only; reviewed at milestone boundaries, never scheduled against mandatory capacity |
-| X | out of scope | WP-X-001 (guard rail) | not work; a standing check that out-of-scope items do not re-enter as stretch |
+| X | out of scope | WP-X-001 (guard rail) | bounded optional documentation/review guardrail work; not delivery of an out-of-scope product capability; remains unscheduled |
 
 | Isolation check | Result |
 |---|---|
@@ -9378,12 +9378,12 @@ Risk identities come from 01 Item 69; priority is not restated here. A work pack
 | ID | Class | Finding | Required resolution | Severity |
 |---|---|---|---|---|
 | WBS-GAP-01 | NAMESPACE_COLLISION (inherited GAP-RTM-013) | `WP-<AREA>-NNN` work packages vs Item 82 `WP-SMALL/NORMAL/STRESS` workload profiles. | Pattern-based disambiguation adopted (§2); tooling must match the full pattern `WP-[A-Z0-9]+-[0-9]{3}`, which also covers digit-bearing area segments such as `WP-R2-001`. Alternative (renaming the WBS namespace) rejected because the user-facing convention in 00 §8 uses `WP-CORE-001`. | MINOR — resolved by convention, confirm in review |
-| WBS-GAP-02 | FORWARD_REFERENCE | DoR/DoD rule sets (§4) are proposed here but 08 is the authoritative artifact and does not exist yet. | Ratify or replace in 08; WP cards reference IDs, not wording, so ratification does not require re-editing every card. | MINOR |
-| WBS-GAP-03 | UNANCHORED_WORK (inherited GAP-RTM-001/002/003) | WP-ML-*, WP-RES-001/003/004, WP-VDATA-004 and WP-RES-006 advance capabilities with no dedicated 02 ARCH ID. | 02 registry append via change control before M4/M5 (05 DEP-GAP-08/09). | B-M4 / B-M5 |
-| WBS-GAP-04 | CONTRACT_NAMING (inherited GAP-RTM-009/010) | WP-CORE-002, WP-CORE-003, WP-EVT-001, WP-VIS-001 and WP-AUTO-003 deliver contracts whose canonical names are unresolved (hold/dispatch command; InspectionObservation vs InspectionResult). | Resolve in the contract registry before S3–S4 so the E2E-01 readiness gate is not the first forcing function. | B-E2E01 |
+| WBS-GAP-02 | RESOLVED | 08 now defines and ratifies the referenced DoR/DoD IDs; lossless many-to-one task mapping is explicit. | Ratify or replace in 08; WP cards reference IDs, not wording, so ratification does not require re-editing every card. | INFO — future implementation evidence remains required |
+| WBS-GAP-03 | RESOLVED | 02 append-only existing-service ARCH allocations and03 traces now cover ML, evaluation and dataset capabilities. | 02 registry append via change control before M4/M5 (05 DEP-GAP-08/09). | INFO — future implementation evidence remains required |
+| WBS-GAP-04 | RESOLVED | Distinct observation/result and canonical command identities are DECIDED in01/02; contract field/version freeze remains assigned implementation work. | Resolve in the contract registry before S3–S4 so the E2E-01 readiness gate is not the first forcing function. | INFO — governed implementation gates retained |
 | WBS-GAP-05 | TIMING (inherited DEP-GAP-04/05) | WP-PLAT-003, WP-SEC-001 and WP-HITL-004 must deliver Keycloak/SeaweedFS by end S4 and Temporal by end S5 — earlier than the Item 66 prose implies; WP-SEC-002 additionally needs an S5 subset for the Oracle negative test. | Roadmaps (06) must schedule these in S3–S5, not M4. | MAJOR |
-| WBS-GAP-06 | OWNER_UNASSIGNED (inherited GAP-RTM-020) | MC-2 (governed synthetic benchmark) has no research owner; WP-SIM-007 and WP-BENCH-001 carry the mechanism but no claim owner exists. | Assign via change control before M6. | B-M6 |
-| WBS-GAP-07 | MEASUREMENT_CONTEXT (inherited GAP-RTM-021) | WP-VIS-008, WP-VIS-010 and WP-PLAT-006 depend on hardware profiles that are not pinned (CPU baseline, Vision GPU/CPU, normal developer hardware). | Record profiles in WP-PLAT-005 before M6. | B-M6 |
+| WBS-GAP-06 | RESOLVED | MC-2 accountability is Asrın Dündar in01; all179 WP owners remain unchanged. | Assign via change control before M6. | INFO — future implementation evidence remains required |
+| WBS-GAP-07 | RESOLVED | 01 final human decision pins the shared-host profile; actual benchmark measurements remain future evidence. | Record profiles in WP-PLAT-005 before M6. | INFO — future implementation evidence remains required |
 | WBS-GAP-08 | LOAD_CONCENTRATION | Asrın owns 73 and Yavuz 57 of 179 packages; S9–S11 concentrates Yavuz-owned evidence infrastructure. | 06 roadmaps must sequence contract-first delivery and move research-lane execution to lane owners; not solved by reassigning ownership (Item 62 is fixed). | MAJOR for 06/07 |
 | WBS-GAP-09 | SIZING_UNCERTAINTY | Size bands are indicative and derived from deliverable/task counts, not from estimation sessions. | Owners re-band their packages at DoR; bands never become hour commitments. | INFO |
 | WBS-GAP-10 | TASKID_ALLOCATION | Major tasks are listed but not individually identified (`TASK-<AREA>-NNN` unallocated) to avoid a micro-task registry before implementation. | Allocate TaskIDs only where a task needs independent tracking (00 §8). | INFO |
@@ -9465,3 +9465,13 @@ Risk identities come from 01 Item 69; priority is not restated here. A work pack
 ---
 
 *End of 04 — Work Breakdown Structure (Draft — Derived from Approved 01/02 Baseline).*
+
+## Final human reconciliation binding — 2026-10-13
+
+01 §Final Human Reconciliation and02 §Final human reconciliation govern this projection. Vision/NDT publishes immutable InspectionObservation (existing EVT-InspectionObservation-v1); Core normalizes separate InspectionResult (existing IC-VIS-002) and owns canonical manufacturing/quality state. PlaceLotOnHold / CMD-PlaceLotOnHold-v1 is the single hold-placement command; ApplyMaterialHold is deprecated terminology, never a second contract. Other protected identities follow the01 action table, with exact approval/revision/freshness/idempotency binding. Simulator/Oracle, Twin/Qdrant projections, AI READ/SIMULATE/PROPOSE, Scheduler candidates, HITL, identity and UI boundaries remain unchanged.
+
+ARCH-AUTO-WORKFLOW (durable Automation/Temporal layer) coordinates GS-01/E2E across Inspection/NDT→Core quality→RCA→recovery→HITL→governed Core commands→verified effect→Twin/Audit. It does not acquire Core authority. MC-2 accountable owner is Asrın Dündar; contributing WP owners remain73/17/32/57. The primary shared-host HardwareProfile and accepted LaneA/B/C portfolio are pinned in01; acquisition/rights/source fields not locally verified are NEEDS_SOURCE_VERIFICATION, not invented facts or performance results. Real/public held-out evaluation and source-specific limitations remain mandatory where claimed.
+
+HARD/SOFT refer to declared work/readiness consumers, not automatic runtime/deployment/import relations. Non-CONTRACT F1 entries DEP-025/045/058/076/094 have no fixture fallback: real producer readiness at the declared stage is required, while development stubs are not satisfaction evidence. DN-VIS-MODELS now declares INTEGRATION_READY for DEP-060/194; operational serving must load promoted required-mode artifacts with provenance. Source-supported deadlines and per-consumer scope are defined in05, without shifting canonical ownership or schedules.
+
+GAP-RTM-004/005 remain ACCEPTED_WITH_RATIONALE for this pre-implementation baseline: missing canonical record metadata is not fabricated. FR-GOV-001/004 and the relevant NFR owners must supply/review actual fields and measurement definitions before their declared gates; projectctl retains nulls/warnings and never grants READY/VERIFIED from planned prose. Owner trace confirmation GAP-RTM-006 and final schema/version/card specifics remain ordinary implementation/review prerequisites, not unresolved choices among the eight approved policy groups.

@@ -53,7 +53,7 @@ Make the approved schedule operational: what each milestone means, what must be 
 | Sprint themes and per-role scope per sprint | Per-person execution detail (06A–D) |
 | Release, promotion, migration and rollback semantics | CD implementation work packages (04 WP-CICD-*) |
 | Freeze rules and the research freeze sequence | Experiment design (01 Item 60) and benchmark design (Item 79) |
-| Cut policy and slip response | Change-request mechanics (09, not yet produced) |
+| Cut policy and slip response | Change-request mechanics (09 Change Control) |
 | Go/No-Go procedure and milestone health states | Dependency semantics (05) and requirement wording (01/03) |
 
 ## 2. Sources, Precedence and Date Policy
@@ -618,16 +618,16 @@ Each record follows the 00 §15 milestone schema. Work packages, dependency gate
 | DEP-102 | DN-AUTO-EXEC → DN-AUTO-VERIFY | CAPABILITY | INTEGRATION | COMPONENT_READY | Batu → Batu |
 | DEP-103 | DN-TWIN-VERIFY → DN-AUTO-VERIFY | CAPABILITY | INTEGRATION | INTEGRATION_READY | Asrın → Batu |
 | DEP-109 | DN-PLAT-CD → DN-RT-OBS | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Yavuz → Yavuz |
-| DEP-178 | DN-VIS-SERVING → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Selman → N/A — no single owner (Item 67 #213) |
-| DEP-179 | DN-AI-RCA → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Asrın → N/A — no single owner (Item 67 #213) |
-| DEP-180 | DN-SCH-PLANCON → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Batu → N/A — no single owner (Item 67 #213) |
-| DEP-181 | DN-SCH-VALID → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Batu → N/A — no single owner (Item 67 #213) |
-| DEP-182 | DN-HITL-APPROVAL → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Asrın → N/A — no single owner (Item 67 #213) |
-| DEP-183 | DN-AUTO-DURABLE → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Batu → N/A — no single owner (Item 67 #213) |
-| DEP-184 | DN-AUTO-EXEC → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Batu → N/A — no single owner (Item 67 #213) |
-| DEP-185 | DN-AUTO-VERIFY → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Batu → N/A — no single owner (Item 67 #213) |
-| DEP-186 | DN-UI-APPROVAL → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Asrın → N/A — no single owner (Item 67 #213) |
-| DEP-187 | DN-SIM-ORACLE → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Batu → N/A — no single owner (Item 67 #213) |
+| DEP-178 | DN-VIS-SERVING → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Selman → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW |
+| DEP-179 | DN-AI-RCA → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Asrın → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW |
+| DEP-180 | DN-SCH-PLANCON → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Batu → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW |
+| DEP-181 | DN-SCH-VALID → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Batu → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW |
+| DEP-182 | DN-HITL-APPROVAL → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Asrın → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW |
+| DEP-183 | DN-AUTO-DURABLE → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Batu → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW |
+| DEP-184 | DN-AUTO-EXEC → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Batu → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW |
+| DEP-185 | DN-AUTO-VERIFY → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Batu → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW |
+| DEP-186 | DN-UI-APPROVAL → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Asrın → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW |
+| DEP-187 | DN-SIM-ORACLE → CK-E2E01 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Batu → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW |
 | DEP-189 | DN-RT-OBS → MS-M3 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Yavuz → — |
 | DEP-190 | DN-TWIN-VERIFY → MS-M3 | CAPABILITY | MILESTONE_EXIT | INTEGRATION_READY | Asrın → — |
 
@@ -1523,7 +1523,7 @@ Sprint goals and per-role scope are the Item 65 progression, projected against t
 | WP-TEST-003 | Integration scenarios AV-SCEN-01…04 | Asrın | F0 |
 | WP-TEST-006 | E2E-01 checkpoint execution | Batu | F0 |
 
-**Dependency gates due by end of this sprint (24):** DEP-012 (Yavuz → Yavuz), DEP-047 (Yavuz → Batu), DEP-058 (Yavuz → Selman), DEP-067 (Asrın → Asrın), DEP-082 (Asrın → Batu), DEP-083 (Batu → Batu), DEP-084 (Batu → Batu), DEP-091 (Asrın → Asrın), DEP-093 (Asrın → Asrın), DEP-095 (Yavuz → Batu), DEP-099 (Asrın → Batu), DEP-100 (Batu → Batu), DEP-102 (Batu → Batu), DEP-103 (Asrın → Batu), DEP-178 (Selman → N/A — no single owner (Item 67 #213)), DEP-179 (Asrın → N/A — no single owner (Item 67 #213)), DEP-180 (Batu → N/A — no single owner (Item 67 #213)), DEP-181 (Batu → N/A — no single owner (Item 67 #213)), DEP-182 (Asrın → N/A — no single owner (Item 67 #213)), DEP-183 (Batu → N/A — no single owner (Item 67 #213)), DEP-184 (Batu → N/A — no single owner (Item 67 #213)), DEP-185 (Batu → N/A — no single owner (Item 67 #213)), DEP-186 (Asrın → N/A — no single owner (Item 67 #213)), DEP-187 (Batu → N/A — no single owner (Item 67 #213))
+**Dependency gates due by end of this sprint (24):** DEP-012 (Yavuz → Yavuz), DEP-047 (Yavuz → Batu), DEP-058 (Yavuz → Selman), DEP-067 (Asrın → Asrın), DEP-082 (Asrın → Batu), DEP-083 (Batu → Batu), DEP-084 (Batu → Batu), DEP-091 (Asrın → Asrın), DEP-093 (Asrın → Asrın), DEP-095 (Yavuz → Batu), DEP-099 (Asrın → Batu), DEP-100 (Batu → Batu), DEP-102 (Batu → Batu), DEP-103 (Asrın → Batu), DEP-178 (Selman → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW), DEP-179 (Asrın → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW), DEP-180 (Batu → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW), DEP-181 (Batu → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW), DEP-182 (Asrın → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW), DEP-183 (Batu → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW), DEP-184 (Batu → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW), DEP-185 (Batu → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW), DEP-186 (Asrın → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW), DEP-187 (Batu → N/A — cross-capability checkpoint; coordinator ARCH-AUTO-WORKFLOW)
 
 **Checkpoint obligations.** E2E-01 dry run mid-sprint (failure is expected feedback) and the formal E2E-01 run at the end of the sprint, executed from an immutable main-derived release — a manual patch invalidates the run.
 
@@ -2245,10 +2245,10 @@ Where a role has no owned package in a window, the roadmaps (06A–D) place that
 |---|---|---|---|---|
 | PLAN-GAP-01 | TIMING_TIGHTENING (inherited 05 DEP-GAP-04) | Item 65 sprint scopes place Keycloak and Temporal at S2/S4 as "skeleton", while Item 67 requires Keycloak READY for actual login by end S4 and Temporal READY for the formal E2E run by end S5. | S4/S5 dates govern; WP-PLAT-003, WP-SEC-001 and WP-HITL-004 are scheduled accordingly in §6. | MAJOR |
 | PLAN-GAP-02 | SEQUENCE_INVERSION (inherited 05 DEP-GAP-05) | The E2E-01 oracle-access negative test needs runtime credential separation by S5, while the full security baseline targets M4 (S8). | Plan an S5 subset of WP-SEC-002; recorded here, decided by the owners. | MAJOR |
-| PLAN-GAP-03 | CONTRACT_NAMING (inherited 03 GAP-RTM-009/010) | The S4 readiness gate requires hold/dispatch commands and the inspection observation contract to be CONTRACT_READY, but their canonical names are unresolved. | Resolve in the contract registry during S3. | B-E2E01 |
-| PLAN-GAP-04 | OWNERLESS_CHECKPOINT (inherited 05 DEP-GAP-13) | E2E-01 has no single capability owner (Item 67 #213); this plan needs a named run coordinator for the dry run and the formal run. | Name a coordinator for the S5 runs (Item 67 assigns scenario semantics to Batu and evidence execution tooling to Yavuz) without changing capability ownership. | MINOR — decide before S4 |
-| PLAN-GAP-05 | OWNER_UNASSIGNED (inherited 03 GAP-RTM-020) | MC-2 has no research owner, so its lane has no accountable owner at M6/M7. | Assign before the F3 freeze. | B-M6 |
-| PLAN-GAP-06 | MEASUREMENT_CONTEXT (inherited 03 GAP-RTM-021) | HardwareProfiles for the Vision CPU baseline and the final Vision host are unpinned; F4 cannot complete without them. | Record in WP-PLAT-005 before S11. | B-M6 |
+| PLAN-GAP-03 | RESOLVED | RESOLVED: distinct observation/result and canonical protected command identities in01/02 | Apply01/02 final human decisions; no WP owner/count change | INFO |
+| PLAN-GAP-04 | RESOLVED | RESOLVED: durable Automation/workflow ARCH-AUTO-WORKFLOW coordinates E2E; implementation owners unchanged | Apply01/02 final human decisions; no WP owner/count change | INFO |
+| PLAN-GAP-05 | RESOLVED | RESOLVED: Asrın Dündar accountable for MC-2 | Apply01/02 final human decisions; no WP owner/count change | INFO |
+| PLAN-GAP-06 | RESOLVED | RESOLVED: primary shared-host HardwareProfile pinned in01; actual run identity/measurements still required | Apply01/02 final human decisions; no WP owner/count change | INFO |
 | PLAN-GAP-07 | CAPACITY_UNVERIFIED | The 65/20/15 capacity model and the milestone package distribution (M4 carries 39 packages, the largest window) have not been validated against real throughput, because no sprint has been executed. | Rebaseline the distribution after S2 using observed integration cost, not velocity points. | INFO |
 | PLAN-GAP-08 | ROLE_LOAD (inherited 04 WBS-GAP-08) | Package counts per window are uneven by design; S9–S11 concentrate platform and evidence work on one owner. | 06 roadmaps keep research lane execution with lane owners; review capacity is reserved in S3–S5 and S11. | MAJOR for planning |
 | PLAN-GAP-09 | NO_CALENDAR | No academic calendar exists in the sources, so effective weeks cannot be mapped to dates. | Map W2–W26 to real dates when the team fixes the semester calendar; milestone semantics stay fixed (Item 65 #4). | INFO |
@@ -2306,3 +2306,13 @@ Where a role has no owned package in a window, the roadmaps (06A–D) place that
 ---
 
 *End of 07 — Milestone and Release Plan (Draft — Derived from Approved 01/02 Baseline).*
+
+## Final human reconciliation binding — 2026-10-13
+
+01 §Final Human Reconciliation and02 §Final human reconciliation govern this projection. Vision/NDT publishes immutable InspectionObservation (existing EVT-InspectionObservation-v1); Core normalizes separate InspectionResult (existing IC-VIS-002) and owns canonical manufacturing/quality state. PlaceLotOnHold / CMD-PlaceLotOnHold-v1 is the single hold-placement command; ApplyMaterialHold is deprecated terminology, never a second contract. Other protected identities follow the01 action table, with exact approval/revision/freshness/idempotency binding. Simulator/Oracle, Twin/Qdrant projections, AI READ/SIMULATE/PROPOSE, Scheduler candidates, HITL, identity and UI boundaries remain unchanged.
+
+ARCH-AUTO-WORKFLOW (durable Automation/Temporal layer) coordinates GS-01/E2E across Inspection/NDT→Core quality→RCA→recovery→HITL→governed Core commands→verified effect→Twin/Audit. It does not acquire Core authority. MC-2 accountable owner is Asrın Dündar; contributing WP owners remain73/17/32/57. The primary shared-host HardwareProfile and accepted LaneA/B/C portfolio are pinned in01; acquisition/rights/source fields not locally verified are NEEDS_SOURCE_VERIFICATION, not invented facts or performance results. Real/public held-out evaluation and source-specific limitations remain mandatory where claimed.
+
+HARD/SOFT refer to declared work/readiness consumers, not automatic runtime/deployment/import relations. Non-CONTRACT F1 entries DEP-025/045/058/076/094 have no fixture fallback: real producer readiness at the declared stage is required, while development stubs are not satisfaction evidence. DN-VIS-MODELS now declares INTEGRATION_READY for DEP-060/194; operational serving must load promoted required-mode artifacts with provenance. Source-supported deadlines and per-consumer scope are defined in05, without shifting canonical ownership or schedules.
+
+GAP-RTM-004/005 remain ACCEPTED_WITH_RATIONALE for this pre-implementation baseline: missing canonical record metadata is not fabricated. FR-GOV-001/004 and the relevant NFR owners must supply/review actual fields and measurement definitions before their declared gates; projectctl retains nulls/warnings and never grants READY/VERIFIED from planned prose. Owner trace confirmation GAP-RTM-006 and final schema/version/card specifics remain ordinary implementation/review prerequisites, not unresolved choices among the eight approved policy groups.

@@ -1,0 +1,98 @@
+CHG-007:
+  title: DOC-MC2
+  trigger: Current human reconciliation request and baseline audit
+  reason: No accountable MC-2 research owner.
+  class: C3
+  review_risk_class: CR-4
+  raised_in: null
+  affected_requirements: []
+  affected_architecture: []
+  affected_contracts: []
+  affected_work_packages: []
+  affected_dependencies: []
+  affected_evidence:
+  - Documentation analysis only; no product evidence claimed
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+    - Existing setup evidence remains bound to its original source hashes, not current
+      documentation approval
+    rerun_required:
+    - Full projectctl tests
+    - Offline validation
+    - Documentation consistency audit
+  security_authority_impact: NONE — no authority, Oracle access, credentials or protected
+    execution changed
+  owner: Asrın
+  reviewers: &id001 []
+  decision: APPROVED_WITH_CONDITIONS
+  conditions:
+  - Product/runtime/source acquisition evidence remains subject to its actual gates;
+    no product DONE/VERIFIED is inferred.
+  - Owner-approved development policy applies; genuine historical review and bounded
+    migration authorization remain separately attributed.
+  rollout: Local reconciliation branch only; no deployment/Plane synchronization/merge
+  rollback: Review and revert the atomic CTRL-DOC commit; do not rewrite history
+  required_rerun:
+  - Full projectctl tests
+  - Offline validation
+  - Source/trace consistency
+  - Diff and secret hygiene
+  documentation_updates:
+  - docs/01_Master_Project_Specification.md
+  - docs/02_System_Architecture_Specification.md
+  - docs/03_Requirements_Traceability_Matrix.md
+  - docs/04_Work_Breakdown_Structure.md
+  - docs/05_Dependency_Graph.md
+  - docs/06A_Asrin_Engineering_Roadmap.md
+  - docs/06C_Batu_Engineering_Roadmap.md
+  - docs/06D_Yavuz_Engineering_Roadmap.md
+  - docs/07_Milestone_and_Release_Plan.md
+  freeze_context: PRE_M6
+  status: UNDER_REVIEW
+  human_decision_basis:
+    request_sha256: 96ff255d4431a99a65ced71aa45136937acd7ae5917eaaca7fba764c23901da7
+    group: MC2_OWNER
+    status: DECIDED
+    decision: Asrın Dündar accountable for MC-2.
+    rationale: Cross-cutting project/integration research accountability; no underlying
+      WP reassignment.
+  source_derived_basis: 01 research contribution ownership; 10 RTF-027 explicitly
+    prohibits inferring WP owner
+  affected_stable_ids:
+  - RTF-027
+  - GAP-RTM-020
+  - MC-2
+  consumer_review_status: Historical Ejlonn review verified; current migration/closure
+    explicitly owner-authorized without additional review.
+  required_review_roles: One qualified independent reviewer for this normal-risk documentation
+    scope; two only for actual high-risk triggers in01/09; no mandatory all-owner/consumer
+    quorum.
+  application_control_item: CTRL-DOC-005
+  sprint_context: UNSPECIFIED; no calendar/sprint fabricated
+  proposal: Bind contribution accountability, retain canonical implementation owners73/17/32/57.
+  review_policy_migration:
+    authority: Explicit project-owner instruction14 October2026; PR#4 closure
+    previous_review_risk_class: CR-4
+    previous_reviewers: *id001
+    previous_consumer_review_status: NOT_EXECUTED
+    actual_high_risk_triggers: []
+    rationale: Scoped reconciliation of owner-approved documentation within retained
+      product authority; no auth/security runtime change, destructive migration, protected
+      execution or major authority transfer.
+    required_independent_approvals: 1
+    historical_review:
+      reviewer: Ejlonn
+      review_id: 5509773739
+      commit: 219439364757473c8450959a3af06bdc237cd439
+      state: APPROVED
+    policy_migration_review: 'No new review requested: bounded explicit owner authorization;
+      historical approval is not a new-head approval.'
+    previous_conditions:
+    - Explicit final human decision authorizes scoped documentation reconciliation;
+      independent qualified review/ratification remains required.
+    - No product/runtime readiness, source/license acquisition, peer approval or VERIFIED
+      state inferred.
+    previous_required_review_roles: 09 §7.3/7.4 according to declared risk; independent
+      research/data review for CR-4; independent critical review for CR-3
