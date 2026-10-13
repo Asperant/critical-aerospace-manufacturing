@@ -124765,7 +124765,7 @@ Requires another qualified reviewer.
 
 # 71. Non-Owner Author Case
 
-Primary Owner review normally mandatory.
+Relevant owner expertise guides review routing; one qualified independent approval suffices for normal-risk changes under the owner-approved policy.
 
 ---
 
@@ -125347,13 +125347,13 @@ Normally one independent reviewer.
 
 # 133. CR-2
 
-Boundary owner pair.
+One qualified independent reviewer for normal-risk boundary work; two only for actual high-risk authority changes.
 
 ---
 
 # 134. CR-3
 
-Minimum two independent relevant approvals.
+Two independent relevant approvals only for actual high-risk triggers defined in the owner-approved development review policy; normal-risk documentation/development requires one independent approval.
 
 ---
 
@@ -125657,11 +125657,11 @@ Every critical artifact must have at least one independent human reviewer.
 
 ## REVIEW-INV-03
 
-Non-owner modification of owned capability requires Primary Owner review.
+Non-owner changes require relevant domain expertise in review; no unconditional additional owner approval quota for normal-risk PRs.
 
 ## REVIEW-INV-04
 
-Cross-boundary changes require affected-domain review.
+Cross-boundary review must cover affected-domain expertise; normal risk requires one independent approval, actual high risk two.
 
 ## REVIEW-INV-05
 
@@ -125673,7 +125673,7 @@ Green CI cannot substitute for semantic human review.
 
 ## REVIEW-INV-07
 
-CR-3 changes require at least two relevant independent approvals.
+Actual high-risk CR-3 changes require two relevant independent approvals; normal-risk documentation/development requires one qualified independent approval (owner policy14 October2026).
 
 ## REVIEW-INV-08
 
@@ -125777,7 +125777,7 @@ Madde 63 başarılı uygulanmış sayılabilmek için:
 2. No author can solely certify own critical change.
 3. Non-owner changes Primary Owner review almalıdır.
 4. Cross-boundary changes affected-domain review almalıdır.
-5. CR-3 minimum two independent relevant approvals almalıdır.
+5. Actual high-risk CR-3 requires two independent relevant approvals; normal-risk changes require one (owner policy14 October2026).
 6. CR-4 methodological/reproducibility review almalıdır.
 7. CODEOWNERS Madde 62 ownership modelini reflect etmelidir.
 8. Contract repository semantic ownership’i görünür kılmalıdır.
@@ -181693,3 +181693,14 @@ Lane A is open real/public experimental machining/tool-wear/health/inspection/ND
 | UCI SECOM / WM-811K / MixedWM38 | Optional legacy cross-domain methodological references only | Existing external source identities, semiconductor process / wafer-map data | Historical license decisions are not current acquisition/redistribution verification | Excluded from primary aerospace portfolio; never aerospace defect performance, critical-component quality, CNC tool-wear or NDT realism evidence |
 
 Source selection is DECIDED; exact acquisition cards, rights checks, leakage-aware partitions and claims are required implementation/evaluation artifacts before the applicable source-use/freeze gate. Existing unverified bibliographic/license/sample claims are not accepted facts: they remain NEEDS_SOURCE_VERIFICATION. This does not create another undecided source-portfolio policy.
+
+
+## Owner-approved development review policy migration — 14 October2026
+
+This owner decision replaces the former blanket two-review / mandatory owner-pair rules for project development governance only. Normal-risk documentation and development PRs require **one qualified independent approval**. Two distinct qualified independent approvals are mandatory only for actual high-risk changes: authentication/authorization, protected-action authority, destructive migrations, security-sensitive infrastructure/secrets, or major authority-boundary changes. Impact and expertise, not filenames or the C0–C3 change class alone, determine risk. CR-3 denotes these actual high-risk triggers; CR-4 retains methodological/reproducibility scrutiny but does not alone require two reviewers. An unresolved high-risk impact is not silently classified normal-risk.
+
+Self-approval remains prohibited. Reviewer routing selects expertise relevant to the actual change; it does not require every listed owner or make Batuhan the reviewer of every PR. For normal risk, one qualified independent reviewer may cover the relevant domains; for high risk, the two independent reviewers must cover the critical impact. Owner/context consultation and contract/evaluation/security evidence remain required where applicable, but are not extra blanket approval quotas. Existing review-role matrices are expertise-routing guidance subject to this policy, not unconditional additional approvals.
+
+This changes no product runtime HITL, protected-command approval/binding, Core authority, Oracle isolation, security invariant or safety rule. Normal approvals still bind the exact reviewed revision. The owner explicitly authorizes the PR#4 documentation-only migration and closure after final-head CI and validation without a new review request: Ejlonn's genuine approval of219439364757473c8450959a3af06bdc237cd439 remains historical review evidence; it is **not represented as approval of the new policy commit**. This bounded owner authorization is not a general stale-approval exception or self-approval.
+
+Historical rule: CR-3 previously required at least two relevant independent approvals and the matrices mandated owner/consumer review sets. The owner replaced those blanket requirements on14 October2026 with the actual-risk policy above. Earlier rules, decisions, failed merge-gate report and source-hashed evidence remain historical. PR#4 reconciles approved documentation within existing authority boundaries, introduces no runtime/security/destructive change and is normal-risk for this migration; the previously blanket CR-3 labels do not establish an actual high-risk trigger. Future changes must be classified on their own impact.

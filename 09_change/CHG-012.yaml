@@ -26,13 +26,13 @@ CHG-012:
   security_authority_impact: NONE — no authority, Oracle access, credentials or protected
     execution changed
   owner: Asrın
-  reviewers: []
+  reviewers: &id001 []
   decision: APPROVED_WITH_CONDITIONS
   conditions:
-  - Current user explicitly authorizes scoped branch edits; canonical peer-review
-    and merge gates remain outstanding
-  - No historical or team approval inferred
-  - No new semantics beyond documented resolution
+  - Product/runtime/source acquisition evidence remains subject to its actual gates;
+    no product DONE/VERIFIED is inferred.
+  - Owner-approved development policy applies; genuine historical review and bounded
+    migration authorization remain separately attributed.
   rollout: Local reconciliation branch only; no deployment/Plane synchronization/merge
   rollback: Review and revert the atomic CTRL-DOC commit; do not rewrite history
   required_rerun:
@@ -53,10 +53,36 @@ CHG-012:
   affected_stable_ids:
   - GAP-RTM-004
   - GAP-RTM-005
-  consumer_review_status: NOT_EXECUTED
-  required_review_roles: 09 §7.3/7.4 according to declared risk; independent research/data
-    review for CR-4; independent critical review for CR-3
+  consumer_review_status: Historical Ejlonn review verified; current migration/closure
+    explicitly owner-authorized without additional review.
+  required_review_roles: One qualified independent reviewer for this normal-risk documentation
+    scope; two only for actual high-risk triggers in01/09; no mandatory all-owner/consumer
+    quorum.
   application_control_item: CTRL-DOC-006
   sprint_context: UNSPECIFIED; no calendar/sprint fabricated
   proposal: Append null/unspecified interpretation to RTM; preserve missing fields/diagnostics;
     no fabricated values.
+  review_policy_migration:
+    authority: Explicit project-owner instruction14 October2026; PR#4 closure
+    previous_review_risk_class: CR-1
+    previous_reviewers: *id001
+    previous_consumer_review_status: NOT_EXECUTED
+    actual_high_risk_triggers: []
+    rationale: Scoped reconciliation of owner-approved documentation within retained
+      product authority; no auth/security runtime change, destructive migration, protected
+      execution or major authority transfer.
+    required_independent_approvals: 1
+    historical_review:
+      reviewer: Ejlonn
+      review_id: 5509773739
+      commit: 219439364757473c8450959a3af06bdc237cd439
+      state: APPROVED
+    policy_migration_review: 'No new review requested: bounded explicit owner authorization;
+      historical approval is not a new-head approval.'
+    previous_conditions:
+    - Current user explicitly authorizes scoped branch edits; canonical peer-review
+      and merge gates remain outstanding
+    - No historical or team approval inferred
+    - No new semantics beyond documented resolution
+    previous_required_review_roles: 09 §7.3/7.4 according to declared risk; independent
+      research/data review for CR-4; independent critical review for CR-3

@@ -2044,3 +2044,8 @@ This section supersedes historical §40/41 verdicts. The approved eight policy d
 | RTF-032 | RESOLVED | Current decisions and change registry are reconciled with immutable historical evidence; independent review is still required. |
 
 All RTM/WBS/dependency/milestone gap rows and additional named reconciliation findings are individually classified in [FINAL_FINDINGS.json](../evidence/documentation-reconciliation/FINAL_FINDINGS.json). Current implementation-blocking documentation findings: **none**. Remaining concrete obligations include owner trace review, exact contract/consumer binding before READY, dataset rights/source verification before acquisition, Oracle/protected-action negative tests, runtime measurements, research freeze and release/effect verification. None is falsely represented as executed product evidence. Independent C2/C3 consumer review remains the integration gate; human policy decisions do not substitute for that review.
+
+
+## Review policy migration —14 October2026
+
+Historical mandatory C2/C3 consumer-quorum statements above are superseded by01/09 actual-risk development policy: normal risk one qualified independent approval, actual high risk two; self-approval remains prohibited. PR#4 migration/closure is explicitly owner-authorized without a new review request, with historical Ejlonn approval attributed to its actual head. This does not change runtime HITL or waive final-head CI/post-merge validation. Documentation readiness remains conditional on successful integration and checks.

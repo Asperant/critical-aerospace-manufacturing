@@ -222,7 +222,7 @@ A C2 change in any row must, at minimum, re-examine the verification families in
 | 12 | EvidenceStaleness | C2+ | explicit answer to "which previous evidence is no longer valid?" (§14) |
 | 13 | SecurityAuthorityImpact | all | identity, credential, authority-policy, oracle-isolation or audit impact — `NONE` must be stated, not omitted |
 | 14 | Owner | all | single accountable owner (the capability owner, never "team") |
-| 15 | Reviewers | all | required reviewer set from §7.4; CR-3/CR-4 need the named independent reviewer |
+| 15 | Reviewers | all | actual risk-based approval count from01 owner policy; §7.4 routes relevant expertise |
 | 16 | Decision | all | APPROVED / APPROVED_WITH_CONDITIONS / REJECTED / DEFERRED, with the deciding reviewers |
 | 17 | Rollout | C1+ | how it reaches INTEGRATION/EVALUATION: release identity, migration plan, consumer sequencing |
 | 18 | Rollback | C1+ | known-good release to return to, or an explicit statement that rollback is impossible and why |
@@ -361,13 +361,13 @@ One person may hold several roles, but never the roles of author *and* sole cert
 |---|---|---|---|
 | CR-0 | typos, comments, documentation wording, formatting | one reviewer; protected main still applies | not a bypass of branch protection |
 | CR-1 | subsystem-local refactor, local serving change, local dashboard work | owner reviewer; a non-owner author needs the owner | an owner may not self-certify their own CR-1 |
-| CR-2 | Vision→AI contract, Scheduler→Core contract, Core→Twin projection, AI tool contract, RAG evidence contract, workflow↔approval contract | owner + affected consumer owner (RD-3 mandatory) | no |
-| CR-3 | manufacturing authorization, ActionCatalog, AI authority, HITL semantics, Core state transitions, oracle isolation, Keycloak policy, service credentials, CI/CD secrets, destructive migration, public dataset/model export, external-provider flow | owner + independent critical reviewer (RD-4) + platform where runtime is touched; cannot auto-approve on timeout; green CI does not replace the review | never |
-| CR-4 | research hypothesis, FINAL split, SeedSet, baseline removal, primary metric, ExperimentProtocolFreeze, AnalysisPlan, exclusion policy, final benchmark execution logic, final statistics | research reviewer independent of the lane owner (RD-7) + data reviewer where data is touched | research owner cannot self-certify final methodology |
+| CR-2 | Vision→AI contract, Scheduler→Core contract, Core→Twin projection, AI tool contract, RAG evidence contract, workflow↔approval contract | one qualified independent reviewer covering affected-domain impact; owner/consumer routing is guidance, not an extra approval quota | no |
+| CR-3 | actual auth/authorization, protected-action authority, destructive migration, security-sensitive infrastructure/secrets, major authority-boundary changes | two distinct qualified independent approvals for actual high-risk triggers in01 owner policy; relevant authority/security expertise required; no timeout or CI substitute | never |
+| CR-4 | research hypothesis, FINAL split, SeedSet, baseline removal, primary metric, ExperimentProtocolFreeze, AnalysisPlan, exclusion policy, final benchmark execution logic, final statistics | one qualified independent reviewer covering methodology/reproducibility and relevant data expertise; two only if an actual high-risk trigger applies | research owner cannot self-certify final methodology |
 
-### 7.4 Mandatory reviewer matrix (generated from ownership)
+### 7.4 Reviewer expertise-routing matrix (owner policy14 October2026)
 
-| Change surface | Primary owner reviewer (RR-1) | Required cross reviewer | Platform reviewer where runtime is touched | Usual risk class |
+| Change surface | Primary owner reviewer (RR-1) | Relevant cross-domain expertise | Relevant platform expertise | Usual risk class |
 |---|---|---|---|---|
 | Core domain, transitions, commands | Asrın | Batu (execution consumer) | Yavuz | CR-2 / CR-3 for state transitions |
 | Event and contract registry | Asrın | every consumer owner | Yavuz | CR-2 |
@@ -411,7 +411,7 @@ stateDiagram-v2
 | DRAFT | title, trigger and reason written | raiser |
 | CLASSIFIED | class C0–C3 and risk class CR-0…CR-4 assigned; CL-01 applied when uncertain | raiser + owner |
 | IMPACT_ASSESSED | all nine impact domains answered, including explicit `NONE` answers | owner |
-| UNDER_REVIEW | required reviewers have responded; CR-3/CR-4 cannot time out into approval | reviewers |
+| UNDER_REVIEW | actual risk-based approvals received: normal risk one, high risk two; no timeout substitutes for approval | reviewers |
 | APPROVED | decision recorded with reviewers named | reviewers |
 | IMPLEMENTED | merged with trace edges updated in the same PR; new ReleaseManifest for C2+ | owner |
 | VERIFIED | required verification passed and required reruns executed with dispositions recorded | owner + Yavuz (evidence) |
@@ -738,3 +738,13 @@ Planned CI checks: `chg lint` validates every YAML record against the schema; a 
 ---
 
 *End of 09 — Change Control Process (Draft — Derived from Approved 01/02 Baseline).*
+
+## Owner-approved development review policy migration — 14 October2026
+
+This owner decision replaces the former blanket two-review / mandatory owner-pair rules for project development governance only. Normal-risk documentation and development PRs require **one qualified independent approval**. Two distinct qualified independent approvals are mandatory only for actual high-risk changes: authentication/authorization, protected-action authority, destructive migrations, security-sensitive infrastructure/secrets, or major authority-boundary changes. Impact and expertise, not filenames or the C0–C3 change class alone, determine risk. CR-3 denotes these actual high-risk triggers; CR-4 retains methodological/reproducibility scrutiny but does not alone require two reviewers. An unresolved high-risk impact is not silently classified normal-risk.
+
+Self-approval remains prohibited. Reviewer routing selects expertise relevant to the actual change; it does not require every listed owner or make Batuhan the reviewer of every PR. For normal risk, one qualified independent reviewer may cover the relevant domains; for high risk, the two independent reviewers must cover the critical impact. Owner/context consultation and contract/evaluation/security evidence remain required where applicable, but are not extra blanket approval quotas. Existing review-role matrices are expertise-routing guidance subject to this policy, not unconditional additional approvals.
+
+This changes no product runtime HITL, protected-command approval/binding, Core authority, Oracle isolation, security invariant or safety rule. Normal approvals still bind the exact reviewed revision. The owner explicitly authorizes the PR#4 documentation-only migration and closure after final-head CI and validation without a new review request: Ejlonn's genuine approval of219439364757473c8450959a3af06bdc237cd439 remains historical review evidence; it is **not represented as approval of the new policy commit**. This bounded owner authorization is not a general stale-approval exception or self-approval.
+
+Historical rule: CR-3 previously required at least two relevant independent approvals and the matrices mandated owner/consumer review sets. The owner replaced those blanket requirements on14 October2026 with the actual-risk policy above. Earlier rules, decisions, failed merge-gate report and source-hashed evidence remain historical. PR#4 reconciles approved documentation within existing authority boundaries, introduces no runtime/security/destructive change and is normal-risk for this migration; the previously blanket CR-3 labels do not establish an actual high-risk trigger. Future changes must be classified on their own impact.

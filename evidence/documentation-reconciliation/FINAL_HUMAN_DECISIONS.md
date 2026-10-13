@@ -123,3 +123,8 @@ Implementation consequence: Source cards need role/modality/provenance/rights/ev
 Future modification: required09 change control at the existing C2/C3 and CR-3/CR-4 impact where applicable; no silent change. Independent qualified review and integration remain pending for this PR.
 
 Unresolved human-choice placeholders in these eight groups: NONE. Actual artifact production, owner trace review, schema freeze, source verification, acquisition/rights checks and measurement execution remain normal implementation/review gate obligations, not renewed semantic-choice placeholders.
+
+
+## Review governance supersession —14 October2026
+
+The owner has replaced blanket review quorums with the01/09 actual-risk policy. Historical pending-review statements above describe the previous policy. Normal risk requires one independent approval; actual high risk requires two. Ejlonn approved the previous PR#4 head; the owner separately authorizes this bounded policy migration and closure without requesting another review. No new-head approval is fabricated, no product HITL rule changes, and no Plane/product execution is authorized. Final-head CI, tests, invariants and post-merge validation are still required.

@@ -62,3 +62,8 @@ MC-2 accountable owner is Asrın; WP owners73/17/32/57 unchanged. Shared-host ha
 The DoR mapping is lossless but may be many-to-one (DOR-WP-03/04→DOR-TASK-04). WP-X-001 remains an optional unscheduled boundary-maintenance documentation/claim guardrail, not implementation of an excluded product capability. All306requirement IDs and179WP IDs remain stable. Item43 duplicate copies remain one logical item under02R-001; they are not competing contracts.
 
 This is docs-only branch reconciliation pending independent qualified change review and integration. No Plane/setup/product state mutation, scientific result, dataset acquisition or runtime verification is claimed. Existing setup evidence remains bound to its original source hashes and observed events; changed canonical source hashes do not rewrite that history.
+
+
+##14 October2026 — owner-approved development review policy migration
+
+Former REVIEW-INV-07 blanket two-review and owner-pair rules replaced by normal-risk one independent approval / actual high-risk two. High-risk triggers: auth/authorization, protected-action authority, destructive migration, security-sensitive infra/secrets and major authority-boundary changes. Batuhan is not a mandatory reviewer for every PR. Self-approval remains prohibited. No product HITL change. CHG-002 retains research scrutiny with one qualified reviewer for this normal-risk documentation scope; CHG-010 and other historical blanket CR-3 documentation classifications become CR-2 with original values recorded. Owner expressly authorizes PR#4 policy commit and closure without a new review request; historical approval is never relabeled current-head approval. Counts, IDs, scheduling and ownership unchanged.

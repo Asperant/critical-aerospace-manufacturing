@@ -40,3 +40,8 @@ Warnings: completed main947; rebased prior reconciliation641; final634. Prior re
 ## Integration gate
 
 One final reconciliation PR against main; no self approval or merge. Existing CI triggers pull requests but not `reconcile/**` pushes, so one draft PR is necessary to execute the existing CI without changing workflows. Mark ready only after exact final-head CI passes; request one independent review. No further documentation commit is planned after this closure commit.
+
+
+## Review governance supersession —14 October2026
+
+The owner has replaced blanket review quorums with the01/09 actual-risk policy. Historical pending-review statements above describe the previous policy. Normal risk requires one independent approval; actual high risk requires two. Ejlonn approved the previous PR#4 head; the owner separately authorizes this bounded policy migration and closure without requesting another review. No new-head approval is fabricated, no product HITL rule changes, and no Plane/product execution is authorized. Final-head CI, tests, invariants and post-merge validation are still required.
