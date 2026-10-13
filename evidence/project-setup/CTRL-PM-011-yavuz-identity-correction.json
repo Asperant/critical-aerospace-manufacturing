@@ -1,0 +1,57 @@
+{
+  "control_item": "CTRL-PM-011",
+  "operation": "YAVUZ_IDENTITY_CORRECTION",
+  "wrong_email": "yavuzgumus@gmail.com",
+  "wrong_invitation_id": "aff3e366-a5ac-4168-b9ce-e1907f26a784",
+  "wrong_pending_before": true,
+  "delete_status": 204,
+  "wrong_absent_after_delete": true,
+  "wrong_absent_final": true,
+  "correct_email": "yavuzzgumus@gmail.com",
+  "correct_invitation": {
+    "id": "d313768d-7a6d-4bc7-8a93-d9a8f40ac32b",
+    "email": "yavuzzgumus@gmail.com",
+    "role": 15,
+    "accepted": false,
+    "responded_at": null
+  },
+  "post_status": 201,
+  "correct_invitation_count": 1,
+  "selman_batuhan_invitation_records_unchanged": true,
+  "project_entities_and_members_unchanged": true,
+  "wp_count": 179,
+  "assigned_count": 73,
+  "workflow_unchanged": true,
+  "plane_mutations": {
+    "DELETE": 1,
+    "POST": 1
+  },
+  "email_delivery": "NOT_CERTIFIED: installed APIv1 create handler does not dispatch invitation email task",
+  "github_username": "Yavuzgmus",
+  "git_commit_email": "yavuzzgumus@gmail.com",
+  "git_config_scope": "Only repository-local user.email in /srv/ailab/workspaces/yavuz/project; integration/global/Selman/Batuhan identities unchanged",
+  "historical_evidence_preserved": [
+    "CTRL-PM-011-invitations.json",
+    "CTRL-PM-011-plane-readback.json",
+    "CTRL-PM-011-workspaces.json"
+  ],
+  "canonical_docs_changed": false,
+  "tests": "146 passed in63.23s",
+  "validation": {
+    "result": "PASS",
+    "warning_count": 947,
+    "wp_count": 179,
+    "owner_distribution": {
+      "Asrın Dündar": 73,
+      "Batuhan Kaya": 32,
+      "Selman Özdemir": 17,
+      "Yavuz Gümüş": 57
+    },
+    "capability_count": 29,
+    "execution_status": "UNAVAILABLE (documentation only)"
+  },
+  "diff_check": "PASS",
+  "final_invitation_readback": "Wrong absent; exactly one corrected role15 invitation remains pending",
+  "github_mutations": 0,
+  "git_push": false
+}

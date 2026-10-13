@@ -1,0 +1,365 @@
+{
+  "control_item": "CTRL-PM-014",
+  "backup": {
+    "result": "PASS",
+    "backup_path": "/srv/ailab/backups/plane-20261012T001234Z-e6315559",
+    "integrity": "SHA256 PASS",
+    "database_counts": {
+      "issues": 179,
+      "modules": 29,
+      "cycles": 13,
+      "labels": 10,
+      "states": 10
+    }
+  },
+  "restore_initial": {
+    "result": "PASS",
+    "backup_path": "/srv/ailab/backups/plane-20261012T001234Z-e6315559",
+    "container": "plane-restore-verify-f38f49d0e38e4fb9b2c039b49e3aa22e",
+    "network": "none",
+    "live_volumes_attached": false,
+    "restored_counts": {
+      "issues": 179,
+      "modules": 29,
+      "cycles": 13,
+      "labels": 10,
+      "states": 10
+    },
+    "object_storage": "All copied files rehashed; live object service restore not performed",
+    "live_restore": false,
+    "cleanup": "Stopped isolated container retained; no deletion performed"
+  },
+  "restore_pinned": {
+    "result": "PASS",
+    "backup_path": "/srv/ailab/backups/plane-20261012T001234Z-e6315559",
+    "container": "plane-restore-verify-e0d6f2d2860143e28897601f586f63de",
+    "network": "none",
+    "live_volumes_attached": false,
+    "restored_counts": {
+      "issues": 179,
+      "modules": 29,
+      "cycles": 13,
+      "labels": 10,
+      "states": 10
+    },
+    "object_storage": "All copied files rehashed; live object service restore not performed",
+    "live_restore": false,
+    "cleanup": "Stopped isolated container retained; no deletion performed"
+  },
+  "failed_attempts": [
+    {
+      "backup_path": "/srv/ailab/backups/plane-20261012T001216Z-e20cfede",
+      "failure": "SQL shell quoting removed string literals; failed before dump; fixed positional argument passing; empty attempt retained"
+    },
+    {
+      "operation": "read-only audit operator constructor",
+      "failure": "explicit approved policy flag omitted; no API requests; fixed with existing historical approval and write-rejecting subclass"
+    }
+  ],
+  "artifact_count": 40,
+  "raw_database_triage": {
+    "name": "Triage",
+    "group": "triage",
+    "project_id": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+    "api_exposed": false
+  },
+  "plane_mutations": [],
+  "restart_test": {
+    "result": "PASS",
+    "operation": "One API container restart only",
+    "previous_api_observation": {
+      "id": "c3917ecaa7e3a3ff5035e2b93cbb430f69312f0e580e33c75763c03178d0ae69",
+      "started_at": "2026-10-11T18:23:35.422416251Z",
+      "restart_count": 1
+    },
+    "after": {
+      "plane-app-api-1": {
+        "id": "c3917ecaa7e3a3ff5035e2b93cbb430f69312f0e580e33c75763c03178d0ae69",
+        "started_at": "2026-10-12T00:18:51.508410273Z",
+        "restart_policy": {
+          "Name": "always",
+          "MaximumRetryCount": 0
+        },
+        "mounts": [
+          {
+            "Type": "volume",
+            "Name": "plane-app_logs_api",
+            "Source": "/var/lib/docker/volumes/plane-app_logs_api/_data",
+            "Destination": "/code/plane/logs",
+            "Driver": "local",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": ""
+          }
+        ]
+      },
+      "plane-app-plane-db-1": {
+        "id": "d373e0cee49cff413af597a11f70cdaf50d21134e69c8cfdf10b4432403ef69d",
+        "started_at": "2026-10-11T18:23:10.229054895Z",
+        "restart_policy": {
+          "Name": "always",
+          "MaximumRetryCount": 0
+        },
+        "mounts": [
+          {
+            "Type": "volume",
+            "Name": "plane-app_pgdata",
+            "Source": "/var/lib/docker/volumes/plane-app_pgdata/_data",
+            "Destination": "/var/lib/postgresql/data",
+            "Driver": "local",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": ""
+          }
+        ]
+      },
+      "plane-app-plane-minio-1": {
+        "id": "f2c9c3a63003c3a724bbfc44cf55cfc0d772b6c64a1c316bdc3fd98b88974324",
+        "started_at": "2026-10-11T18:23:09.151262173Z",
+        "restart_policy": {
+          "Name": "always",
+          "MaximumRetryCount": 0
+        },
+        "mounts": [
+          {
+            "Type": "volume",
+            "Name": "1ff8564968e43061e887fb332ccbb5af18127416a0707a09337e4225a1797156",
+            "Source": "/var/lib/docker/volumes/1ff8564968e43061e887fb332ccbb5af18127416a0707a09337e4225a1797156/_data",
+            "Destination": "/data",
+            "Driver": "local",
+            "Mode": "",
+            "RW": true,
+            "Propagation": ""
+          },
+          {
+            "Type": "volume",
+            "Name": "plane-app_uploads",
+            "Source": "/var/lib/docker/volumes/plane-app_uploads/_data",
+            "Destination": "/export",
+            "Driver": "local",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": ""
+          }
+        ]
+      }
+    },
+    "reads": [
+      {
+        "method": "GET",
+        "path": "/api/v1/users/me/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/",
+        "status": 401
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/states/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/labels/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/modules/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/cycles/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/issues/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/members/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/members/",
+        "status": 200
+      }
+    ],
+    "events": [
+      {
+        "method": "GET",
+        "path": "/api/v1/users/me/",
+        "attempt": 1,
+        "status": 200,
+        "rate_limit": {
+          "remaining": 58.0,
+          "reset_epoch": 1791764504.0,
+          "retry_after_seconds": null,
+          "delay_seconds": 59.60987997055054
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/",
+        "attempt": 1,
+        "status": 200,
+        "rate_limit": {
+          "remaining": 57.0,
+          "reset_epoch": 1791764505.0,
+          "retry_after_seconds": null,
+          "delay_seconds": 59.47862505912781
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/",
+        "attempt": 1,
+        "status": 401,
+        "rate_limit": {
+          "remaining": null,
+          "reset_epoch": null,
+          "retry_after_seconds": null,
+          "delay_seconds": 2
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/",
+        "attempt": 1,
+        "status": 200,
+        "rate_limit": {
+          "remaining": 56.0,
+          "reset_epoch": 1791764507.0,
+          "retry_after_seconds": null,
+          "delay_seconds": 58.986008167266846
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/states/",
+        "attempt": 1,
+        "status": 200,
+        "rate_limit": {
+          "remaining": 55.0,
+          "reset_epoch": 1791764509.0,
+          "retry_after_seconds": null,
+          "delay_seconds": 59.75169610977173
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/labels/",
+        "attempt": 1,
+        "status": 200,
+        "rate_limit": {
+          "remaining": 54.0,
+          "reset_epoch": 1791764510.0,
+          "retry_after_seconds": null,
+          "delay_seconds": 59.500293016433716
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/modules/",
+        "attempt": 1,
+        "status": 200,
+        "rate_limit": {
+          "remaining": 53.0,
+          "reset_epoch": 1791764511.0,
+          "retry_after_seconds": null,
+          "delay_seconds": 59.231741428375244
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/cycles/",
+        "attempt": 1,
+        "status": 200,
+        "rate_limit": {
+          "remaining": 53.0,
+          "reset_epoch": 1791764512.0,
+          "retry_after_seconds": null,
+          "delay_seconds": 58.98493981361389
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/issues/",
+        "attempt": 1,
+        "status": 200,
+        "rate_limit": {
+          "remaining": 52.0,
+          "reset_epoch": 1791764514.0,
+          "retry_after_seconds": null,
+          "delay_seconds": 59.35589408874512
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/projects/beb6dbea-4931-4ce9-b761-a4957c4b33be/members/",
+        "attempt": 1,
+        "status": 200,
+        "rate_limit": {
+          "remaining": 51.0,
+          "reset_epoch": 1791764515.0,
+          "retry_after_seconds": null,
+          "delay_seconds": 59.51266551017761
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/workspaces/critical-aerospace-manufacturing/members/",
+        "attempt": 1,
+        "status": 200,
+        "rate_limit": {
+          "remaining": 50.0,
+          "reset_epoch": 1791764516.0,
+          "retry_after_seconds": null,
+          "delay_seconds": 59.24537253379822
+        }
+      }
+    ],
+    "inventory_unchanged": true,
+    "host_reboot_executed": false,
+    "plane_mutations": [],
+    "failed_probe": {
+      "result": "FAIL",
+      "attempts": 5,
+      "details": "Initial bounded discovery recovery failed after restart; later diagnostic GET users/me succeeded; fresh full discovery now passed. No second restart or runtime configuration change."
+    }
+  },
+  "limitations": [
+    "Live cross-store snapshot is not atomic",
+    "Broker/Valkey queues, worker logs and global roles excluded",
+    "Object file integrity checked; full restored MinIO/Plane service not exercised",
+    "No live restore, host reboot, partition/mount changes or deletion"
+  ],
+  "first_github_ci": {
+    "conclusion": "success",
+    "status": "completed",
+    "url": "https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/38186932978"
+  },
+  "host_observations": {
+    "boot_local": "2026-10-11 20:06:17",
+    "disk_free_observed": "1.7 TiB on /srv/ailab",
+    "backup_size_observed": "11 MiB",
+    "all_plane_containers_restart_policy": "always",
+    "container_count": 12
+  }
+}

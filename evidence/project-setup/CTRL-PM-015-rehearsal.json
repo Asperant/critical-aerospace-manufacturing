@@ -1,0 +1,482 @@
+{
+  "control_item": "CTRL-PM-015",
+  "result": "PARTIAL",
+  "governance_source": {
+    "path": "project_control/PROJECT_SETUP_MASTER_EXECUTION_SPEC.md",
+    "sha256": "87cf5dd7d0f3333f2b1f71c8fff7350cdba192b0ae550f5b06d8783cccf699b7"
+  },
+  "plane_probe": {
+    "id": "2a9f71b7-b074-44b8-8131-4be21dc75369",
+    "name": "[WP-AI-007] RCA path performance characterization",
+    "external_id": "WP-AI-007",
+    "state": "d285bdc3-b05c-4f04-b6e0-c81e1004e706"
+  },
+  "probe_purpose": "Read-only canonical identity/gate demonstration only; setup PR implements no WP-AI-007 scope",
+  "branch": "setup/project-management-bootstrap",
+  "implementation_sha": "644e380f2e1a1dc6e8a7c828b84560d44d6ae799",
+  "branch_policy": "Master §10 approved long-lived setup branch; canonical/control branch conventions documented, not replaced",
+  "readiness": {
+    "criteria_refs": [
+      "DOR-WP-01",
+      "DOR-WP-02",
+      "DOR-WP-03",
+      "DOR-WP-04",
+      "DOR-WP-05",
+      "DOR-WP-06",
+      "DOR-WP-07",
+      "DOR-WP-08"
+    ],
+    "criteria_scope": "WP references plus all applicable docs/08 level and scope supplements",
+    "execution_status": "UNAVAILABLE (documentation only)",
+    "gate": "ready",
+    "governance_source": {
+      "path": "docs/08_Definition_of_Ready_and_Done.md",
+      "sha256": "9b4e00c9666c07a2bf83962a36e5741fbfc6a80fa72a0a9c5341f84f63a62005"
+    },
+    "limitation": "No trusted execution evidence input is implemented; planning prose never yields PASS",
+    "missing_evidence": [
+      "actual dependency readiness and precise consumed contracts",
+      "owner/reviewer confirmations and review routing",
+      "applicable task/scope readiness confirmations"
+    ],
+    "reason": "Required execution evidence and owner/reviewer confirmations are unavailable",
+    "result": "UNKNOWN",
+    "schema_version": "projectctl-gate-v1",
+    "source_manifest": {
+      "docs/01_Master_Project_Specification.md": "14ff9517ca5fc427d9316980a20db1059a628935e5642a4eeca2ffded51572bb",
+      "docs/03_Requirements_Traceability_Matrix.md": "e58e635cacc96f3341b7cb13f54676d3793b82d63cd394d9c260973f23817375",
+      "docs/04_Work_Breakdown_Structure.md": "1f9c2ff532cacac70ff5099a1ff6e4e09d25be990dcbca2071e59e0fa03ed8ac",
+      "docs/05_Dependency_Graph.md": "c693a9b953458d0bcc2be4b2c9fdb4d19d6f21e7ebf8aca8e0fb49be08db30d1",
+      "docs/06A_Asrin_Engineering_Roadmap.md": "4034fbc467766dcaf59aab274bcb6ec2ee944f6c311444f079f589029dc8c92c",
+      "docs/06B_Selman_Engineering_Roadmap.md": "92801ffe6782ec55a096482db1f578b1d75c41278c269ef8c56aaf97e23da2ea",
+      "docs/06C_Batu_Engineering_Roadmap.md": "f12f21dd91c1487c556bd5cbbe24a52fdbda03f9add8d8009463e74cb95f5d2e",
+      "docs/06D_Yavuz_Engineering_Roadmap.md": "a70a3c28b458ccab65e4305675f962b9b6eeb4e84cba4e94e2da53a74d81a961",
+      "docs/07_Milestone_and_Release_Plan.md": "f06243f0e0773b4ebce39b509c6e807bacf698690e8f311d6091087db83272bf"
+    },
+    "transition_authorized": false,
+    "wp_id": "WP-AI-007"
+  },
+  "completion": {
+    "criteria_refs": [
+      "DOD-WP-01",
+      "DOD-WP-02",
+      "DOD-WP-03",
+      "DOD-WP-08",
+      "DOD-WP-11"
+    ],
+    "criteria_scope": "WP references plus all applicable docs/08 level and scope supplements",
+    "execution_status": "UNAVAILABLE (documentation only)",
+    "gate": "done",
+    "governance_source": {
+      "path": "docs/08_Definition_of_Ready_and_Done.md",
+      "sha256": "9b4e00c9666c07a2bf83962a36e5741fbfc6a80fa72a0a9c5341f84f63a62005"
+    },
+    "limitation": "No trusted execution evidence input is implemented; planning prose never yields PASS",
+    "missing_evidence": [
+      "actual deliverables and requirement verification at required boundaries",
+      "required CI and independent review",
+      "post-merge target-environment validation",
+      "trace dispositions and identity-bound accepted evidence",
+      "applicable WP/capability/research/scope DoD confirmations"
+    ],
+    "reason": "Required execution evidence and owner/reviewer confirmations are unavailable",
+    "result": "UNKNOWN",
+    "schema_version": "projectctl-gate-v1",
+    "source_manifest": {
+      "docs/01_Master_Project_Specification.md": "14ff9517ca5fc427d9316980a20db1059a628935e5642a4eeca2ffded51572bb",
+      "docs/03_Requirements_Traceability_Matrix.md": "e58e635cacc96f3341b7cb13f54676d3793b82d63cd394d9c260973f23817375",
+      "docs/04_Work_Breakdown_Structure.md": "1f9c2ff532cacac70ff5099a1ff6e4e09d25be990dcbca2071e59e0fa03ed8ac",
+      "docs/05_Dependency_Graph.md": "c693a9b953458d0bcc2be4b2c9fdb4d19d6f21e7ebf8aca8e0fb49be08db30d1",
+      "docs/06A_Asrin_Engineering_Roadmap.md": "4034fbc467766dcaf59aab274bcb6ec2ee944f6c311444f079f589029dc8c92c",
+      "docs/06B_Selman_Engineering_Roadmap.md": "92801ffe6782ec55a096482db1f578b1d75c41278c269ef8c56aaf97e23da2ea",
+      "docs/06C_Batu_Engineering_Roadmap.md": "f12f21dd91c1487c556bd5cbbe24a52fdbda03f9add8d8009463e74cb95f5d2e",
+      "docs/06D_Yavuz_Engineering_Roadmap.md": "a70a3c28b458ccab65e4305675f962b9b6eeb4e84cba4e94e2da53a74d81a961",
+      "docs/07_Milestone_and_Release_Plan.md": "f06243f0e0773b4ebce39b509c6e807bacf698690e8f311d6091087db83272bf"
+    },
+    "transition_authorized": false,
+    "wp_id": "WP-AI-007"
+  },
+  "planning_candidates": {
+    "execution_status": "UNAVAILABLE (documentation only)",
+    "owner": "Asrın Dündar",
+    "readiness": "NOT_CERTIFIED",
+    "result_type": "PLANNING_CANDIDATES"
+  },
+  "canonical_validation": {
+    "capability_count": 29,
+    "cycle_count": 13,
+    "dependency_edge_count": 217,
+    "dependency_node_count": 100,
+    "execution_status": "UNAVAILABLE (documentation only)",
+    "fr_count": 186,
+    "hard_cycle_count": 0,
+    "hard_edge_count": 208,
+    "milestone_count": 9,
+    "nfr_count": 120,
+    "owner_distribution": {
+      "Asrın Dündar": 73,
+      "Batuhan Kaya": 32,
+      "Selman Özdemir": 17,
+      "Yavuz Gümüş": 57
+    },
+    "parser": "offline-project-v1",
+    "requirement_count": 306,
+    "scheduled_wp_count": 174,
+    "soft_edge_count": 9,
+    "source": "docs/04_Work_Breakdown_Structure.md",
+    "unscheduled_wp_ids": [
+      "WP-R2-001",
+      "WP-R2-002",
+      "WP-R2-003",
+      "WP-S-001",
+      "WP-X-001"
+    ],
+    "validation": "PASS",
+    "wp_count": 179
+  },
+  "warnings": 947,
+  "github": {
+    "baseRefName": "main",
+    "headRefName": "setup/project-management-bootstrap",
+    "headRefOid": "644e380f2e1a1dc6e8a7c828b84560d44d6ae799",
+    "isDraft": true,
+    "mergedAt": null,
+    "number": 2,
+    "reviews": [],
+    "state": "OPEN",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-12T00:28:47Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/38188037162/job/114614551693",
+        "name": "projectctl",
+        "startedAt": "2026-10-12T00:27:01Z",
+        "status": "COMPLETED",
+        "workflowName": "projectctl"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-12T00:28:27Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/38188034454/job/114614543848",
+        "name": "projectctl",
+        "startedAt": "2026-10-12T00:26:58Z",
+        "status": "COMPLETED",
+        "workflowName": "projectctl"
+      }
+    ],
+    "title": "[CTRL-PM-015] Review governed project-management setup",
+    "url": "https://github.com/Asperant/critical-aerospace-manufacturing/pull/2"
+  },
+  "plane_summary": {
+    "result": "PASS",
+    "wp_count": 179,
+    "backlog": 179,
+    "ready_or_later": 0,
+    "duplicate_canonical_ids": [],
+    "module_relationships": 179,
+    "cycle_relationships": 174,
+    "milestone_relationships": 174,
+    "asrin_assigned": 73,
+    "unassigned": 106,
+    "module_distribution": {
+      "WP-AI": 7,
+      "WP-AUTO": 7,
+      "WP-BENCH": 5,
+      "WP-CICD": 6,
+      "WP-CORE": 8,
+      "WP-DOC": 6,
+      "WP-DR": 4,
+      "WP-EVT": 6,
+      "WP-GOV": 4,
+      "WP-HITL": 7,
+      "WP-ML": 7,
+      "WP-OBJ": 2,
+      "WP-OBS": 6,
+      "WP-PERF": 6,
+      "WP-PLAT": 7,
+      "WP-R2": 3,
+      "WP-RAG": 7,
+      "WP-RES": 12,
+      "WP-S": 1,
+      "WP-SCH": 7,
+      "WP-SEC": 8,
+      "WP-SIM": 9,
+      "WP-TEST": 8,
+      "WP-TWIN": 6,
+      "WP-UI": 12,
+      "WP-VALID": 2,
+      "WP-VDATA": 5,
+      "WP-VIS": 10,
+      "WP-X": 1
+    },
+    "owner_distribution": {
+      "Asrın Dündar": 73,
+      "Batuhan Kaya": 32,
+      "Selman Özdemir": 17,
+      "Yavuz Gümüş": 57
+    },
+    "milestone_distribution": {
+      "M0": 2,
+      "M1": 13,
+      "M2": 21,
+      "M3": 27,
+      "M4": 39,
+      "M5": 30,
+      "M6": 17,
+      "M7": 15,
+      "M8": 10
+    },
+    "unscheduled_ids": [
+      "WP-R2-001",
+      "WP-R2-002",
+      "WP-R2-003",
+      "WP-S-001",
+      "WP-X-001"
+    ],
+    "single_cycle": 57,
+    "terminal_multi_cycle": 117,
+    "issue_relations": 0,
+    "source_manifest": {
+      "docs/01_Master_Project_Specification.md": "14ff9517ca5fc427d9316980a20db1059a628935e5642a4eeca2ffded51572bb",
+      "docs/03_Requirements_Traceability_Matrix.md": "e58e635cacc96f3341b7cb13f54676d3793b82d63cd394d9c260973f23817375",
+      "docs/04_Work_Breakdown_Structure.md": "1f9c2ff532cacac70ff5099a1ff6e4e09d25be990dcbca2071e59e0fa03ed8ac",
+      "docs/05_Dependency_Graph.md": "c693a9b953458d0bcc2be4b2c9fdb4d19d6f21e7ebf8aca8e0fb49be08db30d1",
+      "docs/06A_Asrin_Engineering_Roadmap.md": "4034fbc467766dcaf59aab274bcb6ec2ee944f6c311444f079f589029dc8c92c",
+      "docs/06B_Selman_Engineering_Roadmap.md": "92801ffe6782ec55a096482db1f578b1d75c41278c269ef8c56aaf97e23da2ea",
+      "docs/06C_Batu_Engineering_Roadmap.md": "f12f21dd91c1487c556bd5cbbe24a52fdbda03f9add8d8009463e74cb95f5d2e",
+      "docs/06D_Yavuz_Engineering_Roadmap.md": "a70a3c28b458ccab65e4305675f962b9b6eeb4e84cba4e94e2da53a74d81a961",
+      "docs/07_Milestone_and_Release_Plan.md": "f06243f0e0773b4ebce39b509c6e807bacf698690e8f311d6091087db83272bf"
+    },
+    "execution_evidence": "NOT ASSERTED"
+  },
+  "plane_mutations": [],
+  "pending": [
+    "Genuine required independent/platform human review",
+    "Human merge approval through governed PR flow",
+    "Actual main-SHA and target-environment post-merge validation",
+    "Teammate identities and individual clone confirmation",
+    "Supported private-repository protection capability"
+  ],
+  "merged_implies_done": false,
+  "planning_implies_evidence": false,
+  "test_pass_implies_verified": false,
+  "demo_implies_accepted": false,
+  "local_tests": {
+    "count": 144,
+    "result": "PASS",
+    "seconds": 61.97
+  },
+  "failed_ci": {
+    "run_id": 38187728392,
+    "result": "FAIL",
+    "tests": "144 passed",
+    "canonical_validation": "PASS",
+    "failure": "Four pre-existing verbatim Markdown hard breaks failed unchanged whitespace check",
+    "corrective_commit": "644e380f2e1a1dc6e8a7c828b84560d44d6ae799",
+    "correction": "Rendering-equivalent <br> replacements in project_control specification only; no check weakened"
+  },
+  "ci": {
+    "push": {
+      "conclusion": "success",
+      "headSha": "644e380f2e1a1dc6e8a7c828b84560d44d6ae799",
+      "jobs": [
+        {
+          "completedAt": "2026-10-12T00:28:27Z",
+          "conclusion": "success",
+          "databaseId": 114614543848,
+          "name": "projectctl",
+          "startedAt": "2026-10-12T00:26:58Z",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Install existing test dependencies",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Syntax sanity",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Projectctl tests",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Canonical validation",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Whitespace and repository hygiene",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 15,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 16,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 17,
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/38188034454/job/114614543848"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/38188034454"
+    },
+    "pull_request": {
+      "conclusion": "success",
+      "headSha": "644e380f2e1a1dc6e8a7c828b84560d44d6ae799",
+      "jobs": [
+        {
+          "completedAt": "2026-10-12T00:28:47Z",
+          "conclusion": "success",
+          "databaseId": 114614551693,
+          "name": "projectctl",
+          "startedAt": "2026-10-12T00:27:01Z",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Install existing test dependencies",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Syntax sanity",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Projectctl tests",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Canonical validation",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Whitespace and repository hygiene",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 15,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 16,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 17,
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/38188037162/job/114614551693"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/38188037162"
+    }
+  },
+  "github_collaborators": [
+    {
+      "login": "Asperant",
+      "role_name": "admin"
+    }
+  ],
+  "github_description_update": {
+    "result": "PASS",
+    "method": "body-only REST PATCH",
+    "cli_failure": "gh pr edit hit deprecated Projects classic GraphQL projectCards schema; exact body applied via verified repository pull/2 REST endpoint"
+  },
+  "ci_advisories": [
+    "checkout@v4/setup-python@v5 target Node20; runner forced Node24, checks PASS",
+    "ubuntu-latest migration to Ubuntu26 announced for October19; future runner maintenance review"
+  ],
+  "pr_readiness": "DRAFT: verified reviewer routing and genuine independent/platform review remain unavailable; green CI does not certify MERGE_READY",
+  "observed_utc": "2026-10-12T00:31:24.925398+00:00",
+  "commits_created": [
+    "644e380f2e1a1dc6e8a7c828b84560d44d6ae799 [CTRL-PM-012] Preserve setup metadata line breaks without trailing whitespace",
+    "0dd7ce0238d2db116b2527f2a90894ddf4ed2e5a [CTRL-PM-014] Verify private Plane backup and isolated PostgreSQL restore",
+    "986ae8c011b250d0946f33792daa3dd00b34162e [CTRL-PM-013] Add fail-closed readiness and completion checks",
+    "c2ebb1cf4d409485ce885215d320a4390e860ba9 [CTRL-PM-012] Establish projectctl CI and engineering review workflow"
+  ],
+  "network_mutations": [
+    "Three approved checkpoint pushes",
+    "Draft PR2 creation",
+    "PR2 body-only REST update"
+  ],
+  "safe_work_remaining": "NONE: all independent safe work completed; identity/protection/review/merge/post-merge steps human-owned",
+  "final_probe_retry": "Initial housekeeping probe used system Python without installed projectctl; import failed before changes. Correct venv probe passed."
+}

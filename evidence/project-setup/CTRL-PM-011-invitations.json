@@ -1,0 +1,60 @@
+{
+  "control_item": "CTRL-PM-011",
+  "contract": "Installed API v1 invite router/view/serializer; role MEMBER=15; GET verified",
+  "email_delivery": "NOT_CONFIRMED: v1 create has no email-task call",
+  "operations": [
+    {
+      "person": "Selman Özdemir",
+      "method": "POST",
+      "path": "workspaces/critical-aerospace-manufacturing/invitations/",
+      "body": {
+        "email": "selmanozdemir430@gmail.com",
+        "role": 15
+      },
+      "result": "CREATED_VERIFIED",
+      "http_status": 201,
+      "invitation_id": "0fbe3d08-c25b-4ffe-bb5f-7fb377f9d058"
+    },
+    {
+      "person": "Batuhan Kaya",
+      "method": "POST",
+      "path": "workspaces/critical-aerospace-manufacturing/invitations/",
+      "body": {
+        "email": "batuhankaya0204@gmail.com",
+        "role": 15
+      },
+      "result": "CREATED_VERIFIED",
+      "http_status": 201,
+      "invitation_id": "3cb8faff-b07b-4af1-a614-20b842e875ed"
+    },
+    {
+      "person": "Yavuz Gümüş",
+      "method": "POST",
+      "path": "workspaces/critical-aerospace-manufacturing/invitations/",
+      "body": {
+        "email": "yavuzgumus@gmail.com",
+        "role": 15
+      },
+      "result": "CREATED_VERIFIED",
+      "http_status": 201,
+      "invitation_id": "aff3e366-a5ac-4168-b9ce-e1907f26a784"
+    }
+  ],
+  "pending": [
+    {
+      "person": "Selman Özdemir",
+      "accepted": false,
+      "responded_at": null
+    },
+    {
+      "person": "Batuhan Kaya",
+      "accepted": false,
+      "responded_at": null
+    },
+    {
+      "person": "Yavuz Gümüş",
+      "accepted": false,
+      "responded_at": null
+    }
+  ]
+}

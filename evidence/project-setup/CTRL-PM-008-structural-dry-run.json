@@ -1,0 +1,735 @@
+{
+  "api_version": "v1",
+  "audit_sha256": "816386725cdb8b36ffcfae200a38153e92c7395e741774ca1afc082da6047738",
+  "canonical_wps_in_plane": 0,
+  "missing_owners": [
+    {
+      "affected_wp_ids": [
+        "WP-AUTO-001",
+        "WP-AUTO-002",
+        "WP-AUTO-003",
+        "WP-AUTO-004",
+        "WP-AUTO-005",
+        "WP-AUTO-006",
+        "WP-AUTO-007",
+        "WP-PERF-003",
+        "WP-PERF-006",
+        "WP-RES-008",
+        "WP-SCH-001",
+        "WP-SCH-002",
+        "WP-SCH-003",
+        "WP-SCH-004",
+        "WP-SCH-005",
+        "WP-SCH-006",
+        "WP-SCH-007",
+        "WP-SIM-001",
+        "WP-SIM-002",
+        "WP-SIM-003",
+        "WP-SIM-004",
+        "WP-SIM-005",
+        "WP-SIM-006",
+        "WP-SIM-007",
+        "WP-SIM-008",
+        "WP-SIM-009",
+        "WP-TEST-005",
+        "WP-TEST-006",
+        "WP-UI-005",
+        "WP-UI-007",
+        "WP-VALID-001",
+        "WP-VALID-002"
+      ],
+      "owner": "Batuhan Kaya",
+      "reason": "NO_EXACT_PROJECT_MEMBER"
+    },
+    {
+      "affected_wp_ids": [
+        "WP-RES-010",
+        "WP-UI-003",
+        "WP-VDATA-001",
+        "WP-VDATA-002",
+        "WP-VDATA-003",
+        "WP-VDATA-004",
+        "WP-VDATA-005",
+        "WP-VIS-001",
+        "WP-VIS-002",
+        "WP-VIS-003",
+        "WP-VIS-004",
+        "WP-VIS-005",
+        "WP-VIS-006",
+        "WP-VIS-007",
+        "WP-VIS-008",
+        "WP-VIS-009",
+        "WP-VIS-010"
+      ],
+      "owner": "Selman Özdemir",
+      "reason": "NO_EXACT_PROJECT_MEMBER"
+    },
+    {
+      "affected_wp_ids": [
+        "WP-BENCH-001",
+        "WP-BENCH-003",
+        "WP-BENCH-004",
+        "WP-BENCH-005",
+        "WP-CICD-001",
+        "WP-CICD-002",
+        "WP-CICD-003",
+        "WP-CICD-004",
+        "WP-CICD-005",
+        "WP-CICD-006",
+        "WP-DOC-001",
+        "WP-DOC-005",
+        "WP-DR-001",
+        "WP-DR-002",
+        "WP-DR-003",
+        "WP-DR-004",
+        "WP-EVT-004",
+        "WP-EVT-006",
+        "WP-GOV-002",
+        "WP-GOV-003",
+        "WP-HITL-004",
+        "WP-HITL-007",
+        "WP-OBJ-001",
+        "WP-OBJ-002",
+        "WP-OBS-001",
+        "WP-OBS-002",
+        "WP-OBS-003",
+        "WP-OBS-004",
+        "WP-OBS-005",
+        "WP-OBS-006",
+        "WP-PERF-001",
+        "WP-PERF-002",
+        "WP-PERF-004",
+        "WP-PERF-005",
+        "WP-PLAT-001",
+        "WP-PLAT-002",
+        "WP-PLAT-003",
+        "WP-PLAT-004",
+        "WP-PLAT-005",
+        "WP-PLAT-006",
+        "WP-PLAT-007",
+        "WP-R2-003",
+        "WP-RES-001",
+        "WP-RES-003",
+        "WP-RES-005",
+        "WP-SEC-001",
+        "WP-SEC-002",
+        "WP-SEC-004",
+        "WP-SEC-005",
+        "WP-SEC-006",
+        "WP-SEC-007",
+        "WP-SEC-008",
+        "WP-TEST-001",
+        "WP-TEST-004",
+        "WP-TEST-007",
+        "WP-TEST-008",
+        "WP-UI-009"
+      ],
+      "owner": "Yavuz Gümüş",
+      "reason": "NO_EXACT_PROJECT_MEMBER"
+    }
+  ],
+  "multi_cycle_ambiguity_count": 117,
+  "operations": [
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "AI Orchestrator / RCA",
+        "name": "WP-AI"
+      },
+      "identity": "WP-AI",
+      "kind": "modules",
+      "plane_id": "8bab48fd-a4e3-4fa7-bda8-a212d44f5045",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Durable Automation",
+        "name": "WP-AUTO"
+      },
+      "identity": "WP-AUTO",
+      "kind": "modules",
+      "plane_id": "9482737d-c1c3-49b3-8055-94b4a8cd3998",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Final Benchmark Campaign",
+        "name": "WP-BENCH"
+      },
+      "identity": "WP-BENCH",
+      "kind": "modules",
+      "plane_id": "965c4168-2926-4573-a288-a044644aec8c",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "CI/CD",
+        "name": "WP-CICD"
+      },
+      "identity": "WP-CICD",
+      "kind": "modules",
+      "plane_id": "e33f2ec6-d25a-4ff7-99af-0d558ff3e3bc",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Manufacturing Core / Backend",
+        "name": "WP-CORE"
+      },
+      "identity": "WP-CORE",
+      "kind": "modules",
+      "plane_id": "dbdd8368-e65c-4706-9d49-ec18bffeafa8",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Documentation, Thesis, Demo & Public Release",
+        "name": "WP-DOC"
+      },
+      "identity": "WP-DOC",
+      "kind": "modules",
+      "plane_id": "66535172-d9c5-4254-897f-8aba367d5197",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Backup & Disaster Recovery",
+        "name": "WP-DR"
+      },
+      "identity": "WP-DR",
+      "kind": "modules",
+      "plane_id": "989f0968-39b7-4b62-bbf8-5fd7fd6edf43",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Event Spine & Integration Contracts",
+        "name": "WP-EVT"
+      },
+      "identity": "WP-EVT",
+      "kind": "modules",
+      "plane_id": "36ea81bc-2977-4d8d-a0b6-16e384e03b36",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Requirement Governance & Traceability",
+        "name": "WP-GOV"
+      },
+      "identity": "WP-GOV",
+      "kind": "modules",
+      "plane_id": "5bca312a-d69e-4e18-aa00-c4648e0619f1",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "HITL & Authority",
+        "name": "WP-HITL"
+      },
+      "identity": "WP-HITL",
+      "kind": "modules",
+      "plane_id": "c4ecc3b7-a9a2-46d6-8049-a68a054e23b1",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Predictive ML",
+        "name": "WP-ML"
+      },
+      "identity": "WP-ML",
+      "kind": "modules",
+      "plane_id": "fb8d93a3-383e-4546-a15c-3499a10a8c70",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Object / Artifact Layer",
+        "name": "WP-OBJ"
+      },
+      "identity": "WP-OBJ",
+      "kind": "modules",
+      "plane_id": "84fc3bab-e60d-4052-8bbe-6b98a2809f41",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Observability",
+        "name": "WP-OBS"
+      },
+      "identity": "WP-OBS",
+      "kind": "modules",
+      "plane_id": "6c772959-b278-4207-86b9-fbd96c739e87",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Performance & Resilience Measurement",
+        "name": "WP-PERF"
+      },
+      "identity": "WP-PERF",
+      "kind": "modules",
+      "plane_id": "f55615b2-e682-4bfe-b82d-253ca80ea313",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Platform & Runtime",
+        "name": "WP-PLAT"
+      },
+      "identity": "WP-PLAT",
+      "kind": "modules",
+      "plane_id": "68a79fec-2a91-4813-98d4-2c3a19ccea4d",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Evidence-Gated Research Candidates",
+        "name": "WP-R2"
+      },
+      "identity": "WP-R2",
+      "kind": "modules",
+      "plane_id": "6beb175a-f336-4e4e-9778-7ee9b774ac53",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Documentary RAG",
+        "name": "WP-RAG"
+      },
+      "identity": "WP-RAG",
+      "kind": "modules",
+      "plane_id": "17f14b5b-a6da-4f5c-a0b5-566e7277cf6c",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Research & Evaluation Infrastructure",
+        "name": "WP-RES"
+      },
+      "identity": "WP-RES",
+      "kind": "modules",
+      "plane_id": "c4e62aee-e5ec-44a8-b373-e08d838f9aac",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Stretch Register",
+        "name": "WP-S"
+      },
+      "identity": "WP-S",
+      "kind": "modules",
+      "plane_id": "9559f37b-65e8-4e2b-b9d9-edff13e09138",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Scheduling & Optimization",
+        "name": "WP-SCH"
+      },
+      "identity": "WP-SCH",
+      "kind": "modules",
+      "plane_id": "7c9713fa-a8b6-4129-8da2-97eb2d6e9dd9",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Security",
+        "name": "WP-SEC"
+      },
+      "identity": "WP-SEC",
+      "kind": "modules",
+      "plane_id": "8f82f33e-1a1e-404d-9cc9-f1b6af88d5a7",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Operational Manufacturing Simulator",
+        "name": "WP-SIM"
+      },
+      "identity": "WP-SIM",
+      "kind": "modules",
+      "plane_id": "3d81d844-b73b-4a93-ab14-df8e085b54c7",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Testing & Integration Scenarios",
+        "name": "WP-TEST"
+      },
+      "identity": "WP-TEST",
+      "kind": "modules",
+      "plane_id": "9c58ac9b-869e-42b3-82c0-910a35df6947",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Operational Digital Twin",
+        "name": "WP-TWIN"
+      },
+      "identity": "WP-TWIN",
+      "kind": "modules",
+      "plane_id": "db1bb2dd-5c5e-4abb-a151-b6402b2b74f7",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Manufacturing Command Center",
+        "name": "WP-UI"
+      },
+      "identity": "WP-UI",
+      "kind": "modules",
+      "plane_id": "c3893732-dc01-4cb5-bca2-ba33744e9952",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Schedule Validation",
+        "name": "WP-VALID"
+      },
+      "identity": "WP-VALID",
+      "kind": "modules",
+      "plane_id": "6010c2ce-b6be-4fe7-9045-fb716b5aca43",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Vision Dataset & MLOps",
+        "name": "WP-VDATA"
+      },
+      "identity": "WP-VDATA",
+      "kind": "modules",
+      "plane_id": "5adf4f56-5cdb-4408-b88e-9c8dec6c9189",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Visual Perception",
+        "name": "WP-VIS"
+      },
+      "identity": "WP-VIS",
+      "kind": "modules",
+      "plane_id": "7ea5f77f-5db0-457f-8d92-d6600ea774e1",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Out-of-Scope Guard Rail",
+        "name": "WP-X"
+      },
+      "identity": "WP-X",
+      "kind": "modules",
+      "plane_id": "a797ba24-39f5-4d2c-8b8c-effeb53ad356",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Engineering Foundation; effective engineering weeks W1–W2. Calendar dates unspecified.",
+        "name": "S1"
+      },
+      "identity": "S1",
+      "kind": "cycles",
+      "plane_id": "24c63960-2f75-4d61-957c-98e60f27cd9b",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Integrated Spine; effective engineering weeks W3–W4. Calendar dates unspecified.",
+        "name": "S2"
+      },
+      "identity": "S2",
+      "kind": "cycles",
+      "plane_id": "f3bd6141-b612-4d81-a5d9-6670135dfcc4",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Manufacturing World Depth; effective engineering weeks W5–W6. Calendar dates unspecified.",
+        "name": "S3"
+      },
+      "identity": "S3",
+      "kind": "cycles",
+      "plane_id": "a3a6a89a-0a43-4d4b-bb3c-bb3225203dc7",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Operational Manufacturing Alpha; effective engineering weeks W7–W8. Calendar dates unspecified.",
+        "name": "S4"
+      },
+      "identity": "S4",
+      "kind": "cycles",
+      "plane_id": "8cbdd9f6-21d1-48c2-a1be-b0ebfaad3398",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Closed-Loop Skeleton; effective engineering weeks W9–W10. Calendar dates unspecified.",
+        "name": "S5"
+      },
+      "identity": "S5",
+      "kind": "cycles",
+      "plane_id": "401de4d7-795c-498c-b6a6-164f0d6d3c11",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Closed-Loop Alpha; effective engineering weeks W11–W12. Calendar dates unspecified.",
+        "name": "S6"
+      },
+      "identity": "S6",
+      "kind": "cycles",
+      "plane_id": "6e5f90fd-4d6f-440e-8323-a9614404205b",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Intelligence / Planning Depth; effective engineering weeks W13–W14. Calendar dates unspecified.",
+        "name": "S7"
+      },
+      "identity": "S7",
+      "kind": "cycles",
+      "plane_id": "21e2aa2d-b09e-4769-8b5f-81fb76a26107",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Mandatory Capability Completion; effective engineering weeks W15–W16. Calendar dates unspecified.",
+        "name": "S8"
+      },
+      "identity": "S8",
+      "kind": "cycles",
+      "plane_id": "c15d617a-5b1d-4d55-af8a-fd7064538a98",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Reliability / Security / Performance; effective engineering weeks W17–W18. Calendar dates unspecified.",
+        "name": "S9"
+      },
+      "identity": "S9",
+      "kind": "cycles",
+      "plane_id": "8e2843c3-fa98-40bc-a204-1c5e9a30b9c6",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Evaluation Ready; effective engineering weeks W19–W20. Calendar dates unspecified.",
+        "name": "S10"
+      },
+      "identity": "S10",
+      "kind": "cycles",
+      "plane_id": "f705d8ac-b176-48e9-af3c-1930b369c4b2",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Calibration and Freeze; effective engineering weeks W21–W22. Calendar dates unspecified.",
+        "name": "S11"
+      },
+      "identity": "S11",
+      "kind": "cycles",
+      "plane_id": "8b3dc7f5-66cb-499a-ba6d-f375347a69d2",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Final Benchmark; effective engineering weeks W23–W24. Calendar dates unspecified.",
+        "name": "S12"
+      },
+      "identity": "S12",
+      "kind": "cycles",
+      "plane_id": "d341fe5d-861a-4db5-b744-41b08c788185",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "description": "Final Release / Demo / Thesis Stabilization; effective engineering weeks W25–W26. Calendar dates unspecified.",
+        "name": "S13"
+      },
+      "identity": "S13",
+      "kind": "cycles",
+      "plane_id": "2f784b7a-26d4-4dc4-a149-65306380e729",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "name": "MS:M0"
+      },
+      "identity": "MS:M0",
+      "kind": "labels",
+      "plane_id": "e90f6d4b-7785-4bb2-82ad-b035010eae37",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "name": "MS:M1"
+      },
+      "identity": "MS:M1",
+      "kind": "labels",
+      "plane_id": "55608eb3-40dc-4b13-a6b3-b626b366a375",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "name": "MS:M2"
+      },
+      "identity": "MS:M2",
+      "kind": "labels",
+      "plane_id": "4b171e28-d4b9-49b8-987a-8e2be06385da",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "name": "MS:M3"
+      },
+      "identity": "MS:M3",
+      "kind": "labels",
+      "plane_id": "88b24851-a580-463a-9c83-bc021006b120",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "name": "MS:M4"
+      },
+      "identity": "MS:M4",
+      "kind": "labels",
+      "plane_id": "ba18417d-1590-4272-8ad0-d0f7d6947c6b",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "name": "MS:M5"
+      },
+      "identity": "MS:M5",
+      "kind": "labels",
+      "plane_id": "d65aae2a-b11a-4c23-a371-6c25428fc833",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "name": "MS:M6"
+      },
+      "identity": "MS:M6",
+      "kind": "labels",
+      "plane_id": "dfb06690-2f9a-4ebc-b7d4-16c54e7d44f9",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "name": "MS:M7"
+      },
+      "identity": "MS:M7",
+      "kind": "labels",
+      "plane_id": "d68b2156-8feb-408b-a45d-69d57546e9c2",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "name": "MS:M8"
+      },
+      "identity": "MS:M8",
+      "kind": "labels",
+      "plane_id": "f4d70210-9996-4ad1-8bf9-b7b567c5cec7",
+      "request": null
+    },
+    {
+      "action": "unchanged",
+      "desired": {
+        "name": "BLOCKED"
+      },
+      "identity": "BLOCKED",
+      "kind": "labels",
+      "plane_id": "4cc6bbc1-2aba-49f6-ade7-220b7072df80",
+      "request": null
+    }
+  ],
+  "owner_mapping": {
+    "Asrın Dündar": "0b4a5417-2ed5-4ac2-95ff-e74104c5d601",
+    "Batuhan Kaya": null,
+    "Selman Özdemir": null,
+    "Yavuz Gümüş": null
+  },
+  "project": {
+    "id": "beb6dbea-4931-4ce9-b761-a4957c4b33be",
+    "identifier": "CAP",
+    "name": "Graduation Project",
+    "workspace": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb"
+  },
+  "project_default_assignee": null,
+  "schema_version": "plane-bootstrap-plan-v1",
+  "source_manifest": {
+    "docs/01_Master_Project_Specification.md": "14ff9517ca5fc427d9316980a20db1059a628935e5642a4eeca2ffded51572bb",
+    "docs/03_Requirements_Traceability_Matrix.md": "e58e635cacc96f3341b7cb13f54676d3793b82d63cd394d9c260973f23817375",
+    "docs/04_Work_Breakdown_Structure.md": "1f9c2ff532cacac70ff5099a1ff6e4e09d25be990dcbca2071e59e0fa03ed8ac",
+    "docs/05_Dependency_Graph.md": "c693a9b953458d0bcc2be4b2c9fdb4d19d6f21e7ebf8aca8e0fb49be08db30d1",
+    "docs/06A_Asrin_Engineering_Roadmap.md": "4034fbc467766dcaf59aab274bcb6ec2ee944f6c311444f079f589029dc8c92c",
+    "docs/06B_Selman_Engineering_Roadmap.md": "92801ffe6782ec55a096482db1f578b1d75c41278c269ef8c56aaf97e23da2ea",
+    "docs/06C_Batu_Engineering_Roadmap.md": "f12f21dd91c1487c556bd5cbbe24a52fdbda03f9add8d8009463e74cb95f5d2e",
+    "docs/06D_Yavuz_Engineering_Roadmap.md": "a70a3c28b458ccab65e4305675f962b9b6eeb4e84cba4e94e2da53a74d81a961",
+    "docs/07_Milestone_and_Release_Plan.md": "f06243f0e0773b4ebce39b509c6e807bacf698690e8f311d6091087db83272bf"
+  },
+  "structural_scope": {
+    "conflicts": 0,
+    "creates": 0,
+    "required_updates": 0,
+    "unchanged": 52
+  },
+  "workspace": {
+    "direct_endpoint_available": false,
+    "id": "8df81c6e-d0f9-43af-ab75-7c5f01c6b9bb",
+    "slug": "critical-aerospace-manufacturing",
+    "verification": "PROJECT_SCOPE_ONLY"
+  },
+  "wp_count": 179,
+  "wp_import_ready": false
+}
