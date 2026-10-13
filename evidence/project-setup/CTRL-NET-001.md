@@ -134,3 +134,76 @@ GIT MERGE:NONE
 ## Current contact correction — CTRL-PM-011
 
 Yavuz’s correct operational email is **yavuzzgumus@gmail.com**; the earlier single-recipient address in this report is historical and incorrect. Future owner-managed sharing/onboarding must use the corrected address. GitHub remainsYavuzgmus. The wrong pending Plane invitation was revoked and one corrected MEMBER invitation was freshly verified; see CTRL-PM-011-yavuz-identity-correction.json. No Tailscale sharing or policy change occurred as part of this identity correction.
+
+
+## Tailscale authentication correction — 2026-10-13
+
+Control item: CTRL-NET-001. Status: **HUMAN_BROWSER_RETEST_REQUIRED**. This checkpoint supersedes the previous canonical-URL decision gate: the latest human instruction explicitly authorizes the proven minimal correction and prefers the verified MagicDNS endpoint. Historical observations above remain intact. No actual password login was performed and no interactive browser authentication success is claimed.
+
+### Reproduction and installed-source diagnosis
+
+The human reports that the remote Tailscale-IP homepage opens, but submitting valid credentials leaves the UI loading. Installed Plane Community 1.4.2, backend image sha256:90032ce088708889b60c00d491897916f4deb882facda27db59fd10fb68729ef, remains unchanged; no image pull or upgrade was performed.
+
+API logs show GET /auth/get-csrf-token/ HTTP200 at 2026-10-13T15:26:06.379037546Z and POST /auth/sign-in/ HTTP302 at 15:26:10.778704958Z. These logs do not record the incoming Origin/Host, so they cannot independently identify that request as the reported remote client. No relevant CSRF-origin rejection, proxy/frontend failure or pending-request cause was established in the inspected logs. Credentials, cookies, tokens and request bodies are omitted from evidence.
+
+Installed authentication/utils/host.py and utils/host.py select configured WEB_URL/APP_BASE_URL instead of the incoming hostname. SignInAuthEndpoint uses that host in both the missing-credential redirect and successful-login redirect. Safe probes supplied only an anonymous CSRF token, no email/password: LAN, Tailscale-IP and MagicDNS each returned HTTP302 to the LAN origin. All three same-origin CSRF probes succeeded before the change. The proven server-side defect is the canonical LAN redirect, inaccessible to the reported remote client; the missing remote CORS allow-origin headers are an additional configuration mismatch, not proof of a same-origin CSRF failure. Host-only session cookies also do not follow a redirect between different hostnames.
+
+Option A is applied: MagicDNS is the single canonical browser/login/link endpoint; the three exact origins are trusted. LAN/IP transport remains available, but separate-host authenticated sessions are not certified. A LAN-only client without MagicDNS/Tailscale resolution is not proven to complete a new login. Use the canonical hostname for browser login. Caddy's existing wildcard listener preserves Host and already routes /auth/, /api/ and /live/; no proxy edit is needed. Installed settings comma-split CORS_ALLOWED_ORIGINS and derive CSRF_TRUSTED_ORIGINS from that list. Cookie domain/security flags are unchanged (host-only session, HTTP nonsecure cookies, HttpOnly); no CSRF or cookie-security bypass was introduced. Generated auth/invitation/artifact targets derive from WEB_URL; actual email delivery and credentialed websocket sessions remain unverified.
+
+### Minimal configuration and backup
+
+Changed only /srv/ailab/plane/plane-app/plane.env:
+
+- WEB_URL: http://192.168.5.29:8080 → http://ailab.taila966e9.ts.net:8080
+- CORS_ALLOWED_ORIGINS: http://192.168.5.29:8080 → http://192.168.5.29:8080,http://ailab.taila966e9.ts.net:8080,http://100.96.181.5:8080
+- Effective CSRF_TRUSTED_ORIGINS: the same three exact origins.
+
+All other file bytes are preserved, including APP_DOMAIN=192.168.5.29. Backup is private, outside Git: /srv/ailab/backups/plane-auth-config-20261013T153326Z/plane.env (directory0700/file0600). Original SHA256:97303dccced7dfeee45c023986cc170b944e16d45aac2d1e6ec903cb0b7a8640. Final SHA256:aff913b2de558830ef55c707454a943d3fff78e3a5bbe29a50fa37b7aca583d2. Backup contents were not printed or committed.
+
+Only api and worker were recreated. No host, proxy, frontend, database, object store, queue, scheduler or live service restart. No migration command, network policy/firewall/router/Tailscale change, Serve/Funnel enablement, new public exposure, real password login, WP assignment/state edit, or project-data API write. The existing backend entrypoint performs ordinary instance registration/cache/static/bucket housekeeping on startup; this is not a claim of zero database writes. No canonical project entities were mutated.
+
+### Failed first restart and verified rollback
+
+The initial recreation failed: API returned502 and API/worker restarted because an inherited shell DEBUG value overrode file DEBUG=0. Installed Django parses DEBUG with int(); the injected value was not an integer. The unexpected value is intentionally not recorded. Recreating without sanitizing the environment initially left the same startup failure. The private backup was restored byte-for-byte. Comparing retained beat-worker's original runtime environment to the restored API configuration established DEBUG as the sole difference. Using env -u DEBUG for Compose restored the original baseline: API /api/instances/ HTTP200 and both services running. This recovery was verified before reapplying the two-variable correction with the same scoped environment sanitation. Final API/worker are running with restart_count0 and the original image ID. The shell environment and unrelated configuration were not changed.
+
+Rollback procedure (from /srv/ailab/plane/plane-app): restore the private backup bytes to plane.env, then run:
+
+```sh
+env -u DEBUG docker compose --env-file plane.env -f docker-compose.yaml up -d --no-deps --force-recreate --pull never api worker
+```
+
+Check /api/instances/ HTTP200 and both services running, then repeat the project readback. Rollback restores the historical LAN redirect behavior; it is a recovery procedure, not the remote-auth solution. No volume deletion or live database restore is involved.
+
+### Post-change verification actually executed
+
+For each of LAN, Tailscale IPv4 and MagicDNS:
+
+| Probe | LAN | Tailscale IPv4 | MagicDNS |
+| --- | --- | --- | --- |
+| GET / | 200 | 200 | 200 |
+| GET /api/instances/ with matching Origin | 200 | 200 | 200 |
+| GET /auth/get-csrf-token/ with matching Origin | 200 | 200 | 200 |
+| GET /live/health/ | 200 | 200 | 200 |
+| API and CSRF Access-Control-Allow-Origin equals requested Origin | PASS | PASS | PASS |
+| Empty-credential CSRF-valid POST /auth/sign-in/ | 302 | 302 | 302 |
+| Redirect target origin is canonical MagicDNS | PASS | PASS | PASS |
+
+Additional cross-origin empty-credential POSTs through the LAN host with Tailscale-IP and MagicDNS Origin/Referer returned302 and matching CORS allow-origin headers, without CSRF rejection. Cookie attributes remain host-only, path /, nonsecure, HttpOnly, SameSiteLax. Actual credentialed login, authenticated live/websocket upgrade, generated mail delivery, a remote browser's post-fix behavior, effective shared-machine access policy and Internet isolation were not certified by these host-local probes. No public forwarding or exposure was introduced; existing exposure/policy limitations in historical evidence remain.
+
+All12 Plane containers running; web/admin/space healthy. Other services have no Docker healthcheck; running is not equivalent to healthcheck coverage. API and worker restart_count0. Existing APIv1 credential was loaded literally without printing it. Authenticated project readback through MagicDNS PASS. Full fresh APIv1 audit has exact before/after equality for project, work items, states, labels, modules, cycles, project members and workspace members:
+
+- Graduation Project / CAP.
+- 179 unique canonical WPs, zero duplicates, all BACKLOG.
+- 73 assigned / 106 unassigned.
+- 29 modules, 13 cycles, 10 labels.
+- Workflow states and member inventories unchanged.
+
+Repository verification: full projectctl suite146passed in63.45s; projectctl validatePASS with947existing warnings,179WPs,29capabilities,306requirements,100dependency nodes/217edges/0HARDcycles,174scheduled and the exact5unscheduled IDs. Execution status remains UNAVAILABLE(documentation only). No parser/model/validator/CLI/test change. Canonical docs/ and AGENTS.md unchanged against preflight974105e. Final diff hygiene and status inspected before this atomic evidence commit. Only this evidence file is staged; the private deployment configuration/backup remain outside Git.
+
+Browser retest pending: open **http://ailab.taila966e9.ts.net:8080** from the actual remote Tailscale client and submit credentials there. No password is requested by the agent. Final server-side checks do not prove interactive browser login.
+
+PLANE PROJECT MUTATIONS: NONE
+WP ASSIGNMENTS/WORKFLOW MUTATIONS: NONE
+CANONICAL DOC MODIFICATIONS: NONE
+TAILSCALE POLICY MUTATIONS: NONE
+PR APPROVAL/MERGE: NONE
