@@ -664,6 +664,13 @@ The project-control tooling may synchronize approved static metadata into Plane.
 
 Execution fields may live in Plane.
 
+### Execution queue
+
+Plane is the source of truth for execution state, assignment and blockers; GitHub remains engineering-work/review/evidence truth and docs remain specification truth. Read the assignee's live Plane queue first: IN_PROGRESS is the current WP; otherwise READY is the next WP. Normally keep at most one READY WP per person. Multiple candidates or no READY means ask the planning owner; never select work independently from BACKLOG. A blocked active WP must be surfaced, not silently replaced.
+
+Before implementation, retrieve `projectctl context <WP-ID>` for that exact canonical WP, inspect dependencies and DoR, and use its WP branch. `projectctl next` gives planning candidates, not permission to start; offline `status` is not the live queue. Only the authorized planning owner releases a BACKLOG WP to READY after an evidenced DoR check. Move READY to IN_PROGRESS only when its assignee actually starts. UNKNOWN from `check-ready` is not PASS; any authorized manual assessment must record its evidence and limitations in Plane.
+
+
 ---
 
 ## 21. Team Ownership
