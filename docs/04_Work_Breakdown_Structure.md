@@ -208,7 +208,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-PLAT-REPO |
 | Size band (indicative, no hour estimates) | L (≈7–12 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `requirements/`; `tools/projectctl/src/projectctl/requirement_catalog.py`; `evidence/WP-GOV-001/` |
 
 **Purpose.** Turn the 306 approved requirements into a queryable catalog with enforced ID, class and owner rules so that every downstream artifact can be generated instead of hand-maintained.
 

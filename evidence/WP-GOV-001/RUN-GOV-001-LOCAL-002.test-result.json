@@ -1,0 +1,16 @@
+{
+  "run_id": "RUN-GOV-001-LOCAL-002",
+  "command": [
+    "/srv/ailab/workspaces/asrin/project/.venv/bin/python",
+    "-B",
+    "-m",
+    "pytest",
+    "tools/projectctl/tests",
+    "-q"
+  ],
+  "started_at_utc": "2026-10-14T23:36:58.490360+00:00",
+  "finished_at_utc": "2026-10-14T23:38:21.867640+00:00",
+  "exit_code": 0,
+  "reason": "Final self-review added whole-kind/empty-catalog rejection coverage and made its count reporting tolerate zero kinds.",
+  "output": "RUN-GOV-001-LOCAL-002.pytest.txt"
+}

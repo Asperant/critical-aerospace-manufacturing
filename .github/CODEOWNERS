@@ -6,3 +6,9 @@
 /project_control/TEAM_WORKFLOW.md @Ejlonn
 /evidence/project-setup/CTRL-PM-011* @Ejlonn
 /evidence/project-setup/CTRL-PM-015* @Ejlonn
+# WP-GOV-001: canonical owner Asrın; supporting reviewer Yavuz.
+/requirements/ @Yavuzgmus
+/tools/projectctl/src/projectctl/requirement_catalog.py @Yavuzgmus
+/tools/projectctl/src/projectctl/cli.py @Yavuzgmus
+/tools/projectctl/tests/test_requirement_catalog.py @Yavuzgmus
+/evidence/WP-GOV-001/ @Yavuzgmus

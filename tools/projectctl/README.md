@@ -1,4 +1,8 @@
-Offline project tooling for **CTRL-PM-001…005**, control items outside the 179 canonical WPs.
+Offline project tooling, initially for **CTRL-PM-001…005**, control items outside the 179 canonical WPs.
+
+**WP-GOV-001** adds the source-linked requirement catalog, schema, inventory
+exports and fail-closed `catalog-lint`. See [the catalog runbook](../../requirements/README.md).
+These commands do not certify readiness, completion or accepted evidence.
 
 With the declared dependencies already available locally:
 

@@ -1,0 +1,13 @@
+{
+  "wp_id": "WP-GOV-001",
+  "attempts": [
+    {"scope": "pre-change full projectctl suite", "result": "PASS", "passed": 205, "duration_seconds": 64.14},
+    {"scope": "initial catalog-only suite", "result": "PASS", "passed": 34, "duration_seconds": 11.13},
+    {"scope": "expanded catalog + CLI suite", "result": "FAIL", "passed": 46, "failed": 2, "duration_seconds": 20.71,
+     "failing_cases": ["test_gov_002_terminal_ids_need_decisions[RETIRED]", "test_gov_002_terminal_ids_need_decisions[SUPERSEDED]"],
+     "observed": "Canonical source equality rejects fabricated retirement of a still-live ID before the missing decision-file check.",
+     "correction": "Assert the earlier ValidationError and separately exercise an absent historical ID with a missing decision file. Production rejection is preserved."}
+  ],
+  "provenance": "Actual tool-run results from this implementation session; summary, not a recreated console transcript.",
+  "acceptance": "NOT_CERTIFIED"
+}

@@ -29,6 +29,16 @@ jobs:
         run: python -m unittest discover -s tools/host/plane-transition -p 'test_*.py' -v
       - name: Canonical validation
         run: projectctl validate
+      - name: Requirement catalog lint (WP-GOV-001)
+        shell: bash
+        env:
+          CATALOG_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [[ -z "$CATALOG_BASE" || "$CATALOG_BASE" =~ ^0+$ ]]; then
+            # A new branch has no before SHA; use its merge base with main.
+            CATALOG_BASE="$(git merge-base HEAD origin/main)"
+          fi
+          projectctl catalog-lint --base "$CATALOG_BASE"
       - name: Whitespace and repository hygiene
         shell: bash
         run: |
