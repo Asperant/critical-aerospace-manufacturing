@@ -1,10 +1,8 @@
-# CTRL-HOST-003 — Evidence-gated developer workflow transitions
+# CTRL-HOST-003 — Plane workflow projection
 
-This extends CTRL-HOST-002 without modifying `cap-plane-queue`. It is host/control
-infrastructure, not product implementation or a second project-management system.
-The owner explicitly accepts same-UID impersonation risk: CAP_PROFILE is a
-**trusted-team operational guard**, not authentication/security isolation. No new
-Unix user, SSH session binding, workspace change or service restart is introduced.
+This extends CTRL-HOST-002; the read-only queue is unchanged. CAP_PROFILE is a
+trusted-team operational guard, not a security boundary between the shared ailab
+UID's processes. No new identity layer, SSH change or developer-workspace change.
 
 ## Invocation
 
@@ -12,211 +10,131 @@ Unix user, SSH session binding, workspace change or service restart is introduce
 cap-plane-transition <canonical-WP-ID> <TARGET_STATE>
 ```
 
-Exactly two public arguments. CAP_PROFILE is set by the existing session. Supply
-a bounded JSON envelope on stdin with **only** `reason` and `evidence_refs`:
+Exactly two arguments; CAP_PROFILE selects the existing profile. Stdin accepts
+only a bounded reason/evidence envelope, for example:
 
 ```json
-{"reason":"Observed execution event, with actual references","evidence_refs":["pr:123","comment:456","run:789"]}
+{"reason":"Implementation PR is open, review requested, CI green","evidence_refs":["pr:7"]}
 ```
 
-Numbers above are placeholders, not actual evidence. The helper accepts references
-`pr:<number>` (at most one), `comment:<number>`, `run:<number>` (at most 16 total).
-It rejects URLs, endpoints, arbitrary request bodies, extra fields and extra args.
-It never creates comments or any GitHub/Plane entity. Exit 0 means VERIFIED or an
-idempotent UNCHANGED; exit 2 means DENIED/UNAVAILABLE/unconfirmed mutation.
+This example illustrates input; the helper fresh-reads the facts, never trusts the
+reason as proof. References: `pr:N` (at most one), `run:N`, `comment:N`, or
+`commit:<40-character SHA>` for starting actual work before a PR exists. At most
+16 references; a commit and PR cannot be mixed. No URL, endpoint, request body,
+extra input field or extra argument. Exit 0 means VERIFIED/UNCHANGED; exit 2 means
+DENIED/UNAVAILABLE/unconfirmed mutation.
 
-## Canonical evaluation, not an edge allowlist
+## Facts first; no additional confirmation protocol
 
-The build uses the existing `projectctl.queries.context` (the same context returned
-by `projectctl context <WP-ID>`) and current docs/08 criteria, WP selected criteria,
-all source-requirement scope supplements and docs/05 dependency nodes/edges.
-Canonical source hashes and installed helper hashes are checked on every call;
-confirmation/audit records bind the full installed policy digest. A changed/missing
-source in the reference clone fails closed until an owner refreshes the root policy.
-Planning prose or documentation-only `projectctl check-ready/check-done` UNKNOWN
-never becomes PASS. No existing projectctl parser/gate semantics are changed.
-
-| Operation | Required observed facts / canonical confirmation |
+| Transition | Actual evidence required |
 |---|---|
-| BACKLOG → READY | Own assigned canonical scheduled WP; no other READY for that profile; owner confirms all 12 DOR-TASK criteria plus selected DOR-WP refs with real immutable artifacts; producer confirms inbound START HARD readiness and precise consumed artifacts |
-| READY → IN_PROGRESS | Actual changed, open WP branch/PR, explicit implementation-start event and artifact; WIP <=2 implementation items, <=1 heavy/core; START HARD readiness rechecked |
-| IN_PROGRESS → IN_REVIEW | Actual non-draft WP PR with requested review; current required/observed CI green; author confirms all DOR-PR criteria |
-| IN_REVIEW → MERGE_READY | Live current-head CI, safe/mergeable against main, no blocking review; one qualified independent current-head approval for normal risk, two for actual high-risk; risk/PR criteria confirmed by a current independent approver |
-| MERGE_READY → MERGED | GitHub actually merged into main; single-parent squash-compatible merge shape, source branch deleted; live head CI/reviews and PR DoD confirmations (mergeability is not re-required after merge) |
-| MERGED → VALIDATING | Actual main/merge-revision post-merge validation run in progress and owner evidence of start; queued/pre-merge runs do not qualify |
-| VALIDATING → DONE | Owner and supporting reviewer confirm all WP DoD plus selected/scope/research obligations; actual current CI/reviews, deleted branch, exact merge-revision successful post-merge run, HARD readiness at relevant stages and real accepted trace/evidence artifacts |
-| CANCELED | Actual GitHub project-owner (Asperant) explicit CANCEL decision, bound to WP/current state/revision/policy; a caller flag or agent decision is insufficient |
+| READY → IN_PROGRESS | Changed open canonical WP PR, or verified caller-authored commit at exactly one canonical WP branch head with actual changes ahead of main; owner/assignee, WIP and START HARD dependency checks |
+| IN_PROGRESS → IN_REVIEW | Real open non-draft WP PR, requested review/review activity, required and observed current-head CI green |
+| IN_REVIEW → MERGE_READY | Current-head CI, mergeable/clean, no blocking review; current qualified independent approval(s) and actual declared risk |
+| MERGE_READY → MERGED | Actually merged to main, squash-compatible single-parent commit, deleted work branch, actual head CI/reviews |
+| MERGED → VALIDATING | Actual main validation run in progress at the merge revision; queued or pre-merge runs do not qualify |
 
-Normal-risk qualification is impact-based, not a mandatory owner pair. Actual high
-risk triggers are authentication/authorization, protected-action authority,
-destructive migration, security-sensitive infra/secrets, major authority boundary.
-Commit authors/committers, declared pair participants and recognized co-author
-trailers cannot supply independent approval. A stale approval cannot be reused.
-The bounded historical PR#4 policy migration / PR#5 exact-head owner overrides do
-not authorize product WPs, new heads or a general self-approval exception.
+These five forward transitions require **no confirmation comment**. Existing PR
+metadata/body, reviews, commits and CI runs supply the evidence. An extra JSON
+comment does not make execution facts more authoritative. No GitHub write occurs.
 
-Conservative rework is tied to explicit canonical state meaning:
+Review risk comes from the existing PR/review risk declaration: normal risk needs
+one qualified independent current-head approval; actual high risk needs two,
+including authority/security expertise. CR-3 denotes actual high risk; CR-4 alone
+does not impose two reviews. Unknown/conflicting risk is denied. Relevant canonical
+supporting reviewers provide qualification; no blanket Batuhan approval. Actual
+commit authors/committers, co-author trailers and declared pairing participants
+cannot independently approve. Missing approvals, unresolved findings or stale
+reviews are never replaced by a tool confirmation. Historical owner overrides for
+control PRs #4/#5 do not authorize product WPs or new heads.
 
-- IN_REVIEW → IN_PROGRESS only if the actual PR is draft again: 01 Item64 #29 /
-  08 §3.1, draft PR is not IN_REVIEW; implementation/WIP evidence still required. Relative L bands or Core work are
-  conservatively counted as heavy; indicative day text is never a capacity estimate.
-- MERGE_READY → IN_REVIEW only with a real reviewable PR requiring review again
-  and no current-head approval: 01 Item63 #74–76, revision-bound approvals and
-  mandatory re-review after material changes; author review-readiness/CI required.
-- DONE → VALIDATING only with supporting-reviewer stale-evidence confirmation,
-  actual post-merge validation running: 08 §11 / 09 §14 evidence staleness.
-- Other skips/backward transitions fail closed. CANCELED has no outgoing workflow
-  transition; a verified orthogonal BLOCKED clear preserves the terminal state.
+## Semantic evidence remains necessary
 
-These are operation guards, not independent product workflow policy. Do not use
-this tool to approve/merge PRs, change product HITL authority or assert DONE from
-merged/tests/demo alone. Merged != Done; Implemented != Tested; Tested != Verified;
-Demoed != Accepted.
+- BACKLOG → READY: scheduled own WP, no other READY for the profile, actual owner
+  DoR assessment covering canonical DOR-TASK and selected DOR-WP criteria; producer
+  evidence for applicable HARD readiness and precise consumer artifacts.
+- VALIDATING → DONE: actual owner and supporting-reviewer assessment of all
+  applicable WP/scope/research DoD, accepted trace/evidence, successful actual
+  merge-revision validation, reviews/CI and applicable dependency gates.
+- CANCELED: explicit human project-owner cancellation decision, not an agent's
+  scope decision. Account attribution alone cannot distinguish a human from an
+  agent using the same accepted account; this limitation is not concealed.
+- BLOCKED / UNBLOCKED: real blocker reason/owner/work or external dependency;
+  clearing binds the previously verified blocker audit ID and actual resolution,
+  corroborated by a successful same-revision run after the blocker or a supporting
+  reviewer. No silent clearing of blockers with missing history.
 
-## Evidence/confirmation records
+Reuse **existing** PR descriptions, current-revision review bodies, referenced
+GitHub comments, or immutable Markdown assessments linked by those artifacts.
+No new special JSON comment, source-manifest copy, policy digest copy, or separate
+transition-specific confirmation is required. Native semantic evidence uses the
+canonical criterion IDs already defined in docs/08, checked Markdown checklists
+or tables (`ID | PASS / N/A | assessment and artifact links`). Missing criteria,
+unjustified mandatory N/A or conflicting assessments fail closed. Free prose is
+not guessed into PASS. An existing linked assessment may live under `evidence/`,
+`09_change/` or `project_control/`; one bounded hop, at the actual immutable revision.
+Relative repository links and `repo:path` / `artifact:N` evidence are dereferenced.
+File existence alone never certifies semantic correctness.
 
-The root helper GETs real GitHub facts with the fixed system gh binary, **after
-dropping to ailab**, in the existing per-profile GH_CONFIG_DIR and with a clean
-environment. The returned authenticated GitHub login must match that profile's
-verified account. There is no root execution of repository code, no inherited
-GH_TOKEN, no new/copied GitHub credential and no GitHub mutation API. Missing
-per-profile authentication fails closed; authenticate the normal profile first.
+Comments must identify the WP and exact revision (and the actual PR when present).
+PR/review evidence inherits GitHub attribution and actual revision. Ordinary
+unrelated comments are ignored. Native blocker notes can use `Blocker owner:`,
+`Blocking WP:` or `External dependency:`, and `Resolves blocker:`; owner decisions
+use `Owner decision: CANCEL`. These are readable assessments, not mutation-body
+fields. Legacy `cap_plane_transition` JSON comments remain optionally readable
+with their original revision/policy bindings; they are not required.
 
-Qualitative canonical criteria remain accountable owner/reviewer judgments; file
-existence or a green run cannot mechanically prove semantic completeness. An
-actual GitHub issue/PR comment records that judgment at an exact revision and
-policy. This is **not** a caller-provided `PASS` boolean, a raw Plane body, or a
-substitute for required independent review. The helper verifies author/role,
-revision, policy hashes, required criterion coverage and dereferences artifact
-references, alongside actual PR/CI/review/dependency facts. Evidence content and
-N/A applicability remain subject to canonical review. Semantic truth is not
-claimed to follow from an artifact existing.
+Producer readiness can be an existing `DEP-ID | readiness | precise consumer and
+artifact links` table. Root policy checks canonical ordered readiness levels; a
+producer WP's DONE state alone is insufficient. At closure, MILESTONE_EXIT/FREEZE
+applicability needs a supporting-reviewer assessment (a justified
+`DEP-ID | NOT_APPLICABLE | reason and evidence` table is supported). Unknown gates
+fail closed; no fixture is promoted to actual readiness.
 
-Comment body is an exact JSON object with key `cap_plane_transition`:
+Conservative canonical rework remains: IN_REVIEW → IN_PROGRESS only with draft
+rework, WIP and dependencies; MERGE_READY → IN_REVIEW with actual reviewable work
+and invalidated current approval; DONE → VALIDATING requires supporting-reviewer
+staleness evidence and actual running validation. Other skips/backward transitions
+are denied. CANCELED is terminal. BLOCKED is orthogonal; clearing it never revives
+a terminal workflow. Merged != Done; Implemented != Tested; Tested != Verified;
+Demoed != Accepted. Indicative size bands are relative weights, never day capacity.
 
-```text
-{
-  "cap_plane_transition": {
-    "wp_id": "<canonical WP>",
-    "from_state": "<fresh Plane workflow state>",
-    "to_state": "<requested state or BLOCKED/UNBLOCKED>",
-    "head_sha": "<actual PR head or actual merge SHA; main SHA for pre-PR records>",
-    "source_manifest": {"<path>": "<exact installed policy source hash>"},
-    "policy_digest": "<exact installed canonical-context/helper policy digest>",
-    "reason": "<observed execution fact>",
-    "checks": {
-      "<applicable canonical criterion ID>": {
-        "result": "PASS or justified N/A",
-        "reason": "<actual assessment; no TBD/unknown presented as PASS>",
-        "evidence_refs": ["repo:<immutable file path> or artifact:<artifact ID>"]
-      }
-    }
-  }
-}
-```
+## Root boundary and audit
 
-This skeleton is not evidence. Canonical IDs/definitions and exact source_manifest
-are published read-only at `/usr/local/share/cap-plane-transition/policy-manifest.json`.
-DOR-TASK/DOR-PR/DOD-PR/DOD-WP/DOD-RES IDs come from docs/08. `docs/08#9:F0` etc.
-refer to the actual source-requirement class supplements, not new requirements.
-`IMPLEMENTATION-STARTED`, `POST-MERGE-VALIDATION-STARTED`, `BLOCKER-OBSERVED`,
-`BLOCKER-RESOLVED`, `docs/08#11:EVIDENCE-STALE` are helper event references to the
-canonical entry/staleness/blocker rules, not new workflow states or project IDs.
-Always-applicable DoD obligations and actual execution events cannot be N/A.
-N/A elsewhere requires a reason and real evidence; it is never silently inferred.
+- Launcher `/usr/local/bin/cap-plane-transition`; helper
+  `/usr/local/libexec/cap-plane-transition`, root:root 0755.
+- Credential `/etc/cap-plane-queue/credential.json`, root:root 0600, directory 0700;
+  never exported to a developer environment, workspace, repository or CODEX_HOME.
+- Policy `/etc/cap-plane-queue/transition-policy.json`, root 0600, generated from
+  real projectctl context and canonical docs. Source/helper hashes fail closed on
+  drift. Public non-secret manifest: `/usr/local/share/cap-plane-transition/`.
+- Exact profile/WP/target sudo grants in `/etc/sudoers.d/cap-plane-transition`;
+  no arbitrary interpreter, shell, URL or body. CAP_PROFILE + canonical owner +
+  fresh Plane assignee must match; caller's real per-profile GitHub login must match.
+- GitHub reads use the fixed system gh binary after dropping root, a clean
+  environment and existing profile login; no copied credential or repository code
+  runs as root. Plane uses fixed loopback API v1 endpoints only.
+- Sole write: one constructed `{state: mapped_uuid}` or labels preserving all
+  existing labels except the orthogonal BLOCKED addition/removal. No other Plane
+  field, create/delete operation, arbitrary method or endpoint is exposed.
+- Fresh GET before evaluation, another before PATCH, and fresh GET after PATCH;
+  ownership and protected fields rechecked. One PATCH only; no blind retry or
+  compensating overwrite. An external UI write can still race because Plane has
+  no transactional compare-and-swap contract; uncertain readback requires review.
+- `/var/log/cap-plane-transition/audit.jsonl`, root 0600 in directory 0700:
+  timestamp/profile/WP/from/to/reason/evidence/result, installed policy digest and
+  blocker linkage; durable INTENT before writes and VERIFIED/UNCONFIRMED after.
+  No secret or raw API response. Queue and transitions share the root pacing lock.
 
-For pre-PR readiness/blocker/cancellation, a real owner comment bound to the actual
-main revision suffices; implementation is never required **before** DoR. Subsequent
-operations require one real WP PR, owner-authored with `wp/<WP-ID>-...` branch and
-WP binding in title/body. Post-merge refs bind the actual merge revision.
-
-For review gates the confirming independent approver adds:
-
-```text
-"review_risk": "normal or high",
-"high_risk_triggers": [],
-"qualified_reviewers": ["<relevant independently approving GitHub account>"],
-"pairing_participants": []
-```
-
-High-risk enum values: `authentication_authorization`, `protected_action_authority`,
-`destructive_migration`, `security_sensitive_infra_secrets`, `major_authority_boundary`.
-Do not downgrade actual risk by leaving that list empty; the independent risk
-assessment remains part of the reviewed governance record.
-
-For inbound HARD dependencies, a real producer-owner confirmation comment at the
-same consumer revision/policy (including `policy_digest`) includes `dependency_readiness` keyed by DEP-ID with
-`readiness`, `precise_consumer_requirement`, `evidence_refs`. Root policy checks
-the node's canonical ordered readiness levels. Producer WP DONE is not substituted
-for actual readiness. Automatic fixture/fallback certification is not implemented;
-unknown readiness is DENIED, never treated as satisfied because a stub exists.
-At WP closure, MILESTONE_EXIT/FREEZE edges require an explicit supporting-reviewer
-`dependency_stage_dispositions` entry per DEP-ID with `applies_to_wp_completion`
-(boolean), `reason` and actual `evidence_refs`. They are never blindly converted
-into WP closure blockers or silently skipped; unknown applicability is DENIED.
-
-## BLOCKED and cancellation
-
-`BLOCKED` / `UNBLOCKED` are operations on the existing BLOCKED label, not states.
-They preserve state and all other labels. Setting requires an owner confirmation
-with `blocker: {owner: <profile>, wp_id: <canonical blocker WP>}` or a named
-`external_dependency`, plus real blocker evidence. Audit records include the
-blocker owner/link/external dependency. The returned audit_id identifies it.
-
-Clearing requires `resolves_audit_id` matching the prior verified blocker, actual
-resolution artifacts and either a same-revision successful validation run completed
-after the blocker was recorded, or a
-supporting-reviewer confirmation. Existing blockers with no verified history are
-not guessed away. Repeating BLOCKED returns its active blocker audit ID when known.
-No WP description/comment is patched to record blockers: their durable reason is
-in the referenced GitHub confirmation and secret-free host audit.
-
-Cancellation requires `owner_decision: "CANCEL"` in the actual project-owner
-confirmation. That decision must originate from an explicit human owner request;
-Codex must not manufacture owner comments to cancel scope. Account attribution
-cannot distinguish a human from an agent using that same accepted account/UID.
-
-## Root boundary, audit, deployment
-
-- Launcher `/usr/local/bin/cap-plane-transition`, root helper
-  `/usr/local/libexec/cap-plane-transition`, both root:root 0755.
-- Existing root-only `/etc/cap-plane-queue/credential.json` stays in place.
-- Static canonical policy `/etc/cap-plane-queue/transition-policy.json`, root 0600;
-  contains source projections, never execution state. Public manifest has no secret.
-- `/etc/sudoers.d/cap-plane-transition`: generated exact profile/WP/target argument
-  combinations from canonical ownership. This sudo hygiene does not authorize a
-  transition: live predicates are still required. No shell/interpreter/glob grant.
-- Root-owned `/var/log/cap-plane-transition/` 0700 and `audit.jsonl` 0600. Each actual
-  write gets durable INTENT before PATCH and VERIFIED or UNCONFIRMED outcome after
-  fresh GET. Records contain timestamp/profile/WP/from/to/reason/evidence_refs/result
-  plus operation/audit_id/blocker-resolution binding. No credential or raw API body.
-- The sole Plane write endpoint is the fresh resolved UUID's fixed project issue
-  detail. Exactly one constructed body: `{state: mapped_uuid}` or `{labels: existing
-  labels plus/minus BLOCKED}`. No create/delete/assignee/description/cycle/module/
-  milestone API. No arbitrary request method/body/endpoint argument.
-- Queue and transitions share the root-only API pacing lock. Fresh full issue GET
-  is checked again immediately before PATCH; fresh GET verifies state/label and
-  protected fields afterwards. Only one PATCH, no automatic retry. API has no
-  transactional compare-and-swap contract: an external UI write can still race.
-  A detected race/uncertain readback fails closed and requires reconciliation;
-  never compensate by overwriting unrelated fields or blindly retrying.
-- Root code uses isolated Python, clean environment, disabled proxy/redirect/core
-  dumps, bounded JSON and sanitized/redacted diagnostics. sudo-rs ignores -E;
-  helper isolation does not rely on it. Code/secret/log are not ailab-writable.
-
-Build unprivileged from the reference control clone, then install:
+Build unprivileged and install reviewed source from the reference control clone:
 
 ```bash
 .venv/bin/python tools/host/plane-transition/build_policy.py
 sudo python3 -I /srv/ailab/project/tools/host/plane-transition/install.py
 ```
 
-Installer preserves credential/audit/queue, validates sudo syntax, starts no service
-and sends **no API request**. Re-run is idempotent. Refresh the policy after reviewed
-canonical/AGENTS/CI policy changes; do not silently copy an unreviewed workspace as
-canonical truth. Rollback: owner disables only the dedicated transition sudoers
-file; keep audit/credential protected, leave read-only queue intact. No automatic
-Plane rollback.
-
-All transition tests are fixtures/mocks; never exercise a real mutation on a
-production WP to test this helper. See `test_transition.py` and control evidence.
+Installer preserves credentials, audit and queue, validates sudoers, makes no API
+call and restarts no service. Refresh after approved source/AGENTS/CI changes.
+Rollback disables only transition sudo grants; retain protected audit/credential
+and the read-only queue. Never automatically roll back production Plane state.
+Tests use fixtures/mocks only; never mutate production to test transitions.

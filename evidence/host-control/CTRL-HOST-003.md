@@ -1,5 +1,9 @@
 # CTRL-HOST-003 — Evidence-gated developer Plane transitions
 
+Historical deployment report for commit 21ae44e. The owner subsequently removed
+the extra confirmation-comment requirement; see [native-facts revision](CTRL-HOST-003-native-facts.md)
+for current behavior and verification. Original results below are preserved.
+
 Date: 2026-10-15 (Europe/Istanbul). Owner explicitly authorizes workflow/BLOCKED
 mutation on the caller's own assigned canonical WPs. The owner explicitly accepts
 same-UID CAP_PROFILE impersonation risk and prohibits an added SSH session-binding

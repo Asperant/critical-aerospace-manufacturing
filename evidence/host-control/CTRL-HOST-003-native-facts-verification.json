@@ -1,0 +1,30 @@
+{
+  "checks": {
+    "audit_unchanged": true,
+    "credential_directory_root_0700": true,
+    "credential_root_0600": true,
+    "helper_matches_source": true,
+    "probe_methods_get_only": true,
+    "queue_unchanged": true,
+    "source_outputs_audit_secret_free": true
+  },
+  "final_plane_readback": {
+    "comparison": "UNCHANGED",
+    "digest": "f7f26e6fd776018cebd5a9255bfaffb3d0d4a92b85f43c18258ec2ff564b73f5",
+    "http_methods": [
+      "GET"
+    ],
+    "state_counts": {
+      "BACKLOG": 177,
+      "IN_PROGRESS": 1,
+      "READY": 1
+    },
+    "wp_count": 179
+  },
+  "new_policy_digest": "67cdf7fd5d6e51402f5eb76703abba69cef74cde64586708b53dc61de4cb63b5",
+  "old_policy_digest": "e1ae1754908eb374442f0149fed04a6e8cba8acc1452232d7facc81aef7bc5ed",
+  "pr7_head": "eb559a31c37a71759689a318313e495a377bad3c",
+  "probe": "ELIGIBLE_READ_ONLY_NO_PATCH",
+  "production_patch_calls": 0,
+  "wp_gov_001_state": "IN_PROGRESS"
+}

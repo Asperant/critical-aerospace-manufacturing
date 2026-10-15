@@ -36,11 +36,11 @@ REPO = 'repos/Asperant/critical-aerospace-manufacturing'
 GITHUB = {'asrin':'Asperant', 'selman':'selorito', 'batuhan':'Ejlonn', 'yavuz':'Yavuzgmus'}
 SHA = re.compile(r'[0-9a-f]{40}')
 UUID = re.compile(r'[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}')
-REF = re.compile(r'(pr|comment|run):([1-9][0-9]{0,9})')
+REF = re.compile(r'(?:(pr|comment|run):([1-9][0-9]{0,9})|commit:[0-9a-f]{40})')
 TARGETS = {'BACKLOG','READY','IN_PROGRESS','IN_REVIEW','MERGE_READY','MERGED','VALIDATING','DONE','CANCELED','BLOCKED','UNBLOCKED'}
 FORWARD = dict(zip(['BACKLOG','READY','IN_PROGRESS','IN_REVIEW','MERGE_READY','MERGED','VALIDATING'],
                    ['READY','IN_PROGRESS','IN_REVIEW','MERGE_READY','MERGED','VALIDATING','DONE']))
-# Edges alone never authorize anything: predicates and canonical confirmations below do.
+# Edges alone never authorize anything: actual facts and semantic evidence below do.
 REWORK = {('IN_REVIEW','IN_PROGRESS'), ('MERGE_READY','IN_REVIEW'), ('DONE','VALIDATING')}
 PROTECTED = ('id','name','description_html','assignees','external_id','external_source','project','workspace',
              'parent','priority','start_date','target_date','cycle','module','modules','milestone','type','estimate_point')
@@ -74,7 +74,7 @@ def parse_input(raw):
     reason = safe_text(data['reason'])
     refs = data['evidence_refs']
     need(isinstance(refs, list) and 1 <= len(refs) <= 16 and all(isinstance(r,str) and REF.fullmatch(r) for r in refs), 'INVALID_EVIDENCE_REFS')
-    need(len(refs) == len(set(refs)) and sum(r.startswith('pr:') for r in refs) <= 1, 'AMBIGUOUS_EVIDENCE_REFS')
+    need(len(refs) == len(set(refs)) and sum(r.startswith(('pr:','commit:')) for r in refs) <= 1, 'AMBIGUOUS_EVIDENCE_REFS')
     return {'reason':reason, 'evidence_refs':refs}
 
 
@@ -114,6 +114,18 @@ class GitHub:
     def pr(self, number):
         need(type(number) is int and 0 < number < 10**10, 'INVALID_PR')
         return self._get(f'{REPO}/pulls/{number}')
+
+    def started_commit(self,wp,sha,profile):
+        need(q.WP.fullmatch(wp) and SHA.fullmatch(sha), 'INVALID_WORK_REVISION')
+        branches=self._get(f'{REPO}/git/matching-refs/heads/wp/{wp}-')
+        need(isinstance(branches,list) and len(branches)<100, 'WORK_BRANCH_LIST_INCOMPLETE')
+        matches=[b for b in branches if b.get('ref','').startswith('refs/heads/wp/'+wp+'-')
+                 and b.get('object',{}).get('sha')==sha]
+        need(len(matches)==1, 'WORK_BRANCH_MISSING_OR_AMBIGUOUS')
+        commit=self._get(f'{REPO}/commits/{sha}')
+        need(commit.get('author',{}).get('login','').casefold()==GITHUB[profile].casefold(), 'WORK_COMMIT_AUTHOR_MISMATCH')
+        comparison=self._get(f'{REPO}/compare/main...{sha}')
+        need(comparison.get('ahead_by',0)>0 and comparison.get('files'), 'NO_IMPLEMENTATION_CHANGE_FROM_MAIN')
 
     def comment(self, number):
         need(type(number) is int and 0 < number < 10**10, 'INVALID_COMMENT')
@@ -174,6 +186,17 @@ class GitHub:
                  'ARTIFACT_EXPIRED_OR_WRONG_REVISION')
         else:
             raise Denied('INVALID_ARTIFACT_REF')
+
+    def evidence_text(self,path,sha):
+        # Only immutable repository evidence, never user URLs or executable code.
+        need(isinstance(path,str) and path.startswith(('evidence/','09_change/','project_control/'))
+             and path.endswith('.md'), 'INVALID_ASSESSMENT_PATH')
+        self.artifact('repo:'+path,sha)
+        value=self._get(f'{REPO}/contents/{path}?ref={sha}')
+        need(value.get('encoding')=='base64' and value.get('size',0)<=65536, 'ASSESSMENT_CONTENT_UNAVAILABLE')
+        raw=base64.b64decode(value.get('content',''))
+        need(len(raw)<=65536, 'EVIDENCE_TOO_LARGE')
+        return raw.decode('utf-8')
 
 
 class Plane:
@@ -248,22 +271,112 @@ def find(plane, profile, wp, policy):
     return item
 
 
-def records(gh, refs):
+def artifact_refs(text):
+    refs=re.findall(r'(?:repo:[A-Za-z0-9_./-]+|artifact:[1-9][0-9]{0,9})',text)
+    for path in re.findall(r'\]\(([A-Za-z0-9_./-]+)(?:#[A-Za-z0-9_.-]+)?\)',text):
+        if '/' in path and not path.startswith('/') and not any(p in {'','.','..'} for p in path.split('/')):
+            refs.append('repo:'+path)
+    return sorted(set(refs))
+
+
+def existing_assessment(gh,text,wp,sha):
+    # A PR/reviewer can refer to an already committed evidence assessment instead
+    # of copying it into a new comment. One bounded hop; attribution stays GitHub's.
+    link_text='\n'.join(line for line in text.splitlines() if not re.search(r'(?:DOR|DOD)-[A-Z]+-[0-9]{2}|docs/08#|BLOCKER-(?:OBSERVED|RESOLVED)|DEP-[0-9]+|(?:IMPLEMENTATION|POST-MERGE-VALIDATION)-STARTED',line))
+    paths=[r[5:] for r in artifact_refs(link_text) if r.startswith('repo:') and r.endswith('.md')
+           and r[5:].startswith(('evidence/','09_change/','project_control/'))]
+    need(len(paths)<=8, 'TOO_MANY_ASSESSMENTS')
+    record=native_record(text,wp,sha)
+    for path in paths:
+        linked=native_record(gh.evidence_text(path,sha),wp,sha)
+        for key in ('checks','dependency_readiness','dependency_stage_dispositions'):
+            need(not set(record[key]) & set(linked[key]), 'AMBIGUOUS_SEMANTIC_EVIDENCE')
+            record[key].update(linked[key])
+        record['_artifact_refs']=sorted(set(record['_artifact_refs']+linked['_artifact_refs']))
+        for key in ('owner_decision','blocker','resolves_audit_id'):
+            if linked.get(key):
+                need(not record.get(key), 'AMBIGUOUS_SEMANTIC_EVIDENCE')
+                record[key]=linked[key]
+    return record
+
+
+def native_record(text, wp, sha):
+    """Read existing Markdown evidence, without a transition-specific JSON schema.
+
+    Canonical criterion tables/checklists retain their own IDs and linked evidence.
+    Unstructured prose is never guessed into PASS. The caller supplies attribution
+    and immutable revision from GitHub, not from stdin.
+    """
+    need(isinstance(text,str) and len(text)<=65536, 'EVIDENCE_TOO_LARGE')
+    data={'wp_id':wp, 'head_sha':sha, 'reason':'Existing GitHub assessment',
+          '_native':True, '_artifact_refs':artifact_refs(text), 'checks':{}, 'dependency_readiness':{}, 'dependency_stage_dispositions':{}}
+    def field(label):
+        values=re.findall(r'(?im)^\s*(?:[-*]\s+)?(?:\*\*)?'+re.escape(label)+r'(?:\*\*)?\s*:\s*(.+?)\s*$',text)
+        need(len(values)<=1, 'AMBIGUOUS_SEMANTIC_EVIDENCE')
+        return values[0].strip(' *`') if values else None
+    for line in text.splitlines():
+        cells=[c.strip(' `') for c in line.strip().strip('|').split('|')]
+        checked=re.match(r'^\s*[-*] \[x\]\s+(\S+)\s+(.*)',line,re.I)
+        if checked: cells=[checked[1].rstrip(':'),'PASS',checked[2]]
+        if len(cells)<3: continue
+        identity,result=cells[:2]
+        if result not in {'PASS','N/A'}: continue
+        refs=artifact_refs(' '.join(cells[2:]))
+        if re.fullmatch(r'(?:DOR|DOD)-[A-Z]+-[0-9]{2}|docs/08#[0-9]+:[A-Z0-9-]+|BLOCKER-(?:OBSERVED|RESOLVED)',identity):
+            need(identity not in data['checks'], 'AMBIGUOUS_SEMANTIC_EVIDENCE')
+            data['checks'][identity]={'result':result,'reason':' '.join(cells[2:]),'evidence_refs':refs}
+    # Ordinary project-owner decisions and blocker notes; no policy/from/to copy.
+    data['reason']=field('Reason') or text[:1000]
+    data['owner_decision']=field('Owner decision')
+    blocker_owner=field('Blocker owner')
+    if blocker_owner:
+        data['blocker']={'owner':blocker_owner,'wp_id':field('Blocking WP'),
+                         'external_dependency':field('External dependency')}
+    data['resolves_audit_id']=field('Resolves blocker')
+    # Existing dependency assessment tables: DEP-ID | readiness | consumer/evidence.
+    for line in text.splitlines():
+        cells=[c.strip(' `') for c in line.strip().strip('|').split('|')]
+        if len(cells)>=3 and re.fullmatch(r'DEP-[0-9]+',cells[0]):
+            need(cells[0] not in data['dependency_readiness'] and cells[0] not in data['dependency_stage_dispositions'], 'AMBIGUOUS_SEMANTIC_EVIDENCE')
+            if cells[1]=='NOT_APPLICABLE':
+                data['dependency_stage_dispositions'][cells[0]]={'applies_to_wp_completion':False,
+                    'reason':' '.join(cells[2:]),'evidence_refs':artifact_refs(' '.join(cells[2:]))}
+                continue
+            data['dependency_readiness'][cells[0]]={'readiness':cells[1],
+                'precise_consumer_requirement':' '.join(cells[2:]),
+                'evidence_refs':artifact_refs(' '.join(cells[2:]))}
+    return data
+
+
+def records(gh, refs, wp=None, sha=None, pr=None):
+    """Existing PR description, reviews or explicitly referenced GitHub comments.
+
+    Legacy JSON remains readable, but is never required. Native comments must
+    explicitly name the canonical WP and immutable revision; review bodies inherit
+    GitHub's actual commit_id. Ambiguous/missing judgments still fail closed.
+    """
     result=[]
     for ref in refs:
         kind, number=ref.split(':')
         if kind!='comment': continue
         comment=gh.comment(int(number))
-        # A comment is a durable canonical confirmation, not a caller boolean.
-        try:
-            body=json.loads(comment['body'], object_pairs_hook=q.unique)
-        except (ValueError,TypeError):
-            raise Denied('INVALID_CONFIRMATION_RECORD') from None
-        need(isinstance(body,dict) and set(body)=={'cap_plane_transition'}, 'INVALID_CONFIRMATION_RECORD')
-        need(len(comment.get('body',''))<=65536, 'CONFIRMATION_TOO_LARGE')
-        data=body['cap_plane_transition']
-        need(isinstance(data,dict), 'INVALID_CONFIRMATION_RECORD')
+        text=comment.get('body','')
+        need(isinstance(text,str) and len(text)<=65536, 'EVIDENCE_TOO_LARGE')
+        try: body=json.loads(text, object_pairs_hook=q.unique)
+        except (ValueError,TypeError): body=None
+        if isinstance(body,dict) and set(body)=={'cap_plane_transition'}:
+            need(isinstance(body['cap_plane_transition'],dict), 'INVALID_CONFIRMATION_RECORD')
+            data=body['cap_plane_transition']
+        elif wp and sha and wp in text and sha in text:
+            if pr: need(comment.get('issue_url','').endswith('/issues/'+str(pr['number'])), 'EVIDENCE_WRONG_PR')
+            data=existing_assessment(gh,text,wp,sha)
+        else: continue
         result.append((comment.get('user',{}).get('login',''),data))
+    if pr:
+        result.append((pr['user']['login'],existing_assessment(gh,pr.get('body') or '',wp,sha)))
+        for review in gh.reviews(pr['number']):
+            if review.get('commit_id')==pr['head']['sha'] and review.get('state') not in {'PENDING','DISMISSED'}:
+                result.append((review.get('user',{}).get('login',''),existing_assessment(gh,review.get('body') or '',wp,sha)))
     return result
 
 
@@ -290,10 +403,16 @@ def ci(gh,sha,policy):
 
 
 def confirmation(rows, authors, wp, source, target, sha, policy):
-    matches=[dict(data,_confirming_login=author) for author,data in rows if author.casefold() in {a.casefold() for a in authors}
-             and data.get('wp_id')==wp and data.get('from_state')==source and data.get('to_state')==target
-             and data.get('head_sha')==sha and data.get('source_manifest')==policy['source_manifest']
-             and data.get('policy_digest')==policy['policy_digest']]
+    # Native evidence is bound by GitHub attribution/revision and canonical IDs.
+    # No digest/source_manifest/from/to duplication into an extra comment.
+    candidates=[(author,data) for author,data in rows if author.casefold() in {a.casefold() for a in authors}
+                and data.get('wp_id')==wp and data.get('head_sha')==sha]
+    native=[dict(data,_confirming_login=author) for author,data in candidates if data.get('_native') and
+            (data.get('checks') or data.get('owner_decision') or data.get('dependency_readiness') or data.get('blocker') or data.get('resolves_audit_id'))]
+    legacy=[dict(data,_confirming_login=author) for author,data in candidates if not data.get('_native')
+            and data.get('from_state')==source and data.get('to_state')==target
+            and data.get('source_manifest')==policy['source_manifest'] and data.get('policy_digest')==policy['policy_digest']]
+    matches=native or legacy
     need(len(matches)==1, 'CANONICAL_CONFIRMATION_MISSING_OR_AMBIGUOUS')
     safe_text(matches[0].get('reason'))
     return matches[0]
@@ -311,6 +430,16 @@ def criteria(gh,record,ids,sha):
         refs=data.get('evidence_refs')
         need(isinstance(refs,list) and 1<=len(refs)<=8, 'CRITERION_EVIDENCE_MISSING')
         for ref in refs: gh.artifact(ref,sha)
+
+
+def blocker_evidence(gh,record,criterion,sha):
+    if record.get('_native'):
+        safe_text(record.get('reason'))
+        refs=record.get('_artifact_refs',[])
+        need(refs, 'BLOCKER_EVIDENCE_MISSING')
+        for ref in refs: gh.artifact(ref,sha)
+    else:
+        criteria(gh,record,[criterion],sha)  # Optional legacy assessment.
 
 
 def dependencies(gh, rows, context, record, sha, policy, final=False):
@@ -331,9 +460,9 @@ def dependencies(gh, rows, context, record, sha, policy, final=False):
         producer=policy['node_owners'].get(edge['predecessor']['node'])
         need(producer in q.PEOPLE, 'DEPENDENCY_CONFIRMING_OWNER_UNKNOWN')
         matches=[data.get('dependency_readiness',{}).get(edge['id']) for author,data in rows
-                 if author.casefold()==GITHUB[producer].casefold() and data.get('source_manifest')==policy['source_manifest']
-                 and data.get('wp_id')==context['work_package']['id'] and data.get('head_sha')==sha
-                 and data.get('policy_digest')==policy['policy_digest']]
+                 if author.casefold()==GITHUB[producer].casefold() and data.get('wp_id')==context['work_package']['id']
+                 and data.get('head_sha')==sha and (data.get('_native') or
+                 data.get('source_manifest')==policy['source_manifest'] and data.get('policy_digest')==policy['policy_digest'])]
         matches=[m for m in matches if isinstance(m,dict)]
         need(len(matches)==1,'DEPENDENCY_READINESS_UNKNOWN')
         data=matches[0]
@@ -348,13 +477,52 @@ def dependencies(gh, rows, context, record, sha, policy, final=False):
         for ref in refs: gh.artifact(ref,sha)
 
 
+def review_assessment(gh,pr,profile,peers):
+    """Use the existing PR risk declaration, current reviews and contributor trail.
+
+    Unknown/conflicting risk or pairing declarations deny; CR-3/actual high-risk
+    needs two qualified approvals. CR-4 alone does not imply high risk. Never use
+    filenames as a replacement for actual impact classification.
+    """
+    text=pr.get('body') or ''
+    review_text='\n'.join(r.get('body') or '' for r in gh.reviews(pr['number'])
+                          if r.get('commit_id')==pr['head']['sha'] and r.get('state')=='APPROVED')
+    lines=[line for line in (text+'\n'+review_text).splitlines() if re.search(r'review risk|review class',line,re.I)]
+    classifications=set()
+    for line in lines:
+        if re.search(r'\bCR-3\b',line): classifications.add('high')
+        if re.search(r'\bhigh[- ]risk\b',line,re.I): classifications.add('high')
+        elif re.search(r'\bnormal[- ]risk\b',line,re.I): classifications.add('normal')
+        else:
+            classes=set(re.findall(r'\bCR-([0-4])\b',line))
+            if classes: classifications.update('high' if c=='3' else 'normal' for c in classes)
+    need(len(classifications)==1, 'REVIEW_RISK_UNKNOWN_OR_CONFLICTING')
+    risk=classifications.pop()
+    # Native impact declarations cannot contradict the selected risk.
+    impacts=[line for line in text.splitlines() if re.search(r'^\s*(?:\*\*)?High.risk triggers',line,re.I)]
+    if impacts:
+        need(len(impacts)==1, 'REVIEW_RISK_CONFLICT')
+        no_impact=bool(re.search(r':\s*(?:none|no impact)\.?\s*$',impacts[0],re.I))
+        need((risk=='normal')==no_impact, 'REVIEW_RISK_CONFLICT')
+    pairers=[]
+    for line in text.splitlines():
+        if re.search(r'pair(?:ing|ed)[ -](?:participants|with|authors)',line,re.I):
+            names=re.findall(r'@([A-Za-z0-9-]+)',line)
+            need(names or re.search(r'\bnone\b',line,re.I), 'PAIRING_INDEPENDENCE_UNCONFIRMED')
+            need(all(n.casefold() in {v.casefold() for v in GITHUB.values()} for n in names), 'PAIRING_INDEPENDENCE_UNCONFIRMED')
+            accounts={v.casefold():v for v in GITHUB.values()}
+            pairers.extend(accounts[n.casefold()] for n in names)
+    return {'review_risk':risk,'high_risk_triggers':['actual_high_risk'] if risk=='high' else [],
+            'qualified_reviewers':peers,'pairing_participants':pairers}
+
+
 def approvals(gh,pr,record,profile,merging=True):
     need(record.get('review_risk') in {'normal','high'} and isinstance(record.get('high_risk_triggers'),list), 'REVIEW_RISK_UNKNOWN')
-    triggers={'authentication_authorization','protected_action_authority','destructive_migration','security_sensitive_infra_secrets','major_authority_boundary'}
+    triggers={'actual_high_risk','authentication_authorization','protected_action_authority','destructive_migration','security_sensitive_infra_secrets','major_authority_boundary'}
     need(all(isinstance(v,str) and v in triggers for v in record['high_risk_triggers']), 'UNKNOWN_HIGH_RISK_TRIGGER')
     high=record['review_risk']=='high'
     need(high == bool(record['high_risk_triggers']), 'REVIEW_RISK_CONFLICT')
-    # Risk assessment must itself be confirmed by an independent qualified reviewer.
+    # Actual risk and qualifications are reviewed in the PR, not in a tool comment.
     # Historical PR#4/#5 owner overrides are bounded to their exact control heads;
     # none authorizes a canonical product WP or a blanket stale-approval exception.
     latest={}
@@ -370,7 +538,6 @@ def approvals(gh,pr,record,profile,merging=True):
               r.get('commit_id')==pr['head']['sha'] and login not in contributors}
     qualified={x.casefold() for x in record.get('qualified_reviewers',[]) if x in GITHUB.values()}
     need(len(accepted & qualified)>=(2 if high else 1), 'CURRENT_HEAD_APPROVALS_MISSING')
-    need(record.get('_confirming_login','').casefold() in accepted & qualified, 'RISK_CONFIRMATION_NOT_FROM_CURRENT_INDEPENDENT_APPROVER')
     if high:
         need(bool(accepted & qualified & {'asperant','yavuzgmus'}), 'HIGH_RISK_EXPERTISE_MISSING')
     if merging: need(pr.get('mergeable') is True and pr.get('mergeable_state')=='clean', 'PR_NOT_MERGE_READY')
@@ -386,19 +553,24 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
     blocked=plane.blocked in item['labels']
     need(not blocked or target in {'BLOCKED','UNBLOCKED','CANCELED'}, 'ACTIVE_BLOCKER_UNRESOLVED')
     refs=envelope['evidence_refs']
-    rows=records(gh,refs)
     # Planning/blocker/cancellation evidence may precede an implementation PR.
     # Requiring code before READY would invert the canonical DoR gate.
     prework=target in {'READY','BLOCKED','UNBLOCKED','CANCELED'}
-    pr=pr_fact(gh,refs,wp,profile) if not prework or any(r.startswith('pr:') for r in refs) else None
+    commits=[r.split(':')[1] for r in refs if r.startswith('commit:')]
+    starting_commit=target=='IN_PROGRESS' and source=='READY' and len(commits)==1
+    pr=pr_fact(gh,refs,wp,profile) if not prework and not starting_commit or any(r.startswith('pr:') for r in refs) else None
     post=source in {'MERGED','VALIDATING','DONE'} or target=='MERGED'
-    sha=(pr.get('merge_commit_sha') if post else pr['head']['sha']) if pr else gh.main_sha()
+    sha=(pr.get('merge_commit_sha') if post else pr['head']['sha']) if pr else (commits[0] if starting_commit else gh.main_sha())
     need(isinstance(sha,str) and SHA.fullmatch(sha), 'REVISION_UNAVAILABLE')
     if post and pr: need(pr.get('merged') is True, 'PR_NOT_ACTUALLY_MERGED')
     owner=GITHUB[profile]
     peers=[GITHUB[p] for p in GITHUB if p!=profile and q.PEOPLE[p][0] in
            [r['canonical_name'] for r in card.get('supporting_reviewers') or []]]
-    independent=[login for p,login in GITHUB.items() if p!=profile]
+    # Only semantic operations/readiness actually consume assessment records.
+    start_dependencies=target=='IN_PROGRESS' and any(
+        e['semantics']['strength']=='HARD' and e['semantics']['blocking_stage']=='START'
+        for e in context['dependency_edges'])
+    rows=records(gh,refs,wp,sha,pr) if target in {'READY','BLOCKED','UNBLOCKED','CANCELED','DONE'} or source=='DONE' or start_dependencies else []
     if target=='CANCELED':
         decision=confirmation(rows,['Asperant'],wp,source,target,sha,policy)
         need(decision.get('owner_decision')=='CANCEL', 'EXPLICIT_OWNER_CANCELLATION_REQUIRED')
@@ -413,7 +585,7 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
             need(linked in policy['contexts'] and linked!=wp, 'BLOCKER_WP_NOT_CANONICAL')
         else:
             safe_text(blocker.get('external_dependency'))
-        criteria(gh,record,['BLOCKER-OBSERVED'],sha)
+        blocker_evidence(gh,record,'BLOCKER-OBSERVED',sha)
         return {'blocker':{'owner':blocker['owner'],'wp_id':linked,
                 'external_dependency':q.clean(blocker.get('external_dependency',''))}}
     if target=='UNBLOCKED':
@@ -432,7 +604,7 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
                       and resolved_after_block(r) for r in runs)
         record=confirmation(rows,[owner] if automated else peers,wp,source,target,sha,policy)
         need(record.get('resolves_audit_id')==previous['audit_id'], 'WRONG_BLOCKER_RESOLUTION')
-        criteria(gh,record,['BLOCKER-RESOLVED'],sha)
+        blocker_evidence(gh,record,'BLOCKER-RESOLVED',sha)
         return {'resolves_audit_id':previous['audit_id']}
     if target=='READY':
         need(context['cycle_ids'], 'UNSCHEDULED_WORK_NEEDS_PLANNING_DECISION')
@@ -442,7 +614,8 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
         criteria(gh,record,policy['dor_task']+card['dor_refs'],sha)
         dependencies(gh,rows,context,record,sha,policy)
     elif target=='IN_PROGRESS':
-        need(not pr.get('merged') and pr.get('state')=='open', 'NO_LIVE_IMPLEMENTATION_PR')
+        if starting_commit: gh.started_commit(wp,sha,profile)
+        else: need(not pr.get('merged') and pr.get('state')=='open', 'NO_LIVE_IMPLEMENTATION_PR')
         if source=='IN_REVIEW': need(pr.get('draft') is True, 'REWORK_REQUIRES_DRAFT_PR')
         active=[r for r in plane.items if r.get('assignees')==[q.PEOPLE[profile][1]] and
                 r.get('state')==plane.states['IN_PROGRESS'] and r['id']!=item['id']]
@@ -453,38 +626,32 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
             need(band is not None, 'WORKLOAD_CLASS_UNKNOWN')
             return band.group(1)=='L' or identity.startswith('WP-CORE-')
         if heavy(wp): need(not any(heavy(r.get('external_id','')) for r in active), 'HEAVY_CORE_WIP_LIMIT')
-        record=confirmation(rows,[owner],wp,source,target,sha,policy)
-        criteria(gh,record,['IMPLEMENTATION-STARTED'],sha)
-        dependencies(gh,rows,context,record,sha,policy)
+        # An actual changed WP branch/PR proves work started; no extra event comment.
+        dependencies(gh,rows,context,{},sha,policy)
     elif target=='IN_REVIEW':
         need(pr.get('state')=='open' and not pr.get('draft') and not pr.get('merged'), 'REAL_REVIEWABLE_PR_REQUIRED')
         need(pr.get('requested_reviewers') or pr.get('requested_teams') or gh.reviews(pr['number']), 'REVIEW_NOT_REQUESTED')
         ci(gh,sha,policy)
-        record=confirmation(rows,[owner],wp,source,target,sha,policy)
-        criteria(gh,record,policy['dor_pr'],sha)
         if source=='MERGE_READY':
             need(not any(r.get('state')=='APPROVED' and r.get('commit_id')==sha for r in gh.reviews(pr['number'])),
                  'NO_STALE_APPROVAL_REVIEW_EVENT')
     elif target=='MERGE_READY':
         need(not pr.get('draft') and not pr.get('merged'), 'REAL_REVIEWABLE_PR_REQUIRED')
         ci(gh,sha,policy)
-        record=confirmation(rows,independent,wp,source,target,sha,policy)
-        criteria(gh,record,policy['dor_pr']+policy['dod_pr'],sha)
-        approvals(gh,pr,record,profile)
+        need(pr.get('state')=='open', 'REAL_REVIEWABLE_PR_REQUIRED')
+        approvals(gh,pr,review_assessment(gh,pr,profile,peers),profile)
     elif target=='MERGED':
         need(pr.get('merged') is True and pr.get('base',{}).get('ref')=='main', 'PR_NOT_ACTUALLY_MERGED')
         ci(gh,pr['head']['sha'],policy)
         gh.merged_shape(pr)
-        record=confirmation(rows,independent,wp,source,target,sha,policy)
-        criteria(gh,record,policy['dod_pr'],sha)
-        approvals(gh,pr,record,profile,merging=False)
+        approvals(gh,pr,review_assessment(gh,pr,profile,peers),profile,merging=False)
     elif target=='VALIDATING':
-        record=confirmation(rows,peers if source=='DONE' else [owner],wp,source,target,sha,policy)
-        if source=='DONE': criteria(gh,record,['docs/08#11:EVIDENCE-STALE'],sha)
+        if source=='DONE':
+            record=confirmation(rows,peers,wp,source,target,sha,policy)
+            criteria(gh,record,['docs/08#11:EVIDENCE-STALE'],sha)
         runs=[gh.run(int(r.split(':')[1])) for r in refs if r.startswith('run:')]
         need(any(r.get('head_sha')==sha and r.get('head_branch')=='main' and r.get('status')=='in_progress'
                  and r.get('event')!='pull_request' for r in runs), 'POST_MERGE_VALIDATION_NOT_RUNNING')
-        criteria(gh,record,['POST-MERGE-VALIDATION-STARTED'],sha)
     elif target=='DONE':
         ci(gh,sha,policy)
         gh.merged_shape(pr)
@@ -493,7 +660,7 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
         ids=sorted(set(policy['dod_wp']+card['dod_refs']+context['scope_criteria']))
         if card.get('scope_class')=='R1': ids+=policy['dod_research']
         for record in (owner_record,peer_record): criteria(gh,record,ids,sha)
-        approvals(gh,pr,peer_record,profile,merging=False)
+        approvals(gh,pr,review_assessment(gh,pr,profile,peers),profile,merging=False)
         dependencies(gh,rows,context,peer_record,sha,policy,final=True)
         runs=[gh.run(int(r.split(':')[1])) for r in refs if r.startswith('run:')]
         need(any(r.get('head_sha')==sha and r.get('head_branch')=='main' and r.get('status')=='completed'

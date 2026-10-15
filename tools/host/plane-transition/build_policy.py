@@ -30,7 +30,7 @@ manifest=dict(p.source_manifest)
 for name in ['AGENTS.md','docs/02_System_Architecture_Specification.md','docs/08_Definition_of_Ready_and_Done.md',
              'docs/09_Change_Control_Process.md','.github/workflows/projectctl.yml']:
     manifest[name]=sha256((ROOT/name).read_bytes()).hexdigest()
-policy={'schema_version':'cap-transition-policy-v1','source_manifest':manifest,'contexts':contexts,
+policy={'schema_version':'cap-transition-policy-v1','evaluation_revision':'native-execution-facts-v2','source_manifest':manifest,'contexts':contexts,
         'criteria_definitions':criteria, 'node_owners':node_owners,
         'node_levels':{n.id:[str(v) for v in n.readiness_levels] for n in nodes.values()},
         'required_ci':['projectctl'], 'bounded_historical_overrides':{'product_wp_authorizations':[],

@@ -54,7 +54,7 @@ class FakeGH:
         sha=MERGE if post else HEAD
         self.pr_data={'number':1,'base':{'repo':{'full_name':'Asperant/critical-aerospace-manufacturing'},'ref':'main'},
                       'user':{'login':owner},'head':{'ref':f'wp/{wp}-test','sha':HEAD},'title':f'[{wp}] Implement slice',
-                      'body':wp,'changed_files':2,'draft':source=='IN_REVIEW' and target=='IN_PROGRESS',
+                      'body':wp+'\nChange class / review risk: C1 / CR-2 (normal-risk)\nPairing participants: none','changed_files':2,'draft':source=='IN_REVIEW' and target=='IN_PROGRESS',
                       'state':'closed' if post else 'open', 'merged':post,'merge_commit_sha':MERGE if post else None,
                       'requested_reviewers':[{'login':peer}],'mergeable':True,'mergeable_state':'clean'}
         ids=sum((policy[k] for k in ['dor_task','dor_pr','dod_pr','dod_wp','dod_research']),[])
@@ -74,6 +74,14 @@ class FakeGH:
         self.check_data=([{'name':'projectctl','status':'completed','conclusion':'success'}],[])
         self.artifacts=[]
         self.missing_artifact=False
+        self.documents={}
+    def evidence_text(self,path,sha):
+        if path not in self.documents: raise t.Denied('ASSESSMENT_CONTENT_UNAVAILABLE')
+        self.artifact('repo:'+path,sha)
+        return self.documents[path]
+    def started_commit(self,wp,sha,profile):
+        if getattr(self,'bad_work_commit',False): raise t.Denied('NO_IMPLEMENTATION_CHANGE_FROM_MAIN')
+        self.started=(wp,sha,profile)
     def main_sha(self): return HEAD
     def pr(self,number): return deepcopy(self.pr_data)
     def comment(self,number): return deepcopy(self.comments[number])
@@ -143,7 +151,165 @@ class TransitionTests(unittest.TestCase):
             with self.subTest(source=source,target=target):
                 result,plane,logs,gh=run_case(source=source,target=target)
                 self.assertEqual(result['result'],'VERIFIED')
-                self.assertTrue(gh.artifacts or target=='CANCELED')
+                if target in {'READY','DONE'}: self.assertTrue(gh.artifacts)
+
+    def test_mechanical_forward_transitions_need_no_confirmation_comment(self):
+        for source,target in [('READY','IN_PROGRESS'),('IN_PROGRESS','IN_REVIEW'),
+                              ('IN_REVIEW','MERGE_READY'),('MERGE_READY','MERGED'),('MERGED','VALIDATING')]:
+            def no_comments(policy,plane,gh,envelope):
+                envelope['evidence_refs']=['pr:1','run:4']
+                gh.comments={}
+            with self.subTest(source=source):
+                result,plane,logs,gh=run_case(source=source,target=target,mutate=no_comments)
+                self.assertEqual(result['result'],'VERIFIED')
+                self.assertEqual(len(plane.patches),1)
+                self.assertFalse(gh.artifacts)
+
+    def test_work_can_start_on_real_owned_wp_branch_before_pr_exists(self):
+        def commit(policy,plane,gh,envelope): envelope['evidence_refs']=['commit:'+HEAD]
+        result,plane,logs,gh=run_case(mutate=commit)
+        self.assertEqual(result['result'],'VERIFIED')
+        self.assertEqual(gh.started,(plane.item['external_id'],HEAD,'asrin'))
+        def missing(policy,plane,gh,envelope):
+            commit(policy,plane,gh,envelope);gh.bad_work_commit=True
+        with self.assertRaises(t.Denied): run_case(mutate=missing)
+        with self.assertRaises(t.Denied):
+            t.parse_input(json.dumps({'reason':'Two revision sources','evidence_refs':['commit:'+HEAD,'pr:1']}))
+
+    def test_start_commit_contract_rejects_foreign_missing_ambiguous_or_unchanged(self):
+        wp,policy,plane,gh,envelope=fixture()
+        for what in ['foreign','missing','ambiguous','unchanged']:
+            branch={'ref':'refs/heads/wp/'+wp+'-test','object':{'sha':HEAD}}
+            responses=[[branch],{'author':{'login':'Asperant'}},{'ahead_by':1,'files':[{'filename':'a.py'}]}]
+            if what=='foreign': responses[1]['author']['login']='Ejlonn'
+            if what=='missing': responses[0]=[]
+            if what=='ambiguous': responses[0]=[branch,branch]
+            if what=='unchanged': responses[2]['ahead_by']=0
+            client=t.GitHub.__new__(t.GitHub)
+            with patch.object(client,'_get',side_effect=responses),self.subTest(what=what),self.assertRaises(t.Denied):
+                client.started_commit(wp,HEAD,'asrin')
+
+    def test_wp_gov_001_pr7_review_regression(self):
+        wp,policy,plane,gh,envelope=fixture(source='IN_PROGRESS',target='IN_REVIEW')
+        canonical='WP-GOV-001'
+        policy['contexts'][canonical]=policy['contexts'].pop(wp)
+        policy['contexts'][canonical]['work_package']['id']=canonical
+        for item in (plane.item,plane.items[0]):
+            item.update(external_id=canonical,name='['+canonical+'] Requirement catalog',
+                        description_html=json.dumps({'canonical_wp_id':canonical,'canonical_owner':'Asrın Dündar'}))
+        gh.pr_data.update(number=7,title='[WP-GOV-001] Requirement catalog',
+                          body='Existing real scope, requirements, test/evidence and rollback notes; no confirmation JSON.')
+        gh.pr_data['head']['ref']='wp/WP-GOV-001-requirement-catalog'
+        envelope['evidence_refs']=['pr:7']
+        gh.comments={};gh.review_data=[]
+        logs=[]
+        result=t.execute('asrin',canonical,'IN_REVIEW',envelope,policy,plane,gh,lambda r,k:logs.append(deepcopy(r)),SECRET)
+        self.assertEqual(result['result'],'VERIFIED')
+        self.assertEqual(plane.patches,[{'state':'IN_REVIEW'}])
+
+    def test_unrelated_plain_comment_is_not_a_confirmation_protocol_error(self):
+        def ordinary(policy,plane,gh,envelope):
+            for comment in gh.comments.values(): comment['body']='Thanks, reviewing the implementation.'
+        result,*_=run_case(source='IN_PROGRESS',target='IN_REVIEW',mutate=ordinary)
+        self.assertEqual(result['result'],'VERIFIED')
+
+    def test_review_requested_draft_closed_ci_and_blocker_guards_without_comments(self):
+        for what in ['review','draft','closed','ci','blocked']:
+            def invalid(policy,plane,gh,envelope):
+                envelope['evidence_refs']=['pr:1']
+                if what=='review': gh.pr_data['requested_reviewers']=[];gh.review_data=[]
+                if what=='draft': gh.pr_data['draft']=True
+                if what=='closed': gh.pr_data['state']='closed'
+                if what=='ci': gh.check_data[0][0]['conclusion']='failure'
+                if what=='blocked': plane.item['labels'].append(plane.blocked)
+            with self.subTest(what=what),self.assertRaises(t.Denied):
+                run_case(source='IN_PROGRESS',target='IN_REVIEW',mutate=invalid)
+
+    def test_native_dor_dod_checklists_without_custom_json(self):
+        for source,target in [('BACKLOG','READY'),('VALIDATING','DONE')]:
+            def native(policy,plane,gh,envelope):
+                wp=plane.item['external_id'];sha=MERGE if target=='DONE' else HEAD
+                for comment in gh.comments.values():
+                    old=json.loads(comment['body'])['cap_plane_transition']
+                    comment['body']=wp+' '+sha+'\n'+'\n'.join(
+                        '- [x] '+identity+': '+check['reason']+' '+check['evidence_refs'][0]
+                        for identity,check in old['checks'].items())
+                    comment['issue_url']='https://api.github.com/'+t.REPO+'/issues/1'
+            with self.subTest(target=target):
+                result,*_=run_case(source=source,target=target,mutate=native)
+                self.assertEqual(result['result'],'VERIFIED')
+
+    def test_native_pr_and_review_dod_evidence_no_duplicate_comment(self):
+        def native(policy,plane,gh,envelope):
+            checks=json.loads(gh.comments[2]['body'])['cap_plane_transition']['checks']
+            text='\n'.join('| '+k+' | PASS | Existing evaluation repo:evidence/result.md |' for k in checks)
+            gh.pr_data['body']+='\n'+text
+            gh.review_data[0]['body']=text
+            envelope['evidence_refs']=['pr:1','run:4'];gh.comments={}
+        result,*_=run_case(source='VALIDATING',target='DONE',mutate=native)
+        self.assertEqual(result['result'],'VERIFIED')
+
+    def test_existing_repository_assessment_is_reused_by_owner_and_reviewer(self):
+        def linked(policy,plane,gh,envelope):
+            checks=json.loads(gh.comments[2]['body'])['cap_plane_transition']['checks']
+            gh.documents['evidence/accepted-assessment.md']='\n'.join(
+                '| '+k+' | PASS | Existing analysis [result](evidence/result.json) |' for k in checks)
+            gh.pr_data['body']+='\nAssessment: [accepted evidence](evidence/accepted-assessment.md)'
+            gh.review_data[0]['body']='Reviewed assessment: [evidence](evidence/accepted-assessment.md)'
+            gh.comments={};envelope['evidence_refs']=['pr:1','run:4']
+        result,plane,logs,gh=run_case(source='VALIDATING',target='DONE',mutate=linked)
+        self.assertEqual(result['result'],'VERIFIED')
+        self.assertIn(('repo:evidence/accepted-assessment.md',MERGE),gh.artifacts)
+
+    def test_native_dependency_producer_assessment_without_policy_json(self):
+        def native(policy,plane,gh,envelope):
+            wp=plane.item['external_id']
+            policy['contexts'][wp]['dependency_edges']=[{'id':'DEP-001','predecessor':{'node':'DN-ONE'},
+                'semantics':{'strength':'HARD','blocking_stage':'START','required_readiness':'CONTRACT_READY'}}]
+            policy['node_owners']['DN-ONE']='selman';policy['node_levels']['DN-ONE']=['DEFINED','CONTRACT_READY']
+            gh.comments[3].update(body=wp+' '+HEAD+'\n| DEP-001 | CONTRACT_READY | Command fields [contract](contracts/command.json) |',
+                                  issue_url='https://api.github.com/'+t.REPO+'/issues/1')
+            envelope['evidence_refs']=['pr:1','comment:3']
+        result,*_=run_case(mutate=native)
+        self.assertEqual(result['result'],'VERIFIED')
+
+    def test_native_owner_cancel_and_blocker_notes(self):
+        for source,target in [('BACKLOG','CANCELED'),('IN_PROGRESS','BLOCKED'),('IN_PROGRESS','UNBLOCKED')]:
+            def native(policy,plane,gh,envelope):
+                for comment in gh.comments.values():
+                    note=plane.item['external_id']+' '+HEAD+'\n'
+                    if target=='CANCELED': note+='Owner decision: CANCEL\n'
+                    elif target=='BLOCKED':
+                        note+='Blocker owner: asrin\nExternal dependency: Upstream service outage\n'
+                        note+='Reason: Upstream outage observed; [incident](evidence/incident.md)\n'
+                    else:
+                        note+='Resolves blocker: previous-blocker\n'
+                        note+='Reason: Incident resolved; [result](evidence/resolution.md)\n'
+                    gh.documents['evidence/incident.md']='Recorded upstream incident.'
+                    gh.documents['evidence/resolution.md']='Recorded actual incident resolution.'
+                    comment.update(body=note,issue_url='https://api.github.com/'+t.REPO+'/issues/1')
+            with self.subTest(target=target):
+                result,*_=run_case(source=source,target=target,mutate=native)
+                self.assertEqual(result['result'],'VERIFIED')
+
+    def test_semantic_native_evidence_wrong_author_revision_missing_or_ambiguous_denied(self):
+        for what in ['author','revision','coverage','duplicate']:
+            def bad(policy,plane,gh,envelope):
+                wp=plane.item['external_id']
+                text=wp+' '+(HEAD if what!='revision' else 'f'*40)+'\n| DOR-TASK-01 | PASS | Real evidence repo:evidence/result.md |'
+                if what=='duplicate': text+='\n| DOR-TASK-01 | PASS | Conflicting second assessment repo:evidence/other.md |'
+                gh.comments[2].update(body=text,issue_url='https://api.github.com/'+t.REPO+'/issues/1')
+                if what=='author': gh.comments[2]['user']['login']='Ejlonn'
+                envelope['evidence_refs']=['pr:1','comment:2']
+            with self.subTest(what=what),self.assertRaises(t.Denied):
+                run_case(source='BACKLOG',target='READY',mutate=bad)
+
+    def test_unknown_risk_and_contradictory_risk_fail_closed(self):
+        for body in ['WP-TEST-001','Review risk: normal-risk\nHigh-risk triggers: authorization',
+                     'Review risk: normal-risk\nReview class: CR-3']:
+            def bad(policy,plane,gh,envelope): gh.pr_data['body']=body+' WP-TEST-001'
+            with self.subTest(body=body),self.assertRaises(t.Denied):
+                run_case(source='IN_REVIEW',target='MERGE_READY',mutate=bad)
 
     def test_documented_rework_conditions(self):
         for source,target in t.REWORK:
@@ -258,10 +424,7 @@ class TransitionTests(unittest.TestCase):
 
     def test_high_risk_needs_two_current_independent_qualified_approvals(self):
         def high(policy,plane,gh,envelope):
-            for record in gh.comments.values():
-                data=json.loads(record['body']);assessment=data['cap_plane_transition']
-                assessment.update(review_risk='high',high_risk_triggers=['authentication_authorization'],qualified_reviewers=['selorito','Yavuzgmus'])
-                record['body']=json.dumps(data)
+            gh.pr_data['body']=gh.pr_data['body'].replace('CR-2 (normal-risk)','CR-3 (high-risk)')
         with self.assertRaises(t.Denied): run_case(source='IN_REVIEW',target='MERGE_READY',mutate=high)
         def enough(policy,plane,gh,envelope):
             high(policy,plane,gh,envelope)
@@ -271,10 +434,7 @@ class TransitionTests(unittest.TestCase):
 
     def test_pairing_author_cannot_supply_independent_approval(self):
         def paired(policy,plane,gh,envelope):
-            for record in gh.comments.values():
-                data=json.loads(record['body'])
-                data['cap_plane_transition']['pairing_participants']=['selorito']
-                record['body']=json.dumps(data)
+            gh.pr_data['body']=gh.pr_data['body'].replace('Pairing participants: none','Pairing participants: @selorito')
         with self.assertRaises(t.Denied): run_case(source='IN_REVIEW',target='MERGE_READY',mutate=paired)
 
     def test_required_postmerge_run_is_bound_to_merge_revision(self):
