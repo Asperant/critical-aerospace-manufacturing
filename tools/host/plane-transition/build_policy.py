@@ -17,7 +17,7 @@ for line in text.splitlines():
     if re.match(r'\| (?:DOR|DOD)-[A-Z]+-[0-9]{2} \|',line):
         cells=[c.strip() for c in line.strip('|').split('|')]
         criteria.setdefault(cells[0],cells[1:])
-classes={r.id:r.scope_class for r in p.catalog.requirements.requirements}
+classes={r.id:r.scope_class or r.quality_class for r in p.catalog.requirements.requirements}
 contexts={}
 for w in p.catalog.work_packages:
     c=context(p,w.id)
