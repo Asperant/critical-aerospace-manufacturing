@@ -1,0 +1,10 @@
+{
+  "wp_id": "WP-GOV-001",
+  "failed_head": "6aa38228e009f260e11e13ff43692e80d241f80e",
+  "failed_push_run": "https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/38671041048",
+  "successful_pr_run": "https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/38671044633",
+  "failure": "History baseline must resolve to a Git commit: event.before eb559a31c37a71759689a318313e495a377bad3c is outside the rebased reachable history and the checkout did not fetch it.",
+  "correction": "Use authenticated actions/checkout to retain the exact nonzero pre-push SHA before checkout of the current revision. The existing complete current checkout and historical non-reuse checks remain mandatory. No missing-base fallback or retry-until-green.",
+  "credentials": "Both checkouts use persist-credentials:false; no credentials are added to repository files or command arguments.",
+  "validation": "New-head hosted push and PR CI required; prior failed and successful runs remain historical."
+}
