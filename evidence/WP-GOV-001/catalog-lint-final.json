@@ -1,0 +1,72 @@
+{
+  "counts": {
+    "by_domain": {
+      "FR-AI": 13,
+      "FR-AUTO": 14,
+      "FR-CORE": 16,
+      "FR-EVAL": 10,
+      "FR-EVT": 10,
+      "FR-GOV": 10,
+      "FR-HITL": 10,
+      "FR-ML": 8,
+      "FR-PLAT": 10,
+      "FR-RAG": 10,
+      "FR-SCH": 15,
+      "FR-SEC": 10,
+      "FR-SIM": 14,
+      "FR-TWIN": 10,
+      "FR-UI": 10,
+      "FR-VIS": 16,
+      "NFR-CAP": 10,
+      "NFR-DATA": 8,
+      "NFR-DEP": 6,
+      "NFR-DX": 8,
+      "NFR-GOV": 10,
+      "NFR-OBS": 9,
+      "NFR-PERF": 14,
+      "NFR-REC": 10,
+      "NFR-REL": 10,
+      "NFR-REP": 9,
+      "NFR-RES": 8,
+      "NFR-SEC": 12,
+      "NFR-UX": 6
+    },
+    "by_kind": {
+      "FR": 186,
+      "NFR": 120
+    },
+    "by_owner": {
+      "Asrın Dündar": 124,
+      "Batuhan Kaya": 57,
+      "Selman Özdemir": 19,
+      "Yavuz Gümüş": 106
+    },
+    "fr_scope": {
+      "F0": 17,
+      "F1": 159,
+      "R1": 10
+    },
+    "missing_revision": 306,
+    "missing_status": 306,
+    "nfr_quality": {
+      "A1": 41,
+      "C3": 4,
+      "H0": 52,
+      "S2": 23
+    },
+    "retired_id_count": 0,
+    "schema_version": "requirement-counts-v1",
+    "source_sha256": "ae2a313f52b94469f45fad0eac4ea83257de6822ed15374e572e90bec8d87815",
+    "total": 306,
+    "unique_ids": 306
+  },
+  "evidence": "NOT_CERTIFIED",
+  "history": "INITIAL_CATALOG (no prior catalog at baseline)",
+  "issues": [],
+  "readiness": "NOT_CERTIFIED",
+  "result": "PASS",
+  "source_gaps": [
+    "Unspecified canonical Revision/Status remain null (GAP-RTM-004/005)",
+    "NFR measurement metadata remains owner-confirmation work (GAP-RTM-004)"
+  ]
+}

@@ -8,7 +8,7 @@ from projectctl.cli import app
 runner = CliRunner()
 
 
-@pytest.mark.parametrize("command", ["parse", "validate", "status"])
+@pytest.mark.parametrize("command", ["parse", "validate", "status", "catalog-lint", "catalog-export"])
 def test_default_commands_no_network_or_file_mutation(command, root, monkeypatch):
     def forbidden(*args, **kwargs):
         raise AssertionError("Network or file mutation attempted")
@@ -40,7 +40,12 @@ def test_default_commands_no_network_or_file_mutation(command, root, monkeypatch
         monkeypatch.setattr(os, name, forbidden)
     result = runner.invoke(app, [command])
     assert result.exit_code == 0, result.output
-    if command == "parse":
+    if command == "catalog-export":
+        assert len(json.loads(result.output)["requirements"]) == 306
+    elif command == "catalog-lint":
+        assert "PASS (306 records)" in result.output
+        assert "NOT_CERTIFIED" in result.output
+    elif command == "parse":
         assert len(json.loads(result.output)["work_packages"]) == 179
     else:
         assert "UNAVAILABLE (documentation only)" in result.output

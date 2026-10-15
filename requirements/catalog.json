@@ -1,0 +1,5209 @@
+{
+  "requirements": [
+    {
+      "id": "FR-AI-001",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-AI-001",
+        "item": 81,
+        "line_end": 169982,
+        "line_start": 169982,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c965cde9bb8bbd0fad1fd801c079e5314698cea694261c689c3bf82fcc0e83e3"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AI-002",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AI-002",
+        "item": 81,
+        "line_end": 169983,
+        "line_start": 169983,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "2836e3fab1e0ff203999105447a83665a1ace3076617a9a57d8b86540ef97e78"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AI-003",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AI-003",
+        "item": 81,
+        "line_end": 169984,
+        "line_start": 169984,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "7ea2b52fb4b226698296f4091846415638053de1aafa015902ba03d6e3a42ffa"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AI-004",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-AI-004",
+        "item": 81,
+        "line_end": 169985,
+        "line_start": 169985,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c61d950d511cdc1176d115e2de0fbaca4afa5ef06a0871b3fdebd113d387229a"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AI-005",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AI-005",
+        "item": 81,
+        "line_end": 169986,
+        "line_start": 169986,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a2f117e8d55b7b8aa9e22d121c5f5785c35f3a9b28a8b8054c25ad3c4522e682"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AI-006",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AI-006",
+        "item": 81,
+        "line_end": 169987,
+        "line_start": 169987,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "4d2fe50bc76cbdd7d4c26fb262fcd568754be172e35da67fe844d48dd6f4a7f4"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AI-007",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AI-007",
+        "item": 81,
+        "line_end": 169988,
+        "line_start": 169988,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "b6fc63a3966815b772d0cd600a020e85e7ec8627aca4f9640ebb9c104f083b5c"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AI-008",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AI-008",
+        "item": 81,
+        "line_end": 169989,
+        "line_start": 169989,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "e425ed09b2256eff34a56a8e01665539aa170f6e6a2fe8df83b21e1d8d6267e7"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AI-009",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AI-009",
+        "item": 81,
+        "line_end": 169990,
+        "line_start": 169990,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a6e8960cbb36a16d7f300b3417b657a98fa932759a6dfc9484a3c24fc1841713"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AI-010",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AI-010",
+        "item": 81,
+        "line_end": 169991,
+        "line_start": 169991,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "4adfa40c5cad3a9463a4204d69e4e21ab616d24124edefd8fc78d40398af1a32"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AI-011",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AI-011",
+        "item": 81,
+        "line_end": 169992,
+        "line_start": 169992,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "34ed6361e8a4dc7db1046ce4bdd464fb48b365a60a1fcc9a450365961880ac37"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AI-012",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AI-012",
+        "item": 81,
+        "line_end": 169993,
+        "line_start": 169993,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "1d42e3cec00392204de6f7022264c64ed29d376a024828a4580bf9f1fea39ba2"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AI-013",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AI-013",
+        "item": 81,
+        "line_end": 169994,
+        "line_start": 169994,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "6bb10641a872a0a86f4cf2ce14b4f3b1b3a66e86caadf9850e5e56b86fc6e17c"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AUTO-001",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-AUTO-001",
+        "item": 81,
+        "line_end": 170024,
+        "line_start": 170024,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "f02531d25b91d6f38bc65db10597d020aef4e08614c59d650be9fcece57d695e"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AUTO-002",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AUTO-002",
+        "item": 81,
+        "line_end": 170025,
+        "line_start": 170025,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "61c798de74b9b7ba69e8d6b84827d42f70e98fe59606248404a07784323b1c83"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AUTO-003",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AUTO-003",
+        "item": 81,
+        "line_end": 170026,
+        "line_start": 170026,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "688cee26aaa95ad6b07d907b92d2de492b1309038bc6a9ad4921d55329dfbfb5"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AUTO-004",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AUTO-004",
+        "item": 81,
+        "line_end": 170027,
+        "line_start": 170027,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "e4d89af10ebe678218307efa2fab02d0a6d44291629273c3674a22b2dbea5cf9"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AUTO-005",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AUTO-005",
+        "item": 81,
+        "line_end": 170028,
+        "line_start": 170028,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "eb55a793ac88c50b5fe04595886de8a2b6bb59fddd27fa7c6d1f2f6d9381049b"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AUTO-006",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AUTO-006",
+        "item": 81,
+        "line_end": 170029,
+        "line_start": 170029,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "66277ee4ba9645ab63fe80f7dd41abdde219773f3eb8448fde6c2692a5f4cc22"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AUTO-007",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AUTO-007",
+        "item": 81,
+        "line_end": 170030,
+        "line_start": 170030,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "3f237234984ae6d10df56ba8b876199012cdfb3741d79d753f5b506d07b27327"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AUTO-008",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AUTO-008",
+        "item": 81,
+        "line_end": 170031,
+        "line_start": 170031,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "5adf840398dd88a23c531d300dcd7d20452ab1db729e4590088f6d8ed474252a"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AUTO-009",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AUTO-009",
+        "item": 81,
+        "line_end": 170032,
+        "line_start": 170032,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "e55f3d365bcc1f827d879c87b32d32d10cfca32e1d0f326b5ffbda69c0b9d944"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AUTO-010",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AUTO-010",
+        "item": 81,
+        "line_end": 170033,
+        "line_start": 170033,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "9a4e0bf880ac14c82dfe130aa68c9563091baff62a6827f0e8dfceca161762fb"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AUTO-011",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AUTO-011",
+        "item": 81,
+        "line_end": 170034,
+        "line_start": 170034,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "606012e5c882d79caa778e6d082187a1a3dcdd03ea6e223e5fce608e6b411621"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AUTO-012",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AUTO-012",
+        "item": 81,
+        "line_end": 170035,
+        "line_start": 170035,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "3931bd5d9dbc198389da76a8e5f2bc333f8ac4ee47edcce0b8251c4385ea9487"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AUTO-013",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-AUTO-013",
+        "item": 81,
+        "line_end": 170036,
+        "line_start": 170036,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "68fab064910bb66bbf31c1a38e537f39e95d9ce13067d4857d327ab766a42284"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-AUTO-014",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-AUTO-014",
+        "item": 81,
+        "line_end": 170037,
+        "line_start": 170037,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "efcb654f7f045c1db3680beb36b13ee399c96067b6444bbcd24364ffd02368a6"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-CORE-001",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-CORE-001",
+        "item": 81,
+        "line_end": 169849,
+        "line_start": 169849,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "b8f03dd67d8d5f25fbebd21085eefb4b5bf105a3867f761c3f0c0e5f61e22e58"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-CORE-002",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-CORE-002",
+        "item": 81,
+        "line_end": 169850,
+        "line_start": 169850,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a481c40d05ff71d628e23c510770d0c09328d78bae1e06229bcffbc111cc0015"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-CORE-003",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-CORE-003",
+        "item": 81,
+        "line_end": 169851,
+        "line_start": 169851,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "504956309e0f4e180c315736c42f54159c42faf40dda785b67eafa0a54185e62"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-CORE-004",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-CORE-004",
+        "item": 81,
+        "line_end": 169852,
+        "line_start": 169852,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "1c5be2d849df816e219bd2c283e1f8422fbb6dec48cb37db35f575c26b8a5fcb"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-CORE-005",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-CORE-005",
+        "item": 81,
+        "line_end": 169853,
+        "line_start": 169853,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "314e16ccc076a91e16a56038b9cf427f01edef2049d49f938353684bbf7c125a"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-CORE-006",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-CORE-006",
+        "item": 81,
+        "line_end": 169854,
+        "line_start": 169854,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "ac7df4e4f54fba8acba45ee62c9828960b0372f46ad0a4c1c233b733e824cff6"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-CORE-007",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-CORE-007",
+        "item": 81,
+        "line_end": 169855,
+        "line_start": 169855,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "696b50d968071e674e86b0d5054f78f6518329087ed7c9d831e207c14b459521"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-CORE-008",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-CORE-008",
+        "item": 81,
+        "line_end": 169856,
+        "line_start": 169856,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "0a4229cd14d310dafd142715c659499bcb09facc67d82b2d6277128595c93997"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-CORE-009",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-CORE-009",
+        "item": 81,
+        "line_end": 169857,
+        "line_start": 169857,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "8eac97d1662cd264dd4ddcd60c029ced0c638d9e8699556ddf319bc2c76a2d78"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-CORE-010",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-CORE-010",
+        "item": 81,
+        "line_end": 169858,
+        "line_start": 169858,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "0c66dd44f93f33b9188dde42e99058c651ae9c9c9b0ae00556baed4c2f84a7ca"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-CORE-011",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-CORE-011",
+        "item": 81,
+        "line_end": 169859,
+        "line_start": 169859,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a5e2da8b9ba3026912efef156753654ab5d22bf7de3a6c0bc98348e5bd61599f"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-CORE-012",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-CORE-012",
+        "item": 81,
+        "line_end": 169860,
+        "line_start": 169860,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "41e7a5150d409c95187e8c917d2eaa2946c93df0acceeb0f4c3c2f7f02c478c1"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-CORE-013",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-CORE-013",
+        "item": 81,
+        "line_end": 169861,
+        "line_start": 169861,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "732eba087c2db70f4c02e383671257c325af31d1ca4290226e4934eadb722d2a"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-CORE-014",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-CORE-014",
+        "item": 81,
+        "line_end": 169862,
+        "line_start": 169862,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c604532f7a79dddc555a92e1f9c6e2b51f9a4bc7e074bf4e3b69c247b510976d"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-CORE-015",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-CORE-015",
+        "item": 81,
+        "line_end": 169863,
+        "line_start": 169863,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "3d7a48ceb6278bd50ebe16294a69044534a1f85bb3ee60b9d2e3744ddbfcf4f4"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-CORE-016",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-CORE-016",
+        "item": 81,
+        "line_end": 169864,
+        "line_start": 169864,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c81db60f229722f3c24b50c0d89aae1c18a8f0de7db0c23da301e817e3819773"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVAL-001",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "R1",
+      "source": {
+        "heading": "Item 81 / FR-EVAL-001",
+        "item": 81,
+        "line_end": 170119,
+        "line_start": 170119,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c36207bd6aea3d41f293aac20471b81f2336fd343377880163cf396c31600a2f"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVAL-002",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "R1",
+      "source": {
+        "heading": "Item 81 / FR-EVAL-002",
+        "item": 81,
+        "line_end": 170120,
+        "line_start": 170120,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c2769ecdb240ec50f964825ef79ddf8e84f0492901bf2a3c82b888c0c156b11e"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVAL-003",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "R1",
+      "source": {
+        "heading": "Item 81 / FR-EVAL-003",
+        "item": 81,
+        "line_end": 170121,
+        "line_start": 170121,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "b97b57d383d6042f74f5eaffb462accebac46e2216cd74f8478447e55940504c"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVAL-004",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "R1",
+      "source": {
+        "heading": "Item 81 / FR-EVAL-004",
+        "item": 81,
+        "line_end": 170122,
+        "line_start": 170122,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "f78fef1668efc1b87f417d97a55bd16b52460eed5af9ebf0024a2bcdd192ac6a"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVAL-005",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "R1",
+      "source": {
+        "heading": "Item 81 / FR-EVAL-005",
+        "item": 81,
+        "line_end": 170123,
+        "line_start": 170123,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "5919bb1398e6e1e967fff4e29cb1b4128590d3c540d255bb99577fb9ec75a091"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVAL-006",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "R1",
+      "source": {
+        "heading": "Item 81 / FR-EVAL-006",
+        "item": 81,
+        "line_end": 170124,
+        "line_start": 170124,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "4133c8debaf957779cb0e059bd20ec7b191bdde6af68b840dec83a28f5867b56"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVAL-007",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "R1",
+      "source": {
+        "heading": "Item 81 / FR-EVAL-007",
+        "item": 81,
+        "line_end": 170125,
+        "line_start": 170125,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "9879390a5eefe7c45f7f6382a00d2d55b5d00e831f23d9a4370589b1b66687a2"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVAL-008",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "R1",
+      "source": {
+        "heading": "Item 81 / FR-EVAL-008",
+        "item": 81,
+        "line_end": 170126,
+        "line_start": 170126,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "5fdc8772267dd33980b3fc12b0acb66527d10aaf10578e6600ca18c340c3fde0"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVAL-009",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "R1",
+      "source": {
+        "heading": "Item 81 / FR-EVAL-009",
+        "item": 81,
+        "line_end": 170127,
+        "line_start": 170127,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "fce65930ae3736db5f15d94f6f29c18c4d81e8dde1f8712e2aa6469223053a4b"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVAL-010",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "R1",
+      "source": {
+        "heading": "Item 81 / FR-EVAL-010",
+        "item": 81,
+        "line_end": 170128,
+        "line_start": 170128,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "6ff9dae5e0ea67a50f0553d35ea7b2029cc91bf2372421eb4ba2bad55c0857df"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVT-001",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-EVT-001",
+        "item": 81,
+        "line_end": 169910,
+        "line_start": 169910,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "71f015004e553c74edf9861858c31737f8a94a9aea947be64eb569d91c9e121c"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVT-002",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-EVT-002",
+        "item": 81,
+        "line_end": 169911,
+        "line_start": 169911,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "bd78fee369e888ed0da69dde80c3dd5d6339254d4e1169a79dd41bbf51b7c99e"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVT-003",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-EVT-003",
+        "item": 81,
+        "line_end": 169912,
+        "line_start": 169912,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "ef3cb1c8caf740c8e87e5172ab9f5ce0c332a91d441c26d7a89b74816b6c5aea"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVT-004",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-EVT-004",
+        "item": 81,
+        "line_end": 169913,
+        "line_start": 169913,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "e144663ef68aafbb2bf9270393115810f2d0ac6fd2df349c25ec27ede1b8cdfa"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVT-005",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-EVT-005",
+        "item": 81,
+        "line_end": 169914,
+        "line_start": 169914,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "15beddd23f4eb1db6ec16cf770dd9a60fcb3f3f1e110676d281f88d2e9c6fcae"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVT-006",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-EVT-006",
+        "item": 81,
+        "line_end": 169915,
+        "line_start": 169915,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "048a5770d8ce2f1f5ec513367720249049f938e293c429d05f6b9640356db454"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVT-007",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-EVT-007",
+        "item": 81,
+        "line_end": 169916,
+        "line_start": 169916,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "108e7afb4877f9e5ec9d75226c98633a5390f22dee0ba0f13df20555245ebd9d"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVT-008",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-EVT-008",
+        "item": 81,
+        "line_end": 169917,
+        "line_start": 169917,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "6da422f9dda5b2f2a7a4d7647c7d090c0d9edb1ae8072240a87390dca07aa6f1"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVT-009",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-EVT-009",
+        "item": 81,
+        "line_end": 169918,
+        "line_start": 169918,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "0d48d30e5eecf8e71d17e860d78e9b39d6a417aa36b3d603429e162dc4993a67"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-EVT-010",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-EVT-010",
+        "item": 81,
+        "line_end": 169919,
+        "line_start": 169919,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "6c0d70900abe5adceca0d012f77737fa7b20ca904c35df3a98fc1e0de44ae5ae"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-GOV-001",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-GOV-001",
+        "item": 81,
+        "line_end": 169832,
+        "line_start": 169832,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "fc89043f91f1f1c39d38ca67fa01cbcbeb860d7ba828b9ab834ee6d548d612a2"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-GOV-002",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-GOV-002",
+        "item": 81,
+        "line_end": 169833,
+        "line_start": 169833,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "cd5ad60af5e493d43de9b0c0f0e9a4a621e6dd3d60e5df938199151ba35eaaf4"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-GOV-003",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-GOV-003",
+        "item": 81,
+        "line_end": 169834,
+        "line_start": 169834,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "28dc29045fdcd57ed9c2f45d55dd2c4f12f860d880195c99d4cd3b28f49fd912"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-GOV-004",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-GOV-004",
+        "item": 81,
+        "line_end": 169835,
+        "line_start": 169835,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a9813b7a89b42159bbb3ec96a88bcd5e2964e5658f07624586323e64927ed2d8"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-GOV-005",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-GOV-005",
+        "item": 81,
+        "line_end": 169836,
+        "line_start": 169836,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "634935de3c7d2c7f569e391f8ff23cb3bea509c1057165ea6a8bdb7c397f7e22"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-GOV-006",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-GOV-006",
+        "item": 81,
+        "line_end": 169837,
+        "line_start": 169837,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "0d7f8f1fa053d8f3cdf8ded2ebd5382fb7d8b9eaf7320c774988470c1e6b2568"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-GOV-007",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-GOV-007",
+        "item": 81,
+        "line_end": 169838,
+        "line_start": 169838,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "d5b0f2018496c44688e9397cd33398cfb4e21ff65e46165fead54cc81ba862b3"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-GOV-008",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-GOV-008",
+        "item": 81,
+        "line_end": 169839,
+        "line_start": 169839,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "1f6531dee42eb022acab1fcfa60b4e68cfef3ecb2063243ad7e26ac95a89f84f"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-GOV-009",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-GOV-009",
+        "item": 81,
+        "line_end": 169840,
+        "line_start": 169840,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "705e471b19d6deab24b66750c284e5950723a14926eb077febea449a2ef55c87"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-GOV-010",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-GOV-010",
+        "item": 81,
+        "line_end": 169841,
+        "line_start": 169841,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "7e28b09ef9d6a4fbe5e7ba92454bffe4dc99cfffe958863aef9d56e244e344ae"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-HITL-001",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-HITL-001",
+        "item": 81,
+        "line_end": 170045,
+        "line_start": 170045,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "7b931f5f6dbcfda195791a8abef5672c1165368fbb43c42c3a15b510fa7be219"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-HITL-002",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-HITL-002",
+        "item": 81,
+        "line_end": 170046,
+        "line_start": 170046,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "830d59377b15def941984f11eee93cb8c9981c17dabdca725935357b1adfdfbd"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-HITL-003",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-HITL-003",
+        "item": 81,
+        "line_end": 170047,
+        "line_start": 170047,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a077baee72915fccce320d870d658b3de71eec6a0e51bf5753de7b7646a84e0d"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-HITL-004",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-HITL-004",
+        "item": 81,
+        "line_end": 170048,
+        "line_start": 170048,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c5fb812f6b4c75ffbb25a674051ee54e7edc12f99cf14a83fe917f6755ce6092"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-HITL-005",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-HITL-005",
+        "item": 81,
+        "line_end": 170049,
+        "line_start": 170049,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "96132793140ab80e39e99e01eb5ef9dc2f091dfbbc97a06c17f002b4cda62daa"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-HITL-006",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-HITL-006",
+        "item": 81,
+        "line_end": 170050,
+        "line_start": 170050,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "d01534de94da68adcb46ce92282b319b5c2462bdcf4b95c42180a2c3d631f1e6"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-HITL-007",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-HITL-007",
+        "item": 81,
+        "line_end": 170051,
+        "line_start": 170051,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "ed3b92a35c84ecce2763338f94fffdc455769b24c52bfe43178d5ad29f8be5fa"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-HITL-008",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-HITL-008",
+        "item": 81,
+        "line_end": 170052,
+        "line_start": 170052,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "6f51c1846cacdb8df2f16a63743e91e53ee1c488d7a1b6370de1ecd5f91f55d6"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-HITL-009",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-HITL-009",
+        "item": 81,
+        "line_end": 170053,
+        "line_start": 170053,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "cb6514c267fc1a2326e63573329f690d7caa39960af2516ee2f0d854d5bbc5d1"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-HITL-010",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-HITL-010",
+        "item": 81,
+        "line_end": 170054,
+        "line_start": 170054,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "7ba720a4789ed8c3cb9c55a27cee92161522ff4ce8da29bbe4e81b6c4c34c514"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-ML-001",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-ML-001",
+        "item": 81,
+        "line_end": 169950,
+        "line_start": 169950,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a71a5aff7f4f6780e7e3922ebf67bb35f0b52b9d7d7837da61d70650b62f4b3b"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-ML-002",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-ML-002",
+        "item": 81,
+        "line_end": 169951,
+        "line_start": 169951,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "ffbd97472f0e10db8c91877c313af83ef7754316c1d6b9d0241a8fd7b8c0f70d"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-ML-003",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-ML-003",
+        "item": 81,
+        "line_end": 169952,
+        "line_start": 169952,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "e9402afe8d2b5ceed63299a5a1d37ca9d981bf3fc32de005aca25ea281fa1102"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-ML-004",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-ML-004",
+        "item": 81,
+        "line_end": 169953,
+        "line_start": 169953,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "b3b4b864c688efa2a18ce929984386b755d71c99cd578f3d63447a936237588a"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-ML-005",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-ML-005",
+        "item": 81,
+        "line_end": 169954,
+        "line_start": 169954,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "7eb6c3088df5bf559bbd7a95f75d2c0f27006f376eac1ec3407c78999d681fb5"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-ML-006",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-ML-006",
+        "item": 81,
+        "line_end": 169955,
+        "line_start": 169955,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "ffa3fc1260e345aaa85316af6fbccb4f99a34c63413ec7b398ec3502e37ae945"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-ML-007",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-ML-007",
+        "item": 81,
+        "line_end": 169956,
+        "line_start": 169956,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "1fe65dd9c9a7e4f7d643cd3ea622c65741176b6dc897a7e47515f2fe1b9e05f6"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-ML-008",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-ML-008",
+        "item": 81,
+        "line_end": 169957,
+        "line_start": 169957,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "6ab16905992cc5c3fe32148f9220db100ce6c601dd92afcabf26cb76f5693a34"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-PLAT-001",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-PLAT-001",
+        "item": 81,
+        "line_end": 170079,
+        "line_start": 170079,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "d48fd0f1b4bb8829cac13f3b821717a1a1d205ac889d22d2fad9c03ecdf9ea28"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-PLAT-002",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-PLAT-002",
+        "item": 81,
+        "line_end": 170080,
+        "line_start": 170080,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "41a59062313a23d03b471288322c98c7536955cb1ac22112904ae5708c3f62be"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-PLAT-003",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-PLAT-003",
+        "item": 81,
+        "line_end": 170081,
+        "line_start": 170081,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "4260e03a94fb42734f6b1fc0ad215758805a4898be7c82555a72e8de7929e423"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-PLAT-004",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-PLAT-004",
+        "item": 81,
+        "line_end": 170082,
+        "line_start": 170082,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "6c8d0a7d15ceab332b5c902d4242875828a0f045cc0492763eea5c31797d8ff8"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-PLAT-005",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-PLAT-005",
+        "item": 81,
+        "line_end": 170083,
+        "line_start": 170083,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "45738c2ff341760b9c924ad38802b7d22c7429f9ae6080e11a2ff11f3b09d602"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-PLAT-006",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-PLAT-006",
+        "item": 81,
+        "line_end": 170084,
+        "line_start": 170084,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "27a34ddddfd9197ae2d81c13e6e67c4dfa428a210c0b034367045c5e0fc47645"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-PLAT-007",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-PLAT-007",
+        "item": 81,
+        "line_end": 170085,
+        "line_start": 170085,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c613dc0130d790a3aa6f1782585a7b00929f24d11c565c03df2ca8a43151c53c"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-PLAT-008",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-PLAT-008",
+        "item": 81,
+        "line_end": 170086,
+        "line_start": 170086,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "e2e3149e69759bce6751a4a7d8c988af31c2e632f83b4d1a701905cc9fad0c67"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-PLAT-009",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-PLAT-009",
+        "item": 81,
+        "line_end": 170087,
+        "line_start": 170087,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "deda1cbbb5c2fd0158aef5fb30e112182d81650d24f91d9dbe8f583a3908e600"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-PLAT-010",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-PLAT-010",
+        "item": 81,
+        "line_end": 170088,
+        "line_start": 170088,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "871677cc4a4fa6ccbb344b1b35aa2e8676dbe901bf8bffbda0b6c090e028ec72"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-RAG-001",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-RAG-001",
+        "item": 81,
+        "line_end": 169965,
+        "line_start": 169965,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "208b8f238c992b723a74e53c40565e568b5d7958cecc6e10e58be16002315755"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-RAG-002",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-RAG-002",
+        "item": 81,
+        "line_end": 169966,
+        "line_start": 169966,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "edbeb2390954a0b70de96c3e755f059fa7c2f91c5f70e6c8c20b4f251e6c9b59"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-RAG-003",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-RAG-003",
+        "item": 81,
+        "line_end": 169967,
+        "line_start": 169967,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "1eb3a312531d98115b0bf57c61461448044647ad59b26e40fb121690a50e9667"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-RAG-004",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-RAG-004",
+        "item": 81,
+        "line_end": 169968,
+        "line_start": 169968,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "daf0ca070eeb8b0fe084fd6db605396ce8eb7c04e3806bde37fb0bc01fdab44e"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-RAG-005",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-RAG-005",
+        "item": 81,
+        "line_end": 169969,
+        "line_start": 169969,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "29f95b36e11bcb2a08a11f83ece24075900be8130a3aa6b31c2d9a716b3f6b1b"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-RAG-006",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-RAG-006",
+        "item": 81,
+        "line_end": 169970,
+        "line_start": 169970,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "566f9ab30b435f1dc1fbb216195d6dc423888c1fe9fef175b7ab5c986b03a5cc"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-RAG-007",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-RAG-007",
+        "item": 81,
+        "line_end": 169971,
+        "line_start": 169971,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "748fcfb9a6c561f00220c24c95394d1b31139055862fa3c1ce89862db5faad7a"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-RAG-008",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-RAG-008",
+        "item": 81,
+        "line_end": 169972,
+        "line_start": 169972,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "ba141b398f55387bc3d2bd5ae6415ca1e8b10e04e3aeeb07b3288e119b11ddf5"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-RAG-009",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-RAG-009",
+        "item": 81,
+        "line_end": 169973,
+        "line_start": 169973,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "39b0ffb336697524a3b2d9db170eb7b9e9b0cfa16d7db1c24716b35523ec2d78"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-RAG-010",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-RAG-010",
+        "item": 81,
+        "line_end": 169974,
+        "line_start": 169974,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "4b0eddb40f187b161a98d418eed49b18889f00107f968e5ef117be75258d0815"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SCH-001",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-SCH-001",
+        "item": 81,
+        "line_end": 170002,
+        "line_start": 170002,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "cc34d109b5e4f489344e787c55d8305a0164ea6c437d5685c08af15cf9f15ed3"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SCH-002",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SCH-002",
+        "item": 81,
+        "line_end": 170003,
+        "line_start": 170003,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "e52fdf5c1a4a5ce25f0917a485ae8320c6763aa3b418e3676b2e5b6961665a43"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SCH-003",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SCH-003",
+        "item": 81,
+        "line_end": 170004,
+        "line_start": 170004,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "ab3d8342d0fdc1ca5c569894a2bd85c5c520f94c908bc5743f909fe201d9b6cc"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SCH-004",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SCH-004",
+        "item": 81,
+        "line_end": 170005,
+        "line_start": 170005,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c1014842fb9fca85d64ced5ee4f8613fc99c5afd47097edd4e76599e347843cc"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SCH-005",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-SCH-005",
+        "item": 81,
+        "line_end": 170006,
+        "line_start": 170006,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "302641e85916ced661317e7defc2e7b271c64c3599503999e14e10087ffe8380"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SCH-006",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SCH-006",
+        "item": 81,
+        "line_end": 170007,
+        "line_start": 170007,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "12364e1a8b293ee0f207edf649dfc9e1b94926df8afca867e5537bfde3896590"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SCH-007",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SCH-007",
+        "item": 81,
+        "line_end": 170008,
+        "line_start": 170008,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "2ee4a3a983ab866088e31eb9d8a3c99fa185628a88caa8f3bd1de8fa41430624"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SCH-008",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SCH-008",
+        "item": 81,
+        "line_end": 170009,
+        "line_start": 170009,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c2621a220eb02c1df049f56300a46503d6d7524e169d4392e2e0a03074f20ea7"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SCH-009",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SCH-009",
+        "item": 81,
+        "line_end": 170010,
+        "line_start": 170010,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a30af6aafeff5922ce442fa9c18212d3e58d2523bea8a47a170df00fc99cc3f7"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SCH-010",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SCH-010",
+        "item": 81,
+        "line_end": 170011,
+        "line_start": 170011,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "b5b3387a5ca16cb800dbce22f37b4493a4604fb35632bb80956680bada21c26b"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SCH-011",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SCH-011",
+        "item": 81,
+        "line_end": 170012,
+        "line_start": 170012,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "eaec63d30dff01b6c51bfc3c06de8388e6df67a3704e363bbcdc8de50eef3d52"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SCH-012",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SCH-012",
+        "item": 81,
+        "line_end": 170013,
+        "line_start": 170013,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "0fd3cec628ad9cf7396eb1688081f1788fd68981b73383a9ebc0c02003690ce0"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SCH-013",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SCH-013",
+        "item": 81,
+        "line_end": 170014,
+        "line_start": 170014,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "1ee5c573d5ec5875dffc6c60edccc93c6aabd55e42f30be61dec1879db2e500e"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SCH-014",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SCH-014",
+        "item": 81,
+        "line_end": 170015,
+        "line_start": 170015,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "0b9a1028f426085f7d1c8b70cf3bf7196dbb73e34d7c2e07f793932eb88f73f8"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SCH-015",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SCH-015",
+        "item": 81,
+        "line_end": 170016,
+        "line_start": 170016,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "2f525cd83ac2d1cb2c8066ef15c7da8ba43db0b099a8673e5f79b94fe80fbecb"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SEC-001",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SEC-001",
+        "item": 81,
+        "line_end": 170096,
+        "line_start": 170096,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "8b203ebfa7c60bd719830b439a71f883898e6d1df160a1c2a8d6f84c9bd3002e"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SEC-002",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SEC-002",
+        "item": 81,
+        "line_end": 170097,
+        "line_start": 170097,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "f2e1f898081c53897468d1561db58bfbe259710ec3f11f4e6d9c83c594024a71"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SEC-003",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SEC-003",
+        "item": 81,
+        "line_end": 170098,
+        "line_start": 170098,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "fdb42df03e42e99bc4eac76c9797e965eb996d8fa6ec6146168bce79025a1e26"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SEC-004",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SEC-004",
+        "item": 81,
+        "line_end": 170099,
+        "line_start": 170099,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "aad9a2e831cae860bcf2e3bcfc6eee212bc0bb001de4b3559c80846218e014c7"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SEC-005",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SEC-005",
+        "item": 81,
+        "line_end": 170100,
+        "line_start": 170100,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "f2dc348b31fdc0524b39f80aef3e90c0eebe24585eac45e32a17797f70bdb7be"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SEC-006",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SEC-006",
+        "item": 81,
+        "line_end": 170101,
+        "line_start": 170101,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "b6665d6589da59392ae2f6db021ae39bc7576588fcba11d0ae1cdc8b3dbf33cb"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SEC-007",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SEC-007",
+        "item": 81,
+        "line_end": 170102,
+        "line_start": 170102,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "275bb5261f1bd0bce19549ae8d974fc61e8ed29a77c89be73fc67a22b06fb7e1"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SEC-008",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SEC-008",
+        "item": 81,
+        "line_end": 170103,
+        "line_start": 170103,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "e9217d5f380b02f69bced83a7824ecbd27d5ab3405cf63b9ab0f78c70e6d2c31"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SEC-009",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SEC-009",
+        "item": 81,
+        "line_end": 170104,
+        "line_start": 170104,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "d94b870eb981805e0489e57b140a17abf7aea95f541ea402473a967b20f801ee"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SEC-010",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SEC-010",
+        "item": 81,
+        "line_end": 170105,
+        "line_start": 170105,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "6ce481a5eef5ae0402bb980bf3086d3517b36ef06ebbed8eb61a92bfd1fb3df9"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SIM-001",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-SIM-001",
+        "item": 81,
+        "line_end": 169872,
+        "line_start": 169872,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "38d57999bec2389784ec437697763593ac18e2b0d16be16a49869730143dd2a1"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SIM-002",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-SIM-002",
+        "item": 81,
+        "line_end": 169873,
+        "line_start": 169873,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "2b49e622e363b541f92f55ce1ae994af5bd336a63c34194e0b9d5423362223c9"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SIM-003",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SIM-003",
+        "item": 81,
+        "line_end": 169874,
+        "line_start": 169874,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a0e25f3577b6dc13aebf6c96118f5ea91fbdc660b6e18d4299037f462dd86fb2"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SIM-004",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SIM-004",
+        "item": 81,
+        "line_end": 169875,
+        "line_start": 169875,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "0c0bfda1e09772bcdeb52548d20794aba7312a8bcd1cfc669a90517b182281ce"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SIM-005",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SIM-005",
+        "item": 81,
+        "line_end": 169876,
+        "line_start": 169876,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "8d22b6181e839c48e03e5ee9877204cce4cedce9c8af23c647b3def90a5d1e52"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SIM-006",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SIM-006",
+        "item": 81,
+        "line_end": 169877,
+        "line_start": 169877,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "3fd6d2df49eb25c05b67e2024cf8987b8dc65a8423110f7e9857d87f17d7a092"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SIM-007",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SIM-007",
+        "item": 81,
+        "line_end": 169878,
+        "line_start": 169878,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "0c4a75856a00151d345ddb322cd9e907140da0162dab954518f336be872ed43e"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SIM-008",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SIM-008",
+        "item": 81,
+        "line_end": 169879,
+        "line_start": 169879,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c5186509733f694fc5b7d3491923efd20b412d72cd4bf4a57f15613443f4bd5c"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SIM-009",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SIM-009",
+        "item": 81,
+        "line_end": 169880,
+        "line_start": 169880,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "f013380d680593e18e0af5c91387439fe27dea7a70a29bd90b9f5c7def7b5083"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SIM-010",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SIM-010",
+        "item": 81,
+        "line_end": 169881,
+        "line_start": 169881,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "4b72faf3bb42de9f04f55d4c05eb5a810bedb2071c1de9da9389f27551d2debd"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SIM-011",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SIM-011",
+        "item": 81,
+        "line_end": 169882,
+        "line_start": 169882,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c97fa03e3199a666045264d17377f70e70c2b52bff8dbfc01f8c0860dc28c002"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SIM-012",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SIM-012",
+        "item": 81,
+        "line_end": 169883,
+        "line_start": 169883,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "bdbcd24611f620fd751a16ddd67d8ba95d4b5f8c4409a45b8eef4ffd6ef56a3f"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SIM-013",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SIM-013",
+        "item": 81,
+        "line_end": 169884,
+        "line_start": 169884,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "bc724e9db8fd49088d6a615b3d3491e69e53e4610137e8873df1cd3cfd330471"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-SIM-014",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-SIM-014",
+        "item": 81,
+        "line_end": 169885,
+        "line_start": 169885,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "f1b9b056526bb7dc15f96f0bcea6da501fe403cd99b04d00cabeaf0427dfee29"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-TWIN-001",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-TWIN-001",
+        "item": 81,
+        "line_end": 169893,
+        "line_start": 169893,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "428370d058faaddc295e3779bea2ce161a344b6fed80ecbbf749904607389468"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-TWIN-002",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-TWIN-002",
+        "item": 81,
+        "line_end": 169894,
+        "line_start": 169894,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "9d6bbe7508e1d97db439966e99d9c3a83579380097cfe978a10dcc57b3c4190c"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-TWIN-003",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-TWIN-003",
+        "item": 81,
+        "line_end": 169895,
+        "line_start": 169895,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "ebee7c4dd7f7f2d42c3fe8e384814d7b52b3045b58d235e01dabbadb74f37308"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-TWIN-004",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-TWIN-004",
+        "item": 81,
+        "line_end": 169896,
+        "line_start": 169896,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "223c5b58cfd1ecf480d24c67513f6cecb057b9650980a1ef7acbaf0d25c72489"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-TWIN-005",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-TWIN-005",
+        "item": 81,
+        "line_end": 169897,
+        "line_start": 169897,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "7da7f225e4a3eb29cfb73a2eaee2ad3fd48ff4abb63179e514fe570e32c1312f"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-TWIN-006",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-TWIN-006",
+        "item": 81,
+        "line_end": 169898,
+        "line_start": 169898,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "9cef85cc7c7c0a86686c63a49cd048bd23a12c8b3c680bbb74411694a97d8187"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-TWIN-007",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-TWIN-007",
+        "item": 81,
+        "line_end": 169899,
+        "line_start": 169899,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "5d9358621a53ccf06f3fd14cf83bde5c45ada9edae5699ba8c8db7b96e43bdd6"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-TWIN-008",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-TWIN-008",
+        "item": 81,
+        "line_end": 169900,
+        "line_start": 169900,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "bc3501a709a727428d3e0009df9ca58f2982c6dc2beb448e828193940a6b7f97"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-TWIN-009",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-TWIN-009",
+        "item": 81,
+        "line_end": 169901,
+        "line_start": 169901,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "9f70d9970c21ff3488960a739b5869f07a7919263e80fd8de8d590f58ad7ea57"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-TWIN-010",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-TWIN-010",
+        "item": 81,
+        "line_end": 169902,
+        "line_start": 169902,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "2ef86a09ae455531efecc5399da6555c1c996e64556c536abe29779b22ae7e62"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-UI-001",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-UI-001",
+        "item": 81,
+        "line_end": 170062,
+        "line_start": 170062,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "ba0a6b852643d84e4aaf989e7c0950f007b508fc9893a9d056af69bd9402ec6e"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-UI-002",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-UI-002",
+        "item": 81,
+        "line_end": 170063,
+        "line_start": 170063,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "887de4e7098b987f5cf2a26b419afd04c0a9f5426a49df193d3a364972a64ffe"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-UI-003",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-UI-003",
+        "item": 81,
+        "line_end": 170064,
+        "line_start": 170064,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "67e729800cb740acf3833903df79b5da717337eb211ec3a0d038985727f4e4c3"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-UI-004",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-UI-004",
+        "item": 81,
+        "line_end": 170065,
+        "line_start": 170065,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "d11f3ff59a15925691b70e43741969d3669547375472f713e88c6addf8eb84ce"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-UI-005",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-UI-005",
+        "item": 81,
+        "line_end": 170066,
+        "line_start": 170066,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "ada4077856c4343c860f1abb08972bc555ce1946e6ab3777685fa20228098441"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-UI-006",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-UI-006",
+        "item": 81,
+        "line_end": 170067,
+        "line_start": 170067,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "9f249aaf8f3988d2d878c5b900409b3b846b51a6c2193d5973432cc702d82f44"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-UI-007",
+      "kind": "FR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-UI-007",
+        "item": 81,
+        "line_end": 170068,
+        "line_start": 170068,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "e6fc8890bea0046ba59c633e0a1e0e2c7ea3712da1656f4ae7f138644727d4b6"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-UI-008",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-UI-008",
+        "item": 81,
+        "line_end": 170069,
+        "line_start": 170069,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "d11f00be61a6d3652b58b43965f427159c7c2e4f0b2feab62c365c7b9fce205d"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-UI-009",
+      "kind": "FR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-UI-009",
+        "item": 81,
+        "line_end": 170070,
+        "line_start": 170070,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "935cc09d5ef75d641d4849748b1d5903f6a5417a62eee850e134b2f2ad67c88d"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-UI-010",
+      "kind": "FR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-UI-010",
+        "item": 81,
+        "line_end": 170071,
+        "line_start": 170071,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a5d244d8e5fc54dafff404b929940fdf257f087fc2bfd7386cd7339cc1057493"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-VIS-001",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-VIS-001",
+        "item": 81,
+        "line_end": 169927,
+        "line_start": 169927,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "ce1b68ab1cde00a932a2a3352535e4a30ee1357125dbb8696036d817933338b9"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-VIS-002",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-VIS-002",
+        "item": 81,
+        "line_end": 169928,
+        "line_start": 169928,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "29b72b264cbbd0cac99ed1ab864eaa7d0c0bb9e898eeaeb3fa70ba40d7b06ccc"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-VIS-003",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-VIS-003",
+        "item": 81,
+        "line_end": 169929,
+        "line_start": 169929,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "8722121eb25d355d914f106eb8ca14eb0ad9dcccb2c5f253525f20a58755b796"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-VIS-004",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-VIS-004",
+        "item": 81,
+        "line_end": 169930,
+        "line_start": 169930,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "7c335c91155785f79eb694dedd1af6b7b3f2c5b2703c0cf7446b6f08bdd7b47b"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-VIS-005",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-VIS-005",
+        "item": 81,
+        "line_end": 169931,
+        "line_start": 169931,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "b20ef9912dce55aef6a4c0823a08876a048bf9463888278ffa7b6ee6b0096457"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-VIS-006",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-VIS-006",
+        "item": 81,
+        "line_end": 169932,
+        "line_start": 169932,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "deafc1c48790f741bc856eb4518dd2f2021fce0b3cd4c5cbca0be4c55c29ffb5"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-VIS-007",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-VIS-007",
+        "item": 81,
+        "line_end": 169933,
+        "line_start": 169933,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c5fe48890e5d0566b4aac0c8f6c0c44689b70d082a6462ae0bae508673e757b5"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-VIS-008",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-VIS-008",
+        "item": 81,
+        "line_end": 169934,
+        "line_start": 169934,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "6d2e2b26d6777816516dd5384b1f133a8afe791ce5dc384ca0f2d67b8ba337e2"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-VIS-009",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-VIS-009",
+        "item": 81,
+        "line_end": 169935,
+        "line_start": 169935,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "9a5fba1adf6b19159331fd837626f1c181a32b18acef61c32008354aea73dc44"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-VIS-010",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-VIS-010",
+        "item": 81,
+        "line_end": 169936,
+        "line_start": 169936,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a2ef8c003b34a8d84a16c66e48141b8ac4ffb5cbc9f8d378910883268a5a58f9"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-VIS-011",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-VIS-011",
+        "item": 81,
+        "line_end": 169937,
+        "line_start": 169937,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "bdf73557c073c4f49ff8f9aa84b0bc236d549d841bbcf27f503929ba09408b40"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-VIS-012",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-VIS-012",
+        "item": 81,
+        "line_end": 169938,
+        "line_start": 169938,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "97dde0b9f53bcc44ed746ff1612088b5c95c2c36d79cdabec1c73d2ab9e0b445"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-VIS-013",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-VIS-013",
+        "item": 81,
+        "line_end": 169939,
+        "line_start": 169939,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a1b907a89a398db4e97829ed866620e9eabf1e121f53421685ecb137e41bdeb7"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-VIS-014",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-VIS-014",
+        "item": 81,
+        "line_end": 169940,
+        "line_start": 169940,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "5bfc94e42272e36d8e7c860187087776572052cf1c9c2a574c6402a229f2a247"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-VIS-015",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F1",
+      "source": {
+        "heading": "Item 81 / FR-VIS-015",
+        "item": 81,
+        "line_end": 169941,
+        "line_start": 169941,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c4dee8a176a8df70203abecc0b99b10916068da4482c7d9bf2fcd86e4aea59d6"
+      },
+      "status": null
+    },
+    {
+      "id": "FR-VIS-016",
+      "kind": "FR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": null,
+      "revision": null,
+      "scope_class": "F0",
+      "source": {
+        "heading": "Item 81 / FR-VIS-016",
+        "item": 81,
+        "line_end": 169942,
+        "line_start": 169942,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "d5f5011dcef3c38d3852aef8555c108d536b690a4987f77b681f15fdee43fd81"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-CAP-001",
+      "kind": "NFR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-CAP-001",
+        "item": 82,
+        "line_end": 171344,
+        "line_start": 171333,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "b7eb03085cfc3d43d7cf7441315958f8d4b4ba05b1aad5f07c63947c4d66594f"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-CAP-002",
+      "kind": "NFR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-CAP-002",
+        "item": 82,
+        "line_end": 171364,
+        "line_start": 171346,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "68801290ec9bac2d569e48a1b260d9467390f25c23c02e69283119fb80ec95b8"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-CAP-003",
+      "kind": "NFR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-CAP-003",
+        "item": 82,
+        "line_end": 171377,
+        "line_start": 171366,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "df11974a8b0f464415f5b5eb2b3548f32bc4aa2380656c2fd156e7883afff0d0"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-CAP-004",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-CAP-004",
+        "item": 82,
+        "line_end": 171395,
+        "line_start": 171379,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "2775d5f70e7bd64d4c42219c352cba55d626bb1d0b0134e013a78405b90d721f"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-CAP-005",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-CAP-005",
+        "item": 82,
+        "line_end": 171408,
+        "line_start": 171397,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "4ea9d68010b562ff496922ce13130bf18b785d371f5c28dd89c9f639913e349a"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-CAP-006",
+      "kind": "NFR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-CAP-006",
+        "item": 82,
+        "line_end": 171421,
+        "line_start": 171410,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "1bd53ee72c53d0063cf8a4e5120b4ac7d3492617d8b2997e518a87b4c8fce8e4"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-CAP-007",
+      "kind": "NFR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": "C3",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-CAP-007",
+        "item": 82,
+        "line_end": 171439,
+        "line_start": 171423,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "435b409604a09f0cf67e7392796f1384065243f69ebd7fee40a6c640d3478fda"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-CAP-008",
+      "kind": "NFR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-CAP-008",
+        "item": 82,
+        "line_end": 171452,
+        "line_start": 171441,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "5d64a3ac191cb67f416c79ccfa3cfe0e647bc3140fc36011ad4569860461834a"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-CAP-009",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-CAP-009",
+        "item": 82,
+        "line_end": 171465,
+        "line_start": 171454,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "7b030d53fdb5ada1eebb5a8e7e10b60eb8f5851a025a3e92b2757d3627b278ad"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-CAP-010",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-CAP-010",
+        "item": 82,
+        "line_end": 171480,
+        "line_start": 171467,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "33e48959b0d34056dd239abcd4195bd81a3878d616ec0ca4572c4e4b4ecababc"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DATA-001",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DATA-001",
+        "item": 82,
+        "line_end": 172453,
+        "line_start": 172444,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "9c289aad1aaa45686c788cebb8bb51814e0b0fd10b4d5fff81c9832ccafb1ba4"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DATA-002",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DATA-002",
+        "item": 82,
+        "line_end": 172466,
+        "line_start": 172455,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "795ef5f0b85c0f92c588c1896c35d5d35fbc421a5d32d16185060527d112fe0e"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DATA-003",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DATA-003",
+        "item": 82,
+        "line_end": 172477,
+        "line_start": 172468,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "03d1acf9c5732c903be68a9156771293fca409f15e616e3edfb24549540231b4"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DATA-004",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DATA-004",
+        "item": 82,
+        "line_end": 172488,
+        "line_start": 172479,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "5c60de51e67d4f31d6b4783fe87c856d7903b77d0be69081e1eac9e230d77fd3"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DATA-005",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DATA-005",
+        "item": 82,
+        "line_end": 172497,
+        "line_start": 172490,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "2b36b18640dd961a442af6b9490425398b12b3d8d662cff99d8ed0fa1a556fe7"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DATA-006",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DATA-006",
+        "item": 82,
+        "line_end": 172512,
+        "line_start": 172499,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "ce3956eaf29bdfc4e49c4de075463e8d5e2cdc957301e543413fad1220ddc9fa"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DATA-007",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DATA-007",
+        "item": 82,
+        "line_end": 172525,
+        "line_start": 172514,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "67c35b3d8179cfde805b1d778e5564efde2a12f731fb63287a0ef40b22141289"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DATA-008",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DATA-008",
+        "item": 82,
+        "line_end": 172539,
+        "line_start": 172527,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "6ad6d2fe1de80f56dcfa40fcb68c6481cbb4d8fc2238b6d975b2a3fb7d25e082"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DEP-001",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DEP-001",
+        "item": 82,
+        "line_end": 172273,
+        "line_start": 172262,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "084714dac7f8d5bfb8939b0e1e72cf508eebbf1fec2f27ff50b3330c29c4e109"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DEP-002",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DEP-002",
+        "item": 82,
+        "line_end": 172284,
+        "line_start": 172275,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "d90de30e170d3f6043ed41d324a133c40c5326d99fcd06a5598512d795114d89"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DEP-003",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DEP-003",
+        "item": 82,
+        "line_end": 172297,
+        "line_start": 172286,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "b64e70646315445457061db550d3e1032be801dafd10a2b165f9578c427a9544"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DEP-004",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DEP-004",
+        "item": 82,
+        "line_end": 172306,
+        "line_start": 172299,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "5102435e9b00ad1f56df85cc26b4e8562e43ac17122d7642fe3635538203ee3c"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DEP-005",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DEP-005",
+        "item": 82,
+        "line_end": 172319,
+        "line_start": 172308,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "69d916c6c205957bd4d5429bc469c5397d91410973ea566afc65a83e08a1f369"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DEP-006",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DEP-006",
+        "item": 82,
+        "line_end": 172332,
+        "line_start": 172321,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "3b8f950d20c516034408f5d34f82449026cfe31767582ee3aa55d2006610381c"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DX-001",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DX-001",
+        "item": 82,
+        "line_end": 172345,
+        "line_start": 172336,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "12c3766cf4223be8bad443f26c95d632c54338dbabb40fa792baf7fa4c33b721"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DX-002",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DX-002",
+        "item": 82,
+        "line_end": 172358,
+        "line_start": 172347,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c2de7b33027d6527b7a88d224edd6dc3b6179e6765c424f007d8f8258f8c0e15"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DX-003",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DX-003",
+        "item": 82,
+        "line_end": 172371,
+        "line_start": 172360,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "b4ee6bdf133f26af2286837e657dee6c2a66d2373d1ef9f108eb3bdceee8a4a4"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DX-004",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DX-004",
+        "item": 82,
+        "line_end": 172382,
+        "line_start": 172373,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "40e3eb38250de77e36102f7e08e7dda5c15ef9477e31aa855fdd5259f0080c82"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DX-005",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DX-005",
+        "item": 82,
+        "line_end": 172399,
+        "line_start": 172384,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "82d1d8247fda324925892d45f83a02b1fbfac32592f8664a210b01fd7669f235"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DX-006",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DX-006",
+        "item": 82,
+        "line_end": 172412,
+        "line_start": 172401,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "f9da3f128b964bedd3a594472d3aecb893dabae93420c63dea5d77ad754406f1"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DX-007",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DX-007",
+        "item": 82,
+        "line_end": 172427,
+        "line_start": 172414,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "ddfc22a279d71dfcdb52f19bfc3bbef5bceb1ab2e2638ded81ea4638a2fbfbc1"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-DX-008",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-DX-008",
+        "item": 82,
+        "line_end": 172440,
+        "line_start": 172429,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "b553e2f2accfb7457bc25c5e4f64b6075fec1155f21cdbee1a2304c3bba3900b"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-GOV-001",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-GOV-001",
+        "item": 82,
+        "line_end": 171028,
+        "line_start": 171021,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "02fe8018b86c51a8434ccf380ef42eb67549709e74e7d278ec906e90f588e61f"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-GOV-002",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-GOV-002",
+        "item": 82,
+        "line_end": 171037,
+        "line_start": 171030,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "6408368285a56864accf0b714d4a1c25b2818dbdfa7afe209ee19bdb7e083d05"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-GOV-003",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-GOV-003",
+        "item": 82,
+        "line_end": 171046,
+        "line_start": 171039,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "8249ad7adb8e9dc9dc1f26aa4b74f275650b8d0143ae05b8f98f400190875287"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-GOV-004",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-GOV-004",
+        "item": 82,
+        "line_end": 171055,
+        "line_start": 171048,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "28b70f12bc791b0838f8a2ebdd0dbc09a7f24ad4430619fce73ee3e75a743eb0"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-GOV-005",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-GOV-005",
+        "item": 82,
+        "line_end": 171064,
+        "line_start": 171057,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "ebb32e0a10ca285b1bca48c5caf0a5529d8108ee1d2f70bceca8e7fcf68c5606"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-GOV-006",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-GOV-006",
+        "item": 82,
+        "line_end": 171073,
+        "line_start": 171066,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "eed2c9cbc4be4ba11a089952aa468dab13e8dc6d185ad04e00c4259417ae7641"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-GOV-007",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-GOV-007",
+        "item": 82,
+        "line_end": 171084,
+        "line_start": 171075,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "68152675d85831391cb94071ac14b3e3f9e2c64494a387b9eb504d607b7d74f5"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-GOV-008",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-GOV-008",
+        "item": 82,
+        "line_end": 171093,
+        "line_start": 171086,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "e0d6cbd4cdeaaebb859d3d19631d605b546ae331b74b2ca68bb15e4cc28761dd"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-GOV-009",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-GOV-009",
+        "item": 82,
+        "line_end": 171102,
+        "line_start": 171095,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c32bf4dd02da822d6fcdfaf16ba4da989323bb6a211f6e16ab342180d3c6cd7b"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-GOV-010",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-GOV-010",
+        "item": 82,
+        "line_end": 171111,
+        "line_start": 171104,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "6a07630713a748b985307e47e9e116b2d5991361ec984adb2a40b6162c4dee2b"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-OBS-001",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-OBS-001",
+        "item": 82,
+        "line_end": 171926,
+        "line_start": 171917,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "4e16aa1ab33cb1d3adb14a020313dd39ef10f3f725c55c697baaa7f61ae70c3e"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-OBS-002",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-OBS-002",
+        "item": 82,
+        "line_end": 171941,
+        "line_start": 171928,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "bbca71599fdb6abfa24a242d3430a8f32afa9741c15205752b97a9f2b995ceb3"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-OBS-003",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-OBS-003",
+        "item": 82,
+        "line_end": 171950,
+        "line_start": 171943,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "e782566896c0c49850537e30af922fba6e01035daaaaa8d3f89e5d0b1ab66181"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-OBS-004",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-OBS-004",
+        "item": 82,
+        "line_end": 171961,
+        "line_start": 171952,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "444d5f72aded3de7457e3a2d4ecd52916aa82c21ea1126c653ea7b9f2f7e9076"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-OBS-005",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-OBS-005",
+        "item": 82,
+        "line_end": 171975,
+        "line_start": 171963,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "e2cf228c117850e967fb795bbd03d090425db9481cd2f96a36447c5de4808d75"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-OBS-006",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-OBS-006",
+        "item": 82,
+        "line_end": 171986,
+        "line_start": 171977,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "284cf175047be3bba02fc5056ef5d29747f2a7a1b8d60a013e8061a94db89878"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-OBS-007",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-OBS-007",
+        "item": 82,
+        "line_end": 171997,
+        "line_start": 171988,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "4e893a2acd1fe614dec3a529efcfb46f282b060041e2f9d7deb8108d45821c36"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-OBS-008",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-OBS-008",
+        "item": 82,
+        "line_end": 172016,
+        "line_start": 171999,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "b12ad32f4f8460179ec5abf90f6781e403d1c329ff83249db770ec36152bcf0f"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-OBS-009",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-OBS-009",
+        "item": 82,
+        "line_end": 172031,
+        "line_start": 172018,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "b3cfd4821f2b110a3908ef8b8a45fafcf82b514779307ff33a4c02647cebc5ff"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-PERF-001",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-PERF-001",
+        "item": 82,
+        "line_end": 171128,
+        "line_start": 171115,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "473ba8acc95f6b14ef370774c9762f7e099621ba75d2dd668aedc34ac8b95164"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-PERF-002",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-PERF-002",
+        "item": 82,
+        "line_end": 171141,
+        "line_start": 171130,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "2cce86e07454cf74c9fa15b4c8dbd5474b0e21ffe5588abb457789b0bb4b1f30"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-PERF-003",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-PERF-003",
+        "item": 82,
+        "line_end": 171157,
+        "line_start": 171143,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "f59a7fee2a643c64b75dec11d284c667fa9e9667c0ff0953eacc0e96aff16244"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-PERF-004",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-PERF-004",
+        "item": 82,
+        "line_end": 171173,
+        "line_start": 171159,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "8375d7628d3a37a82904531308cef758a91e9eb4a7382534adea824a5dd2347c"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-PERF-005",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-PERF-005",
+        "item": 82,
+        "line_end": 171186,
+        "line_start": 171175,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "cb077be1ee7d042f2d08379b1dcf112c39a4cb8ca226c8a38864921ffc2015f9"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-PERF-006",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-PERF-006",
+        "item": 82,
+        "line_end": 171199,
+        "line_start": 171188,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "52d1c1987d873182a35af2f48d78145b4154f1527edf3f7355a2c9545028c49a"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-PERF-007",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-PERF-007",
+        "item": 82,
+        "line_end": 171216,
+        "line_start": 171201,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a2b1360104a3130b13085e155e489d9f53d6783d7026c25d2eed7b4110af527a"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-PERF-008",
+      "kind": "NFR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-PERF-008",
+        "item": 82,
+        "line_end": 171233,
+        "line_start": 171218,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a2389c8c669f2c7ddcb1b1fe0c6bb5a1ef5adf1e454d8f653e0a1c6f4785b4ad"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-PERF-009",
+      "kind": "NFR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-PERF-009",
+        "item": 82,
+        "line_end": 171248,
+        "line_start": 171235,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "64561daab0267f068e10f59ffa9be38d23027f2301b59422b189ebf3791ed9c7"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-PERF-010",
+      "kind": "NFR",
+      "primary_owner": "Selman Özdemir",
+      "quality_class": "C3",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-PERF-010",
+        "item": 82,
+        "line_end": 171263,
+        "line_start": 171250,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "8e4956a7a977c318398346489b15fe9c71dccc941efc0fea0b3cf786d5405890"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-PERF-011",
+      "kind": "NFR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-PERF-011",
+        "item": 82,
+        "line_end": 171282,
+        "line_start": 171265,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "1d6a0f0ba9b053fe4b95edb2325a3cf8e805a79204351e0047380aa8ba62dd53"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-PERF-012",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-PERF-012",
+        "item": 82,
+        "line_end": 171295,
+        "line_start": 171284,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "bf0ba77e80f3f6f52cce340e173de3ee767ad34d11a0e6d48cb04dac877e2451"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-PERF-013",
+      "kind": "NFR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-PERF-013",
+        "item": 82,
+        "line_end": 171316,
+        "line_start": 171297,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "cd4d24c46411773b242362afcb0f2448065b0b76c328d5952b96a75c4b125384"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-PERF-014",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-PERF-014",
+        "item": 82,
+        "line_end": 171329,
+        "line_start": 171318,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "0705f3030afdfb479943d76b5d7197d802acca2746f8bb80974d1626e7c3a847"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REC-001",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REC-001",
+        "item": 82,
+        "line_end": 171635,
+        "line_start": 171626,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "6bf149356c26b3a78f3dadfd9fdd78134a6720ef7dfc609d2ee77e66184f72dc"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REC-002",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REC-002",
+        "item": 82,
+        "line_end": 171648,
+        "line_start": 171637,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "dbb88209c18960ab4c9d17592b6a275d92f65e18d68628b64d174dc31bb50c7a"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REC-003",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REC-003",
+        "item": 82,
+        "line_end": 171663,
+        "line_start": 171650,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "ce6f3b1f0294b3d5ad0bb8531af2b7efb80d03c33a74c08b77060389eb31afd0"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REC-004",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REC-004",
+        "item": 82,
+        "line_end": 171681,
+        "line_start": 171665,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "2a985f1ab35bd8a00f96be4efadb5333989b54f596e7e47758d64c16cea69876"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REC-005",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REC-005",
+        "item": 82,
+        "line_end": 171694,
+        "line_start": 171683,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "fa4469b9c9bacfd2bad26f88fc66c7e8cf2919bbb23b29a58d0ab9c778cf2246"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REC-006",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REC-006",
+        "item": 82,
+        "line_end": 171705,
+        "line_start": 171696,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "7e530c6e5504566cec7b43bb7e37be16043bc0c31a527537da9b31af237d4976"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REC-007",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REC-007",
+        "item": 82,
+        "line_end": 171716,
+        "line_start": 171707,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "53f72445f09cce32418df8a389777ef2d0d65e36a0253d0c9f1da516e6f44a06"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REC-008",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REC-008",
+        "item": 82,
+        "line_end": 171727,
+        "line_start": 171718,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a12ee3a1fe17eb7cd353d40bb54f21e52210e8cf16496e1017c34e68d1af2cfa"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REC-009",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "S2",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REC-009",
+        "item": 82,
+        "line_end": 171740,
+        "line_start": 171729,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "44b810d0612cb4a168ac5ea28680edb80098a97c6673f54a4f343108e3c86a34"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REC-010",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REC-010",
+        "item": 82,
+        "line_end": 171755,
+        "line_start": 171742,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "7c54e499f3ee65f0401eb235181dba33bbaabde3e43b4392caa4d5c30e2dca47"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REL-001",
+      "kind": "NFR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REL-001",
+        "item": 82,
+        "line_end": 171493,
+        "line_start": 171484,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a2dd7e19c9de63c292c11f8d9b00073db7b9031156fe2d679f40e2ad4f364bb7"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REL-002",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REL-002",
+        "item": 82,
+        "line_end": 171504,
+        "line_start": 171495,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "8d4df479f3d6a81be66c666f949893f5d67c2d7d8955b6ba01cc2a9fe1cc8ef1"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REL-003",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REL-003",
+        "item": 82,
+        "line_end": 171517,
+        "line_start": 171506,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "07c2768922b52a480872cdf6a8e0d804753f8f1a6470d33917fd27e3107f6b0c"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REL-004",
+      "kind": "NFR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REL-004",
+        "item": 82,
+        "line_end": 171530,
+        "line_start": 171519,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "575b8c117a1ce9c65300213fdeb4dc63ad4daf5be282f4907e02756db9c6a490"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REL-005",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REL-005",
+        "item": 82,
+        "line_end": 171547,
+        "line_start": 171532,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "3d98bd74d04bbdafec55cefc9842c0df61eb2abd244af73e0fc3122dd04e97cd"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REL-006",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REL-006",
+        "item": 82,
+        "line_end": 171564,
+        "line_start": 171549,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c8995c0903965b07525144c4c162204e246778dddcf24480a9ee6436a413cf3e"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REL-007",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REL-007",
+        "item": 82,
+        "line_end": 171581,
+        "line_start": 171566,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "185abf3912bc01c7e2b436a9ba2c3e3257e8961b083a7315d736b11d5261160c"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REL-008",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REL-008",
+        "item": 82,
+        "line_end": 171594,
+        "line_start": 171583,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "26743cfbb77a3b504a9eb7973587494eab894868800319a9e5cbf7e4f747874e"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REL-009",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REL-009",
+        "item": 82,
+        "line_end": 171611,
+        "line_start": 171596,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c46331fed925717a6d314c16d1ac4a3d4eb106f10796d64f01bffc88b2c3b580"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REL-010",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REL-010",
+        "item": 82,
+        "line_end": 171622,
+        "line_start": 171613,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "367525d13f9e85c0a40b7281753619261a710b0e3260ba2a49cc807f59c5ddf9"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REP-001",
+      "kind": "NFR",
+      "primary_owner": "Batuhan Kaya",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REP-001",
+        "item": 82,
+        "line_end": 172049,
+        "line_start": 172035,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "001b444383f0fde753f27aa2fe588be984ec9706bb7ab96f0d615a8305760465"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REP-002",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REP-002",
+        "item": 82,
+        "line_end": 172062,
+        "line_start": 172051,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "9b9c0e147e24f7f11576552bb950b54a67dede4c14ee6a0c4c24f5411e5ea221"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REP-003",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REP-003",
+        "item": 82,
+        "line_end": 172071,
+        "line_start": 172064,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "33f4406abebae2a4357e8b0c3f8a21440461a2f0085b932c3fe790c56cb4b12a"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REP-004",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REP-004",
+        "item": 82,
+        "line_end": 172082,
+        "line_start": 172073,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "755ea1376ebb5a3a318ee5075e69102a3487766c50e25743daf815048f308be9"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REP-005",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REP-005",
+        "item": 82,
+        "line_end": 172093,
+        "line_start": 172084,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "71e1aeb473ca1d2046d8bfa084f4492d141f87bd2a9a59b0ceac90576175d78a"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REP-006",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REP-006",
+        "item": 82,
+        "line_end": 172110,
+        "line_start": 172095,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "0a669f9e67ebe7b9e83c74e858ad01e74f3cd4c51037bc1aa6d401506f07d29d"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REP-007",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REP-007",
+        "item": 82,
+        "line_end": 172119,
+        "line_start": 172112,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "d2347ae5e905ed5483b4bdbfd13bcd6b45a42b881d8e6f8b794ccedeea0e9bef"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REP-008",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REP-008",
+        "item": 82,
+        "line_end": 172132,
+        "line_start": 172121,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "19a4af7aaf3ab1218454f9a261ececb0a85afc8823eed9a41237db22af9b9720"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-REP-009",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "C3",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-REP-009",
+        "item": 82,
+        "line_end": 172149,
+        "line_start": 172134,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "83b5b3d8cb3cf222ea878b4ca830ef81a8dcd19e709b4c76b8ac06329e8f6897"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-RES-001",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-RES-001",
+        "item": 82,
+        "line_end": 172168,
+        "line_start": 172153,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "dce548ca25771977f6a834980f0fdd5fe097b7e1aa0c60641c3bc84d44c30831"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-RES-002",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-RES-002",
+        "item": 82,
+        "line_end": 172181,
+        "line_start": 172170,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "e38e68c9f0804961f89d7a8f444a26a0b7377fb45264c78eedfec4d77d44ebd1"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-RES-003",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-RES-003",
+        "item": 82,
+        "line_end": 172192,
+        "line_start": 172183,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "24664b1ef823b899c13033a7a06f84c77c5697407d33cdf282e3b548e9b9f50d"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-RES-004",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-RES-004",
+        "item": 82,
+        "line_end": 172205,
+        "line_start": 172194,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "3d9ceb52f79291edf5725ed7af2535ffd25ab6c3d2e44f445c83c9a1153febaf"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-RES-005",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-RES-005",
+        "item": 82,
+        "line_end": 172219,
+        "line_start": 172207,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "e0d881a988e96545c42a29dfbff65314407fea299f7a759c49e63b33028f98cd"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-RES-006",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-RES-006",
+        "item": 82,
+        "line_end": 172232,
+        "line_start": 172221,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "68d4f49c541fabf0c1ae04948f11047dfc19aa6d7f84ea3abc7120ff1c1de751"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-RES-007",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-RES-007",
+        "item": 82,
+        "line_end": 172243,
+        "line_start": 172234,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "582ff89e8b72b4a2c000d83a2f855d6664896104eb0887283c7717f890dbc187"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-RES-008",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "C3",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-RES-008",
+        "item": 82,
+        "line_end": 172258,
+        "line_start": 172245,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "c30822b4b69c15416c0ff15010aa3d8981a5fc2a5b0d2169fd2d5ab072164944"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-SEC-001",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-SEC-001",
+        "item": 82,
+        "line_end": 171768,
+        "line_start": 171759,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "cc083e52d27a4b7532307201b5a04e845d0d2f47652cf774b1eb7cc7bdfffebb"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-SEC-002",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-SEC-002",
+        "item": 82,
+        "line_end": 171783,
+        "line_start": 171770,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "6b29255972f6380e8d78d473057362519759f7e4b88df2cd6c955cf84a02d927"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-SEC-003",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-SEC-003",
+        "item": 82,
+        "line_end": 171798,
+        "line_start": 171785,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "f071c9b2a70196df18a1a67b03697e429be6d4dcbc80df9f5e138783a7f77305"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-SEC-004",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-SEC-004",
+        "item": 82,
+        "line_end": 171809,
+        "line_start": 171800,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "a62f2d876270bd56dd2163b376b8b336a0e06373e3b740f62ce9fbc145686660"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-SEC-005",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-SEC-005",
+        "item": 82,
+        "line_end": 171820,
+        "line_start": 171811,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "3c0293b91b70972fc606d8e2a029d55d63e518690c1c565591b7747f529f9a6d"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-SEC-006",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-SEC-006",
+        "item": 82,
+        "line_end": 171831,
+        "line_start": 171822,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "bef99c53dd98f3c1fbc68a54f8c0f51d4dc56ac960defc4f2ba274a2da37ec2f"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-SEC-007",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-SEC-007",
+        "item": 82,
+        "line_end": 171844,
+        "line_start": 171833,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "2e77c3160e50ace745aff0502ac89e0a3bebf809069853c868a1c3623d88b8e2"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-SEC-008",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-SEC-008",
+        "item": 82,
+        "line_end": 171857,
+        "line_start": 171846,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "092e227cfd9e3b115d694c217e2eed8b4f5817907131bf5c1681c71aa59c8e95"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-SEC-009",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-SEC-009",
+        "item": 82,
+        "line_end": 171870,
+        "line_start": 171859,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "9825d08266dca15c95530367872a56dedb4ab429399f85970bbc1674f9aa47bd"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-SEC-010",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-SEC-010",
+        "item": 82,
+        "line_end": 171889,
+        "line_start": 171872,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "f4ffed64d212d1c57d2f9f7b76b8ecab16bc43d0f100f3c33157a1a4fd6a54ff"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-SEC-011",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-SEC-011",
+        "item": 82,
+        "line_end": 171902,
+        "line_start": 171891,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "02f268bcc510f361ca0ee58dc5fbbf6d642f67f209838461c993426fc9d027a5"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-SEC-012",
+      "kind": "NFR",
+      "primary_owner": "Yavuz Gümüş",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-SEC-012",
+        "item": 82,
+        "line_end": 171913,
+        "line_start": 171904,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "1c076e630877418b3e58aa7363717bb1ff31a40ad82928d03e2f7542b6f19bfa"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-UX-001",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-UX-001",
+        "item": 82,
+        "line_end": 172558,
+        "line_start": 172543,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "f03ec2c1b28fb6e06f6a5a3e2c14a82556ec600f4a9a2bea7a7aeeeab86cd0a1"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-UX-002",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-UX-002",
+        "item": 82,
+        "line_end": 172569,
+        "line_start": 172560,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "e7b2b3fcd729c7a60ad0f459c0a2807233d06931cd6842adb83ef59840fb5dc2"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-UX-003",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-UX-003",
+        "item": 82,
+        "line_end": 172585,
+        "line_start": 172571,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "ed61e80ce58230978d89d3de1f1fcb3ba3753b76a3b03e800dfc4b1492b6e8d8"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-UX-004",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-UX-004",
+        "item": 82,
+        "line_end": 172596,
+        "line_start": 172587,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "92f85af56689f2ce02f7faa6a65e436063b482e9f249f5e0a5cceb07e366a771"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-UX-005",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "A1",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-UX-005",
+        "item": 82,
+        "line_end": 172610,
+        "line_start": 172598,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "be43b4d64afc4cdbbf1a511b46f1a96ea170ba480d38a3497e076dec31858d06"
+      },
+      "status": null
+    },
+    {
+      "id": "NFR-UX-006",
+      "kind": "NFR",
+      "primary_owner": "Asrın Dündar",
+      "quality_class": "H0",
+      "revision": null,
+      "scope_class": null,
+      "source": {
+        "heading": "Item 82 / NFR-UX-006",
+        "item": 82,
+        "line_end": 172626,
+        "line_start": 172612,
+        "path": "docs/01_Master_Project_Specification.md",
+        "sha256": "1e3c550cf1aa10b69afd1e0291ed4a3e7454866c5df297f512fbf6bf525e3c7c"
+      },
+      "status": null
+    }
+  ],
+  "retired_ids": [],
+  "schema_version": "requirement-catalog-v1",
+  "source_sha256": "83a37cde6b16df98e9ad488bfb596f069651b7c9ee5b7cd77b39481900089a58"
+}

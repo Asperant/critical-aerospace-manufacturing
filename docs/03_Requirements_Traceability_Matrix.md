@@ -18,6 +18,14 @@
 
 > **Reading rule.** This document is a *traceability index*, not a second requirement catalog. It references RequirementIDs and never restates SHALL text (Item 81 §163, Item 83 #2, RTM-INV-02). For wording, open the catalog anchor given in View A.
 
+
+> **WP-GOV-001 implementation delta (2026-10-15).** Historical pre-implementation
+> summaries below remain baseline snapshots. The eight WP-GOV-001 source records
+> now reference real implementation and concrete test assets (§19.1), with local
+> execution recorded under `evidence/WP-GOV-001/`. Their evidence is EVIDENCE_PENDING;
+> remote CI, independent review and post-merge validation remain outstanding.
+> No sealed EvidenceID, accepted measurement or VERIFIED state is asserted.
+
 ---
 
 ## Table of Contents
@@ -148,6 +156,24 @@ Performed programmatically against the 01 catalog tables/headings (Item 81 L1696
 
 **Acceptance denominators derived from the check** (Item 83 Final Acceptance Rules #130–#136): active F0 = 17 must be VERIFIED; active F1 = 159 must be VERIFIED; R1 = 10 must be VERIFIED; H0 = 52 must PASS; A1 = 41 must PASS (unless formally rebaselined); S2 = 23 must be measured with PASS/MISS; C3 = 4 must be measured. No active mandatory requirement may remain UNKNOWN at M8 (#137).
 
+### 3.3 WP-GOV-001 generated catalog inventory
+
+Source: `requirements/coverage_counts.json`; regenerate this block with
+`projectctl catalog-export --artifact rtm-counts`. CI checks the catalog, schema,
+JSON counts and this block against Items 81/82. These are inventory counts;
+null canonical fields and pending NFR metadata remain source gaps.
+
+<!-- WP-GOV-001:GENERATED-COUNTS:START -->
+| Inventory (not verification coverage) | Count |
+|---|---|
+| Total / unique IDs | 306 / 306 |
+| FR / NFR | 186 / 120 |
+| FR F0 / F1 / R1 | 17 / 159 / 10 |
+| NFR H0 / A1 / S2 / C3 | 52 / 41 / 23 / 4 |
+| Missing canonical Revision / Status | 306 / 306 |
+| Recorded retired/superseded IDs | 0 |
+<!-- WP-GOV-001:GENERATED-COUNTS:END -->
+
 ## 4. Trace Model: Nodes, Relations, States, Evidence Semantics
 
 ### 4.1 Graph metamodel used by this RTM
@@ -276,14 +302,14 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 
 | ID | Class | PrimaryOwner | Catalog anchor | Source decisions (DERIVED_FROM) | Planning state | Flags |
 |---|---|---|---|---|---|---|
-| FR-GOV-001 | F1 | Asrın | 01 Item81 FR-GOV-001 L169832 | ITEM-81, FRC-INV-01, RTM-INV-03 | VERIFY_PLANNED | — |
-| FR-GOV-002 | F1 | Asrın | 01 Item81 FR-GOV-002 L169833 | ITEM-81, FRC-INV-02, NFR-INV-01 | VERIFY_PLANNED | — |
-| FR-GOV-003 | F1 | Asrın | 01 Item81 FR-GOV-003 L169834 | ITEM-81, ITEM-62, FRC-INV-05, RESP-INV-01 | VERIFY_PLANNED | — |
+| FR-GOV-001 | F1 | Asrın | 01 Item81 FR-GOV-001 L169832 | ITEM-81, FRC-INV-01, RTM-INV-03 | EVIDENCE_PENDING | — |
+| FR-GOV-002 | F1 | Asrın | 01 Item81 FR-GOV-002 L169833 | ITEM-81, FRC-INV-02, NFR-INV-01 | EVIDENCE_PENDING | — |
+| FR-GOV-003 | F1 | Asrın | 01 Item81 FR-GOV-003 L169834 | ITEM-81, ITEM-62, FRC-INV-05, RESP-INV-01 | EVIDENCE_PENDING | — |
 | FR-GOV-004 | F1 | Asrın | 01 Item81 FR-GOV-004 L169835 | ITEM-81, ITEM-83, FRC-INV-06, RTM-INV-05 | VERIFY_PLANNED (ALLOC-COARSE) | ALLOC-COARSE |
 | FR-GOV-005 | F1 | Yavuz | 01 Item81 FR-GOV-005 L169836 | ITEM-81, ITEM-83, FRC-INV-07, RTM-INV-08 | VERIFY_PLANNED | — |
 | FR-GOV-006 | F1 | Yavuz | 01 Item81 FR-GOV-006 L169837 | ITEM-81, ITEM-83, FRC-INV-08, RTM-INV-68 | VERIFY_PLANNED | — |
 | FR-GOV-007 | F1 | Asrın | 01 Item81 FR-GOV-007 L169838 | ITEM-81, ITEM-73, FRC-INV-25, FRC-INV-26 | VERIFY_PLANNED | — |
-| FR-GOV-008 | F1 | Asrın | 01 Item81 FR-GOV-008 L169839 | ITEM-81, ITEM-68, FRC-INV-13, SCOPE-INV-01 | VERIFY_PLANNED | — |
+| FR-GOV-008 | F1 | Asrın | 01 Item81 FR-GOV-008 L169839 | ITEM-81, ITEM-68, FRC-INV-13, SCOPE-INV-01 | EVIDENCE_PENDING | — |
 | FR-GOV-009 | F1 | Yavuz | 01 Item81 FR-GOV-009 L169840 | ITEM-83, RTM-INV-01, RTM-INV-45 | VERIFY_PLANNED | — |
 | FR-GOV-010 | F1 | Asrın | 01 Item81 FR-GOV-010 L169841 | ITEM-81, ITEM-83, FRC-INV-09, RTM-INV-46 | VERIFY_PLANNED | — |
 
@@ -542,13 +568,13 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 
 | ID | Class | PrimaryOwner | Catalog anchor | Source decisions (DERIVED_FROM) | Planning state | Flags |
 |---|---|---|---|---|---|---|
-| NFR-GOV-001 | H0 | Asrın | 01 Item82 NFR-GOV-001 L171021 | ITEM-82, NFR-INV-01 | VERIFY_PLANNED | — |
-| NFR-GOV-002 | H0 | Asrın | 01 Item82 NFR-GOV-002 L171030 | ITEM-82, NFR-INV-01, FRC-INV-02 | VERIFY_PLANNED | — |
-| NFR-GOV-003 | H0 | Asrın | 01 Item82 NFR-GOV-003 L171039 | ITEM-82, ITEM-62, RESP-INV-01 | VERIFY_PLANNED | — |
+| NFR-GOV-001 | H0 | Asrın | 01 Item82 NFR-GOV-001 L171021 | ITEM-82, NFR-INV-01 | EVIDENCE_PENDING | — |
+| NFR-GOV-002 | H0 | Asrın | 01 Item82 NFR-GOV-002 L171030 | ITEM-82, NFR-INV-01, FRC-INV-02 | EVIDENCE_PENDING | — |
+| NFR-GOV-003 | H0 | Asrın | 01 Item82 NFR-GOV-003 L171039 | ITEM-82, ITEM-62, RESP-INV-01 | EVIDENCE_PENDING | — |
 | NFR-GOV-004 | H0 | Yavuz | 01 Item82 NFR-GOV-004 L171048 | ITEM-82, NFR-INV-02, PERF-INV-01 | VERIFY_PLANNED | — |
 | NFR-GOV-005 | H0 | Yavuz | 01 Item82 NFR-GOV-005 L171057 | ITEM-82, NFR-INV-03, BENCH-INV-06 | VERIFY_PLANNED | — |
 | NFR-GOV-006 | H0 | Yavuz | 01 Item82 NFR-GOV-006 L171066 | ITEM-82, NFR-INV-04, BENCH-INV-37 | VERIFY_PLANNED | — |
-| NFR-GOV-007 | H0 | Asrın | 01 Item82 NFR-GOV-007 L171075 | ITEM-82, NFR-INV-05 | VERIFY_PLANNED | — |
+| NFR-GOV-007 | H0 | Asrın | 01 Item82 NFR-GOV-007 L171075 | ITEM-82, NFR-INV-05 | EVIDENCE_PENDING | — |
 | NFR-GOV-008 | H0 | Asrın | 01 Item82 NFR-GOV-008 L171086 | ITEM-82, NFR-INV-55, NFR-INV-56 | VERIFY_PLANNED | — |
 | NFR-GOV-009 | H0 | Yavuz | 01 Item82 NFR-GOV-009 L171095 | ITEM-82, ITEM-83, RTM-INV-46 | VERIFY_PLANNED | — |
 | NFR-GOV-010 | H0 | Asrın | 01 Item82 NFR-GOV-010 L171104 | ITEM-82, NFR-INV-06, KPI-INV-02 | VERIFY_PLANNED | — |
@@ -1209,14 +1235,14 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 
 | ID | Planned implementation surface (REALIZED_BY) | Contract / policy / data / model identities (EXPOSED_BY · GOVERNED_BY · USES_*) | Repo reference | Target |
 |---|---|---|---|---|
-| FR-GOV-001 | machine-readable requirement catalog + ID lint | DATA:RequirementCatalog | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-GOV-002 | retired/superseded ID registry check in trace linter | DATA:RequirementCatalog | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-GOV-003 | catalog schema: single PrimaryOwner field; CODEOWNERS alignment | DATA:RequirementCatalog | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
+| FR-GOV-001 | machine-readable requirement catalog + ID lint | DATA:RequirementCatalog | requirements/catalog.json; tools/projectctl/src/projectctl/requirement_catalog.py | M4 (F0/F1) |
+| FR-GOV-002 | retired/superseded ID registry check in trace linter | DATA:RequirementCatalog | requirements/catalog.json; tools/projectctl/src/projectctl/requirement_catalog.py | M4 (F0/F1) |
+| FR-GOV-003 | catalog schema: single PrimaryOwner field; CODEOWNERS alignment | DATA:RequirementCatalog | requirements/catalog.json; tools/projectctl/src/projectctl/requirement_catalog.py | M4 (F0/F1) |
 | FR-GOV-004 | DERIVED_FROM edge completeness rule in trace linter | DATA:trace_edges | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-GOV-005 | VERIFIED_BY edge completeness rule (M5 gate) | DATA:trace_edges | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-GOV-006 | EVIDENCED_BY edge rule bound to immutable EvidenceIDs | DATA:EvidenceBundle | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-GOV-007 | requirement-change PR template + freeze-impact review record | POLICY:ChangeControl | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-GOV-008 | ScopeClass enum F0/F1/R1 in catalog schema | DATA:RequirementCatalog | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
+| FR-GOV-008 | ScopeClass enum F0/F1/R1 in catalog schema | DATA:RequirementCatalog | requirements/catalog.json; tools/projectctl/src/projectctl/requirement_catalog.py | M4 (F0/F1) |
 | FR-GOV-009 | trace_edges registry + `mfgctl trace` generated views | DATA:trace_edges · DATA:trace_schema | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-GOV-010 | VERIFIED-state derivation only from applicable CURRENT evidence | DATA:EvidenceApplicability | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 
@@ -1475,13 +1501,13 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 
 | ID | Measured surface (what must exist to be measurable) | Measurement implementation state | Target |
 |---|---|---|---|
-| NFR-GOV-001 | ARCH-PLAT-CICD | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
-| NFR-GOV-002 | ARCH-PLAT-CICD | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
-| NFR-GOV-003 | ARCH-PLAT-CICD | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
+| NFR-GOV-001 | ARCH-PLAT-CICD | requirements/catalog.json; tools/projectctl/src/projectctl/requirement_catalog.py (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
+| NFR-GOV-002 | ARCH-PLAT-CICD | requirements/catalog.json; tools/projectctl/src/projectctl/requirement_catalog.py (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
+| NFR-GOV-003 | ARCH-PLAT-CICD | requirements/catalog.json; tools/projectctl/src/projectctl/requirement_catalog.py (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
 | NFR-GOV-004 | ARCH-PLAT-RELEASE, ARCH-DATA-LINEAGE | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
 | NFR-GOV-005 | ARCH-PLAT-RELEASE | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
 | NFR-GOV-006 | ARCH-PLAT-RELEASE | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
-| NFR-GOV-007 | ARCH-PLAT-CICD | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
+| NFR-GOV-007 | ARCH-PLAT-CICD | requirements/catalog.json; tools/projectctl/src/projectctl/requirement_catalog.py (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
 | NFR-GOV-008 | ARCH-PLAT-CICD | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
 | NFR-GOV-009 | ARCH-PLAT-CICD, ARCH-DATA-OBJ | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
 | NFR-GOV-010 | ARCH-PLAT-CICD | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
@@ -2325,14 +2351,14 @@ No evidence exists. The table fixes, per requirement, **what kind of evidence wi
 
 | ID | Class | Acceptable evidence codes | Required env class(es) | Min evidence maturity at final disposition | EvidenceID | Applicability | EvidenceState |
 |---|---|---|---|---|---|---|---|
-| FR-GOV-001 | F1 | PE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
-| FR-GOV-002 | F1 | PE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
-| FR-GOV-003 | F1 | PE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
+| FR-GOV-001 | F1 | PE | CI | EV-L2 | — | — | EVIDENCE_PENDING |
+| FR-GOV-002 | F1 | PE | CI | EV-L2 | — | — | EVIDENCE_PENDING |
+| FR-GOV-003 | F1 | PE | CI | EV-L2 | — | — | EVIDENCE_PENDING |
 | FR-GOV-004 | F1 | PE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
 | FR-GOV-005 | F1 | TE/PE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
 | FR-GOV-006 | F1 | TE/PE | CI + EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
 | FR-GOV-007 | F1 | PE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
-| FR-GOV-008 | F1 | PE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
+| FR-GOV-008 | F1 | PE | CI | EV-L2 | — | — | EVIDENCE_PENDING |
 | FR-GOV-009 | F1 | PE | CI + EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
 | FR-GOV-010 | F1 | TE/BE/EE | CI + EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
 
@@ -2591,13 +2617,13 @@ No evidence exists. The table fixes, per requirement, **what kind of evidence wi
 
 | ID | Class | Acceptable evidence codes | Required env class(es) | Min evidence maturity at final disposition | EvidenceID | Applicability | EvidenceState |
 |---|---|---|---|---|---|---|---|
-| NFR-GOV-001 | H0 | TE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
-| NFR-GOV-002 | H0 | TE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
-| NFR-GOV-003 | H0 | TE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
+| NFR-GOV-001 | H0 | TE | CI | EV-L2 | — | — | EVIDENCE_PENDING |
+| NFR-GOV-002 | H0 | TE | CI | EV-L2 | — | — | EVIDENCE_PENDING |
+| NFR-GOV-003 | H0 | TE | CI | EV-L2 | — | — | EVIDENCE_PENDING |
 | NFR-GOV-004 | H0 | PE/TE/LE | CI + EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
 | NFR-GOV-005 | H0 | PE/TE/LE | CI + EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
 | NFR-GOV-006 | H0 | PE/TE/LE | CI + EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
-| NFR-GOV-007 | H0 | TE/PE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
+| NFR-GOV-007 | H0 | TE/PE | CI | EV-L2 | — | — | EVIDENCE_PENDING |
 | NFR-GOV-008 | H0 | PE/TE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
 | NFR-GOV-009 | H0 | TE/PE | CI + EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
 | NFR-GOV-010 | H0 | PE/TE | CI + EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
@@ -2930,13 +2956,13 @@ Threshold text is a short index form of Item 82; Item 82 remains the canonical w
 
 | ID | Class | Owner | Metric | Threshold / target | WorkloadProfile | HardwareProfile | Planned measurement mechanism | Observed | Disposition | Evidence state |
 |---|---|---|---|---|---|---|---|---|---|---|
-| NFR-GOV-001 | H0 | Asrın | catalog lint violations | 0 missing/duplicate NFRIDs | — | N/A (not hardware-bound) | TEST-GOV-CATALOG | NOT_YET_MEASURED | — | NOT_YET_EXECUTED |
-| NFR-GOV-002 | H0 | Asrın | retired-ID reuse detections | 0 | — | N/A (not hardware-bound) | TEST-GOV-CATALOG, TEST-GOV-TRACELINT | NOT_YET_MEASURED | — | NOT_YET_EXECUTED |
-| NFR-GOV-003 | H0 | Asrın | NFRs without exactly one PrimaryOwner | 0 | — | N/A (not hardware-bound) | TEST-GOV-CATALOG | NOT_YET_MEASURED | — | NOT_YET_EXECUTED |
+| NFR-GOV-001 | H0 | Asrın | catalog lint violations | 0 missing/duplicate NFRIDs | — | N/A (not hardware-bound) | TEST-GOV-CATALOG | NOT_YET_MEASURED | — | EVIDENCE_PENDING |
+| NFR-GOV-002 | H0 | Asrın | retired-ID reuse detections | 0 | — | N/A (not hardware-bound) | TEST-GOV-CATALOG, TEST-GOV-TRACELINT | NOT_YET_MEASURED | — | EVIDENCE_PENDING |
+| NFR-GOV-003 | H0 | Asrın | NFRs without exactly one PrimaryOwner | 0 | — | N/A (not hardware-bound) | TEST-GOV-CATALOG | NOT_YET_MEASURED | — | EVIDENCE_PENDING |
 | NFR-GOV-004 | H0 | Yavuz | quantitative NFRs lacking metric+measurement context | 0 | — | N/A (not hardware-bound) | INSP-GOV-NFR, TEST-DATA-REFINTEGRITY | NOT_YET_MEASURED | — | NOT_YET_EXECUTED |
 | NFR-GOV-005 | H0 | Yavuz | hardware-dependent final results without HardwareProfile | 0 | — | N/A (not hardware-bound) | INSP-GOV-NFR, TEST-DATA-REFINTEGRITY | NOT_YET_MEASURED | — | NOT_YET_EXECUTED |
 | NFR-GOV-006 | H0 | Yavuz | load-dependent final results without WorkloadProfile | 0 | — | N/A (not hardware-bound) | INSP-GOV-NFR, TEST-DATA-REFINTEGRITY | NOT_YET_MEASURED | — | NOT_YET_EXECUTED |
-| NFR-GOV-007 | H0 | Asrın | NFRs without H0/A1/S2/C3 class | 0 | — | N/A (not hardware-bound) | TEST-GOV-CATALOG, INSP-GOV-NFR | NOT_YET_MEASURED | — | NOT_YET_EXECUTED |
+| NFR-GOV-007 | H0 | Asrın | NFRs without H0/A1/S2/C3 class | 0 | — | N/A (not hardware-bound) | TEST-GOV-CATALOG, INSP-GOV-NFR | NOT_YET_MEASURED | — | EVIDENCE_PENDING |
 | NFR-GOV-008 | H0 | Asrın | post-M6 material NFR changes without freeze-impact review | 0 | — | N/A (not hardware-bound) | INSP-GOV-CHANGECTRL, TEST-GOV-TRACELINT | NOT_YET_MEASURED | — | NOT_YET_EXECUTED |
 | NFR-GOV-009 | H0 | Yavuz | VERIFIED NFRs without durable measurement evidence | 0 | — | N/A (not hardware-bound) | TEST-GOV-TRACELINT, INSP-GOV-ACCEPT | NOT_YET_MEASURED | — | NOT_YET_EXECUTED |
 | NFR-GOV-010 | H0 | Asrın | composite/averaged quality score used for NFR disposition | 0 uses | — | N/A (not hardware-bound) | INSP-GOV-ACCEPT, TEST-GOV-TRACELINT | NOT_YET_MEASURED | — | NOT_YET_EXECUTED |
@@ -3452,35 +3478,35 @@ FR-GOV-001:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-GOV-001 L169832"}
   DERIVED_FROM: [ITEM-81, FRC-INV-01, RTM-INV-03]
   ALLOCATED_TO: [ARCH-PLAT-CICD]
-  REALIZED_BY: {surface: "machine-readable requirement catalog + ID lint", deployable: "repository governance", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "machine-readable requirement catalog + ID lint", deployable: "repository governance", ref: "requirements/catalog.json; tools/projectctl/src/projectctl/requirement_catalog.py"}
   USES_DATA: ["RequirementCatalog"]
-  VERIFIED_BY: [TEST-GOV-CATALOG]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  VERIFIED_BY: [TEST-GOV-001]
+  EXECUTED_AS: [RUN-GOV-001-LOCAL-002]  # local run; acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 FR-GOV-002:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-GOV-002 L169833"}
   DERIVED_FROM: [ITEM-81, FRC-INV-02, NFR-INV-01]
   ALLOCATED_TO: [ARCH-PLAT-CICD]
-  REALIZED_BY: {surface: "retired/superseded ID registry check in trace linter", deployable: "repository governance", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "retired/superseded ID registry check in trace linter", deployable: "repository governance", ref: "requirements/catalog.json; tools/projectctl/src/projectctl/requirement_catalog.py"}
   USES_DATA: ["RequirementCatalog"]
-  VERIFIED_BY: [TEST-GOV-CATALOG, TEST-GOV-TRACELINT]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  VERIFIED_BY: [TEST-GOV-001, TEST-GOV-002]
+  EXECUTED_AS: [RUN-GOV-001-LOCAL-002]  # local run; acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 FR-GOV-003:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-GOV-003 L169834"}
   DERIVED_FROM: [ITEM-81, ITEM-62, FRC-INV-05, RESP-INV-01]
   ALLOCATED_TO: [ARCH-PLAT-CICD]
-  REALIZED_BY: {surface: "catalog schema: single PrimaryOwner field; CODEOWNERS alignment", deployable: "repository governance", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "catalog schema: single PrimaryOwner field; CODEOWNERS alignment", deployable: "repository governance", ref: "requirements/catalog.json; tools/projectctl/src/projectctl/requirement_catalog.py"}
   USES_DATA: ["RequirementCatalog"]
-  VERIFIED_BY: [TEST-GOV-CATALOG]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  VERIFIED_BY: [TEST-GOV-001]
+  EXECUTED_AS: [RUN-GOV-001-LOCAL-002]  # local run; acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 FR-GOV-004:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-GOV-004 L169835"}
   DERIVED_FROM: [ITEM-81, ITEM-83, FRC-INV-06, RTM-INV-05]
@@ -3530,13 +3556,13 @@ FR-GOV-008:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-GOV-008 L169839"}
   DERIVED_FROM: [ITEM-81, ITEM-68, FRC-INV-13, SCOPE-INV-01]
   ALLOCATED_TO: [ARCH-PLAT-CICD]
-  REALIZED_BY: {surface: "ScopeClass enum F0/F1/R1 in catalog schema", deployable: "repository governance", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "ScopeClass enum F0/F1/R1 in catalog schema", deployable: "repository governance", ref: "requirements/catalog.json; tools/projectctl/src/projectctl/requirement_catalog.py"}
   USES_DATA: ["RequirementCatalog"]
-  VERIFIED_BY: [TEST-GOV-CATALOG]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  VERIFIED_BY: [TEST-GOV-001]
+  EXECUTED_AS: [RUN-GOV-001-LOCAL-002]  # local run; acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 FR-GOV-009:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-GOV-009 L169840"}
   DERIVED_FROM: [ITEM-83, RTM-INV-01, RTM-INV-45]
@@ -5766,32 +5792,35 @@ NFR-GOV-001:
   meta: {class: H0, owner: Asrın, anchor: "01 Item82 NFR-GOV-001 L171021"}
   DERIVED_FROM: [ITEM-82, NFR-INV-01]
   ALLOCATED_TO: [ARCH-PLAT-CICD]
+  REALIZED_BY: {surface: "source-linked catalog + ID/class/owner lint", deployable: "repository governance", ref: "requirements/catalog.json; tools/projectctl/src/projectctl/requirement_catalog.py"}
   MEASUREMENT: {metric: "catalog lint violations", threshold: "0 missing/duplicate NFRIDs", workload: "—", hardware: "N/A (not hardware-bound)", observed: null}
-  VERIFIED_BY: [TEST-GOV-CATALOG]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  VERIFIED_BY: [TEST-GOV-001]
+  EXECUTED_AS: [RUN-GOV-001-LOCAL-002]  # local run; acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 NFR-GOV-002:
   meta: {class: H0, owner: Asrın, anchor: "01 Item82 NFR-GOV-002 L171030"}
   DERIVED_FROM: [ITEM-82, NFR-INV-01, FRC-INV-02]
   ALLOCATED_TO: [ARCH-PLAT-CICD]
+  REALIZED_BY: {surface: "source-linked catalog + ID/class/owner lint", deployable: "repository governance", ref: "requirements/catalog.json; tools/projectctl/src/projectctl/requirement_catalog.py"}
   MEASUREMENT: {metric: "retired-ID reuse detections", threshold: "0", workload: "—", hardware: "N/A (not hardware-bound)", observed: null}
-  VERIFIED_BY: [TEST-GOV-CATALOG, TEST-GOV-TRACELINT]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  VERIFIED_BY: [TEST-GOV-001, TEST-GOV-002]
+  EXECUTED_AS: [RUN-GOV-001-LOCAL-002]  # local run; acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 NFR-GOV-003:
   meta: {class: H0, owner: Asrın, anchor: "01 Item82 NFR-GOV-003 L171039"}
   DERIVED_FROM: [ITEM-82, ITEM-62, RESP-INV-01]
   ALLOCATED_TO: [ARCH-PLAT-CICD]
+  REALIZED_BY: {surface: "source-linked catalog + ID/class/owner lint", deployable: "repository governance", ref: "requirements/catalog.json; tools/projectctl/src/projectctl/requirement_catalog.py"}
   MEASUREMENT: {metric: "NFRs without exactly one PrimaryOwner", threshold: "0", workload: "—", hardware: "N/A (not hardware-bound)", observed: null}
-  VERIFIED_BY: [TEST-GOV-CATALOG]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  VERIFIED_BY: [TEST-GOV-001]
+  EXECUTED_AS: [RUN-GOV-001-LOCAL-002]  # local run; acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 NFR-GOV-004:
   meta: {class: H0, owner: Yavuz, anchor: "01 Item82 NFR-GOV-004 L171048"}
   DERIVED_FROM: [ITEM-82, NFR-INV-02, PERF-INV-01]
@@ -5826,12 +5855,13 @@ NFR-GOV-007:
   meta: {class: H0, owner: Asrın, anchor: "01 Item82 NFR-GOV-007 L171075"}
   DERIVED_FROM: [ITEM-82, NFR-INV-05]
   ALLOCATED_TO: [ARCH-PLAT-CICD]
+  REALIZED_BY: {surface: "source-linked catalog + ID/class/owner lint", deployable: "repository governance", ref: "requirements/catalog.json; tools/projectctl/src/projectctl/requirement_catalog.py"}
   MEASUREMENT: {metric: "NFRs without H0/A1/S2/C3 class", threshold: "0", workload: "—", hardware: "N/A (not hardware-bound)", observed: null}
-  VERIFIED_BY: [TEST-GOV-CATALOG, INSP-GOV-NFR]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  VERIFIED_BY: [TEST-GOV-001, TEST-GOV-003]
+  EXECUTED_AS: [RUN-GOV-001-LOCAL-002]  # local run; acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 NFR-GOV-008:
   meta: {class: H0, owner: Asrın, anchor: "01 Item82 NFR-GOV-008 L171086"}
   DERIVED_FROM: [ITEM-82, NFR-INV-55, NFR-INV-56]
@@ -7129,6 +7159,28 @@ Planned query surface (syntax may evolve, Item 83): `mfgctl trace validate | cov
 | Requirement semantic change | new RequirementID preferred with Supersedes/SupersededBy; post-M6 freeze-impact review | Asrın + change control |
 | Finding resolution (View I) | close GAP-RTM-* with reference to CHG/ADR/02 edit; regenerate | resolution owner |
 | Status promotion of this document | Draft → Reviewed only after all four owners confirm their domain rows (GAP-RTM-006) | team |
+
+### 19.1 WP-GOV-001 concrete implementation and verification assets
+
+The planned families remain broader than this WP. TEST-GOV-002 realizes only
+permanent-ID history checks, not the general trace registry in WP-GOV-002.
+TEST-GOV-003 inspects NFR class metadata, not measurement definitions assigned
+elsewhere. Asset implementations and negative cases are in
+`tools/projectctl/tests/test_requirement_catalog.py`; command read-only checks
+are also in `tools/projectctl/tests/test_cli.py`.
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-GOV-001 (`test_gov_001_*`) | TEST-GOV-CATALOG | FR-GOV-001/002/003/008; NFR-GOV-001/002/003/007 |
+| TEST-GOV-002 (`test_gov_002_*`) | TEST-GOV-TRACELINT, permanent-ID slice | FR-GOV-002; NFR-GOV-002 |
+| TEST-GOV-003 (`test_gov_003_*`) | INSP-GOV-NFR, class slice | NFR-GOV-007 |
+
+Catalog/schema/counts: `requirements/`; fail-closed CI entry:
+`.github/workflows/projectctl.yml` → existing `projectctl` job → catalog lint.
+Local run record and source/artifact hashes are under `evidence/WP-GOV-001/`.
+EvidenceState remains EVIDENCE_PENDING until the applicable review/CI/acceptance
+requirements are met; EVIDENCED_BY is empty because no sealed EvidenceBundle
+has been accepted. The missing canonical fields in GAP-RTM-004/005 remain null.
 
 ## 20. Rejected Alternatives
 

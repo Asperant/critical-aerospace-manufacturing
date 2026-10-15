@@ -1,0 +1,15 @@
+{
+  "run_id": "RUN-GOV-001-LOCAL-001",
+  "command": [
+    "/srv/ailab/workspaces/asrin/project/.venv/bin/python",
+    "-B",
+    "-m",
+    "pytest",
+    "tools/projectctl/tests",
+    "-q"
+  ],
+  "started_at_utc": "2026-10-14T23:34:49.701198+00:00",
+  "finished_at_utc": "2026-10-14T23:36:11.363730+00:00",
+  "exit_code": 0,
+  "output": "RUN-GOV-001-LOCAL-001.pytest.txt"
+}

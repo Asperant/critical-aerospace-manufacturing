@@ -1,0 +1,303 @@
+{
+  "$defs": {
+    "CatalogSource": {
+      "additionalProperties": false,
+      "properties": {
+        "heading": {
+          "minLength": 1,
+          "title": "Heading",
+          "type": "string"
+        },
+        "item": {
+          "enum": [
+            81,
+            82
+          ],
+          "title": "Item",
+          "type": "integer"
+        },
+        "line_end": {
+          "minimum": 1,
+          "title": "Line End",
+          "type": "integer"
+        },
+        "line_start": {
+          "minimum": 1,
+          "title": "Line Start",
+          "type": "integer"
+        },
+        "path": {
+          "const": "docs/01_Master_Project_Specification.md",
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "item",
+        "heading",
+        "line_start",
+        "line_end",
+        "sha256"
+      ],
+      "title": "CatalogSource",
+      "type": "object"
+    },
+    "FunctionalEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^FR-[A-Z]+-[0-9]{3}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "FR",
+          "title": "Kind",
+          "type": "string"
+        },
+        "primary_owner": {
+          "enum": [
+            "Asrın Dündar",
+            "Selman Özdemir",
+            "Batuhan Kaya",
+            "Yavuz Gümüş"
+          ],
+          "title": "Primary Owner",
+          "type": "string"
+        },
+        "quality_class": {
+          "title": "Quality Class",
+          "type": "null"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Revision"
+        },
+        "scope_class": {
+          "enum": [
+            "F0",
+            "F1",
+            "R1"
+          ],
+          "title": "Scope Class",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/CatalogSource"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "DEFINED",
+                "MEASURABLE",
+                "IMPLEMENTED",
+                "TESTED",
+                "MEASURED",
+                "VERIFIED",
+                "RETIRED",
+                "SUPERSEDED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Status"
+        }
+      },
+      "required": [
+        "id",
+        "primary_owner",
+        "revision",
+        "status",
+        "source",
+        "kind",
+        "scope_class",
+        "quality_class"
+      ],
+      "title": "FunctionalEntry",
+      "type": "object"
+    },
+    "NonfunctionalEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^NFR-[A-Z]+-[0-9]{3}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "NFR",
+          "title": "Kind",
+          "type": "string"
+        },
+        "primary_owner": {
+          "enum": [
+            "Asrın Dündar",
+            "Selman Özdemir",
+            "Batuhan Kaya",
+            "Yavuz Gümüş"
+          ],
+          "title": "Primary Owner",
+          "type": "string"
+        },
+        "quality_class": {
+          "enum": [
+            "H0",
+            "A1",
+            "S2",
+            "C3"
+          ],
+          "title": "Quality Class",
+          "type": "string"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Revision"
+        },
+        "scope_class": {
+          "title": "Scope Class",
+          "type": "null"
+        },
+        "source": {
+          "$ref": "#/$defs/CatalogSource"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "DEFINED",
+                "MEASURABLE",
+                "IMPLEMENTED",
+                "TESTED",
+                "MEASURED",
+                "VERIFIED",
+                "RETIRED",
+                "SUPERSEDED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Status"
+        }
+      },
+      "required": [
+        "id",
+        "primary_owner",
+        "revision",
+        "status",
+        "source",
+        "kind",
+        "scope_class",
+        "quality_class"
+      ],
+      "title": "NonfunctionalEntry",
+      "type": "object"
+    },
+    "RetiredIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "decision_ref": {
+          "pattern": "^09_change/CHG-[0-9]{3}\\.yaml$",
+          "title": "Decision Ref",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^(?:FR|NFR)-[A-Z]+-[0-9]{3}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "RETIRED",
+            "SUPERSEDED"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "decision_ref"
+      ],
+      "title": "RetiredIdentity",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "requirements": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "FR": "#/$defs/FunctionalEntry",
+            "NFR": "#/$defs/NonfunctionalEntry"
+          },
+          "propertyName": "kind"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/FunctionalEntry"
+          },
+          {
+            "$ref": "#/$defs/NonfunctionalEntry"
+          }
+        ]
+      },
+      "title": "Requirements",
+      "type": "array"
+    },
+    "retired_ids": {
+      "items": {
+        "$ref": "#/$defs/RetiredIdentity"
+      },
+      "title": "Retired Ids",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "requirement-catalog-v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "source_sha256",
+    "requirements",
+    "retired_ids"
+  ],
+  "title": "CatalogFile",
+  "type": "object"
+}

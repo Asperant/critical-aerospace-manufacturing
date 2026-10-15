@@ -123,3 +123,52 @@ def check_ready(wp_id: str, root: Path | None = typer.Option(None)):
 def check_done(wp_id: str, root: Path | None = typer.Option(None)):
     """Fail-closed read-only DoD check; merge/tests never imply DONE."""
     check_gate(wp_id, root, "done")
+
+
+@app.command(name="catalog-export")
+def catalog_export(artifact: str = typer.Option("catalog", help="catalog, schema, counts or rtm-counts; stdout only."),
+                   root: Path | None = typer.Option(None)):
+    """Generate WP-GOV-001 artifacts without writing files or changing lifecycle."""
+    from .requirement_catalog import CATALOG, catalog_schema, coverage_counts, from_sources, read_catalog, rtm_counts
+    try:
+        repo = root if root is not None else find_root(Path.cwd())
+        if artifact == "schema":
+            payload = catalog_schema()
+        elif artifact in {"catalog", "counts", "rtm-counts"}:
+            prior = read_catalog(repo / CATALOG) if (repo / CATALOG).exists() else None
+            catalog = from_sources(repo, prior.retired_ids if prior else ())
+            if artifact == "rtm-counts":
+                typer.echo(rtm_counts(catalog))
+                return
+            payload = catalog.model_dump() if artifact == "catalog" else coverage_counts(catalog)
+        else:
+            raise ValueError("Artifact must be catalog, schema, counts or rtm-counts")
+        emit_json(payload)
+    except (OSError, ValueError) as exc:
+        typer.echo(f"CATALOG_INPUT_ERROR: {exc}", err=True)
+        raise typer.Exit(2) from None
+
+
+@app.command(name="catalog-lint")
+def catalog_lint(root: Path | None = typer.Option(None),
+                 base: str | None = typer.Option(None, help="Git commit for historical ID checks; required in CI."),
+                 json_output: bool = typer.Option(False, "--json")):
+    """Check schema, canonical fidelity, counts, and optional historical non-reuse."""
+    from .requirement_catalog import lint_catalog
+    try:
+        payload = lint_catalog(root if root is not None else find_root(Path.cwd()), base)
+    except (OSError, ValueError) as exc:
+        typer.echo(f"CATALOG_INPUT_ERROR: {exc}", err=True)
+        raise typer.Exit(2) from None
+    if json_output:
+        emit_json(payload)
+    else:
+        typer.echo(f"Requirement catalog: {payload['result']} ({payload['counts']['total']} records)")
+        typer.echo(f"History: {payload['history']}")
+        for issue in payload["issues"]:
+            typer.echo(issue)
+        for gap in payload["source_gaps"]:
+            typer.echo(f"SOURCE_GAP: {gap}")
+        typer.echo("Readiness/evidence: NOT_CERTIFIED")
+    if payload["result"] != "PASS":
+        raise typer.Exit(1)

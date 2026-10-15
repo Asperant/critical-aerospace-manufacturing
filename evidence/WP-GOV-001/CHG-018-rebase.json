@@ -1,0 +1,16 @@
+{
+  "approval_count": 0,
+  "canonical_base": "0ec326f80e39d41a7f90cb4b1f49fc35b9e32f9c",
+  "changed_source_entry_refs": [],
+  "ci": "Pending new-head hosted execution; historical local results are not new-head certification",
+  "conflicts": false,
+  "initial_rebase_lint": "SOURCE_MISMATCH: old full-source SHA retained after rebase",
+  "new_source_sha256": "83a37cde6b16df98e9ad488bfb596f069651b7c9ee5b7cd77b39481900089a58",
+  "old_pr_head": "eb559a31c37a71759689a318313e495a377bad3c",
+  "old_source_sha256": "ae2a313f52b94469f45fad0eac4ea83257de6822ed15374e572e90bec8d87815",
+  "policy_id": "DEV-REVIEW-2026-10-15-FINAL",
+  "reason": "Source-linked generated artifacts refreshed after rebase onto canonical CHG-018 main. Historical test manifests remain bound to their original source snapshots.",
+  "rebased_implementation_commit": "65091540f43966341987701aff038c754154d9fb",
+  "requirement_ids_preserved": true,
+  "wp_id": "WP-GOV-001"
+}
