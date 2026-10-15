@@ -1,0 +1,28 @@
+[
+  {
+    "installation": "PASS",
+    "sudoers_syntax": "PASS"
+  },
+  {
+    "audit_root_0600": true,
+    "credential_root_0600_parent_0700": true,
+    "helper_matches_source": true,
+    "production_mutation_audit_empty": true,
+    "queue_matches_unchanged_source": true,
+    "recent_journal_secret_free": true,
+    "source_outputs_audit_secret_free": true
+  },
+  {
+    "comparison": "UNCHANGED",
+    "digest": "f7f26e6fd776018cebd5a9255bfaffb3d0d4a92b85f43c18258ec2ff564b73f5",
+    "http_methods": [
+      "GET"
+    ],
+    "state_counts": {
+      "BACKLOG": 177,
+      "IN_PROGRESS": 1,
+      "READY": 1
+    },
+    "wp_count": 179
+  }
+]
