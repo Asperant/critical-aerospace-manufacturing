@@ -8395,7 +8395,7 @@ An ADR is required whenever any of the following occurs: a service/bounded-conte
 
 Every ADR carries a stable, global, immutable, never-reused ID (`ADR-0001`, `ADR-0002`, …). Lifecycle: `PROPOSED → ACCEPTED → REJECTED → SUPERSEDED → DEPRECATED`. **Accepted does not mean permanent**: an accepted ADR is never substantively rewritten — only typo/formatting/broken-link/reference/supersession-metadata clarifications are allowed after acceptance. A decision reversal requires a *new* ADR that formally supersedes the old one (the old ADR receives `Status: SUPERSEDED` and `SupersededBy: <new ID>`; the old ADR's original text is never edited to pretend the reversal was the original decision).
 
-**Decision levels**: `ADR-L1` Component (owner plus an independent reviewer); `ADR-L2` Cross-Domain (affected domain owners); `ADR-L3` System-Critical (identity, canonical state, authority, security, runtime platform, research validity, or major persistence/integration architecture — requires team-level review).
+**Decision levels**: `ADR-L1` Component, `ADR-L2` Cross-Domain, `ADR-L3` System-Critical retain accountable scope/technical evidence and advisory domain contacts; CHG-018 removes all development human approval/reviewer quotas. Product authority/HITL decisions are unchanged.
 
 **Evidence levels**: `E0` Reasoned Judgment, `E1` Documentation/Literature, `E2` Prototype/Spike, `E3` Comparative Benchmark, `E4` Integration Evidence — a stronger or less reversible decision requires stronger evidence.
 
@@ -9414,3 +9414,8 @@ These are subcomponents of already-approved services/tooling, not new deployable
 | ARCH-DATA-EVIDENCE | AnalysisPackage/evidence sealing/export on existing PostgreSQL/object artifacts; Asrın analysis, Yavuz infrastructure |
 | ARCH-SCH-EVAL | Scheduling evaluation harness within Scheduler tooling; Batu |
 | ARCH-VIS-DATA | DatasetVersion/SplitManifest and synthetic/real dataset pipeline within Vision tooling; Selman |
+
+
+## Development governance binding — CHG-018, 15 October 2026
+
+Final owner policy DEV-REVIEW-2026-10-15-FINAL governs development/GitHub/repository work: required human approval count zero for all classes, including security/authority changes. CODEOWNERS/ADR/domain/methodology review is advisory and never a development workflow/merge/DONE gate. Actual architecture, contract, security, test, trace/evidence and acceptance checks remain; CI alone is not semantic verification. This does not change product HITL, authenticated approvers, runtime self-approval prohibition, exact proposal/plan binding or execution authorization. Historical architectural-review provenance is retained, not reinterpreted as a current GitHub approval gate.

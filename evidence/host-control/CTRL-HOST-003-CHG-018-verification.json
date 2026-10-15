@@ -1,0 +1,52 @@
+{
+  "assessments": {
+    "pr6": {
+      "draft": true,
+      "full_scope_dor_dod_assessed": false,
+      "head": "0caa66b4ef29ce1f71eca8b664a80df680ed04a1",
+      "local_chg018_changes_published": false,
+      "mergeable": true,
+      "reason_code": "DRAFT_PR",
+      "result": "NOT_ELIGIBLE",
+      "technical_ci": "PASSED_CURRENT_HEAD_TECHNICAL_CI_AND_MAIN_CURRENCY",
+      "technical_ci_reason": null
+    },
+    "pr7": {
+      "head": "eb559a31c37a71759689a318313e495a377bad3c",
+      "plane_state": "IN_REVIEW",
+      "result": "ELIGIBLE_READ_ONLY"
+    }
+  },
+  "checks": {
+    "audit_unchanged": true,
+    "credential_directory_root_0700": true,
+    "credential_root_0600": true,
+    "helper_matches_source": true,
+    "installed_source_manifest_valid": true,
+    "no_github_review_api": true,
+    "plane_probe_get_only": true,
+    "queue_unchanged": true,
+    "source_outputs_audit_secret_free": true
+  },
+  "new_policy_digest": "a862eabcef83103c96e3dacec415f102814a436165b72f0f0076beb11e091db9",
+  "old_policy_digest": "0b5f3e72d3c055524c3a85778fdefc56a6283ef8358a145563a4fea339bbed91",
+  "plane_final_readback": {
+    "comparison": "UNCHANGED",
+    "digest": "443396c691212871de4e2bd3d51e61052a7b6da38811cb329dc89118aaf4d6cb",
+    "http_methods": [
+      "GET"
+    ],
+    "state_counts": {
+      "BACKLOG": 177,
+      "IN_REVIEW": 1,
+      "READY": 1
+    },
+    "timestamp_recorded": "2026-10-15T02:14:46.286185+00:00",
+    "wp_count": 179
+  },
+  "policy_id": "DEV-REVIEW-2026-10-15-FINAL",
+  "pre_migration_policy_digest": "06c5553369a65240fd38260836dd034f4ec464509d2907809a0daf3f30d4453b",
+  "production_mutations": 0,
+  "required_human_approvals": 0,
+  "timestamp": "2026-10-15T02:13:04.617017+00:00"
+}

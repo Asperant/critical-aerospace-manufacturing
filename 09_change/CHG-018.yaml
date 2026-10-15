@@ -1,0 +1,44 @@
+CHG-018:
+  title: Advisory-only development review governance
+  trigger: Explicit newer final project-owner decision, 15 October 2026
+  supersedes: CHG-017
+  policy_id: DEV-REVIEW-2026-10-15-FINAL
+  class: C3
+  review_risk_class: CR-3
+  decision: APPROVED
+  status: APPROVED
+  owner: Asrın
+  reviewers: []
+  application_control_item: CTRL-HOST-003
+  required_human_approvals: 0
+  review_mode: ADVISORY
+  policy_ref: 09_change/development_review_policy.json
+  human_decision_basis:
+    authority: Explicit newer final owner request in current session, 15 October 2026
+    decision: All development PR review/approval states are advisory, including high risk; no reviewer/approval quota in any workflow or DONE gate.
+    scope: Development/GitHub/repository governance only, not product HITL or execution authorization.
+  preserved_history:
+    record: 09_change/CHG-017.yaml
+    record_sha256: 026adf87438dbee71be68d83100b7343963a70d8ab97ad9f14bd8a610f83de9a
+    policy_companion: 09_change/history/CHG-017-development_review_policy.json
+    governance_bindings: 09_change/history/CHG-017-governance-bindings.md
+    note: CHG-017 remains byte-identical as the historical intermediate 0/2 decision, not rewritten or erased.
+  affected_requirements: []
+  affected_architecture: []
+  affected_contracts: []
+  affected_work_packages: []
+  affected_dependencies: []
+  affected_stable_ids: [REVIEW-INV-07, FLOW-INV-16, FLOW-INV-17, DOR-PR-06, DOD-PR-08]
+  security_authority_impact: Development review gates retired; root credential/caller/assignee/fixed API/state-only boundary and all product HITL/authenticated authorization/binding semantics retained.
+  conditions:
+    - Actual scope/head/CI/tests/canonical validation/DoR/DoD/trace/evidence/security/static gates remain mandatory.
+    - Actual BLOCKED conditions and technical/canonical ambiguity fail closed; advisory review states alone do not.
+    - DONE still requires actual DoD/trace/evidence and successful post-merge validation, not merely implementation/merge/tests.
+    - No Plane mutation, merge, commit or push in this pass.
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected: [Historical reviews and CHG-017 results retain their actual dates and revisions.]
+    rerun_required: [Projectctl tests, transition tests, queue tests, canonical validation, root install verification, read-only PR assessments and Plane readback]
+  rollout: Existing reference control branch and host helper/policy refresh only; inspect GitHub settings, never remove technical/destructive protections.
+  rollback: Explicit new policy decision and reviewed source/root policy refresh; never rewrite CHG-017 or auto-revert Plane state.

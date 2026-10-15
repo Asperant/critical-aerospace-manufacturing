@@ -1,0 +1,13 @@
+{
+  "schema_version": "development-review-policy-v2",
+  "policy_id": "DEV-REVIEW-2026-10-15-FINAL",
+  "effective_date": "2026-10-15",
+  "authority": "Explicit final owner decision CHG-018; supersedes CHG-017",
+  "supersedes": "DEV-REVIEW-2026-10-15",
+  "scope": "development_github_repository_only",
+  "required_human_approvals": 0,
+  "review_mode": "ADVISORY",
+  "review_state_is_workflow_input": false,
+  "reviewer_presence_required": false,
+  "product_hitl_unchanged": true
+}

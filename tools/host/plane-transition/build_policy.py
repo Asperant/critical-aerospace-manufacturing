@@ -6,6 +6,7 @@ import re
 from projectctl.project import load_project
 from projectctl.queries import context
 from projectctl.models import resolve_owner
+from projectctl.governance import read_review_policy, POLICY_PATH
 
 ROOT=Path('/srv/ailab/project')
 p=load_project(ROOT)
@@ -28,13 +29,13 @@ people={'Asrın Dündar':'asrin','Selman Özdemir':'selman','Batuhan Kaya':'batu
 node_owners={n.id:people.get(resolve_owner(n.raw_owner).canonical_name) for n in nodes.values()}
 manifest=dict(p.source_manifest)
 for name in ['AGENTS.md','docs/02_System_Architecture_Specification.md','docs/08_Definition_of_Ready_and_Done.md',
-             'docs/09_Change_Control_Process.md','.github/workflows/projectctl.yml']:
+             'docs/09_Change_Control_Process.md',POLICY_PATH,'09_change/CHG-018.yaml','09_change/CHG-017.yaml',
+             '09_change/history/CHG-017-development_review_policy.json','.github/pull_request_template.md','.github/workflows/projectctl.yml']:
     manifest[name]=sha256((ROOT/name).read_bytes()).hexdigest()
-policy={'schema_version':'cap-transition-policy-v1','evaluation_revision':'native-execution-facts-v2','source_manifest':manifest,'contexts':contexts,
+policy={'schema_version':'cap-transition-policy-v1','evaluation_revision':'chg018-advisory-only','source_manifest':manifest,'contexts':contexts,
         'criteria_definitions':criteria, 'node_owners':node_owners,
         'node_levels':{n.id:[str(v) for v in n.readiness_levels] for n in nodes.values()},
-        'required_ci':['projectctl'], 'bounded_historical_overrides':{'product_wp_authorizations':[],
-        'reason':'Owner PR#4/#5 control-only overrides do not authorize product WPs or new heads.'}}
+        'required_ci':['projectctl'], 'review_policy':read_review_policy(ROOT), 'required_technical_steps':['Syntax sanity','Projectctl tests','Canonical validation','Whitespace and repository hygiene']}
 for key,prefix,count in [('dor_task','DOR-TASK-',12),('dor_pr','DOR-PR-',8),('dod_pr','DOD-PR-',12),
                          ('dod_wp','DOD-WP-',12),('dod_research','DOD-RES-',11)]:
     ids=sorted(k for k in criteria if k.startswith(prefix))

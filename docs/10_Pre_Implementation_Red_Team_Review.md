@@ -2048,4 +2048,24 @@ All RTM/WBS/dependency/milestone gap rows and additional named reconciliation fi
 
 ## Review policy migration —14 October2026
 
-Historical mandatory C2/C3 consumer-quorum statements above are superseded by01/09 actual-risk development policy: normal risk one qualified independent approval, actual high risk two; self-approval remains prohibited. PR#4 migration/closure is explicitly owner-authorized without a new review request, with historical Ejlonn approval attributed to its actual head. This does not change runtime HITL or waive final-head CI/post-merge validation. Documentation readiness remains conditional on successful integration and checks.
+Historical 14 October2026 migration (superseded 15 October2026): normal risk then required one qualified independent approval, actual high risk two; self-approval remains prohibited. PR#4 migration/closure is explicitly owner-authorized without a new review request, with historical Ejlonn approval attributed to its actual head. This does not change runtime HITL or waive final-head CI/post-merge validation. Documentation readiness remains conditional on successful integration and checks.
+
+
+Final owner decision15 October2026 (CHG-017 / DEV-REVIEW-2026-10-15): development PR approval count is zero for normal risk, two qualified independent current-head approvals for actual high risk; no CI or owner override substitutes for high-risk review. Optional normal-risk review never waives blocking findings, scope/DoR/DoD, CI or post-merge validation. Product HITL/protected actions remain unchanged. Previous review-policy findings/evidence remain historical.
+
+
+## Final advisory development review policy — CHG-018, 15 October 2026
+
+Policy ID: `DEV-REVIEW-2026-10-15-FINAL`. CHG-018 explicitly supersedes CHG-017; CHG-017 and its intermediate 0/2 decision remain historical, unchanged. Active companion: `09_change/development_review_policy.json`; previous companion archived under `09_change/history/CHG-017-development_review_policy.json`.
+
+| Policy ID | Scope | Required human approvals |
+|---|---|---|
+| DEV-REVIEW-2026-10-15-FINAL | ALL_DEVELOPMENT | 0 |
+
+Every repository development PR, CR-0 through CR-4, normal/high risk, security/auth, protected-action-authority code, destructive migration, secrets/infrastructure, authority boundaries, platform, tooling, docs, product and research implementation has zero required human approvals. Review, requests, comments, suggestions and security advice are ADVISORY. No independent/qualified reviewer quota, self-approval rule, owner override, current-head approval or stale-approval mechanism governs development workflow. GitHub APPROVED, CHANGES_REQUESTED, COMMENTED and DISMISSED are not workflow, merge or DONE gates, and reviewer presence/absence never blocks progress. CODEOWNERS and supporting-reviewer metadata are advisory routing/domain context only.
+
+IN_REVIEW means a real non-draft technically reviewable PR, not waiting for a human. MERGE_READY requires correct canonical WP/approved control scope and branch/PR/head binding, required actual CI/tests/canonical validation, mergeability/no conflict against current main, no out-of-scope changes, applicable DoR-PR/PR DoD, trace/evidence and applicable security/secret/static checks, and no real BLOCKED condition. Actual technical/canonical failures or ambiguity fail closed; a review state alone neither proves nor disproves these facts. Material revisions re-run technical checks/evidence. Rework follows actual revision/technical evidence, not approval invalidation.
+
+MERGED requires an actual GitHub merge. VALIDATING requires actual post-merge validation started. DONE requires all applicable DoD, trace/evidence and actual successful post-merge validation; accountable owner assessment and real artifacts remain required, another person's review/confirmation does not. Development peer/methodology review is advisory even for closure; real protocol, scientific reproducibility, measured acceptance and product-authority evidence remain required. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted.
+
+This changes ONLY development/GitHub/repository governance. Product HITL, protected-action approval, AuthorityPolicy, authenticated approvers, runtime self-approval prohibition, exact proposal/plan binding and execution authorization are unchanged. Project-owner scope/cancellation decisions and real product acceptance artifacts are not GitHub review approvals and are not fabricated or waived. No Plane test mutation, merge, commit or push is authorized in this pass. Existing historical approvals remain history, never requirements for a current transition.

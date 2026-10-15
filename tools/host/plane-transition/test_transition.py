@@ -20,6 +20,31 @@ HEAD='a'*40
 MERGE='b'*40
 
 
+def pr_body(wp):
+    return f"""## Identity and scope
+WP/control ID: {wp}
+Plane reference: canonical {wp}
+Requirements: NONE — fixture has no source requirements
+Architecture surfaces and authority boundaries: Existing approved scope only
+Change class / review risk: C1 / CR-2 (normal-risk)
+Contract/compatibility and migration impact: No contract or migration impact
+Security/authority and dataset/model impact: No authentication/authorization, protected execution, secrets, security infrastructure, major authority or data/model changes
+Observability impact: No runtime impact
+Pairing participants: none
+## Summary
+One coherent canonical WP change; scope excludes other WPs. Author self-reviewed; no secrets or debug artifacts.
+## Validation
+Commands, environment and actual results: pytest passed locally; actual CI is checked live
+Negative/failure paths exercised: Actual failure and malformed-input cases tested
+Evidence paths and identity bindings: [Actual run](evidence/test.json)
+Post-merge validation plan: Run validation at actual merge revision; Merged != Done
+Rollout/rollback notes: Reviewed Git revert if required
+Known limitations: Fixture demonstrates gates, not product acceptance
+Docs impact: Runbook updated within WP
+Trace updates and prior evidence staleness: Requirements/code/test links recorded; prior evidence remains revision-bound
+"""
+
+
 class FakePlane:
     def __init__(self,item):
         self.items=[deepcopy(item)]
@@ -54,7 +79,7 @@ class FakeGH:
         sha=MERGE if post else HEAD
         self.pr_data={'number':1,'base':{'repo':{'full_name':'Asperant/critical-aerospace-manufacturing'},'ref':'main'},
                       'user':{'login':owner},'head':{'ref':f'wp/{wp}-test','sha':HEAD},'title':f'[{wp}] Implement slice',
-                      'body':wp+'\nChange class / review risk: C1 / CR-2 (normal-risk)\nPairing participants: none','changed_files':2,'draft':source=='IN_REVIEW' and target=='IN_PROGRESS',
+                      'body':pr_body(wp),'changed_files':2,'draft':source=='IN_REVIEW' and target=='IN_PROGRESS',
                       'state':'closed' if post else 'open', 'merged':post,'merge_commit_sha':MERGE if post else None,
                       'requested_reviewers':[{'login':peer}],'mergeable':True,'mergeable_state':'clean'}
         ids=sum((policy[k] for k in ['dor_task','dor_pr','dod_pr','dod_wp','dod_research']),[])
@@ -66,8 +91,8 @@ class FakeGH:
                 'review_risk':'normal','high_risk_triggers':[], 'qualified_reviewers':[peer], 'pairing_participants':[],
                 'owner_decision':'CANCEL','blocker':{'owner':profile,'external_dependency':'Named upstream outage'},
                 'resolves_audit_id':'previous-blocker'}
-        self.comments={2:{'user':{'login':owner},'body':json.dumps({'cap_plane_transition':record})},
-                       3:{'user':{'login':peer},'body':json.dumps({'cap_plane_transition':record})}}
+        self.comments={2:{'updated_at':'2026-01-02T00:00:00+00:00','user':{'login':owner},'body':json.dumps({'cap_plane_transition':record})},
+                       3:{'updated_at':'2026-01-02T00:00:00+00:00','user':{'login':peer},'body':json.dumps({'cap_plane_transition':record})}}
         self.review_data=[{'user':{'login':peer},'state':'APPROVED','commit_id':('c'*40 if source=='MERGE_READY' and target=='IN_REVIEW' else HEAD)}]
         self.run_data={'head_sha':sha,'head_branch':'main','event':'push',
                        'status':'in_progress' if target=='VALIDATING' else 'completed','conclusion':'success','updated_at':'2026-01-02T00:00:00+00:00'}
@@ -84,10 +109,17 @@ class FakeGH:
         self.started=(wp,sha,profile)
     def main_sha(self): return HEAD
     def pr(self,number): return deepcopy(self.pr_data)
+    def fresh_pr(self,number): return deepcopy(self.pr_data)
     def comment(self,number): return deepcopy(self.comments[number])
     def run(self,number): return deepcopy(self.run_data)
     def checks(self,sha): return deepcopy(self.check_data)
-    def reviews(self,number): return deepcopy(self.review_data)
+    def reviews(self,number): raise AssertionError('Advisory review API must not be queried')
+    def files(self,pr):
+        return getattr(self,'file_rows',[{'filename':'src/project.py'},{'filename':'evidence/test.json'}])
+    def technical_ci(self,sha,policy,extra=()):
+        if getattr(self,'failed_technical_step',False): raise t.Denied('REQUIRED_TECHNICAL_STEP_NOT_PASSED')
+    def current_main(self,pr):
+        if getattr(self,'behind_main',False): raise t.Denied('PR_BEHIND_CURRENT_MAIN')
     def contributors(self,number): return {self.pr_data['user']['login'].casefold()}
     def merged_shape(self,pr):
         if getattr(self,'undeleted_branch',False): raise t.Denied('MERGED_BRANCH_NOT_DELETED')
@@ -106,7 +138,8 @@ def fixture(profile='asrin',source='READY',target='IN_PROGRESS'):
                              'supporting_reviewers':[{'canonical_name':v[0]} for key,v in names.items() if key!=p],
                              'dor_refs':['DOR-WP-01'],'dod_refs':['DOD-WP-01'],'size_band':'M','scope_class':'F1'},
                             'dependency_edges':[], 'scope_criteria':['docs/08#9:F1'],'cycle_ids':['S1']}
-    policy={'contexts':contexts,'source_manifest':{'docs/08':'canonical-sha'},'required_ci':['projectctl'],
+    policy={'contexts':contexts,'source_manifest':{'docs/08':'canonical-sha'},'required_ci':['projectctl'], 'required_technical_steps':['Syntax sanity','Projectctl tests','Canonical validation','Whitespace and repository hygiene'],
+            'review_policy':json.loads((HERE.parents[2]/'09_change/development_review_policy.json').read_text()),
             'policy_digest':'fixture-policy-digest','dor_task':['DOR-TASK-01','DOR-WP-01'],'dor_pr':['DOR-PR-01'],'dod_pr':['DOD-PR-01'],
             'dod_wp':['DOD-WP-01'],'dod_research':['DOD-RES-01'],'node_owners':{},'node_levels':{}}
     item={'id':'12345678-1234-1234-1234-123456789abc','external_id':wp,'external_source':'projectctl',
@@ -128,7 +161,8 @@ def run_case(profile='asrin',source='READY',target='IN_PROGRESS',mutate=None):
         if key in encoded: raise t.Denied('SECRET_IN_AUDIT_INPUT')
         logs.append(deepcopy(record))
     result=t.execute(profile,wp,target,envelope,policy,plane,gh,audit,SECRET,
-                     {'result':'VERIFIED','operation':'BLOCKED','audit_id':'previous-blocker','timestamp':'2026-01-01T00:00:00+00:00'})
+                     {'result':'VERIFIED','operation':'BLOCKED','audit_id':'previous-blocker','timestamp':'2026-01-01T00:00:00+00:00'},
+                     {'result':'VERIFIED','operation':'MERGE_READY','observed_pr_head':'c'*40})
     return result,plane,logs,gh
 
 
@@ -163,7 +197,7 @@ class TransitionTests(unittest.TestCase):
                 result,plane,logs,gh=run_case(source=source,target=target,mutate=no_comments)
                 self.assertEqual(result['result'],'VERIFIED')
                 self.assertEqual(len(plane.patches),1)
-                self.assertFalse(gh.artifacts)
+                if target not in {'MERGE_READY','MERGED'}: self.assertFalse(gh.artifacts)
 
     def test_work_can_start_on_real_owned_wp_branch_before_pr_exists(self):
         def commit(policy,plane,gh,envelope): envelope['evidence_refs']=['commit:'+HEAD]
@@ -198,7 +232,7 @@ class TransitionTests(unittest.TestCase):
             item.update(external_id=canonical,name='['+canonical+'] Requirement catalog',
                         description_html=json.dumps({'canonical_wp_id':canonical,'canonical_owner':'Asrın Dündar'}))
         gh.pr_data.update(number=7,title='[WP-GOV-001] Requirement catalog',
-                          body='Existing real scope, requirements, test/evidence and rollback notes; no confirmation JSON.')
+                          body=pr_body(canonical)+'\nNo confirmation JSON.')
         gh.pr_data['head']['ref']='wp/WP-GOV-001-requirement-catalog'
         envelope['evidence_refs']=['pr:7']
         gh.comments={};gh.review_data=[]
@@ -213,11 +247,10 @@ class TransitionTests(unittest.TestCase):
         result,*_=run_case(source='IN_PROGRESS',target='IN_REVIEW',mutate=ordinary)
         self.assertEqual(result['result'],'VERIFIED')
 
-    def test_review_requested_draft_closed_ci_and_blocker_guards_without_comments(self):
-        for what in ['review','draft','closed','ci','blocked']:
+    def test_review_presence_never_required_but_real_technical_guards_remain(self):
+        for what in ['draft','closed','ci','blocked']:
             def invalid(policy,plane,gh,envelope):
-                envelope['evidence_refs']=['pr:1']
-                if what=='review': gh.pr_data['requested_reviewers']=[];gh.review_data=[]
+                envelope['evidence_refs']=['pr:1'];gh.review_data=[];gh.pr_data['requested_reviewers']=[]
                 if what=='draft': gh.pr_data['draft']=True
                 if what=='closed': gh.pr_data['state']='closed'
                 if what=='ci': gh.check_data[0][0]['conclusion']='failure'
@@ -304,12 +337,13 @@ class TransitionTests(unittest.TestCase):
             with self.subTest(what=what),self.assertRaises(t.Denied):
                 run_case(source='BACKLOG',target='READY',mutate=bad)
 
-    def test_unknown_risk_and_contradictory_risk_fail_closed(self):
-        for body in ['WP-TEST-001','Review risk: normal-risk\nHigh-risk triggers: authorization',
-                     'Review risk: normal-risk\nReview class: CR-3']:
-            def bad(policy,plane,gh,envelope): gh.pr_data['body']=body+' WP-TEST-001'
-            with self.subTest(body=body),self.assertRaises(t.Denied):
-                run_case(source='IN_REVIEW',target='MERGE_READY',mutate=bad)
+    def test_review_risk_metadata_is_not_a_workflow_input(self):
+        for risk in ['CR-0','CR-1','CR-2','CR-3','CR-4','UNKNOWN ADVISORY CLASSIFICATION']:
+            def advisory(policy,plane,gh,envelope):
+                gh.pr_data['body']=gh.pr_data['body'].replace('CR-2 (normal-risk)',risk)
+                gh.review_data=[];gh.pr_data['requested_reviewers']=[]
+            result,*_=run_case(source='IN_REVIEW',target='MERGE_READY',mutate=advisory)
+            self.assertEqual(result['result'],'VERIFIED')
 
     def test_documented_rework_conditions(self):
         for source,target in t.REWORK:
@@ -379,13 +413,16 @@ class TransitionTests(unittest.TestCase):
             self.assertNotIn('BLOCKED-LABEL',plane.item['labels'])
             self.assertEqual(set(plane.patches[0]),{'labels'})
 
-    def test_old_successful_run_does_not_automatically_resolve_a_new_blocker(self):
-        def old_run_no_peer(policy,plane,gh,envelope):
+    def test_unblock_needs_actual_fresh_resolution_not_a_reviewer(self):
+        def stale(policy,plane,gh,envelope):
             gh.run_data['updated_at']='2025-12-01T00:00:00+00:00'
+            gh.comments[2]['updated_at']='2025-12-01T00:00:00+00:00'
             envelope['evidence_refs'].remove('comment:3')
-        with self.assertRaises(t.Denied): run_case(source='IN_PROGRESS',target='UNBLOCKED',mutate=old_run_no_peer)
-        def fresh_run_no_peer(policy,plane,gh,envelope): envelope['evidence_refs'].remove('comment:3')
-        result,*_=run_case(source='IN_PROGRESS',target='UNBLOCKED',mutate=fresh_run_no_peer)
+        with self.assertRaises(t.Denied): run_case(source='IN_PROGRESS',target='UNBLOCKED',mutate=stale)
+        def current_record(policy,plane,gh,envelope):
+            envelope['evidence_refs']=['pr:1','comment:2']
+            gh.review_data=[]
+        result,*_=run_case(source='IN_PROGRESS',target='UNBLOCKED',mutate=current_record)
         self.assertEqual(result['result'],'VERIFIED')
 
     def test_cancel_requires_explicit_real_owner_record(self):
@@ -410,32 +447,151 @@ class TransitionTests(unittest.TestCase):
                 record['body']=json.dumps(data)
         with self.assertRaises(t.Denied): run_case(source='VALIDATING',target='DONE',mutate=na)
 
-    def test_real_ci_review_and_merge_predicates(self):
-        for what in ['ci','draft','stale','self','mergeability']:
+    def test_normal_risk_zero_approvals_and_optional_review_request(self):
+        for classification in ['CR-0','CR-1','CR-2','CR-4']:
+            for source,target in [('IN_PROGRESS','IN_REVIEW'),('IN_REVIEW','MERGE_READY')]:
+                def no_review(policy,plane,gh,envelope):
+                    gh.pr_data['body']=gh.pr_data['body'].replace('CR-2',classification)
+                    gh.review_data=[];gh.comments={};gh.pr_data['requested_reviewers']=[]
+                    envelope['evidence_refs']=['pr:1']
+                with self.subTest(classification=classification,target=target):
+                    result,*_=run_case(source=source,target=target,mutate=no_review)
+                    self.assertEqual(result['result'],'VERIFIED')
+
+    def test_native_multiline_pr_fields_are_not_missing_declarations(self):
+        def multiline(policy,plane,gh,envelope):
+            gh.review_data=[]
+            gh.pr_data['body']=gh.pr_data['body'].replace('Known limitations: Fixture demonstrates gates, not product acceptance',
+                '**Known limitations and unresolved findings:**\n\n- Fixture demonstrates gates, not product acceptance\n- Post-merge acceptance is still pending')
+        result,*_=run_case(source='IN_REVIEW',target='MERGE_READY',mutate=multiline)
+        self.assertEqual(result['result'],'VERIFIED')
+
+    def test_current_template_explicit_no_high_risk_trigger(self):
+        def normal(policy,plane,gh,envelope):
+            gh.review_data=[]
+            gh.pr_data['body']+='\nActual high-risk triggers (normal approvals 0 / high approvals 2): NONE — ordinary tooling'
+        result,*_=run_case(source='IN_REVIEW',target='MERGE_READY',mutate=normal)
+        self.assertEqual(result['result'],'VERIFIED')
+
+    def test_normal_zero_approvals_still_requires_scope_dor_dod_and_artifacts(self):
+        for missing in ['scope','requirements','tests','negative','trace','evidence','artifact','non_draft']:
+            def bad(policy,plane,gh,envelope):
+                gh.review_data=[]
+                if missing=='scope': gh.pr_data['title']+=' WP-TEST-002'
+                elif missing=='requirements':
+                    policy['contexts'][plane.item['external_id']]['work_package']['requirement_refs']=['FR-GOV-001']
+                elif missing=='artifact': gh.missing_artifact=True
+                elif missing=='non_draft': gh.pr_data['draft']=True
+                else:
+                    labels={'tests':'Commands, environment and actual results:',
+                            'negative':'Negative/failure paths exercised:', 'trace':'Trace updates',
+                            'evidence':'Evidence paths and identity bindings:'}
+                    gh.pr_data['body']='\n'.join(line for line in gh.pr_data['body'].splitlines() if not line.startswith(labels[missing]))
+            with self.subTest(missing=missing),self.assertRaises(t.Denied):
+                run_case(source='IN_REVIEW',target='MERGE_READY',mutate=bad)
+
+    def test_aggregate_review_blocked_metadata_is_not_a_technical_gate(self):
+        def advisory(policy,plane,gh,envelope):
+            gh.pr_data['mergeable_state']='blocked';gh.pr_data['mergeable']=True
+        result,*_=run_case(source='IN_REVIEW',target='MERGE_READY',mutate=advisory)
+        self.assertEqual(result['result'],'VERIFIED')
+
+    def test_optional_review_bot_is_not_a_required_ci_gate(self):
+        def advisory(policy,plane,gh,envelope):
+            gh.check_data[0].append({'name':'Optional advisory review bot','status':'completed','conclusion':'failure'})
+        result,*_=run_case(source='IN_REVIEW',target='MERGE_READY',mutate=advisory)
+        self.assertEqual(result['result'],'VERIFIED')
+
+    def test_all_github_review_states_are_advisory(self):
+        for state in ['CHANGES_REQUESTED','DISMISSED','COMMENTED','PENDING','APPROVED']:
+            def advisory(policy,plane,gh,envelope):
+                gh.review_data=[{'user':{'login':'selorito'},'state':state,'commit_id':HEAD}]
+            with self.subTest(state=state):
+                result,*_=run_case(source='IN_REVIEW',target='MERGE_READY',mutate=advisory)
+                self.assertEqual(result['result'],'VERIFIED')
+
+    def test_normal_risk_cannot_merge_when_behind_current_main(self):
+        def behind(policy,plane,gh,envelope): gh.review_data=[];gh.behind_main=True
+        with self.assertRaises(t.Denied) as denied:
+            run_case(source='IN_REVIEW',target='MERGE_READY',mutate=behind)
+        self.assertEqual(denied.exception.code,'PR_BEHIND_CURRENT_MAIN')
+
+    def test_review_api_failure_does_not_block_technical_readiness(self):
+        def unavailable(policy,plane,gh,envelope):
+            def fail(*args): raise TimeoutError('Review API unavailable')
+            gh.reviews=fail
+        result,*_=run_case(source='IN_REVIEW',target='MERGE_READY',mutate=unavailable)
+        self.assertEqual(result['result'],'VERIFIED')
+
+    def test_advisory_changes_requested_cannot_override_a_real_ci_failure(self):
+        def bad(policy,plane,gh,envelope):
+            gh.review_data=[{'state':'CHANGES_REQUESTED','commit_id':'d'*40}]
+            gh.check_data[0][0]['conclusion']='failure'
+        with self.assertRaises(t.Denied) as denied:
+            run_case(source='IN_REVIEW',target='MERGE_READY',mutate=bad)
+        self.assertEqual(denied.exception.code,'CI_NOT_GREEN')
+
+    def test_high_risk_needs_zero_humans_but_real_ci_tests_validation(self):
+        def no_review(policy,plane,gh,envelope):
+            gh.pr_data['body']=gh.pr_data['body'].replace('CR-2 (normal-risk)','CR-3 (high-risk)')
+            gh.review_data=[];gh.pr_data['requested_reviewers']=[]
+        result,*_=run_case(source='IN_REVIEW',target='MERGE_READY',mutate=no_review)
+        self.assertEqual(result['result'],'VERIFIED')
+        def failed_step(policy,plane,gh,envelope):
+            no_review(policy,plane,gh,envelope);gh.failed_technical_step=True
+        with self.assertRaises(t.Denied): run_case(source='IN_REVIEW',target='MERGE_READY',mutate=failed_step)
+
+    def test_all_security_platform_protected_surfaces_use_technical_gates_only(self):
+        for surface in ['auth/authorization','protected-action authority','destructive migration','secrets/security infra','authority boundary','safety/protected execution']:
+            def no_review(policy,plane,gh,envelope):
+                gh.pr_data['body']=gh.pr_data['body'].replace('CR-2 (normal-risk)','CR-3 (high-risk)')
+                gh.pr_data['body']+='\nActual impact: '+surface
+                gh.review_data=[]
+            with self.subTest(surface=surface):
+                result,*_=run_case(source='IN_REVIEW',target='MERGE_READY',mutate=no_review)
+                self.assertEqual(result['result'],'VERIFIED')
+
+    def test_security_impact_is_not_an_approval_special_case(self):
+        def security(policy,plane,gh,envelope):
+            gh.pr_data['body']=gh.pr_data['body'].replace('No authentication/authorization, protected execution, secrets, security infrastructure, major authority or data/model changes','Authentication/authorization technical changes with actual negative evidence')
+            gh.review_data=[]
+        result,*_=run_case(source='IN_REVIEW',target='MERGE_READY',mutate=security)
+        self.assertEqual(result['result'],'VERIFIED')
+
+    def test_compiled_policy_cannot_reintroduce_human_review_gates(self):
+        for key,value in [('required_human_approvals',2),('reviewer_presence_required',True),('review_state_is_workflow_input',True),('product_hitl_unchanged',False)]:
+            def tampered(policy,plane,gh,envelope): policy['review_policy'][key]=value
+            with self.subTest(key=key),self.assertRaises(t.Denied):
+                run_case(source='IN_REVIEW',target='MERGE_READY',mutate=tampered)
+
+    def test_real_ci_scope_and_merge_predicates(self):
+        for what in ['ci','draft','technical_step','secret_path','mergeability']:
             def bad(policy,plane,gh,envelope):
                 if what=='ci': gh.check_data[0][0]['conclusion']='failure'
                 elif what=='draft': gh.pr_data['draft']=True
-                elif what=='stale': gh.review_data[0]['commit_id']='c'*40
-                elif what=='self': gh.review_data[0]['user']['login']='Asperant'
+                elif what=='technical_step': gh.failed_technical_step=True
+                elif what=='secret_path': gh.file_rows=[{'filename':'project_control/local/plane.env'}]
                 else: gh.pr_data['mergeable']=None
-            with self.subTest(what=what),self.assertRaises(t.Denied): run_case(source='IN_REVIEW',target='MERGE_READY',mutate=bad)
+            with self.subTest(what=what),self.assertRaises(t.Denied):
+                run_case(source='IN_REVIEW',target='MERGE_READY',mutate=bad)
         def not_merged(policy,plane,gh,envelope): gh.pr_data['merged']=False
         with self.assertRaises(t.Denied): run_case(source='MERGE_READY',target='MERGED',mutate=not_merged)
 
-    def test_high_risk_needs_two_current_independent_qualified_approvals(self):
-        def high(policy,plane,gh,envelope):
-            gh.pr_data['body']=gh.pr_data['body'].replace('CR-2 (normal-risk)','CR-3 (high-risk)')
-        with self.assertRaises(t.Denied): run_case(source='IN_REVIEW',target='MERGE_READY',mutate=high)
-        def enough(policy,plane,gh,envelope):
-            high(policy,plane,gh,envelope)
-            gh.review_data.append({'user':{'login':'Yavuzgmus'},'state':'APPROVED','commit_id':HEAD})
-        result,*_=run_case(source='IN_REVIEW',target='MERGE_READY',mutate=enough)
-        self.assertEqual(result['result'],'VERIFIED')
+    def test_done_no_peer_or_approval_but_all_actual_dod_and_postmerge_evidence(self):
+        for profile in t.q.PEOPLE:
+            def no_peer(policy,plane,gh,envelope):
+                gh.review_data=[];gh.pr_data['requested_reviewers']=[]
+                envelope['evidence_refs'].remove('comment:3')
+            with self.subTest(profile=profile):
+                result,*_=run_case(profile,source='VALIDATING',target='DONE',mutate=no_peer)
+                self.assertEqual(result['result'],'VERIFIED')
 
-    def test_pairing_author_cannot_supply_independent_approval(self):
-        def paired(policy,plane,gh,envelope):
+    def test_pairing_and_self_review_metadata_do_not_gate_workflow(self):
+        def advisory(policy,plane,gh,envelope):
             gh.pr_data['body']=gh.pr_data['body'].replace('Pairing participants: none','Pairing participants: @selorito')
-        with self.assertRaises(t.Denied): run_case(source='IN_REVIEW',target='MERGE_READY',mutate=paired)
+            gh.review_data=[{'user':{'login':'Asperant'},'state':'APPROVED','commit_id':HEAD}]
+        result,*_=run_case(source='IN_REVIEW',target='MERGE_READY',mutate=advisory)
+        self.assertEqual(result['result'],'VERIFIED')
 
     def test_required_postmerge_run_is_bound_to_merge_revision(self):
         for target,source in [('VALIDATING','MERGED'),('DONE','VALIDATING')]:
@@ -515,6 +671,62 @@ class TransitionTests(unittest.TestCase):
             self.assertEqual(set(body),{'labels'} if target in {'BLOCKED','UNBLOCKED'} else {'state'})
         with self.assertRaises(t.Denied): client.patch(plane.item,'https://evil')
 
+    def test_current_github_head_is_fresh_before_plane_mutation(self):
+        wp,policy,plane,gh,envelope=fixture(source='IN_REVIEW',target='MERGE_READY')
+        def changed(number):
+            pr=deepcopy(gh.pr_data);pr['head']['sha']='f'*40;return pr
+        gh.fresh_pr=changed
+        with self.assertRaises(t.Denied) as denied:
+            t.execute('asrin',wp,'MERGE_READY',envelope,policy,plane,gh,lambda *a:None,SECRET)
+        self.assertEqual(denied.exception.code,'CONCURRENT_GITHUB_CHANGE')
+        self.assertEqual(plane.patches,[])
+
+    def test_technical_ci_requires_actual_run_job_and_all_required_steps(self):
+        from unittest.mock import MagicMock
+        wp,policy,plane,gh,envelope=fixture()
+        for failure in [None,'run_sha','job_sha','skipped_step','missing_step','failed_run']:
+            client=t.GitHub.__new__(t.GitHub)
+            check={'name':'projectctl','details_url':'https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/11/job/22'}
+            client.checks=MagicMock(return_value=([check],[]))
+            run={'head_sha':HEAD,'status':'completed','conclusion':'success'}
+            steps=[{'name':name,'status':'completed','conclusion':'success'} for name in policy['required_technical_steps']]
+            job={'name':'projectctl','head_sha':HEAD,'status':'completed','conclusion':'success','steps':steps}
+            if failure=='run_sha': run['head_sha']='d'*40
+            if failure=='job_sha': job['head_sha']='d'*40
+            if failure=='skipped_step': steps[0]['conclusion']='skipped'
+            if failure=='missing_step': steps.pop()
+            if failure=='failed_run': run['conclusion']='failure'
+            client.run=MagicMock(return_value=run)
+            client._get=MagicMock(return_value={'total_count':1,'jobs':[job]})
+            with self.subTest(failure=failure):
+                if failure:
+                    with self.assertRaises(t.Denied): client.technical_ci(HEAD,policy)
+                else: client.technical_ci(HEAD,policy)
+
+    def test_host_security_test_steps_required_when_host_files_change(self):
+        def host(policy,plane,gh,envelope):
+            gh.file_rows=[{'filename':'tools/host/plane-transition/transition.py'}]
+            def inspect(sha,policy,extra=()):
+                if extra: raise t.Denied('REQUIRED_TECHNICAL_STEP_NOT_PASSED')
+            gh.technical_ci=inspect
+        with self.assertRaises(t.Denied): run_case(source='IN_REVIEW',target='MERGE_READY',mutate=host)
+
+    def test_actual_file_scope_must_be_complete(self):
+        from unittest.mock import MagicMock
+        wp,policy,plane,gh,envelope=fixture()
+        client=t.GitHub.__new__(t.GitHub)
+        client._get=MagicMock(return_value=[{'filename':'one.py'}])
+        with self.assertRaises(t.Denied): client.files(gh.pr_data)
+
+    def test_rework_is_bound_to_actual_revision_not_advisory_review(self):
+        wp,policy,plane,gh,envelope=fixture(source='MERGE_READY',target='IN_REVIEW')
+        for projection in [None,{'result':'VERIFIED','operation':'MERGE_READY','observed_pr_head':HEAD}]:
+            with self.assertRaises(t.Denied):
+                t.execute('asrin',wp,'IN_REVIEW',envelope,policy,plane,gh,lambda *a:None,SECRET,projection=projection)
+        result=t.execute('asrin',wp,'IN_REVIEW',envelope,policy,plane,gh,lambda *a:None,SECRET,
+                         projection={'result':'VERIFIED','operation':'MERGE_READY','observed_pr_head':'c'*40})
+        self.assertEqual(result['result'],'VERIFIED')
+
     def test_concurrent_change_prevents_patch(self):
         wp,policy,plane,gh,envelope=fixture()
         original=plane.issue
@@ -562,13 +774,13 @@ class TransitionTests(unittest.TestCase):
         result,*_=run_case(mutate=actual_small_band)
         self.assertEqual(result['result'],'VERIFIED')
 
-    def test_unscheduled_missing_ci_and_missing_done_peer_fail_closed(self):
+    def test_unscheduled_missing_ci_and_missing_actual_done_evidence_fail_closed(self):
         def unscheduled(policy,plane,gh,envelope): policy['contexts'][plane.item['external_id']]['cycle_ids']=[]
         with self.assertRaises(t.Denied): run_case(source='BACKLOG',target='READY',mutate=unscheduled)
         def missing_ci(policy,plane,gh,envelope): gh.check_data=([],[])
         with self.assertRaises(t.Denied): run_case(source='IN_PROGRESS',target='IN_REVIEW',mutate=missing_ci)
-        def no_peer(policy,plane,gh,envelope): envelope['evidence_refs'].remove('comment:3')
-        with self.assertRaises(t.Denied): run_case(source='VALIDATING',target='DONE',mutate=no_peer)
+        def no_assessment(policy,plane,gh,envelope): envelope['evidence_refs']=['pr:1','run:4']
+        with self.assertRaises(t.Denied): run_case(source='VALIDATING',target='DONE',mutate=no_assessment)
 
     def test_milestone_dependency_is_not_blindly_a_wp_closure_blocker(self):
         def milestone(policy,plane,gh,envelope):
@@ -578,7 +790,7 @@ class TransitionTests(unittest.TestCase):
         with self.assertRaises(t.Denied): run_case(source='VALIDATING',target='DONE',mutate=milestone)
         def assessed(policy,plane,gh,envelope):
             milestone(policy,plane,gh,envelope)
-            record=gh.comments[3]
+            record=gh.comments[2]
             data=json.loads(record['body'])
             data['cap_plane_transition']['dependency_stage_dispositions']={'DEP-001':{
                 'applies_to_wp_completion':False,'reason':'This gate belongs to the later milestone, not this WP closure',
@@ -607,6 +819,17 @@ class TransitionTests(unittest.TestCase):
         self.assertNotIn(SECRET,output.getvalue())
         self.assertEqual(json.loads(output.getvalue())['reason_code'],'SECRET_IN_INPUT')
         audit.assert_not_called()
+
+    def test_real_actions_run_ids_exceed_ten_digits_and_stay_bounded(self):
+        number=38655953289
+        client=object.__new__(t.GitHub)
+        with patch.object(client,'_get',return_value={'id':number}) as request:
+            self.assertEqual(client.run(number),{'id':number})
+        self.assertEqual(request.call_args.args[0],f'{t.REPO}/actions/runs/{number}')
+        parsed=t.parse_input(json.dumps({'reason':'Real post-merge run','evidence_refs':[f'run:{number}']}).encode())
+        self.assertEqual(parsed['evidence_refs'],[f'run:{number}'])
+        for invalid in [True,0,-1,10**18,'1/../../secrets']:
+            with self.assertRaises(t.Denied): client.run(invalid)
 
     def test_missing_reason_evidence_input_is_explicitly_rejected(self):
         with self.assertRaises(t.Denied) as raised: t.parse_input(b'')

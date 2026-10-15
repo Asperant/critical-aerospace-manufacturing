@@ -1,5 +1,5 @@
-# Verified independent reviewer for the setup closure / projectctl pilot scope.
-# Routing does not grant approval or replace current-head review and CI gates.
+# Verified advisory contact for the setup closure / projectctl pilot scope.
+# Advisory routing only for every development risk class (CHG-018); never an approval or workflow gate.
 /.github/CODEOWNERS @Ejlonn
 /tools/projectctl/ @Ejlonn
 /project_control/control_plane_items.yaml @Ejlonn

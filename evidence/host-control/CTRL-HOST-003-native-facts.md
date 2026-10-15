@@ -1,5 +1,10 @@
 # CTRL-HOST-003 — Native execution facts revision
 
+Historical native-facts deployment report for commit 0caa66b. The later final
+15 October2026 owner decision replaces the normal-risk one-approval quota with zero;
+see [current policy migration](CTRL-HOST-003-review-policy-2026-10-15.md). Recorded
+checks/digests/readbacks below retain their original historical attribution.
+
 Date: 2026-10-15, Europe/Istanbul. This follows the owner's explicit simplification
 of cap-plane-transition after WP-GOV-001 IN_PROGRESS → IN_REVIEW was rejected for
 a missing special JSON confirmation despite an actual reviewable PR. The previous

@@ -124,3 +124,10 @@ has been introduced. Import conformity does not certify readiness or completion.
 ## Fail-closed governance checks
 
 `projectctl check-ready <WP-ID>` and `projectctl check-done <WP-ID>` emit deterministic JSON to stdout. PASS exits 0; FAIL and UNKNOWN exit 1; input-loading failures exit 2. Current evidence support is deliberately unavailable: structurally valid canonical WPs return UNKNOWN, invalid identities/baselines return FAIL. No command can currently produce PASS from planning, merged code, test success or a demo. All applicable docs/08 obligations still require actual execution evidence and confirmations. No Plane calls, state writes, automatic transitions or local execution database are introduced.
+
+
+Development-review policy validation checks the active static companion
+`09_change/development_review_policy.json` against its CHG-018 final owner decision and
+canonical docs/01, docs/08 and docs/09 bindings (all development approvals 0; advisory review only). A claimed missing/conflicting companion is an ERROR. This offline
+check neither certifies live review/CI/DoD nor grants READY/DONE; the host helper
+separately evaluates actual GitHub/Plane facts.

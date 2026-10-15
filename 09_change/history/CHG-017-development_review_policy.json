@@ -1,0 +1,24 @@
+{
+  "schema_version": "development-review-policy-v1",
+  "policy_id": "DEV-REVIEW-2026-10-15",
+  "effective_date": "2026-10-15",
+  "authority": "Explicit final project-owner decision, 15 October 2026; CHG-017",
+  "scope": "development_github_pr_only",
+  "required_approvals": {
+    "normal": 0,
+    "high": 2
+  },
+  "high_risk_triggers": [
+    "authentication_authorization",
+    "protected_action_authority",
+    "destructive_migration",
+    "security_sensitive_infra_secrets",
+    "major_authority_boundary",
+    "safety_protected_execution_semantics"
+  ],
+  "normal_review_optional": true,
+  "blocking_changes_requested_blocks_merge": true,
+  "high_risk_ci_substitution": false,
+  "high_risk_owner_override_substitution": false,
+  "product_hitl_unchanged": true
+}

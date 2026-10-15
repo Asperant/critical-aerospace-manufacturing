@@ -1,0 +1,44 @@
+CHG-017:
+  title: Final owner development PR review policy
+  trigger: Explicit final project-owner instruction, 15 October 2026
+  reason: Mandatory human approval on every normal-risk PR imposes unnecessary operational load.
+  class: C3
+  review_risk_class: CR-2
+  policy_id: DEV-REVIEW-2026-10-15
+  decision: APPROVED
+  status: APPROVED
+  owner: Asrın
+  reviewers: []
+  application_control_item: CTRL-HOST-003
+  human_decision_basis:
+    authority: Current explicit project-owner request, 15 October 2026
+    decision: Normal-risk development PR approvals zero; actual high-risk approvals two.
+    scope: Development/GitHub governance only; not product HITL or manufacturing authority.
+    not_claimed: No team/GitHub approval, merge, product acceptance or DONE is fabricated.
+  affected_requirements: []
+  affected_architecture: []
+  affected_contracts: []
+  affected_work_packages: []
+  affected_dependencies: []
+  affected_stable_ids: [REVIEW-INV-07, DOR-PR-06, DOD-PR-08]
+  security_authority_impact: No change to product HITL or helper caller/assignee/credential/API-write scope; high-risk review remains mandatory.
+  policy_ref: 09_change/development_review_policy.json
+  required_review_roles: Zero approval quota for normal risk; two qualified independent current-head approvals for actual high risk, without CI/owner-override substitution.
+  conditions:
+    - No unresolved blocking CHANGES_REQUESTED or invariant violation may be bypassed.
+    - Actual canonical scope/DoR-PR/applicable PR DoD, current CI and mergeability remain gates.
+    - Unknown/conflicting high risk fails closed.
+    - Final semantic acceptance and post-merge validation remain distinct gates.
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected: [Historical execution/review evidence retains its original revision and date.]
+    rerun_required: [Projectctl tests, queue/transition tests, canonical validation, policy consistency and read-only Plane audit]
+  rollout: Reference control branch and root policy/helper refresh only; no production Plane test mutation or automatic merge.
+  rollback: Reviewed policy/helper revert with root policy regeneration; never rewrite review history or auto-revert Plane state.
+  documentation_updates: [AGENTS.md, docs/01_Master_Project_Specification.md, docs/08_Definition_of_Ready_and_Done.md, docs/09_Change_Control_Process.md]
+  history:
+    supersedes: 14 October 2026 normal-risk one-independent-approval rule
+    previous_normal_required_approvals: 1
+    unchanged_high_required_approvals: 2
+    historical_changes: CHG-001 through CHG-016 retain original decisions/reviews; active policy binding updated, not re-approved retroactively.
