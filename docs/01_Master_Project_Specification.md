@@ -64500,7 +64500,7 @@ Ana hedef:
 
 the Manufacturing Operations Platform:
 
-> **Monorepo + Protected Main + Short-Lived Branches + Mandatory Pull Requests + Risk-Based Review + CODEOWNERS + Immutable Release Tags**
+Historical development-review context, superseded by CHG-018: > **Monorepo + Protected Main + Short-Lived Branches + Mandatory Pull Requests + Risk-Based Review + CODEOWNERS + Immutable Release Tags**
 
 modelini kullanacaktır.
 
@@ -64877,7 +64877,7 @@ gibi evidence gerekebilir.
 
 Minimum:
 
-> **1 qualified reviewer + required CI**
+> **Zero required human approvals; actual required CI/tests/canonical/security evidence (CHG-018)**
 
 ---
 
@@ -64894,7 +64894,7 @@ Minimum:
 
 Minimum:
 
-> owner + impacted subsystem reviewer.
+> Owner/consumer advice is optional; actual contract/compatibility evidence required (CHG-018).
 
 ---
 
@@ -64913,9 +64913,9 @@ Minimum:
 
 Minimum:
 
-> **2 qualified reviewers**
+> **Zero required human approvals even for authority/security-critical development (CHG-018)**
 
-ve relevant owner dışındaki en az bir independent reviewer.
+Reviewer presence/independence is not a development gate; product HITL remains unchanged (CHG-018).
 
 ---
 
@@ -64929,7 +64929,7 @@ Ancak protected paths automatic minimum review class taşıyabilir.
 
 # 33. Author Self-Approval
 
-Author kendi approval’ıyla review requirement’ını karşılayamaz.
+Development self-approval mechanisms are retired; review is advisory and not counted (CHG-018).
 
 ---
 
@@ -65153,10 +65153,10 @@ Main minimum:
 * no direct push
 * no force push
 * mandatory PR
-* required reviews
+* no required approving reviews; review advisory (CHG-018)
 * required CI
-* unresolved discussions block merge
-* stale review invalidation
+* actual technical/invariant failures block merge; advisory discussions/review states do not (CHG-018)
+* material revisions re-run technical checks/evidence, not approval invalidation (CHG-018)
 * merge compatibility
 
 korumaları taşıyacaktır.
@@ -66097,7 +66097,7 @@ Main history rewrite edilemez.
 
 ## GIT-INV-06
 
-Author kendi mandatory review requirement’ını karşılayamaz.
+Development reviewer/approval quotas are retired for all authors/classes (CHG-018).
 
 ## GIT-INV-07
 
@@ -66475,7 +66475,7 @@ Bu details ana Git governance kararını değiştirmeyecektir.
 
 Platform Git Strategy:
 
-> **Bütün source, infrastructure, contracts ve architecture documentation’ını tek monorepo içerisinde yöneten; protected canonical `main` branch, short-lived branches, mandatory PRs, risk-based review, CODEOWNERS, contract/migration governance, CI-enforced quality gates, immutable release tags ve Git-to-Release-Manifest traceability kullanan controlled engineering change-management modeli**
+Historical development-review context, superseded by CHG-018: > **Bütün source, infrastructure, contracts ve architecture documentation’ını tek monorepo içerisinde yöneten; protected canonical `main` branch, short-lived branches, mandatory PRs, risk-based review, CODEOWNERS, contract/migration governance, CI-enforced quality gates, immutable release tags ve Git-to-Release-Manifest traceability kullanan controlled engineering change-management modeli**
 
 olarak tasarlanacaktır.
 
@@ -121471,7 +121471,7 @@ Research question, benchmark, experiment ve thesis evidence responsibility.
 
 # 7. Review Responsibility
 
-Primary owner’dan bağımsız olarak approval/review zorunluluğu.
+Review responsibilities are advisory domain context; no development reviewer/approval quota (CHG-018).
 
 Exact review rules Madde 63’te freeze edilecektir.
 
@@ -121505,7 +121505,7 @@ Bu primary ownership’i otomatik değiştirmez.
 
 # 11. Reviewer ≠ Co-Owner
 
-Required review accountability’yi paylaşmaz.
+Advisory review does not share primary ownership/accountability (CHG-018).
 
 ---
 
@@ -121514,7 +121514,7 @@ Required review accountability’yi paylaşmaz.
 Final responsibility registry:
 
 * **P — Primary Owner**
-* **R — Required Reviewer**
+* **R — Advisory Reviewer / Domain Context (CHG-018)**
 * **C — Contributor**
 
 kullanacaktır.
@@ -122441,7 +122441,7 @@ Requires platform review/ADR.
 
 # Service Ownership Matrix
 
-| Deployable                | Primary Code/Capability Owner | Required Semantic Reviewer   | Runtime Owner |
+| Deployable                | Primary Code/Capability Owner | Advisory Semantic Contact   | Runtime Owner |
 | ------------------------- | ----------------------------- | ---------------------------- | ------------- |
 | `core`                    | Asrın                         | Batu for execution contracts | Yavuz         |
 | `bff`                     | Asrın                         | relevant subsystem owner     | Yavuz         |
@@ -122889,7 +122889,7 @@ Yavuz runtime responsibility.
 
 # Research Ownership
 
-| Research Area                 | Primary Owner | Required Collaborator/Reviewer |
+| Research Area                 | Primary Owner | Advisory Collaborator/Reviewer |
 | ----------------------------- | ------------- | ------------------------------ |
 | RQ-1 Heterogeneous RCA        | Asrın         | Selman                         |
 | RQ-2 Dynamic Recovery         | Batu          | Asrın                          |
@@ -123994,11 +123994,11 @@ Madde 62 kapsamında core ownership boundaries’e ilişkin kritik açık soru b
 Madde 63/64’te freeze edilecek operational details:
 
 * exact CODEOWNERS paths
-* exact required-review combinations
+* advisory review routing; no development approval combinations (CHG-018)
 * emergency-owner substitution
 * vacation/unavailability fallback
 * contract-review SLA
-* PR approval thresholds
+* development PR human approval count zero for all classes (CHG-018)
 * ownership-transfer process
 * cross-review assignment cadence
 * incident escalation procedure.
@@ -124068,7 +124068,7 @@ olarak kabul edilmiştir.
 
 ## Durum
 
-**Approved**
+Historical development-review context only; superseded by CHG-018: **Approved**
 
 ## Amaç
 
@@ -124087,7 +124087,7 @@ Cross Review’ın ana hedefi:
 
 Review lifecycle:
 
-> **Change Classification → Ownership Resolution → Risk Classification → Required Reviewers → Automated Evidence → Human Review → Approval → Merge → Traceable Review Record**
+Historical development-review context only; superseded by CHG-018: > **Change Classification → Ownership Resolution → Risk Classification → Required Reviewers → Automated Evidence → Human Review → Approval → Merge → Traceable Review Record**
 
 olarak kabul edilmiştir.
 
@@ -124201,7 +124201,7 @@ Batu when Simulator/Scheduler/Automation semantics affected.
 
 Ancak critical independence gerektiren change’larda:
 
-> same person cannot satisfy all required approvals.
+Historical development-review context only; superseded by CHG-018: > same person cannot satisfy all required approvals.
 
 ---
 
@@ -124219,7 +124219,7 @@ Examples:
 
 Minimum:
 
-> one normal peer review.
+Historical development-review context only; superseded by CHG-018: > Zero required human approvals for normal risk; optional peer review (DEV-REVIEW-2026-10-15).
 
 ---
 
@@ -124244,23 +124244,23 @@ Direct push still prohibited.
 
 At least:
 
-> one independent qualified reviewer.
+Historical development-review context only; superseded by CHG-018: > Zero required human approvals for normal risk; two qualified independent approvals only for actual high risk.
 
 ---
 
 # 21. Non-Owner Author
 
-Primary Owner approval normally mandatory.
+Historical development-review context only; superseded by CHG-018: Primary Owner expertise routes optional normal-risk review; no required approval (15 October2026 policy).
 
 ---
 
 # 22. Owner Author
 
-Another qualified teammate must approve.
+Historical development-review context only; superseded by CHG-018: Normal-risk teammate review is optional; actual high risk still requires two qualified independent approvals.
 
 ---
 
-# 23. Owner Cannot Self-Certify CR-1
+# 23. Normal-Risk CR-1 Has Zero Required Approvals; No Fabricated Self-Approval — historical/advisory context, CHG-018
 
 ---
 
@@ -124273,13 +124273,13 @@ Another qualified teammate must approve.
 * Core → Twin projection contract
 * AI tool contract
 * RAG evidence contract
-* workflow ↔ approval contract.
+Historical development-review context only; superseded by CHG-018: * workflow ↔ approval contract.
 
 ---
 
 # 25. Minimum Review
 
-> producer/semantic owner + materially affected domain owner.
+Historical development-review context only; superseded by CHG-018: > Producer/consumer expertise guides optional normal-risk review; zero required approvals, two only for actual high risk.
 
 ---
 
@@ -124316,15 +124316,15 @@ PR may move from CR-1 to CR-2/CR-3 after reviewer analysis.
 
 # 29. Minimum Review
 
-> at least two independent relevant human approvals.
+Historical development-review context only; superseded by CHG-018: > at least two independent relevant human approvals.
 
 Author does not count.
 
 ---
 
-# 30. CR-3 Cannot Auto-Approve on Timeout
+# 30. CR-3 Cannot Auto-Approve on Timeout — historical/advisory context, CHG-018
 
-Reviewer absence triggers reassignment, not bypass.
+Historical development-review context only; superseded by CHG-018: Reviewer absence triggers reassignment, not bypass.
 
 ---
 
@@ -124352,15 +124352,15 @@ Reviewer absence triggers reassignment, not bypass.
 
 # 33. Minimum Review
 
-> RQ owner + independent methodological reviewer + Yavuz reproducibility/platform review where execution is affected.
+Historical development-review context only; superseded by CHG-018: > Normal research PR approval count is zero; methodology/reproducibility acceptance remains at its actual semantic/freeze gates; actual high risk requires two.
 
 ---
 
-# 34. Research Owner Cannot Self-Certify Final Methodology
+# 34. Research Owner Cannot Self-Certify Final Methodology — historical/advisory context, CHG-018
 
 ---
 
-# Mandatory Review Matrix
+# Mandatory Review Matrix — historical/advisory context, CHG-018
 
 | Change Area                        | Primary Owner  | Mandatory Cross Reviewer(s)                                  |
 | ---------------------------------- | -------------- | ------------------------------------------------------------ |
@@ -124475,15 +124475,15 @@ Hard → soft transition is CR-3.
 
 ## 42. Workflow Logic
 
-Requires Batu ownership review.
+Historical development-review context only; superseded by CHG-018: Requires Batu ownership review.
 
 ---
 
 # 43. Authority Interaction
 
-If approval/action semantics change:
+Historical development-review context only; superseded by CHG-018: If approval/action semantics change:
 
-> Asrın review mandatory.
+Historical development-review context only; superseded by CHG-018: > Asrın review mandatory.
 
 ---
 
@@ -124497,7 +124497,7 @@ Reviewer must consider:
 * idempotency
 * compensation
 * timers
-* approval waits
+Historical development-review context only; superseded by CHG-018: * approval waits
 * effect verification.
 
 ---
@@ -124514,17 +124514,17 @@ Workflow change must consider already-running workflow compatibility where relev
 
 If Asrın owns both AI and Core side:
 
-> another relevant domain reviewer required.
+Historical development-review context only; superseded by CHG-018: > another relevant domain reviewer required.
 
 ---
 
-# 47. Broad Ownership Does Not Remove Independent Review
+# 47. Broad Ownership Does Not Remove Independent Review — historical/advisory context, CHG-018
 
 ---
 
 # Platform Review Rules
 
-## 48. Yavuz Cannot Self-Certify Critical Platform Changes
+## 48. Yavuz Cannot Self-Certify Critical Platform Changes — historical/advisory context, CHG-018
 
 Examples:
 
@@ -124537,7 +124537,7 @@ Examples:
 
 ---
 
-# 49. Relevant Application/Security Reviewer Required
+# 49. Relevant Application/Security Reviewer Required — historical/advisory context, CHG-018
 
 ---
 
@@ -124709,15 +124709,15 @@ Frozen protocol / reproducibility evidence.
 
 Formal states:
 
-* APPROVE
+Historical development-review context only; superseded by CHG-018: * APPROVE
 * REQUEST_CHANGES
 * BLOCK.
 
 ---
 
-# 64. No Ambiguous Critical Approval State
+# 64. No Ambiguous Critical Approval State — historical/advisory context, CHG-018
 
-“Approve with concern” not used for unresolved blocking risk.
+Historical development-review context only; superseded by CHG-018: “Approve with concern” not used for unresolved blocking risk.
 
 ---
 
@@ -124759,19 +124759,19 @@ No person can override a valid invariant violation merely due to role.
 
 # 70. Owner Author Case
 
-Requires another qualified reviewer.
+Historical development-review context only; superseded by CHG-018: Normal-risk review is optional; actual high risk requires two qualified independent approvals.
 
 ---
 
 # 71. Non-Owner Author Case
 
-Relevant owner expertise guides review routing; one qualified independent approval suffices for normal-risk changes under the owner-approved policy.
+Historical development-review context only; superseded by CHG-018: Relevant owner expertise guides optional normal-risk review; required approval count is zero under the final 15 October2026 owner policy.
 
 ---
 
 # 72. Critical Review Requires Relevant Expertise
 
-Random approval does not satisfy governance.
+Historical development-review context only; superseded by CHG-018: Random approval does not satisfy governance.
 
 ---
 
@@ -124781,17 +124781,17 @@ Where architecture requires independent perspectives.
 
 ---
 
-# Stale Approvals
+# Stale Approvals — historical/advisory context, CHG-018
 
-## 74. Approval Binds Exact Reviewed Revision
-
----
-
-# 75. Material New Commit Invalidates Relevant Approval
+## 74. Approval Binds Exact Reviewed Revision — historical/advisory context, CHG-018
 
 ---
 
-# 76. Re-Review Required
+# 75. Material New Commit Invalidates Relevant Approval — historical/advisory context, CHG-018
+
+---
+
+# 76. Re-Review Required — historical/advisory context, CHG-018
 
 For:
 
@@ -124821,7 +124821,7 @@ AI-generated code receives identical ownership/review requirements.
 
 ---
 
-# 80. Reviewer Must Understand Approved Behavior
+# 80. Reviewer Must Understand Approved Behavior — historical/advisory context, CHG-018
 
 ---
 
@@ -124837,13 +124837,13 @@ Every meaningful contract change classified as:
 
 # 81. BREAKING
 
-Affected consumers must review.
+Historical development-review context only; superseded by CHG-018: Affected consumers must review.
 
 ---
 
 # 82. BEHAVIORAL_CHANGE
 
-Also requires affected-consumer review.
+Historical development-review context only; superseded by CHG-018: Also requires affected-consumer review.
 
 ---
 
@@ -124888,7 +124888,7 @@ Requires:
 
 # Security Cross Review
 
-The following automatically require security-oriented review:
+Historical development-review context only; superseded by CHG-018: The following automatically require security-oriented review:
 
 * authentication
 * authorization
@@ -124896,7 +124896,7 @@ The following automatically require security-oriented review:
 * secrets
 * external LLM data flow
 * Oracle access
-* approval binding
+Historical development-review context only; superseded by CHG-018: * approval binding
 * break-glass
 * signed URLs
 * public asset export
@@ -125013,13 +125013,13 @@ Primary:
 
 > Batu.
 
-Required domain review:
+Historical development-review context only; superseded by CHG-018: Required domain review:
 
 > Asrın.
 
 ---
 
-# 98. Final Statistics Need Independent Review
+# 98. Final Statistics Need Independent Review — historical/advisory context, CHG-018
 
 At least one other teammate reviews:
 
@@ -125053,7 +125053,7 @@ Before FinalBenchmarkProtocol becomes FROZEN, review must cover:
 
 ---
 
-# 100. Freeze Requires Independent Approval
+# 100. Freeze Requires Independent Approval — historical/advisory context, CHG-018
 
 ---
 
@@ -125091,7 +125091,7 @@ CR-3 architectural review.
 
 # 106. New Cross-Cutting Framework
 
-Requires capability + architecture + platform review.
+Historical development-review context only; superseded by CHG-018: Requires capability + architecture + platform review.
 
 ---
 
@@ -125154,13 +125154,13 @@ Must include:
 
 # 114. Selman Cannot Self-Promote Vision Model
 
-Independent evaluation/integration review required.
+Historical development-review context only; superseded by CHG-018: Independent evaluation/integration review required.
 
 ---
 
 # 115. Asrın Cannot Self-Promote RCA/ML Model
 
-Independent research/evaluation review required.
+Historical development-review context only; superseded by CHG-018: Independent research/evaluation review required.
 
 ---
 
@@ -125172,7 +125172,7 @@ Not merely config.
 
 ---
 
-# 117. Constraint Change Requires Cross Review
+# 117. Constraint Change Requires Cross Review — historical/advisory context, CHG-018
 
 ---
 
@@ -125191,7 +125191,7 @@ Review must inspect:
 * retry
 * idempotency
 * timers
-* approval waits
+Historical development-review context only; superseded by CHG-018: * approval waits
 * compensation
 * effect verification
 * restart behavior.
@@ -125242,7 +125242,7 @@ Yavuz + affected service owner.
 
 ---
 
-# 127. Thesis Claim Wording Requires Evidence Review
+# 127. Thesis Claim Wording Requires Evidence Review — historical/advisory context, CHG-018
 
 Unsupported “significant improvement” language must be blocked.
 
@@ -125276,10 +125276,10 @@ with:
 * revision
 * risk class
 * impacted dimensions
-* required reviewers
+Historical development-review context only; superseded by CHG-018: * required reviewers
 * actual reviewers
 * decisions
-* blocking findings
+Historical development-review context only; superseded by CHG-018: * blocking findings
 * evidence refs
 * resolution.
 
@@ -125341,29 +125341,29 @@ Not everybody-review-everything.
 
 # 132. CR-0 / CR-1
 
-Normally one independent reviewer.
+Historical development-review context only; superseded by CHG-018: Zero required human approvals for normal risk; review optional (final owner decision15 October2026).
 
 ---
 
 # 133. CR-2
 
-One qualified independent reviewer for normal-risk boundary work; two only for actual high-risk authority changes.
+Historical development-review context only; superseded by CHG-018: Zero required approvals for normal-risk boundary work; two qualified independent approvals for actual high-risk authority changes.
 
 ---
 
 # 134. CR-3
 
-Two independent relevant approvals only for actual high-risk triggers defined in the owner-approved development review policy; normal-risk documentation/development requires one independent approval.
+Historical development-review context only; superseded by CHG-018: Two qualified independent approvals for actual high-risk triggers; normal-risk documentation/development requires zero approvals (15 October2026).
 
 ---
 
 # 135. CR-4
 
-Methodological + reproducibility review.
+Normal research PR review is optional; independent methodological/reproducibility acceptance remains at its actual semantic/freeze gates.
 
 ---
 
-# 136. Four-Person Approval Exceptional
+# 136. Separate Team-Wide Freeze Acceptance — Not an Additional PR Approval Quota — historical/advisory context, CHG-018
 
 Reserved for:
 
@@ -125379,11 +125379,11 @@ Reserved for:
 
 ## 137. Author May Merge After Requirements Met
 
-Merge button itself is not approval authority.
+Historical development-review context only; superseded by CHG-018: Merge button itself is not approval authority.
 
 ---
 
-# 138. Author Cannot Be Sole Certifier
+# 138. Author Cannot Be Sole Certifier of High-Risk Changes — historical/advisory context, CHG-018
 
 ---
 
@@ -125405,7 +125405,7 @@ But must include:
 
 ---
 
-# 141. Reviewer Absence Does Not Remove Requirement
+# 141. Reviewer Absence Does Not Remove Requirement — historical/advisory context, CHG-018
 
 Delegation required.
 
@@ -125605,7 +125605,7 @@ Review should route to the most relevant domain expert.
 
 # Team-Level Signoff
 
-All four explicit approvals reserved for:
+Historical development-review context only; superseded by CHG-018: All four explicit approvals reserved for:
 
 ## 165. Final Architecture Baseline
 
@@ -125623,9 +125623,9 @@ All four explicit approvals reserved for:
 
 ---
 
-# 169. Silence Is Not Approval
+# 169. Silence Is Not Approval — historical/advisory context, CHG-018
 
-Team signoff requires explicit recorded approval.
+Historical development-review context only; superseded by CHG-018: Team signoff requires explicit recorded approval.
 
 ---
 
@@ -125633,8 +125633,8 @@ Team signoff requires explicit recorded approval.
 
 May track:
 
-* required-review bypasses
-* stale approvals
+Historical development-review context only; superseded by CHG-018: * required-review bypasses
+Historical development-review context only; superseded by CHG-018: * stale approvals
 * boundary violations
 * review latency
 * regressions related to missed review.
@@ -125649,51 +125649,51 @@ May track:
 
 ## REVIEW-INV-01
 
-No author may be the sole certifier of their own critical change.
+The accountable author supplies real technical/canonical evidence; development human review is advisory (CHG-018).
 
 ## REVIEW-INV-02
 
-Every critical artifact must have at least one independent human reviewer.
+Every development PR requires zero human approvals, including high risk; actual technical gates remain mandatory (CHG-018).
 
 ## REVIEW-INV-03
 
-Non-owner changes require relevant domain expertise in review; no unconditional additional owner approval quota for normal-risk PRs.
+Owner/consumer expertise is advisory routing; no reviewer presence or approval quota (CHG-018).
 
 ## REVIEW-INV-04
 
-Cross-boundary review must cover affected-domain expertise; normal risk requires one independent approval, actual high risk two.
+Cross-boundary changes require actual compatibility/trace/evidence; advisory review is not a gate (CHG-018).
 
 ## REVIEW-INV-05
 
-CODEOWNERS cannot replace impact-based review classification.
+CODEOWNERS is advisory routing and does not impose an approval gate (CHG-018).
 
 ## REVIEW-INV-06
 
-Green CI cannot substitute for semantic human review.
+Green CI alone is not semantic acceptance; applicable DoD/trace/evidence remains required, human review does not (CHG-018).
 
 ## REVIEW-INV-07
 
-Actual high-risk CR-3 changes require two relevant independent approvals; normal-risk documentation/development requires one qualified independent approval (owner policy14 October2026).
+Required human approval count = 0 for ALL development PRs, CR-0 through CR-4, including high risk (CHG-018).
 
 ## REVIEW-INV-08
 
-Review timeout cannot imply approval.
+Advisory review timeout has no workflow/merge/DONE effect (CHG-018).
 
 ## REVIEW-INV-09
 
-Reviewer absence changes assignment, not review requirement.
+Reviewer presence or absence cannot block development workflow (CHG-018).
 
 ## REVIEW-INV-10
 
-Approval applies to exact reviewed revision.
+Technical checks/evidence bind the actual revision; no current-head approval mechanism (CHG-018).
 
 ## REVIEW-INV-11
 
-Material post-approval changes require renewed review.
+Material revisions invalidate affected technical checks/evidence, not an approval quota (CHG-018).
 
 ## REVIEW-INV-12
 
-Producer-owned contract meaning cannot change without affected-consumer review.
+Contract meaning changes require actual compatibility/consumer evidence; human review is advisory (CHG-018).
 
 ## REVIEW-INV-13
 
@@ -125701,31 +125701,31 @@ Behavioral contract changes count even if schema remains identical.
 
 ## REVIEW-INV-14
 
-Destructive DB migration requires semantic-owner and platform review.
+Destructive migrations require real migration/rollback/security evidence; no human review quota (CHG-018).
 
 ## REVIEW-INV-15
 
-Authorization/HITL changes cannot be self-certified by one owner.
+Development authorization/HITL changes require technical security evidence; runtime HITL/self-approval rules remain unchanged (CHG-018).
 
 ## REVIEW-INV-16
 
-Oracle-isolation changes require Simulator, application-security and platform review.
+Oracle-isolation changes require actual negative/isolation verification; multi-domain advice is optional (CHG-018).
 
 ## REVIEW-INV-17
 
-Platform ownership does not exempt Yavuz from independent review.
+Platform authors satisfy the same technical gates; no independent development reviewer quota (CHG-018).
 
 ## REVIEW-INV-18
 
-Architecture ownership does not exempt Asrın from independent review.
+Architecture authors satisfy the same technical gates; no independent development reviewer quota (CHG-018).
 
 ## REVIEW-INV-19
 
-Model ownership does not permit self-promotion without evaluation review.
+Model promotion requires actual evaluation/provenance and applicable product authorization; development review is advisory (CHG-018).
 
 ## REVIEW-INV-20
 
-Workflow ownership does not permit unilateral authority-semantic changes.
+Protected runtime execution still obeys product authority semantics; development code review is advisory (CHG-018).
 
 ## REVIEW-INV-21
 
@@ -125733,15 +125733,15 @@ Prompt/config/model/policy changes are reviewable behavioral artifacts.
 
 ## REVIEW-INV-22
 
-Final-test methodology cannot be changed through ordinary CR-1 review.
+Final methodology changes require honest protocol/change/evidence records; no development approval mechanism (CHG-018).
 
 ## REVIEW-INV-23
 
-Final research protocol must receive independent methodological review.
+Final research integrity/reproducibility must be evidenced; development methodological review is advisory (CHG-018).
 
 ## REVIEW-INV-24
 
-Unfavourable reviewer findings cannot be discarded because owner disagrees.
+Actual technical/invariant failures block progress; an advisory review state alone does not (CHG-018).
 
 ## REVIEW-INV-25
 
@@ -125749,11 +125749,11 @@ Hard invariant violations block merge regardless of role seniority.
 
 ## REVIEW-INV-26
 
-New infrastructure technology requires platform/architecture review.
+New infrastructure requires authorized scope and actual architecture/platform/security checks, not a GitHub review quota (CHG-018).
 
 ## REVIEW-INV-27
 
-Review burden must scale with risk.
+Technical checks scale with actual impact; development approval count stays zero (CHG-018).
 
 ## REVIEW-INV-28
 
@@ -125761,11 +125761,11 @@ Repeated manually detected boundary violations should become automated enforceme
 
 ## REVIEW-INV-29
 
-All-team approval is reserved for genuinely team-wide freezes/releases.
+Actual release/acceptance artifacts remain required; no all-team GitHub approval mechanism (CHG-018).
 
 ## REVIEW-INV-30
 
-Cross review exists to add independent expertise, not ceremonial approval.
+Historical development-review context only; superseded by CHG-018: Cross review exists to add independent expertise, not ceremonial approval.
 
 ---
 
@@ -125775,9 +125775,9 @@ Madde 63 başarılı uygulanmış sayılabilmek için:
 
 1. Every nontrivial change ReviewClass almalıdır.
 2. No author can solely certify own critical change.
-3. Non-owner changes Primary Owner review almalıdır.
-4. Cross-boundary changes affected-domain review almalıdır.
-5. Actual high-risk CR-3 requires two independent relevant approvals; normal-risk changes require one (owner policy14 October2026).
+3. Non-owner normal-risk PR review isteğe bağlıdır; expertise routing korunur.
+Historical development-review context only; superseded by CHG-018: 4. Cross-boundary normal-risk PR approval count sıfırdır; actual high-risk için iki bağımsız qualified approval gerekir.
+Historical development-review context only; superseded by CHG-018: 5. Actual high-risk CR-3 requires two independent qualified approvals; normal-risk changes require zero (owner policy15 October2026).
 6. CR-4 methodological/reproducibility review almalıdır.
 7. CODEOWNERS Madde 62 ownership modelini reflect etmelidir.
 8. Contract repository semantic ownership’i görünür kılmalıdır.
@@ -125792,11 +125792,11 @@ Madde 63 başarılı uygulanmış sayılabilmek için:
 17. Public dataset/model release rights/release review almalıdır.
 18. Destructive migrations semantic + platform review almalıdır.
 19. New infrastructure services architecture/platform review almalıdır.
-20. Final ExperimentProtocolFreeze self-certified olamaz.
-21. Final research analysis independent review almalıdır.
+Historical development-review context only; superseded by CHG-018: 20. Final ExperimentProtocolFreeze self-certified olamaz.
+Historical development-review context only; superseded by CHG-018: 21. Final research analysis independent review almalıdır.
 22. Model/prompt/config behavioral changes evidence-backed review almalıdır.
-23. Approvals exact revision’a bind olmalıdır.
-24. Material changes stale approval’ı invalidate etmelidir.
+Historical development-review context only; superseded by CHG-018: 23. Approvals exact revision’a bind olmalıdır.
+Historical development-review context only; superseded by CHG-018: 24. Material changes stale approval’ı invalidate etmelidir.
 25. Green CI semantic review yerine geçmemelidir.
 26. Repeated review findings automated rules’a dönüştürülmelidir where practical.
 27. Review burden risk-based olmalıdır.
@@ -125860,7 +125860,7 @@ maddelerini etkiler.
 
 # Reddedilen Alternatifler
 
-## Owner Self-Certification
+## Owner Self-Certification — historical/advisory context, CHG-018
 
 Reddedildi.
 
@@ -125884,7 +125884,7 @@ Reddedildi.
 
 ---
 
-## Review Timeout Equals Approval
+## Review Timeout Equals Approval — historical/advisory context, CHG-018
 
 Reddedildi.
 
@@ -125926,13 +125926,13 @@ Reddedildi.
 
 ---
 
-## Platform Owner Self-Certifies Security-Critical Platform Change
+## Platform Owner Self-Certifies Security-Critical Platform Change — historical/advisory context, CHG-018
 
 Reddedildi.
 
 ---
 
-## Architecture Owner Overrides Valid Blocking Finding
+## Architecture Owner Overrides Valid Blocking Finding — historical/advisory context, CHG-018
 
 Reddedildi.
 
@@ -125953,7 +125953,7 @@ Madde 64’te freeze edilecek operational details:
 * issue/PR state machine
 * review request timing
 * review SLA
-* unavailable reviewer reassignment
+Historical development-review context only; superseded by CHG-018: * unavailable reviewer reassignment
 * branch naming
 * draft PR timing
 * task handoff process
@@ -125969,13 +125969,13 @@ Bu details review authority modelini değiştirmeyecektir.
 
 Platform Cross Review architecture:
 
-> **Changes’i semantic impact ve risk seviyesine göre CR-0…CR-4 olarak sınıflandıran; ownership, affected-domain expertise, security/runtime impact ve research validity üzerinden mandatory reviewer’ları belirleyen; CODEOWNERS’ı yalnız routing mechanism olarak kullanan; critical owner-authored changes için independent certification zorunlu kılan; behavioral artifacts, models, prompts, datasets, workflow definitions, Scheduler policies ve experiment protocols’ı source code kadar reviewable kabul eden; green CI’ı necessary but insufficient evidence olarak gören ve hard invariant violations’a merge-blocking authority veren risk-based review governance**
+Historical development-review context only; superseded by CHG-018: > **Changes’i semantic impact ve risk seviyesine göre CR-0…CR-4 olarak sınıflandıran; ownership, affected-domain expertise, security/runtime impact ve research validity üzerinden mandatory reviewer’ları belirleyen; CODEOWNERS’ı yalnız routing mechanism olarak kullanan; critical owner-authored changes için independent certification zorunlu kılan; behavioral artifacts, models, prompts, datasets, workflow definitions, Scheduler policies ve experiment protocols’ı source code kadar reviewable kabul eden; green CI’ı necessary but insufficient evidence olarak gören ve hard invariant violations’a merge-blocking authority veren risk-based review governance**
 
 olarak kabul edilmiştir.
 
 Ana prensipler:
 
-**Owner ≠ Sole Certifier**
+Historical development-review context only; superseded by CHG-018: **Owner ≠ Sole Certifier**
 
 **Author ≠ Reviewer**
 
@@ -125991,9 +125991,9 @@ Ana prensipler:
 
 **Model Promotion Is a Behavioral Change**
 
-**Research Protocol Requires Independent Review**
+Historical development-review context only; superseded by CHG-018: **Research Protocol Requires Independent Review**
 
-**Oracle Isolation Requires Multi-Domain Review**
+Historical development-review context only; superseded by CHG-018: **Oracle Isolation Requires Multi-Domain Review**
 
 **Critical Findings Override Seniority**
 
@@ -126020,7 +126020,7 @@ olarak kabul edilmiştir.
 
 ## Durum
 
-**Approved**
+Historical development-review context only; superseded by CHG-018: **Approved**
 
 ## Amaç
 
@@ -126303,8 +126303,8 @@ Draft PR can exist while implementation remains IN_PROGRESS.
 Requires:
 
 * required CI green
-* mandatory reviews complete
-* blocking findings resolved.
+Historical development-review context only; superseded by CHG-018: * required approvals complete: zero for normal risk, two for actual high risk (DEV-REVIEW-2026-10-15)
+Historical development-review context only; superseded by CHG-018: * blocking findings resolved.
 
 ---
 
@@ -126420,7 +126420,7 @@ Broken main/integration takes priority.
 
 # 46. Review Work Is First-Class Work
 
-Small blocking reviews should be prioritized.
+Historical development-review context only; superseded by CHG-018: Small blocking reviews should be prioritized.
 
 ---
 
@@ -126448,7 +126448,7 @@ Guideline, not mandatory estimate.
 
 Example:
 
-> ScheduleProposal → approval → workflow → Core command → verified effect.
+Historical development-review context only; superseded by CHG-018: > ScheduleProposal → approval → workflow → Core command → verified effect.
 
 ---
 
@@ -126564,7 +126564,7 @@ Open before branch becomes large.
 
 ---
 
-# 65. Draft PR Does Not Trigger Mandatory Full Review
+# 65. Draft PR Does Not Trigger Mandatory Full Review — historical/advisory context, CHG-018
 
 Until marked Ready for Review.
 
@@ -126707,13 +126707,13 @@ Coordination target, not punitive SLA.
 
 ---
 
-# 85. Blocking Reviews Prioritized
+# 85. Blocking Reviews Prioritized — historical/advisory context, CHG-018
 
 ---
 
 # 86. Reviewer Delay Must Be Visible
 
-If unavailable, reviewer communicates and requests reassignment.
+Historical development-review context only; superseded by CHG-018: If unavailable, reviewer communicates and requests reassignment.
 
 ---
 
@@ -126762,7 +126762,7 @@ Examples:
 
 ---
 
-# 93. Pairing Does Not Replace Independent Review
+# 93. Pairing Does Not Replace Independent Review — historical/advisory context, CHG-018
 
 ---
 
@@ -126770,7 +126770,7 @@ Examples:
 
 If both wrote critical change:
 
-> neither can satisfy independent-review requirement.
+Historical development-review context only; superseded by CHG-018: > neither can satisfy independent-review requirement.
 
 ---
 
@@ -126786,11 +126786,11 @@ Unless explicit.
 
 ---
 
-# 97. Mandatory Reviews Approved
+# 97. Actual-Risk Approval Count Satisfied: Normal Zero, High Two — historical/advisory context, CHG-018
 
 ---
 
-# 98. Blocking Findings Resolved
+# 98. Blocking Findings Resolved — historical/advisory context, CHG-018
 
 ---
 
@@ -127136,7 +127136,7 @@ Incident may or may not reveal a bug.
 
 ## 148. Canonical Flow
 
-> detect → contain/rollback → issue → short-lived fix branch → minimal fix → independent review → merge → immutable build → deploy → verify.
+Historical development-review context only; superseded by CHG-018: > detect → contain/rollback → issue → short-lived fix branch → minimal fix → independent review → merge → immutable build → deploy → verify.
 
 ---
 
@@ -127154,17 +127154,17 @@ Not untracked implementation.
 
 ---
 
-# 152. Independent Review Still Required Where Technically Possible
+# 152. Independent Review Still Required Where Technically Possible — historical/advisory context, CHG-018
 
 ---
 
-# 153. Retrospective Review Required if Normal Controls Relaxed
+# 153. Retrospective Review Required if Normal Controls Relaxed — historical/advisory context, CHG-018
 
 ---
 
 # Owner Absence / Bus Factor
 
-## 154. Reviewer Reassignment Allowed
+## 154. Reviewer Reassignment Allowed — historical/advisory context, CHG-018
 
 Based on expertise matrix.
 
@@ -127562,7 +127562,7 @@ Requires:
 
 # 214. DOC/ADR DONE
 
-Requires reviewed normative artifact.
+Historical development-review context only; superseded by CHG-018: Requires reviewed normative artifact.
 
 ---
 
@@ -127719,11 +127719,11 @@ Known-broken CI should not routinely be handed to reviewers.
 
 ## FLOW-INV-16
 
-Pair-programming authors cannot satisfy independent-review requirement.
+Pairing metadata is context only; no independent development approval requirement (CHG-018).
 
 ## FLOW-INV-17
 
-Merge requires all mandatory CI/review gates.
+Merge requires actual CI/tests/canonical/scope/evidence gates; no review-state gate (CHG-018).
 
 ## FLOW-INV-18
 
@@ -127798,7 +127798,7 @@ Madde 64 başarılı uygulanmış sayılabilmek için:
 13. Self-review yapılmalıdır.
 14. Mechanical CI gates review’den önce çalışmalıdır.
 15. Review work blocking dependency olarak prioritize edilmelidir.
-16. Pairing independent review yerine geçmemelidir.
+Historical development-review context only; superseded by CHG-018: 16. Pairing independent review yerine geçmemelidir.
 17. Merge only required gates sonrası yapılmalıdır.
 18. Squash merge canonical olmalıdır.
 19. Merge sonrası Integration validation yapılmalıdır.
@@ -127899,7 +127899,7 @@ Reddedildi.
 
 ---
 
-## Pairing Equals Independent Review
+## Pairing Equals Independent Review — historical/advisory context, CHG-018
 
 Reddedildi.
 
@@ -127988,7 +127988,7 @@ Bu details Team Workflow semantics’ini değiştirmeyecektir.
 
 Platform Team Workflow:
 
-> **Every material engineering/research/platform change’i tracked WorkItems, exactly-one delivery ownership, lightweight Definition of Ready, bounded WIP, short-lived branches, contract-first parallel development, early draft PRs, CI-backed risk-based cross review, squash merge, immutable main artifacts, post-merge integration validation, explicit blockers, durable handoffs ve repository-centered decision traceability üzerinden yöneten; pairing’i teşvik ederken independent review’i koruyan; merge ile done kavramını ayıran ve final-week integration yerine continuous integration behavior’ı zorunlu kılan lightweight but disciplined engineering workflow**
+Historical development-review context only; superseded by CHG-018: > **Every material engineering/research/platform change’i tracked WorkItems, exactly-one delivery ownership, lightweight Definition of Ready, bounded WIP, short-lived branches, contract-first parallel development, early draft PRs, CI-backed risk-based cross review, squash merge, immutable main artifacts, post-merge integration validation, explicit blockers, durable handoffs ve repository-centered decision traceability üzerinden yöneten; pairing’i teşvik ederken independent review’i koruyan; merge ile done kavramını ayıran ve final-week integration yerine continuous integration behavior’ı zorunlu kılan lightweight but disciplined engineering workflow**
 
 olarak kabul edilmiştir.
 
@@ -128010,7 +128010,7 @@ Ana prensipler:
 
 **Review Is Engineering Work**
 
-**Pairing ≠ Independent Review**
+Historical development-review context only; superseded by CHG-018: **Pairing ≠ Independent Review**
 
 **Merge ≠ Done**
 
@@ -181695,12 +181695,47 @@ Lane A is open real/public experimental machining/tool-wear/health/inspection/ND
 Source selection is DECIDED; exact acquisition cards, rights checks, leakage-aware partitions and claims are required implementation/evaluation artifacts before the applicable source-use/freeze gate. Existing unverified bibliographic/license/sample claims are not accepted facts: they remain NEEDS_SOURCE_VERIFICATION. This does not create another undecided source-portfolio policy.
 
 
-## Owner-approved development review policy migration — 14 October2026
+## Historical owner-approved review policy — 14 October2026 (superseded 15 October2026)
 
-This owner decision replaces the former blanket two-review / mandatory owner-pair rules for project development governance only. Normal-risk documentation and development PRs require **one qualified independent approval**. Two distinct qualified independent approvals are mandatory only for actual high-risk changes: authentication/authorization, protected-action authority, destructive migrations, security-sensitive infrastructure/secrets, or major authority-boundary changes. Impact and expertise, not filenames or the C0–C3 change class alone, determine risk. CR-3 denotes these actual high-risk triggers; CR-4 retains methodological/reproducibility scrutiny but does not alone require two reviewers. An unresolved high-risk impact is not silently classified normal-risk.
+Historical 14 October2026 decision, superseded by the final 15 October2026 policy below: the former blanket two-review / mandatory owner-pair rules were replaced; normal-risk documentation and development PRs then required **one qualified independent approval**. Two distinct qualified independent approvals are mandatory only for actual high-risk changes: authentication/authorization, protected-action authority, destructive migrations, security-sensitive infrastructure/secrets, or major authority-boundary changes. Impact and expertise, not filenames or the C0–C3 change class alone, determine risk. CR-3 denotes these actual high-risk triggers; CR-4 retains methodological/reproducibility scrutiny but does not alone require two reviewers. An unresolved high-risk impact is not silently classified normal-risk.
 
-Self-approval remains prohibited. Reviewer routing selects expertise relevant to the actual change; it does not require every listed owner or make Batuhan the reviewer of every PR. For normal risk, one qualified independent reviewer may cover the relevant domains; for high risk, the two independent reviewers must cover the critical impact. Owner/context consultation and contract/evaluation/security evidence remain required where applicable, but are not extra blanket approval quotas. Existing review-role matrices are expertise-routing guidance subject to this policy, not unconditional additional approvals.
+Historical 14 October2026 routing (superseded below): self-approval remained prohibited. Reviewer routing selected expertise relevant to the actual change; it does not require every listed owner or make Batuhan the reviewer of every PR. For normal risk, one qualified independent reviewer may cover the relevant domains; for high risk, the two independent reviewers must cover the critical impact. Owner/context consultation and contract/evaluation/security evidence remain required where applicable, but are not extra blanket approval quotas. Existing review-role matrices are expertise-routing guidance subject to this policy, not unconditional additional approvals.
 
 This changes no product runtime HITL, protected-command approval/binding, Core authority, Oracle isolation, security invariant or safety rule. Normal approvals still bind the exact reviewed revision. The owner explicitly authorizes the PR#4 documentation-only migration and closure after final-head CI and validation without a new review request: Ejlonn's genuine approval of219439364757473c8450959a3af06bdc237cd439 remains historical review evidence; it is **not represented as approval of the new policy commit**. This bounded owner authorization is not a general stale-approval exception or self-approval.
 
 Historical rule: CR-3 previously required at least two relevant independent approvals and the matrices mandated owner/consumer review sets. The owner replaced those blanket requirements on14 October2026 with the actual-risk policy above. Earlier rules, decisions, failed merge-gate report and source-hashed evidence remain historical. PR#4 reconciles approved documentation within existing authority boundaries, introduces no runtime/security/destructive change and is normal-risk for this migration; the previously blanket CR-3 labels do not establish an actual high-risk trigger. Future changes must be classified on their own impact.
+
+
+## Historical intermediate CHG-017 decision — 15 October 2026 (superseded by CHG-018)
+
+Policy ID: `DEV-REVIEW-2026-10-15`; migration: `CHG-017`; companion: `09_change/development_review_policy.json`. This final project-owner decision supersedes the 14 October2026 normal-risk one-approval policy for development/GitHub PR governance only.
+
+| Policy ID | Risk | Required independent approvals |
+|---|---|---|
+| DEV-REVIEW-2026-10-15 | NORMAL_RISK | 0 |
+| DEV-REVIEW-2026-10-15 | HIGH_RISK | 2 |
+
+Normal risk includes CR-0/CR-1/CR-2, ordinary implementation, docs/tooling and normal research implementation (including CR-4 without a real high-risk trigger). Human review, review requests and comments are optional and are not merge gates. No self-approval is recorded or fabricated; the author may merge after actual applicable gates pass.
+
+High risk requires two distinct qualified independent current-head approvals covering the actual critical impact: authentication/authorization; protected-action authority; destructive schema/data migration; secrets/security-sensitive infrastructure; major authority-boundary change; explicitly high-risk safety/protected-execution semantics. Author, commit/co-authors and pairing participants do not supply independent approvals. Neither green CI, timeout nor owner override substitutes for either approval. Unassessed/conflicting high-risk impact fails closed; filenames or C0–C3 labels alone do not determine risk.
+
+MERGE_READY requires a real canonical WP PR, non-draft/current head, required CI green, mergeability and safety against current main, scope/DoR-PR/applicable pre-merge PR DoD satisfied, and no unresolved blocking CHANGES_REQUESTED or invariant violation. A new commit, a label, reviewer absence or an owner override cannot silently clear a blocking finding. A reviewer must clear the finding with attributable resolution; ambiguous dismissal alone is insufficient. Approval count zero never means failed CI, missing evidence or an unresolved finding may be bypassed. Post-merge DoD remains post-merge.
+
+All development review matrices/owner/consumer/research routing statements are expertise guidance for normal-risk PRs, not additional approval quotas. Independent semantic acceptance/final-protocol/freeze obligations remain at their actual acceptance gates; they do not impose a blanket GitHub approval on ordinary research implementation. Product runtime HITL, protected-action approval/binding, manufacturing authority and verification obligations are unchanged. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted. Historical reviews remain bound to their real revisions; no new approval or product completion is inferred.
+
+
+## Final advisory development review policy — CHG-018, 15 October 2026
+
+Policy ID: `DEV-REVIEW-2026-10-15-FINAL`. CHG-018 explicitly supersedes CHG-017; CHG-017 and its intermediate 0/2 decision remain historical, unchanged. Active companion: `09_change/development_review_policy.json`; previous companion archived under `09_change/history/CHG-017-development_review_policy.json`.
+
+| Policy ID | Scope | Required human approvals |
+|---|---|---|
+| DEV-REVIEW-2026-10-15-FINAL | ALL_DEVELOPMENT | 0 |
+
+Every repository development PR, CR-0 through CR-4, normal/high risk, security/auth, protected-action-authority code, destructive migration, secrets/infrastructure, authority boundaries, platform, tooling, docs, product and research implementation has zero required human approvals. Review, requests, comments, suggestions and security advice are ADVISORY. No independent/qualified reviewer quota, self-approval rule, owner override, current-head approval or stale-approval mechanism governs development workflow. GitHub APPROVED, CHANGES_REQUESTED, COMMENTED and DISMISSED are not workflow, merge or DONE gates, and reviewer presence/absence never blocks progress. CODEOWNERS and supporting-reviewer metadata are advisory routing/domain context only.
+
+IN_REVIEW means a real non-draft technically reviewable PR, not waiting for a human. MERGE_READY requires correct canonical WP/approved control scope and branch/PR/head binding, required actual CI/tests/canonical validation, mergeability/no conflict against current main, no out-of-scope changes, applicable DoR-PR/PR DoD, trace/evidence and applicable security/secret/static checks, and no real BLOCKED condition. Actual technical/canonical failures or ambiguity fail closed; a review state alone neither proves nor disproves these facts. Material revisions re-run technical checks/evidence. Rework follows actual revision/technical evidence, not approval invalidation.
+
+MERGED requires an actual GitHub merge. VALIDATING requires actual post-merge validation started. DONE requires all applicable DoD, trace/evidence and actual successful post-merge validation; accountable owner assessment and real artifacts remain required, another person's review/confirmation does not. Development peer/methodology review is advisory even for closure; real protocol, scientific reproducibility, measured acceptance and product-authority evidence remain required. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted.
+
+This changes ONLY development/GitHub/repository governance. Product HITL, protected-action approval, AuthorityPolicy, authenticated approvers, runtime self-approval prohibition, exact proposal/plan binding and execution authorization are unchanged. Project-owner scope/cancellation decisions and real product acceptance artifacts are not GitHub review approvals and are not fabricated or waived. No Plane test mutation, merge, commit or push is authorized in this pass. Existing historical approvals remain history, never requirements for a current transition.

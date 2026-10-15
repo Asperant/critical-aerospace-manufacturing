@@ -1,0 +1,11 @@
+#!/bin/sh
+# CAP_PROFILE chooses display scope only; it is not an authorization identity.
+if [ "$#" -ne 0 ]; then
+    printf '%s\n' '{"status":"UNAVAILABLE","reason":"ARGUMENTS_NOT_SUPPORTED"}'
+    exit 2
+fi
+case "${CAP_PROFILE-}" in
+    asrin|selman|batuhan|yavuz) ;;
+    *) printf '%s\n' '{"status":"UNAVAILABLE","reason":"INVALID_CAP_PROFILE"}'; exit 2 ;;
+esac
+exec /usr/bin/sudo -n /usr/local/libexec/cap-plane-queue "$CAP_PROFILE"

@@ -517,8 +517,8 @@ Lifecycle:
 Potential deterministic transitions:
 
 - explicit implementation start → IN_PROGRESS
-- non-draft PR/review request → IN_REVIEW
-- required checks/reviews green → MERGE_READY
+- real non-draft technically reviewable PR → IN_REVIEW; no reviewer/request required (CHG-018)
+- required technical/canonical/test checks green → MERGE_READY; no review-state gate (CHG-018)
 - merged PR → MERGED
 - post-merge validation start → VALIDATING
 
@@ -572,7 +572,7 @@ Rehearse:
 5. implementation change made
 6. tests run
 7. PR opened
-8. review/check state reflected
+8. real technical check state reflected; review is advisory (CHG-018)
 9. merge reflected as MERGED
 10. post-merge validation represented
 11. DONE withheld until evidence exists

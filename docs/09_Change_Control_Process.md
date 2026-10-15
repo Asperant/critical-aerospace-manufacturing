@@ -56,7 +56,7 @@ The approved 01/02 baseline was written before implementation; reality will cont
 |---|---|---|
 | Every material change is classified | a change without a class cannot be reviewed proportionally | PR template requires a class; CI blocks a behaviour-changing PR with no declared class |
 | Every material change declares impact | requirement, contract, architecture, WBS, dependency, milestone, evidence and claim impact are named, not implied | `ImpactedRequirementIDs` (or an explicit `NONE — reason`) in the PR (01 Item 83 #98–#99) |
-| Every material change is reviewed by someone who understands its impact | review authority follows impact, not repository path (Item 63) | reviewer matrix §7.4; CR-3/CR-4 cannot be self-certified |
+| Every material change declares impact; human PR review is optional at normal risk and mandatory at high risk | review authority follows impact, not repository path (Item 63) | reviewer matrix §7.4; human development review is advisory; actual technical/evidence gates remain |
 | Every behaviour-affecting change asks the staleness question | "which previous evidence is no longer valid?" is answered before the change is closed | §14; evidence applicability is updated in the trace registry |
 
 | In scope | Out of scope |
@@ -118,7 +118,7 @@ The project-wide taxonomy is aligned with the Item 79 campaign change classes so
 | Class | Name | Definition | Behavioural semantics | Release identity | Evidence consequence | Item 79 counterpart |
 |---|---|---|---|---|---|---|
 | C0 | Editorial / non-semantic | typos, formatting, non-semantic documentation, diagram clarity, regenerated artifacts from unchanged sources | unchanged | no new release required | no behavioural rerun by default | C0 — Documentation Only |
-| C1 | Compatible correction | bug fix that restores approved behaviour, analysis correction on unchanged raw outputs, derived implementation detail, additive migration | approved semantics preserved | new build, same behavioural identity | impact review required; analysis corrections require a new AnalysisPackage version and symmetric recomputation | C1 — Analysis Correction |
+| C1 | Compatible correction | bug fix that restores approved behaviour, analysis correction on unchanged raw outputs, derived implementation detail, additive migration | approved semantics preserved | new build, same behavioural identity | impact/evidence assessment required; human development review advisory; analysis corrections require a new AnalysisPackage version and symmetric recomputation | C1 — Analysis Correction |
 | C2 | Behaviour-affecting | model, prompt/tool behaviour, scheduler policy, workflow semantics, authority policy, event contract behaviour, data processing | changed | **new ReleaseManifest required** | affected evidence reviewed and, where applicable, reruns executed | C2 — Behaviour-Affecting |
 | C3 | Protocol / scope / final-data / fundamental architecture | requirement semantics, FINAL split or protocol, research hypothesis, canonical authority, major architecture, scope | changed at the level of what the system *is* or what is being measured | new release plus formal rebaseline of the affected baseline documents | research-integrity event: campaign version may change, disclosure required | C3 — Protocol/Data/Final-Split |
 
@@ -144,7 +144,7 @@ flowchart TD
 
 | Rule | Statement | Source |
 |---|---|---|
-| CL-01 | When in doubt between two classes, the higher class applies until a reviewer downgrades it with a reason. | derived |
+| CL-01 | When in doubt between two classes, the higher class applies until actual impact/evidence supports a documented downgrade; no reviewer gate (CHG-018). | derived |
 | CL-02 | A schema-compatible change can still be behaviourally breaking (e.g. `confidence` field semantics changing without a JSON shape change) — that is C2, not C0/C1. | Item 63 #83 |
 | CL-03 | A "configuration only" change that alters behaviour (threshold, budget, policy value, retrieval parameter) is C2. | derived from Item 79 C2 |
 | CL-04 | A fix that changes what the system does in a case it previously handled differently is C2 even when it is called a bug fix; C1 is reserved for restoring *approved* behaviour. | derived |
@@ -157,8 +157,8 @@ flowchart TD
 
 | System | Values | Applies to | Effect |
 |---|---|---|---|
-| Review risk class (Item 63) | CR-0 trivial · CR-1 subsystem-local · CR-2 cross-boundary · CR-3 critical/safety-sensitive · CR-4 research/final-evidence critical | every change | determines reviewer set and whether self-certification is possible |
-| Contract compatibility (Item 22) | NON_BREAKING · BEHAVIORAL_CHANGE · BREAKING | contract changes | BEHAVIORAL_CHANGE and BREAKING both require affected-consumer review |
+| Review risk class (Item 63) | CR-0 trivial · CR-1 subsystem-local · CR-2 cross-boundary · CR-3 critical/safety-sensitive · CR-4 research/final-evidence critical | every change | determines reviewer set and actual technical/security/evidence verification needs; review remains advisory |
+| Contract compatibility (Item 22) | NON_BREAKING · BEHAVIORAL_CHANGE · BREAKING | contract changes | BEHAVIORAL_CHANGE and BREAKING require actual compatibility/consumer evidence; development review advisory |
 | Migration class (Item 35) | additive · backfill · destructive | database changes | destructive migrations are CR-3 and require rollback analysis |
 | Platform change (Item 35 #67–#68) | PlatformChange / maintenance | major infrastructure upgrades | never triggered by application auto-CD; separately scheduled |
 | Run disposition (Item 60) | METHOD_FAILURE · INFRA_INVALID | benchmark runs affected by a change | decides whether a rerun is legitimate (§14.4) |
@@ -353,19 +353,19 @@ Review authority follows impact, not repository path. No critical change may be 
 | RR-6 | Vision / data reviewer | Selman | dataset, split, model and provenance changes |
 | RR-7 | Planning / execution reviewer | Batu | scheduler, workflow and execution-semantics changes |
 
-One person may hold several roles, but never the roles of author *and* sole certifier on CR-3/CR-4 (Item 63 #16, #23, #34).
+One person may hold several expertise roles; all development PRs require zero approvals; actual technical acceptance evidence remains a distinct gate.
 
 ### 7.3 Review risk classes and minimum review
 
 | Risk class | Examples | Minimum review | Self-certification |
 |---|---|---|---|
-| CR-0 | typos, comments, documentation wording, formatting | one reviewer; protected main still applies | not a bypass of branch protection |
-| CR-1 | subsystem-local refactor, local serving change, local dashboard work | owner reviewer; a non-owner author needs the owner | an owner may not self-certify their own CR-1 |
-| CR-2 | Vision→AI contract, Scheduler→Core contract, Core→Twin projection, AI tool contract, RAG evidence contract, workflow↔approval contract | one qualified independent reviewer covering affected-domain impact; owner/consumer routing is guidance, not an extra approval quota | no |
-| CR-3 | actual auth/authorization, protected-action authority, destructive migration, security-sensitive infrastructure/secrets, major authority-boundary changes | two distinct qualified independent approvals for actual high-risk triggers in01 owner policy; relevant authority/security expertise required; no timeout or CI substitute | never |
-| CR-4 | research hypothesis, FINAL split, SeedSet, baseline removal, primary metric, ExperimentProtocolFreeze, AnalysisPlan, exclusion policy, final benchmark execution logic, final statistics | one qualified independent reviewer covering methodology/reproducibility and relevant data expertise; two only if an actual high-risk trigger applies | research owner cannot self-certify final methodology |
+| CR-0 | typos, comments, documentation wording, formatting | zero required human approvals; all development review advisory; protected main technical safeguards still apply | advisory only; no development approval mechanism |
+| CR-1 | subsystem-local refactor, local serving change, local dashboard work | zero required approvals; owner expertise guides advisory review | advisory only; no development approval mechanism |
+| CR-2 | Vision→AI contract, Scheduler→Core contract, Core→Twin projection, AI tool contract, RAG evidence contract, workflow↔approval contract | zero required approvals; affected-domain expertise guides advisory review | advisory only; no development approval mechanism |
+| CR-3 | actual auth/authorization, protected-action authority, destructive migration, security-sensitive infrastructure/secrets, major authority-boundary changes, explicitly high-risk safety/protected execution semantics | zero required human approvals; actual security/authority/migration/static verification remains mandatory | advisory review, not a gate |
+| CR-4 | research hypothesis, FINAL split, SeedSet, baseline removal, primary metric, ExperimentProtocolFreeze, AnalysisPlan, exclusion policy, final benchmark execution logic, final statistics | zero required approvals for ALL research/development PRs, including high risk | final-methodology acceptance remains at its actual gate |
 
-### 7.4 Reviewer expertise-routing matrix (owner policy14 October2026)
+### 7.4 Reviewer expertise-routing matrix (final owner policy15 October2026; all routing advisory, CHG-018)
 
 | Change surface | Primary owner reviewer (RR-1) | Relevant cross-domain expertise | Relevant platform expertise | Usual risk class |
 |---|---|---|---|---|
@@ -393,7 +393,7 @@ stateDiagram-v2
   [*] --> DRAFT
   DRAFT --> CLASSIFIED: class + review risk class assigned
   CLASSIFIED --> IMPACT_ASSESSED: nine impact domains answered (§5)
-  IMPACT_ASSESSED --> UNDER_REVIEW: required reviewers assigned (§7.4)
+  IMPACT_ASSESSED --> UNDER_REVIEW: impact classified; advisory routing for all development classes (§7.4)
   UNDER_REVIEW --> APPROVED
   UNDER_REVIEW --> APPROVED_WITH_CONDITIONS
   UNDER_REVIEW --> REJECTED
@@ -411,8 +411,8 @@ stateDiagram-v2
 | DRAFT | title, trigger and reason written | raiser |
 | CLASSIFIED | class C0–C3 and risk class CR-0…CR-4 assigned; CL-01 applied when uncertain | raiser + owner |
 | IMPACT_ASSESSED | all nine impact domains answered, including explicit `NONE` answers | owner |
-| UNDER_REVIEW | actual risk-based approvals received: normal risk one, high risk two; no timeout substitutes for approval | reviewers |
-| APPROVED | decision recorded with reviewers named | reviewers |
+| UNDER_REVIEW | actual applicable scope/DoR/DoD and CI checks pass: all development approvals zero; actual technical/canonical failures block, advisory review states do not | reviewers |
+| APPROVED | accountable decision and real evidence recorded; reviewers advisory | reviewers |
 | IMPLEMENTED | merged with trace edges updated in the same PR; new ReleaseManifest for C2+ | owner |
 | VERIFIED | required verification passed and required reruns executed with dispositions recorded | owner + Yavuz (evidence) |
 | CLOSED | documentation updates done; evidence applicability set; registry entry final | owner |
@@ -590,7 +590,7 @@ An emergency is a situation where waiting for normal review causes more damage t
 | EH-2 | The deployed artifact is an exact, identifiable revision with a ReleaseManifest — never an edited container or a hand-patched file on the host. | deployment identity is the basis of every later attribution (01 Item 42) |
 | EH-3 | Manual host intervention, if it happens at all, is logged with what was changed, by whom and at which revision, and is reconciled within the same or next sprint. | NFR-DEP-003 requires zero manual source patches on the normal path |
 | EH-4 | A retroactive ChangeRequest is raised for every hotfix, with the same schema, no later than the next working session. | no silent change |
-| EH-5 | Security-sensitive hotfixes still require the CR-3 reviewer, even if the review happens after deployment. | Item 63 #30–#31: CR-3 cannot auto-approve, and green CI does not replace review |
+| EH-5 | Security-sensitive hotfixes still require applicable technical security/negative/rollback verification; development review advisory (CHG-018). | Item 63 #30–#31: CR-3 cannot auto-approve, and green CI does not replace review |
 | EH-6 | A hotfix never bypasses authority invariants: it may not disable approval requirements, validator gates, oracle isolation or audit emission to "make things work". | these are hard invariants, not configuration |
 | EH-7 | During the S12 protected benchmark window, a hotfix pauses the campaign; runs in flight are dispositioned rather than quietly completed. | Item 79 abort conditions; integrity outranks schedule |
 
@@ -670,11 +670,12 @@ flowchart LR
 |---|---|---|
 | `09_change/change_request_schema.json` | ChangeRequest JSON Schema with controlled enums and cross-field rules | — |
 | `09_change/change_classes.csv` | C0–C3 with release and evidence consequences | 4 |
-| `09_change/reviewer_matrix.csv` | required reviewers per change surface | 17 |
+| `09_change/reviewer_matrix.csv` | planned expertise routing, optional for normal-risk PRs | 17 (planned; absent) |
 | `09_change/staleness_triggers.csv` | changed artifact → stale evidence mapping | 11 |
-| `09_change/change_requests.csv` | the live registry | 0 (header only — empty by design) |
+| `09_change/change_requests.csv` | change decision registry; historical decisions preserved | see live CSV; CHG-017 records final review policy |
+| `09_change/development_review_policy.json` | active static development PR approval policy, validated by projectctl and compiled into the host helper policy | all development 0, advisory |
 
-Planned CI checks: `chg lint` validates every YAML record against the schema; a behaviour-changing PR without a declared class or without `ImpactedRequirementIDs` fails; a CR-3/CR-4 record whose reviewer list contains only the owner fails; a `POST_M6_FREEZE_BREAKING` record without a rerun decision fails.
+Planned CI checks: `chg lint` validates every YAML record against the schema; a behaviour-changing PR without a declared class or without `ImpactedRequirementIDs` fails; an approval/reviewer quota is never evaluated; actual technical/scope/trace/evidence violations fail; a `POST_M6_FREEZE_BREAKING` record without a rerun decision fails.
 
 ## 18. Findings Register
 
@@ -739,12 +740,47 @@ Planned CI checks: `chg lint` validates every YAML record against the schema; a 
 
 *End of 09 — Change Control Process (Draft — Derived from Approved 01/02 Baseline).*
 
-## Owner-approved development review policy migration — 14 October2026
+## Historical owner-approved review policy — 14 October2026 (superseded 15 October2026)
 
-This owner decision replaces the former blanket two-review / mandatory owner-pair rules for project development governance only. Normal-risk documentation and development PRs require **one qualified independent approval**. Two distinct qualified independent approvals are mandatory only for actual high-risk changes: authentication/authorization, protected-action authority, destructive migrations, security-sensitive infrastructure/secrets, or major authority-boundary changes. Impact and expertise, not filenames or the C0–C3 change class alone, determine risk. CR-3 denotes these actual high-risk triggers; CR-4 retains methodological/reproducibility scrutiny but does not alone require two reviewers. An unresolved high-risk impact is not silently classified normal-risk.
+Historical 14 October2026 decision, superseded by the final 15 October2026 policy below: the former blanket two-review / mandatory owner-pair rules were replaced; normal-risk documentation and development PRs then required **one qualified independent approval**. Two distinct qualified independent approvals are mandatory only for actual high-risk changes: authentication/authorization, protected-action authority, destructive migrations, security-sensitive infrastructure/secrets, or major authority-boundary changes. Impact and expertise, not filenames or the C0–C3 change class alone, determine risk. CR-3 denotes these actual high-risk triggers; CR-4 retains methodological/reproducibility scrutiny but does not alone require two reviewers. An unresolved high-risk impact is not silently classified normal-risk.
 
-Self-approval remains prohibited. Reviewer routing selects expertise relevant to the actual change; it does not require every listed owner or make Batuhan the reviewer of every PR. For normal risk, one qualified independent reviewer may cover the relevant domains; for high risk, the two independent reviewers must cover the critical impact. Owner/context consultation and contract/evaluation/security evidence remain required where applicable, but are not extra blanket approval quotas. Existing review-role matrices are expertise-routing guidance subject to this policy, not unconditional additional approvals.
+Historical 14 October2026 routing (superseded below): self-approval remained prohibited. Reviewer routing selected expertise relevant to the actual change; it does not require every listed owner or make Batuhan the reviewer of every PR. For normal risk, one qualified independent reviewer may cover the relevant domains; for high risk, the two independent reviewers must cover the critical impact. Owner/context consultation and contract/evaluation/security evidence remain required where applicable, but are not extra blanket approval quotas. Existing review-role matrices are expertise-routing guidance subject to this policy, not unconditional additional approvals.
 
 This changes no product runtime HITL, protected-command approval/binding, Core authority, Oracle isolation, security invariant or safety rule. Normal approvals still bind the exact reviewed revision. The owner explicitly authorizes the PR#4 documentation-only migration and closure after final-head CI and validation without a new review request: Ejlonn's genuine approval of219439364757473c8450959a3af06bdc237cd439 remains historical review evidence; it is **not represented as approval of the new policy commit**. This bounded owner authorization is not a general stale-approval exception or self-approval.
 
 Historical rule: CR-3 previously required at least two relevant independent approvals and the matrices mandated owner/consumer review sets. The owner replaced those blanket requirements on14 October2026 with the actual-risk policy above. Earlier rules, decisions, failed merge-gate report and source-hashed evidence remain historical. PR#4 reconciles approved documentation within existing authority boundaries, introduces no runtime/security/destructive change and is normal-risk for this migration; the previously blanket CR-3 labels do not establish an actual high-risk trigger. Future changes must be classified on their own impact.
+
+
+## Historical intermediate CHG-017 decision — 15 October 2026 (superseded by CHG-018)
+
+Policy ID: `DEV-REVIEW-2026-10-15`; migration: `CHG-017`; companion: `09_change/development_review_policy.json`. This final project-owner decision supersedes the 14 October2026 normal-risk one-approval policy for development/GitHub PR governance only.
+
+| Policy ID | Risk | Required independent approvals |
+|---|---|---|
+| DEV-REVIEW-2026-10-15 | NORMAL_RISK | 0 |
+| DEV-REVIEW-2026-10-15 | HIGH_RISK | 2 |
+
+Normal risk includes CR-0/CR-1/CR-2, ordinary implementation, docs/tooling and normal research implementation (including CR-4 without a real high-risk trigger). Human review, review requests and comments are optional and are not merge gates. No self-approval is recorded or fabricated; the author may merge after actual applicable gates pass.
+
+High risk requires two distinct qualified independent current-head approvals covering the actual critical impact: authentication/authorization; protected-action authority; destructive schema/data migration; secrets/security-sensitive infrastructure; major authority-boundary change; explicitly high-risk safety/protected-execution semantics. Author, commit/co-authors and pairing participants do not supply independent approvals. Neither green CI, timeout nor owner override substitutes for either approval. Unassessed/conflicting high-risk impact fails closed; filenames or C0–C3 labels alone do not determine risk.
+
+MERGE_READY requires a real canonical WP PR, non-draft/current head, required CI green, mergeability and safety against current main, scope/DoR-PR/applicable pre-merge PR DoD satisfied, and no unresolved blocking CHANGES_REQUESTED or invariant violation. A new commit, a label, reviewer absence or an owner override cannot silently clear a blocking finding. A reviewer must clear the finding with attributable resolution; ambiguous dismissal alone is insufficient. Approval count zero never means failed CI, missing evidence or an unresolved finding may be bypassed. Post-merge DoD remains post-merge.
+
+All development review matrices/owner/consumer/research routing statements are expertise guidance for normal-risk PRs, not additional approval quotas. Independent semantic acceptance/final-protocol/freeze obligations remain at their actual acceptance gates; they do not impose a blanket GitHub approval on ordinary research implementation. Product runtime HITL, protected-action approval/binding, manufacturing authority and verification obligations are unchanged. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted. Historical reviews remain bound to their real revisions; no new approval or product completion is inferred.
+
+
+## Final advisory development review policy — CHG-018, 15 October 2026
+
+Policy ID: `DEV-REVIEW-2026-10-15-FINAL`. CHG-018 explicitly supersedes CHG-017; CHG-017 and its intermediate 0/2 decision remain historical, unchanged. Active companion: `09_change/development_review_policy.json`; previous companion archived under `09_change/history/CHG-017-development_review_policy.json`.
+
+| Policy ID | Scope | Required human approvals |
+|---|---|---|
+| DEV-REVIEW-2026-10-15-FINAL | ALL_DEVELOPMENT | 0 |
+
+Every repository development PR, CR-0 through CR-4, normal/high risk, security/auth, protected-action-authority code, destructive migration, secrets/infrastructure, authority boundaries, platform, tooling, docs, product and research implementation has zero required human approvals. Review, requests, comments, suggestions and security advice are ADVISORY. No independent/qualified reviewer quota, self-approval rule, owner override, current-head approval or stale-approval mechanism governs development workflow. GitHub APPROVED, CHANGES_REQUESTED, COMMENTED and DISMISSED are not workflow, merge or DONE gates, and reviewer presence/absence never blocks progress. CODEOWNERS and supporting-reviewer metadata are advisory routing/domain context only.
+
+IN_REVIEW means a real non-draft technically reviewable PR, not waiting for a human. MERGE_READY requires correct canonical WP/approved control scope and branch/PR/head binding, required actual CI/tests/canonical validation, mergeability/no conflict against current main, no out-of-scope changes, applicable DoR-PR/PR DoD, trace/evidence and applicable security/secret/static checks, and no real BLOCKED condition. Actual technical/canonical failures or ambiguity fail closed; a review state alone neither proves nor disproves these facts. Material revisions re-run technical checks/evidence. Rework follows actual revision/technical evidence, not approval invalidation.
+
+MERGED requires an actual GitHub merge. VALIDATING requires actual post-merge validation started. DONE requires all applicable DoD, trace/evidence and actual successful post-merge validation; accountable owner assessment and real artifacts remain required, another person's review/confirmation does not. Development peer/methodology review is advisory even for closure; real protocol, scientific reproducibility, measured acceptance and product-authority evidence remain required. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted.
+
+This changes ONLY development/GitHub/repository governance. Product HITL, protected-action approval, AuthorityPolicy, authenticated approvers, runtime self-approval prohibition, exact proposal/plan binding and execution authorization are unchanged. Project-owner scope/cancellation decisions and real product acceptance artifacts are not GitHub review approvals and are not fabricated or waived. No Plane test mutation, merge, commit or push is authorized in this pass. Existing historical approvals remain history, never requirements for a current transition.

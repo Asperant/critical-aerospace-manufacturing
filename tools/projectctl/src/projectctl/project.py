@@ -25,9 +25,10 @@ class ProjectModel:
     catalog: Catalog
     source_manifest: dict[str, str]
     control_items: list["ControlItem"] = field(default_factory=list)
+    governance_diagnostics: list[Diagnostic] = field(default_factory=list)
 
     def diagnostics(self) -> list[Diagnostic]:
-        result = validate(self.catalog)
+        result = validate(self.catalog) + self.governance_diagnostics
         if self.catalog.schedule is not None:
             result.extend(validate_schedule(self.catalog, self.catalog.schedule))
         if self.catalog.dependencies is not None:
@@ -78,9 +79,12 @@ class ProjectModel:
 
 def load_project(root: Path) -> ProjectModel:
     from .control_plane import load_registry
+    from .governance import review_policy_diagnostics
     catalog = load(root)
     paths = ["docs/01_Master_Project_Specification.md", "docs/03_Requirements_Traceability_Matrix.md",
              "docs/04_Work_Breakdown_Structure.md", "docs/05_Dependency_Graph.md",
              "docs/06A_Asrin_Engineering_Roadmap.md", "docs/06B_Selman_Engineering_Roadmap.md",
-             "docs/06C_Batu_Engineering_Roadmap.md", "docs/06D_Yavuz_Engineering_Roadmap.md", "docs/07_Milestone_and_Release_Plan.md"]
-    return ProjectModel(catalog=catalog, control_items=load_registry(root), source_manifest={p: sha256((root / p).read_bytes()).hexdigest() for p in sorted(paths) if (root / p).is_file()})
+             "docs/06C_Batu_Engineering_Roadmap.md", "docs/06D_Yavuz_Engineering_Roadmap.md", "docs/07_Milestone_and_Release_Plan.md",
+             "docs/08_Definition_of_Ready_and_Done.md", "docs/09_Change_Control_Process.md",
+             "09_change/development_review_policy.json"]
+    return ProjectModel(catalog=catalog, control_items=load_registry(root), governance_diagnostics=review_policy_diagnostics(root), source_manifest={p: sha256((root / p).read_bytes()).hexdigest() for p in sorted(paths) if (root / p).is_file()})

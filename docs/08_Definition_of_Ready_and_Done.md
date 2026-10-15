@@ -97,7 +97,7 @@ DoR and DoD attach to work items. The model below is Item 64 and is not restated
 
 ```mermaid
 flowchart LR
-  B["BACKLOG"] --> R["READY<br/>(DoR satisfied)"] --> I["IN_PROGRESS"] --> RV["IN_REVIEW"] --> MR["MERGE_READY<br/>(CI green, reviews complete)"] --> M["MERGED"] --> V["VALIDATING<br/>(post-merge validation)"] --> D["DONE<br/>(evidence attached)"]
+  B["BACKLOG"] --> R["READY<br/>(DoR satisfied)"] --> I["IN_PROGRESS"] --> RV["IN_REVIEW"] --> MR["MERGE_READY<br/>(CI green, risk gates satisfied)"] --> M["MERGED"] --> V["VALIDATING<br/>(post-merge validation)"] --> D["DONE<br/>(evidence attached)"]
   M -. "Merged ≠ Done" .-> V
   V -. "Tested ≠ Verified" .-> D
   B --> C["CANCELED"]
@@ -108,8 +108,8 @@ flowchart LR
 | BACKLOG | the work is identified | DoR satisfied | §4, §5 |
 | READY | all DoR criteria for the level are met and no hidden blocker exists | owner starts work | §5 |
 | IN_PROGRESS | work started, WIP limits respected | a reviewable change exists | — |
-| IN_REVIEW | explicitly requested review (a draft PR is not IN_REVIEW) | required reviewers responded | §7.1 |
-| MERGE_READY | required CI green, mandatory reviews approved, blocking findings resolved, branch safe against current `main` | merge | §7.1 |
+| IN_REVIEW | real non-draft technically reviewable PR; no human wait or request required | actual technical/canonical gates satisfied | §7.1 |
+| MERGE_READY | required CI green, canonical validation/tests and applicable security/static checks green, no real BLOCKED condition; advisory review states do not gate, branch safe against current `main` | merge | §7.1 |
 | MERGED | squash-merged with a meaningful title; branch deleted | post-merge validation starts | **Merged ≠ Done** |
 | VALIDATING | integration smoke, system scenario, model evaluation, deployment verification or contract validation running | validation passed and evidence attached | **Implemented ≠ Tested**, **Tested ≠ Verified** |
 | DONE | all DoD criteria for the level satisfied and recorded | — | §7 |
@@ -166,7 +166,7 @@ Twelve dimensions from 00 §16. Every DoR level in §5 is a selection of these w
 
 | Field | Value |
 |---|---|
-| Applies when | the moment review capacity is requested |
+| Applies when | a real PR is technically reviewable; no human review request required (CHG-018) |
 | Confirming owner | author |
 | Criteria count | 8 |
 
@@ -176,8 +176,8 @@ Twelve dimensions from 00 §16. Every DoR level in §5 is a selection of these w
 | DOR-PR-02 | Linked work item and requirement IDs, or explicit `NONE — reason` (Item 83 #98–#99) |
 | DOR-PR-03 | PR template complete: what, why, affected domains, predicted review class, contract impact, migration impact, security/authority impact, dataset/model impact, observability impact, tests executed, rollout/rollback notes, known limitations — "no impact" answers are explicit, not omitted |
 | DOR-PR-04 | Author self-review done: no debug code, no secrets, no stray unrelated modifications, relevant tests present (Item 64 #75) |
-| DOR-PR-05 | Required CI is green before serious review is requested; mechanical failures belong to the author (Item 64 #76–#78) |
-| DOR-PR-06 | Reviewers routed: CODEOWNERS baseline plus impact-based reviewers for cross-boundary, security or research impact |
+| DOR-PR-05 | Required CI is green before review/merge readiness; all development review requests are optional; mechanical failures belong to the author (Item 64 #76–#78) |
+| DOR-PR-06 | CODEOWNERS/impact routes advisory review only; no reviewer presence/request/approval requirement for any development risk class |
 | DOR-PR-07 | Change class declared per 09 (C0–C3) when the change touches behaviour, contracts, data or evidence |
 | DOR-PR-08 | Reviewable size: preferably under ~400–500 manually authored changed lines; a larger cohesive PR carries a justification |
 
@@ -194,7 +194,7 @@ Twelve dimensions from 00 §16. Every DoR level in §5 is a selection of these w
 | DOR-CON-01 | Contract identity and current version named (IC-* or equivalent) |
 | DOR-CON-02 | Compatibility class assessed: NON_BREAKING / BEHAVIORAL_CHANGE / BREAKING (Item 22) |
 | DOR-CON-03 | Every consumer identified from 05 downstream edges, with owners named |
-| DOR-CON-04 | Consumer review commitment obtained for BEHAVIORAL_CHANGE and BREAKING before implementation starts |
+| DOR-CON-04 | Consumer contract/compatibility requirements and verification recorded for BEHAVIORAL_CHANGE and BREAKING; development review advisory |
 | DOR-CON-05 | Failure semantics specified: unavailable, timeout, stale, partial, unknown (Item 64 #62) |
 | DOR-CON-06 | Fixture update plan exists — a contract change without fixture updates leaves consumers working against a lie |
 | DOR-CON-07 | Rollout sequencing decided: consumer-tolerance first, producer activation later, dual publication time-bounded if needed |
@@ -325,7 +325,7 @@ Twelve dimensions from 00 §16. Every DoR level in §5 is a selection of these w
 | DOR-ARCH-03 | Authority impact assessed: does anything gain the ability to mutate, approve or bypass? |
 | DOR-ARCH-04 | Contract impact assessed with consumer owners named |
 | DOR-ARCH-05 | Dependency impact assessed in 05 terms (new edges, strength changes, cycle risk) |
-| DOR-ARCH-06 | Change request raised at the correct class (usually C3) with reviewers assigned |
+| DOR-ARCH-06 | Change request raised at the correct class (usually C3), actual technical impact/evidence recorded; reviewers advisory (CHG-018) |
 | DOR-ARCH-07 | Evidence staleness pre-assessed: what would have to be re-verified if this lands |
 | DOR-ARCH-08 | Timing checked against the phase policy — after M6 this is a freeze-breaking path |
 
@@ -357,7 +357,7 @@ Twelve dimensions from 00 §16. Every DoR level in §5 is a selection of these w
 
 | Field | Value |
 |---|---|
-| Confirming owner | author + required reviewers |
+| Confirming owner | accountable author with actual evidence; reviewers advisory |
 | State transition | MERGE_READY → MERGED |
 | Criteria count | 12 |
 
@@ -370,7 +370,7 @@ Twelve dimensions from 00 §16. Every DoR level in §5 is a selection of these w
 | DOD-PR-05 | Contract and schema artifacts updated together with the code; fixtures regenerated |
 | DOD-PR-06 | Trace impact recorded: `ImpactedRequirementIDs` or `NONE — reason`; REALIZED_BY/VERIFIED_BY edges updated in the same PR |
 | DOD-PR-07 | Documentation touched where operator or developer behaviour changes (runbook, quickstart, ADR) |
-| DOD-PR-08 | Required reviewers approved at the actual review risk class; CR-3/CR-4 never self-certified and never auto-approved on timeout |
+| DOD-PR-08 | Human approval count zero for all development classes; review states advisory; actual canonical validation/tests, scope and applicable security/secret/static checks passed |
 | DOD-PR-09 | No secret, credential or security violation introduced; secret scan clean |
 | DOD-PR-10 | Branch safe against current `main`; branch deleted after merge |
 | DOD-PR-11 | Change class declared per 09 where behaviour, contracts, data or evidence are touched |
@@ -380,7 +380,7 @@ Twelve dimensions from 00 §16. Every DoR level in §5 is a selection of these w
 
 | Field | Value |
 |---|---|
-| Confirming owner | WP owner + supporting reviewer |
+| Confirming owner | WP owner with complete actual DoD/trace/evidence; supporting review advisory, not required |
 | State transition | VALIDATING → DONE |
 | Criteria count | 12 |
 
@@ -392,7 +392,7 @@ The twelve criteria below carry the meanings fixed in 04 §4.2, because 179 work
 | DOD-WP-02 | Trace edges updated in the same PR (REALIZED_BY, VERIFIED_BY — 03 §19): the coverage state is advanced to the level the package actually reached and never beyond it, and the evidence state is recorded honestly (`NOT_YET_EXECUTED`, `EVIDENCE_PENDING` or a real evidence reference) | all |
 | DOD-WP-03 | Required CI gates green without retry-until-green; no quarantined test is masking this package | all |
 | DOD-WP-04 | Negative and failure paths are tested, not only the happy path: rejection, staleness, duplication, timeout, unavailability — whichever apply | F0/F1 + H0 |
-| DOD-WP-05 | Cross-boundary behaviour verified against real infrastructure (no mocked broker/DB/identity in the acceptance path): post-merge validation executed on the target environment (integration smoke, scenario, deployment verification or contract validation) and consumers that were promised readiness have confirmed usability | F0/F1 integration WPs |
+| DOD-WP-05 | Cross-boundary behaviour verified against real infrastructure (no mocked broker/DB/identity in the acceptance path): post-merge validation executed on the target environment (integration smoke, scenario, deployment verification or contract validation) and actual usability by promised consumers is evidenced without a human reviewer gate | F0/F1 integration WPs |
 | DOD-WP-06 | Observability exists: structured logs with correlation propagation, health surface for the capability, and the metrics the package's NFRs need | all runtime WPs |
 | DOD-WP-07 | Documentation/runbook updated where operator action is possible; ADR written where a decision was taken | all runtime WPs |
 | DOD-WP-08 | Measurement definition exists and a measurement has been executed in the correct environment and profile | NFR-driven WPs (H0/A1/S2/C3) |
@@ -405,7 +405,7 @@ The twelve criteria below carry the meanings fixed in 04 §4.2, because 179 work
 
 | Field | Value |
 |---|---|
-| Confirming owner | capability owner + cross-domain reviewer |
+| Confirming owner | capability owner with actual acceptance evidence; cross-domain advice optional (CHG-018) |
 | State transition | capability-level acceptance |
 | Criteria count | 10 |
 
@@ -420,7 +420,7 @@ The twelve criteria below carry the meanings fixed in 04 §4.2, because 179 work
 | DOD-CAP-07 | Authority and isolation invariants that touch the capability are proven negatively (no mutation without authorization, no cross-world leakage, no oracle access) |
 | DOD-CAP-08 | Integrated scenario participation: the capability appears in at least one AV-SCEN or E2E path where the architecture requires it |
 | DOD-CAP-09 | Recovery behaviour known: what happens on restart, on dependency loss and on duplicate input |
-| DOD-CAP-10 | Cross-review completed by the consuming owner, confirming the capability is usable as contracted |
+| DOD-CAP-10 | Actual consuming-path verification proves capability usability as contracted; no human reviewer/approval gate (CHG-018) |
 
 ### 7.4 Milestone DoD
 
@@ -678,7 +678,7 @@ Copy-paste forms. Each line is answerable with yes / no / `N/A — reason`; an u
 - [ ] authority and isolation invariants proven negatively
 - [ ] appears in its required integrated scenario
 - [ ] restart, dependency-loss and duplicate behaviour known
-- [ ] consuming owner completed cross-review
+- [ ] actual consumer usability/contract verification evidenced; human cross-review advisory (CHG-018)
 
 ### 12.5 Milestone review (DoD-MS)
 
@@ -802,7 +802,7 @@ Planned CI support: the PR template enforces DOR-PR-03 and DOD-PR-06; the trace 
 | DOD-GAP-02 | TOOLING_ABSENT | PR template, trace linter, preflight and acceptance generator do not exist yet (WP-GOV-002/003, WP-CICD-001, WP-PLAT-007). | Until they exist, criteria are checked manually with the same wording. | MAJOR — discipline risk in S1–S4 |
 | DOD-GAP-03 | BOUNDARY_MODE_SOURCE | Boundary modes per requirement live in 03; a work item that ignores them can claim DONE on fixture evidence. | DOD-WP-12 and DOD-CAP-02 make this explicit; the linter should check it once available. | MAJOR |
 | DOD-GAP-04 | MEASUREMENT_CONTEXT | NFR-driven packages cannot satisfy DOD-WP-08 while hardware profiles remain unpinned (inherited 03 GAP-RTM-021). | Record profiles in WP-PLAT-005 before those packages close. | B-M6 |
-| DOD-GAP-05 | REVIEW_CAPACITY | CR-3/CR-4 criteria require an independent reviewer; in a four-person team this concentrates on two people for authority and research work. | Reserve review capacity in sprint planning (06/07); pairing does not satisfy independent review. | MAJOR |
+| DOD-GAP-05 | REVIEW_CAPACITY | Historical independent-review capacity concern; superseded by CHG-018 advisory-only development policy. | No reviewer quota/presence gate; preserve actual technical/security/research evidence obligations (CHG-018). | MAJOR |
 | DOD-GAP-06 | RESEARCH_RECORD_TOOLING | The research completion record (§8.2) has no storage location until the run registry exists (WP-RES-003). | Keep it in the repository alongside the experiment definitions until then. | MINOR |
 
 ## 17. Rejected Alternatives
@@ -815,7 +815,7 @@ Planned CI support: the PR template enforces DOR-PR-03 and DOD-PR-06; the trace 
 | Accepting demo success as product acceptance | Demoed ≠ Accepted; acceptance is generated from coverage over requirements |
 | Making "hypothesis supported" a research DoD criterion | turns research into advocacy and creates pressure to tune after seeing results |
 | Percentage-complete reporting | a work item is READY, IN_PROGRESS, VALIDATING or DONE; 80% done hides which part is missing |
-| Letting the author self-certify CR-3/CR-4 work | Item 63 forbids it; the failure modes are exactly the ones an author cannot see |
+| Asserting technical completion without actual evidence | CHG-018 retires human-review gates, never actual DoD/trace/evidence requirements |
 | Deferring documentation and trace updates to a cleanup phase | both decay immediately and neither is recoverable later at the same fidelity |
 | Allowing a flaky test to be retried into green on a release gate | destroys the meaning of the gate |
 
@@ -868,6 +868,41 @@ HARD/SOFT refer to declared work/readiness consumers, not automatic runtime/depl
 GAP-RTM-004/005 remain ACCEPTED_WITH_RATIONALE for this pre-implementation baseline: missing canonical record metadata is not fabricated. FR-GOV-001/004 and the relevant NFR owners must supply/review actual fields and measurement definitions before their declared gates; projectctl retains nulls/warnings and never grants READY/VERIFIED from planned prose. Owner trace confirmation GAP-RTM-006 and final schema/version/card specifics remain ordinary implementation/review prerequisites, not unresolved choices among the eight approved policy groups.
 
 
-## Development review policy binding —14 October2026
+## Historical development review policy binding —14 October2026 (superseded 15 October2026)
 
-For development PR review,01 owner-approved policy and09 §§7.3/7.4 govern all reviewer/checklist references: one qualified independent approval for normal risk, two for actual high-risk auth/authorization, protected-action authority, destructive migration, security-sensitive infra/secrets or major authority-boundary changes. Owner/consumer expertise routing is not an additional blanket approval quota. Self-approval is forbidden. Product HITL/protected-action and all runtime evidence/DoR/DoD obligations are unchanged. PR#4 has the explicit bounded owner-authorized migration/closure exception recorded in01; no new-head human review is fabricated.
+Historical binding retained for attribution; replaced below. For development PR review,01 owner-approved policy and09 §§7.3/7.4 govern all reviewer/checklist references: one qualified independent approval for normal risk, two for actual high-risk auth/authorization, protected-action authority, destructive migration, security-sensitive infra/secrets or major authority-boundary changes. Owner/consumer expertise routing is not an additional blanket approval quota. Self-approval is forbidden. Product HITL/protected-action and all runtime evidence/DoR/DoD obligations are unchanged. PR#4 has the explicit bounded owner-authorized migration/closure exception recorded in01; no new-head human review is fabricated.
+
+
+## Historical intermediate CHG-017 decision — 15 October 2026 (superseded by CHG-018)
+
+Policy ID: `DEV-REVIEW-2026-10-15`; migration: `CHG-017`; companion: `09_change/development_review_policy.json`. This final project-owner decision supersedes the 14 October2026 normal-risk one-approval policy for development/GitHub PR governance only.
+
+| Policy ID | Risk | Required independent approvals |
+|---|---|---|
+| DEV-REVIEW-2026-10-15 | NORMAL_RISK | 0 |
+| DEV-REVIEW-2026-10-15 | HIGH_RISK | 2 |
+
+Normal risk includes CR-0/CR-1/CR-2, ordinary implementation, docs/tooling and normal research implementation (including CR-4 without a real high-risk trigger). Human review, review requests and comments are optional and are not merge gates. No self-approval is recorded or fabricated; the author may merge after actual applicable gates pass.
+
+High risk requires two distinct qualified independent current-head approvals covering the actual critical impact: authentication/authorization; protected-action authority; destructive schema/data migration; secrets/security-sensitive infrastructure; major authority-boundary change; explicitly high-risk safety/protected-execution semantics. Author, commit/co-authors and pairing participants do not supply independent approvals. Neither green CI, timeout nor owner override substitutes for either approval. Unassessed/conflicting high-risk impact fails closed; filenames or C0–C3 labels alone do not determine risk.
+
+MERGE_READY requires a real canonical WP PR, non-draft/current head, required CI green, mergeability and safety against current main, scope/DoR-PR/applicable pre-merge PR DoD satisfied, and no unresolved blocking CHANGES_REQUESTED or invariant violation. A new commit, a label, reviewer absence or an owner override cannot silently clear a blocking finding. A reviewer must clear the finding with attributable resolution; ambiguous dismissal alone is insufficient. Approval count zero never means failed CI, missing evidence or an unresolved finding may be bypassed. Post-merge DoD remains post-merge.
+
+All development review matrices/owner/consumer/research routing statements are expertise guidance for normal-risk PRs, not additional approval quotas. Independent semantic acceptance/final-protocol/freeze obligations remain at their actual acceptance gates; they do not impose a blanket GitHub approval on ordinary research implementation. Product runtime HITL, protected-action approval/binding, manufacturing authority and verification obligations are unchanged. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted. Historical reviews remain bound to their real revisions; no new approval or product completion is inferred.
+
+
+## Final advisory development review policy — CHG-018, 15 October 2026
+
+Policy ID: `DEV-REVIEW-2026-10-15-FINAL`. CHG-018 explicitly supersedes CHG-017; CHG-017 and its intermediate 0/2 decision remain historical, unchanged. Active companion: `09_change/development_review_policy.json`; previous companion archived under `09_change/history/CHG-017-development_review_policy.json`.
+
+| Policy ID | Scope | Required human approvals |
+|---|---|---|
+| DEV-REVIEW-2026-10-15-FINAL | ALL_DEVELOPMENT | 0 |
+
+Every repository development PR, CR-0 through CR-4, normal/high risk, security/auth, protected-action-authority code, destructive migration, secrets/infrastructure, authority boundaries, platform, tooling, docs, product and research implementation has zero required human approvals. Review, requests, comments, suggestions and security advice are ADVISORY. No independent/qualified reviewer quota, self-approval rule, owner override, current-head approval or stale-approval mechanism governs development workflow. GitHub APPROVED, CHANGES_REQUESTED, COMMENTED and DISMISSED are not workflow, merge or DONE gates, and reviewer presence/absence never blocks progress. CODEOWNERS and supporting-reviewer metadata are advisory routing/domain context only.
+
+IN_REVIEW means a real non-draft technically reviewable PR, not waiting for a human. MERGE_READY requires correct canonical WP/approved control scope and branch/PR/head binding, required actual CI/tests/canonical validation, mergeability/no conflict against current main, no out-of-scope changes, applicable DoR-PR/PR DoD, trace/evidence and applicable security/secret/static checks, and no real BLOCKED condition. Actual technical/canonical failures or ambiguity fail closed; a review state alone neither proves nor disproves these facts. Material revisions re-run technical checks/evidence. Rework follows actual revision/technical evidence, not approval invalidation.
+
+MERGED requires an actual GitHub merge. VALIDATING requires actual post-merge validation started. DONE requires all applicable DoD, trace/evidence and actual successful post-merge validation; accountable owner assessment and real artifacts remain required, another person's review/confirmation does not. Development peer/methodology review is advisory even for closure; real protocol, scientific reproducibility, measured acceptance and product-authority evidence remain required. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted.
+
+This changes ONLY development/GitHub/repository governance. Product HITL, protected-action approval, AuthorityPolicy, authenticated approvers, runtime self-approval prohibition, exact proposal/plan binding and execution authorization are unchanged. Project-owner scope/cancellation decisions and real product acceptance artifacts are not GitHub review approvals and are not fabricated or waived. No Plane test mutation, merge, commit or push is authorized in this pass. Existing historical approvals remain history, never requirements for a current transition.

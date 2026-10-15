@@ -1,6 +1,6 @@
 # Team workflow — CTRL-PM-011
 
-Status: CTRL-PM-011 COMPLETE — all four real team identities have active Plane workspace/CAP memberships, verified GitHub access, separate clean clones/profiles and repository-local Git identities. All 179 canonical WPs are assigned to their owners (73/17/32/57) and remain BACKLOG. CTRL-PM-015 remains IN_PROGRESS; its separate control-only pilot is IN_REVIEW and the actual final closure PR is #3; independent review, merge and post-merge validation remain outstanding.
+Historical setup snapshot (superseded by later closure evidence; development review is advisory under CHG-018): CTRL-PM-011 COMPLETE — all four real team identities have active Plane workspace/CAP memberships, verified GitHub access, separate clean clones/profiles and repository-local Git identities. All 179 canonical WPs are assigned to their owners (73/17/32/57) and remain BACKLOG. CTRL-PM-015 remains IN_PROGRESS; its separate control-only pilot is IN_REVIEW and the actual final closure PR is #3; independent review, merge and post-merge validation remain outstanding.
 
 Use one persistent Ubuntu GUI session, `ailab`, with RustDesk attached. Do not create GUI users or switch Ubuntu login sessions. `/srv/ailab/project` is the integration/reference clone and must not be used concurrently for developer work.
 
@@ -13,7 +13,7 @@ Use one persistent Ubuntu GUI session, `ailab`, with RustDesk attached. Do not c
 
 Yavuz’s current operational identity is **Yavuz Gümüş**, Plane email **yavuzzgumus@gmail.com**, GitHub **Yavuzgmus**, and Git commit email **yavuzzgumus@gmail.com**. His real Plane account `3ccd9ad8-99e9-4b75-ae65-2325503d347f` is an active workspace/CAP MEMBER (15), with all 57 canonical Yavuz WPs assigned and still BACKLOG. No pending Yavuz invitation remains. The earlier wrong-address invitation was revoked. Historical invitation/workspace snapshots retain their original observations; see the source-bound CTRL-PM-011-yavuz-closure evidence.
 
-Batuhan’s current operational identity is **Batuhan Kaya**, Plane email and Git commit email **batuhankaya0204@gmail.com**, Plane user ID **51137169-2989-42bd-9260-997b26e7e6dd**, GitHub **Ejlonn**. The earlier `eilonn` binding was incorrect and identifies a different account; historical snapshots are retained as history. His workspace/project memberships are active MEMBER (15), and he personally confirmed remote CAP project visibility. His genuine approval on `ee32f2c` is historical once this correction is pushed; a new approval must bind to the new current HEAD.
+Batuhan’s current operational identity is **Batuhan Kaya**, Plane email and Git commit email **batuhankaya0204@gmail.com**, Plane user ID **51137169-2989-42bd-9260-997b26e7e6dd**, GitHub **Ejlonn**. The earlier `eilonn` binding was incorrect and identifies a different account; historical snapshots are retained as history. His workspace/project memberships are active MEMBER (15), and he personally confirmed remote CAP project visibility. His genuine approval on `ee32f2c` remains historical evidence of that revision. Under CHG-018 no new-head human approval is required; actual current-head technical checks remain mandatory.
 
 All four independent clones were prepared from the integrated `main` baseline, with origin set to the canonical GitHub repository, repository-local names/emails and no copied credentials. They will need a normal fetch after individual authentication to receive setup updates. They are not authenticated merely because a clone exists.
 
@@ -44,3 +44,20 @@ Canonical owners never change to compensate for missing accounts. No dummy users
 
 
 Selman’s verified operational identity is **Selman Özdemir**, Plane/Git commit email **selmanozdemir430@gmail.com**, GitHub **selorito**, Plane user **a3d25336-e7d0-43f8-bfef-c0b5c2137a60**. Fresh API v1 reads confirm active workspace and CAP MEMBER (15), all 17 canonical Selman WPs assigned and BACKLOG, and no pending invitation. GitHub WRITE access is active. The account profile currently has first name Selman and an empty last name: these assignments bind the verified exact email/user UUID rather than guessing from display names. Historical pending observations remain preserved.
+
+
+## Final advisory development review policy — CHG-018, 15 October 2026
+
+Policy ID: `DEV-REVIEW-2026-10-15-FINAL`. CHG-018 explicitly supersedes CHG-017; CHG-017 and its intermediate 0/2 decision remain historical, unchanged. Active companion: `09_change/development_review_policy.json`; previous companion archived under `09_change/history/CHG-017-development_review_policy.json`.
+
+| Policy ID | Scope | Required human approvals |
+|---|---|---|
+| DEV-REVIEW-2026-10-15-FINAL | ALL_DEVELOPMENT | 0 |
+
+Every repository development PR, CR-0 through CR-4, normal/high risk, security/auth, protected-action-authority code, destructive migration, secrets/infrastructure, authority boundaries, platform, tooling, docs, product and research implementation has zero required human approvals. Review, requests, comments, suggestions and security advice are ADVISORY. No independent/qualified reviewer quota, self-approval rule, owner override, current-head approval or stale-approval mechanism governs development workflow. GitHub APPROVED, CHANGES_REQUESTED, COMMENTED and DISMISSED are not workflow, merge or DONE gates, and reviewer presence/absence never blocks progress. CODEOWNERS and supporting-reviewer metadata are advisory routing/domain context only.
+
+IN_REVIEW means a real non-draft technically reviewable PR, not waiting for a human. MERGE_READY requires correct canonical WP/approved control scope and branch/PR/head binding, required actual CI/tests/canonical validation, mergeability/no conflict against current main, no out-of-scope changes, applicable DoR-PR/PR DoD, trace/evidence and applicable security/secret/static checks, and no real BLOCKED condition. Actual technical/canonical failures or ambiguity fail closed; a review state alone neither proves nor disproves these facts. Material revisions re-run technical checks/evidence. Rework follows actual revision/technical evidence, not approval invalidation.
+
+MERGED requires an actual GitHub merge. VALIDATING requires actual post-merge validation started. DONE requires all applicable DoD, trace/evidence and actual successful post-merge validation; accountable owner assessment and real artifacts remain required, another person's review/confirmation does not. Development peer/methodology review is advisory even for closure; real protocol, scientific reproducibility, measured acceptance and product-authority evidence remain required. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted.
+
+This changes ONLY development/GitHub/repository governance. Product HITL, protected-action approval, AuthorityPolicy, authenticated approvers, runtime self-approval prohibition, exact proposal/plan binding and execution authorization are unchanged. Project-owner scope/cancellation decisions and real product acceptance artifacts are not GitHub review approvals and are not fabricated or waived. No Plane test mutation, merge, commit or push is authorized in this pass. Existing historical approvals remain history, never requirements for a current transition.

@@ -8,7 +8,8 @@ Change class (C0–C3) and review risk class (CR-0–CR-4):
 Contract/compatibility and migration impact:
 Security/authority and dataset/model impact:
 Observability impact:
-Required reviewers / independence:
+Actual high-risk triggers (explicit NONE if none; all development approvals 0):
+Reviewers / independence (advisory only; no reviewer/approval requirement in any class):
 
 ## Summary
 
@@ -31,7 +32,7 @@ Trace updates and prior evidence staleness:
 ## Governance
 
 - [ ] Canonical WP/control identity and approved scope preserved
-- [ ] Required reviews and checks satisfied before merge
+- [ ] Scope/DoR-PR/applicable PR DoD and current-head CI satisfied; all development approvals 0; review states advisory; actual technical/DoD/evidence gates pass
 - [ ] No secrets or generated runtime state included
 - [ ] Planning is not execution evidence; tests are not automatic VERIFIED
 - [ ] DONE withheld until applicable DoD and post-merge evidence are satisfied

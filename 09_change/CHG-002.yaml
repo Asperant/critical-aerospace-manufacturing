@@ -63,15 +63,16 @@ CHG-002:
   - FR-VIS-012
   consumer_review_status: Historical Ejlonn review verified; current migration/closure
     explicitly owner-authorized without additional review.
-  required_review_roles: One qualified independent reviewer for this normal-risk documentation
-    scope; two only for actual high-risk triggers in01/09; no mandatory all-owner/consumer
-    quorum.
+  required_review_roles: All development review is advisory; required human approvals
+    zero for all risk classes under CHG-018; actual technical/DoD/evidence gates remain.
   application_control_item: CTRL-DOC-003
   sprint_context: UNSPECIFIED; no calendar/sprint fabricated
   proposal: Source cards need role/modality/provenance/rights/evaluation/limits; exact
     unverified metadata NEEDS_SOURCE_VERIFICATION. SECOM/WM/Mixed legacy-methodological
     only.
   review_policy_migration:
+    historical: true
+    superseded_by: DEV-REVIEW-2026-10-15
     authority: Explicit project-owner instruction14 October2026; PR#4 closure
     previous_review_risk_class: CR-4
     previous_reviewers: *id001
@@ -95,3 +96,8 @@ CHG-002:
       state inferred.
     previous_required_review_roles: 09 §7.3/7.4 according to declared risk; independent
       research/data review for CR-4; independent critical review for CR-3
+  active_development_review_policy:
+    policy_ref: 09_change/development_review_policy.json
+    decision_ref: CHG-018
+    effective_date: 2026-10-15
+    note: Applies to current development PR gates; prior reviews/decisions retain historical attribution.

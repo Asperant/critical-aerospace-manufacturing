@@ -15,7 +15,7 @@ items:
       READY: approved scope, verified owner, clean baseline, test plan and evidence path
       IN_PROGRESS: closure branch exists and implementation work has actually begun
       IN_REVIEW: final closure PR opened
-      MERGE_READY: required CI passes and genuine independent approval binds to current PR head
+      MERGE_READY: current-head required CI/tests/canonical validation pass; PR non-draft, mergeable, scope/DoR/DoD/trace/evidence checks pass; human review advisory only (CHG-018)
       MERGED: final closure PR actually merged
       VALIDATING: validation starts on actual merged main
       DONE: all pilot DoD evidence passes and is recorded
@@ -23,5 +23,5 @@ items:
       - exact live representation and canonical inventory audit
       - focused negative tests and full projectctl suite
       - validation and idempotency readback
-      - final PR and current-head independent review
+      - final PR/current-head technical evidence; any human review advisory only (CHG-018)
       - actual merge and post-merge validation evidence

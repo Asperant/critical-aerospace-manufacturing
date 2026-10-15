@@ -1,0 +1,50 @@
+[
+  {
+    "ambiguity": null,
+    "canonical_owner": "Asrın Dündar",
+    "current_task": {
+      "blocked": false,
+      "cycle": "S1",
+      "plane_state": "IN_PROGRESS",
+      "title": "Machine-readable requirement catalog and ID lint",
+      "wp_id": "WP-GOV-001"
+    },
+    "next_task": null,
+    "profile": "asrin",
+    "read_timestamp": "2026-10-14T23:39:31.453718+00:00",
+    "status": "OK"
+  },
+  {
+    "ambiguity": null,
+    "canonical_owner": "Selman Özdemir",
+    "current_task": null,
+    "next_task": null,
+    "profile": "selman",
+    "read_timestamp": "2026-10-14T23:39:55.492959+00:00",
+    "status": "NO_TASK"
+  },
+  {
+    "ambiguity": null,
+    "canonical_owner": "Batuhan Kaya",
+    "current_task": null,
+    "next_task": null,
+    "profile": "batuhan",
+    "read_timestamp": "2026-10-14T23:40:43.207794+00:00",
+    "status": "NO_TASK"
+  },
+  {
+    "ambiguity": null,
+    "canonical_owner": "Yavuz Gümüş",
+    "current_task": null,
+    "next_task": {
+      "blocked": false,
+      "cycle": "S1",
+      "plane_state": "READY",
+      "title": "CI pipeline and required gates",
+      "wp_id": "WP-CICD-001"
+    },
+    "profile": "yavuz",
+    "read_timestamp": "2026-10-14T23:41:07.116287+00:00",
+    "status": "OK"
+  }
+]
