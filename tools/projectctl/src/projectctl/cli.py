@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 
 import typer
+import yaml
 
 from .enums import Severity
 from .loader import find_root
@@ -106,7 +107,11 @@ def plane_plan(audit: Path = typer.Option(..., help="Explicit sanitized API v1 a
 
 def check_gate(wp_id, root, gate):
     from .gates import evaluate
-    repo = root if root is not None else find_root(Path.cwd())
+    try:
+        repo = root if root is not None else find_root(Path.cwd())
+    except (OSError, ValueError) as exc:
+        typer.echo(f"INPUT_ERROR: {exc}", err=True)
+        raise typer.Exit(2) from exc
     payload = evaluate(read_project(repo), wp_id, gate, repo)
     emit_json(payload)
     if payload["result"] != "PASS":
@@ -144,8 +149,9 @@ def catalog_export(artifact: str = typer.Option("catalog", help="catalog, schema
         else:
             raise ValueError("Artifact must be catalog, schema, counts or rtm-counts")
         emit_json(payload)
-    except (OSError, ValueError) as exc:
-        typer.echo(f"CATALOG_INPUT_ERROR: {exc}", err=True)
+    except (OSError, ValueError, yaml.YAMLError) as exc:
+        detail = "Invalid embedded YAML (details redacted)" if isinstance(exc, yaml.YAMLError) else str(exc)
+        typer.echo(f"CATALOG_INPUT_ERROR: {detail}", err=True)
         raise typer.Exit(2) from None
 
 
@@ -157,8 +163,9 @@ def catalog_lint(root: Path | None = typer.Option(None),
     from .requirement_catalog import lint_catalog
     try:
         payload = lint_catalog(root if root is not None else find_root(Path.cwd()), base)
-    except (OSError, ValueError) as exc:
-        typer.echo(f"CATALOG_INPUT_ERROR: {exc}", err=True)
+    except (OSError, ValueError, yaml.YAMLError) as exc:
+        detail = "Invalid embedded YAML (details redacted)" if isinstance(exc, yaml.YAMLError) else str(exc)
+        typer.echo(f"CATALOG_INPUT_ERROR: {detail}", err=True)
         raise typer.Exit(2) from None
     if json_output:
         emit_json(payload)

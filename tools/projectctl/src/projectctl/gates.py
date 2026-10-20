@@ -33,11 +33,11 @@ def evaluate(project, wp_id: str, gate: Literal["ready", "done"], root: Path) ->
         governance_source={"path": source, "sha256": sha256(governance).hexdigest()},
         criteria_refs=wp["dor_refs" if gate == "ready" else "dod_refs"],
         criteria_scope="WP references plus all applicable docs/08 level and scope supplements",
-        reason="Required execution evidence and owner/reviewer confirmations are unavailable",
+        reason="Required execution evidence and accountable owner assessments are unavailable",
         missing_evidence=(
-            ["actual dependency readiness and precise consumed contracts", "owner/reviewer confirmations and review routing", "applicable task/scope readiness confirmations"]
+            ["actual dependency readiness and precise consumed contracts", "accountable owner readiness assessments", "applicable task/scope readiness confirmations"]
             if gate == "ready" else
-            ["actual deliverables and requirement verification at required boundaries", "required CI and independent review", "post-merge target-environment validation", "trace dispositions and identity-bound accepted evidence", "applicable WP/capability/research/scope DoD confirmations"]
+            ["actual deliverables and requirement verification at required boundaries", "required CI and canonical validation", "post-merge target-environment validation", "trace dispositions and identity-bound accepted evidence", "applicable WP/capability/research/scope DoD confirmations"]
         ),
         limitation="No trusted execution evidence input is implemented; planning prose never yields PASS",
     )

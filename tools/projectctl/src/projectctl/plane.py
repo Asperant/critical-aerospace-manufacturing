@@ -105,7 +105,9 @@ class PlaneReader:
         for _ in range(1000):
             data = self._get(path, params, optional)
             if data is None:
-                return None
+                if optional:
+                    return None
+                raise PlaneError("Required Plane list response must not be null")
             if isinstance(data, list):
                 page, more = data, False
             elif isinstance(data, dict) and isinstance(data.get("results"), list):

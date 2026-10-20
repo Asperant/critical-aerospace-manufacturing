@@ -48,6 +48,11 @@ def validate_requirements(wbs, catalog):
         if requirement is None:
             continue
         meta = trace.assertions.get("meta", {})
+        if not isinstance(meta, dict) or any(
+            not isinstance(meta.get(key, ""), str) for key in ("class", "owner", "anchor")
+        ):
+            issue("TRACE_META_SHAPE", "RTM metadata must be a mapping with string class/owner/anchor fields", trace.provenance, requirement.id)
+            continue
         expected_class = requirement.scope_class or requirement.quality_class
         if meta.get("class") != expected_class or resolve_owner(meta.get("owner", "")).canonical_name != requirement.primary_owner.canonical_name:
             issue("TRACE_META_CONFLICT", "RTM class/owner disagrees with 01", trace.provenance, requirement.id)
@@ -56,6 +61,9 @@ def validate_requirements(wbs, catalog):
             issue("STALE_CITATION", f"RTM anchor {meta['anchor']} does not point to {requirement.id}; stable identity retained", trace.provenance, requirement.id, Severity.WARNING)
     for row in catalog.index_assertions:
         requirement = records.get(row[0])
+        if len(row) < 3:
+            issue("RTM_INDEX_SHAPE", "View A row must contain identity, class and owner", identity=row[0])
+            continue
         if requirement and (row[1] != (requirement.scope_class or requirement.quality_class) or resolve_owner(row[2]).canonical_name != requirement.primary_owner.canonical_name):
             issue("RTM_INDEX_CONFLICT", "View A class/owner differs from 01", identity=row[0])
     return diagnostics

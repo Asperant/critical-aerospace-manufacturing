@@ -131,3 +131,45 @@ def test_cli_live_audit_is_explicit_and_safe_without_credentials(root, monkeypat
     monkeypatch.setattr(plane, "load_config", lambda *args: (_ for _ in ()).throw(PlaneError("PLANE_READ_CREDENTIALS_REQUIRED")))
     result = CliRunner().invoke(app, ["plane-audit", "--root", str(root)])
     assert result.exit_code == 2 and "PLANE_READ_CREDENTIALS_REQUIRED" in result.output
+
+
+@pytest.mark.parametrize("null_page", [1, 2])
+def test_required_list_rejects_null_on_any_page(null_page):
+    calls = []
+
+    def handler(request):
+        calls.append(request)
+        assert request.method == "GET"
+        if len(calls) == null_page:
+            return httpx.Response(200, content=b"null")
+        return httpx.Response(200, json={
+            "results": [{"id": "a"}], "next_page_results": True, "next_cursor": "next",
+        })
+
+    with PlaneReader(config(), httpx.MockTransport(handler)) as reader, pytest.raises(PlaneError, match="must not be null"):
+        reader._list("list/")
+    assert len(calls) == null_page
+
+
+def test_audit_rejects_null_required_project_list():
+    def handler(request):
+        if request.url.path.endswith("projects/"):
+            return httpx.Response(200, content=b"null")
+        return httpx.Response(200, json=response(request.url.path))
+
+    with PlaneReader(config(), httpx.MockTransport(handler)) as reader, pytest.raises(PlaneError, match="must not be null"):
+        reader.audit()
+
+
+@pytest.mark.parametrize("status", [401, 403, 404, 405])
+def test_optional_list_denial_remains_unavailable(status):
+    transport = httpx.MockTransport(lambda request: httpx.Response(status))
+    with PlaneReader(config(), transport) as reader:
+        assert reader._list("list/", optional=True) is None
+
+
+@pytest.mark.parametrize("optional", [False, True])
+def test_empty_list_is_valid(optional):
+    transport = httpx.MockTransport(lambda request: httpx.Response(200, json=[]))
+    with PlaneReader(config(), transport) as reader:
+        assert reader._list("list/", optional=optional) == []

@@ -63,3 +63,31 @@ def test_cli_identity_fail_nonzero(root):
     result = CliRunner().invoke(app, ["check-done", "WP-AI-999", "--root", str(root)])
     assert result.exit_code == 1
     assert json.loads(result.output)["result"] == "FAIL"
+
+
+@pytest.mark.parametrize("gate", ["ready", "done"])
+@pytest.mark.parametrize("explicit_root", [False, True])
+def test_gate_input_errors_exit_two(tmp_path, monkeypatch, gate, explicit_root):
+    monkeypatch.chdir(tmp_path)
+    args = [f"check-{gate}", "WP-AI-007"]
+    if explicit_root:
+        args.extend(["--root", str(tmp_path)])
+    result = CliRunner().invoke(app, args)
+    assert result.exit_code == 2
+    assert "INPUT_ERROR:" in result.output
+
+
+@pytest.mark.parametrize("gate", ["ready", "done"])
+def test_gate_evidence_has_no_mandatory_development_review(project, root, gate):
+    result = evaluate(project, "WP-AI-007", gate, root)
+    assert result["result"] == "UNKNOWN"
+    assert result["transition_authorized"] is False
+    assert result["criteria_refs"]
+    explanation = json.dumps([result["reason"], result["missing_evidence"]]).lower()
+    assert "execution evidence" in explanation
+    assert "owner" in explanation
+    assert "review" not in explanation
+    assert "approval" not in explanation
+    if gate == "done":
+        assert "required CI and canonical validation" in result["missing_evidence"]
+        assert "post-merge target-environment validation" in result["missing_evidence"]
