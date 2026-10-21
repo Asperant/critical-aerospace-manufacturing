@@ -64,3 +64,19 @@ Pyright strict.
 5. Pre-existing findings are owned by the code owners; the ratchet only keeps
    them from growing.
 6. Post-merge validation on `main` is required before DONE (Merged != Done).
+
+## Remote CI on PR #9
+
+First remote execution on PR head `73a7ac42cc1f4fd186325284a4e6d93488590ac8` (2026-10-21): all 12 checks
+successful on push and pull_request events: `projectctl`, `t1-static`,
+`t1-unit`, `t1-contract`, `t1-integration` (first REAL PostgreSQL + NATS
+JetStream execution) and `ci-gate`.
+
+| Workflow | Event | Run |
+|---|---|---|
+| ci | pull_request | https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/39602871893 |
+| projectctl | pull_request | https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/39602871790 |
+| ci | push | https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/39602825691 |
+| projectctl | push | https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/39602824964 |
+
+Still pending: post-merge validation on main and branch protection (HTTP 403).
