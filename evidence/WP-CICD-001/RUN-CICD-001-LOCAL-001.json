@@ -1,0 +1,148 @@
+{
+  "run_id": "RUN-CICD-001-LOCAL-001",
+  "wp_id": "WP-CICD-001",
+  "kind": "local development execution (not remote CI, not sealed evidence)",
+  "environment": {
+    "host": "Linux VM on Yavuz's workstation (Claude desktop workspace)",
+    "os": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+    "python": "3.11.16",
+    "uv": "uv 0.12.13 (x86_64-unknown-linux-gnu)",
+    "docker_available": false
+  },
+  "source": {
+    "base_main_sha": "944fd567d7bfa98288c4c3ee2235f321dbde52da",
+    "working_tree": "uncommitted WP-CICD-001 changes on wp/WP-CICD-001-ci-pipeline"
+  },
+  "not_executed": [
+    {
+      "step": "t1-integration",
+      "reason": "Docker is not available in this local environment; the REAL PostgreSQL/NATS smoke runs only in GitHub Actions or on a Docker host. No result is claimed."
+    }
+  ],
+  "steps": [
+    {
+      "step": "t1-static",
+      "command": "ci/.venv/bin/python ci/scripts/static_ratchet.py check",
+      "started_utc": "2026-10-21T11:34:38+00:00",
+      "ended_utc": "2026-10-21T11:34:43+00:00",
+      "exit_code": 0,
+      "output_tail": [
+        "Current: ruff=311 pyright=189 unformatted=56 ({'ruff': 'ruff 0.7.4', 'pyright': 'pyright 1.1.389'})",
+        "PASS: no new static findings; baseline is tight."
+      ]
+    },
+    {
+      "step": "t1-unit/flake-policy",
+      "command": "ci/.venv/bin/python ci/scripts/check_flake_policy.py",
+      "started_utc": "2026-10-21T11:34:43+00:00",
+      "ended_utc": "2026-10-21T11:34:43+00:00",
+      "exit_code": 0,
+      "output_tail": [
+        "PASS: 0 active quarantine(s); no retry-until-green."
+      ]
+    },
+    {
+      "step": "t1-unit/ci-tooling-tests",
+      "command": "ci/.venv/bin/python -m pytest ci/tests -p pytest_quarantine",
+      "started_utc": "2026-10-21T11:34:43+00:00",
+      "ended_utc": "2026-10-21T11:34:44+00:00",
+      "exit_code": 0,
+      "output_tail": [
+        "ci/tests/test_flake_policy.py ..............                             [ 69%]",
+        "ci/tests/test_static_ratchet.py ........                                 [100%]",
+        "",
+        "----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------",
+        "0 registry entr(y/ies); 0 applied in this run",
+        "============================== 26 passed in 0.11s =============================="
+      ]
+    },
+    {
+      "step": "t1-unit/projectctl-tests",
+      "command": "ci/.venv/bin/python -m pytest tools/projectctl/tests -q -p pytest_quarantine",
+      "started_utc": "2026-10-21T11:34:44+00:00",
+      "ended_utc": "2026-10-21T11:36:01+00:00",
+      "exit_code": 0,
+      "output_tail": [
+        "........................................................................ [ 54%]",
+        "........................................................................ [ 82%]",
+        "..............................................                           [100%]",
+        "----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------",
+        "0 registry entr(y/ies); 0 applied in this run",
+        "262 passed in 76.80s (0:01:16)"
+      ]
+    },
+    {
+      "step": "t1-unit/plane-queue",
+      "command": "ci/.venv/bin/python -m unittest discover -s tools/host/plane-queue -p test_*.py",
+      "started_utc": "2026-10-21T11:36:01+00:00",
+      "ended_utc": "2026-10-21T11:36:02+00:00",
+      "exit_code": 0,
+      "output_tail": [
+        ".............",
+        "----------------------------------------------------------------------",
+        "Ran 13 tests in 1.258s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "step": "t1-unit/plane-transition",
+      "command": "ci/.venv/bin/python -m unittest discover -s tools/host/plane-transition -p test_*.py",
+      "started_utc": "2026-10-21T11:36:02+00:00",
+      "ended_utc": "2026-10-21T11:36:02+00:00",
+      "exit_code": 0,
+      "output_tail": [
+        "...................................................................",
+        "----------------------------------------------------------------------",
+        "Ran 67 tests in 0.069s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "step": "t1-contract",
+      "command": "ci/.venv/bin/python ci/scripts/check_contracts.py",
+      "started_utc": "2026-10-21T11:36:02+00:00",
+      "ended_utc": "2026-10-21T11:36:02+00:00",
+      "exit_code": 0,
+      "output_tail": [
+        "OK    requirements/catalog.schema.json (+instance)",
+        "Contracts: 1 schema(s), 1 instance(s) validated.",
+        "PASS"
+      ]
+    },
+    {
+      "step": "projectctl/validate",
+      "command": "ci/.venv/bin/projectctl validate",
+      "started_utc": "2026-10-21T11:36:02+00:00",
+      "ended_utc": "2026-10-21T11:36:03+00:00",
+      "exit_code": 0,
+      "output_tail": [
+        "634 WARNING lines (pre-existing source gaps); no ERROR lines: True"
+      ]
+    },
+    {
+      "step": "projectctl/catalog-lint",
+      "command": "ci/.venv/bin/projectctl catalog-lint --base main",
+      "started_utc": "2026-10-21T11:36:03+00:00",
+      "ended_utc": "2026-10-21T11:36:04+00:00",
+      "exit_code": 0,
+      "output_tail": [
+        "Requirement catalog: PASS (306 records)",
+        "History: CHECKED",
+        "SOURCE_GAP: Unspecified canonical Revision/Status remain null (GAP-RTM-004/005)",
+        "SOURCE_GAP: NFR measurement metadata remains owner-confirmation work (GAP-RTM-004)",
+        "Readiness/evidence: NOT_CERTIFIED"
+      ]
+    },
+    {
+      "step": "hygiene/whitespace",
+      "command": "git diff --cached --check main",
+      "started_utc": "2026-10-21T11:36:04+00:00",
+      "ended_utc": "2026-10-21T11:36:04+00:00",
+      "exit_code": 0,
+      "output_tail": []
+    }
+  ],
+  "overall": "PASS"
+}

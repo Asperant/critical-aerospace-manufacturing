@@ -1,0 +1,7 @@
+# WP-CICD-001: the repository stores LF line endings. A Windows checkout with
+# core.autocrlf=true otherwise shows every file as modified and breaks the
+# `git diff --check` hygiene gate. Text files are always checked out with LF.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.pdf binary

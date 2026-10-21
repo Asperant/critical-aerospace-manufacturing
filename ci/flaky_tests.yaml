@@ -1,0 +1,21 @@
+# WP-CICD-001 — flaky-test quarantine registry.
+# Sources: NFR-DX-006 (H0), 01 Item 41 §162–166, docs/03 TEST-DX-FLAKE.
+#
+# A flaky test is an engineering defect, not normal behaviour. Re-running a
+# test until it passes is never evidence. When a test must be quarantined
+# temporarily, add an entry here in the same PR that explains why. A
+# quarantined test still runs; its failure is reported as XFAIL and does not
+# block the gate. ci/scripts/check_flake_policy.py rejects incomplete, duplicate
+# or expired entries, so a quarantine can never become permanent silently.
+#
+# Entry template (all fields required):
+#   - test_id: "tools/projectctl/tests/test_cli.py::test_example"
+#     owner: Yavuz               # Asrın | Selman | Batu | Yavuz
+#     issue: "CAP-123"           # Plane item or GitHub issue reference
+#     reason: "Intermittent timeout when the fixture server starts slowly"
+#     quarantined_on: 2026-10-21
+#     expires_on: 2026-11-04     # at most max_quarantine_days later
+#     release_impact: "Must be resolved before the next release gate"
+schema_version: cap-flaky-registry-v1
+max_quarantine_days: 14
+entries: []

@@ -26,6 +26,14 @@
 > remote CI, independent review and post-merge validation remain outstanding.
 > No sealed EvidenceID, accepted measurement or VERIFIED state is asserted.
 
+> **WP-CICD-001 implementation delta (2026-10-21).** NFR-DX-006 now references
+> the tiered CI workflow, the flaky-test quarantine registry and concrete
+> verification assets (§19.2); local execution is recorded under
+> `evidence/WP-CICD-001/`. Its evidence is EVIDENCE_PENDING. FR-PLAT-004 stays
+> VERIFY_PLANNED: CI is its first half; deployment to INTEGRATION is WP-CICD-002.
+> Remote CI, branch protection (blocked by the private-repository plan) and
+> post-merge validation remain outstanding. No VERIFIED state is asserted.
+
 ---
 
 ## Table of Contents
@@ -721,7 +729,7 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 | NFR-DX-003 | S2 | Yavuz | 01 Item82 NFR-DX-003 L172360 | ITEM-74, DX-INV-27 | VERIFY_PLANNED | OWNER-WORDING |
 | NFR-DX-004 | S2 | Yavuz | 01 Item82 NFR-DX-004 L172373 | ITEM-74, DX-INV-07 | VERIFY_PLANNED | — |
 | NFR-DX-005 | S2 | Yavuz | 01 Item82 NFR-DX-005 L172384 | ITEM-74, DX-INV-28, DX-INV-51 | VERIFY_PLANNED | — |
-| NFR-DX-006 | H0 | Yavuz | 01 Item82 NFR-DX-006 L172401 | ITEM-50, NFR-INV-46, TEST-INV-24 | VERIFY_PLANNED | — |
+| NFR-DX-006 | H0 | Yavuz | 01 Item82 NFR-DX-006 L172401 | ITEM-50, NFR-INV-46, TEST-INV-24 | EVIDENCE_PENDING | — |
 | NFR-DX-007 | A1 | Yavuz | 01 Item82 NFR-DX-007 L172414 | ITEM-72, ITEM-74, NFR-INV-47 | VERIFY_PLANNED | — |
 | NFR-DX-008 | S2 | Yavuz | 01 Item82 NFR-DX-008 L172429 | ITEM-74, DX-INV-43 | VERIFY_PLANNED | — |
 
@@ -6927,12 +6935,13 @@ NFR-DX-006:
   meta: {class: H0, owner: Yavuz, anchor: "01 Item82 NFR-DX-006 L172401"}
   DERIVED_FROM: [ITEM-50, NFR-INV-46, TEST-INV-24]
   ALLOCATED_TO: [ARCH-PLAT-CICD]
+  REALIZED_BY: {surface: "flaky-test quarantine registry + retry-until-green prohibition + quarantine-aware pytest gate", deployable: "repository CI", ref: ".github/workflows/ci.yml; ci/flaky_tests.yaml; ci/scripts/check_flake_policy.py; ci/pytest_quarantine.py"}
   MEASUREMENT: {metric: "known unresolved unquarantined flaky tests in final release/benchmark gates", threshold: "= 0", workload: "final required gates", hardware: "N/A (not hardware-bound)", observed: null}
-  VERIFIED_BY: [TEST-DX-FLAKE]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  VERIFIED_BY: [TEST-CICD-001]
+  EXECUTED_AS: [RUN-CICD-001-LOCAL-001]  # local run; acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 NFR-DX-007:
   meta: {class: A1, owner: Yavuz, anchor: "01 Item82 NFR-DX-007 L172414"}
   DERIVED_FROM: [ITEM-72, ITEM-74, NFR-INV-47]
@@ -7181,6 +7190,20 @@ Local run record and source/artifact hashes are under `evidence/WP-GOV-001/`.
 EvidenceState remains EVIDENCE_PENDING until the applicable review/CI/acceptance
 requirements are met; EVIDENCED_BY is empty because no sealed EvidenceBundle
 has been accepted. The missing canonical fields in GAP-RTM-004/005 remain null.
+
+### 19.2 WP-CICD-001 concrete implementation and verification assets
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-CICD-001 (`ci/tests/test_flake_policy.py`) | TEST-DX-FLAKE | NFR-DX-006 |
+| TEST-CICD-002 (`ci/tests/test_static_ratchet.py`) | — (CI gate integrity; Item 41 §17–21) | FR-PLAT-004 (CI half) |
+| TEST-CICD-003 (`ci/integration/test_runtime_services.py`, boundary mode REAL) | — (integration tier; Item 41 §46, §52) | FR-PLAT-004 (CI half) |
+
+Workflow: `.github/workflows/ci.yml` (t1-static, t1-unit, t1-contract,
+t1-integration, aggregate `ci-gate`); the `projectctl` workflow is unchanged.
+Required-check configuration: `ci/required_checks.json` (status NOT_APPLIED:
+private-repository plan returns HTTP 403, CTRL-PM-012). TEST-PLAT-CD and
+INSP-DEP-HOST remain with WP-CICD-002. EvidenceState is EVIDENCE_PENDING.
 
 ## 20. Rejected Alternatives
 
