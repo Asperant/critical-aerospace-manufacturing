@@ -1,0 +1,1345 @@
+COMMAND: targeted
+........................................................................ [ 64%]
+.......................................                                  [100%]
+----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------
+0 registry entr(y/ies); 0 applied in this run
+111 passed in 52.73s
+
+COMMAND: projectctl-tests
+........................................................................ [ 24%]
+........................................................................ [ 48%]
+........................................................................ [ 73%]
+........................................................................ [ 97%]
+.......                                                                  [100%]
+----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------
+0 registry entr(y/ies); 0 applied in this run
+295 passed in 112.37s (0:01:52)
+
+COMMAND: ci-tests
+..........................                                               [100%]
+----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------
+0 registry entr(y/ies); 0 applied in this run
+26 passed in 0.17s
+
+COMMAND: queue-tests
+.............
+----------------------------------------------------------------------
+Ran 13 tests in 1.257s
+
+OK
+
+COMMAND: transition-tests
+...................................................................
+----------------------------------------------------------------------
+Ran 67 tests in 0.077s
+
+OK
+
+COMMAND: canonical
+source: docs/04_Work_Breakdown_Structure.md
+parser: offline-project-v1
+execution_status: UNAVAILABLE (documentation only)
+wp_count: 179
+owner_distribution: {'Asrın Dündar': 73, 'Batuhan Kaya': 32, 'Selman Özdemir': 
+17, 'Yavuz Gümüş': 57}
+capability_count: 29
+validation: PASS
+source_manifest: {'09_change/development_review_policy.json': 
+'f5f09ec64e9a63ae12a093e86286fb05a5bc8d1912906e7f95604b38c71c01bf', 
+'docs/01_Master_Project_Specification.md': 
+'83a37cde6b16df98e9ad488bfb596f069651b7c9ee5b7cd77b39481900089a58', 
+'docs/03_Requirements_Traceability_Matrix.md': 
+'6f12942c085cae148fb5d173391d23c41fd63d28454df490378328aa217b03ea', 
+'docs/04_Work_Breakdown_Structure.md': 
+'c7aa5184f3df41335516e311910f9c23a4b0e00f3b7b765ac4b1002df3aa0b0e', 
+'docs/05_Dependency_Graph.md': 
+'279bff88903092fbe3ce378226785e00da9abf4bae76670fbdc40a8fe7813880', 
+'docs/06A_Asrin_Engineering_Roadmap.md': 
+'f9e4d9b442eafe6ab10e67840708093c206631120c5fcf17fd3b6591c8553502', 
+'docs/06B_Selman_Engineering_Roadmap.md': 
+'19224e6edf2a211fe4764157cfab0b43d8250b98c8a7c60b7c267b730e0a2660', 
+'docs/06C_Batu_Engineering_Roadmap.md': 
+'f7faa9a8ce92b1a473500d3420a07f00f111ad42ea45e401ca7727d6d6e71f51', 
+'docs/06D_Yavuz_Engineering_Roadmap.md': 
+'9320180074cbcac4c1c54b75c2534c11459f94654d7ea93aa05a603bc9c30ee9', 
+'docs/07_Milestone_and_Release_Plan.md': 
+'30dacff21f8cf192fc796a8f1968aaa86e894a8e210753439e582d43433f446c', 
+'docs/08_Definition_of_Ready_and_Done.md': 
+'0e94a1f64b56598a182b398d1c275a566e1e134c43cafd336ff3ccdf8aecff79', 
+'docs/09_Change_Control_Process.md': 
+'bb41790adf46f89307744c7369968174a358161a83cbed9633be5cc3e49bc06d'}
+cycle_count: 13
+milestone_count: 9
+scheduled_wp_count: 174
+unscheduled_wp_ids: ['WP-R2-001', 'WP-R2-002', 'WP-R2-003', 'WP-S-001', 
+'WP-X-001']
+dependency_node_count: 100
+dependency_edge_count: 217
+hard_edge_count: 208
+soft_edge_count: 9
+hard_cycle_count: 0
+requirement_count: 306
+fr_count: 186
+nfr_count: 120
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: M0→M1
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: M4/M5
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: — (R2/S)
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: S1–S2
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: S2–S3
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: S1–S2
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: S2–S3
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: S3–S4
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: M5→M6
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: S2–S4
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: S2–S3
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: M4/M5
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: S3–S4
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: S2–S3
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: S3–S4
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: M4/M5
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: M4/M5
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: S3–S4
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: S5–S8
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: S1–S2
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: M6→M7
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: M6→M7
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: M5→M6
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: M5→M6
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: M7→M8
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: M5→M6
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: M5→M6
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: M5→M6
+WARNING NEED_BY_AMBIGUOUS: Unresolved need-by expression retained: M5→M6
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING NFR_METADATA_MISSING: Structured canonical 
+measurement/verification/evidence fields absent; RTM remains a projection
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING PRECISION_MISSING: Precise requirement absent; section 23's general 
+justification is retained but not certified
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+WARNING REQUIREMENT_FIELDS_MISSING: Canonical per-record revision/status absent;
+no defaults assigned
+
+COMMAND: catalog
+Requirement catalog: PASS (306 records)
+History: CHECKED
+SOURCE_GAP: Unspecified canonical Revision/Status remain null (GAP-RTM-004/005)
+SOURCE_GAP: NFR measurement metadata remains owner-confirmation work (GAP-RTM-004)
+Readiness/evidence: NOT_CERTIFIED
+
+COMMAND: contracts
+OK    requirements/catalog.schema.json (+instance)
+Contracts: 1 schema(s), 1 instance(s) validated.
+PASS
+
+COMMAND: flake-policy
+PASS: 0 active quarantine(s); no retry-until-green.
+
+COMMAND: whitespace
+
+COMMAND: syntax
+
+COMMAND: static
+Current: ruff=311 pyright=189 unformatted=56 ({'ruff': 'ruff 0.7.4', 'pyright': 'pyright 1.1.389'})
+PASS: no new static findings; baseline is tight.

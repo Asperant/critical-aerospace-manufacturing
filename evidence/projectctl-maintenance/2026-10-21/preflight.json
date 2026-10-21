@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "linux_user": "asrin",
+    "CAP_PROFILE": "asrin",
+    "github_api_login": "Asperant"
+  },
+  "initial_branch": "maintenance/projectctl-audit-fixes",
+  "initial_head": "cff5528b8747a000a2c8de5be7b54030a60b39c9",
+  "initial_base": "944fd567d7bfa98288c4c3ee2235f321dbde52da",
+  "integrated_main": "8a3fe0efdf357ce58a96674c12523a4ca891ddfe",
+  "integration_head": "0d86b03badf6ad89bc42b944a7265e3bfc612fc9",
+  "recovery_ref": "recovery/projectctl-audit-cff5528",
+  "conflicts": [],
+  "live_queue": "NO_TASK; explicitly authorized existing maintenance only; no Plane mutations",
+  "audit_sha256": {
+    "projectctl-audit-addendum-2026-10-20-944fd56.md": "c5ce7e4ee5c3ca4783d84266de79d53c627180ded3c8bb7c620189d8d1f8a181",
+    "projectctl-technical-audit-2026-10-20-944fd56.md": "53641c2313f08c1282cf7369d043366579028122a6e179ac2f7423502577dad1"
+  },
+  "bounded_added_line_credential_scan": "PASS; private-key headers, GitHub/AWS token patterns and long literal credential assignments; not a full security audit",
+  "branch_protection": {
+    "required_checks": [
+      "ci-gate",
+      "projectctl"
+    ],
+    "strict": true,
+    "enforce_admins": true,
+    "required_approvals": 0
+  }
+}
