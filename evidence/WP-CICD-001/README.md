@@ -80,3 +80,18 @@ JetStream execution) and `ci-gate`.
 | projectctl | push | https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/39602824964 |
 
 Still pending: post-merge validation on main and branch protection (HTTP 403).
+
+## Branch protection applied
+
+The repository was made public by team decision so that branch protection is
+available on the current plan. The owner (Asperant) created the classic rule on
+`main` through the GitHub UI with the configuration in `ci/required_checks.json`:
+required checks `ci-gate` and `projectctl`, up to date before merge, pull request
+required with 0 approvals (CHG-018), no bypass for admins, no force push or
+deletion. `apply_branch_protection.sh --apply` could not be used from the shared
+host because every profile resolved to a non-admin GitHub identity (host-wide gh
+keyring; see the owner's developer-environment audit of 2026-10-21).
+Independent read-back by the WP owner: `branch-protection-readback.json`
+(`enforcement_level: everyone` = admins included). Before publication the full
+history was scanned with gitleaks 8.21.2 (46 commits, 0 findings). This pull
+request is the first change merged under the protection.
