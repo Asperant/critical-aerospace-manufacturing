@@ -25,7 +25,9 @@ empty lists and pagination behavior retain regression coverage.
 
 Environment: locked ci/uv.lock, Python 3.11.16, uv 0.12.13, Ruff 0.7.4,
 Pyright 1.1.389; PYTHONPATH=ci:ci/scripts; PYTHONDONTWRITEBYTECODE=1.
-Exact commands and exit codes are in results.json; outputs are in validation.log.txt.
+Exact commands and exit codes are in results.json; outputs are in validation.log.txt
+with trailing terminal-padding whitespace removed. Raw local logs remain in
+/tmp/asrin-projectctl-maintenance; no diagnostic content was altered.
 All 12 recorded checks exited 0:
 
 - Targeted regressions: 111 passed.
