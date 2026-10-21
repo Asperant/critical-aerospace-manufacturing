@@ -1,0 +1,11 @@
+{
+  "include": ["tools", "ci"],
+  "exclude": ["**/.venv", "**/__pycache__"],
+  "pythonVersion": "3.11",
+  "typeCheckingMode": "standard",
+  "strict": ["ci"],
+  "reportMissingModuleSource": "none",
+  "executionEnvironments": [
+    {"root": "ci", "extraPaths": ["ci", "ci/scripts"]}
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": "cap-required-checks-v1",
+  "repository": "Asperant/critical-aerospace-manufacturing",
+  "branch": "main",
+  "required_status_checks": [
+    "ci-gate",
+    "projectctl"
+  ],
+  "strict": true,
+  "enforce_admins": true,
+  "required_approving_review_count": 0,
+  "status": "APPLIED",
+  "blocker": null,
+  "notes": [
+    "ci-gate aggregates t1-static, t1-unit, t1-contract and t1-integration.",
+    "projectctl stays required because Plane transition policy binds to it.",
+    "0 required approvals follows DEV-REVIEW-2026-10-15-FINAL / CHG-018.",
+    "enforce_admins: required gates cannot be bypassed manually (01 Item 41 §184).",
+    "Applied by the repository owner through the GitHub UI after the repository was made public; independently read back in evidence/WP-CICD-001/branch-protection-readback.json."
+  ],
+  "applied_on": "2026-10-21"
+}

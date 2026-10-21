@@ -1,0 +1,1 @@
+{"branch":"main","enforcement_level":"everyone","protected":true,"required_checks":["ci-gate","projectctl"]}

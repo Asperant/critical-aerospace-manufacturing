@@ -1,0 +1,30 @@
+# WP-CICD-001 — pinned CI toolchain.
+# uv + uv.lock are the canonical dependency mechanism (01 Item 61 §20–23).
+# Local and CI runs use exactly these versions: `uv sync --project ci --locked`.
+[project]
+name = "cap-ci-tools"
+version = "0.1.0"
+description = "WP-CICD-001 tiered CI toolchain: static, unit, contract and integration tiers"
+requires-python = "==3.11.*"
+dependencies = [
+    "projectctl[dev]",
+    "ruff==0.7.4",
+    "pyright==1.1.389",
+    "pytest==8.3.3",
+    "jsonschema==4.23.0",
+    "PyYAML==6.0.2",
+    "psycopg[binary]==3.2.3",
+    "nats-py==2.9.0",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+projectctl = { path = "../tools/projectctl", editable = true }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "scripts"]
+addopts = "-p no:cacheprovider"
+markers = ["integration: needs real PostgreSQL and NATS JetStream services"]

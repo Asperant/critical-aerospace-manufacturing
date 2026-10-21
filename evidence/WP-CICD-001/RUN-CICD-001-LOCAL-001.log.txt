@@ -1,0 +1,73 @@
+## t1-static
+$ ci/.venv/bin/python ci/scripts/static_ratchet.py check
+exit=0
+Current: ruff=311 pyright=189 unformatted=56 ({'ruff': 'ruff 0.7.4', 'pyright': 'pyright 1.1.389'})
+PASS: no new static findings; baseline is tight.
+
+## t1-unit/flake-policy
+$ ci/.venv/bin/python ci/scripts/check_flake_policy.py
+exit=0
+PASS: 0 active quarantine(s); no retry-until-green.
+
+## t1-unit/ci-tooling-tests
+$ ci/.venv/bin/python -m pytest ci/tests -p pytest_quarantine
+exit=0
+ci/tests/test_flake_policy.py ..............                             [ 69%]
+ci/tests/test_static_ratchet.py ........                                 [100%]
+
+----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------
+0 registry entr(y/ies); 0 applied in this run
+============================== 26 passed in 0.11s ==============================
+
+## t1-unit/projectctl-tests
+$ ci/.venv/bin/python -m pytest tools/projectctl/tests -q -p pytest_quarantine
+exit=0
+........................................................................ [ 54%]
+........................................................................ [ 82%]
+..............................................                           [100%]
+----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------
+0 registry entr(y/ies); 0 applied in this run
+262 passed in 76.80s (0:01:16)
+
+## t1-unit/plane-queue
+$ ci/.venv/bin/python -m unittest discover -s tools/host/plane-queue -p test_*.py
+exit=0
+.............
+----------------------------------------------------------------------
+Ran 13 tests in 1.258s
+
+OK
+
+## t1-unit/plane-transition
+$ ci/.venv/bin/python -m unittest discover -s tools/host/plane-transition -p test_*.py
+exit=0
+...................................................................
+----------------------------------------------------------------------
+Ran 67 tests in 0.069s
+
+OK
+
+## t1-contract
+$ ci/.venv/bin/python ci/scripts/check_contracts.py
+exit=0
+OK    requirements/catalog.schema.json (+instance)
+Contracts: 1 schema(s), 1 instance(s) validated.
+PASS
+
+## projectctl/validate
+$ ci/.venv/bin/projectctl validate
+exit=0
+634 WARNING lines (pre-existing source gaps); no ERROR lines: True
+
+## projectctl/catalog-lint
+$ ci/.venv/bin/projectctl catalog-lint --base main
+exit=0
+Requirement catalog: PASS (306 records)
+History: CHECKED
+SOURCE_GAP: Unspecified canonical Revision/Status remain null (GAP-RTM-004/005)
+SOURCE_GAP: NFR measurement metadata remains owner-confirmation work (GAP-RTM-004)
+Readiness/evidence: NOT_CERTIFIED
+
+## hygiene/whitespace
+$ git diff --cached --check main
+exit=0

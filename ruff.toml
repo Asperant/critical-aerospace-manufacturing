@@ -1,0 +1,24 @@
+# WP-CICD-001 — canonical Ruff configuration (01 Item 41 §17, Item 61 §24).
+# Rules live in the repository, never in a developer's IDE or home directory.
+# Existing findings are governed by the ratchet in ci/static_baseline.json;
+# new files start at zero findings.
+target-version = "py311"
+line-length = 88
+extend-exclude = ["docs", "evidence"]
+
+[lint]
+select = [
+    "E4", "E7", "E9", # pycodestyle errors (Ruff default subset)
+    "F",              # pyflakes
+    "W",              # pycodestyle warnings
+    "I",              # import sorting
+    "B",              # flake8-bugbear (likely bugs)
+    "C4",             # comprehensions
+    "SIM",            # simplifications
+    "UP",             # pyupgrade for the py311 target
+]
+
+[lint.flake8-bugbear]
+# Typer parameter declarations are evaluated once by design; B008 is a false
+# positive for them (all 12 previous B008 findings were typer.Option).
+extend-immutable-calls = ["typer.Option", "typer.Argument"]

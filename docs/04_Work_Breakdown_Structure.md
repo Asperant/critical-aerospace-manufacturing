@@ -5246,7 +5246,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-PLAT-REPO |
 | Size band (indicative, no hour estimates) | M (≈4–7 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `.github/workflows/ci.yml`; `ci/`; `ruff.toml`; `pyrightconfig.json`; `evidence/WP-CICD-001/` |
 
 **Purpose.** Establish the protected pipeline that every change must pass, with tiered test execution and flake control.
 
