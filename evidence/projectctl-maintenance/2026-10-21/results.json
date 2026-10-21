@@ -1,0 +1,126 @@
+{
+  "targeted": {
+    "command": [
+      "ci/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tools/projectctl/tests/test_cli.py",
+      "tools/projectctl/tests/test_gates.py",
+      "tools/projectctl/tests/test_plane.py",
+      "tools/projectctl/tests/test_requirement_catalog.py",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "exit_code": 0
+  },
+  "projectctl-tests": {
+    "command": [
+      "ci/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tools/projectctl/tests",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "exit_code": 0
+  },
+  "ci-tests": {
+    "command": [
+      "ci/.venv/bin/python",
+      "-m",
+      "pytest",
+      "ci/tests",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "exit_code": 0
+  },
+  "queue-tests": {
+    "command": [
+      "ci/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/host/plane-queue",
+      "-p",
+      "test_*.py"
+    ],
+    "exit_code": 0
+  },
+  "transition-tests": {
+    "command": [
+      "ci/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/host/plane-transition",
+      "-p",
+      "test_*.py"
+    ],
+    "exit_code": 0
+  },
+  "canonical": {
+    "command": [
+      "ci/.venv/bin/projectctl",
+      "validate"
+    ],
+    "exit_code": 0
+  },
+  "catalog": {
+    "command": [
+      "ci/.venv/bin/projectctl",
+      "catalog-lint",
+      "--base",
+      "origin/main"
+    ],
+    "exit_code": 0
+  },
+  "contracts": {
+    "command": [
+      "ci/.venv/bin/python",
+      "ci/scripts/check_contracts.py"
+    ],
+    "exit_code": 0
+  },
+  "flake-policy": {
+    "command": [
+      "ci/.venv/bin/python",
+      "ci/scripts/check_flake_policy.py"
+    ],
+    "exit_code": 0
+  },
+  "whitespace": {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "origin/main",
+      "HEAD"
+    ],
+    "exit_code": 0
+  },
+  "syntax": {
+    "command": [
+      "ci/.venv/bin/python",
+      "-m",
+      "compileall",
+      "-q",
+      "tools/projectctl/src",
+      "tools/projectctl/tests"
+    ],
+    "exit_code": 0
+  },
+  "static": {
+    "command": [
+      "ci/.venv/bin/python",
+      "ci/scripts/static_ratchet.py",
+      "check"
+    ],
+    "exit_code": 0
+  }
+}

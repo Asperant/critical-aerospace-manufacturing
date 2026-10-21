@@ -202,6 +202,19 @@ def test_gov_001_cli_json_and_failure_exit(sandbox):
     assert runner.invoke(app, ['catalog-export', '--artifact', 'unknown', '--root', str(sandbox)]).exit_code == 2
 
 
+@pytest.mark.parametrize("command", ["catalog-export", "catalog-lint"])
+@pytest.mark.parametrize("yaml_value", ["[private-input", "!!python/object:private.Input {}"])
+def test_catalog_yaml_errors_are_controlled(sandbox, command, yaml_value):
+    path = sandbox / RTM
+    text = path.read_text()
+    line = next(line for line in text.splitlines() if line.startswith("  meta:"))
+    path.write_text(text.replace(line, "  meta: " + yaml_value, 1))
+    result = CliRunner().invoke(app, [command, "--root", str(sandbox)])
+    assert result.exit_code == 2
+    assert result.output.strip() == "CATALOG_INPUT_ERROR: Invalid embedded YAML (details redacted)"
+    assert "private" not in result.output
+
+
 @pytest.mark.parametrize('artifact', ['catalog', 'schema', 'counts', 'rtm-counts'])
 def test_gov_001_exports_deterministic_and_offline(root, catalog, artifact, monkeypatch):
     def forbidden(*args, **kwargs):
