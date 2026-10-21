@@ -1,0 +1,370 @@
+{
+  "schema_version": "cap-static-ratchet-v1",
+  "description": "WP-CICD-001 static ratchet baseline. Counts may only go down; files not listed must stay at zero findings. Regenerate only with `uv run --project ci python ci/scripts/static_ratchet.py update`.",
+  "tools": {
+    "ruff": "ruff 0.7.4",
+    "pyright": "pyright 1.1.389"
+  },
+  "totals": {
+    "ruff": 311,
+    "pyright": 189,
+    "unformatted_files": 56
+  },
+  "ruff": {
+    "project_control/documentation-reconciliation/audit.py": {
+      "C408": 7,
+      "E702": 1,
+      "F841": 2,
+      "I001": 1
+    },
+    "project_control/documentation-reconciliation/planning_audit.py": {
+      "C401": 1,
+      "E401": 1,
+      "E701": 3,
+      "E702": 3,
+      "I001": 1
+    },
+    "tools/host/plane-queue/install.py": {
+      "I001": 1
+    },
+    "tools/host/plane-queue/queue.py": {
+      "B007": 1,
+      "F401": 1,
+      "I001": 1,
+      "UP017": 2
+    },
+    "tools/host/plane-queue/test_queue.py": {
+      "E701": 7,
+      "F401": 1,
+      "I001": 1,
+      "SIM117": 4
+    },
+    "tools/host/plane-transition/build_policy.py": {
+      "I001": 1
+    },
+    "tools/host/plane-transition/install.py": {
+      "E701": 12,
+      "F401": 1,
+      "I001": 1
+    },
+    "tools/host/plane-transition/test_transition.py": {
+      "B023": 28,
+      "E701": 75,
+      "E702": 23,
+      "F841": 1,
+      "I001": 1
+    },
+    "tools/host/plane-transition/transition.py": {
+      "B905": 1,
+      "E701": 27,
+      "I001": 1,
+      "SIM105": 1,
+      "SIM300": 1,
+      "UP017": 1
+    },
+    "tools/operations/developer_workspace.py": {
+      "I001": 1
+    },
+    "tools/operations/plane_backup.py": {
+      "I001": 1,
+      "UP017": 2
+    },
+    "tools/projectctl/src/projectctl/__main__.py": {
+      "E402": 1
+    },
+    "tools/projectctl/src/projectctl/cli.py": {
+      "I001": 3
+    },
+    "tools/projectctl/src/projectctl/control_plane.py": {
+      "I001": 2
+    },
+    "tools/projectctl/src/projectctl/dependency_models.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/governance.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/loader.py": {
+      "I001": 2
+    },
+    "tools/projectctl/src/projectctl/parsers/dependencies.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/parsers/markdown.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/parsers/requirements.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/parsers/schedule.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/parsers/wbs.py": {
+      "B023": 5,
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/parsers/yaml_blocks.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/plane.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/plane_bootstrap.py": {
+      "I001": 1,
+      "SIM105": 1
+    },
+    "tools/projectctl/src/projectctl/plane_import.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/plane_plan.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/plane_transport.py": {
+      "I001": 1,
+      "SIM105": 1
+    },
+    "tools/projectctl/src/projectctl/project.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/queries.py": {
+      "SIM102": 1
+    },
+    "tools/projectctl/src/projectctl/rendering.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/requirement_catalog.py": {
+      "C408": 5,
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/requirement_models.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/validators/dependencies.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/validators/identity.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/validators/requirements.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/validators/schedule.py": {
+      "I001": 1
+    },
+    "tools/projectctl/src/projectctl/validators/wbs.py": {
+      "I001": 1
+    },
+    "tools/projectctl/tests/test_cli.py": {
+      "I001": 1
+    },
+    "tools/projectctl/tests/test_control_plane.py": {
+      "E702": 3,
+      "I001": 1
+    },
+    "tools/projectctl/tests/test_dependencies.py": {
+      "I001": 1
+    },
+    "tools/projectctl/tests/test_gates.py": {
+      "I001": 1
+    },
+    "tools/projectctl/tests/test_governance.py": {
+      "E701": 1,
+      "E702": 1,
+      "I001": 1
+    },
+    "tools/projectctl/tests/test_parser.py": {
+      "I001": 1
+    },
+    "tools/projectctl/tests/test_plane.py": {
+      "C408": 1,
+      "I001": 1,
+      "SIM117": 3
+    },
+    "tools/projectctl/tests/test_plane_bootstrap.py": {
+      "B905": 1,
+      "E701": 2,
+      "E702": 5,
+      "I001": 1,
+      "SIM117": 5
+    },
+    "tools/projectctl/tests/test_plane_import.py": {
+      "E741": 1,
+      "F401": 1,
+      "I001": 1,
+      "SIM117": 3
+    },
+    "tools/projectctl/tests/test_plane_plan.py": {
+      "I001": 1
+    },
+    "tools/projectctl/tests/test_plane_transport.py": {
+      "E701": 2,
+      "E702": 3,
+      "F401": 1,
+      "I001": 1
+    },
+    "tools/projectctl/tests/test_project.py": {
+      "I001": 1
+    },
+    "tools/projectctl/tests/test_requirement_catalog.py": {
+      "C408": 3,
+      "I001": 1
+    },
+    "tools/projectctl/tests/test_requirements.py": {
+      "I001": 1
+    }
+  },
+  "pyright": {
+    "tools/host/plane-queue/queue.py": {
+      "reportArgumentType": 1,
+      "reportAttributeAccessIssue": 1,
+      "reportCallIssue": 1,
+      "reportIncompatibleMethodOverride": 1
+    },
+    "tools/host/plane-queue/test_queue.py": {
+      "reportArgumentType": 1,
+      "reportAttributeAccessIssue": 1,
+      "reportOptionalMemberAccess": 2
+    },
+    "tools/host/plane-transition/build_policy.py": {
+      "reportArgumentType": 1,
+      "reportAttributeAccessIssue": 2,
+      "reportOptionalIterable": 1,
+      "reportOptionalMemberAccess": 2
+    },
+    "tools/host/plane-transition/test_transition.py": {
+      "reportArgumentType": 2,
+      "reportAttributeAccessIssue": 1,
+      "reportOptionalMemberAccess": 4
+    },
+    "tools/host/plane-transition/transition.py": {
+      "reportArgumentType": 1,
+      "reportOptionalIterable": 1,
+      "reportOptionalMemberAccess": 42,
+      "reportOptionalSubscript": 4
+    },
+    "tools/projectctl/src/projectctl/cli.py": {
+      "reportArgumentType": 2,
+      "reportCallIssue": 1
+    },
+    "tools/projectctl/src/projectctl/parsers/requirements.py": {
+      "reportArgumentType": 4
+    },
+    "tools/projectctl/src/projectctl/parsers/schedule.py": {
+      "reportOptionalSubscript": 1
+    },
+    "tools/projectctl/src/projectctl/parsers/wbs.py": {
+      "reportArgumentType": 1
+    },
+    "tools/projectctl/src/projectctl/plane.py": {
+      "reportAttributeAccessIssue": 1,
+      "reportOptionalIterable": 1
+    },
+    "tools/projectctl/src/projectctl/plane_bootstrap.py": {
+      "reportOptionalIterable": 9
+    },
+    "tools/projectctl/src/projectctl/plane_import.py": {
+      "reportAssignmentType": 1,
+      "reportOperatorIssue": 2,
+      "reportOptionalIterable": 3,
+      "reportOptionalMemberAccess": 1,
+      "reportOptionalSubscript": 9
+    },
+    "tools/projectctl/src/projectctl/project.py": {
+      "reportAttributeAccessIssue": 18
+    },
+    "tools/projectctl/src/projectctl/requirement_catalog.py": {
+      "reportAttributeAccessIssue": 8,
+      "reportInvalidTypeForm": 2
+    },
+    "tools/projectctl/tests/test_backup_safety.py": {
+      "reportArgumentType": 1,
+      "reportOptionalMemberAccess": 2
+    },
+    "tools/projectctl/tests/test_dependencies.py": {
+      "reportArgumentType": 1,
+      "reportOptionalSubscript": 2
+    },
+    "tools/projectctl/tests/test_developer_workspace.py": {
+      "reportArgumentType": 1,
+      "reportOptionalMemberAccess": 2
+    },
+    "tools/projectctl/tests/test_parser.py": {
+      "reportOptionalMemberAccess": 5,
+      "reportOptionalSubscript": 1
+    },
+    "tools/projectctl/tests/test_plane.py": {
+      "reportArgumentType": 3,
+      "reportCallIssue": 1
+    },
+    "tools/projectctl/tests/test_plane_bootstrap.py": {
+      "reportArgumentType": 2,
+      "reportAttributeAccessIssue": 1
+    },
+    "tools/projectctl/tests/test_plane_import.py": {
+      "reportAttributeAccessIssue": 2,
+      "reportOptionalSubscript": 6
+    },
+    "tools/projectctl/tests/test_schedule.py": {
+      "reportAttributeAccessIssue": 13,
+      "reportOptionalMemberAccess": 13
+    }
+  },
+  "unformatted": [
+    "project_control/documentation-reconciliation/audit.py",
+    "project_control/documentation-reconciliation/planning_audit.py",
+    "tools/host/plane-queue/install.py",
+    "tools/host/plane-queue/queue.py",
+    "tools/host/plane-queue/test_queue.py",
+    "tools/host/plane-transition/build_policy.py",
+    "tools/host/plane-transition/install.py",
+    "tools/host/plane-transition/test_transition.py",
+    "tools/host/plane-transition/transition.py",
+    "tools/operations/developer_workspace.py",
+    "tools/operations/plane_backup.py",
+    "tools/projectctl/src/projectctl/cli.py",
+    "tools/projectctl/src/projectctl/control_plane.py",
+    "tools/projectctl/src/projectctl/diagnostics.py",
+    "tools/projectctl/src/projectctl/gates.py",
+    "tools/projectctl/src/projectctl/governance.py",
+    "tools/projectctl/src/projectctl/loader.py",
+    "tools/projectctl/src/projectctl/models.py",
+    "tools/projectctl/src/projectctl/parsers/dependencies.py",
+    "tools/projectctl/src/projectctl/parsers/markdown.py",
+    "tools/projectctl/src/projectctl/parsers/requirements.py",
+    "tools/projectctl/src/projectctl/parsers/schedule.py",
+    "tools/projectctl/src/projectctl/parsers/wbs.py",
+    "tools/projectctl/src/projectctl/parsers/yaml_blocks.py",
+    "tools/projectctl/src/projectctl/plane.py",
+    "tools/projectctl/src/projectctl/plane_bootstrap.py",
+    "tools/projectctl/src/projectctl/plane_import.py",
+    "tools/projectctl/src/projectctl/plane_plan.py",
+    "tools/projectctl/src/projectctl/plane_transport.py",
+    "tools/projectctl/src/projectctl/project.py",
+    "tools/projectctl/src/projectctl/queries.py",
+    "tools/projectctl/src/projectctl/rendering.py",
+    "tools/projectctl/src/projectctl/requirement_catalog.py",
+    "tools/projectctl/src/projectctl/validators/dependencies.py",
+    "tools/projectctl/src/projectctl/validators/identity.py",
+    "tools/projectctl/src/projectctl/validators/requirements.py",
+    "tools/projectctl/src/projectctl/validators/schedule.py",
+    "tools/projectctl/src/projectctl/validators/wbs.py",
+    "tools/projectctl/tests/conftest.py",
+    "tools/projectctl/tests/test_backup_safety.py",
+    "tools/projectctl/tests/test_cli.py",
+    "tools/projectctl/tests/test_control_plane.py",
+    "tools/projectctl/tests/test_dependencies.py",
+    "tools/projectctl/tests/test_developer_workspace.py",
+    "tools/projectctl/tests/test_gates.py",
+    "tools/projectctl/tests/test_governance.py",
+    "tools/projectctl/tests/test_parser.py",
+    "tools/projectctl/tests/test_plane.py",
+    "tools/projectctl/tests/test_plane_bootstrap.py",
+    "tools/projectctl/tests/test_plane_import.py",
+    "tools/projectctl/tests/test_plane_plan.py",
+    "tools/projectctl/tests/test_plane_transport.py",
+    "tools/projectctl/tests/test_project.py",
+    "tools/projectctl/tests/test_requirement_catalog.py",
+    "tools/projectctl/tests/test_requirements.py",
+    "tools/projectctl/tests/test_schedule.py"
+  ]
+}

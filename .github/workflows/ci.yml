@@ -1,0 +1,142 @@
+# WP-CICD-001 — tiered T1 pipeline (01 Item 41; FR-PLAT-004, NFR-DX-006).
+#
+# Tiers: t1-static (Ruff lint/format + Pyright ratchet), t1-unit (flake policy,
+# CI tooling tests, projectctl and host tests with quarantine), t1-contract
+# (JSON Schema contracts) and t1-integration (REAL PostgreSQL + NATS JetStream).
+# `ci-gate` is the single required check: it fails unless every T1 job ran and
+# succeeded, so a skipped or missing job can never count as a pass (§181–184).
+#
+# The existing `projectctl` workflow stays unchanged: Plane transition policy
+# (tools/host/plane-transition) binds to its job and step names.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main, 'wp/**', 'control/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  UV_VERSION: "0.12.13"
+  UV_PYTHON: "3.11.16"
+  UV_PYTHON_PREFERENCE: only-managed
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  static:
+    name: t1-static
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install pinned uv
+        run: pipx install "uv==${UV_VERSION}"
+      - name: Sync locked CI toolchain
+        run: uv sync --project ci --locked
+      - name: Static ratchet (Ruff lint + format, Pyright)
+        run: uv run --project ci --locked python ci/scripts/static_ratchet.py check
+
+  unit:
+    name: t1-unit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONPATH: ci:ci/scripts
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install pinned uv
+        run: pipx install "uv==${UV_VERSION}"
+      - name: Sync locked CI toolchain
+        run: uv sync --project ci --locked
+      - name: Flake governance (registry, expiry, no retry-until-green)
+        run: uv run --project ci --locked python ci/scripts/check_flake_policy.py
+      - name: CI tooling tests
+        run: uv run --project ci --locked python -m pytest ci/tests -p pytest_quarantine
+      - name: projectctl tests (quarantine-aware)
+        run: uv run --project ci --locked python -m pytest tools/projectctl/tests -q -p pytest_quarantine
+      - name: Host Plane queue tests (offline)
+        run: uv run --project ci --locked python -m unittest discover -s tools/host/plane-queue -p 'test_*.py'
+      - name: Host Plane transition tests (offline)
+        run: uv run --project ci --locked python -m unittest discover -s tools/host/plane-transition -p 'test_*.py'
+
+  contract:
+    name: t1-contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install pinned uv
+        run: pipx install "uv==${UV_VERSION}"
+      - name: Sync locked CI toolchain
+        run: uv sync --project ci --locked
+      - name: JSON Schema contracts
+        run: uv run --project ci --locked python ci/scripts/check_contracts.py
+
+  integration:
+    name: t1-integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONPATH: ci:ci/scripts
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install pinned uv
+        run: pipx install "uv==${UV_VERSION}"
+      - name: Sync locked CI toolchain
+        run: uv sync --project ci --locked
+      - name: Start REAL PostgreSQL + NATS JetStream
+        run: |
+          ci/scripts/integration_services.sh up
+          ci/scripts/integration_services.sh env >> "$GITHUB_ENV"
+      - name: Integration smoke (boundary mode REAL)
+        run: uv run --project ci --locked python -m pytest ci/integration -m integration -p pytest_quarantine
+      - name: Service logs on failure
+        if: failure()
+        run: |
+          docker logs cap-ci-postgres || true
+          docker logs cap-ci-nats || true
+      - name: Stop services
+        if: always()
+        run: ci/scripts/integration_services.sh down
+
+  gate:
+    name: ci-gate
+    needs: [static, unit, contract, integration]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require every T1 job to have run and succeeded
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          needs = json.loads(os.environ["NEEDS"])
+          expected = {"static", "unit", "contract", "integration"}
+          missing = sorted(expected - needs.keys())
+          failed = {k: v["result"] for k, v in sorted(needs.items()) if v["result"] != "success"}
+          for name in missing:
+              print(f"MISSING     {name}")
+          for name, result in failed.items():
+              print(f"NOT SUCCESS {name}: {result}")
+          if missing or failed:
+              sys.exit(1)
+          print("PASS: all T1 jobs succeeded:", ", ".join(sorted(needs)))
+          PY
