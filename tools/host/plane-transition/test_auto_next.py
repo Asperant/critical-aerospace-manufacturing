@@ -412,6 +412,17 @@ class AutoNextTests(unittest.TestCase):
         self.assertEqual(result["candidates"][second]["result"], "PASS")
         self.assertEqual(envelopes[second]["evidence_refs"], ["comment:99"])
 
+    def test_rollback_preserves_rotated_credentials_and_unrelated_sudo_rules(self):
+        install = load("installer_fixture", HERE / "install_auto_next.py")
+        paths = install.restore_targets(
+            {"/usr/local/libexec/cap-auto-next.py": "source"}
+        )
+        self.assertIn("/etc/cap-plane-queue/transition-policy.json", paths)
+        self.assertIn("/usr/local/libexec/cap-auto-next.py", paths)
+        self.assertNotIn("/etc/cap-plane-queue/credential.json", paths)
+        self.assertNotIn("/etc/sudoers.d/cap-plane-queue", paths)
+        self.assertNotIn("/etc/sudoers.d/cap-plane-transition", paths)
+
 
 if __name__ == "__main__":
     unittest.main()

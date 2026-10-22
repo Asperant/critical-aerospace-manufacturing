@@ -13,6 +13,16 @@ SOURCE = Path("/srv/ailab/project")
 CONFIG = Path("/etc/cap-plane-queue")
 
 
+def restore_targets(mapping):
+    """Back up wider operational context, restore only files this feature changes."""
+    return set(mapping) | {
+        str(CONFIG / "transition-policy.json"),
+        str(CONFIG / "catalog.json"),
+        "/usr/local/share/cap-plane-transition/policy-manifest.json",
+        "/etc/sudoers.d/cap-plane-advance",
+    }
+
+
 def main():
     if os.geteuid() != 0:
         raise PermissionError("Root required")
@@ -63,7 +73,13 @@ def main():
         if path.is_symlink():
             raise ValueError("Symlink deployment target")
         exists = path.exists()
-        originals.append({"path": name, "existed": exists})
+        originals.append(
+            {
+                "path": name,
+                "existed": exists,
+                "restore": name in restore_targets(mapping),
+            }
+        )
         if exists:
             target = backup / name.lstrip("/")
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -76,6 +92,8 @@ from pathlib import Path
 assert os.geteuid()==0
 base=Path(__file__).resolve().parent
 for item in json.loads((base/'inventory.json').read_text()):
+    if not item['restore']:
+        continue
     target=Path(item['path'])
     assert not target.is_symlink()
     if item['existed']:
