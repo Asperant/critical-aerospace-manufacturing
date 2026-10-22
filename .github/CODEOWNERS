@@ -12,3 +12,7 @@
 /tools/projectctl/src/projectctl/cli.py @Yavuzgmus
 /tools/projectctl/tests/test_requirement_catalog.py @Yavuzgmus
 /evidence/WP-GOV-001/ @Yavuzgmus
+
+# WP-CORE-001: canonical owner Asrin; supporting reviewer Batuhan (advisory).
+/services/manufacturing-core/ @Ejlonn
+/evidence/WP-CORE-001/ @Ejlonn
