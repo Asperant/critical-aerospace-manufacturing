@@ -1,0 +1,138 @@
+[
+  {
+    "name": "projectctl-tests",
+    "command": [
+      "ci/.venv/bin/python",
+      "-B",
+      "-m",
+      "pytest",
+      "tools/projectctl/tests",
+      "-q"
+    ],
+    "exit_code": 0,
+    "log": "evidence/host-control/CTRL-HOST-004/projectctl-tests.log.txt"
+  },
+  {
+    "name": "transition-tests",
+    "command": [
+      "ci/.venv/bin/python",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/host/plane-transition",
+      "-p",
+      "test_*.py",
+      "-q"
+    ],
+    "exit_code": 0,
+    "log": "evidence/host-control/CTRL-HOST-004/transition-tests.log.txt"
+  },
+  {
+    "name": "queue-tests",
+    "command": [
+      "ci/.venv/bin/python",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/host/plane-queue",
+      "-p",
+      "test_*.py",
+      "-q"
+    ],
+    "exit_code": 0,
+    "log": "evidence/host-control/CTRL-HOST-004/queue-tests.log.txt"
+  },
+  {
+    "name": "ci-tests",
+    "command": [
+      "ci/.venv/bin/python",
+      "-B",
+      "-m",
+      "pytest",
+      "ci/tests",
+      "-q"
+    ],
+    "exit_code": 0,
+    "log": "evidence/host-control/CTRL-HOST-004/ci-tests.log.txt"
+  },
+  {
+    "name": "static",
+    "command": [
+      "ci/.venv/bin/python",
+      "ci/scripts/static_ratchet.py",
+      "check"
+    ],
+    "exit_code": 0,
+    "log": "evidence/host-control/CTRL-HOST-004/static.log.txt"
+  },
+  {
+    "name": "contracts",
+    "command": [
+      "ci/.venv/bin/python",
+      "ci/scripts/check_contracts.py"
+    ],
+    "exit_code": 0,
+    "log": "evidence/host-control/CTRL-HOST-004/contracts.log.txt"
+  },
+  {
+    "name": "flake",
+    "command": [
+      "ci/.venv/bin/python",
+      "ci/scripts/check_flake_policy.py"
+    ],
+    "exit_code": 0,
+    "log": "evidence/host-control/CTRL-HOST-004/flake.log.txt"
+  },
+  {
+    "name": "canonical",
+    "command": [
+      "ci/.venv/bin/python",
+      "-B",
+      "-m",
+      "projectctl",
+      "validate"
+    ],
+    "exit_code": 0,
+    "log": "evidence/host-control/CTRL-HOST-004/canonical-output.json"
+  },
+  {
+    "name": "preferences",
+    "command": [
+      "ci/.venv/bin/python",
+      "-B",
+      "-m",
+      "projectctl",
+      "execution-preferences"
+    ],
+    "exit_code": 0,
+    "log": "evidence/host-control/CTRL-HOST-004/preferences.log.txt"
+  },
+  {
+    "name": "catalog",
+    "command": [
+      "ci/.venv/bin/python",
+      "-B",
+      "-m",
+      "projectctl",
+      "catalog-lint",
+      "--base",
+      "576bda00a787c353312cef4ef71d8225233a400c"
+    ],
+    "exit_code": 0,
+    "log": "evidence/host-control/CTRL-HOST-004/catalog.log.txt"
+  },
+  {
+    "name": "whitespace",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "log": "evidence/host-control/CTRL-HOST-004/whitespace.log.txt"
+  }
+]

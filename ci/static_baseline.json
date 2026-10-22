@@ -6,7 +6,7 @@
     "pyright": "pyright 1.1.389"
   },
   "totals": {
-    "ruff": 311,
+    "ruff": 307,
     "pyright": 189,
     "unformatted_files": 56
   },
@@ -72,9 +72,6 @@
     "tools/projectctl/src/projectctl/__main__.py": {
       "E402": 1
     },
-    "tools/projectctl/src/projectctl/cli.py": {
-      "I001": 3
-    },
     "tools/projectctl/src/projectctl/control_plane.py": {
       "I001": 2
     },
@@ -122,9 +119,6 @@
     "tools/projectctl/src/projectctl/plane_transport.py": {
       "I001": 1,
       "SIM105": 1
-    },
-    "tools/projectctl/src/projectctl/project.py": {
-      "I001": 1
     },
     "tools/projectctl/src/projectctl/queries.py": {
       "SIM102": 1

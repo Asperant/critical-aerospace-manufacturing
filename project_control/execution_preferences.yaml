@@ -1,0 +1,882 @@
+schema_version: cap-execution-preferences-v1
+change_control: CHG-019
+semantics: Planning priority only; never readiness or execution truth
+generation: milestone, first planning sprint, canonical task-priority category, owner
+  roadmap section 9 order
+sequences:
+  Asrın Dündar:
+  - WP-GOV-001
+  - WP-CORE-007
+  - WP-CORE-001
+  - WP-CORE-005
+  - WP-TWIN-001
+  - WP-EVT-001
+  - WP-EVT-002
+  - WP-UI-001
+  - WP-CORE-003
+  - WP-EVT-003
+  - WP-CORE-002
+  - WP-CORE-004
+  - WP-TWIN-002
+  - WP-TWIN-003
+  - WP-DOC-002
+  - WP-UI-002
+  - WP-EVT-005
+  - WP-TEST-002
+  - WP-SEC-003
+  - WP-AI-003
+  - WP-AI-004
+  - WP-AI-006
+  - WP-HITL-002
+  - WP-HITL-003
+  - WP-TWIN-006
+  - WP-CORE-008
+  - WP-TEST-003
+  - WP-AI-001
+  - WP-AI-002
+  - WP-HITL-001
+  - WP-UI-006
+  - WP-HITL-005
+  - WP-HITL-006
+  - WP-TWIN-005
+  - WP-ML-002
+  - WP-ML-003
+  - WP-ML-004
+  - WP-ML-005
+  - WP-RAG-002
+  - WP-RAG-003
+  - WP-RAG-004
+  - WP-RAG-005
+  - WP-UI-004
+  - WP-AI-005
+  - WP-ML-001
+  - WP-RAG-001
+  - WP-RES-006
+  - WP-TWIN-004
+  - WP-ML-006
+  - WP-RAG-006
+  - WP-RES-002
+  - WP-UI-008
+  - WP-UI-010
+  - WP-RES-011
+  - WP-GOV-004
+  - WP-ML-007
+  - WP-RAG-007
+  - WP-RES-004
+  - WP-RES-007
+  - WP-RES-009
+  - WP-AI-007
+  - WP-CORE-006
+  - WP-BENCH-002
+  - WP-DOC-003
+  - WP-DOC-004
+  - WP-DOC-006
+  - WP-RES-012
+  - WP-UI-011
+  - WP-UI-012
+  Selman Özdemir:
+  - WP-VIS-001
+  - WP-VIS-008
+  - WP-VIS-009
+  - WP-VIS-007
+  - WP-VIS-004
+  - WP-VIS-005
+  - WP-VIS-006
+  - WP-UI-003
+  - WP-VIS-002
+  - WP-VIS-003
+  - WP-VDATA-001
+  - WP-VDATA-003
+  - WP-VDATA-002
+  - WP-VDATA-004
+  - WP-RES-010
+  - WP-VDATA-005
+  - WP-VIS-010
+  Batuhan Kaya:
+  - WP-SIM-001
+  - WP-SIM-003
+  - WP-SCH-001
+  - WP-SIM-002
+  - WP-SIM-006
+  - WP-SIM-005
+  - WP-SCH-002
+  - WP-TEST-006
+  - WP-AUTO-001
+  - WP-AUTO-003
+  - WP-AUTO-004
+  - WP-AUTO-005
+  - WP-VALID-001
+  - WP-VALID-002
+  - WP-SCH-003
+  - WP-SCH-006
+  - WP-SIM-007
+  - WP-SCH-004
+  - WP-UI-005
+  - WP-UI-007
+  - WP-AUTO-002
+  - WP-AUTO-007
+  - WP-SIM-004
+  - WP-SCH-005
+  - WP-SCH-007
+  - WP-AUTO-006
+  - WP-TEST-005
+  - WP-RES-008
+  - WP-SIM-009
+  - WP-PERF-003
+  - WP-PERF-006
+  - WP-SIM-008
+  Yavuz Gümüş:
+  - WP-CICD-001
+  - WP-CICD-002
+  - WP-OBS-001
+  - WP-PLAT-001
+  - WP-PLAT-002
+  - WP-TEST-001
+  - WP-OBJ-001
+  - WP-CICD-003
+  - WP-GOV-002
+  - WP-PLAT-003
+  - WP-TEST-007
+  - WP-SEC-001
+  - WP-HITL-004
+  - WP-OBS-002
+  - WP-SEC-002
+  - WP-SEC-004
+  - WP-SEC-005
+  - WP-SEC-007
+  - WP-OBS-003
+  - WP-OBS-004
+  - WP-UI-009
+  - WP-SEC-006
+  - WP-SEC-008
+  - WP-CICD-004
+  - WP-OBJ-002
+  - WP-CICD-005
+  - WP-CICD-006
+  - WP-DR-001
+  - WP-DR-003
+  - WP-EVT-004
+  - WP-GOV-003
+  - WP-OBS-005
+  - WP-PERF-001
+  - WP-PLAT-004
+  - WP-RES-001
+  - WP-TEST-004
+  - WP-HITL-007
+  - WP-PLAT-005
+  - WP-DOC-001
+  - WP-DR-002
+  - WP-PERF-004
+  - WP-PLAT-007
+  - WP-RES-003
+  - WP-TEST-008
+  - WP-BENCH-001
+  - WP-BENCH-003
+  - WP-RES-005
+  - WP-DR-004
+  - WP-EVT-006
+  - WP-OBS-006
+  - WP-PERF-002
+  - WP-PERF-005
+  - WP-BENCH-005
+  - WP-BENCH-004
+  - WP-DOC-005
+  - WP-PLAT-006
+priority_basis:
+  WP-GOV-001:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 0
+  WP-CORE-001:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 1
+  WP-CORE-005:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 2
+  WP-CORE-007:
+    class: 1
+    reason: security, identity, data-integrity or Oracle-isolation protection
+    roadmap_index: 3
+  WP-EVT-001:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 4
+  WP-EVT-002:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 5
+  WP-TWIN-001:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 6
+  WP-UI-001:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 7
+  WP-CORE-002:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 8
+  WP-CORE-003:
+    class: 1
+    reason: security, identity, data-integrity or Oracle-isolation protection
+    roadmap_index: 9
+  WP-CORE-004:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 10
+  WP-DOC-002:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 11
+  WP-EVT-003:
+    class: 1
+    reason: security, identity, data-integrity or Oracle-isolation protection
+    roadmap_index: 12
+  WP-EVT-005:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 13
+  WP-TEST-002:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 14
+  WP-TWIN-002:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 15
+  WP-TWIN-003:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 16
+  WP-UI-002:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 17
+  WP-AI-001:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 18
+  WP-AI-002:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 19
+  WP-AI-003:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 20
+  WP-AI-004:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 21
+  WP-AI-006:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 22
+  WP-CORE-008:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 23
+  WP-HITL-001:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 24
+  WP-HITL-002:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 25
+  WP-HITL-003:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 26
+  WP-SEC-003:
+    class: 1
+    reason: security, identity, data-integrity or Oracle-isolation protection
+    roadmap_index: 27
+  WP-TEST-003:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 28
+  WP-TWIN-006:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 29
+  WP-UI-006:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 30
+  WP-AI-005:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 31
+  WP-HITL-005:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 32
+  WP-HITL-006:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 33
+  WP-ML-001:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 34
+  WP-ML-002:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 35
+  WP-ML-003:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 36
+  WP-ML-004:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 37
+  WP-ML-005:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 38
+  WP-RAG-001:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 39
+  WP-RAG-002:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 40
+  WP-RAG-003:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 41
+  WP-RAG-004:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 42
+  WP-RAG-005:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 43
+  WP-TWIN-005:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 44
+  WP-UI-004:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 45
+  WP-ML-006:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 46
+  WP-RAG-006:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 47
+  WP-RES-002:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 48
+  WP-RES-006:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 49
+  WP-TWIN-004:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 50
+  WP-UI-008:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 51
+  WP-UI-010:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 52
+  WP-GOV-004:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 53
+  WP-ML-007:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 54
+  WP-RAG-007:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 55
+  WP-RES-004:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 56
+  WP-RES-007:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 57
+  WP-RES-009:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 58
+  WP-RES-011:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 59
+  WP-AI-007:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 60
+  WP-BENCH-002:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 61
+  WP-CORE-006:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 62
+  WP-DOC-003:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 63
+  WP-DOC-004:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 64
+  WP-DOC-006:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 65
+  WP-RES-012:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 66
+  WP-UI-011:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 67
+  WP-UI-012:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 68
+  WP-VIS-001:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 0
+  WP-VIS-008:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 1
+  WP-VIS-007:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 2
+  WP-VIS-009:
+    class: 1
+    reason: security, identity, data-integrity or Oracle-isolation protection
+    roadmap_index: 3
+  WP-UI-003:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 4
+  WP-VDATA-001:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 5
+  WP-VDATA-003:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 6
+  WP-VIS-002:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 7
+  WP-VIS-003:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 8
+  WP-VIS-004:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 9
+  WP-VIS-005:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 10
+  WP-VIS-006:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 11
+  WP-VDATA-002:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 12
+  WP-VDATA-004:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 13
+  WP-RES-010:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 14
+  WP-VDATA-005:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 15
+  WP-VIS-010:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 16
+  WP-SIM-001:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 0
+  WP-SCH-001:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 1
+  WP-SIM-002:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 2
+  WP-SIM-003:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 3
+  WP-SIM-006:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 4
+  WP-AUTO-001:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 5
+  WP-AUTO-003:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 6
+  WP-AUTO-004:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 7
+  WP-AUTO-005:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 8
+  WP-SCH-002:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 9
+  WP-SIM-005:
+    class: 1
+    reason: security, identity, data-integrity or Oracle-isolation protection
+    roadmap_index: 10
+  WP-TEST-006:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 11
+  WP-VALID-001:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 12
+  WP-VALID-002:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 13
+  WP-AUTO-002:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 14
+  WP-AUTO-007:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 15
+  WP-SCH-003:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 16
+  WP-SCH-004:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 17
+  WP-SCH-006:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 18
+  WP-SIM-004:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 19
+  WP-SIM-007:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 20
+  WP-UI-005:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 21
+  WP-UI-007:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 22
+  WP-AUTO-006:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 23
+  WP-SCH-005:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 24
+  WP-SCH-007:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 25
+  WP-TEST-005:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 26
+  WP-RES-008:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 27
+  WP-SIM-009:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 28
+  WP-PERF-003:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 29
+  WP-PERF-006:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 30
+  WP-SIM-008:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 31
+  WP-CICD-001:
+    class: 0
+    reason: required main/project-health CI foundation; no current broken-main incident
+      inferred
+    roadmap_index: 0
+  WP-CICD-002:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 1
+  WP-OBS-001:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 2
+  WP-PLAT-001:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 3
+  WP-PLAT-002:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 4
+  WP-TEST-001:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 5
+  WP-CICD-003:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 6
+  WP-GOV-002:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 7
+  WP-OBJ-001:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 8
+  WP-PLAT-003:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 9
+  WP-TEST-007:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 10
+  WP-HITL-004:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 11
+  WP-OBS-002:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 12
+  WP-SEC-001:
+    class: 1
+    reason: security, identity, data-integrity or Oracle-isolation protection
+    roadmap_index: 13
+  WP-OBS-003:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 14
+  WP-OBS-004:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 15
+  WP-SEC-002:
+    class: 1
+    reason: security, identity, data-integrity or Oracle-isolation protection
+    roadmap_index: 16
+  WP-SEC-004:
+    class: 1
+    reason: security, identity, data-integrity or Oracle-isolation protection
+    roadmap_index: 17
+  WP-SEC-005:
+    class: 1
+    reason: security, identity, data-integrity or Oracle-isolation protection
+    roadmap_index: 18
+  WP-SEC-007:
+    class: 1
+    reason: security, identity, data-integrity or Oracle-isolation protection
+    roadmap_index: 19
+  WP-UI-009:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 20
+  WP-CICD-004:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 21
+  WP-CICD-005:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 22
+  WP-CICD-006:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 23
+  WP-DR-001:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 24
+  WP-DR-003:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 25
+  WP-EVT-004:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 26
+  WP-GOV-003:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 27
+  WP-HITL-007:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 28
+  WP-OBJ-002:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 29
+  WP-OBS-005:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 30
+  WP-PERF-001:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 31
+  WP-PLAT-004:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 32
+  WP-PLAT-005:
+    class: 4
+    reason: primary capability; no stronger static priority declared
+    roadmap_index: 33
+  WP-RES-001:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 34
+  WP-SEC-006:
+    class: 1
+    reason: security, identity, data-integrity or Oracle-isolation protection
+    roadmap_index: 35
+  WP-SEC-008:
+    class: 1
+    reason: security, identity, data-integrity or Oracle-isolation protection
+    roadmap_index: 36
+  WP-TEST-004:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 37
+  WP-DOC-001:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 38
+  WP-DR-002:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 39
+  WP-PERF-004:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 40
+  WP-PLAT-007:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 41
+  WP-RES-003:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 42
+  WP-TEST-008:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 43
+  WP-BENCH-001:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 44
+  WP-BENCH-003:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 45
+  WP-DR-004:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 46
+  WP-EVT-006:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 47
+  WP-OBS-006:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 48
+  WP-PERF-002:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 49
+  WP-PERF-005:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 50
+  WP-RES-005:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 51
+  WP-BENCH-004:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 52
+  WP-BENCH-005:
+    class: 2
+    reason: canonical cross-owner enabling node
+    roadmap_index: 53
+  WP-DOC-005:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 54
+  WP-PLAT-006:
+    class: 3
+    reason: canonical milestone dependency producer
+    roadmap_index: 55

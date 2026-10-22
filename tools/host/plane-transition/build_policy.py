@@ -3,6 +3,8 @@ from hashlib import sha256
 import json
 from pathlib import Path
 import re
+import yaml
+from projectctl.execution_queue import project_view, validate_preferences
 from projectctl.project import load_project
 from projectctl.queries import context
 from projectctl.models import resolve_owner
@@ -44,6 +46,20 @@ for key,prefix,count in [('dor_task','DOR-TASK-',12),('dor_pr','DOR-PR-',8),('do
 policy['implementation_sha256']={
     'transition':sha256((ROOT/'tools/host/plane-transition/transition.py').read_bytes()).hexdigest(),
     'queue':sha256((ROOT/'tools/host/plane-queue/queue.py').read_bytes()).hexdigest()}
+required=json.loads((ROOT/'ci/required_checks.json').read_text())
+assert required['required_approving_review_count']==0
+policy['required_aggregate_ci']=[name for name in required['required_status_checks'] if name not in policy['required_ci']]
+for name in ['ci/required_checks.json','.github/workflows/ci.yml']:
+    manifest[name]=sha256((ROOT/name).read_bytes()).hexdigest()
+preferences=yaml.safe_load((ROOT/'project_control/execution_preferences.yaml').read_text())
+assert not validate_preferences(p,preferences), 'Invalid execution preferences'
+policy['execution_preferences']=preferences
+policy['execution_project']=project_view(p)
+for name in ['project_control/execution_preferences.yaml','09_change/CHG-019.yaml']:
+    manifest[name]=sha256((ROOT/name).read_bytes()).hexdigest()
+policy['execution_project']['source_manifest']=manifest
+for kind,name in [('auto_next','tools/host/plane-transition/auto_next.py'),('execution_queue','tools/projectctl/src/projectctl/execution_queue.py')]:
+    policy['implementation_sha256'][kind]=sha256((ROOT/name).read_bytes()).hexdigest()
 policy['policy_digest']=sha256(json.dumps(policy,ensure_ascii=False,sort_keys=True).encode()).hexdigest()
 output=Path('/srv/ailab/remote-ssh/staging/plane-transition-policy.json')
 output.write_text(json.dumps(policy,ensure_ascii=False,sort_keys=True))

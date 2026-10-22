@@ -6,6 +6,7 @@ import hashlib
 import html.parser
 import json
 import os
+import pwd
 from pathlib import Path
 import re
 import resource
@@ -208,6 +209,17 @@ def select(profile, rows):
         task = {k: clean(v) if isinstance(v, str) else v for k, v in row.items() if not k.startswith('_')}
         result['current_task' if active else 'next_task'] = task
         result['status'] = 'BLOCKED' if row['blocked'] else 'OK'
+    pending = [r for r in own if r['plane_state'] in {'IN_REVIEW','MERGE_READY','MERGED','VALIDATING'}]
+    if not active and not ready and pending:
+        if len(pending)>1:
+            result.update(status='AMBIGUOUS',ambiguity='MULTIPLE_PENDING_WORK')
+        else:
+            row=pending[0]
+            result['current_task']={k:clean(v) if isinstance(v,str) else v for k,v in row.items() if not k.startswith('_')}
+            result['status']='BLOCKED' if row['blocked'] else 'OK'
+    result['display_status']=('CURRENT' if result['current_task'] else 'READY') if result['status']=='OK' else result['status']
+    if result['status']=='NO_TASK':
+        result['reason']='NO_RELEASED_WORK; use read-only automatic eligibility details; never choose BACKLOG'
     return result
 
 
@@ -215,6 +227,12 @@ def emit(result, key=''):
     encoded = json.dumps(result, ensure_ascii=True, sort_keys=True)
     require(not key or key not in encoded and json.dumps(key)[1:-1] not in encoded)
     print(encoded)
+
+
+def exit_status(result):
+    if result['status'] in {'OK','NO_TASK'}:
+        return 0
+    return 2 if result['status']=='UNAVAILABLE' else 1
 
 
 def main():
@@ -225,6 +243,8 @@ def main():
         return 2
     try:
         require(os.geteuid() == 0)
+        caller=int(os.environ.get('SUDO_UID','0'))
+        require(caller in {0,pwd.getpwnam(profile).pw_uid})
         os.environ.clear()
         key = json.loads((ROOT / 'credential.json').read_text())['api_key']
         require(isinstance(key, str) and key and '\n' not in key and '\r' not in key)
@@ -236,8 +256,31 @@ def main():
             fcntl.flock(lock, fcntl.LOCK_EX)
             time.sleep(1.25)
             result = select(profile, snapshot(Reader(key), catalog))
+            if result['status']=='BLOCKED':
+                result['reason']='ACTIVE_BLOCKER; accountable reason unavailable from live label alone'
+                task=result['current_task'] or result['next_task']
+                audit=Path('/var/log/cap-plane-transition/audit.jsonl')
+                if audit.exists() and audit.stat().st_size<=10000000:
+                    matches=[json.loads(line) for line in audit.read_text().splitlines()]
+                    matches=[r for r in matches if r.get('wp_id')==task['wp_id'] and r.get('result')=='VERIFIED' and r.get('operation') in {'BLOCKED','UNBLOCKED'}]
+                    if matches and matches[-1]['operation']=='BLOCKED':
+                        result['reason']=clean(matches[-1].get('reason','ACTIVE_BLOCKER'))
+            if result['status']=='NO_TASK':
+                loader=__import__('importlib.machinery',fromlist=['SourceFileLoader']).SourceFileLoader('cap_auto_next','/usr/local/libexec/cap-auto-next.py')
+                spec=__import__('importlib.util',fromlist=['spec_from_loader']).spec_from_loader(loader.name,loader)
+                auto=__import__('importlib.util',fromlist=['module_from_spec']).module_from_spec(spec)
+                loader.exec_module(auto)
+                t=auto.load_transition()
+                policy=json.loads((ROOT/'transition-policy.json').read_text())
+                t.verify_policy_sources(policy)
+                decision=auto.advance_owner(t,profile,policy,lambda:t.Plane(key),t.GitHub,lambda *_:None,key,preview=True)
+                result['eligibility']=decision
+                result['reason']='; '.join(decision.get('reasons',[])) or 'ELIGIBLE_WORK_AWAITS_GUARDED_RECOVERY'
+                if decision['status'] in {'UNAVAILABLE','INVALID_BASELINE'}:
+                    result['status']='UNAVAILABLE'
+                    result['display_status']='UNAVAILABLE'
         emit(result, key)
-        return 0 if result['status'] in {'OK', 'NO_TASK'} else 1
+        return exit_status(result)
     except Exception:
         # Never format exceptions, response bodies, URLs, config or credential data.
         emit({'profile': profile, 'canonical_owner': PEOPLE[profile][0], 'status': 'UNAVAILABLE',

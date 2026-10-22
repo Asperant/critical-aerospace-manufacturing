@@ -1,0 +1,3 @@
+OK    requirements/catalog.schema.json (+instance)
+Contracts: 1 schema(s), 1 instance(s) validated.
+PASS
