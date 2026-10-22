@@ -51,6 +51,17 @@ class AutomaticQueueTests(unittest.TestCase):
         read.assert_not_called()
         self.assertNotIn("credential", output.getvalue())
 
+    def test_machine_exit_codes_remain_compatible(self):
+        for status, expected in {
+            "OK": 0,
+            "NO_TASK": 0,
+            "BLOCKED": 1,
+            "AMBIGUOUS": 1,
+            "UNAVAILABLE": 2,
+        }.items():
+            with self.subTest(status=status):
+                self.assertEqual(q.exit_status({"status": status}), expected)
+
 
 if __name__ == "__main__":
     unittest.main()

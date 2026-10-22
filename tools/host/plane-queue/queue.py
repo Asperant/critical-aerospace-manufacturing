@@ -229,6 +229,12 @@ def emit(result, key=''):
     print(encoded)
 
 
+def exit_status(result):
+    if result['status'] in {'OK','NO_TASK'}:
+        return 0
+    return 2 if result['status']=='UNAVAILABLE' else 1
+
+
 def main():
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     profile = sys.argv[1] if len(sys.argv) == 2 and sys.argv[1] in PEOPLE else None
@@ -274,7 +280,7 @@ def main():
                     result['status']='UNAVAILABLE'
                     result['display_status']='UNAVAILABLE'
         emit(result, key)
-        return 0 if result['status'] in {'OK', 'NO_TASK'} else 1
+        return exit_status(result)
     except Exception:
         # Never format exceptions, response bodies, URLs, config or credential data.
         emit({'profile': profile, 'canonical_owner': PEOPLE[profile][0], 'status': 'UNAVAILABLE',
