@@ -79,7 +79,7 @@ def parse_input(raw):
 
 
 class GitHub:
-    """Fixed GET API via existing per-profile gh login, always as unprivileged ailab.
+    """Fixed GET API via existing per-profile gh login, always as the matching unprivileged Linux account.
 
     No GitHub credential is copied/exported by the root helper. No repo code runs.
     User-controlled GH configuration is consumed only after dropping root.
@@ -87,9 +87,9 @@ class GitHub:
     def __init__(self, profile):
         self.profile = profile
         self.cache = {}
-        account = pwd.getpwnam('ailab')
+        account = pwd.getpwnam(profile)
         self.uid, self.gid = account.pw_uid, account.pw_gid
-        self.env = {'PATH':'/usr/bin:/bin', 'HOME':account.pw_dir, 'USER':'ailab',
+        self.env = {'PATH':'/usr/bin:/bin', 'HOME':account.pw_dir, 'USER':profile,
                     'GH_CONFIG_DIR':f'/srv/ailab/user-profiles/{profile}/gh',
                     'GH_PROMPT_DISABLED':'1', 'GH_PAGER':'cat', 'GIT_CONFIG_GLOBAL':'/dev/null',
                     'GIT_CONFIG_NOSYSTEM':'1', 'LANG':'C.UTF-8'}
@@ -415,7 +415,7 @@ def pr_fact(gh, refs, wp, profile):
 
 def ci(gh,sha,policy):
     checks,statuses=gh.checks(sha)
-    required=set(policy['required_ci'])
+    required=set(policy['required_ci'])|set(policy.get('required_aggregate_ci',[]))
     selected=[c for c in checks if c.get('name') in required]
     statuses=[v for v in statuses if v.get('context') in required]
     need(selected or statuses, 'CI_EVIDENCE_MISSING')
@@ -743,7 +743,7 @@ def last_projection(wp):
     return matches[-1] if matches else None
 
 
-def execute(profile,wp,target,envelope,policy,plane,gh,audit,key,previous=None,projection=None):
+def execute(profile,wp,target,envelope,policy,plane,gh,audit,key,previous=None,projection=None,prewrite=None):
     need(profile in q.PEOPLE and q.WP.fullmatch(wp) and target in TARGETS, 'INVALID_ARGUMENTS')
     need(wp in policy['contexts'], 'NON_CANONICAL_WP')
     item=find(plane,profile,wp,policy)
@@ -769,6 +769,8 @@ def execute(profile,wp,target,envelope,policy,plane,gh,audit,key,previous=None,p
     fresh=plane.issue(item['id'])
     own(fresh,profile,wp,policy)
     need(fresh==item, 'CONCURRENT_PLANE_CHANGE')
+    if prewrite is not None:
+        prewrite()
     record['result']='INTENT'
     audit(record,key)  # A writable durable audit sink is a precondition for mutation.
     try:
@@ -789,6 +791,13 @@ def execute(profile,wp,target,envelope,policy,plane,gh,audit,key,previous=None,p
 
 
 def verify_policy_sources(policy):
+    if 'execution_project' in policy:
+        data=dict(policy)
+        expected=data.pop('policy_digest')
+        need(hashlib.sha256(json.dumps(data,ensure_ascii=False,sort_keys=True).encode()).hexdigest()==expected,'POLICY_DIGEST_MISMATCH')
+    for kind,path in [('auto_next','/usr/local/libexec/cap-auto-next.py'),('execution_queue','/usr/local/libexec/execution_queue.py')]:
+        if kind in policy.get('implementation_sha256',{}):
+            need(hashlib.sha256(Path(path).read_bytes()).hexdigest()==policy['implementation_sha256'][kind], 'AUTO_NEXT_POLICY_REFRESH_REQUIRED')
     for name,expected in policy['source_manifest'].items():
         need(isinstance(name,str) and not name.startswith('/') and '..' not in name.split('/'), 'INVALID_POLICY_SOURCE')
         try:
@@ -800,6 +809,15 @@ def verify_policy_sources(policy):
     need(hashlib.sha256(Path('/usr/local/libexec/cap-plane-queue').read_bytes()).hexdigest()==policy['implementation_sha256']['queue'], 'QUEUE_POLICY_REFRESH_REQUIRED')
 
 
+def auto_next_support():
+    loader = importlib.machinery.SourceFileLoader('cap_auto_next', '/usr/local/libexec/cap-auto-next.py')
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    loader.exec_module(module)
+    return module
+
+
 def main():
     global q
     resource.setrlimit(resource.RLIMIT_CORE,(0,0))
@@ -809,6 +827,7 @@ def main():
         need(q.STATES == TARGETS-{'BLOCKED','UNBLOCKED'}, 'CANONICAL_WORKFLOW_SCHEMA_CHANGED')
         profile,wp,target=sys.argv[1:]
         need(profile in q.PEOPLE and q.WP.fullmatch(wp) and target in TARGETS, 'INVALID_ARGUMENTS')
+        caller_uid=int(os.environ.get('SUDO_UID',str(os.getuid())))
         os.environ.clear()
         need(not getattr(sys.stdin,'isatty',lambda:False)(), 'REASON_AND_EVIDENCE_JSON_REQUIRED_ON_STDIN')
         envelope=parse_input(sys.stdin.buffer.read(8193))
@@ -818,6 +837,8 @@ def main():
         # Reject raw secret input before logging or external lookups.
         need(key not in json.dumps(envelope) and key not in envelope['reason'], 'SECRET_IN_INPUT')
         verify_policy_sources(policy)
+        auto = auto_next_support()
+        auto.require_caller(profile,caller_uid)
         need(wp in policy['contexts'] and policy['contexts'][wp]['work_package']['primary_owner']['canonical_name']==q.PEOPLE[profile][0], 'WRONG_OR_NON_CANONICAL_OWNER')
         lockfd=os.open('/run/cap-plane-queue.lock',os.O_CREAT|os.O_RDWR|os.O_NOFOLLOW,0o600)
         with os.fdopen(lockfd,'r+') as lock:
@@ -827,6 +848,17 @@ def main():
             plane=Plane(key)
             gh=GitHub(profile)
             result=execute(profile,wp,target,envelope,policy,plane,gh,append_audit,key,last_blocker(wp),last_projection(wp))
+            if target=='DONE' and result.get('result')=='VERIFIED':
+                try:
+                    result['auto_next']=auto.after_done(sys.modules[__name__],wp,policy,lambda:Plane(key),GitHub,append_audit,key)
+                except Exception:
+                    result['auto_next']={'status':'UNAVAILABLE','reasons':['ADVANCE_REQUIRES_RECOVERY']}
+            elif target in {'MERGED','UNBLOCKED'} and result.get('result')=='VERIFIED':
+                # Contract readiness and verified blocker resolution may precede DONE.
+                try:
+                    result['auto_next']=auto.after_done(sys.modules[__name__],wp,policy,lambda:Plane(key),GitHub,append_audit,key)
+                except Exception:
+                    result['auto_next']={'status':'UNAVAILABLE','reasons':['ADVANCE_REQUIRES_RECOVERY']}
         q.emit(result,key)
         return 0
     except Denied as exc:

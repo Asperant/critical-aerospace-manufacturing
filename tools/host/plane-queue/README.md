@@ -89,3 +89,50 @@ change execution state concurrently; never overwrite live data to match a snapsh
 For rollback, an owner can remove only `/etc/sudoers.d/cap-plane-queue` to disable
 unprivileged access; keep the credential protected. No Plane rollback is needed.
 There is no automatic privilege or credential-rotation management.
+
+
+## AUTO_NEXT — CHG-019 / CTRL-HOST-004 (22 October 2026)
+
+Canonical planning preference lives in `project_control/execution_preferences.yaml`.
+Every scheduled owned WP appears exactly once; the five unscheduled WPs stay outside.
+Earlier milestone/window comes first, then canonical security/data-integrity,
+cross-owner enabling and milestone work, then primary work; the owner's roadmap
+section 9 order is the explicit final planning tie-breaker. Current broken-main or
+security incidents are not invented from titles; actual repair remains governed
+by the Task Priority Rule. This artifact is priority only, never readiness/evidence.
+
+AUTO_NEXT scans preference and skips ineligible work with precise reasons. It uses
+canonical node readiness and HARD START gates, not producer-WP DONE. Later-stage
+HARD gates retain their actual stage; SOFT gaps are visible. UNKNOWN is not PASS.
+Existing attributable current-revision DoR/dependency assessments and exact artifacts
+are required; automation never generates confirmations or certifies from planning.
+
+Any READY, IN_PROGRESS, IN_REVIEW, MERGE_READY, MERGED or VALIDATING work prevents
+automatic release of another READY. BLOCKED active work is surfaced. This conservative
+automatic-release policy does not change the global implementation WIP doctrine.
+After VERIFIED DONE, the owner and canonical node consumers are evaluated under the
+shared lock. Only BACKLOG -> READY may be automatically written, through the existing
+transition evaluator, durable INTENT, one PATCH and fresh verified readback. External
+writer races fail closed and require recomputation; timeout is never blindly retried.
+No assignment, cycle, module, label, title, description or dependency backfill occurs.
+
+Run `cap-plane-queue` in the real account/profile. JSON compatibility is retained;
+`display_status` explains CURRENT/READY/NO_TASK/BLOCKED. NO_TASK includes fresh
+eligibility reasons; never choose BACKLOG yourself. `projectctl next` remains
+planning-only. Recovery: `cap-plane-advance` for own profile; root administration:
+`sudo cap-plane-advance --all`. Both use the same resolver and guards. Offline
+`projectctl execution-preferences` validates coverage; `queue-preview` reads explicit
+live/evidence snapshots and never authorizes or performs a transition.
+
+Separate Linux accounts asrin/selman/batuhan/yavuz and private workspaces/profiles
+are authoritative. The helper drops GitHub reads to the matching account; root-only
+installed code/policy is used, never writable repository imports. CAP_PROFILE must
+match the real sudo caller. Historical shared-ailab descriptions are superseded for
+this workflow; no workspace permissions, SSH or profile paths are changed.
+CHG-018 zero-development-approval policy remains; product HITL stays unchanged.
+
+Deploy only merged reference source. The dedicated AUTO_NEXT installer creates a
+root-only timestamped `/root` backup and rollback script before replacing helper
+files, refreshes source/helper hashes, verifies sudoers and preserves audit. Rollback
+restores deployment only; never replay a stale Plane DB or state snapshot. No service
+restart is required. Missing evidence results in NO_TASK, never synthetic READY.

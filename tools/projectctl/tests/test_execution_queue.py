@@ -1,0 +1,261 @@
+"""AUTO_NEXT canonical selection regression tests; no network or mutations."""
+
+from copy import deepcopy
+from pathlib import Path
+
+import pytest
+import yaml
+from projectctl.execution_queue import (
+    ACTIVE,
+    ASSIGNEES,
+    EXCLUDED,
+    OWNERS,
+    affected_owners,
+    compute_next_eligible,
+    project_view,
+    validate_preferences,
+)
+from projectctl.project import load_project
+
+ROOT = Path(__file__).resolve().parents[3]
+
+
+@pytest.fixture(scope="module")
+def baseline():
+    project = project_view(load_project(ROOT))
+    policy = yaml.safe_load(
+        (ROOT / "project_control/execution_preferences.yaml").read_text()
+    )
+    live = {
+        "complete": True,
+        "items": {
+            wp: {
+                "owner": c["owner"],
+                "assignees": [ASSIGNEES[c["owner"]]],
+                "state": "BACKLOG",
+                "blocked": False,
+            }
+            for wp, c in project["cards"].items()
+        },
+    }
+    evidence = {
+        "complete": True,
+        "source_manifest": project["source_manifest"],
+        "candidates": {},
+    }
+    return project, policy, live, evidence
+
+
+def evaluate(data, owner="asrin"):
+    project, policy, live, evidence = data
+    return compute_next_eligible(project, live, evidence, owner, policy)
+
+
+def qualify(data, wp):
+    project, _, _, evidence = data
+    evidence["candidates"][wp] = {
+        "result": "PASS",
+        "dor": "PASS",
+        "evidence_refs": ["comment:1"],
+        "dependencies": {
+            e["id"]: {
+                "result": "PASS",
+                "readiness": e["semantics"]["required_readiness"],
+                "precise_consumer_requirement": "Exact consumer contract fields",
+                "evidence_refs": ["repo:evidence/fixture.md"],
+            }
+            for e in project["cards"][wp]["edges"]
+        },
+    }
+
+
+def test_full_counts_and_ownership(baseline):
+    project, policy, _, _ = baseline
+    assert len(project["cards"]) == 179
+    assert sum(c["scheduled"] for c in project["cards"].values()) == 174
+    assert {w for w, c in project["cards"].items() if not c["scheduled"]} == EXCLUDED
+    assert [len(policy["sequences"][o]) for o in OWNERS.values()] == [69, 17, 32, 56]
+    assert validate_preferences(project, policy) == []
+
+
+@pytest.mark.parametrize(
+    "mutation", ["duplicate", "missing", "unknown", "foreign", "optional"]
+)
+def test_preference_invalid(baseline, mutation):
+    data = deepcopy(baseline)
+    seq = data[1]["sequences"][OWNERS["asrin"]]
+    if mutation == "duplicate":
+        seq.append(seq[0])
+    elif mutation == "missing":
+        seq.pop()
+    elif mutation == "unknown":
+        seq[0] = "WP-UNKNOWN-001"
+    elif mutation == "foreign":
+        seq[0] = data[1]["sequences"][OWNERS["selman"]][0]
+    else:
+        seq[0] = "WP-R2-001"
+    assert evaluate(data)["status"] == "INVALID_BASELINE"
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("owner", OWNERS["selman"]),
+        ("assignees", []),
+        ("assignees", ["wrong"]),
+        ("assignees", [ASSIGNEES[OWNERS["asrin"]], "wrong"]),
+    ],
+)
+def test_live_identity_fails_closed(baseline, field, value):
+    data = deepcopy(baseline)
+    data[2]["items"]["WP-CORE-001"][field] = value
+    assert evaluate(data)["status"] == "INVALID_BASELINE"
+
+
+@pytest.mark.parametrize("state", sorted(ACTIVE))
+def test_active_pending_prevents_another_ready(baseline, state):
+    data = deepcopy(baseline)
+    data[2]["items"]["WP-CORE-001"]["state"] = state
+    result = evaluate(data)
+    assert result["wp_id"] == "WP-CORE-001"
+    assert result["status"] == ("READY" if state == "READY" else "CURRENT")
+
+
+def test_blocked_active_is_not_replaced(baseline):
+    data = deepcopy(baseline)
+    data[2]["items"]["WP-CORE-001"].update(
+        state="IN_REVIEW", blocked=True, blocker_reason="Waiting on exact contract"
+    )
+    assert evaluate(data)["status"] == "BLOCKED"
+    assert evaluate(data)["reasons"] == ["Waiting on exact contract"]
+
+
+def test_multiple_active_unavailable(baseline):
+    data = deepcopy(baseline)
+    for wp in ("WP-CORE-001", "WP-CORE-002"):
+        data[2]["items"][wp]["state"] = "READY"
+    assert evaluate(data)["status"] == "UNAVAILABLE"
+
+
+@pytest.mark.parametrize("state", ["DONE", "CANCELED"])
+def test_terminal_excluded(baseline, state):
+    data = deepcopy(baseline)
+    wp = data[1]["sequences"][OWNERS["asrin"]][0]
+    qualify(data, wp)
+    data[2]["items"][wp]["state"] = state
+    assert evaluate(data)["wp_id"] is None
+
+
+def test_first_blocked_second_valid_and_multiple_eligible(baseline):
+    data = deepcopy(baseline)
+    first, second = data[1]["sequences"][OWNERS["asrin"]][:2]
+    qualify(data, first)
+    qualify(data, second)
+    data[2]["items"][first]["blocked"] = True
+    assert evaluate(data)["wp_id"] == second
+    data[2]["items"][first]["blocked"] = False
+    assert evaluate(data)["wp_id"] == first
+
+
+def test_no_lexical_or_import_order_fallback(baseline):
+    data = deepcopy(baseline)
+    seq = data[1]["sequences"][OWNERS["asrin"]]
+    seq.reverse()
+    for wp in seq:
+        qualify(data, wp)
+    assert evaluate(data)["wp_id"] == seq[0]
+    assert seq[0] != sorted(seq)[0]
+
+
+def test_unknown_is_not_pass_and_skip_reasons(baseline):
+    data = deepcopy(baseline)
+    first = data[1]["sequences"][OWNERS["asrin"]][0]
+    data[3]["candidates"][first] = {
+        "result": "UNKNOWN",
+        "dor": "PASS",
+        "evidence_refs": ["comment:1"],
+    }
+    result = evaluate(data)
+    assert result["status"] == "NO_TASK"
+    assert result["considered"][0]["reason"] == "DOR_EVIDENCE_UNKNOWN"
+
+
+def test_start_gate_producer_done_insufficient(baseline):
+    data = deepcopy(baseline)
+    wp = "WP-CORE-002"
+    qualify(data, wp)
+    data[3]["candidates"][wp]["dependencies"] = {}
+    data[2]["items"]["WP-CORE-001"]["state"] = "DONE"
+    assert evaluate(data)["status"] == "NO_TASK"
+    assert any(
+        "HARD_START_READINESS_UNKNOWN" in (r["reason"] or "")
+        for r in evaluate(data)["considered"]
+    )
+
+
+@pytest.mark.parametrize("stage", ["INTEGRATION", "MILESTONE_EXIT", "FREEZE"])
+def test_later_stage_not_start_gate(baseline, stage):
+    data = deepcopy(baseline)
+    wp = data[1]["sequences"][OWNERS["asrin"]][0]
+    data[0]["cards"][wp]["edges"] = [
+        {
+            "id": "DEP-TEST",
+            "predecessor": {"node": "UNKNOWN_NODE"},
+            "semantics": {
+                "strength": "HARD",
+                "blocking_stage": stage,
+                "required_readiness": "FROZEN",
+            },
+        }
+    ]
+    qualify(data, wp)
+    data[3]["candidates"][wp]["dependencies"] = {}
+    assert evaluate(data)["wp_id"] == wp
+
+
+def test_soft_gap_visible(baseline):
+    data = deepcopy(baseline)
+    wp = data[1]["sequences"][OWNERS["asrin"]][0]
+    data[0]["cards"][wp]["edges"] = [
+        {
+            "id": "DEP-SOFT",
+            "semantics": {"strength": "SOFT", "blocking_stage": "START"},
+        }
+    ]
+    data[3]["candidates"][wp] = {
+        "result": "PASS",
+        "dor": "PASS",
+        "evidence_refs": ["comment:1"],
+    }
+    result = evaluate(data)
+    assert result["wp_id"] == wp
+    assert result["considered"][0]["soft_dependencies"] == ["DEP-SOFT"]
+
+
+@pytest.mark.parametrize("kind", ["partial", "unknown_state", "source", "evidence"])
+def test_unavailable_inputs_no_selection(baseline, kind):
+    data = deepcopy(baseline)
+    if kind == "partial":
+        data[2]["items"].pop("WP-CORE-001")
+    elif kind == "unknown_state":
+        data[2]["items"]["WP-CORE-001"]["state"] = "TRIAGE"
+    elif kind == "source":
+        data[3]["source_manifest"] = {}
+    else:
+        data[3]["complete"] = False
+    assert evaluate(data)["status"] == "UNAVAILABLE"
+
+
+def test_cross_owner_affected_not_all(baseline):
+    project = baseline[0]
+    owners = affected_owners(project, "WP-VDATA-003")
+    assert OWNERS["selman"] in owners
+    assert OWNERS["yavuz"] not in owners
+    assert affected_owners(project, "WP-AI-005") == [OWNERS["asrin"]]
+
+
+def test_pure_and_deterministic(baseline):
+    data = deepcopy(baseline)
+    before = deepcopy(data)
+    assert evaluate(data) == evaluate(data)
+    assert data == before

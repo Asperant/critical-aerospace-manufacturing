@@ -1,0 +1,10 @@
+{
+  "coverage": {
+    "Asrın Dündar": 69,
+    "Batuhan Kaya": 32,
+    "Selman Özdemir": 17,
+    "Yavuz Gümüş": 56
+  },
+  "errors": [],
+  "result": "PASS"
+}

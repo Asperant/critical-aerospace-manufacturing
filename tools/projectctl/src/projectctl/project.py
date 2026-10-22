@@ -12,10 +12,10 @@ from .enums import Severity
 from .loader import load
 from .parsers.wbs import Catalog
 from .rendering import summary
-from .validators.wbs import validate
-from .validators.schedule import validate_schedule
-from .validators.dependencies import validate_dependencies, hard_cycle
+from .validators.dependencies import hard_cycle, validate_dependencies
 from .validators.requirements import validate_requirements
+from .validators.schedule import validate_schedule
+from .validators.wbs import validate
 
 PARSER_VERSION = "offline-project-v1"
 
@@ -87,4 +87,14 @@ def load_project(root: Path) -> ProjectModel:
              "docs/06C_Batu_Engineering_Roadmap.md", "docs/06D_Yavuz_Engineering_Roadmap.md", "docs/07_Milestone_and_Release_Plan.md",
              "docs/08_Definition_of_Ready_and_Done.md", "docs/09_Change_Control_Process.md",
              "09_change/development_review_policy.json"]
-    return ProjectModel(catalog=catalog, control_items=load_registry(root), governance_diagnostics=review_policy_diagnostics(root), source_manifest={p: sha256((root / p).read_bytes()).hexdigest() for p in sorted(paths) if (root / p).is_file()})
+    project = ProjectModel(catalog=catalog, control_items=load_registry(root), governance_diagnostics=review_policy_diagnostics(root), source_manifest={p: sha256((root / p).read_bytes()).hexdigest() for p in sorted(paths) if (root / p).is_file()})
+
+    preferences = root / 'project_control/execution_preferences.yaml'
+    if preferences.exists():
+        import yaml
+
+        from .execution_queue import project_view, validate_preferences
+        project.source_manifest['project_control/execution_preferences.yaml'] = sha256(preferences.read_bytes()).hexdigest()
+        findings = validate_preferences(project_view(project), yaml.safe_load(preferences.read_text()))
+        project.governance_diagnostics.extend(Diagnostic(code='EXECUTION_PREFERENCES',severity=Severity.ERROR,message=message) for message in findings)
+    return project

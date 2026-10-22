@@ -1,0 +1,27 @@
+CHG-019:
+  title: Canonical execution preferences and guarded AUTO_NEXT
+  class: C3
+  review_risk_class: CR-3
+  owner: Asrın
+  decision: APPROVED
+  status: APPROVED
+  application_control_item: CTRL-HOST-004
+  required_human_approvals: 0
+  human_decision_basis: Explicit project-owner request in this session, 22 October
+    2026; first eligible preference and conservative automatic release authorized
+  scope: Project execution coordination only; product HITL and dependency/DoR/DoD
+    unchanged
+  planning_policy: project_control/execution_preferences.yaml
+  rules:
+  - Preference is priority only, not readiness
+  - 174 scheduled WPs, correct owners, no optional inclusion
+  - Use milestone/window, task-priority class, roadmap order final tie-breaker
+  - Only BACKLOG to READY automatically; existing active/pending work preserved
+  - Real source-bound accountable evidence; UNKNOWN never PASS
+  - After VERIFIED DONE reevaluate owner and canonical node consumers
+  - Recovery admin advance uses same resolver/guards
+  - No cycle/relation/assignment backfill
+  rollout: Merge, root-only helper/policy backup, verified install, one all-owner
+    bootstrap, four-user reads
+  rollback: Disable advance and restore helper configuration from root-only backup;
+    preserve audit and never restore Plane state

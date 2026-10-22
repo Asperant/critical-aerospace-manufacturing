@@ -7,7 +7,8 @@ import yaml
 from .enums import Severity
 from .loader import find_root
 from .project import load_project
-from .queries import context as wp_context, planning_candidates
+from .queries import context as wp_context
+from .queries import planning_candidates
 from .rendering import emit_json, emit_summary
 
 sys.dont_write_bytecode = True
@@ -95,6 +96,7 @@ def plane_plan(audit: Path = typer.Option(..., help="Explicit sanitized API v1 a
                root: Path | None = typer.Option(None)):
     """Emit a pure bootstrap dry-run; findings block live application."""
     import json
+
     from .plane import PlaneError
     from .plane_plan import bootstrap_plan
     try:
@@ -134,7 +136,14 @@ def check_done(wp_id: str, root: Path | None = typer.Option(None)):
 def catalog_export(artifact: str = typer.Option("catalog", help="catalog, schema, counts or rtm-counts; stdout only."),
                    root: Path | None = typer.Option(None)):
     """Generate WP-GOV-001 artifacts without writing files or changing lifecycle."""
-    from .requirement_catalog import CATALOG, catalog_schema, coverage_counts, from_sources, read_catalog, rtm_counts
+    from .requirement_catalog import (
+        CATALOG,
+        catalog_schema,
+        coverage_counts,
+        from_sources,
+        read_catalog,
+        rtm_counts,
+    )
     try:
         repo = root if root is not None else find_root(Path.cwd())
         if artifact == "schema":
@@ -178,4 +187,34 @@ def catalog_lint(root: Path | None = typer.Option(None),
             typer.echo(f"SOURCE_GAP: {gap}")
         typer.echo("Readiness/evidence: NOT_CERTIFIED")
     if payload["result"] != "PASS":
+        raise typer.Exit(1)
+
+
+@app.command(name="execution-preferences")
+def execution_preferences(root: Path | None = typer.Option(None)):
+    """Validate canonical AUTO_NEXT planning preference; never mutate Plane."""
+    from .execution_queue import validate_preferences
+    repo = root if root is not None else find_root(Path.cwd())
+    project = read_project(repo)
+    policy = yaml.safe_load((repo / 'project_control/execution_preferences.yaml').read_text())
+    errors = validate_preferences(project, policy)
+    emit_json({'result': 'FAIL' if errors else 'PASS', 'errors': errors,
+               'coverage': {owner: len(ids) for owner, ids in policy['sequences'].items()}})
+    if errors:
+        raise typer.Exit(1)
+
+
+@app.command(name="queue-preview")
+def queue_preview(owner: str = typer.Option(...), live: Path = typer.Option(...),
+                  evidence: Path = typer.Option(...), root: Path | None = typer.Option(None)):
+    """Pure offline AUTO_NEXT preview of explicit snapshots; no authorization."""
+    import json
+
+    from .execution_queue import compute_next_eligible
+    repo = root if root is not None else find_root(Path.cwd())
+    result = compute_next_eligible(read_project(repo), json.loads(live.read_text()),
+                                  json.loads(evidence.read_text()), owner,
+                                  yaml.safe_load((repo / 'project_control/execution_preferences.yaml').read_text()))
+    emit_json(result)
+    if result['status'] in {'INVALID_BASELINE','UNAVAILABLE'}:
         raise typer.Exit(1)

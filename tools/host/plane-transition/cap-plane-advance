@@ -1,0 +1,10 @@
+#!/bin/sh
+if [ "${1-}" = "--all" ] && [ "$#" -eq 1 ] && [ "$(id -u)" -eq 0 ]; then
+    exec /usr/bin/env -u SUDO_UID -u SUDO_USER -u SUDO_GID /usr/bin/python3 -I /usr/local/libexec/cap-auto-next.py --all
+fi
+if [ "$#" -ne 0 ]; then
+    printf '%s\n' '{"status":"UNAVAILABLE","reason":"INVALID_ARGUMENTS_OR_ADMIN_REQUIRED"}'
+    exit 2
+fi
+case "${CAP_PROFILE-}" in asrin|selman|batuhan|yavuz) ;; *) exit 2 ;; esac
+exec /usr/bin/sudo -n /usr/bin/python3 -I /usr/local/libexec/cap-auto-next.py "$CAP_PROFILE"
