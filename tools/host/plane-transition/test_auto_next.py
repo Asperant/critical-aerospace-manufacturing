@@ -385,6 +385,33 @@ class AutoNextTests(unittest.TestCase):
             )
         self.assertEqual(plane.patches, [])
 
+    def test_ambiguous_evidence_candidate_does_not_hide_later_candidate(self):
+        wp, policy, plane, gh, envelope = fixture(source="BACKLOG", target="READY")
+        second = "WP-TEST-999"
+        policy["execution_preferences"] = {
+            "sequences": {t.q.PEOPLE["asrin"][0]: [wp, second]}
+        }
+        policy["contexts"][second] = deepcopy(policy["contexts"][wp])
+        live = {
+            "items": {w: {"state": "BACKLOG", "blocked": False} for w in [wp, second]}
+        }
+        sha = gh.main_sha()
+        comments = [{"id": n + 1, "body": f"{wp} {sha} DOR-TASK-01"} for n in range(17)]
+        comments.append({"id": 99, "body": f"{second} {sha} DOR-TASK-01"})
+        with (
+            patch.object(t, "find", return_value=plane.item),
+            patch.object(t, "evaluate"),
+            patch.object(t, "records", return_value=[]),
+        ):
+            result, envelopes = auto.candidate_evidence(
+                t, plane, policy, "asrin", gh, comments, live
+            )
+        self.assertEqual(
+            result["candidates"][wp]["reason"], "AMBIGUOUS_EVIDENCE_DISCOVERY"
+        )
+        self.assertEqual(result["candidates"][second]["result"], "PASS")
+        self.assertEqual(envelopes[second]["evidence_refs"], ["comment:99"])
+
 
 if __name__ == "__main__":
     unittest.main()

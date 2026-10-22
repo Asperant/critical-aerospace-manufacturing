@@ -111,7 +111,9 @@ def candidate_evidence(t, plane, policy, profile, gh, comments, live):
         result["candidates"][wp] = entry
         if not refs:
             continue
-        t.need(len(refs) <= 16, "AMBIGUOUS_EVIDENCE_DISCOVERY")
+        if len(refs) > 16:
+            entry["reason"] = "AMBIGUOUS_EVIDENCE_DISCOVERY"
+            continue
         envelope = {
             "reason": "AUTO_NEXT canonical first verified eligible preference",
             "evidence_refs": refs,
@@ -123,9 +125,20 @@ def candidate_evidence(t, plane, policy, profile, gh, comments, live):
             )
             records = t.records(gh, refs, wp, sha)
             proofs = {}
-            for _, record in records:
+            edges = {
+                edge["id"]: edge for edge in policy["contexts"][wp]["dependency_edges"]
+            }
+            for author, record in records:
                 for identity, data in record.get("dependency_readiness", {}).items():
-                    proofs[identity] = dict(data, result="PASS")
+                    edge = edges.get(identity)
+                    if edge is None:
+                        continue
+                    producer = policy["node_owners"].get(edge["predecessor"]["node"])
+                    if (
+                        producer in t.GITHUB
+                        and author.casefold() == t.GITHUB[producer].casefold()
+                    ):
+                        proofs[identity] = dict(data, result="PASS")
             entry.update(
                 result="PASS",
                 dor="PASS",

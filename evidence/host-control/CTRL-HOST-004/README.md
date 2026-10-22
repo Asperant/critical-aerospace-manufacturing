@@ -5,8 +5,8 @@ reuse, verified-DONE and contract/blocker-resolution reevaluation, own-profile
 and root recovery, read-only queue explanations, separate-account enforcement,
 and merged-source installer with root-only backup/rollback are implemented.
 
-Local final checks: 329 projectctl tests (including 34 resolver cases), 85 host
-transition/orchestration tests, 16 queue tests, 26 CI-tooling tests: 456 passed,
+Local final checks: 329 projectctl tests (including 34 resolver cases), 86 host
+transition/orchestration tests, 16 queue tests, 26 CI-tooling tests: 457 passed,
 zero failed/skipped. Results and exact command logs accompany this file. Static
 ratchet, schemas, flake governance, canonical validation, preference coverage,
 catalog history and whitespace checks passed. Earlier failures identified a
