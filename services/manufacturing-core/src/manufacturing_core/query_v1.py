@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from time import perf_counter
 from typing import TYPE_CHECKING, Final, Literal, Self
 
 from pydantic import BaseModel, ConfigDict, model_validator
@@ -85,6 +86,25 @@ class QueryReferenceError(ValueError):
 
 
 def query_order_v1(
+    repository: CoreRepository,
+    request: OrderQueryRequestV1,
+    *,
+    correlation_id: str | None = None,
+) -> OrderQueryResultV1:
+    from manufacturing_core.observability import correlation, record
+
+    identity = correlation(correlation_id)
+    started = perf_counter()
+    try:
+        result = _query_order_v1(repository, request)
+    except Exception:
+        record(identity, "order-query.v1", "FAILED", (perf_counter() - started) * 1000)
+        raise
+    record(identity, "order-query.v1", "SUCCESS", (perf_counter() - started) * 1000)
+    return result
+
+
+def _query_order_v1(
     repository: CoreRepository, request: OrderQueryRequestV1
 ) -> OrderQueryResultV1:
     """Read the requested order's complete domain closure in caller's transaction.

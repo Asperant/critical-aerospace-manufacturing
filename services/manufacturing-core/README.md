@@ -1,5 +1,14 @@
 # Core initial persistence interface — WP-CORE-001
 
+Internal capability diagnostics: `manufacturing_core.observability.health(dsn,
+correlation_id=...)` returns READY/UNAVAILABLE after a real restricted runtime
+connection/privilege probe. It does not certify manufacturing/action readiness.
+`query_order_v1(..., correlation_id=...)` propagates caller correlation into
+structured JSON completion/failure logs with outcome and duration; omitted IDs
+are generated. Connection strings, exception text and domain payloads are not
+logged. The embedding process configures standard Python log handlers/exporters;
+no HTTP endpoint or telemetry platform is introduced.
+
 The first service-owned migration lives in
 `src/manufacturing_core/migrations/0001_domain.sql`, included as package data.
 The local runner uses the selected Psycopg 3 driver; it applies only this
