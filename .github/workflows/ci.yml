@@ -2,7 +2,8 @@
 #
 # Tiers: t1-static (Ruff lint/format + Pyright ratchet), t1-unit (flake policy,
 # CI tooling tests, projectctl and host tests with quarantine), t1-contract
-# (JSON Schema contracts) and t1-integration (REAL PostgreSQL + NATS JetStream).
+# (JSON Schema contracts) and t1-integration (REAL PostgreSQL + NATS JetStream,
+# and the REAL OTel Collector + OpenObserve telemetry pipeline, WP-OBS-001).
 # `ci-gate` is the single required check: it fails unless every T1 job ran and
 # succeeded, so a skipped or missing job can never count as a pass (§181–184).
 #
@@ -74,7 +75,7 @@ jobs:
         run: uv run --project ci --locked python -m pytest tools/mfgctl/tests -q -p pytest_quarantine
       - name: Observability standard tests and typing (WP-OBS-001)
         run: |
-          uv run --project ci --locked python -m pytest packages/observability/tests -q -p pytest_quarantine
+          uv run --project ci --locked python -m pytest packages/observability/tests infra/observability/tests -m 'not integration' -q -p pytest_quarantine
           uv run --project ci --locked pyright --project packages/observability/pyrightconfig.json
       - name: Host Plane queue tests (offline)
         run: uv run --project ci --locked python -m unittest discover -s tools/host/plane-queue -p 'test_*.py'
@@ -120,14 +121,23 @@ jobs:
         run: uv run --project ci --locked python -m pytest ci/integration -m integration -p pytest_quarantine
       - name: Core initial migration and persistence (real PostgreSQL 18)
         run: uv run --project ci --locked python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests/persistence -m integration -q -p pytest_quarantine
+      - name: Start REAL OTel Collector + OpenObserve (WP-OBS-001)
+        run: |
+          infra/observability/stack.sh up
+          infra/observability/stack.sh env >> "$GITHUB_ENV"
+      - name: Telemetry pipeline smoke (boundary mode REAL)
+        run: uv run --project ci --locked python -m pytest infra/observability/tests -m integration -q -p pytest_quarantine
       - name: Service logs on failure
         if: failure()
         run: |
           docker logs cap-ci-postgres || true
           docker logs cap-ci-nats || true
+          infra/observability/stack.sh logs || true
       - name: Stop services
         if: always()
-        run: ci/scripts/integration_services.sh down
+        run: |
+          ci/scripts/integration_services.sh down
+          infra/observability/stack.sh down || true
 
   gate:
     name: ci-gate

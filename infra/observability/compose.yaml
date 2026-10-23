@@ -1,0 +1,50 @@
+# WP-OBS-001 — observability runtime: OTel Collector → OpenObserve (single node).
+# 01 Item 61 §176–§182 (OpenTelemetry, Collector, OpenObserve single-node SELECTED);
+# 02 resource profile OBSERVABILITY. WP-PLAT-001 composes this file into the
+# capability profiles; DEP-011 requires the shared Integration runtime to host it
+# from this same definition.
+#
+# Start and stop with infra/observability/stack.sh (it creates throw-away
+# credentials outside the repository and waits for both health surfaces).
+# Images are pinned to exact releases; ports bind to localhost only.
+name: cap-observability
+
+services:
+  openobserve:
+    image: public.ecr.aws/zinclabs/openobserve:v1.0.4
+    environment:
+      ZO_ROOT_USER_EMAIL: ${O2_ROOT_EMAIL:?run infra/observability/stack.sh up}
+      ZO_ROOT_USER_PASSWORD: ${O2_ROOT_PASSWORD:?run infra/observability/stack.sh up}
+      ZO_DATA_DIR: /data
+      ZO_TELEMETRY: "false"
+    volumes:
+      - openobserve-data:/data
+    ports:
+      - "127.0.0.1:${O2_HTTP_PORT:-55080}:5080"
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+    restart: unless-stopped
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.162.0
+    command: ["--config=/etc/otelcol/config.yaml"]
+    environment:
+      O2_BASIC_AUTH: ${O2_BASIC_AUTH:?run infra/observability/stack.sh up}
+    volumes:
+      - ./otel-collector.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "127.0.0.1:${OTLP_GRPC_PORT:-54317}:4317"
+      - "127.0.0.1:${OTLP_HTTP_PORT:-54318}:4318"
+      - "127.0.0.1:${OTEL_HEALTH_PORT:-53133}:13133"
+    depends_on:
+      - openobserve
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+    restart: unless-stopped
+
+volumes:
+  openobserve-data:

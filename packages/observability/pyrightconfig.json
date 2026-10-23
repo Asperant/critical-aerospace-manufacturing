@@ -1,5 +1,5 @@
 {
-  "include": ["src", "tests"],
+  "include": ["src", "tests", "../../infra/observability/tests"],
   "extraPaths": ["src"],
   "pythonVersion": "3.11",
   "typeCheckingMode": "standard",
