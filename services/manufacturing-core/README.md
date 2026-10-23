@@ -74,6 +74,20 @@ the inserted row; only caller commit makes it visible to other connections.
 This primitive does not prove atomic domain mutation/outbox, DEP-022 readiness,
 crash consistency or delivery. ReleaseLot still awaits the exact lifecycle binding.
 
+`observability.outbox_pending_age(connection, as_of=..., correlation_id=...)`
+returns a frozen diagnostic with pending_count and oldest_pending_age_seconds,
+and emits the same values through the existing manufacturing_core structured
+JSON logger. It reads only PENDING rows in one SQL aggregate over the caller's
+snapshot. Supply a timezone-aware wall-clock reference explicitly; there is no
+implicit clock sample. Age is `(as_of - min(created_at)).total_seconds()`, using
+persisted creation times, never simulation occurrence time. An empty backlog has
+count=0 and age=None. Future creation times or database errors fail explicitly,
+without logging credentials/payloads or substituting a healthy zero backlog.
+Callers observing committed backlog should use a fresh read-only runtime
+transaction; this diagnostic never commits, rolls back or modifies any row.
+This is backlog age, not completed commit-to-broker latency or evidence that
+NFR-PERF-003's p95/p99 thresholds have been met. No collector/exporter is added.
+
 ## Focused real persistence verification
 
 Use the existing CI PostgreSQL fixture with `CI_POSTGRES_IMAGE=postgres:18-alpine`.

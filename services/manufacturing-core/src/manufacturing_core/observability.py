@@ -4,8 +4,12 @@ import json
 import logging
 import re
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from typing import Literal
 from uuid import uuid4
+
+import psycopg
+from psycopg.rows import DictRow
 
 from manufacturing_core.database import connect_runtime
 from manufacturing_core.migrate import TABLES
@@ -42,6 +46,78 @@ def record(
 class CoreHealth:
     status: Literal["READY", "UNAVAILABLE"]
     correlation_id: str
+
+
+@dataclass(frozen=True)
+class OutboxPendingAge:
+    as_of: datetime
+    pending_count: int
+    oldest_pending_age_seconds: float | None
+
+
+def outbox_pending_age(
+    connection: psycopg.Connection[DictRow],
+    *,
+    as_of: datetime,
+    correlation_id: str | None = None,
+) -> OutboxPendingAge:
+    """Read caller snapshot; pending age is not measured broker publication delay.
+
+    No clock sampling, transaction completion, publication or state mutation.
+    Empty backlog has no oldest age. Future creation times fail explicitly.
+    """
+    identity = correlation(correlation_id)
+    if as_of.tzinfo is None or as_of.utcoffset() is None:
+        raise ValueError("outbox age requires timezone-aware as_of")
+    reference = as_of.astimezone(UTC)
+    try:
+        row = connection.execute(
+            "SELECT count(*) AS pending_count, min(created_at) AS oldest, "
+            "max(created_at) AS newest FROM core.outbox "
+            "WHERE publication_status = 'PENDING'"
+        ).fetchone()
+        if row is None:
+            raise ValueError("outbox aggregate result unavailable")
+        if row["newest"] is not None and row["newest"] > reference:
+            raise ValueError("outbox creation time is after as_of")
+        result = OutboxPendingAge(
+            as_of=reference,
+            pending_count=row["pending_count"],
+            oldest_pending_age_seconds=(
+                None
+                if row["oldest"] is None
+                else (reference - row["oldest"]).total_seconds()
+            ),
+        )
+    except Exception:
+        # A failed read never becomes a healthy zero backlog; no exception/DSN dump.
+        LOGGER.info(
+            json.dumps(
+                {
+                    "service": "manufacturing-core",
+                    "operation": "outbox-pending-age",
+                    "correlation_id": identity,
+                    "outcome": "FAILED",
+                },
+                sort_keys=True,
+            )
+        )
+        raise
+    LOGGER.info(
+        json.dumps(
+            {
+                "service": "manufacturing-core",
+                "operation": "outbox-pending-age",
+                "correlation_id": identity,
+                "outcome": "COMPLETED",
+                "as_of": result.as_of.isoformat(),
+                "pending_count": result.pending_count,
+                "oldest_pending_age_seconds": result.oldest_pending_age_seconds,
+            },
+            sort_keys=True,
+        )
+    )
+    return result
 
 
 def health(dsn: str, *, correlation_id: str | None = None) -> CoreHealth:
