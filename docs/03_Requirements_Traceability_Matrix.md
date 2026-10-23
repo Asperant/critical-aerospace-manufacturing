@@ -405,7 +405,7 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 | FR-EVT-002 | F1 | Asrın | 01 Item81 FR-EVT-002 L169911 | ITEM-12, EVTINF-INV-04 | VERIFY_PLANNED | — |
 | FR-EVT-003 | F1 | Asrın | 01 Item81 FR-EVT-003 L169912 | ITEM-12, ITEM-47, BE-INV-09, OBS-INV-05 | VERIFY_PLANNED | — |
 | FR-EVT-004 | F1 | Asrın | 01 Item81 FR-EVT-004 L169913 | ITEM-12, ITEM-84, SEC-INV-20, DX-INV-59 | VERIFY_PLANNED | — |
-| FR-EVT-005 | F1 | Asrın | 01 Item81 FR-EVT-005 L169914 | ITEM-36, EV-INV-03, EVTINF-INV-05, TEST-INV-09 | VERIFY_PLANNED | — |
+| FR-EVT-005 | F1 | Asrın | 01 Item81 FR-EVT-005 L169914 | ITEM-36, EV-INV-03, EVTINF-INV-05, TEST-INV-09 | EVIDENCE_PENDING | — |
 | FR-EVT-006 | F1 | Asrın | 01 Item81 FR-EVT-006 L169915 | ITEM-22, ITEM-36, EV-INV-06 | VERIFY_PLANNED | — |
 | FR-EVT-007 | F1 | Asrın | 01 Item81 FR-EVT-007 L169916 | ITEM-13, ITEM-22, DA-INV-03, INT-INV-01, GIT-INV-02 | VERIFY_PLANNED | — |
 | FR-EVT-008 | F1 | Asrın | 01 Item81 FR-EVT-008 L169917 | ITEM-22, INT-INV-03, EV-INV-08 | VERIFY_PLANNED | — |
@@ -4167,14 +4167,15 @@ FR-EVT-005:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-EVT-005 L169914"}
   DERIVED_FROM: [ITEM-36, EV-INV-03, EVTINF-INV-05, TEST-INV-09]
   ALLOCATED_TO: [ARCH-EVT-CONSUMER]
-  REALIZED_BY: {surface: "idempotent consumer framework (processed-message ledger)", deployable: "all event consumers", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "idempotent consumer framework (processed-message ledger)", deployable: "all event consumers", ref: "packages/event-consumer/src/cap_event_consumer/; packages/event-consumer/tests/"}
   EXPOSED_BY: ["consumer idempotency policy"]
   VERIFIED_BY: [TEST-EVT-CONSUMER-IDEMP, RES-DUP-001]
   EXERCISED_IN: [AV-SCEN-05]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-EVT-003-LOCAL-001]  # scoped REAL PostgreSQL/JetStream primitive acceptance; integrated consumers pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L4, env: "CI + INTEGRATION + EVALUATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "WP-EVT-003 framework acceptance covers real broker/DB duplicate, crash, restart, retry and replay isolation. evidence/WP-EVT-003/FINAL-ACCEPTANCE.md records limits: actual downstream adoption, full AV-SCEN-05/RES-DUP-001 and DEP-023/024/025 integration evidence remain unverified."
 FR-EVT-006:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-EVT-006 L169915"}
   DERIVED_FROM: [ITEM-22, ITEM-36, EV-INV-06]

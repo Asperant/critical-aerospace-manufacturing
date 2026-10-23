@@ -844,7 +844,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-EVT-SPINE |
 | Size band (indicative, no hour estimates) | S (≈1–3 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `packages/event-consumer/`; `evidence/WP-EVT-003/` |
 
 **Purpose.** Make at-least-once delivery safe by construction for every consumer rather than per-service ad hoc handling.
 
