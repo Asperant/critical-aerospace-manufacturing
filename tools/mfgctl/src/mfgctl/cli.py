@@ -1,10 +1,12 @@
 """Command surface of mfgctl (01 Item 74 §13–39).
 
 Slice A: ``doctor``. Slice B: ``bootstrap``, ``check`` and ``timings``.
-Profile, smoke, scenario and diagnose join in slice C of WP-PLAT-002.
+Slice C: ``profile list``, ``up``, ``down``, ``status``, ``smoke``, ``scenario``
+and ``diagnose bundle`` over the capability registry (mfgctl.capabilities/v1).
 
 Exit codes: 0 success (warnings allowed), 1 a check or step failed, 2 mfgctl
-could not run (for example outside the repository or ci.yml unusable).
+could not run (outside the repository, ci.yml unusable, registry missing or
+invalid, unknown profile/capability/scenario).
 Every command records its duration (see ``mfgctl timings``).
 """
 
@@ -15,14 +17,16 @@ import os
 import time
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
+from datetime import UTC, datetime
 from enum import StrEnum
 from pathlib import Path
 
 import typer
 
-from mfgctl import __version__, probe, timing
+from mfgctl import __version__, probe, registry, runtime, timing
 from mfgctl import bootstrap as bootstrap_module
 from mfgctl import check as check_module
+from mfgctl import diagnose as diagnose_module
 from mfgctl import doctor as doctor_module
 from mfgctl.repo import RepoNotFoundError, find_repo_root
 
@@ -31,6 +35,12 @@ app = typer.Typer(
     add_completion=False,
     no_args_is_help=True,
 )
+profile_app = typer.Typer(help="Capability profiles (Compose).", no_args_is_help=True)
+scenario_app = typer.Typer(help="Declared scenarios.", no_args_is_help=True)
+diagnose_app = typer.Typer(help="Diagnostics for support.", no_args_is_help=True)
+app.add_typer(profile_app, name="profile")
+app.add_typer(scenario_app, name="scenario")
+app.add_typer(diagnose_app, name="diagnose")
 
 
 class Tier(StrEnum):
@@ -160,3 +170,97 @@ def timings(
     else:
         location = timing.state_dir(os.environ) / timing.FILENAME
         typer.echo(timing.render_summary(rows, location))
+
+
+def _registry(root: Path) -> registry.Registry:
+    try:
+        return registry.load(root, os.environ)
+    except (registry.RegistryMissingError, registry.RegistryInvalidError) as exc:
+        typer.echo(f"ERROR: {exc}", err=True)
+        raise typer.Exit(2) from exc
+
+
+def _action(build: Callable[[registry.Registry], runtime.Action]) -> runtime.Action:
+    root = _repo_root()
+    try:
+        return build(_registry(root))
+    except registry.UnknownNameError as exc:
+        typer.echo(f"ERROR: {exc}", err=True)
+        raise typer.Exit(2) from exc
+
+
+def _run(action: runtime.Action) -> None:
+    typer.secho(f"$ {' '.join(action.argv)}", bold=True)
+    result = runtime.execute(action, _repo_root(), probe.run_streaming)
+    typer.echo(result.summary())
+    raise typer.Exit(0 if result.passed else 1)
+
+
+@profile_app.command("list")
+def profile_list() -> None:
+    """List the declared capability profiles."""
+    with _timed("profile list"):
+        typer.echo(runtime.render_profiles(_registry(_repo_root())))
+
+
+@app.command()
+def up(name: str = typer.Argument(..., help="Profile name.")) -> None:
+    """Start a capability profile (docker compose --profile NAME up --wait)."""
+    with _timed("up"):
+        _run(_action(lambda reg: runtime.profile_up(reg, name)))
+
+
+@app.command()
+def down(name: str = typer.Argument(..., help="Profile name.")) -> None:
+    """Stop a capability profile."""
+    with _timed("down"):
+        _run(_action(lambda reg: runtime.profile_down(reg, name)))
+
+
+@app.command()
+def status() -> None:
+    """Show container state for the declared Compose files."""
+    with _timed("status"):
+        _run(_action(runtime.status))
+
+
+@app.command()
+def smoke(capability: str = typer.Argument(..., help="Capability name.")) -> None:
+    """Run the smoke path a capability declares (DX-INV-27)."""
+    with _timed("smoke"):
+        _run(_action(lambda reg: runtime.smoke(reg, capability)))
+
+
+@scenario_app.command("list")
+def scenario_list() -> None:
+    """List the declared scenarios."""
+    with _timed("scenario list"):
+        typer.echo(runtime.render_scenarios(_registry(_repo_root())))
+
+
+@scenario_app.command("run")
+def scenario_run(identity: str = typer.Argument(..., help="Scenario ID.")) -> None:
+    """Run a declared scenario."""
+    with _timed("scenario run"):
+        _run(_action(lambda reg: runtime.scenario(reg, identity)))
+
+
+@diagnose_app.command("bundle")
+def diagnose_bundle(
+    output: Path | None = typer.Option(
+        None, "--output", help="Directory for the archive (default: state dir)."
+    ),
+) -> None:
+    """Write a redacted diagnostics archive; review it before sharing."""
+    with _timed("diagnose bundle"):
+        env = doctor_module.default_environment(_repo_root())
+        files = diagnose_module.collect(env, os.environ)
+        target = output or diagnose_module.default_target(os.environ)
+        try:
+            path = diagnose_module.write_bundle(files, target, datetime.now(UTC))
+        except OSError as exc:
+            typer.echo(f"ERROR: cannot write bundle: {exc}", err=True)
+            raise typer.Exit(1) from exc
+        typer.echo(f"Diagnostics bundle: {path}")
+        typer.echo("Contents: " + ", ".join(sorted(files)))
+        typer.echo("Secrets are redacted, but review the archive before sharing it.")

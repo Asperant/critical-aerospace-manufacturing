@@ -25,7 +25,13 @@ from mfgctl import __version__
 SCHEMA = "mfgctl.timing/v1"
 FILENAME = "timings.jsonl"
 # Targets from 01 Item 82 (S2 class: measured and recorded, PASS or MISS).
-TARGETS_MS = {"doctor": 30_000, "check --fast": 90_000}
+TARGETS_MS = {
+    "doctor": 30_000,  # NFR-DX-001
+    "check --fast": 90_000,  # NFR-DX-002
+    "smoke": 120_000,  # NFR-DX-003
+    "up": 300_000,  # NFR-DX-004
+    "diagnose bundle": 120_000,  # NFR-DX-008
+}
 
 
 def state_dir(environ: Mapping[str, str]) -> Path:
@@ -138,7 +144,7 @@ def render_summary(rows: Sequence[Mapping[str, object]], location: Path) -> str:
             verdict = "  within target" if row["median_within_target"] else "  MISS"
             verdict += f" ({target / 1000:.0f} s)"
         lines.append(
-            f"  {row['command']:<14} runs={row['runs']:<3} "
+            f"  {row['command']:<20} runs={row['runs']:<3} "
             f"median={_seconds(row['median_ms'])} max={_seconds(row['max_ms'])}{verdict}"
         )
     return "\n".join(lines)

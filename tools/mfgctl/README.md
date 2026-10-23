@@ -37,10 +37,13 @@ overrides it and must point at the root (no silent fallback, DX-INV-10).
 | `bootstrap [--dry-run]` | B | available |
 | `check [--fast \| --pr]` | B | available |
 | `timings [--json]` | B | available |
-| `profile`, `smoke`, `scenario`, `diagnose bundle` | C | planned (Compose profiles arrive with WP-PLAT-001) |
+| `profile list`, `up NAME`, `down NAME`, `status` | C | available; needs the registry from WP-PLAT-001 |
+| `smoke CAPABILITY`, `scenario list`, `scenario run ID` | C | available; needs the registry from WP-PLAT-001 |
+| `diagnose bundle [--output DIR]` | C | available |
 
 Exit codes for every command: `0` success (warnings allowed), `1` a check or
-step failed, `2` mfgctl could not run (outside the repository, unusable ci.yml).
+step failed, `2` mfgctl could not run (outside the repository, unusable ci.yml,
+registry missing or invalid, unknown profile/capability/scenario).
 
 ### `mfgctl doctor`
 
@@ -91,8 +94,42 @@ Every command appends its duration and exit code to
 `$XDG_STATE_HOME/mfgctl`); `MFGCTL_TIMINGS=off` disables it. Records live outside
 the repository, so doctor stays read-only for the repository. `mfgctl timings`
 shows runs, median and maximum per command and compares the median with the DX
-targets (doctor ≤ 30 s, check --fast ≤ 90 s). These are DEV measurements for
-BENCH-DX-001, not release evidence.
+targets (doctor ≤ 30 s, check --fast ≤ 90 s, smoke ≤ 2 min, up ≤ 5 min,
+diagnose bundle ≤ 2 min). These are DEV measurements for BENCH-DX-001, not
+release evidence.
+
+### Capability registry: `profile`, `up`, `down`, `status`, `smoke`, `scenario`
+
+These commands orchestrate what the capability owners declare; they contain no
+service knowledge themselves (DX-INV-03). The declaration is the contract
+`tools/mfgctl/schemas/capabilities.schema.json` (`mfgctl.capabilities/v1`):
+Compose files, profiles, one smoke command per capability (DX-INV-27) and
+scenarios, all as argv lists run without a shell. `capabilities.json` next to the
+schema is an illustrative example that the contract tier validates.
+
+The real registry is `infra/mfgctl/capabilities.json`, produced by WP-PLAT-001
+(DEP-003). Until it exists every one of these commands stops with exit `2`, says
+so and runs nothing — they never report success for work that did not happen.
+`MFGCTL_REGISTRY` points to another file (relative to the repository root).
+
+| Command | Runs |
+|---|---|
+| `mfgctl profile list` | — (lists profiles and their smoke paths) |
+| `mfgctl up core` | `docker compose -f … --profile core up --detach --wait` |
+| `mfgctl down core` | `docker compose -f … --profile core down` |
+| `mfgctl status` | `docker compose -f … ps --all` |
+| `mfgctl smoke platform` | the capability's declared smoke argv, with its timeout |
+| `mfgctl scenario run GS-01` | the scenario's declared argv, with its timeout |
+
+### `mfgctl diagnose bundle`
+
+Writes `mfgctl-diagnose-<UTC>.tar.gz` (mode 0600) to the state directory, or
+`--output DIR`, never into the repository. It contains only mfgctl's own
+observations: `doctor.json`, `git.txt` (HEAD, branch, status), `timings.json` and
+`versions.json`. Environment variables and repository files such as `.env` are
+never collected. Everything is redacted first (GitHub tokens, AWS keys, private
+key blocks, `password=`/`token=`/`api_key:` values, credentials in URLs). Review
+a bundle before sharing it; redaction is defence in depth (NFR-DX-008).
 
 ## Tests
 
@@ -103,5 +140,6 @@ PYTHONPATH=ci:ci/scripts uv run --project ci --locked python -m pytest tools/mfg
 The tests replace the machine with fake runners (TEST-PLAT-FABCTL, boundary mode
 FIXTURE_ALLOWED) and include the negative paths: missing tools, unreachable
 daemon, wrong Python, unusable or foreign-owned environment, stale lock,
-timeouts, low disk, busy ports, workflow drift and unwritable timing storage.
+timeouts, low disk, busy ports, workflow drift, unwritable timing storage,
+missing or contract-violating registries, unknown names and secret redaction.
 One test reads the real `.github/workflows/ci.yml` to guard against drift.

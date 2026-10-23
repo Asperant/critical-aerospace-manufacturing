@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mfgctl.capabilities/v1",
+  "title": "mfgctl capability registry",
+  "description": "Contract between mfgctl (WP-PLAT-002) and the runtime composition (WP-PLAT-001, DEP-003). The real registry lives at infra/mfgctl/capabilities.json and is produced by WP-PLAT-001; the sibling capabilities.json in this directory is an illustrative example validated by the contract tier. mfgctl only orchestrates the declared commands (DX-INV-03).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "compose_files", "profiles", "capabilities", "scenarios"],
+  "properties": {
+    "schema": {"const": "mfgctl.capabilities/v1"},
+    "compose_files": {
+      "description": "Compose files relative to the repository root, passed to docker compose with -f in this order.",
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/relative_path"}
+    },
+    "profiles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "description"],
+        "properties": {
+          "name": {"$ref": "#/$defs/name"},
+          "description": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "capabilities": {
+      "description": "Every mandatory capability exposes a smoke path (DX-INV-27).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "owner", "profile", "smoke"],
+        "properties": {
+          "name": {"$ref": "#/$defs/name"},
+          "owner": {"enum": ["Asrın", "Selman", "Batu", "Yavuz"]},
+          "profile": {"$ref": "#/$defs/name"},
+          "smoke": {"$ref": "#/$defs/command"},
+          "timeout_s": {"type": "integer", "minimum": 1, "maximum": 3600}
+        }
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description", "profile", "command"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[A-Z][A-Z0-9]*(-[A-Z0-9]+)*$"},
+          "description": {"type": "string", "minLength": 1},
+          "profile": {"$ref": "#/$defs/name"},
+          "command": {"$ref": "#/$defs/command"},
+          "timeout_s": {"type": "integer", "minimum": 1, "maximum": 3600}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "name": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+    "relative_path": {"type": "string", "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$))[A-Za-z0-9_./-]+$"},
+    "command": {
+      "description": "argv list; executed without a shell.",
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}
