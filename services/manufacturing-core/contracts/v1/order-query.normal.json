@@ -1,0 +1,62 @@
+{
+  "contract_version": "core.order-query.v1",
+  "order": {
+    "id": "O-NORMAL",
+    "revision": "order-r2",
+    "route_id": "R-NORMAL"
+  },
+  "route": {
+    "id": "R-NORMAL",
+    "revision": "route-r3",
+    "visits": [
+      {
+        "id": "V-30",
+        "revision": "visit-r4",
+        "route_id": "R-NORMAL",
+        "operation_class_id": "CNC",
+        "equipment_id": "E-CNC"
+      },
+      {
+        "id": "V-10",
+        "revision": "visit-r4",
+        "route_id": "R-NORMAL",
+        "operation_class_id": "METROLOGY",
+        "equipment_id": "E-MET"
+      }
+    ]
+  },
+  "lots": [
+    {
+      "id": "L-NORMAL-1",
+      "revision": "lot-r5",
+      "order_id": "O-NORMAL"
+    },
+    {
+      "id": "L-NORMAL-2",
+      "revision": "lot-r6",
+      "order_id": "O-NORMAL"
+    }
+  ],
+  "components": [
+    {
+      "id": "C-NORMAL-1",
+      "revision": "component-r7",
+      "lot_id": "L-NORMAL-2"
+    },
+    {
+      "id": "C-NORMAL-2",
+      "revision": "component-r8",
+      "lot_id": "L-NORMAL-1"
+    }
+  ],
+  "equipment": [
+    {
+      "id": "E-CNC",
+      "revision": "equipment-r9"
+    },
+    {
+      "id": "E-MET",
+      "revision": "equipment-r10"
+    }
+  ]
+}
