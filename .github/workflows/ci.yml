@@ -66,6 +66,8 @@ jobs:
         run: uv run --project ci --locked python -m pytest ci/tests -p pytest_quarantine
       - name: projectctl tests (quarantine-aware)
         run: uv run --project ci --locked python -m pytest tools/projectctl/tests -q -p pytest_quarantine
+      - name: mfgctl tests (quarantine-aware)
+        run: uv run --project ci --locked python -m pytest tools/mfgctl/tests -q -p pytest_quarantine
       - name: Host Plane queue tests (offline)
         run: uv run --project ci --locked python -m unittest discover -s tools/host/plane-queue -p 'test_*.py'
       - name: Host Plane transition tests (offline)
