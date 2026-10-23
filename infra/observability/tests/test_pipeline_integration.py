@@ -238,3 +238,45 @@ def test_counter_is_queryable(run: dict[str, Any]) -> None:
         f"SELECT * FROM \"cap_obs_smoke_events\" WHERE smoke_run = '{run['run_id']}'",
     )
     assert hit.get("service_name") == "obs-smoke"
+
+
+def test_service_helper_reaches_openobserve() -> None:
+    """configure() as a service would use it: stdlib logging + an OTel span."""
+    import io
+    import logging
+
+    from cap_observability.telemetry import configure
+    from opentelemetry import trace
+
+    collector = required("OTLP_HTTP_URL")
+    in_ci = os.environ.get("GITHUB_ACTIONS") == "true"
+    run_id = "obs-helper-" + secrets.token_hex(6)
+    environ = {
+        "USER": "smoke",
+        "OTEL_EXPORTER_OTLP_ENDPOINT": collector,
+        "CAP_ENVIRONMENT": "ci-obs-smoke" if in_ci else "local-obs-smoke",
+        "CAP_ENVIRONMENT_CLASS": "CI_EPHEMERAL" if in_ci else "LOCAL",
+    }
+    stdout = io.StringIO()
+    telemetry = configure("obs-helper-smoke", "0.1.0", environ=environ, stream=stdout)
+    try:
+        tracer = trace.get_tracer("obs-helper-smoke")
+        with tracer.start_as_current_span("observability.helper_smoke") as span:
+            logging.getLogger("obs_helper").info(
+                "helper smoke",
+                extra={
+                    "event_name": "observability.helper_smoke",
+                    "correlation_id": run_id,
+                },
+            )
+            trace_id = format(span.get_span_context().trace_id, "032x")
+    finally:
+        telemetry.shutdown()
+    assert check_log_record(json.loads(stdout.getvalue().splitlines()[-1])) == []
+    o2 = OpenObserve()
+    hit = o2.wait_for(
+        "logs", f"SELECT * FROM \"default\" WHERE correlation_id = '{run_id}'"
+    )
+    assert hit.get("service_name") == "obs-helper-smoke"
+    assert hit.get("trace_id") == trace_id
+    o2.wait_for("traces", f"SELECT * FROM \"default\" WHERE trace_id = '{trace_id}'")

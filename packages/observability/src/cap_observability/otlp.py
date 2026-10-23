@@ -11,7 +11,7 @@ Standard library only: services can emit without installing jsonschema.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from datetime import datetime
 from typing import Any
 
@@ -81,7 +81,7 @@ def log_record(record: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def logs_request(
-    resource: Mapping[str, object], records: list[Mapping[str, Any]], scope: str
+    resource: Mapping[str, object], records: Sequence[Mapping[str, Any]], scope: str
 ) -> dict[str, Any]:
     """OTLP ``ExportLogsServiceRequest`` (POST /v1/logs, application/json)."""
     return {

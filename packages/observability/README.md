@@ -89,6 +89,44 @@ EventID is not a TraceID, and a replay may carry a new trace (§22–§23).
 
 ## Use
 
+**In a service** (slice C) — one call at start-up, ordinary `logging` afterwards:
+
+```python
+import logging
+from cap_observability.telemetry import configure
+
+telemetry = configure("manufacturing-core", "0.1.0")
+log = logging.getLogger(__name__)
+log.info(
+    "order query finished",
+    extra={"event_name": "core.query_completed", "correlation_id": cid,
+           "attributes": {"duration_ms": 12.5}},
+)
+telemetry.shutdown()  # on exit: flushes everything still queued
+```
+
+| Environment variable | Meaning |
+|---|---|
+| `CAP_ENVIRONMENT` | EnvironmentID; defaults to `local-<user>` only for LOCAL |
+| `CAP_ENVIRONMENT_CLASS` | `LOCAL` (default), `INTEGRATION`, `EVALUATION`, `DEMO`, `CI_EPHEMERAL` |
+| `CAP_RELEASE_ID` | required for EVALUATION and DEMO |
+| `CAP_DEPLOYMENT_ID`, `CAP_RUNTIME_PROFILE`, `CAP_SERVICE_INSTANCE_ID` | optional identities |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Collector base URL, e.g. `http://127.0.0.1:54318`; unset means stdout only |
+
+Every record is written to stdout as one `cap.log/v1` line. With an endpoint,
+the same records go to the Collector (`OtlpLogHandler`, bounded queue, never
+blocks or raises) and OpenTelemetry tracing and metrics are exported there too;
+log lines inside a span carry its `trace_id` and `span_id`. Records are made to
+conform rather than rejected: invalid context is dropped, secrets are redacted,
+oversize payloads are shed, and ERROR/FATAL without a code get
+`UNCLASSIFIED_ERROR` so that the gap is visible and searchable.
+
+Logs use the project's own small OTLP shipper because OpenTelemetry's Python log
+SDK is still experimental and its `LoggingHandler` is deprecated (1.45); traces
+and metrics use the stable OpenTelemetry SDK (`otel` extra).
+
+**Checking files:**
+
 ```bash
 # check JSON Lines log files (exit 0 conform, 1 violations, 2 usage/unreadable)
 uv run --project ci --locked python -m cap_observability check-logs service.log.jsonl
@@ -99,15 +137,13 @@ from cap_observability import check_log_record, check_resource
 assert check_log_record(record) == []
 ```
 
-Validation needs the `validate` extra (jsonschema). Emitting telemetry will not:
-the SDK wiring helper in a later slice uses only the standard library and
-OpenTelemetry.
+Validation needs the `validate` extra (jsonschema); emitting never does.
 
 ## Adoption
 
-Services adopt the standard with their owners as instrumentation lands
-(WP-OBS-001 slice C). Existing structured lines (for example manufacturing-core's
-health record) are not rewritten in this slice.
+Services adopt `configure` with their owners. manufacturing-core is the first
+candidate; its existing structured health record is changed only together with
+its owner.
 
 ## Tests
 
