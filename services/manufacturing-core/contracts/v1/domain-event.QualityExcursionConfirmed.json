@@ -1,0 +1,20 @@
+{
+  "event_id": "EVENT-SYNTHETIC-QualityExcursionConfirmed",
+  "event_type": "quality.QualityExcursionConfirmed",
+  "schema_version": "1",
+  "producer": "manufacturing-core",
+  "source": "SYNTHETIC-TEST",
+  "world_id": "SYNTHETIC-TEST",
+  "simulation_run_id": "RUN-SYNTHETIC-001",
+  "branch_id": "BRANCH-SYNTHETIC-001",
+  "occurred_at": "2026-10-23T10:00:00Z",
+  "aggregate_type": "QualityExcursion",
+  "aggregate_id": "QE-SYNTHETIC-001",
+  "aggregate_version": "opaque-revision-A",
+  "correlation_id": "CORRELATION-SYNTHETIC-001",
+  "causation_id": "COMMAND-SYNTHETIC-001",
+  "trace_id": "TRACE-SYNTHETIC-001",
+  "payload": {
+    "quality_excursion_id": "QE-SYNTHETIC-001"
+  }
+}
