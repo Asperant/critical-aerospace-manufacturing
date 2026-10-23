@@ -104,6 +104,15 @@ class LoginService:
         verifier = secrets.token_urlsafe(64)
         nonce = secrets.token_urlsafe(32)
         binding = secrets.token_urlsafe(32)
+        try:
+            location = self._idp.authorization_url(
+                AuthorizationRequest(
+                    state=state, code_challenge=pkce_challenge(verifier), nonce=nonce
+                )
+            )
+        except IdentityProviderUnavailable:
+            raise Unavailable("Identity provider unavailable") from None
+        # Stored only once the provider URL exists, so an outage leaves nothing.
         self._store.put(
             digest(state),
             LoginTransaction(
@@ -112,11 +121,6 @@ class LoginService:
                 binding_digest=digest(binding),
                 expires_at=now + self.config.ttl,
             ),
-        )
-        location = self._idp.authorization_url(
-            AuthorizationRequest(
-                state=state, code_challenge=pkce_challenge(verifier), nonce=nonce
-            )
         )
         return StartedLogin(location, binding, int(self.config.ttl.total_seconds()))
 

@@ -7,7 +7,11 @@ name = "operations-bff"
 version = "0.1.0"
 description = "Command Center BFF (WP-UI-001): contract and framework-neutral session primitives"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "fastapi>=0.142,<1",
+    "httpx>=0.28,<1",
+    "PyJWT[crypto]>=2.15,<3",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]

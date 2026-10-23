@@ -137,3 +137,41 @@ format, Pyright 0 errors, `check_contracts.py` PASS, `ci/tests` 26 passed,
 `static_ratchet check` PASS. Not done: a real provider adapter, token validation,
 persistent stores, rotation on read, shell, routes. CI for this commit is not yet
 observed.
+
+## Slice 6: OIDC provider adapter (Keycloak) behind the IdentityProvider port
+
+Canonical basis: Keycloak is the selected self-hosted identity provider using
+OIDC/OAuth2 for user authentication (01 Items 158 to 162, 02 Authentication);
+its identity and role claims are input, never the authorization decision. The
+documents fix no realm, issuer, client type, client identifier, redirect URI or
+Keycloak version, and give the Keycloak runtime to the platform owner. Those are
+therefore runtime settings here and nothing provider specific is hard-coded.
+
+Added: `src/operations_bff/oidc.py` with `OidcSettings` (explicit settings,
+`from_environ` reading `OPERATIONS_BFF_OIDC_*`, secret optional and never in
+`repr`) and `OidcIdentityProvider`. Discovery is read from
+`<issuer>/.well-known/openid-configuration` and keys from its `jwks_uri`, both
+cached with a TTL and a rate-limited refetch on an unknown `kid`. Authorization
+URL carries state, S256 challenge and nonce from the existing login flow. The
+code is exchanged server side; the ID token is validated for signature
+(asymmetric allow-list, `none` and HMAC refused), issuer, audience (`azp` when
+several), expiry, issued-at, not-before, subject and nonce, then discarded.
+Access and refresh tokens are never read. Discovery documents with a different
+issuer, a non-https endpoint or no S256 support are refused. Provider rejection
+maps to `IdentityProviderError` (401), network failures, 5xx and discovery or
+key outages to `IdentityProviderUnavailable` (503). Roles come from a
+configurable claim path (default `realm_access.roles`) and the environment id
+from settings, so the Keycloak mapper must put roles into the ID token.
+`LoginService.start` now calls the provider before storing the transaction and
+maps an outage to 503.
+
+Dependencies (locked): `pyjwt[crypto]==2.15.1`, `cryptography==50.0.2`.
+
+Not done: wiring the adapter and settings into an application entry point,
+plain-http development issuer, Keycloak realm and client provisioning, any live
+provider call, token refresh, persistence, shell, routes.
+
+Local verification with the CI commands: 146 tests pass (49 new), Ruff lint and
+format, Pyright 0 errors, `check_contracts.py` PASS, `ci/tests` 26 passed,
+`static_ratchet check` PASS. Tests use `httpx.MockTransport` and generated RSA
+keys only. CI for this commit is not yet observed.

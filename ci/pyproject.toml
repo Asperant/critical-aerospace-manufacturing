@@ -19,6 +19,8 @@ dependencies = [
     "fastapi==0.142.4",
     "httpx==0.28.1",
     "starlette==1.7.0",
+    "pyjwt[crypto]==2.15.1",
+    "cryptography==50.0.2",
 ]
 
 [tool.uv]
