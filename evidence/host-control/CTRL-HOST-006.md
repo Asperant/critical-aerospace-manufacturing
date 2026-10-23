@@ -21,8 +21,8 @@ sanitized actions and snapshots protect retries. Plane writes remain exclusively
 through existing guarded AUTO_NEXT. Current work prevents a second READY; DONE
 hook stays intact and verified lifecycle transitions request replenishment.
 
-Local validation: 26 new preparation tests; 20 existing AUTO_NEXT tests; 5 health
-tests; 67 transition tests; 34 execution-queue tests = 152 focused tests passed.
+Local validation: 26 new preparation tests; 21 existing AUTO_NEXT tests; 5 health
+tests; 67 transition tests; 34 execution-queue tests = 153 focused tests passed.
 Canonical validation passed. Static ratchet passed with no new findings.
 GitHub required CI, merged-source deployment and live results are recorded by
 the actual PR and root-only deployment/controller records, not asserted here.
@@ -44,3 +44,7 @@ are unchanged; product/metadata-only commits do not fabricate new assessments.
 
 A verified PREPARED buffer suppresses further preparation PR creation until it is
 consumed or invalidated; normal guarded release and replenishment still run.
+
+A final main-SHA recheck immediately before the guarded Plane write rejects a
+repository race that occurs during final Plane revalidation; its focused test
+verifies zero PATCH calls.

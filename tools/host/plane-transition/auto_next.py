@@ -388,6 +388,8 @@ def advance_owner(
             live_view(t, plane_factory(), policy) == fresh_live,
             "CONCURRENT_CHANGE_RECOMPUTE_REQUIRED",
         )
+        gh.cache.clear()
+        t.need(gh.main_sha() == observed_sha, "CONCURRENT_CHANGE_RECOMPUTE_REQUIRED")
 
     proof = t.execute(
         profile,
