@@ -190,7 +190,7 @@
       }
     }
   ],
-  "input_digest": "52c37b660ff6dacdc062a8741a33beb789127dda0f1514fe4ec2119bd54697c7",
+  "input_digest": "07ef3f6d53bf11d941984f95f2467462496ca67d4dfba4a069d1f73966b4bdc7",
   "outcome": "Publish every accepted state change exactly once from the same transaction that mutates state, forming the factual basis of the event spine.",
   "planned_acceptance": [
     "outbox table + relay worker",
@@ -217,7 +217,7 @@
     }
   ],
   "schema_version": "cap-preparation-v1",
-  "source_sha": "e9edb2d1e19a208e8673ed030656f23c35bf0ba9",
+  "source_sha": "ff54acfeb118b27a86d26168cdc9749918cc1bd1",
   "start_slice": "define event payloads per accepted transition",
   "supporting_reviewers": [
     {
