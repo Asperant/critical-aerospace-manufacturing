@@ -21,12 +21,22 @@ or history interface is inferred from the current domain implementation.
 
 ## Verification
 
+Implementation revision: `ee7969c75f642e354a5f73232d5dd7261be0d439`.
+
 - Local focused unit run: 81 passed (47 domain + 34 contract), 29 database
   integration cases deselected; no failing or quarantined tests.
 - Service Pyright: 0 errors, 0 warnings.
 - Service Ruff lint/format and diff checks passed.
-- Real PostgreSQL 18 round trips: pending pushed implementation's existing CI
-  integration job; not claimed executed locally.
+- Published schema tier: 3 schemas and the existing catalog instance validated;
+  the focused contract tests additionally validated both query fixtures.
+- Real PostgreSQL 18: **29 passed, 0 failed** (26 persistence + 3 query cases),
+  in 0.94 seconds in [CI integration job 120402732761](https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/39949857079/job/120402732761).
+  The completed job log confirms `CI_POSTGRES_IMAGE=postgres:18-alpine`, both
+  infrastructure smoke tests passed, Core tests passed, and successful cleanup.
+  No local database execution is claimed.
+- That implementation revision's `t1-static` and `t1-contract` CI jobs passed.
+  Full pipeline completion is not claimed here. Evidence binds to the tested
+  implementation SHA above; the final record update changes evidence only.
 
 Contract tests compare published/generated schemas and exact nested wire shape,
 validate both deterministic fixtures, round-trip every field, preserve repeated
