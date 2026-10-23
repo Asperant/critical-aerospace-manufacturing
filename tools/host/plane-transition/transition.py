@@ -102,6 +102,7 @@ class GitHub:
             result = subprocess.run(['/usr/bin/gh','api','--hostname','github.com','--method','GET',route],
                                     env=self.env, cwd='/', user=self.uid, group=self.gid, extra_groups=(),
                                     umask=0o077, capture_output=True, timeout=30)
+            need(result.returncode == 0 or b'HTTP 401' not in result.stderr, 'GITHUB_AUTH_HTTP_401')
             need(result.returncode == 0 and len(result.stdout) <= 8_000_000, 'GITHUB_READ_UNAVAILABLE')
             self.cache[route] = json.loads(result.stdout, object_pairs_hook=q.unique)
         return self.cache[route]
@@ -795,7 +796,7 @@ def verify_policy_sources(policy):
         data=dict(policy)
         expected=data.pop('policy_digest')
         need(hashlib.sha256(json.dumps(data,ensure_ascii=False,sort_keys=True).encode()).hexdigest()==expected,'POLICY_DIGEST_MISMATCH')
-    for kind,path in [('auto_next','/usr/local/libexec/cap-auto-next.py'),('execution_queue','/usr/local/libexec/execution_queue.py')]:
+    for kind,path in [('auto_next','/usr/local/libexec/cap-auto-next.py'),('execution_queue','/usr/local/libexec/execution_queue.py'),('health','/usr/local/libexec/cap-plane-health.py'),('health_snapshot','/usr/local/libexec/cap-plane-health-snapshot.py')]:
         if kind in policy.get('implementation_sha256',{}):
             need(hashlib.sha256(Path(path).read_bytes()).hexdigest()==policy['implementation_sha256'][kind], 'AUTO_NEXT_POLICY_REFRESH_REQUIRED')
     for name,expected in policy['source_manifest'].items():
@@ -859,6 +860,11 @@ def main():
                     result['auto_next']=auto.after_done(sys.modules[__name__],wp,policy,lambda:Plane(key),GitHub,append_audit,key)
                 except Exception:
                     result['auto_next']={'status':'UNAVAILABLE','reasons':['ADVANCE_REQUIRES_RECOVERY']}
+            if result.get('result')=='VERIFIED':
+                try:
+                    result['health']=auto.after_transition(sys.modules[__name__],wp,policy,lambda:Plane(key),GitHub)
+                except Exception:
+                    result['health']={'health':'UNAVAILABLE','reasons':['PREFLIGHT_SOURCE_UNAVAILABLE']}
         q.emit(result,key)
         return 0
     except Denied as exc:
