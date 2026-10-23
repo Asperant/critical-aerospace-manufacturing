@@ -6,6 +6,7 @@ import hashlib
 import json
 import re
 from collections import Counter
+from collections.abc import Callable
 from typing import Any
 
 OWNERS = {
@@ -389,7 +390,40 @@ def candidate_reason(view, wp, item, evidence):
     return reason
 
 
-def preflight_health(project, live, evidence, owner, preferences):
+CANDIDATE_WINDOW_MINIMUM = 3
+
+
+def candidate_window(
+    candidates: list[dict[str, Any]],
+    actionable: Callable[[dict[str, Any]], bool] | None = None,
+) -> tuple[list[dict[str, Any]], str | None]:
+    """Canonical-order prefix through the first actionable candidate.
+
+    Every candidate before the first actionable one stays reported and none of them
+    stops the scan, so earlier blocked work cannot starve later executable work. The
+    window never reorders, never skips an actionable candidate and is bounded by the
+    finite backlog. With no actionable candidate it is the fixed diagnostic head.
+    `actionable` classifies one candidate; it defaults to a fully PREPARED status and
+    must not weaken any gate (it only selects among already-derived candidates).
+    """
+    test = actionable or (lambda c: c["status"] == "PREPARED")
+    for index, candidate in enumerate(candidates):
+        if test(candidate):
+            return (
+                candidates[: max(CANDIDATE_WINDOW_MINIMUM, index + 1)],
+                candidate["wp_id"],
+            )
+    return candidates[:CANDIDATE_WINDOW_MINIMUM], None
+
+
+def preflight_health(
+    project,
+    live,
+    evidence,
+    owner,
+    preferences,
+    actionable: Callable[[dict[str, Any]], bool] | None = None,
+):
     """Derived control-plane status only. Never mutates inputs or Plane."""
     owner = OWNERS.get(owner, owner)
     view = project_view(project)
@@ -400,6 +434,7 @@ def preflight_health(project, live, evidence, owner, preferences):
         "prepared_next": None,
         "health": "UNAVAILABLE",
         "candidates": [],
+        "actionable_next": None,
         "first_blocker": None,
         "reasons": decision.get("reasons", []),
     }
@@ -489,7 +524,9 @@ def preflight_health(project, live, evidence, owner, preferences):
         candidates.append(candidate)
         if status == "PREPARED" and result["prepared_next"] is None:
             result["prepared_next"] = wp
-    result["candidates"] = candidates[:3]
+    result["candidates"], result["actionable_next"] = candidate_window(
+        candidates, actionable
+    )
     result["backlog_count"] = len(candidates)
     result["first_blocker"] = next((c for c in candidates if c["reason"]), None)
     if any(c["status"] == "UNAVAILABLE" for c in candidates):

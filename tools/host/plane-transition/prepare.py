@@ -300,10 +300,14 @@ def run(auto, t, engine, policy, key):
         health = auto.owner_health(t, profile, policy, t.Plane(key), t.GitHub)
         actions = []
         if health["health"] != "UNAVAILABLE" and not health.get("prepared_next"):
-            for candidate in health["candidates"][:3]:
+            # Same canonical-order window as the resolver: every candidate before the
+            # first actionable one is reported without stopping the scan.
+            gh, sha = None, ""
+            for candidate in health["candidates"]:
                 try:
-                    gh = t.GitHub(profile)
-                    sha = gh.main_sha()
+                    if gh is None:
+                        gh = t.GitHub(profile)
+                        sha = gh.main_sha()
                     plan = engine.derive(
                         policy["contexts"][candidate["wp_id"]], policy, sha
                     )

@@ -916,3 +916,11 @@ authority that the blocker is active; the re-assertion must reference it through
 every audit row must recompute its `audit_id`. The comment still has to satisfy every
 CHG-024 requirement. `UNCHANGED` is never equivalent to `VERIFIED`; duplicate, edited,
 foreign or contradictory chains fail closed and keep the slot.
+
+CHG-026 / CTRL-HOST-011: the health/preparation candidate window no longer stops at the
+first three canonical candidates. It is the canonical-order prefix through the first
+candidate the preparation engine classifies AUTO_PREPARABLE or VERIFIED_PREPARED (never
+fewer than the three-candidate diagnostic head), so WAITING_DEP, NEEDS_DOR and other
+non-actionable head candidates stay reported but cannot starve later preparable work.
+The controller and health use the same engine classification and canonical order; gates,
+UNKNOWN handling, one-PR-per-run and AUTO_NEXT eligibility are unchanged.

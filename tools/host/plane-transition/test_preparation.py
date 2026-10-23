@@ -1,14 +1,19 @@
 """Bounded preparation safety and actual transition integration; offline fixtures."""
 
 import base64
+import tempfile
 import unittest
 from copy import deepcopy
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 from test_auto_next import HERE, auto, load
 from test_transition import SECRET, fixture, t
 
+resolver = load(
+    "window_resolver", HERE.parents[1] / "projectctl/src/projectctl/execution_queue.py"
+)
 p = load("preparation_test", HERE / "preparation.py")
 c = load("prepare_test", HERE / "prepare.py")
 SHA = "a" * 40
@@ -431,6 +436,118 @@ class PreparationTests(unittest.TestCase):
         writer.assert_not_called()
         self.assertEqual(len(result["profiles"]), 4)
         self.assertEqual(result["production_diff"], {})
+
+    def controller_run(self, states, health_for_asrin):
+        """Run the real controller loop; only Asrin has candidates to prepare."""
+        others = {"health": "HEALTHY", "prepared_next": "WP-OK-001", "candidates": []}
+
+        def owner_health(_t, profile, *_args):
+            return deepcopy(health_for_asrin if profile == "asrin" else others)
+
+        adapter = SimpleNamespace(
+            owner_health=Mock(side_effect=owner_health),
+            advance_owner=Mock(return_value={"status": "NO_TASK"}),
+            live_view=Mock(return_value={}),
+        )
+        support = SimpleNamespace(
+            Plane=Mock(return_value=object()),
+            GitHub=Mock(),
+            append_audit=Mock(),
+            now=lambda: "timestamp",
+        )
+        engine = SimpleNamespace(
+            derive=Mock(return_value={"checks": {}}),
+            classify=Mock(side_effect=lambda cand, _plan: states[cand["wp_id"]]),
+        )
+        with (
+            tempfile.TemporaryDirectory() as state,
+            patch.object(c, "STATE", Path(state)),
+            patch.object(c, "persist"),
+            patch.object(c, "snapshot", return_value={}),
+            patch.object(c, "Writer"),
+            patch.object(
+                c,
+                "prepare_pr",
+                return_value={"state": "IN_PROGRESS", "wp_id": "WP-PREP-004"},
+            ) as prepare,
+        ):
+            policy = {"contexts": {wp: {} for wp in states}}
+            result = c.run(adapter, support, engine, policy, "sentinel")
+        return result, engine, prepare, support
+
+    def head_of_line(self):
+        rows = [
+            dict(
+                candidate(),
+                wp_id=f"WP-BLK-00{n}",
+                status="WAITING_DEP",
+                reason="HARD_START_BLOCKED",
+                hard_start_blockers=[{"dependency_id": f"DEP-{n}"}],
+            )
+            for n in (1, 2, 3)
+        ]
+        rows += [
+            dict(candidate(), wp_id="WP-PREP-004"),
+            dict(candidate(), wp_id="WP-PREP-005"),
+        ]
+        health = {
+            "health": "STALLED",
+            "prepared_next": None,
+            "current": None,
+            "candidates": rows,
+        }
+        return rows, health
+
+    def test_controller_scans_past_blocked_candidates_to_first_preparable(self):
+        rows, health = self.head_of_line()
+        states = {
+            "WP-BLK-001": "WAITING_DEP",
+            "WP-BLK-002": "REAL_WORK_REQUIRED",
+            "WP-BLK-003": "UNAVAILABLE",
+            "WP-PREP-004": "AUTO_PREPARABLE",
+            "WP-PREP-005": "AUTO_PREPARABLE",
+        }
+        result, engine, prepare, support = self.controller_run(states, health)
+        self.assertEqual(engine.derive.call_count, 4)  # stops after the first action
+        prepare.assert_called_once()
+        self.assertEqual(prepare.call_args.args[3]["wp_id"], "WP-PREP-004")
+        actions = result["profiles"]["asrin"]["actions"]
+        self.assertEqual(
+            [(a["wp_id"], a["state"]) for a in actions],
+            [
+                ("WP-BLK-001", "WAITING_DEP"),
+                ("WP-BLK-002", "REAL_WORK_REQUIRED"),
+                ("WP-BLK-003", "UNAVAILABLE"),
+                ("WP-PREP-004", "IN_PROGRESS"),
+            ],
+        )
+        support.GitHub.assert_called_once_with("asrin")  # one client per profile
+
+    def test_controller_with_no_preparable_candidate_changes_nothing(self):
+        rows, health = self.head_of_line()
+        states = {row["wp_id"]: "WAITING_DEP" for row in rows}
+        result, engine, prepare, _ = self.controller_run(states, health)
+        prepare.assert_not_called()
+        self.assertEqual(engine.derive.call_count, len(rows))
+        actions = result["profiles"]["asrin"]["actions"]
+        self.assertEqual([a["wp_id"] for a in actions], [r["wp_id"] for r in rows])
+        self.assertTrue(all(a["state"] == "WAITING_DEP" for a in actions))
+        self.assertEqual(result["production_diff"], {})
+
+    def test_controller_and_resolver_window_share_the_same_order(self):
+        rows, health = self.head_of_line()
+        states = {r["wp_id"]: "WAITING_DEP" for r in rows}
+        states["WP-PREP-004"] = "AUTO_PREPARABLE"
+        window, chosen = resolver.candidate_window(
+            rows, lambda cand: states[cand["wp_id"]] == "AUTO_PREPARABLE"
+        )
+        _, engine, prepare, _ = self.controller_run(states, health)
+        self.assertEqual(chosen, "WP-PREP-004")
+        self.assertEqual(
+            [r["wp_id"] for r in window],
+            [r["wp_id"] for r in rows[:4]],
+        )
+        self.assertEqual(prepare.call_args.args[3]["wp_id"], chosen)
 
     def test_controller_uid_rejected_before_loading(self):
         with (

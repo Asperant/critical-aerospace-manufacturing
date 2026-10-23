@@ -1,0 +1,21 @@
+CHG-026:
+  title: Scan the full canonical candidate set so blocked head candidates cannot starve later preparable work
+  class: C3
+  review_risk_class: CR-3
+  owner: Asrın
+  decision: APPROVED
+  status: APPROVED
+  application_control_item: CTRL-HOST-011
+  required_human_approvals: 0
+  human_decision_basis: Explicit project-owner request for this narrow correction and deployment, 23 October 2026
+  scope: Candidate window used by health diagnostics and the preparation controller only; eligibility, gates and AUTO_NEXT selection unchanged
+  rules:
+  - The window is the canonical-order prefix through the first actionable candidate and never fewer than the existing three-candidate diagnostic head
+  - Actionable means the preparation engine classifies the candidate AUTO_PREPARABLE or VERIFIED_PREPARED; the same engine classification drives the controller, so both use identical selection semantics
+  - WAITING_DEP, NEEDS_DOR, REAL_WORK_REQUIRED, UNAVAILABLE and every other non-actionable candidate stays reported with its reasons and never stops the scan
+  - Order is the unchanged canonical preference order; an actionable candidate is never skipped; the scan is bounded by the finite BACKLOG set
+  - A candidate that cannot be derived is non-actionable and reported UNAVAILABLE; UNKNOWN never becomes PASS, HARD dependency, DoR, readiness and evidence checks are unchanged
+  - The controller prepares at most one candidate per run exactly as before; AUTO_NEXT still releases only a fully verified PREPARED candidate through its existing guards
+  - No WP or owner is special-cased and no Plane state, policy preference or readiness evidence is created or changed
+  rollout: Merged source only; generated policy, root-only backup, supported installer and verified hashes
+  rollback: Restore deployment only; never replay Plane state or erase audit
