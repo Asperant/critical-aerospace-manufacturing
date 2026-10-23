@@ -126,3 +126,45 @@ def test_real_ci_workflow_still_provides_the_commands() -> None:
     names = {command.name for command in pr}
     assert "mfgctl tests (quarantine-aware)" in names
     assert {command.job for command in pr} == {"t1-static", "t1-unit", "t1-contract"}
+
+
+MULTI_LINE = """
+jobs:
+  static:
+    name: t1-static
+    steps:
+      - name: Ratchet
+        run: uv run --project ci python ratchet.py
+  unit:
+    name: t1-unit
+    steps:
+      - name: Core tests and typing
+        run: |
+          uv run --project ci --locked python -m pytest services/core/tests -m 'not integration'
+          uv run --project ci --locked pyright --project services/core/pyrightconfig.json
+  contract:
+    name: t1-contract
+    steps:
+      - name: Contracts
+        run: uv run --project ci python contracts.py
+"""
+
+
+def test_multi_line_step_runs_each_line(tmp_path: Path) -> None:
+    commands = load_commands(write_workflow(tmp_path, MULTI_LINE), "pr")
+    unit = [c for c in commands if c.job == "t1-unit"]
+    assert [c.name for c in unit] == [
+        "Core tests and typing (1/2)",
+        "Core tests and typing (2/2)",
+    ]
+    assert unit[0].argv[-2:] == ("-m", "not integration")
+    assert unit[1].argv[-2:] == ("--project", "services/core/pyrightconfig.json")
+
+
+def test_multi_line_step_with_other_commands_is_rejected(tmp_path: Path) -> None:
+    text = MULTI_LINE.replace(
+        "          uv run --project ci --locked pyright",
+        "          rm -rf build\n          uv run --project ci --locked pyright",
+    )
+    with pytest.raises(WorkflowError, match="every line"):
+        load_commands(write_workflow(tmp_path, text), "pr")

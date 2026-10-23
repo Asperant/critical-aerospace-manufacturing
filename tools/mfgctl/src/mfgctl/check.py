@@ -3,6 +3,7 @@
 The commands are read from ``.github/workflows/ci.yml`` instead of being copied
 here, so local checks cannot drift from CI: every ``uv run ...`` step of the
 selected jobs is executed with the job's environment, exactly as CI runs it.
+A multi-line step runs line by line; each of its lines must be a ``uv run``.
 
 Tiers:
 - ``fast`` (default): job ``static`` — Ruff and Pyright ratchet (NFR-DX-002 ≤ 90 s);
@@ -110,11 +111,18 @@ def load_commands(root: Path, tier: str) -> list[Command]:
             run = step.get("run") if isinstance(step, dict) else None
             if not isinstance(run, str) or not run.strip().startswith("uv run "):
                 continue  # checkout, tool installation and sync are CI plumbing
-            if "\n" in run.strip():
-                raise WorkflowError(f"{label}: multi-line uv run step is not supported")
-            commands.append(
-                Command(label, str(step.get("name", run)), tuple(shlex.split(run)), env)
-            )
+            name = str(step.get("name", run.strip()))
+            lines = [line.strip() for line in run.splitlines() if line.strip()]
+            if any(not line.startswith("uv run ") for line in lines):
+                raise WorkflowError(
+                    f"{label} · {name}: every line of a multi-line step must be a "
+                    "uv run command"
+                )
+            for index, line in enumerate(lines, start=1):
+                suffix = f" ({index}/{len(lines)})" if len(lines) > 1 else ""
+                commands.append(
+                    Command(label, name + suffix, tuple(shlex.split(line)), env)
+                )
             found += 1
         if not found:
             raise WorkflowError(f"{WORKFLOW} job {key!r} has no uv run steps")
