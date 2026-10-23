@@ -21,6 +21,7 @@ from .api import create_app, utc_now
 from .config import CookieSettings, LoginConfig, SessionConfig
 from .login import InMemoryLoginStore, LoginService
 from .oidc import OidcIdentityProvider, OidcSettings
+from .overview import OverviewService
 from .session import InMemorySessionStore, SessionManager
 
 PREFIX = "OPERATIONS_BFF_"
@@ -123,11 +124,14 @@ def build_app(
     *,
     http_client: httpx.Client | None = None,
     clock: Callable[[], datetime] = utc_now,
+    overview: OverviewService | None = None,
 ) -> FastAPI:
     """Wire settings, OIDC adapter, stores, services and the transport adapter.
 
     Building performs no network call; the provider is first contacted by the
-    first login. A client passed in is owned by the caller.
+    first login. A client passed in is owned by the caller. The overview route is
+    mounted only when a service is supplied; no real backend adapter exists yet,
+    so the process entrypoint leaves it off.
     """
     client = http_client or httpx.Client()
     owned = http_client is None
@@ -154,4 +158,5 @@ def build_app(
         login=login,
         post_login_redirect=settings.post_login_path,
         lifespan=lifespan,
+        overview=overview,
     )

@@ -12,18 +12,44 @@ from collections.abc import Callable
 from datetime import UTC, datetime
 from typing import Annotated
 
-from fastapi import FastAPI, Query, Request, Response
+from fastapi import Depends, FastAPI, Query, Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.types import Lifespan
 
-from .actor import Authenticated, authenticate_request
+from .actor import Authenticated, authenticate_request, derive_actor_context
 from .config import COOKIE_NAME, LOGIN_COOKIE_NAME, CookieSettings
 from .errors import BadRequest, BffError
 from .login import LoginService
+from .overview import OverviewQuery, OverviewService
 from .session import SessionManager, SessionRecord, session_view
 
 Param = Annotated[str, Query(min_length=1, max_length=2048, pattern=r"\S")]
+Ident = Annotated[str, Query(min_length=1, max_length=256, pattern=r"\S")]
+OptIdent = Annotated[str | None, Query(min_length=1, max_length=256, pattern=r"\S")]
+AsOf = Annotated[
+    str | None,
+    Query(
+        pattern=r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?Z$"
+    ),
+]
+Limit = Annotated[int, Query(ge=1, le=100)]
+CursorParam = Annotated[str | None, Query(min_length=1, max_length=512, pattern=r"\S")]
+
+
+def require_session(request: Request) -> Authenticated:
+    """Dependency: runs before query validation, so anonymous callers get 401."""
+    state = request.app.state
+    return authenticate_request(
+        state.sessions,
+        method=request.method,
+        cookies=request.cookies,
+        headers=request.headers,
+        now=state.clock(),
+    )
+
+
+Session = Annotated[Authenticated, Depends(require_session)]
 
 
 def utc_now() -> datetime:
@@ -70,11 +96,15 @@ def create_app(
     login: LoginService | None = None,
     post_login_redirect: str = "/",
     lifespan: Lifespan[FastAPI] | None = None,
+    overview: OverviewService | None = None,
 ) -> FastAPI:
     if not post_login_redirect.startswith("/") or post_login_redirect.startswith("//"):
         raise ValueError("post_login_redirect must be a same-origin absolute path")
     # The contract file is the only API description; no generated docs surface.
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
+
+    app.state.sessions = manager
+    app.state.clock = clock
 
     @app.exception_handler(BffError)
     def bff_error(_: Request, exc: BffError) -> JSONResponse:  # pyright: ignore[reportUnusedFunction]
@@ -111,7 +141,43 @@ def create_app(
 
     if login is not None:
         _add_login_routes(app, login, cookie, clock, post_login_redirect)
+    if overview is not None:
+        _add_overview_route(app, overview, clock)
     return app
+
+
+def _add_overview_route(
+    app: FastAPI, overview: OverviewService, clock: Callable[[], datetime]
+) -> None:
+    @app.get("/v1/overview", operation_id="getManufacturingOverview")
+    def get_overview(  # pyright: ignore[reportUnusedFunction]
+        auth: Session,
+        world_id: Ident,
+        simulation_run_id: OptIdent = None,
+        branch_id: OptIdent = None,
+        as_of: AsOf = None,
+        limit: Limit = 50,
+        cursor: CursorParam = None,
+    ) -> JSONResponse:
+        try:
+            when = datetime.fromisoformat(as_of) if as_of else None
+        except ValueError:
+            raise BadRequest("as_of is not a valid instant") from None
+        query = OverviewQuery(
+            world_id=world_id,
+            simulation_run_id=simulation_run_id,
+            branch_id=branch_id,
+            as_of=when,
+            actor=derive_actor_context(auth.session, world_id),
+        )
+        body = overview.get(
+            query,
+            limit=limit,
+            cursor=cursor,
+            now=clock(),
+            correlation_id=uuid.uuid4().hex,
+        )
+        return JSONResponse(body, headers={"Cache-Control": "no-store"})
 
 
 def _clear_login_cookie(response: Response) -> None:

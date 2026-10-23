@@ -13,18 +13,22 @@ class BffError(Exception):
     error_code: str
     retryable = False
 
-    def __init__(self, message: str) -> None:
+    def __init__(self, message: str, details: dict[str, Any] | None = None) -> None:
         super().__init__(message)
         self.message = message
+        self.details = details
 
     def envelope(self, correlation_id: str) -> dict[str, Any]:
-        return {
+        body: dict[str, Any] = {
             "error_code": self.error_code,
             "category": self.category,
             "message": self.message,
             "retryable": self.retryable,
             "correlation_id": correlation_id,
         }
+        if self.details:
+            body["details"] = self.details
+        return body
 
 
 class Unauthorized(BffError):

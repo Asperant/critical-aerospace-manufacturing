@@ -207,3 +207,37 @@ Local verification with the CI commands: 181 tests pass (35 new), Ruff lint and
 format, Pyright 0 errors, `check_contracts.py` PASS, `ci/tests` 26 passed,
 `static_ratchet check` PASS. No broker or database module is imported, checked
 statically and in a clean interpreter. CI for this commit is not yet observed.
+
+## Slice 8: getManufacturingOverview query path
+
+Canonical basis (02, operations-bff catalog and aggregation rules): the BFF
+consumes backend Query APIs, requires `manufacturing-core` and treats the Twin,
+Scheduler, AI and Vision services as degradable; it composes without creating a
+new status, passes world, branch and `as_of` through, forwards the actor and
+keeps the least-fresh marker. The documents do not bind a concrete backend Query
+API for attention items, so the read ports stay abstract.
+
+Added in `src/operations_bff/`: `overview.py` (port `AttentionReader`,
+`OverviewQuery` carrying world, `as_of` and the session `ActorContext`,
+`SourceSnapshot`, `OverviewService`) and the `GET /v1/overview` route in
+`api.py`, mounted only when a service is supplied. Composition: sources sorted by
+name, items ordered by contract kind then id, `meta.freshness` is the least fresh
+source, `meta.as_of` the oldest source `as_of`, `meta.revision` a SHA-256 digest
+of world and source revisions, `generated_at` from the clock, cursor pagination
+bound to the view revision (a moved view gives 400 `STALE_STATE`). Authentication
+runs as a dependency before query validation, so anonymous callers always get
+401. No role filtering and no derived status exist. `BffError` gained optional
+`details`.
+
+Gap kept visible: the contract cannot show an unavailable source, and a missing
+source must not read as nothing needing attention. Any unavailable or invalid
+backend therefore returns 503 `DEPENDENCY_UNAVAILABLE` naming the sources, which
+is stricter than the canonical degradable dependencies. Partial results need a
+contract extension (a per-source availability field) and an owner decision. Real
+Core and Twin adapters are integration work and the process entrypoint leaves the
+route off until they exist.
+
+Local verification with the CI commands: 208 tests pass (27 new), Ruff lint and
+format, Pyright 0 errors, `check_contracts.py` PASS, `ci/tests` 26 passed,
+`static_ratchet check` PASS. Tests use in-memory readers built from
+`overview-query.normal.json`. CI for this commit is not yet observed.
