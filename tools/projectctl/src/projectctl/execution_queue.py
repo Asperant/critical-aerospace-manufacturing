@@ -23,6 +23,37 @@ EXCLUDED = {"WP-R2-001", "WP-R2-002", "WP-R2-003", "WP-S-001", "WP-X-001"}
 EXPECTED = dict(zip(OWNERS.values(), (69, 17, 32, 56), strict=True))
 
 
+DEFERRED_CLASS = "WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE"
+
+
+def deferred_acceptance(wp: str, item: dict[str, Any]) -> bool:
+    """Consume only the root adapter's verified, owner/revision-bound proof.
+
+    Offline snapshots can preview this classification, never authorize writes.
+    Lifecycle ACTIVE/STATES and all DONE requirements remain unchanged.
+    """
+    proof = item.get("deferred_acceptance")
+    return (
+        item.get("state") == "VALIDATING"
+        and item.get("blocked") is True
+        and isinstance(proof, dict)
+        and proof.get("schema") == "cap-deferred-acceptance-v1"
+        and proof.get("classification") == DEFERRED_CLASS
+        and proof.get("wp_id") == wp
+        and proof.get("owner") == item.get("owner")
+        and proof.get("implementation_complete") is True
+        and proof.get("owner_work_remaining") is False
+        and all(
+            isinstance(proof.get(k), str) and proof[k]
+            for k in ("merge_sha", "audit_id", "assessment_digest")
+        )
+    )
+
+
+def occupies_implementation_slot(wp: str, item: dict[str, Any]) -> bool:
+    return item.get("state") in ACTIVE and not deferred_acceptance(wp, item)
+
+
 def project_view(project: Any) -> dict[str, Any]:
     """Accept the parsed project or the identical installed static projection."""
     if isinstance(project, dict):
@@ -147,7 +178,7 @@ def compute_next_eligible(
     active = [
         wp
         for wp, item in items.items()
-        if cards[wp]["owner"] == owner and item["state"] in ACTIVE
+        if cards[wp]["owner"] == owner and occupies_implementation_slot(wp, item)
     ]
     if active:
         if len(active) != 1:
@@ -182,7 +213,7 @@ def compute_next_eligible(
     considered = []
     for wp in planning_policy["sequences"][owner]:
         item = items[wp]
-        if item["state"] in {"DONE", "CANCELED"}:
+        if item["state"] in {"DONE", "CANCELED"} or deferred_acceptance(wp, item):
             continue
         evidence = evidence_snapshot.get("candidates", {}).get(wp, {})
         reason = candidate_reason(view, wp, item, evidence)
@@ -270,7 +301,12 @@ def preflight_health(project, live, evidence, owner, preferences):
     active = [
         w
         for w, item in live["items"].items()
-        if view["cards"][w]["owner"] == owner and item["state"] in ACTIVE
+        if view["cards"][w]["owner"] == owner and occupies_implementation_slot(w, item)
+    ]
+    result["deferred_waits"] = [
+        {"wp_id": w, "state": item["state"], "blocked": True, "reason": DEFERRED_CLASS}
+        for w, item in live["items"].items()
+        if view["cards"][w]["owner"] == owner and deferred_acceptance(w, item)
     ]
     if active:
         result["current"] = {

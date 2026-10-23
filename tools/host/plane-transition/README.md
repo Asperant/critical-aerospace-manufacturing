@@ -237,3 +237,19 @@ Failed reads replace stale health with UNAVAILABLE; journald contains only aggre
 health/result. No daemon, Git mutation or unrelated service restart. Existing Selman
 auth failures stay UNAVAILABLE until a human repairs that profile's authentication;
 credentials are never requested or copied between profiles.
+
+CHG-022 / CTRL-HOST-007 adds one implementation-slot exception: verified
+VALIDATING + BLOCKED downstream acceptance waits. It does not remove VALIDATING
+from ACTIVE. The adapter reads the existing verified BLOCKED audit and owner-authored
+merged WP PR. The PR assessment must contain exact single-value fields:
+
+```
+Deferred acceptance class: WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE
+Owner-executable implementation work: NONE
+```
+
+The blocker must match its audited assessment; actual squash merge, deleted branch,
+post-merge main CI and unchanged canonical inputs/architecture are verified live.
+The proof includes the assessment digest and is recomputed before AUTO_NEXT writes.
+UNKNOWN retains the slot. Health exposes `deferred_waits`; readiness never sees a
+synthetic DONE for these WPs. No DONE evaluator or canonical preference changes.

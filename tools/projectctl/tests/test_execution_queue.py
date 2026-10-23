@@ -259,3 +259,96 @@ def test_pure_and_deterministic(baseline):
     before = deepcopy(data)
     assert evaluate(data) == evaluate(data)
     assert data == before
+
+
+def defer(data):
+    wp = "WP-CORE-001"
+    data[2]["items"][wp].update(
+        state="VALIDATING",
+        blocked=True,
+        deferred_acceptance={
+            "schema": "cap-deferred-acceptance-v1",
+            "wp_id": wp,
+            "owner": OWNERS["asrin"],
+            "classification": "WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE",
+            "implementation_complete": True,
+            "owner_work_remaining": False,
+            "merge_sha": "a" * 40,
+            "audit_id": "b" * 64,
+            "assessment_digest": "c" * 64,
+        },
+    )
+    return data[2]["items"][wp]
+
+
+def test_deferred_release_preference_one_ready_and_other_owners_unchanged(baseline):
+    data = deepcopy(baseline)
+    defer(data)
+    seq = [w for w in data[1]["sequences"][OWNERS["asrin"]] if w != "WP-CORE-001"]
+    for wp in seq[:2]:
+        qualify(data, wp)
+    before = deepcopy(data)
+    foreign = {o: evaluate(data, o) for o in ("selman", "batuhan", "yavuz")}
+    result = evaluate(data)
+    assert result["status"] == "PROPOSED_NEXT"
+    assert result["wp_id"] == seq[0]
+    assert data == before  # resolver read-only, canonical order unchanged
+    data[2]["items"][seq[0]]["state"] = "READY"
+    assert evaluate(data)["status"] == "READY"
+    assert evaluate(data)["wp_id"] == seq[0]  # no second READY
+    assert foreign == {o: evaluate(data, o) for o in foreign}
+    assert data[2]["items"]["WP-CORE-001"]["state"] == "VALIDATING"
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    ["ordinary", "implementation", "unknown", "work", "owner", "missing", "unblocked"],
+)
+def test_deferred_unknown_or_local_work_retains_slot(baseline, mutation):
+    data = deepcopy(baseline)
+    item = defer(data)
+    proof = item["deferred_acceptance"]
+    if mutation == "ordinary":
+        item.pop("deferred_acceptance")
+    elif mutation in {"implementation", "unknown"}:
+        proof["classification"] = mutation.upper()
+    elif mutation == "work":
+        proof["owner_work_remaining"] = True
+    elif mutation == "owner":
+        proof["owner"] = OWNERS["selman"]
+    elif mutation == "missing":
+        proof.pop("assessment_digest")
+    else:
+        item["blocked"] = False
+    assert evaluate(data)["status"] in {"BLOCKED", "CURRENT"}
+    assert evaluate(data)["wp_id"] == "WP-CORE-001"
+
+
+@pytest.mark.parametrize("state", sorted(ACTIVE - {"VALIDATING"}))
+def test_deferred_proof_cannot_exempt_other_active_states(baseline, state):
+    data = deepcopy(baseline)
+    defer(data)["state"] = state
+    assert evaluate(data)["status"] == "BLOCKED"
+
+
+def test_deferred_does_not_hide_another_active_or_duplicate_ready(baseline):
+    data = deepcopy(baseline)
+    defer(data)
+    data[2]["items"]["WP-CORE-002"]["state"] = "IN_PROGRESS"
+    assert evaluate(data)["wp_id"] == "WP-CORE-002"
+    data[2]["items"]["WP-CORE-003"]["state"] = "READY"
+    assert evaluate(data)["reasons"] == ["MULTIPLE_ACTIVE_WORK"]
+
+
+def test_deferred_health_visible_but_not_implementation_blocker(baseline):
+    from projectctl.execution_queue import preflight_health
+
+    data = deepcopy(baseline)
+    defer(data)
+    data[2]["items"]["WP-CORE-002"]["state"] = "READY"
+    qualify(data, "WP-CORE-003")
+    p, prefs, live, evidence = data
+    result = preflight_health(p, live, evidence, "asrin", prefs)
+    assert result["current"]["wp_id"] == "WP-CORE-002"
+    assert result["deferred_waits"][0]["wp_id"] == "WP-CORE-001"
+    assert result["health"] == "HEALTHY"

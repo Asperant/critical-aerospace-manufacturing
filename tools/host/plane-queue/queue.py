@@ -288,7 +288,7 @@ def main():
                 policy=json.loads((ROOT/'transition-policy.json').read_text())
                 t.verify_policy_sources(policy)
                 health=auto.owner_health(t,profile,policy,t.Plane(key),t.GitHub)
-                result.update(prepared_next=health['prepared_next'],health=health['health'],first_blocker=health['first_blocker'])
+                result.update(prepared_next=health['prepared_next'],health=health['health'],first_blocker=health['first_blocker'],deferred_waits=health.get('deferred_waits',[]))
             except Exception:
                 result.update(prepared_next=None,health='UNAVAILABLE',first_blocker={'reason':'PREFLIGHT_SOURCE_UNAVAILABLE'})
         emit(result, key)
