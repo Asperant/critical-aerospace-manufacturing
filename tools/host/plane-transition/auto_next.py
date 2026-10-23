@@ -171,21 +171,67 @@ def exact_field(text, label):
     return values[0].strip() if len(values) == 1 else None
 
 
+AMBIGUOUS = object()
+
+
+def reassertion(t, wp, profile, verified):
+    """Latest UNCHANGED BLOCKED re-assertion of the same verified active blocker.
+
+    The VERIFIED record stays the only authority that the blocker is active; a
+    re-assertion may merely carry fresh assessment evidence for that same blocker.
+    Returns None when there is none, AMBIGUOUS for any broken, edited or
+    contradictory chain, otherwise the re-assertion row.
+    """
+    rows = t.blocker_rows(wp)
+    if not rows:
+        return None
+    known = [
+        i
+        for i, r in enumerate(rows)
+        if r.get("audit_id") == verified.get("audit_id")
+        and r.get("result") == "VERIFIED"
+    ]
+    if len(known) != 1:
+        return AMBIGUOUS
+    later = rows[known[0] + 1 :]
+    if not later:
+        return None
+    if t.audit_identity(verified) != verified.get("audit_id"):
+        return AMBIGUOUS
+    for row in later:
+        if not (
+            row.get("result") == "UNCHANGED"
+            and row.get("operation") == "BLOCKED"
+            and row.get("wp_id") == wp
+            and row.get("profile") == profile
+            and row.get("from_state") == "IN_PROGRESS"
+            and row.get("to_state") == "IN_PROGRESS"
+            and row.get("active_blocker_audit_id") == verified["audit_id"]
+            and row.get("reason") == verified.get("reason")
+            and "blocker" not in row
+            and t.audit_identity(row) == row.get("audit_id")
+        ):
+            return AMBIGUOUS
+    return later[-1]
+
+
 def external_wait_proof(t, wp, profile, policy, gh):
     """Owner assessment, verified blocker audit and canonical dependency binding.
 
     The slot is freed only for an unedited owner-authored comment, referenced by
-    the root verified BLOCKED audit, that states an approved external wait class
-    and `Owner-executable implementation work: NONE`, cites a canonical readiness
-    node of this WP's own dependency edges at an explicit level, and was assessed
+    the root verified BLOCKED audit or by a later UNCHANGED re-assertion of that
+    same verified blocker, that states an approved external wait class and
+    `Owner-executable implementation work: NONE`, cites a canonical readiness node
+    of this WP's own dependency edges at an explicit level, and was assessed
     against canonical inputs that still match. Absence, ambiguity, UNKNOWN or any
-    mismatch leaves the slot occupied; no Plane field or reason text alone suffices.
+    mismatch leaves the slot occupied; no Plane field or reason text alone suffices,
+    and UNCHANGED is never equivalent to VERIFIED.
     """
     global resolver
     if resolver is None:
         resolver = load_resolver()
-    previous = t.last_blocker(wp)
-    reason = previous.get("reason", "") if previous else ""
+    verified = t.last_blocker(wp)
+    reason = verified.get("reason", "") if verified else ""
     classification = next(
         (
             c
@@ -195,19 +241,36 @@ def external_wait_proof(t, wp, profile, policy, gh):
         None,
     )
     if not (
-        previous
+        verified
         and classification
-        and previous.get("result") == "VERIFIED"
-        and previous.get("operation") == "BLOCKED"
-        and previous.get("from_state") == "IN_PROGRESS"
-        and previous.get("to_state") == "IN_PROGRESS"
-        and previous.get("profile") == profile
+        and verified.get("result") == "VERIFIED"
+        and verified.get("operation") == "BLOCKED"
+        and verified.get("from_state") == "IN_PROGRESS"
+        and verified.get("to_state") == "IN_PROGRESS"
+        and verified.get("profile") == profile
     ):
         return None
     try:
+        again = reassertion(t, wp, profile, verified)
+        if again is AMBIGUOUS:
+            return None
+        # Fresh re-assertion evidence first; the original assessment remains valid.
+        for source in ([again] if again else []) + [verified]:
+            proof = assess_external_wait(
+                t, wp, profile, policy, gh, verified, source, classification
+            )
+            if proof:
+                return proof
+    except t.Denied:
+        pass  # UNKNOWN never frees the slot.
+    return None
+
+
+def assess_external_wait(t, wp, profile, policy, gh, verified, source, classification):
+    try:
         ids = [
             r[8:]
-            for r in previous.get("evidence_refs", [])
+            for r in source.get("evidence_refs", [])
             if re.fullmatch(r"comment:[1-9][0-9]{0,15}", r)
         ]
         t.need(len(ids) == 1, "EXTERNAL_WAIT_ASSESSMENT_REQUIRED")
@@ -231,7 +294,7 @@ def external_wait_proof(t, wp, profile, policy, gh):
         )
         record = t.native_record(text, wp, sha)
         t.need(
-            record.get("blocker") == previous.get("blocker"),
+            record.get("blocker") == verified.get("blocker"),
             "EXTERNAL_WAIT_BLOCKER_ASSESSMENT_CHANGED",
         )
         dependency = (record.get("blocker") or {}).get("external_dependency") or ""
@@ -253,19 +316,22 @@ def external_wait_proof(t, wp, profile, policy, gh):
         # The assessment must still describe today's canonical inputs and evidence.
         check_canonical_scope(t, gh, wp, sha, policy)
         t.blocker_evidence(gh, record, "BLOCKER-OBSERVED", gh.main_sha())
-        return {
+        proof = {
             "schema": "cap-external-integration-wait-v1",
             "wp_id": wp,
             "owner": t.q.PEOPLE[profile][0],
             "classification": classification,
             "owner_work_remaining": False,
-            "audit_id": previous["audit_id"],
+            "audit_id": verified["audit_id"],
             "comment_id": ids[0],
             "assessment_digest": hashlib.sha256(text.encode()).hexdigest(),
             "dependency_nodes": nodes,
         }
+        if source is not verified:
+            proof["reassertion_audit_id"] = source["audit_id"]
+        return proof
     except t.Denied:
-        return None  # UNKNOWN never frees the slot.
+        return None
 
 
 def deferred_proof(t, wp, profile, policy, gh):

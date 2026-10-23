@@ -789,6 +789,7 @@ class ExternalIntegrationWaitTests(unittest.TestCase):
             "tree": [{"path": p, "sha": sha} for p, sha in sources.items()],
         }
         gh.blobs = blobs
+        gh.comments = {}
         gh.comment = {
             "user": {"login": "Asperant"},
             "created_at": "2026-10-23T14:33:02Z",
@@ -798,7 +799,7 @@ class ExternalIntegrationWaitTests(unittest.TestCase):
 
         def route(path):
             if "/issues/comments/" in path:
-                return gh.comment
+                return gh.comments.get(path.rsplit("/", 1)[1], gh.comment)
             if "/git/blobs/" in path:
                 return gh.blobs.get(path.rsplit("/", 1)[1], {})
             return gh.tree
@@ -919,6 +920,198 @@ class ExternalIntegrationWaitTests(unittest.TestCase):
         wp, policy, plane, gh, previous = self.fixture()
         with patch.object(t, "last_blocker", return_value=None):
             self.assertIsNone(auto.external_wait_proof(t, wp, "asrin", policy, gh))
+
+    # --- UNCHANGED re-assertion of the same verified blocker (CHG-025) ---
+
+    def chain(self, wp, previous, reassert_ref="222"):
+        """VERIFIED blocker (prose-only comment 111) + UNCHANGED re-assertion (222)."""
+        base = {
+            "timestamp": "2026-10-23T14:33:22+00:00",
+            "profile": "asrin",
+            "wp_id": wp,
+            "from_state": "IN_PROGRESS",
+            "to_state": "IN_PROGRESS",
+            "operation": "BLOCKED",
+            "reason": previous["reason"],
+            "evidence_refs": ["comment:111"],
+            "policy_digest": "digest",
+        }
+        verified = dict(base, result="VERIFIED", blocker=previous["blocker"])
+        verified["audit_id"] = t.audit_identity(verified)
+        again = dict(
+            base,
+            timestamp="2026-10-23T15:32:54+00:00",
+            evidence_refs=[f"comment:{reassert_ref}"],
+            result="UNCHANGED",
+        )
+        again["audit_id"] = t.audit_identity(again)
+        again["active_blocker_audit_id"] = verified["audit_id"]
+        return verified, again
+
+    def chain_fixture(self):
+        wp, policy, plane, gh, previous = self.fixture()
+        gh.comments["111"] = dict(
+            gh.comment, body="Prose only: no exact fields, nothing remains."
+        )
+        gh.comments["222"] = gh.comment
+        verified, again = self.chain(wp, previous)
+        return wp, policy, plane, gh, verified, again
+
+    def chain_proof(self, wp, policy, gh, verified, rows):
+        with (
+            patch.object(t, "last_blocker", return_value=verified),
+            patch.object(t, "blocker_rows", return_value=rows),
+        ):
+            return auto.external_wait_proof(t, wp, "asrin", policy, gh)
+
+    def test_verified_then_unchanged_reassertion_chain_passes(self):
+        wp, policy, plane, gh, verified, again = self.chain_fixture()
+        # The VERIFIED record alone is backed only by the prose-only comment.
+        self.assertIsNone(self.chain_proof(wp, policy, gh, verified, [verified]))
+        proof = self.chain_proof(wp, policy, gh, verified, [verified, again])
+        assert proof is not None
+        self.assertEqual(proof["comment_id"], "222")
+        self.assertEqual(proof["audit_id"], verified["audit_id"])
+        self.assertEqual(proof["reassertion_audit_id"], again["audit_id"])
+        item = {
+            "owner": proof["owner"],
+            "state": "IN_PROGRESS",
+            "blocked": True,
+            "external_integration_wait": proof,
+        }
+        self.assertFalse(resolver.occupies_implementation_slot(wp, item))
+        # UNCHANGED is never equivalent to VERIFIED: alone it proves nothing.
+        self.assertIsNone(self.chain_proof(wp, policy, gh, None, [again]))
+        # Same through the live view.
+        with (
+            patch.object(t, "last_blocker", return_value=verified),
+            patch.object(t, "blocker_rows", return_value=[verified, again]),
+        ):
+            live = auto.live_view(t, plane, policy, "asrin", gh)
+        self.assertTrue(resolver.external_integration_wait(wp, live["items"][wp]))
+
+    def test_direct_verified_proof_still_passes_with_chain_reader(self):
+        wp, policy, plane, gh, previous = self.fixture()
+        self.assertIsNotNone(self.chain_proof(wp, policy, gh, previous, []))
+        wp, policy, plane, gh, verified, again = self.chain_fixture()
+        # A good original assessment survives an unusable re-assertion comment.
+        gh.comments["111"] = gh.comment
+        gh.comments["222"] = dict(gh.comment, updated_at="2026-10-24T00:00:00Z")
+        proof = self.chain_proof(wp, policy, gh, verified, [verified, again])
+        assert proof is not None
+        self.assertEqual(proof["comment_id"], "111")
+        self.assertNotIn("reassertion_audit_id", proof)
+
+    def test_reassertion_chain_fails_closed(self):
+        def tamper_reason(verified, again, gh, policy):
+            again["reason"] = "WAITING_EXTERNAL_INTEGRATION_BINDINGS: edited"
+
+        def other_wp(verified, again, gh, policy):
+            again["wp_id"] = "WP-OTHER-999"
+            again["audit_id"] = t.audit_identity(again)
+
+        def unknown_predecessor(verified, again, gh, policy):
+            again["active_blocker_audit_id"] = "f" * 64
+
+        def not_verified(verified, again, gh, policy):
+            verified["result"] = "INTENT"
+
+        def two_verified(verified, again, gh, policy):
+            rows.insert(1, dict(verified))
+
+        def later_intent(verified, again, gh, policy):
+            rows.append(dict(again, result="INTENT"))
+
+        def unblocked_row(verified, again, gh, policy):
+            again["operation"] = "UNBLOCKED"
+            again["audit_id"] = t.audit_identity(again)
+            again["active_blocker_audit_id"] = verified["audit_id"]
+
+        def other_state(verified, again, gh, policy):
+            again["from_state"] = "VALIDATING"
+            again["audit_id"] = t.audit_identity(again)
+            again["active_blocker_audit_id"] = verified["audit_id"]
+
+        def reason_changed(verified, again, gh, policy):
+            again["reason"] = "WAITING_EXTERNAL_INTEGRATION_BINDINGS: different"
+            again["audit_id"] = t.audit_identity(again)
+            again["active_blocker_audit_id"] = verified["audit_id"]
+
+        def generic_reason(verified, again, gh, policy):
+            for row in (verified, again):
+                row["reason"] = "BLOCKED: waiting"
+                row["audit_id"] = t.audit_identity(row)
+            again["active_blocker_audit_id"] = verified["audit_id"]
+
+        def carries_blocker(verified, again, gh, policy):
+            again["blocker"] = verified["blocker"]
+
+        def tampered_verified(verified, again, gh, policy):
+            verified["evidence_refs"] = ["comment:999"]
+
+        def comment_edited(verified, again, gh, policy):
+            gh.comments["222"] = dict(gh.comment, updated_at="2026-10-24T00:00:00Z")
+
+        def comment_foreign(verified, again, gh, policy):
+            gh.comments["222"] = dict(gh.comment, user={"login": "someone-else"})
+
+        def comment_fields(verified, again, gh, policy):
+            gh.comments["222"] = dict(
+                gh.comment,
+                body=self.body(**{"Owner-executable implementation work": "REMAINING"}),
+            )
+
+        def blocker_changed(verified, again, gh, policy):
+            gh.comments["222"] = dict(
+                gh.comment,
+                body=self.body(
+                    **{"External dependency": "DN-TEST-LIFE COMPONENT_READY changed"}
+                ),
+            )
+
+        def no_comment(verified, again, gh, policy):
+            again["evidence_refs"] = ["pr:1"]
+            again["audit_id"] = t.audit_identity(again)
+            again["active_blocker_audit_id"] = verified["audit_id"]
+
+        def two_comments(verified, again, gh, policy):
+            again["evidence_refs"] = ["comment:222", "comment:333"]
+            again["audit_id"] = t.audit_identity(again)
+            again["active_blocker_audit_id"] = verified["audit_id"]
+
+        def scope_changed(verified, again, gh, policy):
+            policy["scope_projections"][verified["wp_id"]] = "0" * 64
+
+        cases = (
+            tamper_reason,
+            other_wp,
+            unknown_predecessor,
+            not_verified,
+            two_verified,
+            later_intent,
+            unblocked_row,
+            other_state,
+            reason_changed,
+            generic_reason,
+            carries_blocker,
+            tampered_verified,
+            comment_edited,
+            comment_foreign,
+            comment_fields,
+            blocker_changed,
+            no_comment,
+            two_comments,
+            scope_changed,
+        )
+        for case in cases:
+            with self.subTest(case=case.__name__):
+                wp, policy, plane, gh, verified, again = self.chain_fixture()
+                rows = [verified, again]
+                case(verified, again, gh, policy)
+                self.assertIsNone(self.chain_proof(wp, policy, gh, verified, rows))
+        # Missing predecessor entirely.
+        wp, policy, plane, gh, verified, again = self.chain_fixture()
+        self.assertIsNone(self.chain_proof(wp, policy, gh, None, [again]))
 
     def test_ordinary_in_progress_consumes_slot(self):
         wp, policy, plane, gh, previous = self.fixture()

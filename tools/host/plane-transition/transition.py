@@ -743,6 +743,26 @@ def last_blocker(wp):
     return matches[-1] if matches else None
 
 
+AUDIT_IDENTITY_FIELDS=('timestamp','profile','wp_id','from_state','to_state','operation','reason','evidence_refs','policy_digest')
+
+
+def audit_identity(row):
+    """Recompute the audit_id execute() derives, to detect edited audit rows."""
+    return hashlib.sha256(json.dumps({k:row.get(k) for k in AUDIT_IDENTITY_FIELDS},sort_keys=True).encode()).hexdigest()
+
+
+def blocker_rows(wp):
+    """Chronological BLOCKED/UNBLOCKED audit rows of any result for one WP; read-only."""
+    try:
+        if not AUDIT.exists():
+            return []
+        need(AUDIT.stat().st_size<10_000_000, 'AUDIT_ROTATION_REQUIRED')
+        rows=[json.loads(line) for line in AUDIT.read_text().splitlines()]
+    except OSError:
+        return []
+    return [r for r in rows if r.get('wp_id')==wp and r.get('operation') in {'BLOCKED','UNBLOCKED'}]
+
+
 def last_projection(wp):
     if not AUDIT.exists(): return None
     need(AUDIT.stat().st_size<10_000_000, 'AUDIT_ROTATION_REQUIRED')
