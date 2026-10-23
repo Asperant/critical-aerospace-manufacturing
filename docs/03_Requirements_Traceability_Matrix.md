@@ -1271,8 +1271,8 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 | FR-CORE-011 | lot merge relation model (policy-permitted) | CONTRACT:Core Query API (genealogy) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-012 | relational temporal genealogy (no mandatory graph DB, backfill ADR 12) | CONTRACT:Core Query API (genealogy) · ADR:backfill-12 | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-013 | schema-level grants; per-service DB roles; `core` schema privacy | POLICY:DB role/grant configuration | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-CORE-014 | domain-event emission per accepted transition | CONTRACT:Core domain event schemas (Production/Equipment/Quality/Schedule namespaces) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-CORE-015 | transactional outbox table + relay | CONTRACT:Outbox record schema | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
+| FR-CORE-014 | domain-event emission per accepted transition | CONTRACT:Core domain event schemas (Production/Equipment/Quality/Schedule namespaces) | `services/manufacturing-core/src/manufacturing_core/events_v1.py` — PARTIAL: four fact schemas only; emission/remaining coverage pending; pinned tests/evidence: [WP-CORE-005 reconciliation](../evidence/WP-CORE-005/TRACE-RECONCILIATION.md) | M4 (F0/F1) |
+| FR-CORE-015 | transactional outbox table + relay | CONTRACT:Outbox record schema | `services/manufacturing-core/src/manufacturing_core/outbox.py`, `services/manufacturing-core/src/manufacturing_core/migrations/0002_outbox.sql` — PARTIAL: storage only; atomic domain mutation/relay pending; pinned tests/evidence: [WP-CORE-005 reconciliation](../evidence/WP-CORE-005/TRACE-RECONCILIATION.md) | M4 (F0/F1) |
 | FR-CORE-016 | versioned OpenAPI query/command surface | CONTRACT:Core Query API · CONTRACT:Core Command Acceptance API | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 
 ### 8.FC FR-SIM — Operational Simulator
@@ -3755,7 +3755,9 @@ FR-CORE-014:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-014 L169862"}
   DERIVED_FROM: [ITEM-12, ITEM-15, EV-INV-10, BE-INV-03]
   ALLOCATED_TO: [ARCH-CORE-OUTBOX, ARCH-EVT-OUTBOX]
-  REALIZED_BY: {surface: "domain-event emission per accepted transition", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  # PARTIAL schemas only, not emission. Exact artifacts/tests/revisions:
+  # evidence/WP-CORE-005/TRACE-RECONCILIATION.md (no final acceptance claim).
+  REALIZED_BY: {surface: "domain-event emission per accepted transition", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/events_v1.py"}
   EXPOSED_BY: ["Core domain event schemas (Production/Equipment/Quality/Schedule namespaces)"]
   VERIFIED_BY: [TEST-CORE-OUTBOX, TEST-EVT-SCHEMA]
   EXERCISED_IN: [AV-SCEN-01]
@@ -3767,7 +3769,9 @@ FR-CORE-015:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-015 L169863"}
   DERIVED_FROM: [ITEM-15, ITEM-36, EVTINF-INV-06, TECH-INV-10]
   ALLOCATED_TO: [ARCH-CORE-OUTBOX, ARCH-CORE-DB, ARCH-EVT-OUTBOX]
-  REALIZED_BY: {surface: "transactional outbox table + relay", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  # PARTIAL storage only, not atomic domain mutation or relay. Exact SQL/tests/revisions:
+  # evidence/WP-CORE-005/TRACE-RECONCILIATION.md (no final acceptance claim).
+  REALIZED_BY: {surface: "transactional outbox table + relay", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/outbox.py"}
   EXPOSED_BY: ["Outbox record schema"]
   VERIFIED_BY: [TEST-CORE-OUTBOX, RES-BROKER-001]
   EXERCISED_IN: [AV-SCEN-07]
