@@ -11,7 +11,7 @@ name = "mfgctl"
 version = "0.1.0"
 description = "Canonical developer and operator CLI (WP-PLAT-002)"
 requires-python = ">=3.11"
-dependencies = ["typer>=0.12,<1"]
+dependencies = ["typer>=0.12,<1", "PyYAML>=6,<7"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<10"]

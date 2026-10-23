@@ -12,16 +12,18 @@ the command exit 1; WARN means it works but differs from what CI pins.
 
 from __future__ import annotations
 
+import getpass
 import json
+import os
 import re
 import sys
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import asdict, dataclass, field
 from enum import StrEnum
 from pathlib import Path
 
-from mfgctl import probe
+from mfgctl import probe, venv
 from mfgctl.probe import Result, Runner
 
 SCHEMA = "mfgctl.doctor/v1"
@@ -69,6 +71,8 @@ class Environment:
     )
     disk_free_bytes: Callable[[Path], int] = probe.disk_free_bytes
     port_in_use: Callable[[int], bool] = probe.port_in_use
+    environ: Mapping[str, str] = field(default_factory=lambda: dict(os.environ))
+    current_user: str = field(default_factory=getpass.getuser)
 
 
 @dataclass
@@ -168,6 +172,26 @@ def check_uv(env: Environment) -> Check:
     if found != pinned:
         return Check("uv", Status.WARN, f"uv {found}; CI pins {pinned}", install)
     return Check("uv", Status.OK, f"uv {found} (matches CI pin)")
+
+
+def check_venv(env: Environment) -> Check:
+    path = venv.environment_path(env.root, env.environ)
+    if not path.exists():
+        return Check(
+            "venv",
+            Status.WARN,
+            f"{path} does not exist yet",
+            "Create the locked toolchain environment: mfgctl bootstrap",
+        )
+    problem = venv.problem(path)
+    if problem is not None:
+        return Check(
+            "venv",
+            Status.FAIL,
+            problem,
+            venv.remediation(path, env.current_user),
+        )
+    return Check("venv", Status.OK, f"{path} usable")
 
 
 def check_docker(env: Environment) -> Check:
@@ -276,6 +300,7 @@ def run_doctor(env: Environment, clock: Callable[[], float] = time.monotonic) ->
     report.checks.append(check_python(env))
     uv = check_uv(env)
     report.checks.append(uv)
+    report.checks.append(check_venv(env))
     report.checks.append(check_docker(env))
     report.checks.append(check_compose(env))
     report.checks.append(check_disk(env))

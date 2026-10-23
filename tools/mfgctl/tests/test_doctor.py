@@ -39,6 +39,7 @@ def test_healthy_machine_passes_every_check(repo: Path) -> None:
         "git",
         "python",
         "uv",
+        "venv",
         "docker",
         "compose",
         "disk",

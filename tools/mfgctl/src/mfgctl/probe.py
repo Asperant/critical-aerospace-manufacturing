@@ -1,16 +1,17 @@
-"""Read-only probes of the developer machine.
+"""Probes of the developer machine and command runners.
 
-Every external command goes through a ``Runner`` so tests can replace the
+Every external command goes through a runner so tests can replace the
 machine with a fake and so a missing tool or a hung command becomes a result,
 never an exception or an endless wait.
 """
 
 from __future__ import annotations
 
+import os
 import shutil
 import socket
 import subprocess
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
@@ -61,3 +62,28 @@ def port_in_use(port: int, host: str = "127.0.0.1") -> bool:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.settimeout(0.5)
         return sock.connect_ex((host, port)) == 0
+
+
+class StreamRunner(Protocol):
+    def __call__(
+        self, args: Sequence[str], env: Mapping[str, str], cwd: Path, timeout: float
+    ) -> int: ...
+
+
+def run_streaming(
+    args: Sequence[str], env: Mapping[str, str], cwd: Path, timeout: float
+) -> int:
+    """Run a command with its output going straight to the terminal."""
+    try:
+        completed = subprocess.run(
+            list(args),
+            cwd=cwd,
+            env={**os.environ, **env},
+            timeout=timeout,
+            check=False,
+        )
+    except FileNotFoundError:
+        return NOT_FOUND
+    except subprocess.TimeoutExpired:
+        return TIMED_OUT
+    return completed.returncode

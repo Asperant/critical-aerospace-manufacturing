@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -48,7 +49,20 @@ def make_repo(root: Path, uv_pin: str | None = "0.12.13") -> Path:
     workflows.mkdir(parents=True, exist_ok=True)
     pin = f'  UV_VERSION: "{uv_pin}"\n' if uv_pin else ""
     (workflows / "ci.yml").write_text(f"name: ci\nenv:\n{pin}", encoding="utf-8")
+    venv_bin = root / "ci" / ".venv" / "bin"
+    venv_bin.mkdir(parents=True, exist_ok=True)
+    if not (venv_bin / "python").is_symlink():
+        (venv_bin / "python").symlink_to(sys.executable)
     return root
+
+
+@pytest.fixture(autouse=True)
+def isolated_state(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Path:
+    """Timing records and uv settings of the developer never leak into tests."""
+    state = tmp_path / "state"
+    monkeypatch.setenv("MFGCTL_STATE_DIR", str(state))
+    monkeypatch.delenv("UV_PROJECT_ENVIRONMENT", raising=False)
+    return state
 
 
 @pytest.fixture
@@ -63,6 +77,8 @@ def make_env(
     python: tuple[int, int, int] = (3, 11, 16),
     free_gib: float = 100,
     busy_ports: frozenset[int] = frozenset(),
+    environ: dict[str, str] | None = None,
+    current_user: str = "yavuz",
 ) -> Environment:
     return Environment(
         root=root,
@@ -70,4 +86,6 @@ def make_env(
         python_version=python,
         disk_free_bytes=lambda _path: int(free_gib * GIB),
         port_in_use=lambda port: port in busy_ports,
+        environ=dict(environ or {}),
+        current_user=current_user,
     )
