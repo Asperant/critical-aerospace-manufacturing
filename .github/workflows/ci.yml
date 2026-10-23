@@ -47,6 +47,11 @@ jobs:
         run: uv sync --project ci --locked
       - name: Static ratchet (Ruff lint + format, Pyright)
         run: uv run --project ci --locked python ci/scripts/static_ratchet.py check
+      - name: Consumer framework static checks (WP-EVT-003)
+        run: |
+          uv run --project ci --locked ruff check packages/event-consumer
+          uv run --project ci --locked ruff format --check packages/event-consumer
+          uv run --project ci --locked pyright --project packages/event-consumer/pyrightconfig.json
       - name: Set up Node (version pinned in .node-version)
         uses: actions/setup-node@v4
         with:
@@ -86,6 +91,8 @@ jobs:
         run: uv run --project ci --locked python ci/scripts/check_flake_policy.py
       - name: CI tooling tests
         run: uv run --project ci --locked python -m pytest ci/tests -p pytest_quarantine
+      - name: Consumer framework pure checks (WP-EVT-003)
+        run: uv run --project ci --locked python -m pytest -c packages/event-consumer/pyproject.toml packages/event-consumer/tests -m 'not integration' -q -p pytest_quarantine
       - name: projectctl tests (quarantine-aware)
         run: uv run --project ci --locked python -m pytest tools/projectctl/tests -q -p pytest_quarantine
       - name: Core pure domain tests and typing (WP-CORE-001)
@@ -159,6 +166,10 @@ jobs:
         run: uv run --project ci --locked python -m pytest ci/integration -m integration -p pytest_quarantine
       - name: Core initial migration and persistence (real PostgreSQL 18)
         run: uv run --project ci --locked python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests/persistence -m integration -q -p pytest_quarantine
+      - name: Consumer idempotency acceptance (REAL PostgreSQL and JetStream, WP-EVT-003)
+        env:
+          EVT_TEST_DISPOSABLE: "1"
+        run: uv run --project ci --locked python -m pytest -c packages/event-consumer/pyproject.toml packages/event-consumer/tests -m integration -q -p pytest_quarantine
       - name: Start REAL OTel Collector + OpenObserve (WP-OBS-001)
         run: |
           infra/observability/stack.sh up

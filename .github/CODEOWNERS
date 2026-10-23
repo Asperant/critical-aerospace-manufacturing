@@ -29,4 +29,5 @@
 # WP-OBS-001: telemetry pipeline and field standard; canonical owner Yavuz (advisory, CHG-018).
 /packages/observability/ @Yavuzgmus
 /evidence/WP-EVT-003/ @Asperant @Ejlonn
+/packages/event-consumer/ @Asperant @Ejlonn
 /evidence/WP-CORE-004/ @Asperant
