@@ -24,3 +24,4 @@
 
 # WP-PLAT-002: mfgctl developer and operator CLI; canonical owner Yavuz (advisory, CHG-018).
 /tools/mfgctl/ @Yavuzgmus
+/evidence/WP-TEST-001/ @Yavuzgmus @Asperant
