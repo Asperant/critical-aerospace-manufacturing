@@ -55,3 +55,19 @@ def test_summary_compares_median_with_target() -> None:
     text = timing.render_summary(list(rows.values()), Path("/x"))
     assert "MISS" in text and "within target" in text
     json.dumps(list(rows.values()))  # serialisable for --json
+
+
+def test_failed_runs_never_count_toward_targets() -> None:
+    records = [
+        {"command": "up", "duration_ms": 10, "exit_code": 2},
+        {"command": "smoke", "duration_ms": 500_000, "exit_code": 1},
+        {"command": "smoke", "duration_ms": 30_000, "exit_code": 0},
+    ]
+    rows = {row["command"]: row for row in timing.summarize(records)}
+    assert rows["up"]["median_ms"] is None
+    assert rows["up"]["failed_runs"] == 1
+    assert rows["up"]["median_within_target"] is None
+    assert rows["smoke"]["median_ms"] == 30_000
+    assert rows["smoke"]["median_within_target"] is True
+    text = timing.render_summary(list(rows.values()), Path("/x"))
+    assert "no successful run yet" in text and "failed=1" in text

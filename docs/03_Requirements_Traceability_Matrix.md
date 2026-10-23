@@ -34,6 +34,16 @@
 > Remote CI, branch protection (blocked by the private-repository plan) and
 > post-merge validation remain outstanding. No VERIFIED state is asserted.
 
+> **WP-PLAT-002 implementation delta (2026-10-23).** FR-PLAT-003 now references
+> the `mfgctl` CLI in `tools/mfgctl/` and its command-contract tests (§19.3);
+> NFR-DX-001 and NFR-DX-002 reference the doctor/check timing instrumentation.
+> The shared-host development run is recorded under `evidence/WP-PLAT-002/`;
+> evidence is EVIDENCE_PENDING. Profile, smoke and scenario commands are wired
+> to the `mfgctl.capabilities/v1` registry contract whose real instance arrives
+> with WP-PLAT-001 (DEP-003), so NFR-DX-003 and NFR-DX-004 stay VERIFY_PLANNED.
+> The documented HardwareProfile is still open (Item 82): no accepted
+> measurement, sealed EvidenceID or VERIFIED state is asserted.
+
 ---
 
 ## Table of Contents
@@ -533,7 +543,7 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 |---|---|---|---|---|---|---|
 | FR-PLAT-001 | F0 | Yavuz | 01 Item81 FR-PLAT-001 L170079 | ITEM-39, ITEM-61, ITEM-68, NFR-INV-44, INTEG-INV-20 | VERIFY_PLANNED | — |
 | FR-PLAT-002 | F1 | Yavuz | 01 Item81 FR-PLAT-002 L170080 | ITEM-38, DX-INV-07, DX-INV-08 | VERIFY_PLANNED | — |
-| FR-PLAT-003 | F1 | Yavuz | 01 Item81 FR-PLAT-003 L170081 | ITEM-74, DX-INV-02, DX-INV-03 | VERIFY_PLANNED | — |
+| FR-PLAT-003 | F1 | Yavuz | 01 Item81 FR-PLAT-003 L170081 | ITEM-74, DX-INV-02, DX-INV-03 | EVIDENCE_PENDING | — |
 | FR-PLAT-004 | F1 | Yavuz | 01 Item81 FR-PLAT-004 L170082 | ITEM-42, CD-INV-01, PLAT-INV-01, INTEG-INV-03 | VERIFY_PLANNED | — |
 | FR-PLAT-005 | F1 | Yavuz | 01 Item81 FR-PLAT-005 L170083 | ITEM-42, CD-INV-03, PLAT-INV-10 | VERIFY_PLANNED | — |
 | FR-PLAT-006 | F1 | Yavuz | 01 Item81 FR-PLAT-006 L170084 | ITEM-47, ITEM-61, TECH-INV-14 | VERIFY_PLANNED | — |
@@ -724,8 +734,8 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 
 | ID | Class | PrimaryOwner | Catalog anchor | Source decisions (DERIVED_FROM) | Planning state | Flags |
 |---|---|---|---|---|---|---|
-| NFR-DX-001 | S2 | Yavuz | 01 Item82 NFR-DX-001 L172336 | ITEM-74, DX-INV-06 | VERIFY_PLANNED | — |
-| NFR-DX-002 | S2 | Yavuz | 01 Item82 NFR-DX-002 L172347 | ITEM-74, DX-INV-52 | VERIFY_PLANNED | — |
+| NFR-DX-001 | S2 | Yavuz | 01 Item82 NFR-DX-001 L172336 | ITEM-74, DX-INV-06 | EVIDENCE_PENDING | — |
+| NFR-DX-002 | S2 | Yavuz | 01 Item82 NFR-DX-002 L172347 | ITEM-74, DX-INV-52 | EVIDENCE_PENDING | — |
 | NFR-DX-003 | S2 | Yavuz | 01 Item82 NFR-DX-003 L172360 | ITEM-74, DX-INV-27 | VERIFY_PLANNED | OWNER-WORDING |
 | NFR-DX-004 | S2 | Yavuz | 01 Item82 NFR-DX-004 L172373 | ITEM-74, DX-INV-07 | VERIFY_PLANNED | — |
 | NFR-DX-005 | S2 | Yavuz | 01 Item82 NFR-DX-005 L172384 | ITEM-74, DX-INV-28, DX-INV-51 | VERIFY_PLANNED | — |
@@ -5453,13 +5463,14 @@ FR-PLAT-003:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-PLAT-003 L170081"}
   DERIVED_FROM: [ITEM-74, DX-INV-02, DX-INV-03]
   ALLOCATED_TO: [ARCH-PLAT-CLI]
-  REALIZED_BY: {surface: "bootstrap/doctor/profile/scenario/smoke commands", deployable: "mfgctl", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "bootstrap/doctor/profile/scenario/smoke commands", deployable: "mfgctl", ref: "tools/mfgctl/; tools/mfgctl/schemas/capabilities.schema.json"}
   EXPOSED_BY: ["mfgctl command surface"]
   VERIFIED_BY: [TEST-PLAT-FABCTL, BENCH-DX-001]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-PLAT-002-DEV-001]  # shared-host development run and CI unit tier; acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "DEV + CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "profile/smoke/scenario run only what infra/mfgctl/capabilities.json declares; that registry is produced by WP-PLAT-001 (DEP-003)."
 FR-PLAT-004:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-PLAT-004 L170082"}
   DERIVED_FROM: [ITEM-42, CD-INV-01, PLAT-INV-01, INTEG-INV-03]
@@ -6884,22 +6895,24 @@ NFR-DX-001:
   meta: {class: S2, owner: Yavuz, anchor: "01 Item82 NFR-DX-001 L172336"}
   DERIVED_FROM: [ITEM-74, DX-INV-06]
   ALLOCATED_TO: [ARCH-PLAT-CLI]
+  REALIZED_BY: {surface: "mfgctl doctor with per-command timing records", deployable: "mfgctl", ref: "tools/mfgctl/src/mfgctl/doctor.py; tools/mfgctl/src/mfgctl/timing.py"}
   MEASUREMENT: {metric: "`mfgctl doctor` duration on healthy bootstrapped machine", threshold: "≤ 30 s", workload: "—", hardware: "HP: documented normal developer hardware (TBD, Item 82 open)", observed: null}
   VERIFIED_BY: [BENCH-DX-001]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-PLAT-002-DEV-001]  # DEV observation on the shared host, not on a documented HardwareProfile
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L2, env: "DEV", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 NFR-DX-002:
   meta: {class: S2, owner: Yavuz, anchor: "01 Item82 NFR-DX-002 L172347"}
   DERIVED_FROM: [ITEM-74, DX-INV-52]
   ALLOCATED_TO: [ARCH-PLAT-CLI, ARCH-PLAT-CICD]
+  REALIZED_BY: {surface: "mfgctl check --fast running the CI static tier read from ci.yml", deployable: "mfgctl", ref: "tools/mfgctl/src/mfgctl/check.py; tools/mfgctl/src/mfgctl/timing.py"}
   MEASUREMENT: {metric: "high-value local lint/type/static validation duration", threshold: "≤ 90 s", workload: "—", hardware: "HP: documented normal developer hardware", observed: null}
   VERIFIED_BY: [BENCH-DX-001]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-PLAT-002-DEV-001]  # DEV observation on the shared host, not on a documented HardwareProfile
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L2, env: "DEV", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 NFR-DX-003:
   meta: {class: S2, owner: Yavuz, anchor: "01 Item82 NFR-DX-003 L172360"}
   DERIVED_FROM: [ITEM-74, DX-INV-27]
@@ -7204,6 +7217,22 @@ t1-integration, aggregate `ci-gate`); the `projectctl` workflow is unchanged.
 Required-check configuration: `ci/required_checks.json` (status NOT_APPLIED:
 private-repository plan returns HTTP 403, CTRL-PM-012). TEST-PLAT-CD and
 INSP-DEP-HOST remain with WP-CICD-002. EvidenceState is EVIDENCE_PENDING.
+
+### 19.3 WP-PLAT-002 concrete implementation and verification assets
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-PLAT-002-001 (`tools/mfgctl/tests/test_doctor.py`, `test_venv.py`, `test_repo.py`) | TEST-PLAT-FABCTL | FR-PLAT-003 (doctor, configuration discovery) |
+| TEST-PLAT-002-002 (`tools/mfgctl/tests/test_bootstrap.py`, `test_check.py`) | TEST-PLAT-FABCTL | FR-PLAT-003 (bootstrap); NFR-DX-002 (check) |
+| TEST-PLAT-002-003 (`tools/mfgctl/tests/test_registry.py`, `test_runtime.py`) | TEST-PLAT-FABCTL | FR-PLAT-003 (profile, smoke, scenario command contract) |
+| TEST-PLAT-002-004 (`tools/mfgctl/tests/test_timing.py`, `test_diagnose.py`, `test_cli.py`) | TEST-PLAT-FABCTL, BENCH-DX-001 instrumentation | FR-PLAT-003; NFR-DX-001…004 timing hooks |
+
+Command-surface contract: `tools/mfgctl/schemas/capabilities.schema.json`
+(`mfgctl.capabilities/v1`, validated with its example by the contract tier).
+CI: the `mfgctl tests` step of the t1-unit job. BENCH-DX-001 measurements on a
+documented HardwareProfile, NFR-DX-003 (smoke) and NFR-DX-004 (profile startup)
+remain open until WP-PLAT-001 provides the registry and Compose profiles.
+EvidenceState is EVIDENCE_PENDING.
 
 ## 20. Rejected Alternatives
 

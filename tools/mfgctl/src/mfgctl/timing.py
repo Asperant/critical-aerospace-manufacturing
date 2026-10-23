@@ -109,25 +109,39 @@ def _median(values: Sequence[int]) -> int:
 
 
 def summarize(records: Sequence[Mapping[str, object]]) -> list[dict[str, object]]:
-    by_command: dict[str, list[int]] = {}
+    """Per command: all runs, and median/max over successful runs only.
+
+    A run that failed or stopped early (exit code != 0) says nothing about
+    how long the work takes, so it never counts toward a DX target.
+    """
+    by_command: dict[str, list[tuple[int, int]]] = {}
     for record in records:
         duration = record.get("duration_ms")
         command = record.get("command")
-        if isinstance(command, str) and isinstance(duration, int):
-            by_command.setdefault(command, []).append(duration)
+        code = record.get("exit_code", 0)
+        if (
+            isinstance(command, str)
+            and isinstance(duration, int)
+            and isinstance(code, int)
+        ):
+            by_command.setdefault(command, []).append((duration, code))
     rows: list[dict[str, object]] = []
-    for command, durations in sorted(by_command.items()):
+    for command, runs in sorted(by_command.items()):
         target = TARGETS_MS.get(command)
-        median = _median(durations)
+        passed = [duration for duration, code in runs if code == 0]
+        median = _median(passed) if passed else None
         rows.append(
             {
                 "command": command,
-                "runs": len(durations),
+                "runs": len(runs),
+                "failed_runs": len(runs) - len(passed),
                 "median_ms": median,
-                "max_ms": max(durations),
-                "last_ms": durations[-1],
+                "max_ms": max(passed) if passed else None,
+                "last_ms": runs[-1][0],
                 "target_ms": target,
-                "median_within_target": None if target is None else median <= target,
+                "median_within_target": (
+                    None if target is None or median is None else median <= target
+                ),
             }
         )
     return rows
@@ -141,14 +155,19 @@ def render_summary(rows: Sequence[Mapping[str, object]], location: Path) -> str:
         target = row["target_ms"]
         verdict = ""
         if isinstance(target, int):
-            verdict = "  within target" if row["median_within_target"] else "  MISS"
+            within = row["median_within_target"]
+            if within is None:
+                verdict = "  no successful run yet"
+            else:
+                verdict = "  within target" if within else "  MISS"
             verdict += f" ({target / 1000:.0f} s)"
+        failed = f" failed={row['failed_runs']}" if row["failed_runs"] else ""
         lines.append(
-            f"  {row['command']:<20} runs={row['runs']:<3} "
+            f"  {row['command']:<20} runs={row['runs']:<3}{failed} "
             f"median={_seconds(row['median_ms'])} max={_seconds(row['max_ms'])}{verdict}"
         )
     return "\n".join(lines)
 
 
 def _seconds(value: object) -> str:
-    return f"{value / 1000:.1f}s" if isinstance(value, int) else "?"
+    return f"{value / 1000:.1f}s" if isinstance(value, int) else "-"
