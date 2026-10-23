@@ -10,9 +10,12 @@ from projectctl.execution_queue import (
     ASSIGNEES,
     EXCLUDED,
     OWNERS,
+    RTM_PATH,
+    WBS_PATH,
     affected_owners,
     compute_next_eligible,
     project_view,
+    scope_projection,
     validate_preferences,
 )
 from projectctl.project import load_project
@@ -352,3 +355,112 @@ def test_deferred_health_visible_but_not_implementation_blocker(baseline):
     assert result["current"]["wp_id"] == "WP-CORE-002"
     assert result["deferred_waits"][0]["wp_id"] == "WP-CORE-001"
     assert result["health"] == "HEALTHY"
+
+
+def scope_docs(own="own", other="other", wp="WP-AAA-001"):
+    wbs = (
+        f"| {wp} | Title | Owner |\n| WP-BBB-001 | {other} | Owner |\n\n"
+        f"#### {wp} — Title\n\n{own}\n\n##### Sub\n\n{own}-sub\n\n"
+        f"#### WP-BBB-001 — Other\n\n{other}\n"
+    )
+    rtm = (
+        f"| FR-AAA-001 | F0 | {own} |\n| FR-BBB-001 | F0 | {other} |\n\n"
+        f"FR-AAA-001:\n  meta: {{{own}}}\n  state: x\n\n"
+        f"FR-BBB-001:\n  meta: {{{other}}}\n"
+    )
+    return wbs, rtm
+
+
+def projection(wbs, rtm, refs=("FR-AAA-001",), wp="WP-AAA-001"):
+    return scope_projection(wp, list(refs), wbs, rtm)
+
+
+def test_scope_projection_ignores_unrelated_shared_file_edits():
+    base = projection(*scope_docs())
+    assert projection(*scope_docs(other="changed elsewhere")) == base
+    wbs, rtm = scope_docs()
+    assert (
+        projection(
+            wbs + "\n#### WP-CCC-001 — New\n\nnew\n", rtm + "\nFR-CCC-001:\n  x: 1\n"
+        )
+        == base
+    )
+    assert projection(wbs.replace("\r", ""), rtm.replace("\n", "\r\n")) == base
+
+
+@pytest.mark.parametrize(
+    "field", ["wbs_row", "wbs_card", "wbs_sub", "rtm_row", "rtm_block"]
+)
+def test_scope_projection_detects_own_scope_edits(field):
+    wbs, rtm = scope_docs()
+    base = projection(wbs, rtm)
+    if field == "wbs_row":
+        wbs = wbs.replace("| WP-AAA-001 | Title |", "| WP-AAA-001 | Retitled |")
+    elif field == "wbs_card":
+        wbs = wbs.replace("\nown\n", "\nown changed\n", 1)
+    elif field == "wbs_sub":
+        wbs = wbs.replace("own-sub", "own-sub changed")
+    elif field == "rtm_row":
+        rtm = rtm.replace("| FR-AAA-001 | F0 |", "| FR-AAA-001 | F1 |")
+    else:
+        rtm = rtm.replace("state: x", "state: y")
+    assert projection(wbs, rtm) != base
+
+
+def test_scope_projection_requirement_set_is_part_of_scope():
+    wbs, rtm = scope_docs()
+    assert projection(wbs, rtm, ("FR-AAA-001", "FR-BBB-001")) != projection(wbs, rtm)
+    assert projection(
+        wbs, rtm, ("FR-BBB-001", "FR-AAA-001", "FR-AAA-001")
+    ) == projection(wbs, rtm, ("FR-AAA-001", "FR-BBB-001"))
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        "no_card",
+        "duplicate_card",
+        "no_row",
+        "no_rtm_row",
+        "no_rtm_block",
+        "duplicate_rtm_block",
+        "no_refs",
+        "bad_ref",
+        "bad_wp",
+    ],
+)
+def test_scope_projection_fails_closed_when_missing_or_ambiguous(case):
+    wbs, rtm = scope_docs()
+    refs, wp = ("FR-AAA-001",), "WP-AAA-001"
+    if case == "no_card":
+        wbs = wbs.replace("#### WP-AAA-001 — Title", "#### Renamed")
+    elif case == "duplicate_card":
+        wbs += "\n#### WP-AAA-001 — Title\n\ncopy\n"
+    elif case == "no_row":
+        wbs = wbs.replace("| WP-AAA-001 |", "| WP-ZZZ-001 |")
+    elif case == "no_rtm_row":
+        rtm = rtm.replace("| FR-AAA-001 |", "| FR-ZZZ-001 |")
+    elif case == "no_rtm_block":
+        rtm = rtm.replace("FR-AAA-001:", "FR-ZZZ-001:")
+    elif case == "duplicate_rtm_block":
+        rtm += "\nFR-AAA-001:\n  meta: copy\n"
+    elif case == "no_refs":
+        refs = ()
+    elif case == "bad_ref":
+        refs = ("not a requirement",)
+    else:
+        wp = "WP-1"
+    with pytest.raises(ValueError):
+        scope_projection(wp, list(refs), wbs, rtm)
+
+
+def test_scope_projection_covers_every_canonical_work_package():
+    project = load_project(ROOT)
+    wbs = (ROOT / WBS_PATH).read_text()
+    rtm = (ROOT / RTM_PATH).read_text()
+    digests = {
+        w.id: scope_projection(w.id, list(w.requirement_refs or []), wbs, rtm)
+        for w in project.catalog.work_packages
+    }
+    assert len(digests) == len(project.catalog.work_packages) > 100
+    assert all(len(d) == 64 for d in digests.values())
