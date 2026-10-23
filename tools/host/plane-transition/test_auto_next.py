@@ -1,5 +1,7 @@
 """AUTO_NEXT integration tests; fixture-only, never production mutations."""
 
+import base64
+import hashlib
 import importlib.util
 import unittest
 from copy import deepcopy
@@ -452,6 +454,29 @@ class AutoNextTests(unittest.TestCase):
         self.assertNotIn("/etc/sudoers.d/cap-plane-transition", paths)
 
 
+def scope_docs(wp, own="own", other="other"):
+    wbs = (
+        f"| {wp} | Title | Owner |\n| WP-OTHER-001 | {other} | Owner |\n\n"
+        f"#### {wp} — Title\n\n{own}\n\n#### WP-OTHER-001 — Other\n\n{other}\n"
+    )
+    rtm = (
+        f"| FR-TEST-001 | F0 | {own} |\n| FR-OTHER-001 | F0 | {other} |\n\n"
+        f"FR-TEST-001:\n  meta: {{{own}}}\n\nFR-OTHER-001:\n  meta: {{{other}}}\n"
+    )
+    return wbs, rtm
+
+
+def git_blob(store, text):
+    raw = text.encode()
+    sha = hashlib.sha1(b"blob %d\0" % len(raw) + raw, usedforsecurity=False).hexdigest()
+    store[sha] = {
+        "encoding": "base64",
+        "size": len(raw),
+        "content": base64.b64encode(raw).decode(),
+    }
+    return sha
+
+
 class DeferredAcceptanceTests(unittest.TestCase):
     def fixture(self):
         wp, policy, plane, fixture_gh, _ = fixture(source="VALIDATING", target="DONE")
@@ -462,14 +487,29 @@ class DeferredAcceptanceTests(unittest.TestCase):
             "docs/08": "blob1",
             "docs/02_System_Architecture_Specification.md": "blob2",
         }
-        policy["source_git_blobs"] = sources
         policy["contexts"][wp]["source_manifest"] = {"docs/08": "digest"}
-        gh._get = Mock(
-            return_value={
-                "truncated": False,
-                "tree": [{"path": p, "sha": sha} for p, sha in sources.items()],
-            }
-        )
+        policy["contexts"][wp]["work_package"]["requirement_refs"] = ["FR-TEST-001"]
+        wbs, rtm = scope_docs(wp)
+        policy["scope_projection_schema"] = "cap-scope-projection-v1"
+        policy["scope_projections"] = {
+            wp: resolver.scope_projection(wp, ["FR-TEST-001"], wbs, rtm)
+        }
+        blobs = {}
+        for path, text in ((resolver.WBS_PATH, wbs), (resolver.RTM_PATH, rtm)):
+            sources[path] = git_blob(blobs, text)
+        policy["source_git_blobs"] = dict(sources)
+        gh.tree = {
+            "truncated": False,
+            "tree": [{"path": p, "sha": sha} for p, sha in sources.items()],
+        }
+        gh.blobs = blobs
+
+        def route(path):
+            if "/git/blobs/" in path:
+                return gh.blobs.get(path.rsplit("/", 1)[1], {})
+            return gh.tree
+
+        gh._get = Mock(side_effect=route)
         gh.pr_data["body"] += """
 Deferred acceptance class: WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE
 Owner-executable implementation work: NONE
@@ -553,7 +593,7 @@ Blocker evidence: repo:evidence/test.json
                 elif gap == "scope":
                     policy["source_git_blobs"]["docs/08"] = "changed"
                 elif gap == "truncated":
-                    gh._get.return_value["truncated"] = True
+                    gh.tree["truncated"] = True
                 elif gap == "blocker":
                     previous["blocker"]["wp_id"] = "WP-TEST-003"
                 elif gap == "artifact":
@@ -570,6 +610,94 @@ Blocker evidence: repo:evidence/test.json
                     gh.failed_technical_step = True
                 with patch.object(t, "last_blocker", return_value=previous):
                     self.assertIsNone(auto.deferred_proof(t, wp, "asrin", policy, gh))
+
+    def merged(self, gh, wbs, rtm):
+        """Replace the implementation-merge versions of the shared canonical files."""
+        for path, text in ((resolver.WBS_PATH, wbs), (resolver.RTM_PATH, rtm)):
+            sha = git_blob(gh.blobs, text)
+            for row in gh.tree["tree"]:
+                if row["path"] == path:
+                    row["sha"] = sha
+
+    def proof(self, wp, policy, gh, previous):
+        with patch.object(t, "last_blocker", return_value=previous):
+            return auto.deferred_proof(t, wp, "asrin", policy, gh)
+
+    def test_unrelated_shared_file_edits_preserve_deferred_proof(self):
+        wp, policy, plane, gh, previous = self.fixture()
+        # Merge-time files differ byte-for-byte from the pinned current files...
+        self.merged(gh, *scope_docs(wp, other="edited later for another WP"))
+        for path in (resolver.WBS_PATH, resolver.RTM_PATH):
+            merge_sha = next(r["sha"] for r in gh.tree["tree"] if r["path"] == path)
+            self.assertNotEqual(merge_sha, policy["source_git_blobs"][path])
+        # ...yet only another WP's content changed, so the proof still holds.
+        self.assertIsNotNone(self.proof(wp, policy, gh, previous))
+        with patch.object(t, "last_blocker", return_value=previous):
+            live = auto.live_view(t, plane, policy, "asrin", gh)
+        self.assertTrue(resolver.deferred_acceptance(wp, live["items"][wp]))
+
+    def test_own_scope_edit_invalidates_deferred_proof(self):
+        for own in ("wbs", "rtm"):
+            with self.subTest(own=own):
+                wp, policy, plane, gh, previous = self.fixture()
+                wbs, rtm = scope_docs(wp)
+                if own == "wbs":
+                    wbs = wbs.replace("\nown\n", "\nown changed\n", 1)
+                else:
+                    rtm = rtm.replace("meta: {own}", "meta: {own changed}")
+                self.merged(gh, wbs, rtm)
+                self.assertIsNone(self.proof(wp, policy, gh, previous))
+
+    def test_missing_or_ambiguous_scope_projection_fails_closed(self):
+        for gap in (
+            "no_projection",
+            "projection_none",
+            "no_schema",
+            "no_refs",
+            "no_tree_entry",
+            "blob_unavailable",
+            "blob_size",
+            "blob_hash",
+            "blob_encoding",
+            "duplicate_card",
+            "missing_card",
+        ):
+            with self.subTest(gap=gap):
+                wp, policy, plane, gh, previous = self.fixture()
+                wbs, rtm = scope_docs(wp)
+                path = resolver.WBS_PATH
+                row = next(r for r in gh.tree["tree"] if r["path"] == path)
+                if gap == "no_projection":
+                    policy.pop("scope_projections")
+                elif gap == "projection_none":
+                    policy["scope_projections"][wp] = None
+                elif gap == "no_schema":
+                    policy.pop("scope_projection_schema")
+                elif gap == "no_refs":
+                    del policy["contexts"][wp]["work_package"]["requirement_refs"]
+                elif gap == "no_tree_entry":
+                    gh.tree["tree"].remove(row)
+                elif gap == "blob_unavailable":
+                    del gh.blobs[row["sha"]]
+                elif gap == "blob_size":
+                    gh.blobs[row["sha"]]["size"] += 1
+                elif gap == "blob_hash":
+                    gh.blobs[row["sha"]]["content"] = base64.b64encode(
+                        wbs.replace("Title", "Tampered").encode()
+                    ).decode()
+                elif gap == "blob_encoding":
+                    gh.blobs[row["sha"]]["encoding"] = "utf-8"
+                elif gap == "duplicate_card":
+                    self.merged(gh, wbs + f"\n#### {wp} — Title\n\ncopy\n", rtm)
+                else:
+                    self.merged(gh, wbs.replace(f"#### {wp} — ", "#### "), rtm)
+                self.assertIsNone(self.proof(wp, policy, gh, previous))
+
+    def test_other_pinned_shared_sources_still_require_exact_blobs(self):
+        wp, policy, plane, gh, previous = self.fixture()
+        self.assertIsNotNone(self.proof(wp, policy, gh, previous))
+        policy["source_git_blobs"]["docs/02_System_Architecture_Specification.md"] = "x"
+        self.assertIsNone(self.proof(wp, policy, gh, previous))
 
     def test_assessment_digest_changes_for_prewrite_comparison(self):
         wp, policy, plane, gh, previous = self.fixture()

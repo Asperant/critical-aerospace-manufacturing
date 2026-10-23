@@ -1,0 +1,20 @@
+CHG-023:
+  title: Validate deferred acceptance canonical scope by work-package projection
+  class: C3
+  review_risk_class: CR-3
+  owner: Asrın
+  decision: APPROVED
+  status: APPROVED
+  application_control_item: CTRL-HOST-008
+  required_human_approvals: 0
+  human_decision_basis: Explicit project-owner request for this narrow correction and deployment, 23 October 2026
+  scope: Canonical-scope comparison inside the CHG-022 deferred acceptance proof only; no change to what qualifies as deferred
+  rules:
+  - CHG-022 requires canonical WP inputs to match the implementation merge; this clarifies that unrelated edits to shared files are not WP inputs
+  - Shared WBS and RTM files are compared by a deterministic projection of the deferred WP's own rows, card, requirements and requirement blocks, never by whole-file blob
+  - The merge-time files are fetched by Git blob and verified against their Git SHA; the pinned current projection comes from the generated policy
+  - Any edit to the WP's own projected scope, a changed requirement set, or a missing, oversized, unparsable or ambiguous projection fails closed and the WP keeps occupying the implementation slot
+  - Every other pinned source file keeps exact blob equality; architecture, DoD, merge, CI, audit and owner-assessment checks are unchanged
+  - No WP is special-cased and the projection is generic; DONE criteria, blocker attribution, AUTO_NEXT guards and Plane states are unchanged
+  rollout: Merged source only; generated policy, root-only backup, supported installer and verified hashes
+  rollback: Restore deployment only; never replay Plane state or erase audit

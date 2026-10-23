@@ -887,3 +887,10 @@ occupying the slot. All other active states, ordinary VALIDATING and implementat
 blockers still prevent release. The deferred WP stays visible, open and blocked;
 it is never considered DONE for dependency readiness. Existing canonical preference,
 AUTO_NEXT guards, fresh rechecks, one READY and all actual DONE gates are unchanged.
+
+CHG-023 / CTRL-HOST-008 clarifies the canonical-scope check of that proof. Shared
+WBS/RTM files are compared by a deterministic projection of the deferred WP's own
+rows, card, requirements and requirement blocks, so unrelated edits for other WPs do
+not release or invalidate the wait. Any change to the WP's own scope, or a missing,
+ambiguous or unverifiable projection, still fails closed and keeps the slot. All other
+pinned sources keep exact blob equality; nothing else in CHG-022 changes.

@@ -1,5 +1,6 @@
 """CTRL-HOST-004: root-owned AUTO_NEXT orchestration; existing transition guards."""
 
+import base64
 import hashlib
 import importlib.machinery
 import importlib.util
@@ -83,12 +84,67 @@ def live_view(t, plane, policy, profile=None, gh=None):
     return {"complete": True, "items": items}
 
 
+def check_scope_projection(t, gh, wp, blobs, policy):
+    """Merge-time WBS/RTM content for this WP must equal the pinned current content.
+
+    Blob bytes are verified against their Git SHA; any missing, oversized, ambiguous
+    or unparsable input denies the proof (UNKNOWN never frees the slot).
+    """
+    expected = policy.get("scope_projections", {}).get(wp)
+    refs = policy["contexts"][wp]["work_package"].get("requirement_refs")
+    t.need(
+        policy.get("scope_projection_schema") == "cap-scope-projection-v1"
+        and isinstance(expected, str)
+        and isinstance(refs, list),
+        "DEFERRED_SCOPE_PROJECTION_UNAVAILABLE",
+    )
+    texts = {}
+    for path in (resolver.WBS_PATH, resolver.RTM_PATH):
+        blob_sha = blobs.get(path)
+        t.need(
+            isinstance(blob_sha, str) and re.fullmatch(r"[a-f0-9]{40}", blob_sha),
+            "DEFERRED_SCOPE_PROJECTION_UNAVAILABLE",
+        )
+        blob = gh._get(f"{t.REPO}/git/blobs/{blob_sha}")
+        size = blob.get("size")
+        t.need(
+            blob.get("encoding") == "base64"
+            and type(size) is int
+            and 0 < size <= 4_000_000,
+            "DEFERRED_SCOPE_PROJECTION_UNAVAILABLE",
+        )
+        try:
+            raw = base64.b64decode(blob.get("content", ""), validate=False)
+            text = raw.decode("utf-8")
+        except (ValueError, TypeError):
+            raise t.Denied("DEFERRED_SCOPE_PROJECTION_UNAVAILABLE") from None
+        t.need(
+            len(raw) == size
+            and hashlib.sha1(
+                b"blob " + str(size).encode() + b"\0" + raw, usedforsecurity=False
+            ).hexdigest()
+            == blob_sha,
+            "DEFERRED_SCOPE_PROJECTION_UNAVAILABLE",
+        )
+        texts[path] = text
+    try:
+        actual = resolver.scope_projection(
+            wp, refs, texts[resolver.WBS_PATH], texts[resolver.RTM_PATH]
+        )
+    except ValueError:
+        raise t.Denied("DEFERRED_SCOPE_PROJECTION_UNAVAILABLE") from None
+    t.need(actual == expected, "DEFERRED_CANONICAL_SCOPE_CHANGED")
+
+
 def deferred_proof(t, wp, profile, policy, gh):
     """Existing attributable owner assessment plus real merged/CI/audit facts.
 
     Absence, ambiguity or stale canonical scope leaves the slot occupied. No
     Plane field or free-text reason alone authorizes deferred release.
     """
+    global resolver
+    if resolver is None:
+        resolver = load_resolver()
     previous = t.last_blocker(wp)
     if not (
         previous
@@ -122,9 +178,10 @@ def deferred_proof(t, wp, profile, policy, gh):
         tree = gh._get(f"{t.REPO}/git/trees/{sha}?recursive=1")
         t.need(tree.get("truncated") is False, "DEFERRED_SOURCE_TREE_INCOMPLETE")
         blobs = {r["path"]: r.get("sha") for r in tree["tree"]}
-        sources = set(policy["contexts"][wp]["source_manifest"]) | {
-            "docs/02_System_Architecture_Specification.md"
-        }
+        sources = (
+            set(policy["contexts"][wp]["source_manifest"])
+            | {"docs/02_System_Architecture_Specification.md"}
+        ) - resolver.PROJECTED_SOURCES
         t.need(
             all(
                 blobs.get(p) == policy["source_git_blobs"].get(p) and blobs.get(p)
@@ -132,6 +189,8 @@ def deferred_proof(t, wp, profile, policy, gh):
             ),
             "DEFERRED_CANONICAL_SCOPE_CHANGED",
         )
+        # Shared WBS/RTM files are compared by this WP's own projection only.
+        check_scope_projection(t, gh, wp, blobs, policy)
         record = t.native_record(text, wp, sha)
         t.need(
             record.get("blocker") == previous.get("blocker"),

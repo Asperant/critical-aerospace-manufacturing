@@ -4,7 +4,8 @@ import json
 from pathlib import Path
 import re
 import yaml
-from projectctl.execution_queue import project_view, validate_preferences
+from projectctl.execution_queue import (
+    RTM_PATH, WBS_PATH, project_view, scope_projection, validate_preferences)
 from projectctl.project import load_project
 from projectctl.queries import context
 from projectctl.models import resolve_owner
@@ -55,13 +56,21 @@ preferences=yaml.safe_load((ROOT/'project_control/execution_preferences.yaml').r
 assert not validate_preferences(p,preferences), 'Invalid execution preferences'
 policy['execution_preferences']=preferences
 policy['execution_project']=project_view(p)
-for name in ['project_control/execution_preferences.yaml','09_change/CHG-019.yaml','09_change/CHG-020.yaml','09_change/CHG-021.yaml','09_change/CHG-022.yaml']:
+for name in ['project_control/execution_preferences.yaml','09_change/CHG-019.yaml','09_change/CHG-020.yaml','09_change/CHG-021.yaml','09_change/CHG-022.yaml','09_change/CHG-023.yaml']:
     manifest[name]=sha256((ROOT/name).read_bytes()).hexdigest()
 policy['execution_project']['source_manifest']=manifest
 for kind,name in [('auto_next','tools/host/plane-transition/auto_next.py'),('execution_queue','tools/projectctl/src/projectctl/execution_queue.py')]:
     policy['implementation_sha256'][kind]=sha256((ROOT/name).read_bytes()).hexdigest()
 policy['preparation_schema']='cap-preparation-v1'
 policy['deferred_acceptance_schema']='cap-deferred-acceptance-v1'
+policy['scope_projection_schema']='cap-scope-projection-v1'
+wbs_text,rtm_text=(ROOT/WBS_PATH).read_text(),(ROOT/RTM_PATH).read_text()
+policy['scope_projections']={}
+for w in p.catalog.work_packages:
+    try:
+        policy['scope_projections'][w.id]=scope_projection(w.id,list(w.requirement_refs or []),wbs_text,rtm_text)
+    except ValueError:
+        policy['scope_projections'][w.id]=None  # deferred proof for this WP fails closed
 for kind,name in [('health','health.py'),('health_snapshot','health_snapshot.py'),('preparation','preparation.py'),('prepare','prepare.py')]:
     policy['implementation_sha256'][kind]=sha256((ROOT/'tools/host/plane-transition'/name).read_bytes()).hexdigest()
 policy['source_git_blobs']={name:sha1(b'blob '+str(len((ROOT/name).read_bytes())).encode()+b'\0'+(ROOT/name).read_bytes(),usedforsecurity=False).hexdigest() for name in manifest}

@@ -253,3 +253,11 @@ post-merge main CI and unchanged canonical inputs/architecture are verified live
 The proof includes the assessment digest and is recomputed before AUTO_NEXT writes.
 UNKNOWN retains the slot. Health exposes `deferred_waits`; readiness never sees a
 synthetic DONE for these WPs. No DONE evaluator or canonical preference changes.
+
+CHG-023 / CTRL-HOST-008: the deferred proof's canonical-scope check compares
+`docs/03` and `docs/04` through `execution_queue.scope_projection` (the WP's own WBS
+rows/card and its requirements' RTM rows/blocks) against `scope_projections[wp]`
+pinned by `build_policy.py`, instead of whole-file blobs. Merge-time files are read
+as Git blobs and verified against their SHA. Missing, unparsable, ambiguous or
+changed projections deny the proof; every other pinned source keeps exact blob
+equality.

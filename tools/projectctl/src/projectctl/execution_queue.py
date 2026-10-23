@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
+import re
 from collections import Counter
 from typing import Any
 
@@ -24,6 +27,72 @@ EXPECTED = dict(zip(OWNERS.values(), (69, 17, 32, 56), strict=True))
 
 
 DEFERRED_CLASS = "WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE"
+WBS_PATH = "docs/04_Work_Breakdown_Structure.md"
+RTM_PATH = "docs/03_Requirements_Traceability_Matrix.md"
+PROJECTED_SOURCES = frozenset({WBS_PATH, RTM_PATH})
+
+
+def _lines(text: str) -> list[str]:
+    return [line.rstrip("\r") for line in text.split("\n")]
+
+
+def _first_cell(line: str) -> str | None:
+    cells = line.split("|")
+    return cells[1].strip() if line.startswith("|") and len(cells) > 2 else None
+
+
+def scope_projection(
+    wp: str, requirement_refs: list[str], wbs_text: str, rtm_text: str
+) -> str:
+    """Digest of only the canonical content that belongs to one work package.
+
+    Shared WBS/RTM files change for every WP, so whole-file equality would let an
+    unrelated edit release or hold another WP's deferred wait. The projection keeps
+    the WP's own table rows and card, plus the rows and block of each requirement
+    it references. Missing or ambiguous structure raises: the caller fails closed.
+    """
+    if not re.fullmatch(r"WP-[A-Z0-9]+-[0-9]{3}", wp):
+        raise ValueError("INVALID_WP")
+    refs = sorted(set(requirement_refs))
+    if not refs or any(
+        not re.fullmatch(r"[A-Z]+-[A-Z0-9]+-[0-9]{3}", ref) for ref in refs
+    ):
+        raise ValueError("REQUIREMENT_REFS_UNAVAILABLE")
+    wbs, rtm = _lines(wbs_text), _lines(rtm_text)
+    rows = [line for line in wbs if _first_cell(line) == wp]
+    starts = [i for i, line in enumerate(wbs) if line.startswith(f"#### {wp} — ")]
+    if not rows or len(starts) != 1:
+        raise ValueError("WBS_PROJECTION_UNAVAILABLE")
+    stop = next(
+        (i for i in range(starts[0] + 1, len(wbs)) if re.match(r"#{1,4} ", wbs[i])),
+        len(wbs),
+    )
+    projection: dict[str, Any] = {
+        "wp": wp,
+        "wbs_rows": rows,
+        "wbs_card": wbs[starts[0] : stop],
+        "requirements": {},
+    }
+    for ref in refs:
+        table = [line for line in rtm if _first_cell(line) == ref]
+        blocks = [i for i, line in enumerate(rtm) if line == f"{ref}:"]
+        if not table or len(blocks) != 1:
+            raise ValueError("RTM_PROJECTION_UNAVAILABLE")
+        end = next(
+            (
+                i
+                for i in range(blocks[0] + 1, len(rtm))
+                if rtm[i] and not rtm[i][0].isspace()
+            ),
+            len(rtm),
+        )
+        projection["requirements"][ref] = {
+            "rows": table,
+            "block": rtm[blocks[0] : end],
+        }
+    return hashlib.sha256(
+        json.dumps(projection, sort_keys=True, ensure_ascii=True).encode()
+    ).hexdigest()
 
 
 def deferred_acceptance(wp: str, item: dict[str, Any]) -> bool:
