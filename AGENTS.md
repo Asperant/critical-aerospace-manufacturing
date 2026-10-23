@@ -894,3 +894,17 @@ rows, card, requirements and requirement blocks, so unrelated edits for other WP
 not release or invalidate the wait. Any change to the WP's own scope, or a missing,
 ambiguous or unverifiable projection, still fails closed and keeps the slot. All other
 pinned sources keep exact blob equality; nothing else in CHG-022 changes.
+
+## External integration binding wait — CHG-024 / CTRL-HOST-009
+
+CHG-024 adds one more implementation-slot exception beside CHG-022. An `IN_PROGRESS +
+BLOCKED` work package stops occupying the owner's slot only when the root verified
+BLOCKED audit points to exactly one unedited owner-authored comment that states, as
+exact single fields, the wait class (`WAITING_EXTERNAL_INTEGRATION_BINDINGS`), a
+`Canonical main revision` and `Owner-executable implementation work: NONE`; the audited
+blocker equals the assessed blocker; its external dependency cites a canonical node of the
+WP's own dependency edges at an explicit readiness level; and the WP's canonical inputs
+still match the assessed revision. Anything missing, UNKNOWN, ambiguous or owner-executable,
+every ordinary implementation blocker and every other active state keeps the slot. The WP
+stays visible, blocked and never DONE for readiness; DONE and unblock requirements are
+unchanged.

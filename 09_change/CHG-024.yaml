@@ -1,0 +1,21 @@
+CHG-024:
+  title: Release implementation slot during verified external integration binding wait
+  class: C3
+  review_risk_class: CR-3
+  owner: Asrın
+  decision: APPROVED
+  status: APPROVED
+  application_control_item: CTRL-HOST-009
+  required_human_approvals: 0
+  human_decision_basis: Explicit project-owner request for this narrow policy and deployment, 23 October 2026
+  scope: Implementation-slot accounting only; canonical preference, readiness, candidate ordering and DONE unchanged
+  rules:
+  - Only IN_PROGRESS with orthogonal BLOCKED and an exact approved wait class (initially WAITING_EXTERNAL_INTEGRATION_BINDINGS) may be released
+  - The root verified BLOCKED audit must reference exactly one unedited owner-authored GitHub comment stating the class, "Canonical main revision" and "Owner-executable implementation work: NONE" as exact single fields
+  - The audited blocker must equal the assessed blocker and its external dependency must cite a canonical readiness node of the WP's own dependency edges at an explicit canonical readiness level
+  - The WP's canonical inputs at the assessed revision, including its WBS/RTM projection, must match the pinned policy; changed or unavailable proof fails closed
+  - Missing, duplicate, UNKNOWN or ambiguous fields, ordinary implementation blockers, unresolved local code/tests/evidence, generic BLOCKED and every other active state keep occupying the slot
+  - The waiting WP stays IN_PROGRESS and BLOCKED, remains visible, is never treated as DONE for readiness, and DONE, blocker attribution and unblock requirements are unchanged
+  - Shared resolver preference and existing guarded AUTO_NEXT BACKLOG to READY remain the only selection and mutation path; no WP is special-cased
+  rollout: Merged source only; generated policy, root-only backup, supported installer and verified hashes
+  rollback: Restore deployment only; never replay Plane state or erase audit

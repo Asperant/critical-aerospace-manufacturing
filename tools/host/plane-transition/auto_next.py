@@ -81,6 +81,15 @@ def live_view(t, plane, policy, profile=None, gh=None):
             proof = deferred_proof(t, wp, profile, policy, gh or t.GitHub(profile))
             if proof:
                 items[wp]["deferred_acceptance"] = proof
+        if (
+            requested_profile == profile
+            and policy.get("external_wait_schema") == "cap-external-integration-wait-v1"
+            and items[wp]["state"] == "IN_PROGRESS"
+            and items[wp]["blocked"]
+        ):
+            proof = external_wait_proof(t, wp, profile, policy, gh or t.GitHub(profile))
+            if proof:
+                items[wp]["external_integration_wait"] = proof
     return {"complete": True, "items": items}
 
 
@@ -136,6 +145,129 @@ def check_scope_projection(t, gh, wp, blobs, policy):
     t.need(actual == expected, "DEFERRED_CANONICAL_SCOPE_CHANGED")
 
 
+def check_canonical_scope(t, gh, wp, sha, policy):
+    """The WP's canonical inputs at revision `sha` must equal the pinned policy."""
+    tree = gh._get(f"{t.REPO}/git/trees/{sha}?recursive=1")
+    t.need(tree.get("truncated") is False, "DEFERRED_SOURCE_TREE_INCOMPLETE")
+    blobs = {r["path"]: r.get("sha") for r in tree["tree"]}
+    sources = (
+        set(policy["contexts"][wp]["source_manifest"])
+        | {"docs/02_System_Architecture_Specification.md"}
+    ) - resolver.PROJECTED_SOURCES
+    t.need(
+        all(
+            blobs.get(p) == policy["source_git_blobs"].get(p) and blobs.get(p)
+            for p in sources
+        ),
+        "DEFERRED_CANONICAL_SCOPE_CHANGED",
+    )
+    # Shared WBS/RTM files are compared by this WP's own projection only.
+    check_scope_projection(t, gh, wp, blobs, policy)
+
+
+def exact_field(text, label):
+    """Single-line `Label: value`; missing or repeated labels are ambiguous."""
+    values = re.findall(r"(?im)^" + re.escape(label) + r": ([^\r\n]+)$", text)
+    return values[0].strip() if len(values) == 1 else None
+
+
+def external_wait_proof(t, wp, profile, policy, gh):
+    """Owner assessment, verified blocker audit and canonical dependency binding.
+
+    The slot is freed only for an unedited owner-authored comment, referenced by
+    the root verified BLOCKED audit, that states an approved external wait class
+    and `Owner-executable implementation work: NONE`, cites a canonical readiness
+    node of this WP's own dependency edges at an explicit level, and was assessed
+    against canonical inputs that still match. Absence, ambiguity, UNKNOWN or any
+    mismatch leaves the slot occupied; no Plane field or reason text alone suffices.
+    """
+    global resolver
+    if resolver is None:
+        resolver = load_resolver()
+    previous = t.last_blocker(wp)
+    reason = previous.get("reason", "") if previous else ""
+    classification = next(
+        (
+            c
+            for c in sorted(resolver.EXTERNAL_WAIT_CLASSES)
+            if re.match(re.escape(c) + r"(?::|\s|$)", reason)
+        ),
+        None,
+    )
+    if not (
+        previous
+        and classification
+        and previous.get("result") == "VERIFIED"
+        and previous.get("operation") == "BLOCKED"
+        and previous.get("from_state") == "IN_PROGRESS"
+        and previous.get("to_state") == "IN_PROGRESS"
+        and previous.get("profile") == profile
+    ):
+        return None
+    try:
+        ids = [
+            r[8:]
+            for r in previous.get("evidence_refs", [])
+            if re.fullmatch(r"comment:[1-9][0-9]{0,15}", r)
+        ]
+        t.need(len(ids) == 1, "EXTERNAL_WAIT_ASSESSMENT_REQUIRED")
+        comment = gh._get(f"{t.REPO}/issues/comments/{ids[0]}")
+        text = comment.get("body")
+        t.need(
+            isinstance(text, str)
+            and str((comment.get("user") or {}).get("login", "")).casefold()
+            == t.GITHUB[profile].casefold()
+            and comment.get("created_at")
+            and comment.get("created_at") == comment.get("updated_at"),
+            "EXTERNAL_WAIT_ASSESSMENT_NOT_OWNER_UNEDITED",
+        )
+        sha = exact_field(text, "Canonical main revision")
+        t.need(
+            exact_field(text, "External integration wait class") == classification
+            and exact_field(text, "Owner-executable implementation work") == "NONE"
+            and sha is not None
+            and re.fullmatch(r"[0-9a-f]{40}", sha),
+            "EXTERNAL_WAIT_ASSESSMENT_INCOMPLETE",
+        )
+        record = t.native_record(text, wp, sha)
+        t.need(
+            record.get("blocker") == previous.get("blocker"),
+            "EXTERNAL_WAIT_BLOCKER_ASSESSMENT_CHANGED",
+        )
+        dependency = (record.get("blocker") or {}).get("external_dependency") or ""
+        edges = {
+            e["predecessor"]["node"]
+            for e in policy["contexts"][wp]["dependency_edges"]
+            if isinstance((e.get("predecessor") or {}).get("node"), str)
+        }
+        nodes = sorted(
+            n
+            for n in set(re.findall(r"DN-[A-Z0-9]+(?:-[A-Z0-9]+)*", dependency))
+            if n in edges
+            and any(
+                re.search(re.escape(n) + r"\s+" + re.escape(level) + r"\b", dependency)
+                for level in policy["node_levels"].get(n, [])
+            )
+        )
+        t.need(nodes, "EXTERNAL_WAIT_CANONICAL_DEPENDENCY_MISSING")
+        # The assessment must still describe today's canonical inputs and evidence.
+        check_canonical_scope(t, gh, wp, sha, policy)
+        t.blocker_evidence(gh, record, "BLOCKER-OBSERVED", gh.main_sha())
+        return {
+            "schema": "cap-external-integration-wait-v1",
+            "wp_id": wp,
+            "owner": t.q.PEOPLE[profile][0],
+            "classification": classification,
+            "owner_work_remaining": False,
+            "audit_id": previous["audit_id"],
+            "comment_id": ids[0],
+            "assessment_digest": hashlib.sha256(text.encode()).hexdigest(),
+            "dependency_nodes": nodes,
+        }
+    except t.Denied:
+        return None  # UNKNOWN never frees the slot.
+
+
 def deferred_proof(t, wp, profile, policy, gh):
     """Existing attributable owner assessment plus real merged/CI/audit facts.
 
@@ -175,22 +307,7 @@ def deferred_proof(t, wp, profile, policy, gh):
         sha = pr["merge_commit_sha"]
         gh.merged_shape(pr)
         # Scope, readiness, architecture and final acceptance must still match.
-        tree = gh._get(f"{t.REPO}/git/trees/{sha}?recursive=1")
-        t.need(tree.get("truncated") is False, "DEFERRED_SOURCE_TREE_INCOMPLETE")
-        blobs = {r["path"]: r.get("sha") for r in tree["tree"]}
-        sources = (
-            set(policy["contexts"][wp]["source_manifest"])
-            | {"docs/02_System_Architecture_Specification.md"}
-        ) - resolver.PROJECTED_SOURCES
-        t.need(
-            all(
-                blobs.get(p) == policy["source_git_blobs"].get(p) and blobs.get(p)
-                for p in sources
-            ),
-            "DEFERRED_CANONICAL_SCOPE_CHANGED",
-        )
-        # Shared WBS/RTM files are compared by this WP's own projection only.
-        check_scope_projection(t, gh, wp, blobs, policy)
+        check_canonical_scope(t, gh, wp, sha, policy)
         record = t.native_record(text, wp, sha)
         t.need(
             record.get("blocker") == previous.get("blocker"),
