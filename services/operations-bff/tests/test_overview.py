@@ -109,7 +109,7 @@ def _query(world: str = WORLD) -> Any:
     from operations_bff.overview import OverviewQuery
 
     return OverviewQuery(
-        world, None, None, None, ActorContext("U-1", (), "ENV-1", world)
+        world, None, None, None, ActorContext("U-1", (), "ENV-1", world), "C-TEST"
     )
 
 

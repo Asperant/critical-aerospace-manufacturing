@@ -15,7 +15,9 @@
     "build": "vite build",
     "check": "npm run contract:check && npm run lint && npm run format:check && npm run typecheck && npm run test && npm run build",
     "contract:generate": "node scripts/generate-contract-types.mjs",
-    "contract:check": "node scripts/generate-contract-types.mjs --check"
+    "contract:check": "node scripts/generate-contract-types.mjs --check",
+    "e2e": "npm run build && playwright test",
+    "bench:ui": "npm run build && BENCH=1 playwright test"
   },
   "dependencies": {
     "react": "19.3.0",
@@ -24,6 +26,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@playwright/test": "1.64.0",
     "@testing-library/dom": "10.4.2",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.3",

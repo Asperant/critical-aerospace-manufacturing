@@ -58,13 +58,14 @@ class StaleCursor(BffError):
 
 @dataclass(frozen=True)
 class OverviewQuery:
-    """Everything a backend needs: the world binding, as_of and the session actor."""
+    """What a backend needs: world binding, as_of, the session actor, correlation id."""
 
     world_id: str
     simulation_run_id: str | None
     branch_id: str | None
     as_of: datetime | None
     actor: ActorContext
+    correlation_id: str
 
 
 @dataclass(frozen=True)

@@ -3,3 +3,5 @@ dist
 coverage
 package-lock.json
 src/contract/generated.ts
+test-results
+playwright-report

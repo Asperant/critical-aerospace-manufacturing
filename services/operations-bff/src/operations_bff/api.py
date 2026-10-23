@@ -7,8 +7,8 @@ Queries and commands are not wired.
 
 from __future__ import annotations
 
-import uuid
-from collections.abc import Callable
+import time
+from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime
 from typing import Annotated
 
@@ -21,6 +21,13 @@ from .actor import Authenticated, authenticate_request, derive_actor_context
 from .config import COOKIE_NAME, LOGIN_COOKIE_NAME, CookieSettings
 from .errors import BadRequest, BffError
 from .login import LoginService
+from .observability import (
+    CORRELATION_HEADER,
+    access_record,
+    health_body,
+    log_access,
+    new_correlation_id,
+)
 from .overview import OverviewQuery, OverviewService
 from .session import SessionManager, SessionRecord, session_view
 
@@ -56,9 +63,15 @@ def utc_now() -> datetime:
     return datetime.now(UTC)
 
 
-def error_response(exc: BffError) -> JSONResponse:
+def correlation_id_of(request: Request) -> str:
+    """The id the access middleware assigned to this request."""
+    value = getattr(request.state, "correlation_id", None)
+    return value if isinstance(value, str) else new_correlation_id()
+
+
+def error_response(exc: BffError, correlation_id: str) -> JSONResponse:
     return JSONResponse(
-        exc.envelope(correlation_id=uuid.uuid4().hex), status_code=exc.status
+        exc.envelope(correlation_id=correlation_id), status_code=exc.status
     )
 
 
@@ -106,14 +119,51 @@ def create_app(
     app.state.sessions = manager
     app.state.clock = clock
 
+    @app.middleware("http")
+    async def observe(  # pyright: ignore[reportUnusedFunction]
+        request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
+        correlation_id = new_correlation_id()
+        request.state.correlation_id = correlation_id
+        started = time.perf_counter()
+        status = 500
+        try:
+            response = await call_next(request)
+            status = response.status_code
+            response.headers[CORRELATION_HEADER] = correlation_id
+            return response
+        finally:
+            route = request.scope.get("route")
+            log_access(
+                access_record(
+                    method=request.method,
+                    route=getattr(route, "path", None) or "unmatched",
+                    operation_id=getattr(route, "operation_id", None),
+                    status=status,
+                    duration_ms=(time.perf_counter() - started) * 1000,
+                    correlation_id=correlation_id,
+                )
+            )
+
     @app.exception_handler(BffError)
-    def bff_error(_: Request, exc: BffError) -> JSONResponse:  # pyright: ignore[reportUnusedFunction]
-        return error_response(exc)
+    def bff_error(request: Request, exc: BffError) -> JSONResponse:  # pyright: ignore[reportUnusedFunction]
+        return error_response(exc, correlation_id_of(request))
 
     @app.exception_handler(RequestValidationError)
-    def invalid_request(_: Request, __: RequestValidationError) -> JSONResponse:  # pyright: ignore[reportUnusedFunction]
+    def invalid_request(request: Request, __: RequestValidationError) -> JSONResponse:  # pyright: ignore[reportUnusedFunction]
         # Never echo the rejected input back.
-        return error_response(BadRequest("Request does not match the contract"))
+        return error_response(
+            BadRequest("Request does not match the contract"),
+            correlation_id_of(request),
+        )
+
+    @app.get("/healthz")
+    def healthz() -> JSONResponse:  # pyright: ignore[reportUnusedFunction]
+        # Operational surface, not part of the browser contract.
+        return JSONResponse(
+            health_body(login=login is not None, overview=overview is not None),
+            headers={"Cache-Control": "no-store"},
+        )
 
     def authenticate(request: Request) -> Authenticated:
         return authenticate_request(
@@ -151,6 +201,7 @@ def _add_overview_route(
 ) -> None:
     @app.get("/v1/overview", operation_id="getManufacturingOverview")
     def get_overview(  # pyright: ignore[reportUnusedFunction]
+        request: Request,
         auth: Session,
         world_id: Ident,
         simulation_run_id: OptIdent = None,
@@ -169,13 +220,14 @@ def _add_overview_route(
             branch_id=branch_id,
             as_of=when,
             actor=derive_actor_context(auth.session, world_id),
+            correlation_id=correlation_id_of(request),
         )
         body = overview.get(
             query,
             limit=limit,
             cursor=cursor,
             now=clock(),
-            correlation_id=uuid.uuid4().hex,
+            correlation_id=query.correlation_id,
         )
         return JSONResponse(body, headers={"Cache-Control": "no-store"})
 
@@ -229,7 +281,7 @@ def _add_login_routes(
             )
         except BffError as exc:
             # The transaction is spent whatever the outcome; drop its cookie.
-            failure = error_response(exc)
+            failure = error_response(exc, correlation_id_of(request))
             _clear_login_cookie(failure)
             return failure
         response = Response(

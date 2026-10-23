@@ -57,6 +57,16 @@ view, not a domain revision; the stream chains `from_revision` to it.
 - Open: the SameSite value of the session cookie (Strict or Lax) and the session
   lifetimes are configuration decisions for the owner.
 
+## Operational surface (outside the browser contract)
+
+`GET /healthz` reports process and configuration health only (`session` ready,
+`login` and `overview` enabled or disabled); it calls no backend or provider and
+needs no session. Every response carries `X-Correlation-Id`; error envelopes and
+overview `meta.correlation_id` reuse it, it is passed to every read port, and it
+is never taken from the browser. Each request writes one JSON access record
+(`operations_bff.access`: method, route template, operation id, status, outcome,
+duration, correlation id) and never a query string, cookie, header or body.
+
 ## Boundaries
 
 - Browser to BFF only. No path, parameter or property names a broker, database,

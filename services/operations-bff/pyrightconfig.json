@@ -1,6 +1,12 @@
 {
-  "include": ["src", "tests"],
-  "extraPaths": ["src"],
+  "include": [
+    "src",
+    "tests",
+    "e2e"
+  ],
+  "extraPaths": [
+    "src"
+  ],
   "pythonVersion": "3.11",
   "typeCheckingMode": "standard"
 }

@@ -152,6 +152,21 @@ jobs:
         run: uv run --project ci --locked python -m pytest ci/integration -m integration -p pytest_quarantine
       - name: Core initial migration and persistence (real PostgreSQL 18)
         run: uv run --project ci --locked python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests/persistence -m integration -q -p pytest_quarantine
+      - name: Set up Node (version pinned in .node-version)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: services/command-center-web/.node-version
+          cache: npm
+          cache-dependency-path: services/command-center-web/package-lock.json
+      - name: Frontend install (exact committed lockfile, no scripts)
+        working-directory: services/command-center-web
+        run: npm ci
+      - name: Install Playwright browsers (Chromium and Firefox)
+        working-directory: services/command-center-web
+        run: npx playwright install --with-deps chromium firefox
+      - name: Browser acceptance against a real BFF process (TEST-UI-BROWSER, WP-UI-001)
+        working-directory: services/command-center-web
+        run: npm run e2e
       - name: Service logs on failure
         if: failure()
         run: |
