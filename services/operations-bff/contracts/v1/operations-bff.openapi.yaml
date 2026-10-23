@@ -4,8 +4,8 @@ info:
   version: 1.0.0
   summary: Browser-facing contract; the only normal path from browser to backend.
   description: |
-    Slice 1 of WP-UI-001 (DN-UI-BFFCON). Contract surface only: no runtime,
-    no authentication scheme and no routes of the web application are defined.
+    WP-UI-001 (DN-UI-BFFCON). Contract surface only: no runtime and no routes
+    of the web application are defined.
     The BFF composes backend facts for display and owns no domain authority
     (BFF-INV-1..7). The browser reaches only this API: never the event broker,
     a database or a private service API. Actor identity comes from the
@@ -13,6 +13,23 @@ info:
 x-bff-contract:
   contract_id: bff.operations-bff.v1
   semantic_owner: Asrin Dundar
+x-bff-actor-context:
+  source: SESSION
+  browser_supplied_fields: []
+  composed_from:
+    - actor_id and roles from the server-validated session
+    - environment_id from the session
+    - world_id from the request world binding, forwarded unchanged
+  propagated_to:
+    - manufacturing-core
+    - automation-service
+  semantics: >-
+    The BFF builds the ActorContext actor from the authenticated session only.
+    Nothing in a request body, query or header is trusted as actor identity,
+    role or permission. Roles are identity-provider claims, an input to the
+    backend policy engine and never a decision. Backends re-authorize every
+    command at acceptance time; the BFF forwards the actor and does not
+    substitute, elevate or launder it.
 x-bff-streaming:
   boundary: >-
     Streaming is not an OpenAPI path. After the initial Query snapshot the
@@ -31,6 +48,8 @@ paths:
         Read only. Returns composed backend facts with revision, as_of,
         generated_at and freshness. Freshness is the least-fresh source.
       x-bff-class: QUERY
+      security:
+        - browserSession: []
       parameters:
         - name: world_id
           in: query
@@ -81,9 +100,9 @@ paths:
         "400":
           $ref: "#/components/responses/Error"
         "401":
-          $ref: "#/components/responses/Error"
+          $ref: "#/components/responses/Unauthorized"
         "403":
-          $ref: "#/components/responses/Error"
+          $ref: "#/components/responses/Forbidden"
         "503":
           $ref: "#/components/responses/Error"
   /v1/commands:
@@ -96,6 +115,9 @@ paths:
         verbatim. Acceptance is never completion; canonical effects arrive
         later through the stream.
       x-bff-class: COMMAND
+      security:
+        - browserSession: []
+          csrfToken: []
       requestBody:
         required: true
         content:
@@ -112,13 +134,146 @@ paths:
         "400":
           $ref: "#/components/responses/Error"
         "401":
-          $ref: "#/components/responses/Error"
+          $ref: "#/components/responses/Unauthorized"
         "403":
-          $ref: "#/components/responses/Error"
+          $ref: "#/components/responses/Forbidden"
         "503":
           $ref: "#/components/responses/Error"
+  /v1/session:
+    get:
+      operationId: getSession
+      summary: Current session and session-derived actor (Session)
+      description: >-
+        Returns the authenticated session. An anonymous or expired session
+        gets 401 UNAUTHORIZED and no data.
+      x-bff-class: SESSION
+      security:
+        - browserSession: []
+      responses:
+        "200":
+          description: The authenticated session.
+          content:
+            application/json:
+              schema:
+                $ref: "session.schema.json"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "503":
+          $ref: "#/components/responses/Error"
+  /v1/session/login:
+    get:
+      operationId: startLogin
+      summary: Begin the OIDC authorization-code flow (Session)
+      description: >-
+        Anonymous by design. Redirects the browser to the identity provider
+        with server-generated state and PKCE. No application password store
+        and no custom authentication protocol.
+      x-bff-class: SESSION
+      security: []
+      responses:
+        "302":
+          description: Redirect to the identity provider.
+          headers:
+            Location:
+              required: true
+              schema:
+                type: string
+        "503":
+          $ref: "#/components/responses/Error"
+  /v1/session/callback:
+    get:
+      operationId: completeLogin
+      summary: Complete the OIDC flow and establish the session (Session)
+      description: >-
+        Anonymous by design. The BFF validates state, exchanges the code
+        server side, rotates the session and sets the session cookie. Tokens
+        are never returned to the browser.
+      x-bff-class: SESSION
+      security: []
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+            pattern: "\\S"
+        - name: state
+          in: query
+          required: true
+          schema:
+            type: string
+            pattern: "\\S"
+      responses:
+        "302":
+          description: Redirect into the application with the session cookie set.
+          headers:
+            Location:
+              required: true
+              schema:
+                type: string
+            Set-Cookie:
+              required: true
+              schema:
+                type: string
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "503":
+          $ref: "#/components/responses/Error"
+  /v1/session/logout:
+    post:
+      operationId: logout
+      summary: End the session server side (Session)
+      description: >-
+        Invalidates the server-side session; clearing the browser state alone
+        is not logout.
+      x-bff-class: SESSION
+      security:
+        - browserSession: []
+          csrfToken: []
+      responses:
+        "204":
+          description: Session invalidated.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
 components:
+  securitySchemes:
+    browserSession:
+      type: apiKey
+      in: cookie
+      name: cap_session
+      description: >-
+        Opaque BFF session cookie. No bearer token, access token or refresh
+        token is ever exposed to the browser.
+      x-cookie-attributes:
+        http_only: true
+        secure: true
+        same_site_one_of: [Strict, Lax]
+        bounded_expiry: true
+        rotated_on_login: true
+    csrfToken:
+      type: apiKey
+      in: header
+      name: X-CSRF-Token
+      description: >-
+        Required with the session cookie on every state-changing request.
+        Obtained from getSession.
   responses:
+    Unauthorized:
+      description: Anonymous or expired session (UNAUTHORIZED).
+      content:
+        application/json:
+          schema:
+            $ref: "common.schema.json#/$defs/UnauthorizedError"
+    Forbidden:
+      description: Authenticated but refused, including a bad CSRF token (FORBIDDEN).
+      content:
+        application/json:
+          schema:
+            $ref: "common.schema.json#/$defs/ForbiddenError"
     Error:
       description: Common ErrorEnvelope.
       content:

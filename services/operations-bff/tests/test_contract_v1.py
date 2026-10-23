@@ -22,6 +22,7 @@ SCHEMA_FILES = (
     "overview-query.schema.json",
     "command.schema.json",
     "stream-message.schema.json",
+    "session.schema.json",
 )
 FRESHNESS_ORDER = {"FRESH": 0, "DEGRADED": 1, "STALE": 2}
 FORBIDDEN_NAME_PARTS = {
@@ -148,13 +149,29 @@ def test_openapi_structure() -> None:
     assert doc["openapi"] == "3.1.0"
     assert doc["info"]["version"] == "1.0.0"
     assert "servers" not in doc
-    assert set(doc["paths"]) == {"/v1/overview", "/v1/commands"}
+    assert set(doc["paths"]) == {
+        "/v1/overview",
+        "/v1/commands",
+        "/v1/session",
+        "/v1/session/login",
+        "/v1/session/callback",
+        "/v1/session/logout",
+    }
     ops = operations()
-    assert set(ops) == {"getManufacturingOverview", "submitCommand"}
+    assert set(ops) == {
+        "getManufacturingOverview",
+        "submitCommand",
+        "getSession",
+        "startLogin",
+        "completeLogin",
+        "logout",
+    }
     for operation_id, (_, method, op) in ops.items():
         kind = op["x-bff-class"]
-        assert {"QUERY": "get", "COMMAND": "post"}[kind] == method, operation_id
-        assert any(code.startswith("2") for code in op["responses"]), operation_id
+        if kind in ("QUERY", "COMMAND"):
+            assert {"QUERY": "get", "COMMAND": "post"}[kind] == method, operation_id
+        assert kind in ("QUERY", "COMMAND", "SESSION"), operation_id
+        assert any(code[0] in "23" for code in op["responses"]), operation_id
     assert "StreamMessage" in doc["components"]["schemas"]
 
 
@@ -180,6 +197,7 @@ def test_forbidden_browser_surfaces_are_absent() -> None:
 def test_command_boundary_has_no_actor_or_completion() -> None:
     request = load_json("command.schema.json")["$defs"]["CommandRequest"]
     assert not any(name_parts(n) & ACTOR_NAME_PARTS for n in request["properties"])
+    assert request["additionalProperties"] is False
     outcomes = load_json("command.schema.json")["$defs"]["CommandReceipt"][
         "properties"
     ]["outcome"]["enum"]
@@ -192,6 +210,7 @@ def test_all_object_shapes_are_closed() -> None:
             if (
                 isinstance(node, dict)
                 and "properties" in node
+                and "$ref" not in node  # refinement of an already closed shape
                 and path[-1:] != ("properties",)
             ):
                 assert node.get("additionalProperties") is False, (name, path)
@@ -277,3 +296,159 @@ def test_stream_messages_are_revision_aware_and_resync_via_query() -> None:
     del delta["from_revision"]
     with pytest.raises(ValidationError):
         validator.validate(delta)
+
+
+PROTECTED = {
+    "getManufacturingOverview": False,
+    "submitCommand": True,
+    "getSession": False,
+    "logout": True,
+}
+ANONYMOUS = {"startLogin", "completeLogin"}
+TOKEN_NAME_PARTS = {"access", "refresh", "bearer", "jwt", "password", "secret"}
+
+
+def test_protected_operations_declare_session_and_csrf() -> None:
+    doc = openapi()
+    schemes = doc["components"]["securitySchemes"]
+    assert set(schemes) == {"browserSession", "csrfToken"}
+    assert schemes["browserSession"]["type"] == "apiKey"
+    assert schemes["browserSession"]["in"] == "cookie"
+    assert schemes["csrfToken"]["in"] == "header"
+    cookie = schemes["browserSession"]["x-cookie-attributes"]
+    assert cookie["http_only"] is True
+    assert cookie["secure"] is True
+    assert cookie["bounded_expiry"] is True
+    assert set(cookie["same_site_one_of"]) <= {"Strict", "Lax"}
+    ops = operations()
+    for operation_id, needs_csrf in PROTECTED.items():
+        security = ops[operation_id][2]["security"]
+        expected = {"browserSession": []} | ({"csrfToken": []} if needs_csrf else {})
+        assert security == [expected], operation_id
+    assert {o for o, (_, _, op) in ops.items() if op["security"] == []} == ANONYMOUS
+    # Every state-changing request is CSRF protected.
+    for operation_id, (_, method, op) in ops.items():
+        if method == "post":
+            assert {"csrfToken": []}.items() <= op["security"][0].items(), operation_id
+    # No bearer or OAuth scheme and no token field is exposed to the browser.
+    assert all(s["type"] == "apiKey" for s in schemes.values())
+    for name in property_names():
+        assert not name_parts(name) & TOKEN_NAME_PARTS, name
+
+
+def test_anonymous_behaviour_is_401_unauthorized_without_data() -> None:
+    ops = operations()
+    reg = registry()
+    envelope = {
+        "error_code": "SESSION_REQUIRED",
+        "category": "UNAUTHORIZED",
+        "message": "Authentication required",
+        "retryable": False,
+        "correlation_id": "C-SYNTHETIC-0002",
+    }
+    unauthorized = Draft202012Validator(
+        {"$ref": BASE + "common.schema.json#/$defs/UnauthorizedError"}, registry=reg
+    )
+    unauthorized.validate(envelope)
+    for bad in ("FORBIDDEN", "NOT_FOUND"):
+        with pytest.raises(ValidationError):
+            unauthorized.validate({**envelope, "category": bad})
+    for operation_id in PROTECTED:
+        responses = ops[operation_id][2]["responses"]
+        assert responses["401"] == {"$ref": "#/components/responses/Unauthorized"}
+        assert "302" not in responses  # never a redirect for a missing session
+    components = openapi()["components"]["responses"]
+    assert components["Unauthorized"]["content"]["application/json"]["schema"] == {
+        "$ref": "common.schema.json#/$defs/UnauthorizedError"
+    }
+    assert components["Forbidden"]["content"]["application/json"]["schema"] == {
+        "$ref": "common.schema.json#/$defs/ForbiddenError"
+    }
+    for operation_id in ("submitCommand", "logout"):
+        assert ops[operation_id][2]["responses"]["403"] == {
+            "$ref": "#/components/responses/Forbidden"
+        }
+    # OIDC entry points are anonymous by design and return only redirects.
+    assert set(ops["startLogin"][2]["responses"]) >= {"302"}
+    assert "200" not in ops["completeLogin"][2]["responses"]
+
+
+def command(parameters: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "contract_version": "bff.command.v1",
+        "command_id": "CMD-1",
+        "command_type": "isolate-machine",
+        "world": {"world_id": "W-SYNTHETIC-TEST"},
+        "target": {"entity_type": "Machine", "entity_id": "E-CNC"},
+        "parameters": parameters,
+    }
+
+
+def test_actor_cannot_be_injected_through_command_payloads() -> None:
+    validator = validator_for("command.schema.json#/$defs/CommandRequest")
+    validator.validate(command({"reason": "vibration", "limits": [{"max": 3}]}))
+    injected: list[dict[str, Any]] = [
+        {"actor_id": "U-ADMIN"},
+        {"Actor": {"id": "U-ADMIN"}},
+        {"nested": {"user": "U-ADMIN"}},
+        {"items": [{"roles": ["admin"]}]},
+        {"PERMISSIONS": ["all"]},
+        {"session_id": "S-1"},
+        {"identity": "x"},
+    ]
+    for parameters in injected:
+        with pytest.raises(ValidationError):
+            validator.validate(command(parameters))
+    for top_level in ("actor", "actor_id", "user_id", "roles", "acted_as"):
+        with pytest.raises(ValidationError):
+            validator.validate({**command({}), top_level: "U-ADMIN"})
+    for param in openapi()["paths"]["/v1/overview"]["get"]["parameters"]:
+        assert not name_parts(param["name"]) & ACTOR_NAME_PARTS
+
+
+def test_actor_context_is_session_derived_only() -> None:
+    context = openapi()["x-bff-actor-context"]
+    assert context["source"] == "SESSION"
+    assert context["browser_supplied_fields"] == []
+    assert set(context["propagated_to"]) == {"manufacturing-core", "automation-service"}
+
+
+def test_session_fixture_and_exposed_actor_fields_are_required() -> None:
+    fixture = load_json("session.normal.json")
+    validator = validator_for("session.schema.json")
+    validator.validate(fixture)
+    for field in ("actor", "environment_id", "expires_at", "csrf_token"):
+        broken = {k: v for k, v in fixture.items() if k != field}
+        with pytest.raises(ValidationError):
+            validator.validate(broken)
+    for field in ("actor_id", "display_name", "roles", "derived_from"):
+        broken = copy.deepcopy(fixture)
+        del broken["actor"][field]
+        with pytest.raises(ValidationError):
+            validator.validate(broken)
+    for mutate in (
+        lambda d: d["actor"].update(derived_from="CLIENT"),
+        lambda d: d["actor"].update(roles=["a", "a"]),
+        lambda d: d.update(access_token="x"),
+        lambda d: d["actor"].update(permissions=["all"]),
+    ):
+        broken = copy.deepcopy(fixture)
+        mutate(broken)
+        with pytest.raises(ValidationError):
+            validator.validate(broken)
+
+
+def test_command_receipt_echoes_session_actor() -> None:
+    receipt = {
+        "contract_version": "bff.command-receipt.v1",
+        "command_id": "CMD-1",
+        "outcome": "ACCEPTED",
+        "acted_as": {"actor_id": "U-SYNTHETIC-01", "derived_from": "SESSION"},
+        "correlation_id": "C-SYNTHETIC-0003",
+        "received_at": "2026-10-23T09:00:07Z",
+    }
+    validator = validator_for("command.schema.json#/$defs/CommandReceipt")
+    validator.validate(receipt)
+    del receipt["acted_as"]
+    with pytest.raises(ValidationError):
+        validator.validate(receipt)

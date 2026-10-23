@@ -15,7 +15,11 @@
       "description": "UTC RFC 3339 instant with a literal Z suffix."
     },
     "Freshness": {
-      "enum": ["FRESH", "DEGRADED", "STALE"],
+      "enum": [
+        "FRESH",
+        "DEGRADED",
+        "STALE"
+      ],
       "description": "Staleness Contract classification, ordered FRESH (best), DEGRADED, STALE (worst)."
     },
     "EpistemicClass": {
@@ -33,32 +37,60 @@
     "WorldContext": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["world_id"],
+      "required": [
+        "world_id"
+      ],
       "properties": {
-        "world_id": { "$ref": "#/$defs/OpaqueId" },
-        "simulation_run_id": { "$ref": "#/$defs/OpaqueId" },
-        "branch_id": { "$ref": "#/$defs/OpaqueId" }
+        "world_id": {
+          "$ref": "#/$defs/OpaqueId"
+        },
+        "simulation_run_id": {
+          "$ref": "#/$defs/OpaqueId"
+        },
+        "branch_id": {
+          "$ref": "#/$defs/OpaqueId"
+        }
       },
       "description": "Explicit world binding. There is no implicit current world; the BFF forwards it unchanged."
     },
     "EntityRef": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["entity_type", "entity_id"],
+      "required": [
+        "entity_type",
+        "entity_id"
+      ],
       "properties": {
-        "entity_type": { "$ref": "#/$defs/OpaqueId" },
-        "entity_id": { "$ref": "#/$defs/OpaqueId" }
+        "entity_type": {
+          "$ref": "#/$defs/OpaqueId"
+        },
+        "entity_id": {
+          "$ref": "#/$defs/OpaqueId"
+        }
       }
     },
     "SourceStatus": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["source", "revision", "as_of", "freshness"],
+      "required": [
+        "source",
+        "revision",
+        "as_of",
+        "freshness"
+      ],
       "properties": {
-        "source": { "$ref": "#/$defs/OpaqueId" },
-        "revision": { "$ref": "#/$defs/OpaqueId" },
-        "as_of": { "$ref": "#/$defs/Timestamp" },
-        "freshness": { "$ref": "#/$defs/Freshness" }
+        "source": {
+          "$ref": "#/$defs/OpaqueId"
+        },
+        "revision": {
+          "$ref": "#/$defs/OpaqueId"
+        },
+        "as_of": {
+          "$ref": "#/$defs/Timestamp"
+        },
+        "freshness": {
+          "$ref": "#/$defs/Freshness"
+        }
       },
       "description": "Revision, as_of and freshness exactly as reported by one backend Query API, Snapshot or read model."
     },
@@ -83,18 +115,26 @@
           "$ref": "#/$defs/Timestamp",
           "description": "Instant the view describes; the oldest source as_of."
         },
-        "generated_at": { "$ref": "#/$defs/Timestamp" },
+        "generated_at": {
+          "$ref": "#/$defs/Timestamp"
+        },
         "freshness": {
           "$ref": "#/$defs/Freshness",
           "description": "Least-fresh freshness among sources; never better than any source."
         },
-        "world": { "$ref": "#/$defs/WorldContext" },
+        "world": {
+          "$ref": "#/$defs/WorldContext"
+        },
         "sources": {
           "type": "array",
           "minItems": 1,
-          "items": { "$ref": "#/$defs/SourceStatus" }
+          "items": {
+            "$ref": "#/$defs/SourceStatus"
+          }
         },
-        "correlation_id": { "$ref": "#/$defs/OpaqueId" }
+        "correlation_id": {
+          "$ref": "#/$defs/OpaqueId"
+        }
       }
     },
     "ErrorEnvelope": {
@@ -108,7 +148,9 @@
         "correlation_id"
       ],
       "properties": {
-        "error_code": { "$ref": "#/$defs/OpaqueId" },
+        "error_code": {
+          "$ref": "#/$defs/OpaqueId"
+        },
         "category": {
           "enum": [
             "VALIDATION_ERROR",
@@ -124,11 +166,88 @@
             "INTERNAL_ERROR"
           ]
         },
-        "message": { "type": "string", "minLength": 1 },
-        "retryable": { "type": "boolean" },
-        "details": { "type": "object" },
-        "correlation_id": { "$ref": "#/$defs/OpaqueId" }
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "details": {
+          "type": "object"
+        },
+        "correlation_id": {
+          "$ref": "#/$defs/OpaqueId"
+        }
       }
+    },
+    "ActorRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actor_id",
+        "derived_from"
+      ],
+      "properties": {
+        "actor_id": {
+          "$ref": "#/$defs/OpaqueId",
+          "description": "Identity subject taken from the server-validated session."
+        },
+        "derived_from": {
+          "const": "SESSION",
+          "description": "Always SESSION: actor identity is never supplied by the browser."
+        }
+      },
+      "description": "Who the BFF acted as. Presentation echo of the session-derived ActorContext actor."
+    },
+    "SessionActor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actor_id",
+        "display_name",
+        "roles",
+        "derived_from"
+      ],
+      "properties": {
+        "actor_id": {
+          "$ref": "#/$defs/OpaqueId"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OpaqueId"
+          },
+          "uniqueItems": true,
+          "description": "Identity-provider role claims for display. Claims are input to backend policy, never an authorization decision, and hiding UI by role is not a security control."
+        },
+        "derived_from": {
+          "const": "SESSION"
+        }
+      },
+      "description": "Session-derived actor shown to the user. Read only; no field is accepted from the browser."
+    },
+    "UnauthorizedError": {
+      "$ref": "#/$defs/ErrorEnvelope",
+      "properties": {
+        "category": {
+          "const": "UNAUTHORIZED"
+        }
+      },
+      "description": "Anonymous or expired session on a protected operation: 401, never a redirect and never partial data."
+    },
+    "ForbiddenError": {
+      "$ref": "#/$defs/ErrorEnvelope",
+      "properties": {
+        "category": {
+          "const": "FORBIDDEN"
+        }
+      },
+      "description": "Authenticated but refused, including a missing or invalid CSRF token: 403."
     }
   }
 }

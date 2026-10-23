@@ -1,0 +1,15 @@
+{
+  "contract_version": "bff.session.v1",
+  "actor": {
+    "actor_id": "U-SYNTHETIC-01",
+    "display_name": "Synthetic Operator",
+    "roles": [
+      "ops-controller"
+    ],
+    "derived_from": "SESSION"
+  },
+  "environment_id": "ENV-SYNTHETIC-TEST",
+  "authenticated_at": "2026-10-23T08:00:00Z",
+  "expires_at": "2026-10-23T16:00:00Z",
+  "csrf_token": "csrf-synthetic-0001"
+}

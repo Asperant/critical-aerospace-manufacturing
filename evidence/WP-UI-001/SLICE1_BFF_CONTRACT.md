@@ -34,3 +34,18 @@ Pyright 0 errors, `check_contracts.py` PASS, `ci/tests` pass. `static_ratchet.py
 check` still reports the same 16 pre-existing `tools/mfgctl` Pyright regressions
 and none elsewhere; they were not modified. The GitHub Actions run itself is not
 yet observed.
+
+## Slice 2: session contract and session-derived ActorContext
+
+Contract-only addition to the same v1 draft (`bff.session.v1`): `browserSession`
+cookie and `csrfToken` header schemes, OIDC login/callback/session/logout
+operations, `UnauthorizedError` / `ForbiddenError` responses, `SessionActor` and
+`ActorRef` shapes, `x-bff-actor-context`, a recursive key restriction on command
+`parameters`, `acted_as` on the command receipt, and `session.normal.json`.
+No OIDC provider integration, token exchange, runtime, shell or routes exist.
+
+Local verification: 21 contract tests pass (6 new groups for security schemes,
+anonymous 401, payload injection, session fixture, receipt actor), Ruff lint and
+format, Pyright 0 errors, `check_contracts.py` PASS (9 schemas). The CI run for
+this commit is not yet observed. `static_ratchet` status is unchanged and was
+not rerun for this slice.
