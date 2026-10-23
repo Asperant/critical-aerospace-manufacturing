@@ -254,6 +254,34 @@ class AutoNextTests(unittest.TestCase):
             )
             execute.assert_not_called()
 
+    def test_repo_change_at_final_prewrite_has_zero_plane_patches(self):
+        wp, policy, plane, gh, envelope = fixture(source="BACKLOG", target="READY")
+        policy.update(execution_project={}, execution_preferences={})
+        gh.__dict__["cache"] = {}
+        gh.main_sha = Mock(side_effect=["a" * 40, "a" * 40, "b" * 40])
+        fake = SimpleNamespace(
+            compute_next_eligible=Mock(
+                side_effect=[
+                    {"status": "NO_TASK", "reasons": ["NO_VERIFIED_ELIGIBLE_WORK"]},
+                    {"status": "PROPOSED_NEXT", "wp_id": wp},
+                ]
+            )
+        )
+        with (
+            patch.object(auto, "resolver", fake),
+            patch.object(auto, "live_view", return_value={}),
+            patch.object(auto, "discover", return_value=[]),
+            patch.object(auto, "candidate_evidence", return_value=({}, {wp: envelope})),
+            patch.object(t, "verify_policy_sources"),
+            patch.object(t, "evaluate", return_value=None),
+            self.assertRaises(t.Denied) as error,
+        ):
+            auto.advance_owner(
+                t, "asrin", policy, lambda: plane, lambda _: gh, lambda *_: None, SECRET
+            )
+        self.assertEqual(error.exception.code, "CONCURRENT_CHANGE_RECOMPUTE_REQUIRED")
+        self.assertEqual(plane.patches, [])
+
     def test_no_task_does_not_mutate(self):
         policy = {
             "execution_project": {},
