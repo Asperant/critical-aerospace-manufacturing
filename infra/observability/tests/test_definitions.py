@@ -110,3 +110,32 @@ def test_stack_script_is_valid_bash_and_prints_secrets_only_in_env() -> None:
         if "O2_ROOT_PASSWORD}" in branches[i + 1] and "echo" in branches[i + 1]
     }
     assert printing == {"env"}
+
+
+DASHBOARDS = sorted((HERE / "dashboards").glob("*.json"))
+
+
+@pytest.mark.parametrize("path", DASHBOARDS, ids=[p.stem for p in DASHBOARDS])
+def test_dashboards_are_valid_openobserve_v8(path: Path) -> None:
+    import json
+
+    board = json.loads(path.read_text("utf-8"))
+    assert board["version"] == 8 and board["title"] and board["description"]
+    panels = [p for tab in board["tabs"] for p in tab["panels"]]
+    assert panels and len({p["id"] for p in panels}) == len(panels)
+    for panel in panels:
+        layout = panel["layout"]
+        assert layout["x"] >= 0 and layout["x"] + layout["w"] <= 192, panel["id"]
+        (query,) = panel["queries"]
+        fields = query["fields"]
+        assert fields["stream_type"] in {"logs", "metrics", "traces"}
+        assert isinstance(fields["filter"], dict)  # OpenObserve requires an object
+        assert fields["x"] and fields["y"]
+        assert query["customQuery"] is True and query["query"].startswith("SELECT ")
+        assert "promql_legend" in query["config"] and "show_legends" in panel["config"]
+
+
+def test_dashboard_importer_is_valid_python() -> None:
+    import py_compile
+
+    py_compile.compile(str(HERE / "dashboards.py"), doraise=True)

@@ -83,6 +83,21 @@ class OpenObserve:
             return []  # stream not created yet, or not searchable yet
         return list(body.get("hits", []))
 
+    def query(self, stream_type: str, sql: str) -> tuple[int, Any]:
+        now = int(time.time() * 1_000_000)
+        payload = {
+            "query": {
+                "sql": sql,
+                "start_time": now - 60 * 60 * 1_000_000,
+                "end_time": now + 60 * 1_000_000,
+                "from": 0,
+                "size": 10,
+            }
+        }
+        return request(
+            f"{self.url}/api/default/_search?type={stream_type}", payload, self.auth
+        )
+
     def wait_for(self, stream_type: str, sql: str) -> dict[str, Any]:
         deadline = time.monotonic() + DEADLINE_S
         while time.monotonic() < deadline:
@@ -133,8 +148,16 @@ def run() -> dict[str, Any]:
         "correlation_id": run_id,
         "attributes": {"smoke_run": run_id},
     }
+    error_record = record | {
+        "severity": "ERROR",
+        "event_name": "observability.smoke_failed",
+        "message": "telemetry pipeline smoke error record",
+        "error_code": "OBS_SMOKE_INJECTED",
+        "correlation_id": run_id + "-error",
+    }
     assert check_resource(resource) == []
     assert check_log_record(record) == []
+    assert check_log_record(error_record) == []
     start = unix_nanos(record["timestamp"])
     end = str(int(start) + 5_000_000)
     span = {
@@ -194,7 +217,9 @@ def run() -> dict[str, Any]:
     }
     sent = {
         "logs": request(
-            f"{collector}/v1/logs", logs_request(resource, [record], "obs-smoke"), {}
+            f"{collector}/v1/logs",
+            logs_request(resource, [record, error_record], "obs-smoke"),
+            {},
         ),
         "traces": request(f"{collector}/v1/traces", span, {}),
         "metrics": request(f"{collector}/v1/metrics", counter, {}),
@@ -280,3 +305,39 @@ def test_service_helper_reaches_openobserve() -> None:
     assert hit.get("service_name") == "obs-helper-smoke"
     assert hit.get("trace_id") == trace_id
     o2.wait_for("traces", f"SELECT * FROM \"default\" WHERE trace_id = '{trace_id}'")
+
+
+def test_dashboards_import_idempotently_and_their_queries_run(
+    run: dict[str, Any],
+) -> None:
+    """Every versioned dashboard is accepted and every panel query executes.
+
+    The smoke records (one with an error_code) create the columns the panels
+    group by, so a wrong column name fails here instead of in the UI.
+    """
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    here = Path(__file__).resolve().parents[1]
+    command = [sys.executable, str(here / "dashboards.py"), "import"]
+    first = subprocess.run(command, capture_output=True, text=True, check=False)
+    assert first.returncode == 0, first.stderr
+    second = subprocess.run(command, capture_output=True, text=True, check=False)
+    assert second.returncode == 0 and "CREATED" not in second.stdout, second.stdout
+    o2 = OpenObserve()
+    for path in sorted((here / "dashboards").glob("*.json")):
+        board = json.loads(path.read_text("utf-8"))
+        for tab in board["tabs"]:
+            for panel in tab["panels"]:
+                (query,) = panel["queries"]
+                stream_type, sql = query["fields"]["stream_type"], query["query"]
+                deadline = time.monotonic() + DEADLINE_S
+                status, body = o2.query(stream_type, sql)
+                while (status != 200 or not body.get("hits")) and (
+                    time.monotonic() < deadline
+                ):
+                    time.sleep(2)  # columns appear once the smoke data is ingested
+                    status, body = o2.query(stream_type, sql)
+                assert status == 200, f"{panel['id']}: HTTP {status} {body}"
+                assert body["hits"], f"{panel['id']}: no rows for {run['run_id']}"

@@ -3,13 +3,14 @@
 # The same script runs in GitHub Actions (t1-integration) and on a developer or
 # shared host with Docker, so both use identical images and settings.
 #
-# Usage: infra/observability/stack.sh up|down|reset|env|status|logs
+# Usage: infra/observability/stack.sh up|down|reset|env|status|logs|dashboards
 #   up      create credentials if needed, start both services, wait for health
 #   down    stop the services, keep stored data and credentials
 #   reset   stop, delete stored data and credentials (fresh start next time)
 #   env     print O2_URL, OTLP endpoints and credentials as KEY=VALUE lines
 #   status  docker compose ps
 #   logs    recent logs of both services
+#   dashboards  import the versioned dashboards (idempotent; never overwrites)
 #
 # Credentials are generated per machine and kept outside the repository in
 # ${CAP_OBS_STATE_DIR:-$XDG_STATE_HOME/cap-observability} with mode 0600; they are
@@ -108,8 +109,12 @@ case "${1:-}" in
     load_credentials
     "${COMPOSE[@]}" logs --tail 200
     ;;
+  dashboards)
+    load_credentials
+    O2_URL="http://127.0.0.1:${O2_HTTP_PORT}" python3 "${HERE}/dashboards.py" import
+    ;;
   *)
-    echo "usage: $0 up|down|reset|env|status|logs" >&2
+    echo "usage: $0 up|down|reset|env|status|logs|dashboards" >&2
     exit 2
     ;;
 esac

@@ -10,7 +10,9 @@ Every team-owned service sends its logs, metrics and traces as OTLP to the
 |---|---|
 | `compose.yaml` | the two services: pinned images, localhost-only ports, memory limits, credentials only from the environment |
 | `otel-collector.yaml` | OTLP receivers → memory limiter → batch → OpenObserve exporter, for logs, metrics and traces |
-| `stack.sh` | `up` / `down` / `reset` / `env` / `status` / `logs`; creates throw-away credentials outside the repository |
+| `stack.sh` | `up` / `down` / `reset` / `env` / `status` / `logs` / `dashboards`; creates throw-away credentials outside the repository |
+| `dashboards/*.json`, `dashboards.py` | versioned OpenObserve dashboards and their idempotent importer |
+| `coverage.json` | which mandatory deployables already use the logging and health helpers (checked in CI by `check-coverage`) |
 | `tests/test_definitions.py` | static checks of the two files (CI t1-unit, no Docker) |
 | `tests/test_pipeline_integration.py` | REAL smoke: a log, a span and a counter must become queryable (CI t1-integration) |
 
@@ -20,8 +22,20 @@ Every team-owned service sends its logs, metrics and traces as OTLP to the
 infra/observability/stack.sh up        # starts both, waits for /healthz and the Collector health check
 eval "$(infra/observability/stack.sh env | sed 's/^/export /')"
 uv run --project ci --locked python -m pytest infra/observability/tests -m integration -q
+infra/observability/stack.sh dashboards  # imports dashboards/*.json once; existing titles are left alone
 infra/observability/stack.sh down      # keeps data and credentials; `reset` removes both
 ```
+
+## Dashboards
+
+`dashboards/telemetry-pipeline.json` ("CAP Telemetry Pipeline") shows log
+records per service, environment and severity, errors per `error_code`, and
+spans per service. Dashboards are code: change the JSON in a pull request, not
+only in the UI. The importer creates a dashboard whose title does not exist yet
+and never overwrites one, so UI experiments are not lost; to publish a changed
+dashboard, delete it in the UI and run `stack.sh dashboards` again. The
+integration test imports every dashboard twice and runs every panel query
+against the smoke data, so a wrong column name fails in CI.
 
 | Endpoint (localhost) | Port | Use |
 |---|---|---|
@@ -51,5 +65,6 @@ or set `O2_ROOT_PASSWORD` yourself before the first `up`.
 ## Not in this slice
 
 Composition into the capability profiles and the shared Integration host
-(WP-PLAT-001, WP-PLAT-003; DEP-011), service SDK wiring and dashboards (later
-WP-OBS-001 slices), retention and alerting (later OBS work packages).
+(WP-PLAT-001, WP-PLAT-003; DEP-011); adoption of the helpers by each mandatory
+deployable as it is created (tracked in `coverage.json`); retention, alerting
+and trace propagation across HTTP/NATS/Temporal (WP-OBS-002 and later).
