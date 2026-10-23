@@ -11,8 +11,10 @@ no HTTP endpoint or telemetry platform is introduced.
 
 The first service-owned migration lives in
 `src/manufacturing_core/migrations/0001_domain.sql`, included as package data.
-The local runner uses the selected Psycopg 3 driver; it applies only this
-migration, atomically, with an advisory lock and checksum/runtime-role ledger.
+The local runner uses the selected Psycopg 3 driver; it applies the ordered
+`0001_domain` and `0002_outbox` migrations atomically, with an advisory lock and
+checksum/runtime-role ledger. An existing valid `0001_domain` ledger upgrades
+without rewriting that migration; unknown, changed or non-prefix ledgers fail.
 It does not select a shared migration framework, provision the platform,
 implement CD wiring, or certify WP-CORE-007 / DN-RT-PG readiness.
 
@@ -37,12 +39,40 @@ or shared credentials are embedded in the application or migration.
   ownership, schema CREATE or migration-role membership.
 
 The migration grants runtime only schema USAGE and SELECT/INSERT on the six
-domain tables. It grants no ledger, DDL, UPDATE, DELETE, or cross-schema access.
+domain tables and outbox. It grants no ledger, DDL, UPDATE, DELETE, or cross-schema access.
 The initial repository inserts and reads domain entities; it does not execute
 manufacturing transitions. Caller transactions can group inserts; a single
 route plus its visits is atomic. Query/API contracts, lifecycle mutation,
 deployment environment/secret binding, broader role provisioning and CD remain
 separate later work. This interface does not claim deployment readiness.
+
+## Outbox primitives — WP-CORE-005
+
+`OutboxRecord` holds an already-formed Slice 1 `DomainEventV1`, an explicit opaque
+`outbox_id`, and caller-supplied timezone-aware `created_at`. No clock, ID or
+revision is minted by this API. `OutboxRepository.insert(record)` requires an
+active caller transaction and performs only INSERT: no BEGIN, savepoint, commit,
+rollback, domain mutation, authorization or command acceptance. SQL errors remain
+the caller's responsibility. `get(outbox_id)` returns the validated typed record.
+
+`core.outbox` stores the complete event as JSONB; generated event/type/version,
+aggregate/revision and payload columns derive from that single persisted event.
+Event ID and outbox ID are independently unique; even an identical second insert
+fails with PostgreSQL UniqueViolation. This is storage uniqueness, not command
+idempotency. Opaque revisions are preserved, never incremented or compared.
+The model enforces the event's payload/aggregate identity binding; database checks
+also protect supported type/namespace, version, producer and aggregate binding.
+The complete event model is the validation boundary; SQL checks are not a full
+replacement for its schema. Polymorphic aggregate IDs are not new domain foreign
+keys: the caller must supply the already-formed authoritative fact. This API
+neither creates nor certifies the referenced manufacturing entity or transition.
+
+Initial publication metadata is PENDING, attempt_count=0 and last_error=NULL.
+There is no publisher, retry behavior or UPDATE grant. Future publication work
+must explicitly extend these pending-only constraints. Caller rollback removes
+the inserted row; only caller commit makes it visible to other connections.
+This primitive does not prove atomic domain mutation/outbox, DEP-022 readiness,
+crash consistency or delivery. ReleaseLot still awaits the exact lifecycle binding.
 
 ## Focused real persistence verification
 

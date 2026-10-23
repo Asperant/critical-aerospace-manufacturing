@@ -1,4 +1,4 @@
-"""Single initial SQL migration; does not choose shared platform/CD tooling."""
+"""Ordered Core SQL migrations; does not choose shared platform/CD tooling."""
 
 import hashlib
 import os
@@ -10,6 +10,7 @@ from psycopg import sql
 from manufacturing_core.database import connect, require_restricted_role
 
 VERSION = "0001_domain"
+VERSIONS = (VERSION, "0002_outbox")
 TABLES = (
     "equipment",
     "manufacturing_route",
@@ -17,6 +18,7 @@ TABLES = (
     "production_order",
     "lot",
     "serialized_component",
+    "outbox",
 )
 
 
@@ -27,10 +29,18 @@ def migrate(dsn: str, runtime_role: str) -> bool:
     needs bootstrap CREATE on this database or ownership of a precreated empty
     core schema. Database-wide bootstrap CREATE should be revoked afterwards.
     """
-    source = (
-        files("manufacturing_core").joinpath("migrations/0001_domain.sql").read_text()
-    )
-    digest = hashlib.sha256(source.encode()).hexdigest()
+    sources = [
+        files("manufacturing_core").joinpath(f"migrations/{version}.sql").read_text()
+        for version in VERSIONS
+    ]
+    expected = [
+        {
+            "version": version,
+            "sha256": hashlib.sha256(source.encode()).hexdigest(),
+            "runtime_role": runtime_role,
+        }
+        for version, source in zip(VERSIONS, sources, strict=True)
+    ]
     with connect(dsn) as conn, conn.transaction():
         conn.execute("SELECT pg_catalog.pg_advisory_xact_lock(731001)")
         require_restricted_role(conn, runtime_role)
@@ -53,20 +63,24 @@ def migrate(dsn: str, runtime_role: str) -> bool:
         ).fetchone()
         if ledger is None:
             raise ValueError("migration catalog unavailable")
+        applied = []
         if ledger["ledger"]:
             applied = conn.execute(
-                "SELECT version, sha256, runtime_role FROM core.schema_migration"
+                "SELECT version, sha256, runtime_role FROM core.schema_migration "
+                "ORDER BY version"
             ).fetchall()
-            if applied != [
-                {"version": VERSION, "sha256": digest, "runtime_role": runtime_role}
-            ]:
-                raise ValueError("migration ledger/version/checksum mismatch")
+        if applied != expected[: len(applied)] or len(applied) > len(expected):
+            raise ValueError("migration ledger/version/checksum mismatch")
+        if applied == expected:
             return False
-        conn.execute(source.encode())
-        conn.execute(
-            "INSERT INTO core.schema_migration VALUES (%s, %s, %s)",
-            (VERSION, digest, runtime_role),
-        )
+        for row, source in zip(
+            expected[len(applied) :], sources[len(applied) :], strict=True
+        ):
+            conn.execute(source.encode())
+            conn.execute(
+                "INSERT INTO core.schema_migration VALUES (%s, %s, %s)",
+                (row["version"], row["sha256"], runtime_role),
+            )
         conn.execute(
             sql.SQL("GRANT USAGE ON SCHEMA core TO {}").format(
                 sql.Identifier(runtime_role)
@@ -91,7 +105,7 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
-    print("Core initial migration verified")
+    print("Core migrations verified")
     return 0
 
 

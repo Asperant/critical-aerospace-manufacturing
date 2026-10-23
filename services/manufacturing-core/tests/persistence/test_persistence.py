@@ -60,6 +60,7 @@ def test_schema_creation_and_replay(database: Database) -> None:
             "production_order",
             "lot",
             "serialized_component",
+            "outbox",
         }
         assert admin.execute(
             "SELECT pg_catalog.pg_get_userbyid(nspowner) FROM pg_catalog.pg_namespace WHERE nspname = 'core'"
@@ -226,13 +227,20 @@ def test_runtime_membership_rejected(database: Database) -> None:
 
 def test_ledger_tampering_rejected(database: Database) -> None:
     with psycopg.connect(database.admin_dsn, autocommit=True) as admin:
-        checksum = admin.execute("SELECT sha256 FROM core.schema_migration").fetchone()
+        checksum = admin.execute(
+            "SELECT sha256 FROM core.schema_migration WHERE version = '0001_domain'"
+        ).fetchone()
         assert checksum is not None
-        admin.execute("UPDATE core.schema_migration SET sha256 = 'tampered'")
+        admin.execute(
+            "UPDATE core.schema_migration SET sha256 = 'tampered' "
+            "WHERE version = '0001_domain'"
+        )
         try:
             with pytest.raises(ValueError, match="checksum"):
                 migrate(database.migration_dsn, database.runtime_role)
         finally:
             admin.execute(
-                "UPDATE core.schema_migration SET sha256 = %s", (checksum[0],)
+                "UPDATE core.schema_migration SET sha256 = %s "
+                "WHERE version = '0001_domain'",
+                (checksum[0],),
             )
