@@ -592,23 +592,8 @@ def owner_health(t, profile, policy, plane, gh_factory):
             first_blocker=None,
         )
         return result
-    result = resolver.preflight_health(
-        policy["execution_project"],
-        live,
-        evidence,
-        profile,
-        policy["execution_preferences"],
-    )
-    for candidate in result["candidates"]:
-        candidate["deficits"] = (
-            evidence.get("candidates", {})
-            .get(candidate["wp_id"], {})
-            .get("deficits", [])
-        )
-        for blocker in candidate["hard_start_blockers"]:
-            producer = policy.get("node_owners", {}).get(blocker["readiness_node"])
-            if producer:
-                blocker["producer_owner"] = producer
+    prep = None
+    prs: list = []
     if policy.get("preparation_schema"):
         spec = importlib.util.spec_from_file_location(
             "cap_preparation_health", "/usr/local/libexec/cap-preparation.py"
@@ -621,10 +606,48 @@ def owner_health(t, profile, policy, plane, gh_factory):
             isinstance(prs, list) and len(prs) < 100,
             "PREPARATION_PR_DISCOVERY_INCOMPLETE",
         )
+
+    def actionable(candidate):
+        """Same effective selection as the preparation controller (engine.classify)."""
+        if prep is None:
+            return candidate["status"] == "PREPARED"
+        wp = candidate["wp_id"]
+        try:
+            plan = prep.derive(policy["contexts"][wp], policy, gh.main_sha())
+            deficits = evidence.get("candidates", {}).get(wp, {}).get("deficits", [])
+            state = prep.classify(dict(candidate, deficits=deficits), plan)
+        except Exception:
+            return False  # never actionable when it cannot be derived
+        return state in {"AUTO_PREPARABLE", "VERIFIED_PREPARED"}
+
+    result = resolver.preflight_health(
+        policy["execution_project"],
+        live,
+        evidence,
+        profile,
+        policy["execution_preferences"],
+        actionable,
+    )
+    for candidate in result["candidates"]:
+        candidate["deficits"] = (
+            evidence.get("candidates", {})
+            .get(candidate["wp_id"], {})
+            .get("deficits", [])
+        )
+        for blocker in candidate["hard_start_blockers"]:
+            producer = policy.get("node_owners", {}).get(blocker["readiness_node"])
+            if producer:
+                blocker["producer_owner"] = producer
+    if prep is not None:
         for candidate in result["candidates"]:
-            plan = prep.derive(
-                policy["contexts"][candidate["wp_id"]], policy, gh.main_sha()
-            )
+            try:
+                plan = prep.derive(
+                    policy["contexts"][candidate["wp_id"]], policy, gh.main_sha()
+                )
+            except Exception:
+                candidate["preparation"] = "UNAVAILABLE"
+                candidate["unknown_criteria"] = []
+                continue
             candidate["preparation"] = prep.classify(candidate, plan)
             if candidate["preparation"] == "AUTO_PREPARABLE" and any(
                 pr["head"]["ref"].startswith(
@@ -636,14 +659,18 @@ def owner_health(t, profile, policy, plane, gh_factory):
             candidate["unknown_criteria"] = [
                 k for k, v in plan["checks"].items() if v["result"] == "UNKNOWN"
             ]
+        head = next(
+            (
+                c
+                for c in result["candidates"]
+                if c["wp_id"] == result["actionable_next"]
+            ),
+            result["candidates"][0] if result["candidates"] else None,
+        )
         result["preparation"] = (
             "VERIFIED_PREPARED"
             if result.get("prepared_next")
-            else (
-                result["candidates"][0]["preparation"]
-                if result["candidates"]
-                else "NO_BACKLOG"
-            )
+            else (head["preparation"] if head else "NO_BACKLOG")
         )
     return result
 

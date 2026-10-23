@@ -278,3 +278,9 @@ comment. The re-assertion must reference the latest VERIFIED BLOCKED audit throu
 `active_blocker_audit_id`, repeat its reason, carry no `blocker`, and every row must
 recompute `audit_id` (`audit_identity()`); any other later row makes the chain ambiguous
 and denies the proof.
+
+CHG-026 / CTRL-HOST-011: `execution_queue.candidate_window(candidates, actionable)` returns
+the canonical-order prefix through the first actionable candidate (at least three). The
+adapter's `owner_health` passes the preparation engine's own `classify` as `actionable`;
+`prepare.py` iterates that same `health["candidates"]` window with one GitHub client per
+profile. `health["actionable_next"]` names the first actionable candidate or is null.

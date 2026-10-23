@@ -8,12 +8,15 @@ import yaml
 from projectctl.execution_queue import (
     ACTIVE,
     ASSIGNEES,
+    CANDIDATE_WINDOW_MINIMUM,
     EXCLUDED,
     OWNERS,
     RTM_PATH,
     WBS_PATH,
     affected_owners,
+    candidate_window,
     compute_next_eligible,
+    preflight_health,
     project_view,
     scope_projection,
     validate_preferences,
@@ -578,3 +581,118 @@ def test_deferred_and_external_waits_are_independent_of_each_other(baseline):
     ):
         data[2]["items"]["WP-CORE-001"] = swapped
         assert evaluate(data)["status"] == "BLOCKED"
+
+
+def window_health(data, actionable=None):
+    project, policy, live, evidence = data
+    return preflight_health(project, live, evidence, "asrin", policy, actionable)
+
+
+def backlog_order(data):
+    live = data[2]["items"]
+    return [
+        w
+        for w in data[1]["sequences"][OWNERS["asrin"]]
+        if live[w]["state"] == "BACKLOG"
+    ]
+
+
+def test_blocked_head_does_not_starve_later_eligible_candidate(baseline):
+    data = deepcopy(baseline)
+    order = backlog_order(data)
+    qualify(data, order[3])
+    before = deepcopy(data)
+    result = window_health(data)
+    # Blocked head stays reported, in canonical order, through the first eligible.
+    assert [c["wp_id"] for c in result["candidates"]] == order[:4]
+    assert [c["status"] for c in result["candidates"][:3]] != ["PREPARED"] * 3
+    assert all(c["reason"] for c in result["candidates"][:3])
+    assert result["candidates"][3]["status"] == "PREPARED"
+    assert result["actionable_next"] == order[3] == result["prepared_next"]
+    # AUTO_NEXT (full scan) and the window agree on the selection.
+    assert evaluate(data)["wp_id"] == result["actionable_next"]
+    assert data == before  # derived only, never mutates
+
+
+def test_first_eligible_candidate_still_wins(baseline):
+    data = deepcopy(baseline)
+    order = backlog_order(data)
+    qualify(data, order[0])
+    qualify(data, order[3])
+    result = window_health(data)
+    assert result["actionable_next"] == order[0] == result["prepared_next"]
+    assert [c["wp_id"] for c in result["candidates"]] == order[
+        :CANDIDATE_WINDOW_MINIMUM
+    ]
+    assert evaluate(data)["wp_id"] == order[0]
+
+
+def test_unknown_candidate_never_becomes_eligible_or_stops_the_scan(baseline):
+    data = deepcopy(baseline)
+    order = backlog_order(data)
+    qualify(data, order[1])
+    data[3]["candidates"][order[1]]["dor"] = "UNKNOWN"
+    qualify(data, order[4])
+    result = window_health(data)
+    assert result["prepared_next"] == order[4] == result["actionable_next"]
+    statuses = {c["wp_id"]: c["status"] for c in result["candidates"]}
+    assert statuses[order[1]] != "PREPARED"
+    assert [c["wp_id"] for c in result["candidates"]] == order[:5]
+    assert evaluate(data)["wp_id"] == order[4]
+
+
+def test_no_eligible_candidate_keeps_existing_no_task_behavior(baseline):
+    data = deepcopy(baseline)
+    result = window_health(data)
+    assert result["actionable_next"] is None
+    assert result["prepared_next"] is None
+    assert len(result["candidates"]) == CANDIDATE_WINDOW_MINIMUM
+    assert (
+        result["backlog_count"] == len(backlog_order(data)) > CANDIDATE_WINDOW_MINIMUM
+    )
+    assert result["first_blocker"]["wp_id"] == backlog_order(data)[0]
+    assert evaluate(data)["status"] == "NO_TASK"
+
+
+def test_custom_actionable_selects_without_weakening_the_gates(baseline):
+    data = deepcopy(baseline)
+    order = backlog_order(data)
+    target = order[4]
+    result = window_health(data, lambda c: c["wp_id"] == target)
+    assert [c["wp_id"] for c in result["candidates"]] == order[:5]
+    assert result["actionable_next"] == target
+    # The classifier only picks; it cannot make anything PREPARED or eligible.
+    assert result["prepared_next"] is None
+    assert result["candidates"][4]["status"] != "PREPARED"
+    assert evaluate(data)["status"] == "NO_TASK"
+    for earlier in result["candidates"][:4]:
+        assert earlier["reason"]
+
+
+def test_window_is_deterministic_and_bounded(baseline):
+    data = deepcopy(baseline)
+    last = backlog_order(data)[-1]
+    result = window_health(data, lambda c: c["wp_id"] == last)
+    assert result == window_health(data, lambda c: c["wp_id"] == last)
+    assert len(result["candidates"]) == len(backlog_order(data))
+    assert window_health(data, lambda c: False)["actionable_next"] is None
+
+
+def test_candidate_window_helper_preserves_order_and_minimum():
+    rows = [{"wp_id": f"WP-X-{i:03d}", "status": "NEEDS_DOR"} for i in range(1, 8)]
+
+    def ids(window):
+        return [c["wp_id"] for c in window]
+
+    window, chosen = candidate_window(rows, lambda c: c["wp_id"] == "WP-X-001")
+    assert (ids(window), chosen) == (ids(rows[:3]), "WP-X-001")
+    window, chosen = candidate_window(rows, lambda c: c["wp_id"] == "WP-X-006")
+    assert (ids(window), chosen) == (ids(rows[:6]), "WP-X-006")
+    window, chosen = candidate_window(
+        rows, lambda c: c["wp_id"] in {"WP-X-005", "WP-X-002"}
+    )
+    assert (ids(window), chosen) == (ids(rows[:3]), "WP-X-002")
+    assert candidate_window(rows) == (rows[:3], None)
+    assert candidate_window([]) == ([], None)
+    rows[4]["status"] = "PREPARED"
+    assert candidate_window(rows)[1] == "WP-X-005"
