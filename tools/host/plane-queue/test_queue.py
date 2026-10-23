@@ -147,5 +147,80 @@ class QueueTests(unittest.TestCase):
         with self.assertRaises(q.Unsafe): q.snapshot(Fake(), catalog)
 
 
+class DeferredWaitVisibilityTests(unittest.TestCase):
+    WAITS = [{'wp_id': 'WP-CORE-005', 'state': 'IN_PROGRESS', 'blocked': True,
+              'reason': 'WAITING_EXTERNAL_INTEGRATION_BINDINGS'},
+             {'wp_id': 'WP-CORE-001', 'state': 'VALIDATING', 'blocked': True,
+              'reason': 'WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE'}]
+
+    def rows(self, *extra):
+        rows = {'a': task('WP-CORE-005', 'IN_PROGRESS', blocked=True),
+                'b': task('WP-CORE-001', 'VALIDATING', blocked=True)}
+        rows.update({str(n): row for n, row in enumerate(extra)})
+        return rows
+
+    def health(self, waits=None):
+        return {'prepared_next': None, 'health': 'STALL_RISK', 'first_blocker': None,
+                'deferred_waits': self.WAITS if waits is None else waits}
+
+    def test_ready_work_is_current_and_deferred_waits_stay_visible(self):
+        result = q.combine('asrin', self.rows(task('WP-UI-001')), self.health())
+        self.assertEqual(result['status'], 'OK')
+        self.assertEqual(result['current_task']['wp_id'], 'WP-UI-001')
+        self.assertEqual(result['next_task']['wp_id'], 'WP-UI-001')  # compatibility
+        self.assertEqual(result['display_status'], 'READY')
+        self.assertEqual(result['deferred_waits'], self.WAITS)
+        self.assertEqual(result['health'], 'STALL_RISK')
+
+    def test_only_deferred_waits_leave_no_current_task(self):
+        result = q.combine('asrin', self.rows(), self.health())
+        self.assertEqual(result['status'], 'NO_TASK')
+        self.assertIsNone(result['current_task'])
+        self.assertIsNone(result['next_task'])
+        self.assertEqual([w['wp_id'] for w in result['deferred_waits']], ['WP-CORE-005', 'WP-CORE-001'])
+
+    def test_ordinary_in_progress_still_wins(self):
+        rows = self.rows(task('WP-ORD-001', 'IN_PROGRESS'), task('WP-UI-001'))
+        result = q.combine('asrin', rows, self.health())
+        self.assertEqual(result['current_task']['wp_id'], 'WP-ORD-001')
+        self.assertIsNone(result['next_task'])
+        self.assertEqual(result['display_status'], 'CURRENT')
+        self.assertEqual(len(result['deferred_waits']), 2)
+
+    def test_ordinary_blocked_in_progress_is_never_treated_as_a_wait(self):
+        rows = self.rows(task('WP-ORD-001', 'IN_PROGRESS', blocked=True), task('WP-UI-001'))
+        result = q.combine('asrin', rows, self.health())
+        self.assertEqual(result['status'], 'BLOCKED')
+        self.assertEqual(result['current_task']['wp_id'], 'WP-ORD-001')
+
+    def test_multiple_actionable_work_still_fails_closed(self):
+        for extra in ((task('WP-A-001'), task('WP-A-002')),
+                      (task('WP-A-001', 'IN_PROGRESS'), task('WP-A-002', 'IN_PROGRESS'))):
+            result = q.combine('asrin', self.rows(*extra), self.health())
+            self.assertEqual(result['status'], 'AMBIGUOUS')
+            self.assertIsNone(result['current_task'])
+            self.assertEqual(result['candidate_wp_ids'], ['WP-A-001', 'WP-A-002'])
+            self.assertEqual(len(result['deferred_waits']), 2)
+
+    def test_unclassified_or_unavailable_waits_fail_closed(self):
+        rows = self.rows(task('WP-UI-001'))
+        for health in (None, self.health(waits=[])):
+            result = q.combine('asrin', rows, health)
+            self.assertEqual(result['current_task']['wp_id'], 'WP-CORE-005')
+            self.assertEqual(result['status'], 'BLOCKED')  # old behavior: nothing is hidden
+        self.assertEqual(q.combine('asrin', rows, None)['health'], 'UNAVAILABLE')
+
+    def test_classification_is_by_resolver_output_not_by_wp_id(self):
+        rows = {'a': task('WP-OTHER-009', 'IN_PROGRESS', blocked=True), 'b': task('WP-UI-001')}
+        waits = [{'wp_id': 'WP-OTHER-009', 'state': 'IN_PROGRESS', 'blocked': True, 'reason': 'X'}]
+        result = q.combine('asrin', rows, self.health(waits))
+        self.assertEqual(result['current_task']['wp_id'], 'WP-UI-001')
+
+    def test_other_owners_are_untouched(self):
+        other = dict(task('WP-SEL-001', 'IN_PROGRESS'), _profile='selman')
+        result = q.combine('asrin', self.rows(other), self.health())
+        self.assertEqual(result['status'], 'NO_TASK')
+
+
 if __name__ == '__main__':
     unittest.main()
