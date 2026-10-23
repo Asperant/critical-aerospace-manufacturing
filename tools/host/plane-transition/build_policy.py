@@ -1,5 +1,5 @@
 """Generate a static canonical context projection, never execution state. Run unprivileged."""
-from hashlib import sha256
+from hashlib import sha1, sha256
 import json
 from pathlib import Path
 import re
@@ -63,6 +63,7 @@ for kind,name in [('auto_next','tools/host/plane-transition/auto_next.py'),('exe
 policy['preparation_schema']='cap-preparation-v1'
 for kind,name in [('health','health.py'),('health_snapshot','health_snapshot.py'),('preparation','preparation.py'),('prepare','prepare.py')]:
     policy['implementation_sha256'][kind]=sha256((ROOT/'tools/host/plane-transition'/name).read_bytes()).hexdigest()
+policy['source_git_blobs']={name:sha1(b'blob '+str(len((ROOT/name).read_bytes())).encode()+b'\0'+(ROOT/name).read_bytes(),usedforsecurity=False).hexdigest() for name in manifest}
 policy['policy_digest']=sha256(json.dumps(policy,ensure_ascii=False,sort_keys=True).encode()).hexdigest()
 output=Path('/srv/ailab/remote-ssh/staging/plane-transition-policy.json')
 output.write_text(json.dumps(policy,ensure_ascii=False,sort_keys=True))

@@ -220,6 +220,32 @@ def routing_line(context, github):
     )
 
 
+def verify_remote_sources(t, gh, sha, policy):
+    """A current main SHA alone cannot prove a pinned policy is still canonical."""
+    expected = policy.get("source_git_blobs", {})
+    t.need(
+        bool(expected) and set(expected) == set(policy["source_manifest"]),
+        "REMOTE_CANONICAL_SOURCE_UNAVAILABLE_POLICY_REFRESH_REQUIRED",
+    )
+    tree = gh._get(f"{t.REPO}/git/trees/{sha}?recursive=1")
+    t.need(
+        tree.get("truncated") is False,
+        "REMOTE_CANONICAL_SOURCE_UNAVAILABLE_TREE_INCOMPLETE",
+    )
+    blobs = {
+        row["path"]: row.get("sha")
+        for row in tree.get("tree", [])
+        if row.get("type") == "blob"
+    }
+    t.need(
+        all(
+            re.fullmatch(r"[a-f0-9]{40}", value) and blobs.get(path) == value
+            for path, value in expected.items()
+        ),
+        "REMOTE_CANONICAL_SOURCE_UNAVAILABLE_POLICY_REFRESH_REQUIRED",
+    )
+
+
 def verified_record(t, gh, wp, sha, policy):
     """Recompute every field from pinned policy; never trust supplied PASS or SHA.
 
@@ -227,6 +253,7 @@ def verified_record(t, gh, wp, sha, policy):
     to be an owner-authored comment. Semantic/DoD assessments keep attribution rules.
     """
     t.need(policy.get("preparation_schema") == SCHEMA, "PREPARATION_POLICY_UNAVAILABLE")
+    verify_remote_sources(t, gh, sha, policy)
     context = policy["contexts"][wp]
     raw = gh.evidence_text(path_for(wp), sha)
     data = json.loads(raw)

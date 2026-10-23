@@ -299,7 +299,7 @@ def run(auto, t, engine, policy, key):
     for profile in profiles:
         health = auto.owner_health(t, profile, policy, t.Plane(key), t.GitHub)
         actions = []
-        if health["health"] != "UNAVAILABLE":
+        if health["health"] != "UNAVAILABLE" and not health.get("prepared_next"):
             for candidate in health["candidates"][:3]:
                 try:
                     gh = t.GitHub(profile)
@@ -353,6 +353,7 @@ def run(auto, t, engine, policy, key):
                                 fresh.main_sha() == sha,
                                 "CONCURRENT_MAIN_CHANGE_RECOMPUTE_REQUIRED",
                             )
+                            engine.verify_remote_sources(t, fresh, sha, policy)
 
                         if writer is None:
                             writer = Writer(t)
