@@ -1,0 +1,62 @@
+{
+  "schema": "mfgctl.doctor/v1",
+  "status": "FAIL",
+  "duration_ms": 52,
+  "repo_root": "<repo>",
+  "checks": [
+    {
+      "name": "git",
+      "status": "OK",
+      "detail": "git version 2.53.0; work tree readable",
+      "remediation": null
+    },
+    {
+      "name": "python",
+      "status": "OK",
+      "detail": "Python 3.11.16",
+      "remediation": null
+    },
+    {
+      "name": "uv",
+      "status": "OK",
+      "detail": "uv 0.12.13 (matches CI pin)",
+      "remediation": null
+    },
+    {
+      "name": "venv",
+      "status": "OK",
+      "detail": "<repo>/ci/.venv usable",
+      "remediation": null
+    },
+    {
+      "name": "docker",
+      "status": "FAIL",
+      "detail": "Docker daemon unreachable: permission denied while trying to connect to the docker API at unix:///var/run/docker.sock",
+      "remediation": "Start Docker (sudo systemctl start docker) and make sure your user is in the docker group (sudo usermod -aG docker $USER, then log in again)."
+    },
+    {
+      "name": "compose",
+      "status": "OK",
+      "detail": "Docker Compose 5.6.1",
+      "remediation": null
+    },
+    {
+      "name": "disk",
+      "status": "OK",
+      "detail": "1688.8 GiB free at <repo>",
+      "remediation": null
+    },
+    {
+      "name": "ports",
+      "status": "OK",
+      "detail": "3 known ports free",
+      "remediation": null
+    },
+    {
+      "name": "lock",
+      "status": "OK",
+      "detail": "ci/uv.lock matches ci/pyproject.toml",
+      "remediation": null
+    }
+  ]
+}

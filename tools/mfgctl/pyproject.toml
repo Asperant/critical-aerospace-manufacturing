@@ -1,0 +1,28 @@
+# WP-PLAT-002 — mfgctl, the canonical developer and operator CLI (01 Item 74).
+# Python + Typer is the preferred baseline (01 Item 74 §9); location fixed by 02.
+# mfgctl is thin orchestration/diagnostics over existing tools (DX-INV-02/03):
+# it owns no business logic and never replaces direct use of Docker, uv or pytest.
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mfgctl"
+version = "0.1.0"
+description = "Canonical developer and operator CLI (WP-PLAT-002)"
+requires-python = ">=3.11"
+dependencies = ["typer>=0.12,<1", "PyYAML>=6,<7"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10"]
+
+[project.scripts]
+mfgctl = "mfgctl.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-p no:cacheprovider"

@@ -70,6 +70,8 @@ jobs:
         run: |
           uv run --project ci --locked python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests -m 'not integration' -q -p pytest_quarantine
           uv run --project ci --locked pyright --project services/manufacturing-core/pyrightconfig.json
+      - name: mfgctl tests (quarantine-aware)
+        run: uv run --project ci --locked python -m pytest tools/mfgctl/tests -q -p pytest_quarantine
       - name: Host Plane queue tests (offline)
         run: uv run --project ci --locked python -m unittest discover -s tools/host/plane-queue -p 'test_*.py'
       - name: Host Plane transition tests (offline)

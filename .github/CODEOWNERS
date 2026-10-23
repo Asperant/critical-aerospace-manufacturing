@@ -21,3 +21,6 @@
 /evidence/WP-SIM-001/ @Ejlonn @Asperant
 /evidence/WP-SCH-001/ @Ejlonn @Asperant
 /evidence/WP-SIM-002/ @Ejlonn @Yavuzgmus
+
+# WP-PLAT-002: mfgctl developer and operator CLI; canonical owner Yavuz (advisory, CHG-018).
+/tools/mfgctl/ @Yavuzgmus

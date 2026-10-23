@@ -1,0 +1,60 @@
+{
+  "run_id": "RUN-PLAT-002-DEV-001",
+  "work_package": "WP-PLAT-002",
+  "kind": "DEV run on the shared host (not a documented HardwareProfile)",
+  "code_revision": "430ea869c02749927a4fa1d04a520ee053312556",
+  "branch": "wp/WP-PLAT-002-mfgctl",
+  "recorded_at": "2026-10-23T13:19:42+00:00",
+  "steps": [
+    {
+      "step": "bootstrap-1",
+      "exit_code": 0,
+      "output": "bootstrap-1.log.txt"
+    },
+    {
+      "step": "bootstrap-2",
+      "exit_code": 0,
+      "output": "bootstrap-2.log.txt"
+    },
+    {
+      "step": "doctor",
+      "exit_code": 1,
+      "output": "doctor.json"
+    },
+    {
+      "step": "check-fast",
+      "exit_code": 0,
+      "output": "check-fast.log.txt"
+    },
+    {
+      "step": "tests",
+      "exit_code": 0,
+      "output": "tests.log.txt"
+    },
+    {
+      "step": "up-core",
+      "exit_code": 2,
+      "output": "up-core.log.txt"
+    },
+    {
+      "step": "diagnose",
+      "exit_code": 0,
+      "output": "diagnose.log.txt"
+    },
+    {
+      "step": "timings",
+      "exit_code": 0,
+      "output": "timings.json"
+    }
+  ],
+  "diagnose_bundle_contents": [
+    "doctor.json",
+    "git.txt",
+    "timings.json",
+    "versions.json"
+  ],
+  "non_zero_explained": {
+    "doctor": "a doctor check failed; see doctor.json (for example Docker socket access)",
+    "up-core": "exit 2 by design: infra/mfgctl/capabilities.json arrives with WP-PLAT-001 (DEP-003)"
+  }
+}

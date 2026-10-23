@@ -1,0 +1,26 @@
+{
+  "schema": "mfgctl.capabilities/v1",
+  "compose_files": ["infra/compose/compose.yaml"],
+  "profiles": [
+    {"name": "core", "description": "PostgreSQL, NATS JetStream, Core/BFF (example only)"},
+    {"name": "full", "description": "All mandatory showcase services (example only)"}
+  ],
+  "capabilities": [
+    {
+      "name": "platform",
+      "owner": "Yavuz",
+      "profile": "core",
+      "smoke": ["uv", "run", "--project", "ci", "--locked", "python", "-c", "print('example smoke')"],
+      "timeout_s": 120
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "GS-01",
+      "description": "Closed-loop golden scenario (example only)",
+      "profile": "full",
+      "command": ["uv", "run", "--project", "ci", "--locked", "python", "-c", "print('example scenario')"],
+      "timeout_s": 600
+    }
+  ]
+}

@@ -8,6 +8,7 @@ description = "WP-CICD-001 tiered CI toolchain: static, unit, contract and integ
 requires-python = "==3.11.*"
 dependencies = [
     "projectctl[dev]",
+    "mfgctl[dev]",
     "ruff==0.7.4",
     "pyright==1.1.389",
     "pytest==8.3.3",
@@ -22,6 +23,7 @@ package = false
 
 [tool.uv.sources]
 projectctl = { path = "../tools/projectctl", editable = true }
+mfgctl = { path = "../tools/mfgctl", editable = true }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
