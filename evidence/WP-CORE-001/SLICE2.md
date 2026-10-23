@@ -39,14 +39,25 @@ service README for the concrete interface and its deployment limitations.
 
 ## Verification at implementation revision
 
+Implementation SHA: `0b0412e0b507cee6ea384bb8731621244d8a2b2f`.
+
 - Pure-domain focused tests: 47 passed, 26 integration cases deselected.
 - Service Pyright: 0 errors, 0 warnings after resolving row typing/optional-row
   findings; no type-check suppression added.
 - Ruff lint/format and diff checks: passed locally.
-- Real PostgreSQL persistence tests: pending the pushed revision's CI run.
-  No local DB execution or passing remote result is claimed in this revision.
+- Real PostgreSQL persistence tests: **26 passed, 0 failed** in 0.75 seconds
+  in [CI run 39948962189, integration job 120398444962](https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/39948962189/job/120398444962).
+  The completed job log confirms `CI_POSTGRES_IMAGE=postgres:18-alpine`,
+  successful image startup, 2 existing infrastructure smoke tests passed,
+  26 Core persistence tests passed, and successful fixture/service cleanup.
+  Migration ran as the restricted migration login; repository tests ran as
+  the distinct restricted runtime login. No local DB execution is claimed.
+- The same implementation revision's `t1-static` and `t1-contract` jobs passed.
+  Full pipeline completion is not claimed by this record; focused persistence
+  verification is bound to the implementation SHA above, not to a later
+  evidence-only commit.
 
-Planned coverage: schema creation/replay; all entity identity/revision round
+Executed coverage: schema creation/replay; all entity identity/revision round
 trips; route visit order independent of visit-ID sorting; repeated classes with
 distinct visit IDs; foreign keys; invalid fields; duplicate IDs/positions;
 atomic route rollback; runtime DDL/ledger/update/delete denial; cross-schema
