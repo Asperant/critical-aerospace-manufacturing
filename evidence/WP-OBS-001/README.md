@@ -23,7 +23,12 @@ implementation start on the same item (IN_PROGRESS verified 2026-10-23).
 | B | `97736ed`, `a93b8aa` | Collector + OpenObserve stack, REAL integration smoke in CI |
 | C | `e0723a1` | service helper `configure()`, OTLP log handler, trace correlation |
 | D1 | `daa1808` | health surface contract, deployable coverage check |
-| D2 | this commit | dashboards and importer, evidence, trace (03/04) |
+| D2 | `b1605d2` | dashboards and importer, evidence, trace (03/04) |
+| run | after `b1605d2` | RUN-OBS-001-DEV-001 recorded |
+| pull fix | `48e6b7e` | image pulls with retries and a Docker Hub fallback (CI hit the public.ecr.aws anonymous quota) |
+| main merge | before PR | main `1e54f9c` merged; `operations-bff` and `command-center-web` declared in coverage |
+
+All of the above were squash-merged to main as `46b4305` by PR #40.
 
 ## Verification
 
@@ -55,6 +60,27 @@ emitted by `configure()`, including a redacted secret and an error with
 
 Read it as a development observation on the shared host, not as acceptance
 evidence on the INTEGRATION environment.
+
+## Merge and post-merge validation
+
+| Fact | Value |
+|---|---|
+| Implementation PR | #40, squash-merged 2026-10-23T21:08:43Z, work branch deleted |
+| Merge revision | `46b430586f4a6b4a1e4a497c3b41909d9c6fb38e` (parent `1e54f9c`, the main revision the branch was tested against) |
+| PR head CI | push run 40021503686 and pull_request run 40022851765: all T1 jobs and `ci-gate` succeeded |
+| Plane | IN_REVIEW verified for PR #40 |
+
+**Workflow sequence deviation.** PR #40 was merged before the MERGE_READY
+transition was recorded, so the guarded helper could no longer record
+MERGE_READY (it requires an open PR) or MERGED (it requires MERGE_READY) for
+PR #40. The MERGE_READY conditions held at the merge: head CI green, the PR
+mergeable and not behind main (main was still `1e54f9c`), and the PR
+description had passed the helper's own `pr_governance` check before the PR was
+opened. No state was changed by hand: the remaining transitions are recorded
+through this follow-up PR (`wp/WP-OBS-001-post-merge`), which carries this
+record, and the post-merge validation runs on main at its merge revision.
+Lesson applied: an irreversible step (merge) is taken only after the preceding
+transition has returned VERIFIED.
 
 ## Limitations and follow-ups
 
