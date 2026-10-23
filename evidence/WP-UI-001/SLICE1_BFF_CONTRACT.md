@@ -241,3 +241,45 @@ Local verification with the CI commands: 208 tests pass (27 new), Ruff lint and
 format, Pyright 0 errors, `check_contracts.py` PASS, `ci/tests` 26 passed,
 `static_ratchet check` PASS. Tests use in-memory readers built from
 `overview-query.normal.json`. CI for this commit is not yet observed.
+
+## Slice 9A: frontend toolchain and minimum shell foundation
+
+Canonical basis (01 Items 163 to 175 and Frontend CI 118 to 120, 146; 02 Command
+Center architecture): TypeScript with strict configuration, React, Vite, React
+Router, MUI Core, TanStack Query and Table, ECharts, generated OpenAPI clients,
+and Playwright for browser tests; frontend CI carries format/lint, type-check
+and production build, with an exact committed lockfile. The documents fix no Node
+version, package manager, test runner, linter or package versions, and the
+repository had no frontend before this slice. Those are therefore implementation
+choices made here and open to owner review: Node 24.21.0 (Active LTS, pinned in
+`.node-version`, `engines` `^24.15.0`), npm with a committed `package-lock.json`,
+Vitest with Testing Library and jsdom, ESLint with typescript-eslint and the
+React hooks rules, Prettier. Every dependency is pinned exactly and was
+published at least two weeks before 2026-10-23. TypeScript is 6.0.3, not 7.0.2,
+because typescript-eslint 8.71 supports `<6.1.0`. `.npmrc` sets
+`ignore-scripts`, `engine-strict` and `save-exact`.
+
+Host setup, no sudo and no global packages: the official Node 24.21.0 tarball
+was verified against `SHASUMS256.txt` and unpacked to
+`~/.local/opt/node-v24.21.0`; the shell profile and system packages are
+untouched, so commands are run with that directory first on `PATH`.
+
+Added `services/command-center-web/`: Vite and React bootstrap (`main.tsx`),
+`App.tsx` with React Router, a root layout with banner and main landmarks, one
+placeholder Overview page at `/overview` (the index redirects there), a not-found
+page, strict `tsconfig.json`, and 8 tests: mounting, routes, and boundary checks
+that no broker, database or identity-provider package is declared, every
+dependency is pinned exactly, application code contains no network, storage or
+credential access, and `index.html` loads nothing external. Nothing consumes
+`/v1/session` or `/v1/overview` yet.
+
+CI (existing tiers, no new job): `t1-static` now installs with `npm ci` and runs
+lint, format check, type-check and production build; `t1-unit` runs the component
+tests. `actions/setup-node@v4` follows the tag convention of `actions/checkout`.
+`ci/README.md` is updated.
+
+Local verification with a clean `npm ci`: ESLint, Prettier check, `tsc` and
+production build pass, 8 tests pass; Python side unchanged (208 BFF tests, 26 CI
+tooling tests pass). Not done: MUI, TanStack Query, generated API types,
+Playwright, CSP and security headers, the Node setup action's behaviour on
+GitHub, and any visual design. CI for this commit is not yet observed.
