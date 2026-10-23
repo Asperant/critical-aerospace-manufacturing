@@ -368,3 +368,10 @@ Remaining WP-UI-001 acceptance gaps, exactly:
    session store.
 8. Process: the draft PR is not merged and merged is not done; DoD, post-merge
    validation and the owner's closeout assessment remain.
+
+## Slice 11: browser acceptance, observability and benchmark
+
+See `DEVELOPER-CLOSEOUT.md` (what was added, the NFR-PERF-014 engineering
+measurement, verification and trace) and `FINAL-ACCEPTANCE-GAPS.md` (what is
+downstream or outside scope). Raw benchmark output: `bench-ui-chromium.json` and
+`bench-ui-firefox.json`.
