@@ -29,6 +29,9 @@ services:
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.162.0
+    # Run as the invoking user so the bind-mounted config is readable even when
+    # private workspaces are not world-readable (stack.sh sets both IDs).
+    user: "${CAP_OBS_UID:-10001}:${CAP_OBS_GID:-10001}"
     command: ["--config=/etc/otelcol/config.yaml"]
     environment:
       O2_BASIC_AUTH: ${O2_BASIC_AUTH:?run infra/observability/stack.sh up}

@@ -56,6 +56,16 @@ def test_credentials_only_from_required_environment() -> None:
     assert headers["Authorization"] == "Basic ${env:O2_BASIC_AUTH}"
 
 
+def test_collector_runs_as_the_invoking_user() -> None:
+    # A private workspace (mode 0600/0640) must still be readable by the Collector.
+    assert (
+        SERVICES["otel-collector"]["user"]
+        == "${CAP_OBS_UID:-10001}:${CAP_OBS_GID:-10001}"
+    )
+    script = (HERE / "stack.sh").read_text("utf-8")
+    assert 'CAP_OBS_UID="${CAP_OBS_UID:-$(id -u)}"' in script
+
+
 def test_telemetry_phone_home_is_disabled() -> None:
     assert SERVICES["openobserve"]["environment"]["ZO_TELEMETRY"] == "false"
 

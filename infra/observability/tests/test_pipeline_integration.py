@@ -50,6 +50,11 @@ def request(url: str, payload: object, headers: dict[str, str]) -> tuple[int, An
             return response.status, json.loads(body) if body.strip() else None
     except urllib.error.HTTPError as exc:
         return exc.code, exc.read().decode(errors="replace")[:500]
+    except urllib.error.URLError as exc:
+        return (
+            0,
+            f"unreachable ({exc.reason}); is infra/observability/stack.sh up healthy?",
+        )
 
 
 class OpenObserve:
@@ -194,6 +199,11 @@ def run() -> dict[str, Any]:
         "traces": request(f"{collector}/v1/traces", span, {}),
         "metrics": request(f"{collector}/v1/metrics", counter, {}),
     }
+    unreachable = [f"{k}: {body}" for k, (status, body) in sent.items() if status == 0]
+    if unreachable:
+        pytest.fail(
+            "Collector not reachable at " + collector + "\n" + "\n".join(unreachable)
+        )
     return {"run_id": run_id, "trace_id": trace_id, "resource": resource, "sent": sent}
 
 
