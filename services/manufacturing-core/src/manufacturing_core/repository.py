@@ -81,3 +81,18 @@ class CoreRepository:
             ).fetchall()
             row["visits"] = tuple(RouteVisit.model_validate(visit) for visit in visits)
         return model.model_validate(row)
+
+    def lots_for_order(self, order_id: str) -> tuple[Lot, ...]:
+        rows = self.connection.execute(
+            "SELECT id, revision, order_id FROM core.lot WHERE order_id = %s ORDER BY id",
+            (order_id,),
+        ).fetchall()
+        return tuple(Lot.model_validate(row) for row in rows)
+
+    def components_for_lot(self, lot_id: str) -> tuple[SerializedComponent, ...]:
+        rows = self.connection.execute(
+            "SELECT id, revision, lot_id FROM core.serialized_component "
+            "WHERE lot_id = %s ORDER BY id",
+            (lot_id,),
+        ).fetchall()
+        return tuple(SerializedComponent.model_validate(row) for row in rows)

@@ -1,0 +1,23 @@
+{
+  "$id": "urn:cap:core:order-query-request:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contract_version": {
+      "const": "core.order-query.v1",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "order_id": {
+      "pattern": "\\S",
+      "title": "Order Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "contract_version",
+    "order_id"
+  ],
+  "title": "OrderQueryRequestV1",
+  "type": "object"
+}
