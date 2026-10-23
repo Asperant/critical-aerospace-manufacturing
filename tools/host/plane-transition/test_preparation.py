@@ -218,6 +218,7 @@ class PreparationTests(unittest.TestCase):
         branch = "wp/WP-SIM-001-auto-prepare-" + self.plan["input_digest"][:12]
         pr = {
             "number": 32,
+            "state": "open",
             "head": {"ref": branch, "sha": "c" * 40},
             "base": {"ref": "main"},
             "user": {"login": "Asperant"},
@@ -227,6 +228,8 @@ class PreparationTests(unittest.TestCase):
         line = p.routing_line(self.context, names)
 
         def respond(method, route):
+            if "/compare/" in route:
+                return {"status": "identical", "behind_by": 0}
             if "/git/trees/" in route:
                 return {"truncated": False, "tree": []}
             if "/files?" in route:
@@ -240,7 +243,10 @@ class PreparationTests(unittest.TestCase):
             return [pr] if "state=open" in route else pr
 
         gh = SimpleNamespace(
-            main_sha=lambda: SHA, evidence_text=lambda *_: p.encode(self.plan), cache={}
+            main_sha=lambda: SHA,
+            evidence_text=lambda *_: p.encode(self.plan),
+            cache={},
+            _get=Mock(return_value=source_tree(self.policy)),
         )
         writer = SimpleNamespace(gh=gh, call=Mock(side_effect=respond))
         with patch.object(t, "ci", side_effect=t.Denied("CI_NOT_GREEN")):
@@ -248,6 +254,212 @@ class PreparationTests(unittest.TestCase):
                 t, p, writer, candidate(), self.plan, self.policy, Mock()
             )
         self.assertEqual(result["state"], "IN_PROGRESS")
+        self.assertTrue(all(x.args[0] == "GET" for x in writer.call.call_args_list))
+
+    def supersession_writer(self, *, routed=True):
+        old = deepcopy(self.plan)
+        old["source_sha"] = "b" * 40
+        old["input_digest"] = "d" * 64
+        self.old_preparation = old
+        self.pr_preparation = deepcopy(self.plan)
+        self.pr_preparation["source_sha"] = "e" * 40
+        self.prs = [
+            {
+                "number": 45,
+                "state": "open",
+                "head": {
+                    "ref": "wp/WP-SIM-001-auto-prepare-"
+                    + self.plan["input_digest"][:12],
+                    "sha": "c" * 40,
+                },
+                "base": {"ref": "main"},
+                "user": {"login": "Asperant"},
+                "draft": False,
+                "mergeable": True,
+                "mergeable_state": "clean",
+            }
+        ]
+        names = {v[0]: t.GITHUB[k] for k, v in t.q.PEOPLE.items()}
+        line = p.routing_line(self.context, names)
+        self.main_route = "# original\n" + (line + "\n" if routed else "")
+        self.head_route = self.main_route if routed else self.main_route + line + "\n"
+        self.pr_files = [{"filename": p.path_for("WP-SIM-001")}]
+        if not routed:
+            self.pr_files.append({"filename": ".github/CODEOWNERS"})
+        self.source_status = "ahead"
+
+        def respond(method, route, body=None):
+            if method == "PUT" and route.endswith("/merge"):
+                return {"merged": True, "sha": "f" * 40}
+            self.assertEqual(method, "GET")
+            if "/git/trees/" in route:
+                return {
+                    "truncated": False,
+                    "tree": [{"path": p.path_for("WP-SIM-001")}],
+                }
+            if "state=open" in route:
+                return self.prs
+            if "/files?" in route:
+                return self.pr_files
+            if "CODEOWNERS" in route:
+                text = self.main_route if route.endswith(SHA) else self.head_route
+                return {"content": base64.encodebytes(text.encode()).decode()}
+            if "/compare/" in route:
+                return {"status": self.source_status, "behind_by": 0}
+            return self.prs[0]
+
+        gh = SimpleNamespace(
+            main_sha=lambda: SHA,
+            evidence_text=lambda _path, sha: p.encode(
+                self.old_preparation if sha == SHA else self.pr_preparation
+            ),
+            cache={},
+            _get=Mock(return_value=source_tree(self.policy)),
+        )
+        return SimpleNamespace(gh=gh, call=Mock(side_effect=respond))
+
+    def supersede(self, writer):
+        with patch.object(t, "ci"):
+            return c.prepare_pr(
+                t, p, writer, candidate(), self.plan, self.policy, Mock()
+            )
+
+    def assert_rejected_without_write(self, writer, reason):
+        with self.assertRaises(t.Denied) as error:
+            self.supersede(writer)
+        self.assertEqual(error.exception.code, reason)
+        self.assertTrue(all(x.args[0] == "GET" for x in writer.call.call_args_list))
+
+    def test_stale_merged_artifact_current_pr_is_superseded_without_duplicate_route(
+        self,
+    ):
+        writer = self.supersession_writer()
+        result = self.supersede(writer)
+        self.assertEqual(result["state"], "MERGED")
+        self.assertEqual(result["pr"], 45)
+        writes = [x for x in writer.call.call_args_list if x.args[0] != "GET"]
+        self.assertEqual(len(writes), 1)
+        self.assertTrue(writes[0].args[1].endswith("/pulls/45/merge"))
+
+    def test_supersession_requires_actual_routing_change_when_missing(self):
+        writer = self.supersession_writer(routed=False)
+        self.pr_files = [{"filename": p.path_for("WP-SIM-001")}]
+        self.head_route = self.main_route
+        self.assert_rejected_without_write(writer, "PREPARATION_PR_DIFF_INVALID")
+
+    def test_supersession_correct_routing_append_is_valid(self):
+        self.assertEqual(
+            self.supersede(self.supersession_writer(routed=False))["state"], "MERGED"
+        )
+
+    def test_supersession_wrong_routing_and_shadowed_routing_rejected(self):
+        for suffix in ["/evidence/WP-SIM-001/ @wrong\n", "* @wrong\n"]:
+            writer = self.supersession_writer(routed=False)
+            self.head_route += suffix
+            with self.subTest(suffix=suffix):
+                self.assert_rejected_without_write(
+                    writer, "PREPARATION_ROUTING_DIFF_INVALID"
+                )
+
+    def test_semantic_preparation_changes_still_require_review(self):
+        for key, value in [
+            ("start_slice", "broadened scope"),
+            ("accountable_owner", "wrong"),
+            ("checks", {}),
+        ]:
+            writer = self.supersession_writer()
+            self.old_preparation[key] = value
+            result = self.supersede(writer)
+            with self.subTest(key=key):
+                self.assertEqual(
+                    result["reason"],
+                    "EXISTING_PREPARATION_INPUT_CHANGED_REVIEW_REQUIRED",
+                )
+                self.assertTrue(
+                    all(x.args[0] == "GET" for x in writer.call.call_args_list)
+                )
+
+    def test_supersession_multiple_prs_rejected(self):
+        writer = self.supersession_writer()
+        self.prs.append(deepcopy(self.prs[0]))
+        self.assert_rejected_without_write(writer, "DUPLICATE_PREPARATION_PRS")
+
+    def test_supersession_stale_input_pr_rejected(self):
+        writer = self.supersession_writer()
+        self.pr_preparation["input_digest"] = "d" * 64
+        self.assert_rejected_without_write(writer, "PREPARATION_PR_CONTENT_CHANGED")
+
+    def test_supersession_stale_canonical_source_rejected(self):
+        writer = self.supersession_writer()
+        tree = source_tree(self.policy)
+        tree["tree"][0]["sha"] = "f" * 40
+        writer.gh._get.return_value = tree
+        self.assert_rejected_without_write(
+            writer, "REMOTE_CANONICAL_SOURCE_UNAVAILABLE_POLICY_REFRESH_REQUIRED"
+        )
+
+    def test_supersession_nonancestor_source_rejected(self):
+        writer = self.supersession_writer()
+        self.source_status = "diverged"
+        self.assert_rejected_without_write(writer, "PREPARATION_SOURCE_NOT_ANCESTOR")
+
+    def test_supersession_product_files_rejected(self):
+        writer = self.supersession_writer()
+        self.pr_files.append({"filename": "services/core/product.py"})
+        self.assert_rejected_without_write(writer, "PREPARATION_PR_DIFF_INVALID")
+
+    def test_supersession_broadened_pr_and_wrong_wp_rejected(self):
+        for key, value in [
+            ("start_slice", "implementation"),
+            ("wp_id", "WP-OTHER-001"),
+            ("checks", {}),
+        ]:
+            writer = self.supersession_writer()
+            self.pr_preparation[key] = value
+            with self.subTest(key=key):
+                self.assert_rejected_without_write(
+                    writer, "PREPARATION_PR_CONTENT_CHANGED"
+                )
+
+    def test_supersession_malformed_merged_evidence_requires_review(self):
+        writer = self.supersession_writer()
+        self.old_preparation["input_digest"] = "not-a-digest"
+        self.assertEqual(
+            self.supersede(writer)["reason"],
+            "EXISTING_PREPARATION_INPUT_CHANGED_REVIEW_REQUIRED",
+        )
+
+    def test_supersession_malformed_pr_json_rejected_without_write(self):
+        writer = self.supersession_writer()
+        original = writer.gh.evidence_text
+        for bad in [
+            "{invalid",
+            p.encode(self.pr_preparation).replace(
+                '"wp_id":', '"wp_id": "duplicate", "wp_id":'
+            ),
+        ]:
+            writer.gh.evidence_text = (
+                lambda path, sha, bad=bad: original(path, sha) if sha == SHA else bad
+            )
+            with self.subTest(bad=bad), self.assertRaises((ValueError, t.q.Unsafe)):
+                self.supersede(writer)
+            self.assertTrue(all(x.args[0] == "GET" for x in writer.call.call_args_list))
+
+    def test_supersession_stale_branch_and_closed_pr_rejected(self):
+        writer = self.supersession_writer()
+        self.prs[0]["head"]["ref"] += "-old"
+        self.assert_rejected_without_write(
+            writer, "EXISTING_PREPARATION_INPUT_CHANGED_REVIEW_REQUIRED"
+        )
+        writer = self.supersession_writer()
+        self.prs[0]["state"] = "closed"
+        self.assert_rejected_without_write(writer, "PREPARATION_PR_SCOPE_INVALID")
+
+    def test_supersession_missing_pr_is_read_only(self):
+        writer = self.supersession_writer()
+        self.prs.clear()
+        result = self.supersede(writer)
+        self.assertEqual(result["reason"], "PREPARATION_SUPERSESSION_PR_REQUIRED")
         self.assertTrue(all(x.args[0] == "GET" for x in writer.call.call_args_list))
 
     def test_batuhan_normal_auto_next_uses_transition_boundary(self):

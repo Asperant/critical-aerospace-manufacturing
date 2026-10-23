@@ -3,10 +3,12 @@
 
 import base64
 import fcntl
+import fnmatch
 import importlib.util
 import json
 import os
 import pwd
+import re
 import resource
 import signal
 import subprocess
@@ -104,6 +106,106 @@ class Writer:
         return json.loads(result.stdout) if result.stdout.strip() else {}
 
 
+def same_preparation(prior, plan):
+    """Only source binding may change; every semantic field/key stays exact."""
+    return (
+        isinstance(prior, dict)
+        and prior.keys() == plan.keys()
+        and isinstance(prior.get("source_sha"), str)
+        and re.fullmatch(r"[a-f0-9]{40}", prior["source_sha"]) is not None
+        and isinstance(prior.get("input_digest"), str)
+        and re.fullmatch(r"[a-f0-9]{64}", prior["input_digest"]) is not None
+        and all(
+            prior[key] == value
+            for key, value in plan.items()
+            if key not in {"source_sha", "input_digest"}
+        )
+    )
+
+
+def routing_correct(engine, context, names, text):
+    line = engine.routing_line(context, names)
+    lines = text.splitlines()
+    if line not in lines:
+        return False
+    last = len(lines) - 1 - lines[::-1].index(line)
+    sample = engine.path_for(context["work_package"]["id"])
+    for later in lines[last + 1 :]:
+        parts = later.split()
+        if not parts or parts[0].startswith("#"):
+            continue
+        pattern = parts[0].lstrip("/")
+        if fnmatch.fnmatch(sample, pattern + ("*" if pattern.endswith("/") else "")):
+            return False
+    return True
+
+
+def validate_preparation_pr(t, engine, writer, pr, plan, policy, main):
+    """GET-only scope/source/routing checks shared by creation and supersession."""
+    wp = plan["wp_id"]
+    target = engine.path_for(wp)
+    branch = "wp/" + wp + "-auto-prepare-" + plan["input_digest"][:12]
+    t.need(
+        pr["user"]["login"].casefold() == t.GITHUB["asrin"].casefold()
+        and not pr["draft"]
+        and pr.get("state") == "open"
+        and pr["base"]["ref"] == "main"
+        and pr["head"]["ref"] == branch,
+        "PREPARATION_PR_SCOPE_INVALID",
+    )
+    head = pr["head"]["sha"]
+    stored = json.loads(
+        writer.gh.evidence_text(target, head), object_pairs_hook=t.q.unique
+    )
+    t.need(
+        same_preparation(stored, plan)
+        and stored
+        == engine.derive(policy["contexts"][wp], policy, stored["source_sha"]),
+        "PREPARATION_PR_CONTENT_CHANGED",
+    )
+    t.need(
+        all(x["result"] in {"PASS", "N/A"} for x in stored["checks"].values()),
+        "PREPARATION_REAL_WORK_REQUIRED",
+    )
+    # An older SHA is valid only with the same current canonical blobs and ancestry.
+    engine.verify_remote_sources(t, writer.gh, stored["source_sha"], policy)
+    source = writer.call("GET", f"{t.REPO}/compare/{stored['source_sha']}...{main}")
+    t.need(
+        source.get("status") in {"ahead", "identical"},
+        "PREPARATION_SOURCE_NOT_ANCESTOR",
+    )
+    names = {v[0]: t.GITHUB[k] for k, v in t.q.PEOPLE.items()}
+    old_route = writer.call("GET", f"{t.REPO}/contents/.github/CODEOWNERS?ref={main}")
+    new_route = writer.call("GET", f"{t.REPO}/contents/.github/CODEOWNERS?ref={head}")
+    owners = base64.b64decode(
+        "".join(old_route["content"].splitlines()), validate=True
+    ).decode()
+    routed = routing_correct(engine, policy["contexts"][wp], names, owners)
+    expected = (
+        owners
+        if routed
+        else owners.rstrip()
+        + "\n"
+        + engine.routing_line(policy["contexts"][wp], names)
+        + "\n"
+    )
+    files = writer.call("GET", f"{t.REPO}/pulls/{pr['number']}/files?per_page=100")
+    expected_files = {target} if routed else {target, ".github/CODEOWNERS"}
+    t.need(
+        len(files) == len(expected_files)
+        and {x["filename"] for x in files} == expected_files,
+        "PREPARATION_PR_DIFF_INVALID",
+    )
+    t.need(
+        base64.b64decode(
+            "".join(new_route["content"].splitlines()), validate=True
+        ).decode()
+        == expected,
+        "PREPARATION_ROUTING_DIFF_INVALID",
+    )
+    return stored
+
+
 def prepare_pr(t, engine, writer, candidate, plan, policy, before_write):
     """One open PR per WP; a lost response is discovered, never blindly repeated."""
     writer.prewrite = before_write
@@ -116,16 +218,19 @@ def prepare_pr(t, engine, writer, candidate, plan, policy, before_write):
     # A canonical-same preparation survives unrelated main commits; verify each use.
     tree = writer.call("GET", f"{repo}/git/trees/{main}?recursive=1")
     t.need(tree.get("truncated") is False, "REPOSITORY_TREE_INCOMPLETE")
+    superseding = False
     if any(x["path"] == target for x in tree["tree"]):
         raw = writer.gh.evidence_text(target, main)
-        prior = json.loads(raw)
+        prior = json.loads(raw, object_pairs_hook=t.q.unique)
         if prior == engine.derive(policy["contexts"][wp], policy, prior["source_sha"]):
             return {"state": "ALREADY_PRESENT", "wp_id": wp}
-        return {
-            "state": "REAL_WORK_REQUIRED",
-            "wp_id": wp,
-            "reason": "EXISTING_PREPARATION_INPUT_CHANGED_REVIEW_REQUIRED",
-        }
+        if not same_preparation(prior, plan):
+            return {
+                "state": "REAL_WORK_REQUIRED",
+                "wp_id": wp,
+                "reason": "EXISTING_PREPARATION_INPUT_CHANGED_REVIEW_REQUIRED",
+            }
+        superseding = True
     prs = writer.call("GET", f"{repo}/pulls?state=open&per_page=100")
     t.need(len(prs) < 100, "PREPARATION_PR_DISCOVERY_INCOMPLETE")
     active = [
@@ -138,6 +243,12 @@ def prepare_pr(t, engine, writer, candidate, plan, policy, before_write):
             pr["head"]["ref"] == branch,
             "EXISTING_PREPARATION_INPUT_CHANGED_REVIEW_REQUIRED",
         )
+    elif superseding:
+        return {
+            "state": "REAL_WORK_REQUIRED",
+            "wp_id": wp,
+            "reason": "PREPARATION_SUPERSESSION_PR_REQUIRED",
+        }
     else:
         closed = writer.call(
             "GET", f"{repo}/pulls?state=closed&head=Asperant:{branch}&per_page=1"
@@ -156,7 +267,8 @@ def prepare_pr(t, engine, writer, candidate, plan, policy, before_write):
             owners = base64.b64decode(route["content"]).decode()
             names = {v[0]: t.GITHUB[k] for k, v in t.q.PEOPLE.items()}
             line = engine.routing_line(policy["contexts"][wp], names)
-            owners = owners.rstrip() + "\n" + line + "\n"
+            routed = routing_correct(engine, policy["contexts"][wp], names, owners)
+            owners = owners if routed else owners.rstrip() + "\n" + line + "\n"
             before_write()
             t.need(
                 writer.gh.main_sha() == main,
@@ -174,13 +286,19 @@ def prepare_pr(t, engine, writer, candidate, plan, policy, before_write):
                             "type": "blob",
                             "content": engine.encode(plan),
                         },
-                        {
-                            "path": ".github/CODEOWNERS",
-                            "mode": "100644",
-                            "type": "blob",
-                            "content": owners,
-                        },
-                    ],
+                    ]
+                    + (
+                        []
+                        if routed
+                        else [
+                            {
+                                "path": ".github/CODEOWNERS",
+                                "mode": "100644",
+                                "type": "blob",
+                                "content": owners,
+                            }
+                        ]
+                    ),
                 },
             )
             commit = writer.call(
@@ -209,42 +327,8 @@ def prepare_pr(t, engine, writer, candidate, plan, policy, before_write):
                 "body": f"WP: {wp}\nControl: CTRL-HOST-006 / CHG-021\nSource: {main}\n\nCanonical metadata and planned workstream only. No implementation, test result or readiness artifact is certified. Deterministic generation and fresh transition validation are mandatory. CHG-018: zero development approvals; all required CI retained.",
             },
         )
-    # Bind exact minimal diff and authenticated Asrin author, even on recovery.
-    t.need(
-        pr["user"]["login"].casefold() == t.GITHUB["asrin"].casefold()
-        and not pr["draft"]
-        and pr["base"]["ref"] == "main",
-        "PREPARATION_PR_SCOPE_INVALID",
-    )
+    validate_preparation_pr(t, engine, writer, pr, plan, policy, main)
     head = pr["head"]["sha"]
-    files = writer.call("GET", f"{repo}/pulls/{pr['number']}/files?per_page=100")
-    t.need(
-        {x["filename"] for x in files} == {target, ".github/CODEOWNERS"}
-        and len(files) == 2,
-        "PREPARATION_PR_DIFF_INVALID",
-    )
-    stored = json.loads(writer.gh.evidence_text(target, head))
-    t.need(
-        stored == engine.derive(policy["contexts"][wp], policy, stored["source_sha"]),
-        "PREPARATION_PR_CONTENT_CHANGED",
-    )
-    # Exact CODEOWNERS diff only appends the deterministic routing line.
-    old_route = writer.call(
-        "GET",
-        f"{repo}/contents/.github/CODEOWNERS?ref={pr['base'].get('sha', stored['source_sha'])}",
-    )
-    new_route = writer.call("GET", f"{repo}/contents/.github/CODEOWNERS?ref={head}")
-    names = {v[0]: t.GITHUB[k] for k, v in t.q.PEOPLE.items()}
-    expected_route = (
-        base64.b64decode(old_route["content"]).decode().rstrip()
-        + "\n"
-        + engine.routing_line(policy["contexts"][wp], names)
-        + "\n"
-    )
-    t.need(
-        base64.b64decode(new_route["content"]).decode() == expected_route,
-        "PREPARATION_ROUTING_DIFF_INVALID",
-    )
     comparison = writer.call("GET", f"{repo}/compare/main...{head}")
     if comparison.get("behind_by", 0) > 0:
         before_write()
