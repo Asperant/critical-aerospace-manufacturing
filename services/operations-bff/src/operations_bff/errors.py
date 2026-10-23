@@ -44,8 +44,29 @@ class Forbidden(BffError):
 
 
 class BadRequest(BffError):
-    """Request breaks the contract, e.g. browser-supplied actor authority: 400."""
+    """Request breaks the contract: 400."""
 
     status = 400
     category = "VALIDATION_ERROR"
+    error_code = "INVALID_REQUEST"
+
+
+class AuthorityRejected(BadRequest):
+    """Browser-supplied actor, role or identity authority: 400."""
+
     error_code = "BROWSER_AUTHORITY_REJECTED"
+
+
+class LoginRejected(Unauthorized):
+    """Login transaction or provider result refused: 401, no session created."""
+
+    error_code = "LOGIN_REJECTED"
+
+
+class Unavailable(BffError):
+    """A required dependency such as the identity provider is down: 503."""
+
+    status = 503
+    category = "DEPENDENCY_UNAVAILABLE"
+    error_code = "DEPENDENCY_UNAVAILABLE"
+    retryable = True

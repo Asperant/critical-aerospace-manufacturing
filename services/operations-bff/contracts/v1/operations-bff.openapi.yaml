@@ -172,9 +172,15 @@ paths:
       security: []
       responses:
         "302":
-          description: Redirect to the identity provider.
+          description: >-
+            Redirect to the identity provider, with a short-lived HttpOnly
+            login cookie that binds the callback to this browser.
           headers:
             Location:
+              required: true
+              schema:
+                type: string
+            Set-Cookie:
               required: true
               schema:
                 type: string

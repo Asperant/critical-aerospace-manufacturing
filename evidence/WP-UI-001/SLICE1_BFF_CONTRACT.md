@@ -102,3 +102,38 @@ tests pass (16 new transport tests), Ruff lint and format, Pyright 0 errors,
 earlier 16 mfgctl findings came from an unsynced local environment). One
 Starlette deprecation warning about `httpx` in TestClient (it prefers `httpx2`)
 is unaddressed. CI for this commit is not yet observed.
+
+## Slice 5: OIDC login-flow skeleton behind an IdP port
+
+Canonical basis (02, Authentication and Browser/BFF Security): OIDC/OAuth2 flow
+run by the BFF, no custom protocol, server-validated identity, session rotation on
+login, claims are input and never a decision. The documents name no PKCE, state
+or nonce rules; those follow the OAuth 2.0 / OIDC authorization-code standard
+and were requested for this slice.
+
+Added in `src/operations_bff/`: `idp.py` (port `IdentityProvider` with
+`authorization_url` and `complete`, returning only an `AuthenticatedIdentity`;
+errors `IdentityProviderError` and `IdentityProviderUnavailable`), `login.py`
+(`LoginService`, single-use login transactions with S256 PKCE verifier, state and
+nonce, in-memory store, pending cap and TTL up to 15 min), `LoginConfig` and the
+`cap_login` binding cookie name in `config.py`, `LoginRejected` (401) and
+`Unavailable` (503) in `errors.py`, and `startLogin` / `completeLogin` routes in
+`api.py`, mounted only when a `LoginService` is supplied.
+
+startLogin: 302 to the provider URL plus the `cap_login` cookie. completeLogin:
+spends the transaction first, then checks expiry and browser binding, calls the
+port, accepts only a complete `AuthenticatedIdentity`, creates the session (any
+previous session is ended), writes `cap_session` through `write_session_cookie`,
+clears `cap_login` and redirects to a configured same-origin path. Failures are
+the contract envelopes: 401 rejected, 503 provider unavailable, 400 invalid
+parameters. No concrete provider, URL, secret or token handling exists.
+
+Contract change made here: `startLogin` now declares the `Set-Cookie` header.
+`BadRequest` is now generic (`INVALID_REQUEST`); authority refusal moved to
+`AuthorityRejected`.
+
+Local verification with the CI commands: 97 tests pass (30 new), Ruff lint and
+format, Pyright 0 errors, `check_contracts.py` PASS, `ci/tests` 26 passed,
+`static_ratchet check` PASS. Not done: a real provider adapter, token validation,
+persistent stores, rotation on read, shell, routes. CI for this commit is not yet
+observed.

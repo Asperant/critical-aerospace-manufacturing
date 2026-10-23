@@ -50,8 +50,12 @@ view, not a domain revision; the stream chains `from_revision` to it.
 - Command payloads cannot carry identity: the request is closed and
   `parameters` keys at any depth may not start with an actor, user, role,
   permission, principal, identity, session or csrf name (case-insensitive).
-- Open: the cookie name, SameSite value (Strict or Lax) and session lifetimes
-  are runtime decisions for the auth/session implementation slice.
+- Login binding: `startLogin` also sets a short-lived HttpOnly `cap_login` cookie
+  (Secure, SameSite=Lax, path `/v1/session`) that `completeLogin` requires and
+  clears, so a callback link fed to another browser cannot log it in as someone
+  else. Pending login state, the PKCE verifier and the nonce stay server side.
+- Open: the SameSite value of the session cookie (Strict or Lax) and the session
+  lifetimes are configuration decisions for the owner.
 
 ## Boundaries
 

@@ -10,7 +10,7 @@ from datetime import datetime
 from typing import Any
 
 from .config import COOKIE_NAME, CSRF_HEADER
-from .errors import BadRequest, Forbidden
+from .errors import AuthorityRejected, Forbidden
 from .session import SessionManager, SessionRecord
 
 STATE_CHANGING = frozenset({"POST", "PUT", "PATCH", "DELETE"})
@@ -45,7 +45,9 @@ def reject_browser_authority(value: Any, *, where: str = "payload") -> None:
     if isinstance(value, Mapping):
         for key, item in value.items():  # pyright: ignore[reportUnknownVariableType]
             if AUTHORITY_KEY.match(str(key)):  # pyright: ignore[reportUnknownArgumentType]
-                raise BadRequest(f"{where} must not carry authority field {key!r}")
+                raise AuthorityRejected(
+                    f"{where} must not carry authority field {key!r}"
+                )
             reject_browser_authority(item, where=where)
     elif isinstance(value, list):
         for item in value:  # pyright: ignore[reportUnknownVariableType]
@@ -76,7 +78,7 @@ def authenticate_request(
     lowered = {name.lower(): value for name, value in headers.items()}
     for name in lowered:
         if name in AUTHORITY_HEADERS:
-            raise BadRequest(f"header {name!r} is not accepted as authority")
+            raise AuthorityRejected(f"header {name!r} is not accepted as authority")
     if method.upper() in STATE_CHANGING:
         presented = lowered.get(CSRF_HEADER.lower(), "")
         if not presented or not hmac.compare_digest(

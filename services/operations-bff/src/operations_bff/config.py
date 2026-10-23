@@ -9,6 +9,8 @@ from typing import Literal
 MAX_ABSOLUTE_TTL = timedelta(hours=12)
 COOKIE_NAME = "cap_session"
 CSRF_HEADER = "X-CSRF-Token"
+LOGIN_COOKIE_NAME = "cap_login"
+MAX_LOGIN_TTL = timedelta(minutes=15)
 
 
 @dataclass(frozen=True)
@@ -45,3 +47,17 @@ class CookieSettings:
     def __post_init__(self) -> None:
         if self.same_site not in ("strict", "lax"):
             raise ValueError("same_site must be 'strict' or 'lax'")
+
+
+@dataclass(frozen=True)
+class LoginConfig:
+    """Bounds for pending login transactions."""
+
+    ttl: timedelta = timedelta(minutes=10)
+    max_pending: int = 1000
+
+    def __post_init__(self) -> None:
+        if not timedelta(0) < self.ttl <= MAX_LOGIN_TTL:
+            raise ValueError("ttl must be positive and at most 15 minutes")
+        if self.max_pending < 1:
+            raise ValueError("max_pending must be at least 1")
