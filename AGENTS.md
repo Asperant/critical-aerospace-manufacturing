@@ -908,3 +908,11 @@ still match the assessed revision. Anything missing, UNKNOWN, ambiguous or owner
 every ordinary implementation blocker and every other active state keeps the slot. The WP
 stays visible, blocked and never DONE for readiness; DONE and unblock requirements are
 unchanged.
+
+CHG-025 / CTRL-HOST-010 lets the CHG-024 proof take its assessment comment from a later
+`UNCHANGED` re-assertion of the same blocker. The latest VERIFIED BLOCKED audit remains the
+authority that the blocker is active; the re-assertion must reference it through
+`active_blocker_audit_id`, repeat the identical reason, carry no blocker of its own, and
+every audit row must recompute its `audit_id`. The comment still has to satisfy every
+CHG-024 requirement. `UNCHANGED` is never equivalent to `VERIFIED`; duplicate, edited,
+foreign or contradictory chains fail closed and keep the slot.

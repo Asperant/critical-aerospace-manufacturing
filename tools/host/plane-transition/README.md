@@ -271,3 +271,10 @@ at an explicit readiness level, with canonical inputs at the assessed revision e
 the pinned policy (`check_canonical_scope`, shared with the deferred proof). The
 resolver's `external_integration_wait` / `released_wait` consume only that proof;
 `deferred_waits` lists both kinds with their class.
+
+CHG-025 / CTRL-HOST-010: `external_wait_proof` tries the latest `UNCHANGED` BLOCKED
+re-assertion first (`reassertion()` over `blocker_rows()`), then the VERIFIED record's own
+comment. The re-assertion must reference the latest VERIFIED BLOCKED audit through
+`active_blocker_audit_id`, repeat its reason, carry no `blocker`, and every row must
+recompute `audit_id` (`audit_identity()`); any other later row makes the chain ambiguous
+and denies the proof.
