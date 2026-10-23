@@ -924,3 +924,8 @@ fewer than the three-candidate diagnostic head), so WAITING_DEP, NEEDS_DOR and o
 non-actionable head candidates stay reported but cannot starve later preparable work.
 The controller and health use the same engine classification and canonical order; gates,
 UNKNOWN handling, one-PR-per-run and AUTO_NEXT eligibility are unchanged.
+
+CHG-027 / CTRL-HOST-012: `cap-plane-queue` reports `current_task` as the owner's current actionable
+work (READY work is also kept in `next_task`). Work the shared resolver classifies as a verified
+deferred wait (CHG-022/CHG-024) is excluded from that selection and listed in `deferred_waits`;
+if the classification is unavailable nothing is excluded. Multiple actionable work stays AMBIGUOUS.

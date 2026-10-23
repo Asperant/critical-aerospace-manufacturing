@@ -136,3 +136,11 @@ root-only timestamped `/root` backup and rollback script before replacing helper
 files, refreshes source/helper hashes, verifies sudoers and preserves audit. Rollback
 restores deployment only; never replay a stale Plane DB or state snapshot. No service
 restart is required. Missing evidence results in NO_TASK, never synthetic READY.
+
+CHG-027 / CTRL-HOST-012: `combine()` selects from the live snapshot after excluding the WP IDs in
+the resolver's `deferred_waits` (verified CHG-022/CHG-024 waits, never inferred from Plane fields
+or IDs). `current_task` is the owner's current actionable work; READY work is additionally kept in
+`next_task` for existing readers and keeps `display_status` READY. Waits stay listed in
+`deferred_waits`; with no actionable work both tasks are null. If the resolver classification is
+unavailable nothing is excluded (previous fail-closed behavior); multiple actionable work remains
+AMBIGUOUS.

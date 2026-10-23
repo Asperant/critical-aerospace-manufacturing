@@ -194,8 +194,13 @@ def clean(text):
     return ''.join(c for c in text if not unicodedata.category(c).startswith('C'))[:240]
 
 
-def select(profile, rows):
-    own = [r for r in rows.values() if r['_profile'] == profile]
+def select(profile, rows, deferred=None):
+    """`deferred` holds WP IDs the shared resolver classifies as verified waits.
+
+    They stay visible through `deferred_waits` but never become, or hide, the owner's
+    current actionable work. Unknown or unavailable classification passes none (fail-closed).
+    """
+    own = [r for r in rows.values() if r['_profile'] == profile and r['wp_id'] not in (deferred or ())]
     active = [r for r in own if r['plane_state'] == 'IN_PROGRESS']
     ready = [r for r in own if r['plane_state'] == 'READY']
     result = {'profile': profile, 'canonical_owner': PEOPLE[profile][0], 'status': 'NO_TASK',
@@ -207,7 +212,9 @@ def select(profile, rows):
     elif active or ready:
         row = (active or ready)[0]
         task = {k: clean(v) if isinstance(v, str) else v for k, v in row.items() if not k.startswith('_')}
-        result['current_task' if active else 'next_task'] = task
+        result['current_task'] = task
+        if not active:
+            result['next_task'] = task  # READY stays in next_task for existing readers
         result['status'] = 'BLOCKED' if row['blocked'] else 'OK'
     pending = [r for r in own if r['plane_state'] in {'IN_REVIEW','MERGE_READY','MERGED','VALIDATING'}]
     if not active and not ready and pending:
@@ -217,9 +224,38 @@ def select(profile, rows):
             row=pending[0]
             result['current_task']={k:clean(v) if isinstance(v,str) else v for k,v in row.items() if not k.startswith('_')}
             result['status']='BLOCKED' if row['blocked'] else 'OK'
-    result['display_status']=('CURRENT' if result['current_task'] else 'READY') if result['status']=='OK' else result['status']
+    current = result['current_task']
+    result['display_status']=('READY' if current and current['plane_state']=='READY' else 'CURRENT' if current else 'READY') if result['status']=='OK' else result['status']
     if result['status']=='NO_TASK':
         result['reason']='NO_RELEASED_WORK; use read-only automatic eligibility details; never choose BACKLOG'
+    return result
+
+
+def preflight(profile, key):
+    """Derived health (including deferred waits) from the installed resolver; None if unavailable."""
+    try:
+        loader=__import__('importlib.machinery',fromlist=['SourceFileLoader']).SourceFileLoader('cap_auto_health','/usr/local/libexec/cap-auto-next.py')
+        spec=__import__('importlib.util',fromlist=['spec_from_loader']).spec_from_loader(loader.name,loader)
+        auto=__import__('importlib.util',fromlist=['module_from_spec']).module_from_spec(spec)
+        loader.exec_module(auto)
+        t=auto.load_transition()
+        policy=json.loads((ROOT/'transition-policy.json').read_text())
+        t.verify_policy_sources(policy)
+        return auto.owner_health(t,profile,policy,t.Plane(key),t.GitHub)
+    except Exception:
+        return None
+
+
+def combine(profile, rows, health):
+    """Selection excluding verified waits, plus derived health; health None fails closed."""
+    waits = (health or {}).get('deferred_waits', [])
+    deferred = {w['wp_id'] for w in waits if isinstance(w, dict) and isinstance(w.get('wp_id'), str)}
+    result = select(profile, rows, deferred)
+    if health is not None:
+        result.update(prepared_next=health['prepared_next'], health=health['health'],
+                      first_blocker=health['first_blocker'], deferred_waits=waits)
+    else:
+        result.update(prepared_next=None, health='UNAVAILABLE', first_blocker={'reason': 'PREFLIGHT_SOURCE_UNAVAILABLE'})
     return result
 
 
@@ -255,7 +291,7 @@ def main():
             require(os.fstat(lock.fileno()).st_uid == 0)
             fcntl.flock(lock, fcntl.LOCK_EX)
             time.sleep(1.25)
-            result = select(profile, snapshot(Reader(key), catalog))
+            result = combine(profile, snapshot(Reader(key), catalog), preflight(profile, key))
             if result['status']=='BLOCKED':
                 result['reason']='ACTIVE_BLOCKER; accountable reason unavailable from live label alone'
                 task=result['current_task'] or result['next_task']
@@ -279,18 +315,6 @@ def main():
                 if decision['status'] in {'UNAVAILABLE','INVALID_BASELINE'}:
                     result['status']='UNAVAILABLE'
                     result['display_status']='UNAVAILABLE'
-            try:
-                auto_loader=__import__('importlib.machinery',fromlist=['SourceFileLoader']).SourceFileLoader('cap_auto_health','/usr/local/libexec/cap-auto-next.py')
-                auto_spec=__import__('importlib.util',fromlist=['spec_from_loader']).spec_from_loader(auto_loader.name,auto_loader)
-                auto=__import__('importlib.util',fromlist=['module_from_spec']).module_from_spec(auto_spec)
-                auto_loader.exec_module(auto)
-                t=auto.load_transition()
-                policy=json.loads((ROOT/'transition-policy.json').read_text())
-                t.verify_policy_sources(policy)
-                health=auto.owner_health(t,profile,policy,t.Plane(key),t.GitHub)
-                result.update(prepared_next=health['prepared_next'],health=health['health'],first_blocker=health['first_blocker'],deferred_waits=health.get('deferred_waits',[]))
-            except Exception:
-                result.update(prepared_next=None,health='UNAVAILABLE',first_blocker={'reason':'PREFLIGHT_SOURCE_UNAVAILABLE'})
         emit(result, key)
         return exit_status(result)
     except Exception:
