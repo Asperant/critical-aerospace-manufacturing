@@ -59,11 +59,13 @@ evidence on the INTEGRATION environment.
 ## Limitations and follow-ups
 
 - **NFR-OBS-001/002 are coverage measures over the nine mandatory
-  deployables.** Only `manufacturing-core` exists today; its adoption of
-  `configure()` and `health_report()` is PENDING with an owned exemption in
-  `coverage.json` (owner agreement needed, Asrın). The other eight are
-  NOT_PRESENT and adopt the helpers when they are created; CI prints the
-  current figure on every run. `observed` stays `null` in 03.
+  deployables.** Three exist today: `manufacturing-core`, and
+  `operations-bff` and `command-center-web` from WP-UI-001 (which bring their
+  own access log and `/healthz`). Their adoption of the standard is PENDING
+  with owned exemptions in `coverage.json` (owner agreement needed, Asrın). The
+  other six are NOT_PRESENT and adopt the helpers when they are created; CI
+  prints the current figure on every run. `observed` stays `null` in 03.
+  RUN-OBS-001-DEV-001 was recorded before main was merged and shows 1/9.
 - **INTEGRATION host:** the stack runs on a developer or shared host and in CI;
   composition into the capability profiles and the shared Integration host is
   WP-PLAT-001 / WP-PLAT-003 (DEP-011, DEP-109).

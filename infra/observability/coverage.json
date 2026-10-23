@@ -1,8 +1,32 @@
 {
   "schema": "cap.telemetry-coverage/v1",
   "deployables": [
-    {"name": "command-center-web", "owner": "Asrın", "runtime": "typescript", "path": "services/command-center-web", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
-    {"name": "operations-bff", "owner": "Asrın", "runtime": "python", "path": "services/operations-bff", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
+    {
+      "name": "command-center-web",
+      "owner": "Asrın",
+      "runtime": "typescript",
+      "path": "services/command-center-web",
+      "logging": "PENDING",
+      "health": "PENDING",
+      "exemption": {
+        "reason": "Created by WP-UI-001 before the standard existed; a browser deployable has no Python helper, so its log and health mapping to cap.log/v1 and cap.health/v1 is agreed with the owner (WP-OBS-001).",
+        "owner": "Yavuz",
+        "expires_on": "2026-11-20"
+      }
+    },
+    {
+      "name": "operations-bff",
+      "owner": "Asrın",
+      "runtime": "python",
+      "path": "services/operations-bff",
+      "logging": "PENDING",
+      "health": "PENDING",
+      "exemption": {
+        "reason": "Created by WP-UI-001 with its own structured access log and /healthz; replacing them with configure() and health_report() is agreed with the owner before changing services/operations-bff (WP-OBS-001).",
+        "owner": "Yavuz",
+        "expires_on": "2026-11-20"
+      }
+    },
     {
       "name": "manufacturing-core",
       "owner": "Asrın",
@@ -13,7 +37,7 @@
       "exemption": {
         "reason": "Adoption of configure() and health_report() is agreed with the service owner before changing services/manufacturing-core (WP-OBS-001 slice C/D).",
         "owner": "Yavuz",
-        "expires_on": "2026-11-06"
+        "expires_on": "2026-11-20"
       }
     },
     {"name": "manufacturing-simulator", "owner": "Batu", "runtime": "python", "path": "services/manufacturing-simulator", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},

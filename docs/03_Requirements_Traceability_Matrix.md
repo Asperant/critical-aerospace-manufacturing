@@ -51,7 +51,7 @@
 > helpers in `packages/observability/` and the CI coverage check over the nine
 > mandatory deployables. The shared-host run is recorded under
 > `evidence/WP-OBS-001/`; evidence is EVIDENCE_PENDING. Coverage is measured,
-> not yet met: one of nine deployables exists and its adoption is pending, so
+> not yet met: three of nine deployables exist and their adoption is pending, so
 > `observed` stays null. No accepted measurement, sealed EvidenceID or VERIFIED
 > state is asserted.
 
@@ -6555,7 +6555,7 @@ NFR-OBS-001:
   REALIZED_BY: {surface: "cap.health/v1 health surface and coverage check", deployable: "cap-observability", ref: "packages/observability/src/cap_observability/health.py; packages/observability/src/cap_observability/coverage.py; infra/observability/coverage.json"}
   MEASUREMENT: {metric: "mandatory deployables exposing inspectable health/readiness", threshold: "100%", workload: "mandatory runtime", hardware: "N/A (not hardware-bound)", observed: null}
   VERIFIED_BY: [TEST-OBS-HEALTH]
-  EXECUTED_AS: [RUN-OBS-001-DEV-001]  # coverage measured in CI t1-unit; 1 of 9 deployables exists, adoption pending
+  EXECUTED_AS: [RUN-OBS-001-DEV-001]  # coverage measured in CI t1-unit; 3 of 9 deployables exist, adoption pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "INTEGRATION", m6_freeze_sensitive: false}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
@@ -6566,7 +6566,7 @@ NFR-OBS-002:
   REALIZED_BY: {surface: "cap.log/v1 structured logging via configure()", deployable: "cap-observability", ref: "packages/observability/src/cap_observability/telemetry.py; packages/observability/src/cap_observability/schemas/log-record.schema.json; infra/observability/coverage.json"}
   MEASUREMENT: {metric: "team-owned mandatory services emitting structured logs with service/environment/correlation", threshold: "100% where applicable", workload: "mandatory runtime", hardware: "N/A (not hardware-bound)", observed: null}
   VERIFIED_BY: [TEST-OBS-LOGS]
-  EXECUTED_AS: [RUN-OBS-001-DEV-001]  # coverage measured in CI t1-unit; 1 of 9 deployables exists, adoption pending
+  EXECUTED_AS: [RUN-OBS-001-DEV-001]  # coverage measured in CI t1-unit; 3 of 9 deployables exist, adoption pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
