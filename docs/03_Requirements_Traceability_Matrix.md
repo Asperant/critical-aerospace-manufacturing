@@ -44,6 +44,17 @@
 > The documented HardwareProfile is still open (Item 82): no accepted
 > measurement, sealed EvidenceID or VERIFIED state is asserted.
 
+> **WP-OBS-001 implementation delta (2026-10-23).** FR-PLAT-006 now references
+> the OTel Collector → OpenObserve stack in `infra/observability/` and its REAL
+> integration smoke (§19.4); NFR-OBS-001 and NFR-OBS-002 reference the
+> `cap.health/v1` and `cap.log/v1` contracts, the `configure()`/`health_report()`
+> helpers in `packages/observability/` and the CI coverage check over the nine
+> mandatory deployables. The shared-host run is recorded under
+> `evidence/WP-OBS-001/`; evidence is EVIDENCE_PENDING. Coverage is measured,
+> not yet met: three of nine deployables exist and their adoption is pending, so
+> `observed` stays null. No accepted measurement, sealed EvidenceID or VERIFIED
+> state is asserted.
+
 ---
 
 ## Table of Contents
@@ -546,7 +557,7 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 | FR-PLAT-003 | F1 | Yavuz | 01 Item81 FR-PLAT-003 L170081 | ITEM-74, DX-INV-02, DX-INV-03 | EVIDENCE_PENDING | — |
 | FR-PLAT-004 | F1 | Yavuz | 01 Item81 FR-PLAT-004 L170082 | ITEM-42, CD-INV-01, PLAT-INV-01, INTEG-INV-03 | VERIFY_PLANNED | — |
 | FR-PLAT-005 | F1 | Yavuz | 01 Item81 FR-PLAT-005 L170083 | ITEM-42, CD-INV-03, PLAT-INV-10 | VERIFY_PLANNED | — |
-| FR-PLAT-006 | F1 | Yavuz | 01 Item81 FR-PLAT-006 L170084 | ITEM-47, ITEM-61, TECH-INV-14 | VERIFY_PLANNED | — |
+| FR-PLAT-006 | F1 | Yavuz | 01 Item81 FR-PLAT-006 L170084 | ITEM-47, ITEM-61, TECH-INV-14 | EVIDENCE_PENDING | — |
 | FR-PLAT-007 | F1 | Yavuz | 01 Item81 FR-PLAT-007 L170085 | ITEM-47, OBS-INV-05, OBS-INV-06, E2E-INV-23 | VERIFY_PLANNED | — |
 | FR-PLAT-008 | F1 | Yavuz | 01 Item81 FR-PLAT-008 L170086 | ITEM-53, DR-INV-02, DR-INV-11 | VERIFY_PLANNED | — |
 | FR-PLAT-009 | F1 | Yavuz | 01 Item81 FR-PLAT-009 L170087 | ITEM-53, DR-INV-08, DB-INV-13 | VERIFY_PLANNED | — |
@@ -682,8 +693,8 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 
 | ID | Class | PrimaryOwner | Catalog anchor | Source decisions (DERIVED_FROM) | Planning state | Flags |
 |---|---|---|---|---|---|---|
-| NFR-OBS-001 | A1 | Yavuz | 01 Item82 NFR-OBS-001 L171917 | ITEM-47, OBS-INV-09 | VERIFY_PLANNED | — |
-| NFR-OBS-002 | A1 | Yavuz | 01 Item82 NFR-OBS-002 L171928 | ITEM-47, OBS-INV-04 | VERIFY_PLANNED | — |
+| NFR-OBS-001 | A1 | Yavuz | 01 Item82 NFR-OBS-001 L171917 | ITEM-47, OBS-INV-09 | EVIDENCE_PENDING | — |
+| NFR-OBS-002 | A1 | Yavuz | 01 Item82 NFR-OBS-002 L171928 | ITEM-47, OBS-INV-04 | EVIDENCE_PENDING | — |
 | NFR-OBS-003 | A1 | Yavuz | 01 Item82 NFR-OBS-003 L171943 | ITEM-47, E2E-INV-23, NFR-INV-33 | VERIFY_PLANNED | — |
 | NFR-OBS-004 | A1 | Yavuz | 01 Item82 NFR-OBS-004 L171952 | ITEM-21, ITEM-47, TEST-INV-22 | VERIFY_PLANNED | — |
 | NFR-OBS-005 | H0 | Yavuz | 01 Item82 NFR-OBS-005 L171963 | ITEM-47, OBS-INV-04, DX-INV-29 | VERIFY_PLANNED | — |
@@ -5498,14 +5509,15 @@ FR-PLAT-006:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-PLAT-006 L170084"}
   DERIVED_FROM: [ITEM-47, ITEM-61, TECH-INV-14]
   ALLOCATED_TO: [ARCH-OBS-TELEMETRY, ARCH-OBS-STORE]
-  REALIZED_BY: {surface: "centralized telemetry pipeline (backfill ADR 10)", deployable: "OTel SDK + Collector + OpenObserve", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "centralized telemetry pipeline (backfill ADR 10)", deployable: "OTel SDK + Collector + OpenObserve", ref: "infra/observability/; packages/observability/src/cap_observability/telemetry.py"}
   GOVERNED_BY: ["Collector pipeline config"]
   VERIFIED_BY: [TEST-OBS-TELEMETRY]
   EXERCISED_IN: [AV-SCEN-01]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-OBS-001-DEV-001]  # REAL stack on the shared host and in CI t1-integration; INTEGRATION host pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "the stack runs on developer/shared hosts and in CI; composition on the INTEGRATION host follows WP-PLAT-001/003 (DEP-011)."
 FR-PLAT-007:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-PLAT-007 L170085"}
   DERIVED_FROM: [ITEM-47, OBS-INV-05, OBS-INV-06, E2E-INV-23]
@@ -6540,22 +6552,24 @@ NFR-OBS-001:
   meta: {class: A1, owner: Yavuz, anchor: "01 Item82 NFR-OBS-001 L171917"}
   DERIVED_FROM: [ITEM-47, OBS-INV-09]
   ALLOCATED_TO: [ARCH-OBS-HEALTH]
+  REALIZED_BY: {surface: "cap.health/v1 health surface and coverage check", deployable: "cap-observability", ref: "packages/observability/src/cap_observability/health.py; packages/observability/src/cap_observability/coverage.py; infra/observability/coverage.json"}
   MEASUREMENT: {metric: "mandatory deployables exposing inspectable health/readiness", threshold: "100%", workload: "mandatory runtime", hardware: "N/A (not hardware-bound)", observed: null}
   VERIFIED_BY: [TEST-OBS-HEALTH]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-OBS-001-DEV-001]  # coverage measured in CI t1-unit; 3 of 9 deployables exist, adoption pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 NFR-OBS-002:
   meta: {class: A1, owner: Yavuz, anchor: "01 Item82 NFR-OBS-002 L171928"}
   DERIVED_FROM: [ITEM-47, OBS-INV-04]
   ALLOCATED_TO: [ARCH-OBS-TELEMETRY]
+  REALIZED_BY: {surface: "cap.log/v1 structured logging via configure()", deployable: "cap-observability", ref: "packages/observability/src/cap_observability/telemetry.py; packages/observability/src/cap_observability/schemas/log-record.schema.json; infra/observability/coverage.json"}
   MEASUREMENT: {metric: "team-owned mandatory services emitting structured logs with service/environment/correlation", threshold: "100% where applicable", workload: "mandatory runtime", hardware: "N/A (not hardware-bound)", observed: null}
   VERIFIED_BY: [TEST-OBS-LOGS]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-OBS-001-DEV-001]  # coverage measured in CI t1-unit; 3 of 9 deployables exist, adoption pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 NFR-OBS-003:
   meta: {class: A1, owner: Yavuz, anchor: "01 Item82 NFR-OBS-003 L171943"}
   DERIVED_FROM: [ITEM-47, E2E-INV-23, NFR-INV-33]
@@ -7232,6 +7246,22 @@ Command-surface contract: `tools/mfgctl/schemas/capabilities.schema.json`
 CI: the `mfgctl tests` step of the t1-unit job. BENCH-DX-001 measurements on a
 documented HardwareProfile, NFR-DX-003 (smoke) and NFR-DX-004 (profile startup)
 remain open until WP-PLAT-001 provides the registry and Compose profiles.
+EvidenceState is EVIDENCE_PENDING.
+
+### 19.4 WP-OBS-001 concrete implementation and verification assets
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-OBS-001-001 (`packages/observability/tests/test_standard.py`, `test_telemetry.py`) | TEST-OBS-LOGS | NFR-OBS-002 (field standard, redaction, helper output) |
+| TEST-OBS-001-002 (`infra/observability/tests/test_pipeline_integration.py`, `test_definitions.py`) | TEST-OBS-TELEMETRY | FR-PLAT-006 (REAL OTLP → Collector → OpenObserve for logs, metrics, traces; dashboards) |
+| TEST-OBS-001-003 (`packages/observability/tests/test_health_coverage.py`, health part) | TEST-OBS-HEALTH | NFR-OBS-001 (liveness/readiness contract, dependency classes) |
+| TEST-OBS-001-004 (`python -m cap_observability check-coverage infra/observability/coverage.json`) | TEST-OBS-HEALTH, TEST-OBS-LOGS | NFR-OBS-001, NFR-OBS-002 (coverage over the nine mandatory deployables) |
+
+Contracts: `cap.resource/v1`, `cap.log/v1`, `cap.health/v1` in
+`packages/observability/src/cap_observability/schemas/` (each with an example
+validated by the tests). CI: the "Observability standard tests and typing" step
+of t1-unit and the REAL telemetry pipeline steps of t1-integration. The failure
+detection latency of NFR-OBS-004 and the INTEGRATION-host run remain open.
 EvidenceState is EVIDENCE_PENDING.
 
 ## 20. Rejected Alternatives

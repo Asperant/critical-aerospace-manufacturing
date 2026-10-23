@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Asperant/critical-aerospace-manufacturing/packages/observability/schemas/log-record.schema.json",
+  "title": "cap.log/v1 — structured log record",
+  "description": "One structured log line emitted by any team-owned service (WP-OBS-001; FR-PLAT-006, NFR-OBS-002; 01 Item 47 §27–§40). Canonical field names follow Item 47 §29. Only relevant context is carried (§13); secrets and large payloads are never logged (§34–§36).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["timestamp", "severity", "service", "environment", "event_name", "message"],
+  "properties": {
+    "timestamp": {
+      "description": "UTC RFC 3339 instant with Z suffix.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?Z$"
+    },
+    "severity": {
+      "description": "OpenTelemetry severity text.",
+      "enum": ["DEBUG", "INFO", "WARN", "ERROR", "FATAL"]
+    },
+    "service": {
+      "description": "ServiceName; equals resource service.name.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,62}$"
+    },
+    "service_version": {
+      "description": "ServiceVersion; equals resource service.version.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "environment": {
+      "description": "EnvironmentID; equals resource deployment.environment.name.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,62}$"
+    },
+    "environment_class": {
+      "description": "EnvironmentClass; equals resource cap.environment.class.",
+      "enum": ["LOCAL", "INTEGRATION", "EVALUATION", "DEMO", "CI_EPHEMERAL"]
+    },
+    "release": {
+      "description": "ReleaseID; equals resource cap.release.id.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "event_name": {
+      "description": "Stable diagnostic event name, domain.event in lower snake case (Item 47 §30), for example scheduler.validation_failed.",
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$"
+    },
+    "message": {
+      "description": "Human-readable text. Important diagnostic facts also live in fields, never only here (§31).",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048
+    },
+    "trace_id": {
+      "description": "W3C trace identity: 32 lower-case hex, not all zero.",
+      "type": "string",
+      "pattern": "^(?!0{32}$)[0-9a-f]{32}$"
+    },
+    "span_id": {
+      "description": "W3C span identity: 16 lower-case hex, not all zero.",
+      "type": "string",
+      "pattern": "^(?!0{16}$)[0-9a-f]{16}$"
+    },
+    "correlation_id": {"$ref": "#/$defs/identifier", "description": "Broader operation or business-flow identity (§17)."},
+    "causation_id": {"$ref": "#/$defs/identifier", "description": "Direct causal predecessor command or event (§18)."},
+    "request_id": {"$ref": "#/$defs/identifier", "description": "Specific ingress request identity (§16)."},
+    "error_code": {
+      "description": "Stable error code from the owning service's taxonomy (§32); required for ERROR and FATAL.",
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]{2,63}$"
+    },
+    "error_type": {
+      "description": "Error class or category, for example psycopg.OperationalError.",
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_.]{0,127}$"
+    },
+    "world_id": {"$ref": "#/$defs/identifier", "description": "Simulation world: PRIMARY, WHAT_IF, REPLAY or COUNTERFACTUAL instance."},
+    "simulation_run_id": {"$ref": "#/$defs/identifier"},
+    "workflow_instance_id": {"$ref": "#/$defs/identifier"},
+    "agent_run_id": {"$ref": "#/$defs/identifier"},
+    "scheduling_run_id": {"$ref": "#/$defs/identifier"},
+    "data_pipeline_run_id": {"$ref": "#/$defs/identifier"},
+    "evaluation_run_id": {"$ref": "#/$defs/identifier"},
+    "deployment_id": {"$ref": "#/$defs/identifier"},
+    "entity_refs": {
+      "description": "Bounded references to canonical business records; never full rows (§34–§35).",
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "id"],
+        "properties": {
+          "type": {"type": "string", "pattern": "^[A-Z][A-Za-z0-9]{1,63}$"},
+          "id": {"$ref": "#/$defs/identifier"}
+        }
+      }
+    },
+    "attributes": {
+      "description": "Event-specific diagnostic scalars: at most 16, values bounded; no nested payloads.",
+      "type": "object",
+      "maxProperties": 16,
+      "propertyNames": {"pattern": "^[a-z][a-z0-9_.]{0,63}$"},
+      "additionalProperties": {
+        "type": ["string", "number", "boolean", "null"],
+        "maxLength": 256
+      }
+    }
+  },
+  "dependentRequired": {"span_id": ["trace_id"]},
+  "allOf": [
+    {
+      "if": {
+        "properties": {"severity": {"enum": ["ERROR", "FATAL"]}},
+        "required": ["severity"]
+      },
+      "then": {"required": ["error_code"]}
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+    }
+  }
+}

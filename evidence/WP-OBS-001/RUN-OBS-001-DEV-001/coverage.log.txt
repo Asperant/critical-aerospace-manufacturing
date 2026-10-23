@@ -1,0 +1,1 @@
+telemetry coverage: 1/9 mandatory deployables exist; logging 0/1 adopted (1 pending); health 0/1 adopted (1 pending); 8 not yet present

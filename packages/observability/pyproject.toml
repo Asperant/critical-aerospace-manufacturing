@@ -1,0 +1,39 @@
+# WP-OBS-001 — shared observability support package (02: packages/observability).
+# Sanctioned shared surface (ARCH-INV-025): published telemetry contracts and
+# support code only; no service imports another service's internals through it.
+# Slice A publishes the telemetry field standard (01 Item 47 §11–§40, Item 43 §4–§6).
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cap-observability"
+version = "0.1.0"
+description = "Telemetry field standard and support code (WP-OBS-001)"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+validate = ["jsonschema>=4.21,<5"]
+# Tracing and metrics export (slice C); logs need only the standard library.
+otel = [
+    "opentelemetry-sdk>=1.45,<2",
+    "opentelemetry-exporter-otlp-proto-http>=1.45,<2",
+]
+dev = [
+    "jsonschema>=4.21,<5",
+    "pytest>=8,<10",
+    "opentelemetry-sdk>=1.45,<2",
+    "opentelemetry-exporter-otlp-proto-http>=1.45,<2",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+cap_observability = ["schemas/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-p no:cacheprovider"

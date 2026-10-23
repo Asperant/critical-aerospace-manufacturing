@@ -5513,7 +5513,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-RT-OBS |
 | Size band (indicative, no hour estimates) | M (≈4–7 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `packages/observability/`; `infra/observability/`; `evidence/WP-OBS-001/` |
 
 **Purpose.** Centralize logs, metrics and traces with consistent service, environment and correlation fields.
 

@@ -1,0 +1,190 @@
+{
+  "version": 8,
+  "title": "CAP Telemetry Pipeline",
+  "description": "WP-OBS-001: what each service sends through the Collector (cap.log/v1 fields). Read-only diagnostics, not a KPI authority (Item 47 §70).",
+  "tabs": [
+    {
+      "tabId": "default",
+      "name": "Pipeline",
+      "panels": [
+        {
+          "id": "panel_logs_by_service",
+          "type": "table",
+          "title": "Log records by service and severity",
+          "description": "Volume per service, environment and severity over the selected range.",
+          "config": {
+            "show_legends": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT service_name, deployment_environment_name AS environment, severity, COUNT(*) AS records FROM \"default\" GROUP BY service_name, deployment_environment_name, severity ORDER BY records DESC",
+              "customQuery": true,
+              "fields": {
+                "stream": "default",
+                "stream_type": "logs",
+                "x": [
+                  {
+                    "label": "Service",
+                    "alias": "service_name",
+                    "column": "service_name",
+                    "color": null
+                  },
+                  {
+                    "label": "Environment",
+                    "alias": "environment",
+                    "column": "environment",
+                    "color": null
+                  },
+                  {
+                    "label": "Severity",
+                    "alias": "severity",
+                    "column": "severity",
+                    "color": null
+                  }
+                ],
+                "y": [
+                  {
+                    "label": "Records",
+                    "alias": "records",
+                    "column": "records",
+                    "color": null
+                  }
+                ],
+                "z": [],
+                "filter": {
+                  "type": "list",
+                  "values": [],
+                  "logicalOperator": "AND",
+                  "filterType": "list"
+                }
+              },
+              "config": {
+                "promql_legend": ""
+              }
+            }
+          ],
+          "layout": {
+            "x": 0,
+            "y": 0,
+            "w": 96,
+            "h": 10,
+            "i": 1
+          }
+        },
+        {
+          "id": "panel_errors_by_code",
+          "type": "table",
+          "title": "Errors by stable error code",
+          "description": "ERROR and FATAL records grouped by error_code (Item 47 §32); UNCLASSIFIED_ERROR marks code-less errors to fix.",
+          "config": {
+            "show_legends": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT service_name, error_code, COUNT(*) AS errors FROM \"default\" WHERE error_code IS NOT NULL GROUP BY service_name, error_code ORDER BY errors DESC",
+              "customQuery": true,
+              "fields": {
+                "stream": "default",
+                "stream_type": "logs",
+                "x": [
+                  {
+                    "label": "Service",
+                    "alias": "service_name",
+                    "column": "service_name",
+                    "color": null
+                  },
+                  {
+                    "label": "Error code",
+                    "alias": "error_code",
+                    "column": "error_code",
+                    "color": null
+                  }
+                ],
+                "y": [
+                  {
+                    "label": "Errors",
+                    "alias": "errors",
+                    "column": "errors",
+                    "color": null
+                  }
+                ],
+                "z": [],
+                "filter": {
+                  "type": "list",
+                  "values": [],
+                  "logicalOperator": "AND",
+                  "filterType": "list"
+                }
+              },
+              "config": {
+                "promql_legend": ""
+              }
+            }
+          ],
+          "layout": {
+            "x": 96,
+            "y": 0,
+            "w": 96,
+            "h": 10,
+            "i": 2
+          }
+        },
+        {
+          "id": "panel_spans_by_service",
+          "type": "table",
+          "title": "Spans by service",
+          "description": "Trace spans received per service; a service missing here sends no traces.",
+          "config": {
+            "show_legends": false
+          },
+          "queryType": "sql",
+          "queries": [
+            {
+              "query": "SELECT service_name, COUNT(*) AS spans FROM \"default\" GROUP BY service_name ORDER BY spans DESC",
+              "customQuery": true,
+              "fields": {
+                "stream": "default",
+                "stream_type": "traces",
+                "x": [
+                  {
+                    "label": "Service",
+                    "alias": "service_name",
+                    "column": "service_name",
+                    "color": null
+                  }
+                ],
+                "y": [
+                  {
+                    "label": "Spans",
+                    "alias": "spans",
+                    "column": "spans",
+                    "color": null
+                  }
+                ],
+                "z": [],
+                "filter": {
+                  "type": "list",
+                  "values": [],
+                  "logicalOperator": "AND",
+                  "filterType": "list"
+                }
+              },
+              "config": {
+                "promql_legend": ""
+              }
+            }
+          ],
+          "layout": {
+            "x": 0,
+            "y": 10,
+            "w": 192,
+            "h": 9,
+            "i": 3
+          }
+        }
+      ]
+    }
+  ]
+}

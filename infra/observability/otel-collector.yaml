@@ -1,0 +1,51 @@
+# WP-OBS-001 — OpenTelemetry Collector pipeline (FR-PLAT-006; 01 Item 47, Item 61 §179).
+# Every team-owned service sends OTLP here; the Collector batches and forwards to
+# OpenObserve. Credentials come only from the environment (Item 47 §36); this file
+# is safe to commit. Health: GET :13133/ returns 200 once pipelines are running.
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  # Keep the Collector inside its container limit (compose: 256 MiB).
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 200
+    spike_limit_mib: 40
+  batch:
+    timeout: 1s
+    send_batch_size: 512
+
+exporters:
+  otlphttp/openobserve:
+    # otlphttp appends /v1/logs, /v1/metrics and /v1/traces to this base.
+    endpoint: http://openobserve:5080/api/default
+    headers:
+      Authorization: Basic ${env:O2_BASIC_AUTH}
+      stream-name: default
+    retry_on_failure:
+      enabled: true
+
+service:
+  extensions: [health_check]
+  pipelines:
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp/openobserve]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp/openobserve]
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp/openobserve]

@@ -1,0 +1,15 @@
+{
+  "schema": "cap.health/v1",
+  "service": "vision-service",
+  "environment": "integration-main",
+  "checked_at": "2026-10-23T20:15:00.000Z",
+  "live": true,
+  "status": "DEGRADED",
+  "checks": [
+    {"name": "api", "kind": "readiness", "class": "REQUIRED", "status": "READY"},
+    {"name": "object-storage", "kind": "dependency", "class": "REQUIRED", "status": "READY", "duration_ms": 3.1},
+    {"name": "defect-model", "kind": "capability", "class": "DEGRADABLE", "status": "UNAVAILABLE", "detail": "model not loaded yet"},
+    {"name": "telemetry-export", "kind": "dependency", "class": "OPTIONAL", "status": "UNAVAILABLE"}
+  ],
+  "correlation_id": "health-7f3a"
+}
