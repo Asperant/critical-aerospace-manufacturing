@@ -6,6 +6,7 @@ import hashlib
 import json
 import re
 from collections import Counter
+from collections.abc import Callable
 from typing import Any
 
 OWNERS = {
@@ -30,6 +31,7 @@ DEFERRED_CLASS = "WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE"
 WBS_PATH = "docs/04_Work_Breakdown_Structure.md"
 RTM_PATH = "docs/03_Requirements_Traceability_Matrix.md"
 PROJECTED_SOURCES = frozenset({WBS_PATH, RTM_PATH})
+EXTERNAL_WAIT_CLASSES = frozenset({"WAITING_EXTERNAL_INTEGRATION_BINDINGS"})
 
 
 def _lines(text: str) -> list[str]:
@@ -119,8 +121,45 @@ def deferred_acceptance(wp: str, item: dict[str, Any]) -> bool:
     )
 
 
+def external_integration_wait(wp: str, item: dict[str, Any]) -> bool:
+    """Consume only the root adapter's verified, owner/revision-bound proof.
+
+    An IN_PROGRESS work package whose remaining work is gated solely by explicit
+    canonical external dependency/readiness bindings. Offline snapshots can preview
+    this classification, never authorize writes. Lifecycle, readiness and every DONE
+    requirement remain unchanged; the wait is never completion evidence.
+    """
+    proof = item.get("external_integration_wait")
+    return (
+        item.get("state") == "IN_PROGRESS"
+        and item.get("blocked") is True
+        and isinstance(proof, dict)
+        and proof.get("schema") == "cap-external-integration-wait-v1"
+        and proof.get("classification") in EXTERNAL_WAIT_CLASSES
+        and proof.get("wp_id") == wp
+        and proof.get("owner") == item.get("owner")
+        and proof.get("owner_work_remaining") is False
+        and all(
+            isinstance(proof.get(k), str) and proof[k]
+            for k in ("audit_id", "assessment_digest", "comment_id")
+        )
+        and isinstance(proof.get("dependency_nodes"), list)
+        and bool(proof["dependency_nodes"])
+        and all(isinstance(n, str) and n for n in proof["dependency_nodes"])
+    )
+
+
+def released_wait(wp: str, item: dict[str, Any]) -> str | None:
+    """Verified blocked wait that does not occupy the implementation slot."""
+    if deferred_acceptance(wp, item):
+        return DEFERRED_CLASS
+    if external_integration_wait(wp, item):
+        return item["external_integration_wait"]["classification"]
+    return None
+
+
 def occupies_implementation_slot(wp: str, item: dict[str, Any]) -> bool:
-    return item.get("state") in ACTIVE and not deferred_acceptance(wp, item)
+    return item.get("state") in ACTIVE and released_wait(wp, item) is None
 
 
 def project_view(project: Any) -> dict[str, Any]:
@@ -282,7 +321,7 @@ def compute_next_eligible(
     considered = []
     for wp in planning_policy["sequences"][owner]:
         item = items[wp]
-        if item["state"] in {"DONE", "CANCELED"} or deferred_acceptance(wp, item):
+        if item["state"] in {"DONE", "CANCELED"} or released_wait(wp, item):
             continue
         evidence = evidence_snapshot.get("candidates", {}).get(wp, {})
         reason = candidate_reason(view, wp, item, evidence)
@@ -351,7 +390,40 @@ def candidate_reason(view, wp, item, evidence):
     return reason
 
 
-def preflight_health(project, live, evidence, owner, preferences):
+CANDIDATE_WINDOW_MINIMUM = 3
+
+
+def candidate_window(
+    candidates: list[dict[str, Any]],
+    actionable: Callable[[dict[str, Any]], bool] | None = None,
+) -> tuple[list[dict[str, Any]], str | None]:
+    """Canonical-order prefix through the first actionable candidate.
+
+    Every candidate before the first actionable one stays reported and none of them
+    stops the scan, so earlier blocked work cannot starve later executable work. The
+    window never reorders, never skips an actionable candidate and is bounded by the
+    finite backlog. With no actionable candidate it is the fixed diagnostic head.
+    `actionable` classifies one candidate; it defaults to a fully PREPARED status and
+    must not weaken any gate (it only selects among already-derived candidates).
+    """
+    test = actionable or (lambda c: c["status"] == "PREPARED")
+    for index, candidate in enumerate(candidates):
+        if test(candidate):
+            return (
+                candidates[: max(CANDIDATE_WINDOW_MINIMUM, index + 1)],
+                candidate["wp_id"],
+            )
+    return candidates[:CANDIDATE_WINDOW_MINIMUM], None
+
+
+def preflight_health(
+    project,
+    live,
+    evidence,
+    owner,
+    preferences,
+    actionable: Callable[[dict[str, Any]], bool] | None = None,
+):
     """Derived control-plane status only. Never mutates inputs or Plane."""
     owner = OWNERS.get(owner, owner)
     view = project_view(project)
@@ -362,6 +434,7 @@ def preflight_health(project, live, evidence, owner, preferences):
         "prepared_next": None,
         "health": "UNAVAILABLE",
         "candidates": [],
+        "actionable_next": None,
         "first_blocker": None,
         "reasons": decision.get("reasons", []),
     }
@@ -373,9 +446,14 @@ def preflight_health(project, live, evidence, owner, preferences):
         if view["cards"][w]["owner"] == owner and occupies_implementation_slot(w, item)
     ]
     result["deferred_waits"] = [
-        {"wp_id": w, "state": item["state"], "blocked": True, "reason": DEFERRED_CLASS}
+        {
+            "wp_id": w,
+            "state": item["state"],
+            "blocked": True,
+            "reason": released_wait(w, item),
+        }
         for w, item in live["items"].items()
-        if view["cards"][w]["owner"] == owner and deferred_acceptance(w, item)
+        if view["cards"][w]["owner"] == owner and released_wait(w, item)
     ]
     if active:
         result["current"] = {
@@ -446,7 +524,9 @@ def preflight_health(project, live, evidence, owner, preferences):
         candidates.append(candidate)
         if status == "PREPARED" and result["prepared_next"] is None:
             result["prepared_next"] = wp
-    result["candidates"] = candidates[:3]
+    result["candidates"], result["actionable_next"] = candidate_window(
+        candidates, actionable
+    )
     result["backlog_count"] = len(candidates)
     result["first_blocker"] = next((c for c in candidates if c["reason"]), None)
     if any(c["status"] == "UNAVAILABLE" for c in candidates):

@@ -1,0 +1,21 @@
+CHG-025:
+  title: Accept fresh assessment evidence from an UNCHANGED re-assertion of a verified external integration wait
+  class: C3
+  review_risk_class: CR-3
+  owner: Asrın
+  decision: APPROVED
+  status: APPROVED
+  application_control_item: CTRL-HOST-010
+  required_human_approvals: 0
+  human_decision_basis: Explicit project-owner request for this narrow correction and deployment, 23 October 2026
+  scope: Evidence source of the CHG-024 external integration wait proof only; no change to what qualifies as a wait
+  rules:
+  - Re-asserting BLOCKED on an already blocked WP records UNCHANGED and never becomes equivalent to VERIFIED
+  - The latest VERIFIED BLOCKED audit stays the sole authority that the blocker is active, in the same WP, profile and IN_PROGRESS lifecycle
+  - A later UNCHANGED BLOCKED record may only supply assessment evidence, and only if it references that VERIFIED audit through active_blocker_audit_id, repeats the identical reason and carries no blocker of its own
+  - Every referenced audit row must recompute its audit_id, and the chain must be unique and gap-free; a duplicate, edited, foreign, UNBLOCKED, INTENT or otherwise unexpected later row fails closed
+  - The referenced owner comment must independently satisfy every CHG-024 exact-field, authorship, unedited, blocker-equality, canonical-dependency and canonical-scope requirement
+  - A valid original assessment stays valid if a re-assertion comment is unusable; absent, ambiguous or broken chains keep the slot occupied
+  - No UNBLOCKED transition is faked, and DONE, blocker attribution, Plane state and candidate ordering are unchanged
+  rollout: Merged source only; generated policy, root-only backup, supported installer and verified hashes
+  rollback: Restore deployment only; never replay Plane state or erase audit

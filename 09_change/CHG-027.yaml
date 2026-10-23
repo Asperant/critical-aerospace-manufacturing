@@ -1,0 +1,19 @@
+CHG-027:
+  title: Developer queue selects current work excluding verified deferred waits
+  class: C3
+  review_risk_class: CR-3
+  owner: Asrın
+  decision: APPROVED
+  status: APPROVED
+  application_control_item: CTRL-HOST-012
+  required_human_approvals: 0
+  human_decision_basis: Explicit project-owner request for this narrow correction and deployment, 23 October 2026
+  scope: Display and selection in the developer-facing cap-plane-queue only; Plane state, AUTO_NEXT policy, WIP rules and DONE unchanged
+  rules:
+  - current_task is the owner's current actionable implementation work, with READY work also kept in next_task for existing readers
+  - Work the shared resolver classifies as a verified deferred wait (CHG-022 or CHG-024) is excluded from current/next/pending selection and listed in deferred_waits
+  - Classification is consumed from the resolver output, never inferred from Plane fields or WP IDs; when it is unavailable nothing is excluded and the previous fail-closed selection applies
+  - Ordinary IN_PROGRESS and other actionable work still wins; multiple actionable work is still AMBIGUOUS and never chosen
+  - With no actionable work current_task and next_task are null while deferred_waits stay listed
+  rollout: Merged source only; generated policy, root-only backup, supported installer and verified hashes
+  rollback: Restore deployment only; never replay Plane state or erase audit

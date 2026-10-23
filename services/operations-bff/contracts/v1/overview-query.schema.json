@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.cap.invalid/operations-bff/v1/overview-query.schema.json",
+  "title": "ManufacturingOverviewResponse",
+  "description": "QUERY response for the Manufacturing Overview attention-first landing view. Composition only: every item keeps its own epistemic class and source freshness; no overall status exists.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "meta", "needs_attention", "page"],
+  "properties": {
+    "contract_version": { "const": "bff.overview-query.v1" },
+    "meta": { "$ref": "common.schema.json#/$defs/QueryMeta" },
+    "needs_attention": {
+      "type": "array",
+      "maxItems": 100,
+      "items": { "$ref": "#/$defs/AttentionItem" }
+    },
+    "page": { "$ref": "#/$defs/CursorPage" }
+  },
+  "$defs": {
+    "AttentionKind": {
+      "enum": [
+        "QUALITY_EXCURSION",
+        "DEGRADED_EQUIPMENT_RISK",
+        "BATCH_TARDINESS",
+        "PENDING_APPROVAL",
+        "STUCK_WORKFLOW",
+        "STALE_TWIN_STATE"
+      ]
+    },
+    "AttentionItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "item_id",
+        "kind",
+        "epistemic_class",
+        "subject",
+        "summary",
+        "source",
+        "source_revision",
+        "freshness"
+      ],
+      "properties": {
+        "item_id": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "kind": { "$ref": "#/$defs/AttentionKind" },
+        "epistemic_class": { "$ref": "common.schema.json#/$defs/EpistemicClass" },
+        "subject": { "$ref": "common.schema.json#/$defs/EntityRef" },
+        "summary": { "type": "string", "minLength": 1 },
+        "source": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "source_revision": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "freshness": { "$ref": "common.schema.json#/$defs/Freshness" }
+      }
+    },
+    "CursorPage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["limit", "next_cursor"],
+      "properties": {
+        "limit": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "next_cursor": {
+          "oneOf": [
+            { "$ref": "common.schema.json#/$defs/OpaqueId" },
+            { "type": "null" }
+          ],
+          "description": "Opaque server cursor; null when no further window exists."
+        }
+      }
+    }
+  }
+}

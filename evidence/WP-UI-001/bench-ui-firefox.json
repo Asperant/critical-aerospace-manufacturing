@@ -1,0 +1,26 @@
+{
+  "requirement": "NFR-PERF-014: primary route actionable after warm start, p95 <= 3 s",
+  "kind": "engineering measurement on a development host; not canonical final acceptance",
+  "boundary": "navigation start of GET /overview?world_id=... in a fresh browser context (empty cache, signed-in session cookie, warm BFF process) until the populated 'Needs attention' list first exists in the DOM",
+  "browser": "firefox 157.0",
+  "transport": "loopback HTTPS to one local process serving the built frontend and the BFF",
+  "backends": "scripted identity provider and fixture-backed Core and Twin readers",
+  "warmupDiscarded": 10,
+  "samples": 100,
+  "unit": "ms",
+  "min": 75,
+  "p50": 87,
+  "p95": 98,
+  "p99": 115,
+  "max": 116,
+  "budgetMs": 3000,
+  "verdict": "PASS",
+  "host": {
+    "cpu": "Intel(R) Core(TM) i7-9700K CPU @ 3.60GHz",
+    "cores": 8,
+    "memoryGiB": 30,
+    "node": "v24.21.0"
+  },
+  "commit": "c109f9d143dd968b913efa80b328555c77bb098c",
+  "measuredAt": "2026-10-23T19:34:17.633Z"
+}

@@ -894,3 +894,38 @@ rows, card, requirements and requirement blocks, so unrelated edits for other WP
 not release or invalidate the wait. Any change to the WP's own scope, or a missing,
 ambiguous or unverifiable projection, still fails closed and keeps the slot. All other
 pinned sources keep exact blob equality; nothing else in CHG-022 changes.
+
+## External integration binding wait — CHG-024 / CTRL-HOST-009
+
+CHG-024 adds one more implementation-slot exception beside CHG-022. An `IN_PROGRESS +
+BLOCKED` work package stops occupying the owner's slot only when the root verified
+BLOCKED audit points to exactly one unedited owner-authored comment that states, as
+exact single fields, the wait class (`WAITING_EXTERNAL_INTEGRATION_BINDINGS`), a
+`Canonical main revision` and `Owner-executable implementation work: NONE`; the audited
+blocker equals the assessed blocker; its external dependency cites a canonical node of the
+WP's own dependency edges at an explicit readiness level; and the WP's canonical inputs
+still match the assessed revision. Anything missing, UNKNOWN, ambiguous or owner-executable,
+every ordinary implementation blocker and every other active state keeps the slot. The WP
+stays visible, blocked and never DONE for readiness; DONE and unblock requirements are
+unchanged.
+
+CHG-025 / CTRL-HOST-010 lets the CHG-024 proof take its assessment comment from a later
+`UNCHANGED` re-assertion of the same blocker. The latest VERIFIED BLOCKED audit remains the
+authority that the blocker is active; the re-assertion must reference it through
+`active_blocker_audit_id`, repeat the identical reason, carry no blocker of its own, and
+every audit row must recompute its `audit_id`. The comment still has to satisfy every
+CHG-024 requirement. `UNCHANGED` is never equivalent to `VERIFIED`; duplicate, edited,
+foreign or contradictory chains fail closed and keep the slot.
+
+CHG-026 / CTRL-HOST-011: the health/preparation candidate window no longer stops at the
+first three canonical candidates. It is the canonical-order prefix through the first
+candidate the preparation engine classifies AUTO_PREPARABLE or VERIFIED_PREPARED (never
+fewer than the three-candidate diagnostic head), so WAITING_DEP, NEEDS_DOR and other
+non-actionable head candidates stay reported but cannot starve later preparable work.
+The controller and health use the same engine classification and canonical order; gates,
+UNKNOWN handling, one-PR-per-run and AUTO_NEXT eligibility are unchanged.
+
+CHG-027 / CTRL-HOST-012: `cap-plane-queue` reports `current_task` as the owner's current actionable
+work (READY work is also kept in `next_task`). Work the shared resolver classifies as a verified
+deferred wait (CHG-022/CHG-024) is excluded from that selection and listed in `deferred_waits`;
+if the classification is unavailable nothing is excluded. Multiple actionable work stays AMBIGUOUS.

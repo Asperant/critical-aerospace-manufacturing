@@ -261,3 +261,26 @@ pinned by `build_policy.py`, instead of whole-file blobs. Merge-time files are r
 as Git blobs and verified against their SHA. Missing, unparsable, ambiguous or
 changed projections deny the proof; every other pinned source keeps exact blob
 equality.
+
+CHG-024 / CTRL-HOST-009: `external_wait_proof` (installed `cap-auto-next.py`) adds the
+IN_PROGRESS counterpart of the deferred proof. The verified BLOCKED audit must name
+exactly one unedited owner comment with the exact fields `Canonical main revision`,
+`External integration wait class` and `Owner-executable implementation work: NONE`,
+matching the audited blocker, citing a canonical node of the WP's own dependency edges
+at an explicit readiness level, with canonical inputs at the assessed revision equal to
+the pinned policy (`check_canonical_scope`, shared with the deferred proof). The
+resolver's `external_integration_wait` / `released_wait` consume only that proof;
+`deferred_waits` lists both kinds with their class.
+
+CHG-025 / CTRL-HOST-010: `external_wait_proof` tries the latest `UNCHANGED` BLOCKED
+re-assertion first (`reassertion()` over `blocker_rows()`), then the VERIFIED record's own
+comment. The re-assertion must reference the latest VERIFIED BLOCKED audit through
+`active_blocker_audit_id`, repeat its reason, carry no `blocker`, and every row must
+recompute `audit_id` (`audit_identity()`); any other later row makes the chain ambiguous
+and denies the proof.
+
+CHG-026 / CTRL-HOST-011: `execution_queue.candidate_window(candidates, actionable)` returns
+the canonical-order prefix through the first actionable candidate (at least three). The
+adapter's `owner_health` passes the preparation engine's own `classify` as `actionable`;
+`prepare.py` iterates that same `health["candidates"]` window with one GitHub client per
+profile. `health["actionable_next"]` names the first actionable candidate or is null.

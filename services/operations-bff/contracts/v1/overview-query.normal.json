@@ -1,0 +1,59 @@
+{
+  "contract_version": "bff.overview-query.v1",
+  "meta": {
+    "revision": "view-0042",
+    "as_of": "2026-10-23T09:00:00Z",
+    "generated_at": "2026-10-23T09:00:05Z",
+    "freshness": "DEGRADED",
+    "world": {
+      "world_id": "W-SYNTHETIC-TEST"
+    },
+    "sources": [
+      {
+        "source": "digital-twin-service",
+        "revision": "twin-r118",
+        "as_of": "2026-10-23T09:00:00Z",
+        "freshness": "DEGRADED"
+      },
+      {
+        "source": "manufacturing-core",
+        "revision": "core-r77",
+        "as_of": "2026-10-23T09:00:03Z",
+        "freshness": "FRESH"
+      }
+    ],
+    "correlation_id": "C-SYNTHETIC-0001"
+  },
+  "needs_attention": [
+    {
+      "item_id": "A-001",
+      "kind": "DEGRADED_EQUIPMENT_RISK",
+      "epistemic_class": "INFERRED",
+      "subject": {
+        "entity_type": "Machine",
+        "entity_id": "E-CNC"
+      },
+      "summary": "Spindle vibration trend inferred above baseline",
+      "source": "digital-twin-service",
+      "source_revision": "twin-r118",
+      "freshness": "DEGRADED"
+    },
+    {
+      "item_id": "A-002",
+      "kind": "PENDING_APPROVAL",
+      "epistemic_class": "ACTUAL",
+      "subject": {
+        "entity_type": "ApprovalRequest",
+        "entity_id": "AR-7"
+      },
+      "summary": "Approval request awaiting a human decision",
+      "source": "manufacturing-core",
+      "source_revision": "core-r77",
+      "freshness": "FRESH"
+    }
+  ],
+  "page": {
+    "limit": 50,
+    "next_cursor": null
+  }
+}

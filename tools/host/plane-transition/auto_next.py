@@ -81,6 +81,15 @@ def live_view(t, plane, policy, profile=None, gh=None):
             proof = deferred_proof(t, wp, profile, policy, gh or t.GitHub(profile))
             if proof:
                 items[wp]["deferred_acceptance"] = proof
+        if (
+            requested_profile == profile
+            and policy.get("external_wait_schema") == "cap-external-integration-wait-v1"
+            and items[wp]["state"] == "IN_PROGRESS"
+            and items[wp]["blocked"]
+        ):
+            proof = external_wait_proof(t, wp, profile, policy, gh or t.GitHub(profile))
+            if proof:
+                items[wp]["external_integration_wait"] = proof
     return {"complete": True, "items": items}
 
 
@@ -136,6 +145,195 @@ def check_scope_projection(t, gh, wp, blobs, policy):
     t.need(actual == expected, "DEFERRED_CANONICAL_SCOPE_CHANGED")
 
 
+def check_canonical_scope(t, gh, wp, sha, policy):
+    """The WP's canonical inputs at revision `sha` must equal the pinned policy."""
+    tree = gh._get(f"{t.REPO}/git/trees/{sha}?recursive=1")
+    t.need(tree.get("truncated") is False, "DEFERRED_SOURCE_TREE_INCOMPLETE")
+    blobs = {r["path"]: r.get("sha") for r in tree["tree"]}
+    sources = (
+        set(policy["contexts"][wp]["source_manifest"])
+        | {"docs/02_System_Architecture_Specification.md"}
+    ) - resolver.PROJECTED_SOURCES
+    t.need(
+        all(
+            blobs.get(p) == policy["source_git_blobs"].get(p) and blobs.get(p)
+            for p in sources
+        ),
+        "DEFERRED_CANONICAL_SCOPE_CHANGED",
+    )
+    # Shared WBS/RTM files are compared by this WP's own projection only.
+    check_scope_projection(t, gh, wp, blobs, policy)
+
+
+def exact_field(text, label):
+    """Single-line `Label: value`; missing or repeated labels are ambiguous."""
+    values = re.findall(r"(?im)^" + re.escape(label) + r": ([^\r\n]+)$", text)
+    return values[0].strip() if len(values) == 1 else None
+
+
+AMBIGUOUS = object()
+
+
+def reassertion(t, wp, profile, verified):
+    """Latest UNCHANGED BLOCKED re-assertion of the same verified active blocker.
+
+    The VERIFIED record stays the only authority that the blocker is active; a
+    re-assertion may merely carry fresh assessment evidence for that same blocker.
+    Returns None when there is none, AMBIGUOUS for any broken, edited or
+    contradictory chain, otherwise the re-assertion row.
+    """
+    rows = t.blocker_rows(wp)
+    if not rows:
+        return None
+    known = [
+        i
+        for i, r in enumerate(rows)
+        if r.get("audit_id") == verified.get("audit_id")
+        and r.get("result") == "VERIFIED"
+    ]
+    if len(known) != 1:
+        return AMBIGUOUS
+    later = rows[known[0] + 1 :]
+    if not later:
+        return None
+    if t.audit_identity(verified) != verified.get("audit_id"):
+        return AMBIGUOUS
+    for row in later:
+        if not (
+            row.get("result") == "UNCHANGED"
+            and row.get("operation") == "BLOCKED"
+            and row.get("wp_id") == wp
+            and row.get("profile") == profile
+            and row.get("from_state") == "IN_PROGRESS"
+            and row.get("to_state") == "IN_PROGRESS"
+            and row.get("active_blocker_audit_id") == verified["audit_id"]
+            and row.get("reason") == verified.get("reason")
+            and "blocker" not in row
+            and t.audit_identity(row) == row.get("audit_id")
+        ):
+            return AMBIGUOUS
+    return later[-1]
+
+
+def external_wait_proof(t, wp, profile, policy, gh):
+    """Owner assessment, verified blocker audit and canonical dependency binding.
+
+    The slot is freed only for an unedited owner-authored comment, referenced by
+    the root verified BLOCKED audit or by a later UNCHANGED re-assertion of that
+    same verified blocker, that states an approved external wait class and
+    `Owner-executable implementation work: NONE`, cites a canonical readiness node
+    of this WP's own dependency edges at an explicit level, and was assessed
+    against canonical inputs that still match. Absence, ambiguity, UNKNOWN or any
+    mismatch leaves the slot occupied; no Plane field or reason text alone suffices,
+    and UNCHANGED is never equivalent to VERIFIED.
+    """
+    global resolver
+    if resolver is None:
+        resolver = load_resolver()
+    verified = t.last_blocker(wp)
+    reason = verified.get("reason", "") if verified else ""
+    classification = next(
+        (
+            c
+            for c in sorted(resolver.EXTERNAL_WAIT_CLASSES)
+            if re.match(re.escape(c) + r"(?::|\s|$)", reason)
+        ),
+        None,
+    )
+    if not (
+        verified
+        and classification
+        and verified.get("result") == "VERIFIED"
+        and verified.get("operation") == "BLOCKED"
+        and verified.get("from_state") == "IN_PROGRESS"
+        and verified.get("to_state") == "IN_PROGRESS"
+        and verified.get("profile") == profile
+    ):
+        return None
+    try:
+        again = reassertion(t, wp, profile, verified)
+        if again is AMBIGUOUS:
+            return None
+        # Fresh re-assertion evidence first; the original assessment remains valid.
+        for source in ([again] if again else []) + [verified]:
+            proof = assess_external_wait(
+                t, wp, profile, policy, gh, verified, source, classification
+            )
+            if proof:
+                return proof
+    except t.Denied:
+        pass  # UNKNOWN never frees the slot.
+    return None
+
+
+def assess_external_wait(t, wp, profile, policy, gh, verified, source, classification):
+    try:
+        ids = [
+            r[8:]
+            for r in source.get("evidence_refs", [])
+            if re.fullmatch(r"comment:[1-9][0-9]{0,15}", r)
+        ]
+        t.need(len(ids) == 1, "EXTERNAL_WAIT_ASSESSMENT_REQUIRED")
+        comment = gh._get(f"{t.REPO}/issues/comments/{ids[0]}")
+        text = comment.get("body")
+        t.need(
+            isinstance(text, str)
+            and str((comment.get("user") or {}).get("login", "")).casefold()
+            == t.GITHUB[profile].casefold()
+            and comment.get("created_at")
+            and comment.get("created_at") == comment.get("updated_at"),
+            "EXTERNAL_WAIT_ASSESSMENT_NOT_OWNER_UNEDITED",
+        )
+        sha = exact_field(text, "Canonical main revision")
+        t.need(
+            exact_field(text, "External integration wait class") == classification
+            and exact_field(text, "Owner-executable implementation work") == "NONE"
+            and sha is not None
+            and re.fullmatch(r"[0-9a-f]{40}", sha),
+            "EXTERNAL_WAIT_ASSESSMENT_INCOMPLETE",
+        )
+        record = t.native_record(text, wp, sha)
+        t.need(
+            record.get("blocker") == verified.get("blocker"),
+            "EXTERNAL_WAIT_BLOCKER_ASSESSMENT_CHANGED",
+        )
+        dependency = (record.get("blocker") or {}).get("external_dependency") or ""
+        edges = {
+            e["predecessor"]["node"]
+            for e in policy["contexts"][wp]["dependency_edges"]
+            if isinstance((e.get("predecessor") or {}).get("node"), str)
+        }
+        nodes = sorted(
+            n
+            for n in set(re.findall(r"DN-[A-Z0-9]+(?:-[A-Z0-9]+)*", dependency))
+            if n in edges
+            and any(
+                re.search(re.escape(n) + r"\s+" + re.escape(level) + r"\b", dependency)
+                for level in policy["node_levels"].get(n, [])
+            )
+        )
+        t.need(nodes, "EXTERNAL_WAIT_CANONICAL_DEPENDENCY_MISSING")
+        # The assessment must still describe today's canonical inputs and evidence.
+        check_canonical_scope(t, gh, wp, sha, policy)
+        t.blocker_evidence(gh, record, "BLOCKER-OBSERVED", gh.main_sha())
+        proof = {
+            "schema": "cap-external-integration-wait-v1",
+            "wp_id": wp,
+            "owner": t.q.PEOPLE[profile][0],
+            "classification": classification,
+            "owner_work_remaining": False,
+            "audit_id": verified["audit_id"],
+            "comment_id": ids[0],
+            "assessment_digest": hashlib.sha256(text.encode()).hexdigest(),
+            "dependency_nodes": nodes,
+        }
+        if source is not verified:
+            proof["reassertion_audit_id"] = source["audit_id"]
+        return proof
+    except t.Denied:
+        return None
+
+
 def deferred_proof(t, wp, profile, policy, gh):
     """Existing attributable owner assessment plus real merged/CI/audit facts.
 
@@ -175,22 +373,7 @@ def deferred_proof(t, wp, profile, policy, gh):
         sha = pr["merge_commit_sha"]
         gh.merged_shape(pr)
         # Scope, readiness, architecture and final acceptance must still match.
-        tree = gh._get(f"{t.REPO}/git/trees/{sha}?recursive=1")
-        t.need(tree.get("truncated") is False, "DEFERRED_SOURCE_TREE_INCOMPLETE")
-        blobs = {r["path"]: r.get("sha") for r in tree["tree"]}
-        sources = (
-            set(policy["contexts"][wp]["source_manifest"])
-            | {"docs/02_System_Architecture_Specification.md"}
-        ) - resolver.PROJECTED_SOURCES
-        t.need(
-            all(
-                blobs.get(p) == policy["source_git_blobs"].get(p) and blobs.get(p)
-                for p in sources
-            ),
-            "DEFERRED_CANONICAL_SCOPE_CHANGED",
-        )
-        # Shared WBS/RTM files are compared by this WP's own projection only.
-        check_scope_projection(t, gh, wp, blobs, policy)
+        check_canonical_scope(t, gh, wp, sha, policy)
         record = t.native_record(text, wp, sha)
         t.need(
             record.get("blocker") == previous.get("blocker"),
@@ -409,23 +592,8 @@ def owner_health(t, profile, policy, plane, gh_factory):
             first_blocker=None,
         )
         return result
-    result = resolver.preflight_health(
-        policy["execution_project"],
-        live,
-        evidence,
-        profile,
-        policy["execution_preferences"],
-    )
-    for candidate in result["candidates"]:
-        candidate["deficits"] = (
-            evidence.get("candidates", {})
-            .get(candidate["wp_id"], {})
-            .get("deficits", [])
-        )
-        for blocker in candidate["hard_start_blockers"]:
-            producer = policy.get("node_owners", {}).get(blocker["readiness_node"])
-            if producer:
-                blocker["producer_owner"] = producer
+    prep = None
+    prs: list = []
     if policy.get("preparation_schema"):
         spec = importlib.util.spec_from_file_location(
             "cap_preparation_health", "/usr/local/libexec/cap-preparation.py"
@@ -438,10 +606,48 @@ def owner_health(t, profile, policy, plane, gh_factory):
             isinstance(prs, list) and len(prs) < 100,
             "PREPARATION_PR_DISCOVERY_INCOMPLETE",
         )
+
+    def actionable(candidate):
+        """Same effective selection as the preparation controller (engine.classify)."""
+        if prep is None:
+            return candidate["status"] == "PREPARED"
+        wp = candidate["wp_id"]
+        try:
+            plan = prep.derive(policy["contexts"][wp], policy, gh.main_sha())
+            deficits = evidence.get("candidates", {}).get(wp, {}).get("deficits", [])
+            state = prep.classify(dict(candidate, deficits=deficits), plan)
+        except Exception:
+            return False  # never actionable when it cannot be derived
+        return state in {"AUTO_PREPARABLE", "VERIFIED_PREPARED"}
+
+    result = resolver.preflight_health(
+        policy["execution_project"],
+        live,
+        evidence,
+        profile,
+        policy["execution_preferences"],
+        actionable,
+    )
+    for candidate in result["candidates"]:
+        candidate["deficits"] = (
+            evidence.get("candidates", {})
+            .get(candidate["wp_id"], {})
+            .get("deficits", [])
+        )
+        for blocker in candidate["hard_start_blockers"]:
+            producer = policy.get("node_owners", {}).get(blocker["readiness_node"])
+            if producer:
+                blocker["producer_owner"] = producer
+    if prep is not None:
         for candidate in result["candidates"]:
-            plan = prep.derive(
-                policy["contexts"][candidate["wp_id"]], policy, gh.main_sha()
-            )
+            try:
+                plan = prep.derive(
+                    policy["contexts"][candidate["wp_id"]], policy, gh.main_sha()
+                )
+            except Exception:
+                candidate["preparation"] = "UNAVAILABLE"
+                candidate["unknown_criteria"] = []
+                continue
             candidate["preparation"] = prep.classify(candidate, plan)
             if candidate["preparation"] == "AUTO_PREPARABLE" and any(
                 pr["head"]["ref"].startswith(
@@ -453,14 +659,18 @@ def owner_health(t, profile, policy, plane, gh_factory):
             candidate["unknown_criteria"] = [
                 k for k, v in plan["checks"].items() if v["result"] == "UNKNOWN"
             ]
+        head = next(
+            (
+                c
+                for c in result["candidates"]
+                if c["wp_id"] == result["actionable_next"]
+            ),
+            result["candidates"][0] if result["candidates"] else None,
+        )
         result["preparation"] = (
             "VERIFIED_PREPARED"
             if result.get("prepared_next")
-            else (
-                result["candidates"][0]["preparation"]
-                if result["candidates"]
-                else "NO_BACKLOG"
-            )
+            else (head["preparation"] if head else "NO_BACKLOG")
         )
     return result
 
