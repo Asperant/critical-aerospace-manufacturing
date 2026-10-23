@@ -1,10 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "operations-bff"
 version = "0.1.0"
-description = "Command Center BFF contract (WP-UI-001); no runtime yet"
+description = "Command Center BFF (WP-UI-001): contract and framework-neutral session primitives"
 requires-python = ">=3.11"
 dependencies = []
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["src"]
 addopts = "-p no:cacheprovider"
