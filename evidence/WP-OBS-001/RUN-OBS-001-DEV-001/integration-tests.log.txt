@@ -1,0 +1,17 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.16, pytest-8.3.3, pluggy-1.7.0 -- <repo>/ci/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: <repo>
+plugins: anyio-4.15.1
+collecting ... collected 23 items / 17 deselected / 6 selected
+
+infra/observability/tests/test_pipeline_integration.py::test_collector_accepts_all_three_signals PASSED [ 16%]
+infra/observability/tests/test_pipeline_integration.py::test_log_record_is_queryable_with_its_context PASSED [ 33%]
+infra/observability/tests/test_pipeline_integration.py::test_span_is_queryable_by_trace_id PASSED [ 50%]
+infra/observability/tests/test_pipeline_integration.py::test_counter_is_queryable PASSED [ 66%]
+infra/observability/tests/test_pipeline_integration.py::test_service_helper_reaches_openobserve PASSED [ 83%]
+infra/observability/tests/test_pipeline_integration.py::test_dashboards_import_idempotently_and_their_queries_run PASSED [100%]
+
+----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------
+0 registry entr(y/ies); 0 applied in this run
+======================= 6 passed, 17 deselected in 4.28s =======================

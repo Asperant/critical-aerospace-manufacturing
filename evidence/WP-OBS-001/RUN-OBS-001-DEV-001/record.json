@@ -1,0 +1,57 @@
+{
+  "run_id": "RUN-OBS-001-DEV-001",
+  "work_package": "WP-OBS-001",
+  "kind": "DEV run on the shared host against the REAL Collector and OpenObserve",
+  "boundary_mode": "REAL",
+  "code_revision": "b1605d2a01a526df30719c7a3c75900c685f06a9",
+  "branch": "wp/WP-OBS-001-telemetry-standard",
+  "recorded_at": "2026-10-23T20:24:38+00:00",
+  "steps": [
+    {
+      "step": "up",
+      "exit_code": 0,
+      "output": "up.log.txt"
+    },
+    {
+      "step": "unit-tests",
+      "exit_code": 0,
+      "output": "unit-tests.log.txt"
+    },
+    {
+      "step": "coverage",
+      "exit_code": 0,
+      "output": "coverage.log.txt"
+    },
+    {
+      "step": "dashboards",
+      "exit_code": 0,
+      "output": "dashboards.log.txt"
+    },
+    {
+      "step": "integration-tests",
+      "exit_code": 0,
+      "output": "integration-tests.log.txt"
+    },
+    {
+      "step": "sample",
+      "exit_code": 0,
+      "output": "sample-logs.jsonl"
+    },
+    {
+      "step": "check-logs",
+      "exit_code": 0,
+      "output": "check-logs.log.txt"
+    },
+    {
+      "step": "status",
+      "exit_code": 0,
+      "output": "status.log.txt"
+    },
+    {
+      "step": "down",
+      "exit_code": 0,
+      "output": "down.log.txt"
+    }
+  ],
+  "non_zero_explained": {}
+}
