@@ -1,0 +1,26 @@
+{
+  "schema": "cap.telemetry-coverage/v1",
+  "deployables": [
+    {"name": "command-center-web", "owner": "Asrın", "runtime": "typescript", "path": "services/command-center-web", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
+    {"name": "operations-bff", "owner": "Asrın", "runtime": "python", "path": "services/operations-bff", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
+    {
+      "name": "manufacturing-core",
+      "owner": "Asrın",
+      "runtime": "python",
+      "path": "services/manufacturing-core",
+      "logging": "PENDING",
+      "health": "PENDING",
+      "exemption": {
+        "reason": "Adoption of configure() and health_report() is agreed with the service owner before changing services/manufacturing-core (WP-OBS-001 slice C/D).",
+        "owner": "Yavuz",
+        "expires_on": "2026-11-06"
+      }
+    },
+    {"name": "manufacturing-simulator", "owner": "Batu", "runtime": "python", "path": "services/manufacturing-simulator", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
+    {"name": "digital-twin-service", "owner": "Asrın", "runtime": "python", "path": "services/digital-twin-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
+    {"name": "vision-service", "owner": "Selman", "runtime": "python", "path": "services/vision-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
+    {"name": "ai-intelligence-service", "owner": "Asrın", "runtime": "python", "path": "services/ai-intelligence-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
+    {"name": "scheduler-service", "owner": "Batu", "runtime": "python", "path": "services/scheduler-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
+    {"name": "automation-service", "owner": "Batu", "runtime": "python", "path": "services/automation-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"}
+  ]
+}

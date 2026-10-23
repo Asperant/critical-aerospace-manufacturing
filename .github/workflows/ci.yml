@@ -77,6 +77,7 @@ jobs:
         run: |
           uv run --project ci --locked python -m pytest packages/observability/tests infra/observability/tests -m 'not integration' -q -p pytest_quarantine
           uv run --project ci --locked pyright --project packages/observability/pyrightconfig.json
+          uv run --project ci --locked python -m cap_observability check-coverage infra/observability/coverage.json
       - name: Host Plane queue tests (offline)
         run: uv run --project ci --locked python -m unittest discover -s tools/host/plane-queue -p 'test_*.py'
       - name: Host Plane transition tests (offline)

@@ -20,6 +20,7 @@ from typing import Any, cast
 
 LOG_SCHEMA = "log-record.schema.json"
 RESOURCE_SCHEMA = "resource.schema.json"
+HEALTH_SCHEMA = "health.schema.json"
 MAX_RECORD_BYTES = 8192  # §34: logs are not a payload store
 
 ENVIRONMENT_CLASSES = ("LOCAL", "INTEGRATION", "EVALUATION", "DEMO", "CI_EPHEMERAL")
@@ -121,6 +122,22 @@ def check_log_record(record: object) -> list[str]:
 def check_resource(attributes: object) -> list[str]:
     """All violations of ``cap.resource/v1``; empty when the resource conforms."""
     return _schema_errors(RESOURCE_SCHEMA, attributes)
+
+
+def check_health_report(report: object) -> list[str]:
+    """Violations of ``cap.health/v1``, including a status the checks do not justify."""
+    from cap_observability.health import aggregate
+
+    errors = _schema_errors(HEALTH_SCHEMA, report)
+    if errors or not isinstance(report, Mapping):
+        return errors
+    data = cast(Mapping[str, Any], report)
+    expected = aggregate(data["checks"]) if data["live"] else "UNAVAILABLE"
+    if data["status"] != expected:
+        errors.append(
+            f"status: {data['status']} but the checks give {expected} (Item 47 §68)"
+        )
+    return errors
 
 
 def check_log_lines(lines: Iterator[str] | list[str]) -> list[str]:

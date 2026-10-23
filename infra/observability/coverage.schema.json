@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Asperant/critical-aerospace-manufacturing/infra/observability/coverage.schema.json",
+  "title": "cap.telemetry-coverage/v1 — telemetry adoption of the mandatory deployables",
+  "description": "WP-OBS-001 (NFR-OBS-001, NFR-OBS-002). Checked against the repository by `python -m cap_observability check-coverage`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "deployables"],
+  "properties": {
+    "schema": {"const": "cap.telemetry-coverage/v1"},
+    "deployables": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "owner", "runtime", "path", "logging", "health"],
+        "properties": {
+          "name": {"type": "string", "pattern": "^[a-z][a-z0-9-]{1,62}$"},
+          "owner": {"enum": ["Asrın", "Selman", "Batu", "Yavuz"]},
+          "runtime": {"enum": ["python", "typescript"]},
+          "path": {"type": "string", "pattern": "^[a-z][a-z0-9_./-]+$"},
+          "logging": {"$ref": "#/$defs/status"},
+          "health": {"$ref": "#/$defs/status"},
+          "exemption": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["reason", "owner", "expires_on"],
+            "properties": {
+              "reason": {"type": "string", "minLength": 10, "maxLength": 300},
+              "owner": {"enum": ["Asrın", "Selman", "Batu", "Yavuz"]},
+              "expires_on": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"}
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "status": {"enum": ["ADOPTED", "PENDING", "NOT_PRESENT"]}
+  }
+}

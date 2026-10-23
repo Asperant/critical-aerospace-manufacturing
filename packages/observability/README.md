@@ -16,6 +16,8 @@ EnvironmentID, RuntimeProfile).
 |---|---|---|
 | `cap.resource/v1` — resource attributes | `src/cap_observability/schemas/resource.schema.json` | `resource.json` |
 | `cap.log/v1` — structured log record | `src/cap_observability/schemas/log-record.schema.json` | `log-record.json` |
+| `cap.health/v1` — health and readiness surface | `src/cap_observability/schemas/health.schema.json` | `health.json` |
+| `cap.telemetry-coverage/v1` — adoption by the nine deployables | `infra/observability/coverage.schema.json` | `coverage.json` |
 
 Both schemas and examples are validated by the CI contract tier
 (`ci/scripts/check_contracts.py`); the rules below are tested in CI t1-unit.
@@ -75,6 +77,38 @@ Identifiers (`correlation_id`, run IDs, `entity_refs[].id`) match
 `[A-Za-z0-9_.:-]{1,128}`, the rule manufacturing-core already enforces for
 correlation IDs. The three correlation identities stay separate (§19): an
 EventID is not a TraceID, and a replay may carry a new trace (§22–§23).
+
+## Health surface (`cap.health/v1`)
+
+Every mandatory deployable answers its health endpoint with a `cap.health/v1`
+document (NFR-OBS-001; Item 47 §62–§69). `live` is liveness; `status` is the
+readiness aggregate and is always derived from the checks, never set by hand:
+
+| Failing check class | Effect on `status` |
+|---|---|
+| `REQUIRED` unavailable | `UNAVAILABLE` |
+| `REQUIRED` degraded, or `DEGRADABLE` not ready | `DEGRADED` |
+| `OPTIONAL` | none |
+
+```python
+from cap_observability.health import Check, health_report
+report = health_report("manufacturing-core", env_id, [
+    Check("postgresql", "dependency", "REQUIRED", "READY", duration_ms=3.2),
+])
+```
+
+Checks stay cheap (§67): no model evaluation, heavy scan or simulation.
+`check_health_report` rejects a document whose status the checks do not justify.
+
+## Coverage of the mandatory deployables
+
+`infra/observability/coverage.json` declares for each of the nine deployables of
+02 whether logging (`configure`) and health (`health_report`) are adopted. CI
+runs `python -m cap_observability check-coverage infra/observability/coverage.json`:
+a deployable that exists must be `ADOPTED` (proved by its pyproject and sources)
+or `PENDING` with an owned exemption of at most 30 days; one that does not exist
+yet must be `NOT_PRESENT`. The printed line is the NFR-OBS-001/002 coverage
+figure, for example `1/9 mandatory deployables exist; logging 0/1 adopted`.
 
 ## Rules a schema cannot express
 

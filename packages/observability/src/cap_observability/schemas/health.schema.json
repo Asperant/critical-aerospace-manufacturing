@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Asperant/critical-aerospace-manufacturing/packages/observability/schemas/health.schema.json",
+  "title": "cap.health/v1 — inspectable health and readiness surface",
+  "description": "What every mandatory deployable returns from its health surface (WP-OBS-001; NFR-OBS-001; 01 Item 47 §62-§69; ARCH-OBS-HEALTH). Liveness is separate from readiness; process up is not capability healthy; dependency classes decide how a failing check affects the aggregate.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "service", "environment", "checked_at", "live", "status", "checks"],
+  "properties": {
+    "schema": {"const": "cap.health/v1"},
+    "service": {
+      "description": "ServiceName, as resource service.name.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,62}$"
+    },
+    "environment": {
+      "description": "EnvironmentID, as resource deployment.environment.name.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,62}$"
+    },
+    "checked_at": {
+      "description": "UTC RFC 3339 instant of the evaluation.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?Z$"
+    },
+    "live": {
+      "description": "Liveness (§62): the process is alive and able to answer.",
+      "type": "boolean"
+    },
+    "status": {
+      "description": "Readiness aggregate (§63, §68): derived from the checks, never set independently.",
+      "enum": ["READY", "DEGRADED", "UNAVAILABLE"]
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "kind", "class", "status"],
+        "properties": {
+          "name": {"type": "string", "pattern": "^[a-z][a-z0-9_.-]{0,63}$"},
+          "kind": {
+            "description": "readiness (§63), dependency (§64) or capability (§65).",
+            "enum": ["readiness", "dependency", "capability"]
+          },
+          "class": {
+            "description": "§68: REQUIRED failure → UNAVAILABLE; DEGRADABLE failure → DEGRADED; OPTIONAL does not affect readiness.",
+            "enum": ["REQUIRED", "DEGRADABLE", "OPTIONAL"]
+          },
+          "status": {"enum": ["READY", "DEGRADED", "UNAVAILABLE"]},
+          "detail": {"type": "string", "maxLength": 256},
+          "duration_ms": {"type": "number", "minimum": 0}
+        }
+      }
+    },
+    "correlation_id": {"type": "string", "pattern": "^[A-Za-z0-9_.:-]{1,128}$"}
+  }
+}
