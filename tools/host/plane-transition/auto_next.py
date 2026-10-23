@@ -25,6 +25,16 @@ def load_resolver():
     return module
 
 
+def load_preparation():
+    spec = importlib.util.spec_from_file_location(
+        "cap_preparation_read", "/usr/local/libexec/cap-preparation.py"
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 ROOT = Path("/etc/cap-plane-queue")
 
 
@@ -101,6 +111,7 @@ def candidate_evidence(t, plane, policy, profile, gh, comments, live, future=Fal
         tree = gh._get(f"{t.REPO}/git/trees/{sha}?recursive=1")
         t.need(tree.get("truncated") is False, "REPOSITORY_TREE_INCOMPLETE")
         generated = {row["path"] for row in tree["tree"]}
+        load_preparation().verify_remote_sources(t, gh, sha, policy)
     for wp in policy["execution_preferences"]["sequences"][t.q.PEOPLE[profile][0]]:
         if live["items"][wp]["state"] != "BACKLOG" or live["items"][wp]["blocked"]:
             continue

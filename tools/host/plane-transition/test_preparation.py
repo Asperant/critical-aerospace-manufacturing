@@ -48,6 +48,7 @@ def canonical():
         "contexts": {w["id"]: context},
         "source_manifest": {"docs/04_Work_Breakdown_Structure.md": "b" * 64},
         "preparation_schema": p.SCHEMA,
+        "source_git_blobs": {"docs/04_Work_Breakdown_Structure.md": "b" * 40},
     }
     return context, policy
 
@@ -59,6 +60,16 @@ def candidate():
         "hard_start_blockers": [],
         "deficits": [{"canonical_id": "DOR-TASK-01"}],
         "reason": "DOR_EVIDENCE_UNAVAILABLE",
+    }
+
+
+def source_tree(policy):
+    return {
+        "truncated": False,
+        "tree": [
+            {"path": name, "sha": value, "type": "blob"}
+            for name, value in policy["source_git_blobs"].items()
+        ],
     }
 
 
@@ -132,6 +143,8 @@ class PreparationTests(unittest.TestCase):
         gh._get = Mock(
             side_effect=lambda route_: {"status": "ahead"}
             if "/compare/" in route_
+            else source_tree(self.policy)
+            if "/git/trees/" in route_
             else {"content": base64.b64encode(route.encode()).decode()}
         )
         return gh
@@ -163,7 +176,11 @@ class PreparationTests(unittest.TestCase):
 
     def test_nonancestor_source_rejected(self):
         gh = self.gh()
-        gh._get = Mock(return_value={"status": "diverged"})
+        gh._get = Mock(
+            side_effect=lambda route: {"status": "diverged"}
+            if "/compare/" in route
+            else source_tree(self.policy)
+        )
         with self.assertRaises(t.Denied):
             p.verified_record(t, gh, "WP-SIM-001", SHA, self.policy)
 
@@ -295,6 +312,9 @@ class PreparationTests(unittest.TestCase):
         context["cycle_ids"] = ["S2"]
         policy["contexts"][wp] = context
         policy["preparation_schema"] = p.SCHEMA
+        policy["source_git_blobs"] = {
+            name: "b" * 40 for name in policy["source_manifest"]
+        }
         plan = p.derive(context, policy, SHA)
         names = {v[0]: t.GITHUB[k] for k, v in t.q.PEOPLE.items()}
         line = p.routing_line(context, names)
@@ -306,6 +326,8 @@ class PreparationTests(unittest.TestCase):
         gh._get = Mock(
             side_effect=lambda route: {"status": "identical"}
             if "/compare/" in route
+            else source_tree(policy)
+            if "/git/trees/" in route
             else {"content": base64.b64encode(line.encode()).decode()}
         )
         original = t.importlib.util.spec_from_file_location
@@ -355,6 +377,60 @@ class PreparationTests(unittest.TestCase):
         self.assertEqual(plan["checks"]["DOR-TASK-04"]["result"], "PASS")
         self.assertEqual(plan["deferred_dependencies"][0]["readiness"], "NOT_CERTIFIED")
         self.assertNotIn("dependency_readiness", plan)
+
+    def test_current_canonical_blobs_are_read_only_verified(self):
+        gh = SimpleNamespace(_get=Mock(return_value=source_tree(self.policy)))
+        p.verify_remote_sources(t, gh, SHA, self.policy)
+        gh._get.assert_called_once()
+
+    def test_remote_canonical_change_is_unavailable_not_pass(self):
+        tree = source_tree(self.policy)
+        tree["tree"][0]["sha"] = "c" * 40
+        gh = SimpleNamespace(_get=Mock(return_value=tree))
+        with self.assertRaises(t.Denied) as error:
+            p.verify_remote_sources(t, gh, SHA, self.policy)
+        self.assertIn("UNAVAILABLE_POLICY_REFRESH_REQUIRED", error.exception.code)
+
+    def test_missing_source_projection_is_unavailable(self):
+        self.policy.pop("source_git_blobs")
+        with self.assertRaises(t.Denied):
+            p.verify_remote_sources(t, SimpleNamespace(_get=Mock()), SHA, self.policy)
+
+    def test_truncated_remote_source_tree_is_unavailable(self):
+        gh = SimpleNamespace(_get=Mock(return_value={"truncated": True, "tree": []}))
+        with self.assertRaises(t.Denied):
+            p.verify_remote_sources(t, gh, SHA, self.policy)
+
+    def test_verified_buffer_prevents_unnecessary_preparation_pr(self):
+        health = {
+            "health": "HEALTHY",
+            "prepared_next": "WP-SCH-001",
+            "current": {"wp_id": "WP-SIM-001"},
+            "candidates": [candidate()],
+        }
+        adapter = SimpleNamespace(
+            owner_health=Mock(return_value=health),
+            advance_owner=Mock(return_value={"status": "CURRENT"}),
+        )
+        support = SimpleNamespace(
+            Plane=Mock(return_value=object()),
+            GitHub=Mock(),
+            append_audit=Mock(),
+            now=lambda: "timestamp",
+        )
+        engine = SimpleNamespace(
+            derive=Mock(side_effect=AssertionError("buffer already verified"))
+        )
+        with (
+            patch.object(c, "persist"),
+            patch.object(c, "snapshot", return_value={}),
+            patch.object(c, "Writer") as writer,
+        ):
+            result = c.run(adapter, support, engine, {}, "sentinel")
+        engine.derive.assert_not_called()
+        writer.assert_not_called()
+        self.assertEqual(len(result["profiles"]), 4)
+        self.assertEqual(result["production_diff"], {})
 
     def test_controller_uid_rejected_before_loading(self):
         with (

@@ -21,8 +21,8 @@ sanitized actions and snapshots protect retries. Plane writes remain exclusively
 through existing guarded AUTO_NEXT. Current work prevents a second READY; DONE
 hook stays intact and verified lifecycle transitions request replenishment.
 
-Local validation: 21 new preparation tests; 20 existing AUTO_NEXT tests; 5 health
-tests; 67 transition tests; 34 execution-queue tests = 147 focused tests passed.
+Local validation: 26 new preparation tests; 20 existing AUTO_NEXT tests; 5 health
+tests; 67 transition tests; 34 execution-queue tests = 152 focused tests passed.
 Canonical validation passed. Static ratchet passed with no new findings.
 GitHub required CI, merged-source deployment and live results are recorded by
 the actual PR and root-only deployment/controller records, not asserted here.
@@ -30,3 +30,17 @@ the actual PR and root-only deployment/controller records, not asserted here.
 Recovery and failure behavior are in AGENTS.md CHG-021. Health remains read-only;
 timer never performs product implementation or fabricates predecessor readiness.
 Selman credentials are outside this control's remediation scope.
+
+## Current remote canonical source binding
+
+The policy records the exact Git blob IDs of all pinned canonical source files.
+Each evidence scan and every preparation write compares them with a complete
+GitHub tree at the freshly observed immutable main SHA. This also covers native
+DoR evidence selection. Missing projection, changed canonical content or truncated
+trees yield UNAVAILABLE/POLICY_REFRESH_REQUIRED, never stale PASS or a write.
+Four focused tests cover valid binding, changed source, missing projection and
+truncated trees. Existing prepared documents remain valid when canonical inputs
+are unchanged; product/metadata-only commits do not fabricate new assessments.
+
+A verified PREPARED buffer suppresses further preparation PR creation until it is
+consumed or invalidated; normal guarded release and replenishment still run.
