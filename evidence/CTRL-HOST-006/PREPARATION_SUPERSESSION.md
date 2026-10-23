@@ -35,3 +35,14 @@ Local verification (offline fixtures, no Plane writes):
 Required remote CI, merge, supported installation and read-only live validation
 must be observed separately. This repair does not execute preparation, AUTO_NEXT,
 Plane transitions or product implementation, and does not merge refresh PR #45.
+
+## Live response-format correction
+
+Initial GET-only validation after deployment of PR #46 failed closed with
+`binascii.Error: Only base64 data is allowed`. GitHub Contents API wraps base64
+content with newlines; the single-line fixtures had not represented that response.
+The decoder now removes line breaks before strict base64 validation. Supersession
+routing fixtures use the real wrapped encoding format. No PR #45 or Plane write
+occurred during this failed validation. All 44 focused preparation, 154 controller
+and 25 queue tests, canonical validation, catalog lint and static checks pass with
+the corrected representation.

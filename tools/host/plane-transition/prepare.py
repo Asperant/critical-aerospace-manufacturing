@@ -177,7 +177,9 @@ def validate_preparation_pr(t, engine, writer, pr, plan, policy, main):
     names = {v[0]: t.GITHUB[k] for k, v in t.q.PEOPLE.items()}
     old_route = writer.call("GET", f"{t.REPO}/contents/.github/CODEOWNERS?ref={main}")
     new_route = writer.call("GET", f"{t.REPO}/contents/.github/CODEOWNERS?ref={head}")
-    owners = base64.b64decode(old_route["content"], validate=True).decode()
+    owners = base64.b64decode(
+        "".join(old_route["content"].splitlines()), validate=True
+    ).decode()
     routed = routing_correct(engine, policy["contexts"][wp], names, owners)
     expected = (
         owners
@@ -195,7 +197,10 @@ def validate_preparation_pr(t, engine, writer, pr, plan, policy, main):
         "PREPARATION_PR_DIFF_INVALID",
     )
     t.need(
-        base64.b64decode(new_route["content"], validate=True).decode() == expected,
+        base64.b64decode(
+            "".join(new_route["content"].splitlines()), validate=True
+        ).decode()
+        == expected,
         "PREPARATION_ROUTING_DIFF_INVALID",
     )
     return stored

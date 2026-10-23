@@ -303,7 +303,7 @@ class PreparationTests(unittest.TestCase):
                 return self.pr_files
             if "CODEOWNERS" in route:
                 text = self.main_route if route.endswith(SHA) else self.head_route
-                return {"content": base64.b64encode(text.encode()).decode()}
+                return {"content": base64.encodebytes(text.encode()).decode()}
             if "/compare/" in route:
                 return {"status": self.source_status, "behind_by": 0}
             return self.prs[0]
