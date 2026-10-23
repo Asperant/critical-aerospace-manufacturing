@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.cap.invalid/operations-bff/v1/stream-message.schema.json",
+  "title": "StreamMessage",
+  "description": "STREAMING messages the BFF pushes to the browser after an initial Query snapshot. Transport (WebSocket or SSE) is an open architecture decision and is deliberately not fixed here. The browser never connects to the event backbone.",
+  "oneOf": [
+    { "$ref": "#/$defs/StreamDelta" },
+    { "$ref": "#/$defs/ResyncRequired" }
+  ],
+  "$defs": {
+    "StreamDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "message_type",
+        "world",
+        "from_revision",
+        "to_revision",
+        "generated_at",
+        "changes"
+      ],
+      "properties": {
+        "contract_version": { "const": "bff.stream-message.v1" },
+        "message_type": { "const": "DELTA" },
+        "world": { "$ref": "common.schema.json#/$defs/WorldContext" },
+        "from_revision": {
+          "$ref": "common.schema.json#/$defs/OpaqueId",
+          "description": "Must equal the previously applied meta.revision, else the browser resyncs."
+        },
+        "to_revision": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "generated_at": { "$ref": "common.schema.json#/$defs/Timestamp" },
+        "coalesced_count": { "type": "integer", "minimum": 1 },
+        "changes": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["subject", "source", "source_revision", "freshness"],
+            "properties": {
+              "subject": { "$ref": "common.schema.json#/$defs/EntityRef" },
+              "source": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+              "source_revision": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+              "epistemic_class": { "$ref": "common.schema.json#/$defs/EpistemicClass" },
+              "freshness": { "$ref": "common.schema.json#/$defs/Freshness" }
+            }
+          }
+        }
+      }
+    },
+    "ResyncRequired": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "message_type",
+        "connection_state",
+        "reason",
+        "resync_operation_id",
+        "generated_at"
+      ],
+      "properties": {
+        "contract_version": { "const": "bff.stream-message.v1" },
+        "message_type": { "const": "RESYNC_REQUIRED" },
+        "connection_state": { "enum": ["RECONNECTING", "RESYNCING", "STALE"] },
+        "reason": { "enum": ["REVISION_GAP", "RECONNECT", "SOURCE_STALE"] },
+        "last_good_revision": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "resync_operation_id": {
+          "type": "string",
+          "description": "operationId of the Query that re-establishes the snapshot. The browser never rebuilds state from events alone."
+        },
+        "generated_at": { "$ref": "common.schema.json#/$defs/Timestamp" }
+      }
+    }
+  }
+}

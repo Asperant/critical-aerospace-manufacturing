@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.cap.invalid/operations-bff/v1/common.schema.json",
+  "title": "operations-bff v1 shared definitions",
+  "description": "Shared closed shapes for the Command Center BFF contract. Presentation envelope only: no domain authority, no derived overall status.",
+  "$defs": {
+    "OpaqueId": {
+      "type": "string",
+      "pattern": "\\S",
+      "description": "Opaque nonblank identifier or revision token. Compared for equality only."
+    },
+    "Timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$",
+      "description": "UTC RFC 3339 instant with a literal Z suffix."
+    },
+    "Freshness": {
+      "enum": ["FRESH", "DEGRADED", "STALE"],
+      "description": "Staleness Contract classification, ordered FRESH (best), DEGRADED, STALE (worst)."
+    },
+    "EpistemicClass": {
+      "enum": [
+        "ACTUAL",
+        "OBSERVED",
+        "INFERRED",
+        "PREDICTED",
+        "PLANNED",
+        "COUNTERFACTUAL",
+        "STALE"
+      ],
+      "description": "Facility-wide epistemic vocabulary. Classes are never flattened into one status."
+    },
+    "WorldContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["world_id"],
+      "properties": {
+        "world_id": { "$ref": "#/$defs/OpaqueId" },
+        "simulation_run_id": { "$ref": "#/$defs/OpaqueId" },
+        "branch_id": { "$ref": "#/$defs/OpaqueId" }
+      },
+      "description": "Explicit world binding. There is no implicit current world; the BFF forwards it unchanged."
+    },
+    "EntityRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity_type", "entity_id"],
+      "properties": {
+        "entity_type": { "$ref": "#/$defs/OpaqueId" },
+        "entity_id": { "$ref": "#/$defs/OpaqueId" }
+      }
+    },
+    "SourceStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "revision", "as_of", "freshness"],
+      "properties": {
+        "source": { "$ref": "#/$defs/OpaqueId" },
+        "revision": { "$ref": "#/$defs/OpaqueId" },
+        "as_of": { "$ref": "#/$defs/Timestamp" },
+        "freshness": { "$ref": "#/$defs/Freshness" }
+      },
+      "description": "Revision, as_of and freshness exactly as reported by one backend Query API, Snapshot or read model."
+    },
+    "QueryMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revision",
+        "as_of",
+        "generated_at",
+        "freshness",
+        "world",
+        "sources",
+        "correlation_id"
+      ],
+      "properties": {
+        "revision": {
+          "$ref": "#/$defs/OpaqueId",
+          "description": "Opaque equality-only token of this composed view. Not a domain revision and not comparable."
+        },
+        "as_of": {
+          "$ref": "#/$defs/Timestamp",
+          "description": "Instant the view describes; the oldest source as_of."
+        },
+        "generated_at": { "$ref": "#/$defs/Timestamp" },
+        "freshness": {
+          "$ref": "#/$defs/Freshness",
+          "description": "Least-fresh freshness among sources; never better than any source."
+        },
+        "world": { "$ref": "#/$defs/WorldContext" },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/SourceStatus" }
+        },
+        "correlation_id": { "$ref": "#/$defs/OpaqueId" }
+      }
+    },
+    "ErrorEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "error_code",
+        "category",
+        "message",
+        "retryable",
+        "correlation_id"
+      ],
+      "properties": {
+        "error_code": { "$ref": "#/$defs/OpaqueId" },
+        "category": {
+          "enum": [
+            "VALIDATION_ERROR",
+            "NOT_FOUND",
+            "CONFLICT",
+            "STALE_STATE",
+            "UNAUTHORIZED",
+            "FORBIDDEN",
+            "DEPENDENCY_UNAVAILABLE",
+            "TIMEOUT",
+            "RATE_LIMITED",
+            "PARTIAL_RESULT",
+            "INTERNAL_ERROR"
+          ]
+        },
+        "message": { "type": "string", "minLength": 1 },
+        "retryable": { "type": "boolean" },
+        "details": { "type": "object" },
+        "correlation_id": { "$ref": "#/$defs/OpaqueId" }
+      }
+    }
+  }
+}

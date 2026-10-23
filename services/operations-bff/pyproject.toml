@@ -1,0 +1,10 @@
+[project]
+name = "operations-bff"
+version = "0.1.0"
+description = "Command Center BFF contract (WP-UI-001); no runtime yet"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-p no:cacheprovider"

@@ -1,0 +1,130 @@
+openapi: 3.1.0
+info:
+  title: Command Center BFF (operations-bff) v1
+  version: 1.0.0
+  summary: Browser-facing contract; the only normal path from browser to backend.
+  description: |
+    Slice 1 of WP-UI-001 (DN-UI-BFFCON). Contract surface only: no runtime,
+    no authentication scheme and no routes of the web application are defined.
+    The BFF composes backend facts for display and owns no domain authority
+    (BFF-INV-1..7). The browser reaches only this API: never the event broker,
+    a database or a private service API. Actor identity comes from the
+    authenticated session on the server side and is never a request field.
+x-bff-contract:
+  contract_id: bff.operations-bff.v1
+  semantic_owner: Asrin Dundar
+x-bff-streaming:
+  boundary: >-
+    Streaming is not an OpenAPI path. After the initial Query snapshot the
+    BFF pushes StreamMessage values over a browser-facing channel whose
+    transport (WebSocket or SSE) is an open architecture decision.
+    The browser never connects to the event backbone.
+  transport: UNDECIDED
+  snapshot_operation_id: getManufacturingOverview
+  message_schema: StreamMessage
+paths:
+  /v1/overview:
+    get:
+      operationId: getManufacturingOverview
+      summary: Manufacturing Overview attention-first view (Query)
+      description: >-
+        Read only. Returns composed backend facts with revision, as_of,
+        generated_at and freshness. Freshness is the least-fresh source.
+      x-bff-class: QUERY
+      parameters:
+        - name: world_id
+          in: query
+          required: true
+          description: Explicit world binding; there is no implicit current world.
+          schema:
+            type: string
+            pattern: "\\S"
+        - name: simulation_run_id
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: "\\S"
+        - name: branch_id
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: "\\S"
+        - name: as_of
+          in: query
+          required: false
+          description: Historical-as-of instant; omitted means live. Historical views are read only.
+          schema:
+            $ref: "common.schema.json#/$defs/Timestamp"
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: "\\S"
+      responses:
+        "200":
+          description: Composed overview view model.
+          content:
+            application/json:
+              schema:
+                $ref: "overview-query.schema.json"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+  /v1/commands:
+    post:
+      operationId: submitCommand
+      summary: Submit command intent (Command)
+      description: >-
+        Expresses intent and may be rejected. The BFF attaches the session
+        actor, routes the command unchanged and returns the backend acceptance
+        verbatim. Acceptance is never completion; canonical effects arrive
+        later through the stream.
+      x-bff-class: COMMAND
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "command.schema.json#/$defs/CommandRequest"
+      responses:
+        "202":
+          description: Backend acceptance result (ACCEPTED, REJECTED, CONFLICT or STALE).
+          content:
+            application/json:
+              schema:
+                $ref: "command.schema.json#/$defs/CommandReceipt"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "503":
+          $ref: "#/components/responses/Error"
+components:
+  responses:
+    Error:
+      description: Common ErrorEnvelope.
+      content:
+        application/json:
+          schema:
+            $ref: "common.schema.json#/$defs/ErrorEnvelope"
+  schemas:
+    StreamMessage:
+      $ref: "stream-message.schema.json"

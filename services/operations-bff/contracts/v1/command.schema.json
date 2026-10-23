@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.cap.invalid/operations-bff/v1/command.schema.json",
+  "title": "operations-bff command routing shapes",
+  "description": "COMMAND intent request and acceptance receipt. The BFF routes intent unchanged and returns the backend acceptance verbatim; acceptance is never completion. Actor identity is derived server side from the session and never supplied by the browser.",
+  "$defs": {
+    "CommandRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_version", "command_id", "command_type", "world", "target"],
+      "properties": {
+        "contract_version": { "const": "bff.command.v1" },
+        "command_id": {
+          "$ref": "common.schema.json#/$defs/OpaqueId",
+          "description": "Client-generated idempotency key."
+        },
+        "command_type": {
+          "$ref": "common.schema.json#/$defs/OpaqueId",
+          "description": "Backend-owned command name; the BFF assigns it no semantics."
+        },
+        "world": { "$ref": "common.schema.json#/$defs/WorldContext" },
+        "target": { "$ref": "common.schema.json#/$defs/EntityRef" },
+        "expected_revision": {
+          "$ref": "common.schema.json#/$defs/OpaqueId",
+          "description": "Revision the user acted on, for stale-state rejection by the backend."
+        },
+        "parameters": {
+          "type": "object",
+          "description": "Backend command payload forwarded unmodified; validated by the owning Command API."
+        }
+      }
+    },
+    "CommandReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_version", "command_id", "outcome", "correlation_id", "received_at"],
+      "properties": {
+        "contract_version": { "const": "bff.command-receipt.v1" },
+        "command_id": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "outcome": {
+          "enum": ["ACCEPTED", "REJECTED", "CONFLICT", "STALE"],
+          "description": "Backend acceptance result, verbatim. There is no completed or confirmed value: canonical effects arrive as events through the stream."
+        },
+        "reason": { "type": "string", "minLength": 1 },
+        "correlation_id": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "received_at": { "$ref": "common.schema.json#/$defs/Timestamp" }
+      }
+    }
+  }
+}
