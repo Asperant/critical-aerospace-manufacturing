@@ -833,3 +833,43 @@ root-only timestamped `/root` backup and rollback script before replacing helper
 files, refreshes source/helper hashes, verifies sudoers and preserves audit. Rollback
 restores deployment only; never replay a stale Plane DB or state snapshot. No service
 restart is required. Missing evidence results in NO_TASK, never synthetic READY.
+
+
+## Automatic preparation — CHG-021 / CTRL-HOST-006
+
+CHG-021 supersedes CHG-019's blanket prohibition on generated START assessments
+only for exact, mechanically derived canonical governance. Product/DoD evidence,
+semantic assessments and dependency-owner attribution remain mandatory.
+`preparation.py` consumes existing resolver diagnostics; it does not select work.
+AUTO_PREPARABLE means all required START facts can be derived. REAL_WORK_REQUIRED
+means actual contract/consumer/design/research evidence or implementation is
+missing. WAITING_DEP requires real HARD START producer evidence. UNAVAILABLE
+means trusted input cannot be read. UNKNOWN never becomes PASS or PREPARED.
+
+The narrow complete recipe requires explicit zero-inbound early-unlocker scope,
+non-R1 requirements, canonical outcome/tasks/deliverables/verification/architecture
+and deterministic advisory owner/reviewer evidence routing. The first canonical
+task is the initial slice; the remainder is an explicit workstream. Acceptance is
+planned, tests NOT_EXECUTED, artifacts NOT_PRODUCED. Preparation source SHA is
+recorded; every use regenerates all facts at current main, checks ancestor binding,
+input digest and actual artifact/routing presence. These are machine-derived
+assessments authorized here, not fabricated owner comments or DONE evidence.
+
+`cap-plane-prepare --all` is root-only. Its 15-minute systemd oneshot may create
+minimal branch/commit/PR preparation as Asrin's real UID/GitHub identity, and merge
+only after current-head required CI and clean current-main mergeability. One PR
+per WP, stable canonical-input branch, existing equivalent artifact detection and
+closed-PR no-retry prevent spam. Changed/ambiguous inputs fail closed. No daemon.
+All Plane writes still pass existing AUTO_NEXT with fresh full state/evidence
+revalidation. Current work excludes another READY. PREPARED remains derived;
+later-cycle eligibility is allowed. VERIFIED lifecycle writes nonblockingly request
+replenishment after releasing the shared lock; timer is the recovery path.
+
+Recovery: `sudo systemctl start cap-plane-prepare.service`; inspect
+`sudo journalctl -u cap-plane-prepare.service` and root-only
+`/var/lib/cap-plane-prepare/{latest,before,after,failure}.json` plus per-WP results.
+The controller has a 720-second alarm, 750-second service timeout, nonblocking
+global lock and per-WP locks. Failures do not undo or interrupt developer work.
+Health remains GET-only and does not call this writer. Installer creates root-only
+backup/rollback before deploying merged helpers/policy/units. No unrelated service
+restart or credential copying. Real consumer/readiness/product blockers remain.

@@ -96,6 +96,11 @@ def candidate_evidence(t, plane, policy, profile, gh, comments, live, future=Fal
         "candidates": {},
     }
     envelopes = {}
+    generated = set()
+    if policy.get("preparation_schema"):
+        tree = gh._get(f"{t.REPO}/git/trees/{sha}?recursive=1")
+        t.need(tree.get("truncated") is False, "REPOSITORY_TREE_INCOMPLETE")
+        generated = {row["path"] for row in tree["tree"]}
     for wp in policy["execution_preferences"]["sequences"][t.q.PEOPLE[profile][0]]:
         if live["items"][wp]["state"] != "BACKLOG" or live["items"][wp]["blocked"]:
             continue
@@ -128,8 +133,10 @@ def candidate_evidence(t, plane, policy, profile, gh, comments, live, future=Fal
             }
             for identity in ids
         ]
-        if not refs:
+        if not refs and f"evidence/{wp}/AUTO_PREPARATION.md" not in generated:
             continue
+        if not refs:
+            refs = [f"repo:evidence/{wp}/AUTO_PREPARATION.md"]
         if len(refs) > 16:
             entry["reason"] = "AMBIGUOUS_EVIDENCE_DISCOVERY"
             continue
@@ -185,6 +192,7 @@ def candidate_evidence(t, plane, policy, profile, gh, comments, live, future=Fal
                 reason=None,
                 evidence_refs=refs,
                 dependencies=proofs,
+                deficits=[],
             )
             envelopes[wp] = envelope
         except t.Denied as exc:
@@ -245,6 +253,42 @@ def owner_health(t, profile, policy, plane, gh_factory):
             producer = policy.get("node_owners", {}).get(blocker["readiness_node"])
             if producer:
                 blocker["producer_owner"] = producer
+    if policy.get("preparation_schema"):
+        spec = importlib.util.spec_from_file_location(
+            "cap_preparation_health", "/usr/local/libexec/cap-preparation.py"
+        )
+        assert spec is not None and spec.loader is not None
+        prep = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(prep)
+        prs = gh._get(f"{t.REPO}/pulls?state=open&per_page=100")
+        t.need(
+            isinstance(prs, list) and len(prs) < 100,
+            "PREPARATION_PR_DISCOVERY_INCOMPLETE",
+        )
+        for candidate in result["candidates"]:
+            plan = prep.derive(
+                policy["contexts"][candidate["wp_id"]], policy, gh.main_sha()
+            )
+            candidate["preparation"] = prep.classify(candidate, plan)
+            if candidate["preparation"] == "AUTO_PREPARABLE" and any(
+                pr["head"]["ref"].startswith(
+                    "wp/" + candidate["wp_id"] + "-auto-prepare-"
+                )
+                for pr in prs
+            ):
+                candidate["preparation"] = "IN_PROGRESS"
+            candidate["unknown_criteria"] = [
+                k for k, v in plan["checks"].items() if v["result"] == "UNKNOWN"
+            ]
+        result["preparation"] = (
+            "VERIFIED_PREPARED"
+            if result.get("prepared_next")
+            else (
+                result["candidates"][0]["preparation"]
+                if result["candidates"]
+                else "NO_BACKLOG"
+            )
+        )
     return result
 
 

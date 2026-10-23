@@ -1,0 +1,11 @@
+[Unit]
+Description=Replenish canonical PREPARED buffer every 15 minutes
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=15min
+AccuracySec=30s
+Unit=cap-plane-prepare.service
+
+[Install]
+WantedBy=timers.target

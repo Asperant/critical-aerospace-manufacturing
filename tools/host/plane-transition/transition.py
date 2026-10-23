@@ -636,7 +636,14 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
         need(context['cycle_ids'], 'UNSCHEDULED_WORK_NEEDS_PLANNING_DECISION')
         need(not any(r['id']!=item['id'] and r.get('assignees')==[q.PEOPLE[profile][1]] and
                      r.get('state')==plane.states['READY'] for r in plane.items), 'ANOTHER_READY_WP_EXISTS')
-        record=confirmation(rows,[owner],wp,source,target,sha,policy)
+        if not rows and policy.get('preparation_schema') == 'cap-preparation-v1':
+            spec=importlib.util.spec_from_file_location('cap_preparation_ready','/usr/local/libexec/cap-preparation.py')
+            assert spec is not None and spec.loader is not None
+            prep=importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(prep)
+            record=prep.verified_record(sys.modules[__name__],gh,wp,sha,policy)
+        else:
+            record=confirmation(rows,[owner],wp,source,target,sha,policy)
         criteria(gh,record,policy['dor_task']+card['dor_refs'],sha)
         dependencies(gh,rows,context,record,sha,policy)
     elif target=='IN_PROGRESS':
@@ -796,7 +803,7 @@ def verify_policy_sources(policy):
         data=dict(policy)
         expected=data.pop('policy_digest')
         need(hashlib.sha256(json.dumps(data,ensure_ascii=False,sort_keys=True).encode()).hexdigest()==expected,'POLICY_DIGEST_MISMATCH')
-    for kind,path in [('auto_next','/usr/local/libexec/cap-auto-next.py'),('execution_queue','/usr/local/libexec/execution_queue.py'),('health','/usr/local/libexec/cap-plane-health.py'),('health_snapshot','/usr/local/libexec/cap-plane-health-snapshot.py')]:
+    for kind,path in [('auto_next','/usr/local/libexec/cap-auto-next.py'),('execution_queue','/usr/local/libexec/execution_queue.py'),('health','/usr/local/libexec/cap-plane-health.py'),('health_snapshot','/usr/local/libexec/cap-plane-health-snapshot.py'),('preparation','/usr/local/libexec/cap-preparation.py'),('prepare','/usr/local/libexec/cap-plane-prepare.py')]:
         if kind in policy.get('implementation_sha256',{}):
             need(hashlib.sha256(Path(path).read_bytes()).hexdigest()==policy['implementation_sha256'][kind], 'AUTO_NEXT_POLICY_REFRESH_REQUIRED')
     for name,expected in policy['source_manifest'].items():
@@ -865,6 +872,12 @@ def main():
                     result['health']=auto.after_transition(sys.modules[__name__],wp,policy,lambda:Plane(key),GitHub)
                 except Exception:
                     result['health']={'health':'UNAVAILABLE','reasons':['PREFLIGHT_SOURCE_UNAVAILABLE']}
+        if result.get('result')=='VERIFIED':
+            # Nonblocking replenishment after lock release; failure cannot undo work.
+            try:
+                subprocess.run(['/usr/bin/systemctl','--no-block','start','cap-plane-prepare.service'],capture_output=True,timeout=5,check=False)
+            except (OSError,subprocess.TimeoutExpired):
+                pass  # Timer recovers; successful lifecycle result remains successful.
         q.emit(result,key)
         return 0
     except Denied as exc:

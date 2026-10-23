@@ -1,0 +1,19 @@
+[Unit]
+Description=Bounded canonical preparation and guarded AUTO_NEXT
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+UMask=0077
+StateDirectory=cap-plane-prepare
+StateDirectoryMode=0700
+ExecStart=/usr/local/bin/cap-plane-prepare --all
+TimeoutStartSec=750
+Nice=10
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/var/lib/cap-plane-prepare /var/log/cap-plane-transition /run
+StandardOutput=journal
+StandardError=null
