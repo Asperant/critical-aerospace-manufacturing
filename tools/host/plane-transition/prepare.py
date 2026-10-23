@@ -42,17 +42,10 @@ def snapshot(plane):
             .sha256(
                 json.dumps(
                     {
-                        k: x.get(k)
-                        for k in (
-                            "id",
-                            "name",
-                            "description_html",
-                            "assignees",
-                            "labels",
-                            "cycle_id",
-                            "module_ids",
-                            "external_id",
-                        )
+                        k: value
+                        for k, value in x.items()
+                        if k
+                        not in {"state", "updated_at", "updated_by", "completed_at"}
                     },
                     sort_keys=True,
                 ).encode()
@@ -69,6 +62,7 @@ class Writer:
     def __init__(self, t):
         self.t = t
         self.gh = t.GitHub("asrin")
+        self.prewrite = lambda: None
 
     def call(self, method, route, body=None):
         self.t.need(
@@ -76,6 +70,8 @@ class Writer:
             and route.startswith(self.t.REPO + "/"),
             "INVALID_PREPARATION_ROUTE",
         )
+        if method != "GET":
+            self.prewrite()
         command = [
             "/usr/bin/gh",
             "api",
@@ -110,6 +106,7 @@ class Writer:
 
 def prepare_pr(t, engine, writer, candidate, plan, policy, before_write):
     """One open PR per WP; a lost response is discovered, never blindly repeated."""
+    writer.prewrite = before_write
     wp = candidate["wp_id"]
     repo = t.REPO
     target = engine.path_for(wp)
@@ -169,7 +166,7 @@ def prepare_pr(t, engine, writer, candidate, plan, policy, before_write):
                 "POST",
                 f"{repo}/git/trees",
                 {
-                    "base_tree": main,
+                    "base_tree": tree["sha"],
                     "tree": [
                         {
                             "path": target,
