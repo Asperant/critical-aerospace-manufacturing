@@ -5,6 +5,7 @@ CAP_PROFILE is an operational guard, not a same-UID security boundary.
 Only this module's constructed state/BLOCKED PATCH is possible. No generic API CLI.
 """
 import base64
+import contextlib
 import datetime as dt
 import fcntl
 import hashlib
@@ -874,10 +875,8 @@ def main():
                     result['health']={'health':'UNAVAILABLE','reasons':['PREFLIGHT_SOURCE_UNAVAILABLE']}
         if result.get('result')=='VERIFIED':
             # Nonblocking replenishment after lock release; failure cannot undo work.
-            try:
+            with contextlib.suppress(OSError,subprocess.TimeoutExpired):
                 subprocess.run(['/usr/bin/systemctl','--no-block','start','cap-plane-prepare.service'],capture_output=True,timeout=5,check=False)
-            except (OSError,subprocess.TimeoutExpired):
-                pass  # Timer recovers; successful lifecycle result remains successful.
         q.emit(result,key)
         return 0
     except Denied as exc:
