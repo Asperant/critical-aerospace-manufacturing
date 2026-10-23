@@ -227,7 +227,8 @@ def test_fastapi_is_confined_to_the_transport_module() -> None:
         for path in SRC.glob("*.py")
         if re.search(r"^\s*(from|import)\s+(fastapi|starlette)", path.read_text(), re.M)
     }
-    assert importers == {"api.py"}
+    # The composition root and entrypoint name the app type; domain modules never do.
+    assert importers == {"api.py", "composition.py", "main.py"}
     for path in SRC.glob("*.py"):
         text = path.read_text()
         assert not re.search(

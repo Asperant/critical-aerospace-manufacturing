@@ -175,3 +175,35 @@ Local verification with the CI commands: 146 tests pass (49 new), Ruff lint and
 format, Pyright 0 errors, `check_contracts.py` PASS, `ci/tests` 26 passed,
 `static_ratchet check` PASS. Tests use `httpx.MockTransport` and generated RSA
 keys only. CI for this commit is not yet observed.
+
+## Slice 7: composition root and entrypoint
+
+Added `src/operations_bff/composition.py` (`RuntimeSettings.from_environ`,
+`ConfigurationError`, `build_app`) and `src/operations_bff/main.py`
+(`create_app()`, an ASGI factory that reads the process environment). It is the
+only module that imports the OIDC adapter; the entrypoint is the only one that
+reads `os.environ`. `api.create_app` gained an optional `lifespan` so the HTTP
+client created by the root is closed on shutdown.
+
+Configuration (all read from the environment, nothing committed): the
+`OPERATIONS_BFF_OIDC_*` settings of slice 6 plus
+`OPERATIONS_BFF_COOKIE_SAMESITE` (strict or lax),
+`OPERATIONS_BFF_SESSION_ABSOLUTE_TTL_SECONDS`,
+`OPERATIONS_BFF_SESSION_IDLE_TTL_SECONDS` and
+`OPERATIONS_BFF_SESSION_ROTATE_AFTER_SECONDS`. These and the OIDC issuer, client,
+redirect URI and environment id are required and have no defaults, so the
+owner-level SameSite and lifetime decisions cannot be hidden. Optional with
+bounded defaults: `OPERATIONS_BFF_LOGIN_TTL_SECONDS`,
+`OPERATIONS_BFF_LOGIN_MAX_PENDING`, `OPERATIONS_BFF_POST_LOGIN_PATH` (`/`). All
+problems are reported together by setting name and never include the client
+secret. Building the app makes no network call.
+
+Known limits: sessions and login transactions are in memory, so only one
+process can serve them; rotation on read is still not wired; no ASGI server
+dependency was added, so the factory is run by whichever server the deployment
+uses.
+
+Local verification with the CI commands: 181 tests pass (35 new), Ruff lint and
+format, Pyright 0 errors, `check_contracts.py` PASS, `ci/tests` 26 passed,
+`static_ratchet check` PASS. No broker or database module is imported, checked
+statically and in a clean interpreter. CI for this commit is not yet observed.

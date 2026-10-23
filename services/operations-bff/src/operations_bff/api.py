@@ -15,6 +15,7 @@ from typing import Annotated
 from fastapi import FastAPI, Query, Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from starlette.types import Lifespan
 
 from .actor import Authenticated, authenticate_request
 from .config import COOKIE_NAME, LOGIN_COOKIE_NAME, CookieSettings
@@ -68,11 +69,12 @@ def create_app(
     clock: Callable[[], datetime] = utc_now,
     login: LoginService | None = None,
     post_login_redirect: str = "/",
+    lifespan: Lifespan[FastAPI] | None = None,
 ) -> FastAPI:
     if not post_login_redirect.startswith("/") or post_login_redirect.startswith("//"):
         raise ValueError("post_login_redirect must be a same-origin absolute path")
     # The contract file is the only API description; no generated docs surface.
-    app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+    app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
 
     @app.exception_handler(BffError)
     def bff_error(_: Request, exc: BffError) -> JSONResponse:  # pyright: ignore[reportUnusedFunction]
