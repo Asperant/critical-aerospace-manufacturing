@@ -1,0 +1,1 @@
+ERROR: no capability registry at <repo>/infra/mfgctl/capabilities.json. Compose profiles, smoke paths and scenarios arrive with WP-PLAT-001 (DEP-003); nothing was run.

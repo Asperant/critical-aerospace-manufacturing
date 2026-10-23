@@ -1,0 +1,6 @@
+mfgctl bootstrap
+  OK    git   git version 2.53.0; work tree readable
+  OK    uv    uv 0.12.13 (matches CI pin)
+  OK    venv  <repo>/ci/.venv present
+  OK    sync  already up to date
+Result: OK — no changes needed. Next: mfgctl doctor

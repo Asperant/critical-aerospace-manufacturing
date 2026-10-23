@@ -1,0 +1,52 @@
+[
+  {
+    "command": "bootstrap",
+    "runs": 2,
+    "failed_runs": 0,
+    "median_ms": 15,
+    "max_ms": 15,
+    "last_ms": 15,
+    "target_ms": null,
+    "median_within_target": null
+  },
+  {
+    "command": "check --fast",
+    "runs": 1,
+    "failed_runs": 0,
+    "median_ms": 4079,
+    "max_ms": 4079,
+    "last_ms": 4079,
+    "target_ms": 90000,
+    "median_within_target": true
+  },
+  {
+    "command": "diagnose bundle",
+    "runs": 1,
+    "failed_runs": 0,
+    "median_ms": 59,
+    "max_ms": 59,
+    "last_ms": 59,
+    "target_ms": 120000,
+    "median_within_target": true
+  },
+  {
+    "command": "doctor",
+    "runs": 1,
+    "failed_runs": 1,
+    "median_ms": null,
+    "max_ms": null,
+    "last_ms": 52,
+    "target_ms": 30000,
+    "median_within_target": null
+  },
+  {
+    "command": "up",
+    "runs": 1,
+    "failed_runs": 1,
+    "median_ms": null,
+    "max_ms": null,
+    "last_ms": 0,
+    "target_ms": 300000,
+    "median_within_target": null
+  }
+]

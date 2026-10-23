@@ -1,0 +1,6 @@
+[1/1] t1-static · Static ratchet (Ruff lint + format, Pyright)
+Current: ruff=307 pyright=189 unformatted=56 ({'ruff': 'ruff 0.7.4', 'pyright': 'pyright 1.1.389'})
+PASS: no new static findings; baseline is tight.
+mfgctl check --fast summary
+  PASS    t1-static       Static ratchet (Ruff lint + format, Pyright) [4.1 s]
+Result: PASS in 4.1 s
