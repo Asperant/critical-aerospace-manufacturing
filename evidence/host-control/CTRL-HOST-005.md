@@ -22,6 +22,9 @@ Focused local validation (real execution, no production mutation):
 - Static ratchet PASS: unchanged 307 Ruff / 189 Pyright / 56 legacy format findings.
 - Flake governance PASS; contract checks PASS; compileall and git diff --check PASS.
 - Full local suite deliberately not run; normal required GitHub CI gates merge.
+- Initial unit CI exposed order-dependent fixture registration in the new tests;
+  fixed with an explicit local fixture delegating to the canonical fixture.
+  Affected tests rechecked using full collection and the CI quarantine plugin.
 
 Existing Asrin audit files preserved byte-for-byte:
 - projectctl-audit-addendum-2026-10-20-944fd56.md:

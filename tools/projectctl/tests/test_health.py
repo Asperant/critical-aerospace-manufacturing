@@ -1,12 +1,17 @@
 """Focused derived-health regressions using the real canonical fixture."""
 
 from copy import deepcopy
+from typing import Any, cast
 
 import pytest
 from projectctl.execution_queue import OWNERS, compute_next_eligible, preflight_health
+from test_execution_queue import baseline as canonical_baseline
 from test_execution_queue import qualify
 
-pytest_plugins = ["test_execution_queue"]
+
+@pytest.fixture(name="baseline", scope="module")
+def health_baseline():
+    return cast(Any, canonical_baseline).__wrapped__()
 
 
 def health(data):
