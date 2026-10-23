@@ -59,6 +59,7 @@ def emit(result, machine):
             print(profile)
             print("CURRENT:", (row.get("current") or {}).get("wp_id", "NONE"))
             print("PREPARED:", row.get("prepared_next") or "NONE")
+            print("PREPARATION:", row.get("preparation", "UNAVAILABLE"))
             print("HEALTH:", row["health"])
             blocker = row.get("first_blocker")
             if blocker:

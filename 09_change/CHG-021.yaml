@@ -1,0 +1,28 @@
+CHG-021:
+  title: Bounded canonical preparation and autonomous prepared buffer replenishment
+  class: C2
+  review_risk_class: CR-4
+  owner: Asrın
+  decision: APPROVED
+  status: APPROVED
+  application_control_item: CTRL-HOST-006
+  required_human_approvals: 0
+  human_decision_basis: Explicit project-owner request for autonomous preparation and deployment, 23 October 2026
+  scope: Mechanically derive START governance only; product, dependency and DoD evidence unchanged
+  rules:
+  - Dedicated automation identity is not introduced; preparation PRs use real Asrin UID and GitHub identity
+  - Machine-derived START assessments are permitted only after exact recomputation from current trusted canonical policy
+  - Full derivation requires no canonical HARD START gate, explicit canonical input scope and non-R1 work
+  - First canonical major task is start slice; remaining tasks are a workstream, not completed implementation
+  - Canonical source SHA must be an ancestor; all input facts and current artifact existence are freshly checked
+  - Generated records are explicitly machine-derived, never falsely attributed owner comments
+  - UNKNOWN is never PASS; no synthetic contract, schema, migration, readiness artifact or test result
+  - Later-stage edges require canonical precise consumer or unblock evidence; their readiness remains NOT_CERTIFIED until their actual gate
+  - Other candidates require actual precise consumer, contract, research or design evidence and retain UNKNOWN
+  - Existing resolver preference and guarded BACKLOG to READY boundary remain authoritative; cycle is not a hard gate
+  - One active preparation PR per WP; required CI and current-main mergeability must pass; no blind write retry
+  - Root bounded controller uses global and per-WP locks; durable sanitized before/after and action results
+  - Health stays read-only; current work prevents second READY; successful transitions request bounded replenishment
+  - Selman HTTP 401 remains unavailable with no credential remediation or copying
+  rollout: Merged source only, root-only timestamped backup and rollback; approximately 15-minute oneshot timer
+  rollback: Restore deployment files and prior timer enablement; never restore Plane state or erase audit

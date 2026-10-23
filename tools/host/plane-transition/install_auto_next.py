@@ -2,6 +2,7 @@
 """Deploy merged AUTO_NEXT sources with root-only backups and bounded rollback."""
 
 import datetime
+import fcntl
 import hashlib
 import json
 import os
@@ -28,6 +29,13 @@ def main():
     if os.geteuid() != 0:
         raise PermissionError("Root required")
     os.umask(0o077)
+    fd = os.open(
+        "/run/cap-plane-queue.lock", os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600
+    )
+    deployment_lock = os.fdopen(fd, "r+")
+    if os.fstat(fd).st_uid != 0:
+        raise PermissionError("Unsafe lock owner")
+    fcntl.flock(deployment_lock, fcntl.LOCK_EX)
     status = subprocess.check_output(
         ["git", "-C", str(SOURCE), "status", "--porcelain"], text=True
     )
@@ -53,6 +61,15 @@ def main():
         "/etc/systemd/system/cap-plane-health.service": "tools/host/plane-transition/cap-plane-health.service",
         "/etc/systemd/system/cap-plane-health.timer": "tools/host/plane-transition/cap-plane-health.timer",
     }
+    mapping.update(
+        {
+            "/usr/local/libexec/cap-preparation.py": "tools/host/plane-transition/preparation.py",
+            "/usr/local/libexec/cap-plane-prepare.py": "tools/host/plane-transition/prepare.py",
+            "/usr/local/bin/cap-plane-prepare": "tools/host/plane-transition/cap-plane-prepare",
+            "/etc/systemd/system/cap-plane-prepare.service": "tools/host/plane-transition/cap-plane-prepare.service",
+            "/etc/systemd/system/cap-plane-prepare.timer": "tools/host/plane-transition/cap-plane-prepare.timer",
+        }
+    )
     policy = json.loads(
         Path("/srv/ailab/remote-ssh/staging/plane-transition-policy.json").read_text()
     )
@@ -103,12 +120,21 @@ def main():
         ]
     }
     (backup / "timer-state.json").write_text(json.dumps(timer_state))
+    prep_timer_state = (
+        subprocess.run(
+            ["systemctl", "is-enabled", "cap-plane-prepare.timer"], capture_output=True
+        ).returncode
+        == 0
+    )
+    (backup / "prepare-timer-state.json").write_text(json.dumps(prep_timer_state))
     # Restores deployment only, never database/state or audit history.
     rollback = """#!/usr/bin/python3 -I
 import json,os,shutil,subprocess
 from pathlib import Path
 assert os.geteuid()==0
 base=Path(__file__).resolve().parent
+subprocess.run(['systemctl','disable','--now','cap-plane-prepare.timer'],capture_output=True)
+subprocess.run(['systemctl','stop','cap-plane-prepare.service'],capture_output=True)
 subprocess.run(['systemctl','disable','--now','cap-plane-health.timer'],capture_output=True)
 for item in json.loads((base/'inventory.json').read_text()):
     if not item['restore']:
@@ -124,6 +150,8 @@ subprocess.run(['/usr/sbin/visudo','-cf','/etc/sudoers'],check=True)
 subprocess.run(['systemctl','daemon-reload'],check=True)
 if json.loads((base/'timer-state.json').read_text())['cap-plane-health.timer']:
     subprocess.run(['systemctl','enable','--now','cap-plane-health.timer'],check=True)
+if json.loads((base/'prepare-timer-state.json').read_text()):
+    subprocess.run(['systemctl','enable','--now','cap-plane-prepare.timer'],check=True)
 print('AUTO_NEXT deployment restored; Plane states and audit untouched. Source policy drift remains fail-closed.')
 """
     (backup / "rollback.py").write_text(rollback)
@@ -201,6 +229,8 @@ print('AUTO_NEXT deployment restored; Plane states and audit untouched. Source p
             "execution_queue": "/usr/local/libexec/execution_queue.py",
             "health": "/usr/local/libexec/cap-plane-health.py",
             "health_snapshot": "/usr/local/libexec/cap-plane-health-snapshot.py",
+            "preparation": "/usr/local/libexec/cap-preparation.py",
+            "prepare": "/usr/local/libexec/cap-plane-prepare.py",
         }.items():
             if (
                 hashlib.sha256(Path(dest).read_bytes()).hexdigest()
@@ -232,6 +262,18 @@ print('AUTO_NEXT deployment restored; Plane states and audit untouched. Source p
         subprocess.run(["systemctl", "daemon-reload"], check=True)
         subprocess.run(
             ["systemctl", "enable", "--now", "cap-plane-health.timer"], check=True
+        )
+        subprocess.run(
+            [
+                "systemd-analyze",
+                "verify",
+                "/etc/systemd/system/cap-plane-prepare.service",
+                "/etc/systemd/system/cap-plane-prepare.timer",
+            ],
+            check=True,
+        )
+        subprocess.run(
+            ["systemctl", "enable", "--now", "cap-plane-prepare.timer"], check=True
         )
         hashes = {
             dest: hashlib.sha256(Path(dest).read_bytes()).hexdigest()
