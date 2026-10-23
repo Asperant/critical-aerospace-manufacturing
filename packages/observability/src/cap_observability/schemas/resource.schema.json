@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Asperant/critical-aerospace-manufacturing/packages/observability/schemas/resource.schema.json",
+  "title": "cap.resource/v1 — telemetry resource attributes",
+  "description": "Identity every process attaches to all of its logs, metrics and traces (WP-OBS-001; 01 Item 47 §11–§12, Item 43 §4–§7). OpenTelemetry semantic-convention names where one exists, the cap.* namespace for project identities.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "service.name",
+    "service.version",
+    "deployment.environment.name",
+    "cap.environment.class"
+  ],
+  "properties": {
+    "service.name": {
+      "description": "ServiceName: logical deployable or platform component, kebab-case (for example manufacturing-core, otel-collector).",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,62}$"
+    },
+    "service.version": {
+      "description": "ServiceVersion: package or image version of the running code.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "service.instance.id": {
+      "description": "Distinguishes replicas or processes of the same service.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+    },
+    "deployment.environment.name": {
+      "description": "EnvironmentID (Item 43 §5), for example local-yavuz, integration-main, eval-rc090-001.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,62}$"
+    },
+    "cap.environment.class": {
+      "description": "EnvironmentClass (Item 43 §4). CI_EPHEMERAL is a technical CI runtime, not a team environment.",
+      "enum": ["LOCAL", "INTEGRATION", "EVALUATION", "DEMO", "CI_EPHEMERAL"]
+    },
+    "cap.runtime.profile": {
+      "description": "RuntimeProfile (Item 38); never an environment class (Item 43 §7).",
+      "enum": ["infra", "core", "vision", "ai", "planning", "platform", "full", "e2e"]
+    },
+    "cap.release.id": {
+      "description": "ReleaseID of the deployed composition.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "cap.deployment.id": {
+      "description": "DeploymentID / DeploymentRecord identity.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"cap.environment.class": {"enum": ["EVALUATION", "DEMO"]}},
+        "required": ["cap.environment.class"]
+      },
+      "then": {"required": ["cap.release.id"]}
+    }
+  ]
+}

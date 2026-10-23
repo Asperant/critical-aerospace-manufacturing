@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-10-23T15:04:05.123Z",
+  "severity": "ERROR",
+  "service": "scheduler-service",
+  "service_version": "0.1.0",
+  "environment": "integration-main",
+  "environment_class": "INTEGRATION",
+  "event_name": "scheduler.validation_failed",
+  "message": "Candidate schedule rejected by ScheduleValidator",
+  "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+  "span_id": "00f067aa0ba902b7",
+  "correlation_id": "incident-2026-10-23-0007",
+  "error_code": "SCHEDULE_INFEASIBLE",
+  "error_type": "ScheduleValidationError",
+  "world_id": "PRIMARY",
+  "scheduling_run_id": "schrun-000412",
+  "entity_refs": [
+    {"type": "Equipment", "id": "CNC-5AX-07"},
+    {"type": "Lot", "id": "LOT-2026-0318"}
+  ],
+  "attributes": {
+    "violated_constraint": "equipment_unavailable",
+    "candidate_count": 3
+  }
+}

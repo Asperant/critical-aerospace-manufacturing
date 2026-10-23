@@ -24,3 +24,6 @@
 
 # WP-PLAT-002: mfgctl developer and operator CLI; canonical owner Yavuz (advisory, CHG-018).
 /tools/mfgctl/ @Yavuzgmus
+
+# WP-OBS-001: telemetry pipeline and field standard; canonical owner Yavuz (advisory, CHG-018).
+/packages/observability/ @Yavuzgmus

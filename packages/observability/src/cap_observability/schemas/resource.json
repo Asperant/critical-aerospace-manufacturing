@@ -1,0 +1,8 @@
+{
+  "service.name": "manufacturing-core",
+  "service.version": "0.1.0",
+  "service.instance.id": "core-api-1",
+  "deployment.environment.name": "local-yavuz",
+  "cap.environment.class": "LOCAL",
+  "cap.runtime.profile": "core"
+}
