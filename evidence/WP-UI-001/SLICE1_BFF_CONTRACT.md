@@ -311,3 +311,60 @@ Ruff, `check_contracts.py`, 26 CI tooling tests, `static_ratchet` pass). Tests
 read the real `session.normal.json` contract fixture and assert: request shape,
 401, error statuses, forged actor refused, no storage or cookie writes, no token
 shown, and that `fetch` appears only in the session client with only `/v1/session`.
+
+## Slice 10: browser integration (sign in, sign out, overview, navigation)
+
+No BFF contract or runtime change was needed: `GET /v1/session` already returns
+the session's CSRF value, which the browser keeps in memory and sends only as
+`X-CSRF-Token` on logout. Everything below is in `services/command-center-web`.
+
+- Sign in: a plain anchor to `/v1/session/login` (operation `startLogin`), shown to
+  an unauthenticated user. It is a full browser navigation, so the BFF runs the
+  provider redirects and the app never sees a code or token. A test ties the
+  path and operation id to the OpenAPI file.
+- Sign out: `signOut` posts `/v1/session/logout` with the cookie and the
+  session's CSRF value. Success, or a 401 for an already-ended session, returns
+  the UI to unauthenticated; any other outcome keeps the user signed in and says
+  so. The server ends the session.
+- Overview: `fetchOverview` calls `GET /v1/overview` with an explicit `world_id`
+  taken from the URL (a small form selects it; none is invented) and the cursor
+  when paging. Replies are checked at runtime against the contract shape. The page
+  renders revision, as_of, generated_at, freshness, world, the per-source table
+  and each attention item with kind, epistemic class, subject, source revision
+  and freshness, and warns when freshness is not FRESH. States: idle, loading,
+  ready, 401 (back to unauthenticated), 400 stale (reload), 400 invalid, 503
+  (explicit unavailable state naming the sources, never an empty list), and error
+  for network failures or malformed replies. "Load more" appends the next page.
+- Navigation: root redirects to `/overview`; a primary nav with Overview; a
+  header session area (name and Sign out, Sign in, or an error); a not-found page
+  linking back.
+- Types: `ManufacturingOverviewResponse` is now generated with the other
+  contract types; `contract:check` runs in CI and in a unit test.
+
+Local verification from a clean `npm ci`: contract check, ESLint, Prettier,
+`tsc`, 85 tests and the production build pass. BFF side unchanged and passing:
+208 tests, Ruff lint and format, Pyright 0 errors, `check_contracts.py`, 26 CI
+tooling tests, `static_ratchet`, workflow YAML. GitHub Actions was deliberately
+not consulted for this commit.
+
+Remaining WP-UI-001 acceptance gaps, exactly:
+1. Browser tests against a running BFF in Chromium-family and Firefox
+   (`TEST-UI-BROWSER`, Playwright): not started; the current tests stub `fetch`.
+2. Warm-start measurement to an actionable route, p95 at most 3 s on the accepted
+   LAN and client profile (`NFR-PERF-014`, `BENCH-PERF-UI`): not started.
+3. Integrated scenario evidence (`E2E-01`, `AV-SCEN-01`, `DEMO-GS01-001`): not
+   executed; recorded as `NOT_YET_EXECUTED`.
+4. Real backend adapters for the overview: only abstract ports and in-memory test
+   readers exist, and the process entrypoint leaves `/v1/overview` unmounted.
+   "UI shows real Twin state via BFF" (DEP-106) also depends on the Twin skeleton.
+5. Live Keycloak: realm, client and role mapper provisioning (platform owner) and
+   one real login. The adapter has only run against a local HTTP stand-in.
+6. Owner decisions still open: session cookie SameSite (Strict or Lax) and the
+   session lifetimes; partial-result representation for an unavailable source
+   (needs a contract extension); the stream transport ADR; Node, npm, Vitest,
+   ESLint and Prettier as the frontend toolchain.
+7. Not built: realtime stream consumption, MUI, TanStack Query, ECharts, CSP and
+   security headers, CORS and ingress for the same-origin assumption, a shared
+   session store.
+8. Process: the draft PR is not merged and merged is not done; DoD, post-merge
+   validation and the owner's closeout assessment remain.

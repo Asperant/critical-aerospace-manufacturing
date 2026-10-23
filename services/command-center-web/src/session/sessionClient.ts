@@ -5,10 +5,11 @@ export type SessionResult =
   | { status: "authenticated"; session: SessionResponse }
   | { status: "unauthenticated" };
 
-/** The session could not be determined: network failure or an unexpected reply. */
+/** The session could not be determined or ended: network failure or unexpected reply. */
 export class SessionError extends Error {}
 
 const SESSION_URL = "/v1/session";
+const LOGOUT_URL = "/v1/session/logout";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -76,4 +77,31 @@ export async function fetchSession(
     throw new SessionError("The BFF reply is not a bff.session.v1 session");
   }
   return { status: "authenticated", session: body };
+}
+
+/**
+ * Ends the session on the server. The CSRF value is the one the BFF itself gave
+ * this session; it is a request-forgery guard and carries no authority. A 401
+ * means the session was already gone, which is the state the caller wants.
+ */
+export async function signOut(
+  csrfToken: string,
+  signal: AbortSignal,
+  fetchImpl: typeof fetch = fetch,
+): Promise<void> {
+  let response: Response;
+  try {
+    response = await fetchImpl(LOGOUT_URL, {
+      method: "POST",
+      credentials: "include",
+      cache: "no-store",
+      headers: { Accept: "application/json", "X-CSRF-Token": csrfToken },
+      signal,
+    });
+  } catch (error) {
+    if (signal.aborted) throw error;
+    throw new SessionError("The BFF could not be reached");
+  }
+  if (response.status === 204 || response.status === 401) return;
+  throw new SessionError(`Sign-out was refused with status ${response.status}`);
 }

@@ -1,7 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { contractSession } from "../test/fixtures";
-import { fetchSession, isSessionResponse, SessionError } from "./sessionClient";
+import {
+  fetchSession,
+  isSessionResponse,
+  SessionError,
+  signOut,
+} from "./sessionClient";
 
 function replying(status: number, body?: unknown) {
   return vi.fn<typeof fetch>(
@@ -122,5 +127,44 @@ describe("isSessionResponse", () => {
 
   it.each([null, "session", 42, [], {}])("refuses %j", (value) => {
     expect(isSessionResponse(value)).toBe(false);
+  });
+});
+
+describe("signOut", () => {
+  const signal = () => new AbortController().signal;
+
+  it("posts to the BFF with the cookie and the session's CSRF value only", async () => {
+    const fetchMock = replying(204);
+    await signOut("CSRF-1", signal(), fetchMock);
+    const [url, init] = fetchMock.mock.calls[0] ?? [];
+    expect(url).toBe("/v1/session/logout");
+    expect(init?.method).toBe("POST");
+    expect(init?.credentials).toBe("include");
+    expect(init?.body ?? null).toBeNull();
+    expect(init?.headers).toEqual({
+      Accept: "application/json",
+      "X-CSRF-Token": "CSRF-1",
+    });
+  });
+
+  it("treats an already-ended session (401) as signed out", async () => {
+    await expect(
+      signOut("CSRF-1", signal(), replying(401, unauthorized)),
+    ).resolves.toBeUndefined();
+  });
+
+  it.each([403, 500])("reports status %i as a failure", async (status) => {
+    await expect(
+      signOut("CSRF-1", signal(), replying(status)),
+    ).rejects.toBeInstanceOf(SessionError);
+  });
+
+  it("reports a network failure", async () => {
+    const failing = vi.fn<typeof fetch>(async () => {
+      throw new TypeError("down");
+    });
+    await expect(signOut("CSRF-1", signal(), failing)).rejects.toBeInstanceOf(
+      SessionError,
+    );
   });
 });

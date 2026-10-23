@@ -1,11 +1,13 @@
-import { act, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { contractSession } from "../test/fixtures";
 import {
   SessionProvider,
   useSession,
+  useSessionActions,
   type SessionLoader,
+  type SignOutRequest,
 } from "./SessionProvider";
 import type { SessionResult } from "./sessionClient";
 
@@ -86,5 +88,67 @@ describe("SessionProvider", () => {
       "useSession must be used inside SessionProvider",
     );
     spy.mockRestore();
+  });
+});
+
+describe("SessionProvider actions", () => {
+  function Controls() {
+    const state = useSession();
+    const { signOut, signOutFailed, expire } = useSessionActions();
+    return (
+      <>
+        <p data-testid="state">{state.status}</p>
+        <p data-testid="failed">{String(signOutFailed)}</p>
+        <button type="button" onClick={() => void signOut()}>
+          out
+        </button>
+        <button type="button" onClick={expire}>
+          expire
+        </button>
+      </>
+    );
+  }
+
+  const authenticated: SessionLoader = async () => ({
+    status: "authenticated",
+    session: contractSession(),
+  });
+
+  async function mount(signOutRequest: SignOutRequest) {
+    render(
+      <SessionProvider
+        loadSession={authenticated}
+        signOutRequest={signOutRequest}
+      >
+        <Controls />
+      </SessionProvider>,
+    );
+    await act(async () => undefined);
+  }
+
+  it("signs out with the session's own CSRF value and becomes unauthenticated", async () => {
+    const request = vi.fn<SignOutRequest>(async () => undefined);
+    await mount(request);
+    await act(async () => fireEvent.click(screen.getByText("out")));
+    expect(request).toHaveBeenCalledWith(
+      contractSession().csrf_token,
+      expect.any(AbortSignal),
+    );
+    expect(screen.getByTestId("state")).toHaveTextContent("unauthenticated");
+  });
+
+  it("stays authenticated and flags a failed sign-out", async () => {
+    await mount(async () => {
+      throw new Error("refused");
+    });
+    await act(async () => fireEvent.click(screen.getByText("out")));
+    expect(screen.getByTestId("state")).toHaveTextContent("authenticated");
+    expect(screen.getByTestId("failed")).toHaveTextContent("true");
+  });
+
+  it("returns to unauthenticated when told the session expired", async () => {
+    await mount(async () => undefined);
+    await act(async () => fireEvent.click(screen.getByText("expire")));
+    expect(screen.getByTestId("state")).toHaveTextContent("unauthenticated");
   });
 });

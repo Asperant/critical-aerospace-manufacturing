@@ -74,3 +74,143 @@ export interface ErrorEnvelope {
    */
   correlation_id: string;
 }
+/**
+ * QUERY response for the Manufacturing Overview attention-first landing view. Composition only: every item keeps its own epistemic class and source freshness; no overall status exists.
+ *
+ * This interface was referenced by `ContractRoot`'s JSON-Schema
+ * via the `definition` "ManufacturingOverviewResponse".
+ */
+export interface ManufacturingOverviewResponse {
+  contract_version: "bff.overview-query.v1";
+  meta: QueryMeta;
+  /**
+   * @maxItems 100
+   */
+  needs_attention: AttentionItem[];
+  page: CursorPage;
+}
+export interface QueryMeta {
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  revision: string;
+  /**
+   * UTC RFC 3339 instant with a literal Z suffix.
+   */
+  as_of: string;
+  /**
+   * UTC RFC 3339 instant with a literal Z suffix.
+   */
+  generated_at: string;
+  /**
+   * Least-fresh freshness among sources; never better than any source.
+   */
+  freshness: "FRESH" | "DEGRADED" | "STALE";
+  world: WorldContext;
+  /**
+   * @minItems 1
+   */
+  sources: [SourceStatus, ...SourceStatus[]];
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  correlation_id: string;
+}
+/**
+ * Explicit world binding. There is no implicit current world; the BFF forwards it unchanged.
+ */
+export interface WorldContext {
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  world_id: string;
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  simulation_run_id?: string;
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  branch_id?: string;
+}
+/**
+ * Revision, as_of and freshness exactly as reported by one backend Query API, Snapshot or read model.
+ */
+export interface SourceStatus {
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  source: string;
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  revision: string;
+  /**
+   * UTC RFC 3339 instant with a literal Z suffix.
+   */
+  as_of: string;
+  /**
+   * Staleness Contract classification, ordered FRESH (best), DEGRADED, STALE (worst).
+   */
+  freshness: "FRESH" | "DEGRADED" | "STALE";
+}
+/**
+ * This interface was referenced by `ManufacturingOverviewResponse`'s JSON-Schema
+ * via the `definition` "AttentionItem".
+ */
+export interface AttentionItem {
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  item_id: string;
+  /**
+   * This interface was referenced by `ManufacturingOverviewResponse`'s JSON-Schema
+   * via the `definition` "AttentionKind".
+   */
+  kind:
+    | "QUALITY_EXCURSION"
+    | "DEGRADED_EQUIPMENT_RISK"
+    | "BATCH_TARDINESS"
+    | "PENDING_APPROVAL"
+    | "STUCK_WORKFLOW"
+    | "STALE_TWIN_STATE";
+  /**
+   * Facility-wide epistemic vocabulary. Classes are never flattened into one status.
+   */
+  epistemic_class: "ACTUAL" | "OBSERVED" | "INFERRED" | "PREDICTED" | "PLANNED" | "COUNTERFACTUAL" | "STALE";
+  subject: EntityRef;
+  summary: string;
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  source: string;
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  source_revision: string;
+  /**
+   * Staleness Contract classification, ordered FRESH (best), DEGRADED, STALE (worst).
+   */
+  freshness: "FRESH" | "DEGRADED" | "STALE";
+}
+export interface EntityRef {
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  entity_type: string;
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  entity_id: string;
+}
+/**
+ * This interface was referenced by `ManufacturingOverviewResponse`'s JSON-Schema
+ * via the `definition` "CursorPage".
+ */
+export interface CursorPage {
+  limit: number;
+  /**
+   * Opaque server cursor; null when no further window exists.
+   */
+  next_cursor: string | null;
+}

@@ -18,6 +18,7 @@ const root = {
   $defs: {
     SessionResponse: { $ref: "session.schema.json" },
     ErrorEnvelope: { $ref: "common.schema.json#/$defs/ErrorEnvelope" },
+    ManufacturingOverviewResponse: { $ref: "overview-query.schema.json" },
   },
 };
 
