@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "manufacturing-core"
+version = "0.1.0"
+description = "Core-owned canonical manufacturing domain"
+requires-python = ">=3.11"
+dependencies = ["pydantic>=2.7,<3"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-p no:cacheprovider"
