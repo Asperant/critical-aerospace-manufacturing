@@ -261,3 +261,13 @@ pinned by `build_policy.py`, instead of whole-file blobs. Merge-time files are r
 as Git blobs and verified against their SHA. Missing, unparsable, ambiguous or
 changed projections deny the proof; every other pinned source keeps exact blob
 equality.
+
+CHG-024 / CTRL-HOST-009: `external_wait_proof` (installed `cap-auto-next.py`) adds the
+IN_PROGRESS counterpart of the deferred proof. The verified BLOCKED audit must name
+exactly one unedited owner comment with the exact fields `Canonical main revision`,
+`External integration wait class` and `Owner-executable implementation work: NONE`,
+matching the audited blocker, citing a canonical node of the WP's own dependency edges
+at an explicit readiness level, with canonical inputs at the assessed revision equal to
+the pinned policy (`check_canonical_scope`, shared with the deferred proof). The
+resolver's `external_integration_wait` / `released_wait` consume only that proof;
+`deferred_waits` lists both kinds with their class.

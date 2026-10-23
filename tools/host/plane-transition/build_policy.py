@@ -56,7 +56,7 @@ preferences=yaml.safe_load((ROOT/'project_control/execution_preferences.yaml').r
 assert not validate_preferences(p,preferences), 'Invalid execution preferences'
 policy['execution_preferences']=preferences
 policy['execution_project']=project_view(p)
-for name in ['project_control/execution_preferences.yaml','09_change/CHG-019.yaml','09_change/CHG-020.yaml','09_change/CHG-021.yaml','09_change/CHG-022.yaml','09_change/CHG-023.yaml']:
+for name in ['project_control/execution_preferences.yaml','09_change/CHG-019.yaml','09_change/CHG-020.yaml','09_change/CHG-021.yaml','09_change/CHG-022.yaml','09_change/CHG-023.yaml','09_change/CHG-024.yaml']:
     manifest[name]=sha256((ROOT/name).read_bytes()).hexdigest()
 policy['execution_project']['source_manifest']=manifest
 for kind,name in [('auto_next','tools/host/plane-transition/auto_next.py'),('execution_queue','tools/projectctl/src/projectctl/execution_queue.py')]:
@@ -64,6 +64,7 @@ for kind,name in [('auto_next','tools/host/plane-transition/auto_next.py'),('exe
 policy['preparation_schema']='cap-preparation-v1'
 policy['deferred_acceptance_schema']='cap-deferred-acceptance-v1'
 policy['scope_projection_schema']='cap-scope-projection-v1'
+policy['external_wait_schema']='cap-external-integration-wait-v1'
 wbs_text,rtm_text=(ROOT/WBS_PATH).read_text(),(ROOT/RTM_PATH).read_text()
 policy['scope_projections']={}
 for w in p.catalog.work_packages:

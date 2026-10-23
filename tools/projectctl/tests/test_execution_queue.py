@@ -464,3 +464,117 @@ def test_scope_projection_covers_every_canonical_work_package():
     }
     assert len(digests) == len(project.catalog.work_packages) > 100
     assert all(len(d) == 64 for d in digests.values())
+
+
+def wait(data, state="IN_PROGRESS"):
+    wp = "WP-CORE-001"
+    data[2]["items"][wp].update(
+        state=state,
+        blocked=True,
+        external_integration_wait={
+            "schema": "cap-external-integration-wait-v1",
+            "wp_id": wp,
+            "owner": OWNERS["asrin"],
+            "classification": "WAITING_EXTERNAL_INTEGRATION_BINDINGS",
+            "owner_work_remaining": False,
+            "audit_id": "b" * 64,
+            "comment_id": "123456",
+            "assessment_digest": "c" * 64,
+            "dependency_nodes": ["DN-CORE-LIFECYCLE"],
+        },
+    )
+    return data[2]["items"][wp]
+
+
+def test_external_wait_release_preference_one_ready_and_other_owners_unchanged(
+    baseline,
+):
+    data = deepcopy(baseline)
+    wait(data)
+    seq = [w for w in data[1]["sequences"][OWNERS["asrin"]] if w != "WP-CORE-001"]
+    for wp in seq[:2]:
+        qualify(data, wp)
+    before = deepcopy(data)
+    foreign = {o: evaluate(data, o) for o in ("selman", "batuhan", "yavuz")}
+    result = evaluate(data)
+    assert result["status"] == "PROPOSED_NEXT"
+    assert result["wp_id"] == seq[0]
+    assert "WP-CORE-001" not in [c["wp_id"] for c in result["considered"]]
+    assert data == before  # resolver read-only, canonical order unchanged
+    data[2]["items"][seq[0]]["state"] = "READY"
+    assert evaluate(data)["status"] == "READY"
+    assert evaluate(data)["wp_id"] == seq[0]  # no second READY
+    assert foreign == {o: evaluate(data, o) for o in foreign}
+    assert data[2]["items"]["WP-CORE-001"]["state"] == "IN_PROGRESS"
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "ordinary",
+        "implementation",
+        "unknown",
+        "work",
+        "owner",
+        "missing",
+        "unblocked",
+        "no_nodes",
+        "other_wp",
+    ],
+)
+def test_external_wait_unknown_or_local_work_retains_slot(baseline, mutation):
+    data = deepcopy(baseline)
+    item = wait(data)
+    proof = item["external_integration_wait"]
+    if mutation == "ordinary":
+        item.pop("external_integration_wait")
+    elif mutation in {"implementation", "unknown"}:
+        proof["classification"] = mutation.upper()
+    elif mutation == "work":
+        proof["owner_work_remaining"] = True
+    elif mutation == "owner":
+        proof["owner"] = OWNERS["selman"]
+    elif mutation == "missing":
+        proof.pop("comment_id")
+    elif mutation == "no_nodes":
+        proof["dependency_nodes"] = []
+    elif mutation == "other_wp":
+        proof["wp_id"] = "WP-CORE-002"
+    else:
+        item["blocked"] = False
+    assert evaluate(data)["status"] in {"BLOCKED", "CURRENT"}
+    assert evaluate(data)["wp_id"] == "WP-CORE-001"
+
+
+@pytest.mark.parametrize("state", sorted(ACTIVE - {"IN_PROGRESS"}))
+def test_external_wait_proof_cannot_exempt_other_active_states(baseline, state):
+    data = deepcopy(baseline)
+    wait(data)["state"] = state
+    assert evaluate(data)["status"] == "BLOCKED"
+
+
+def test_external_wait_does_not_hide_another_active_or_duplicate_ready(baseline):
+    data = deepcopy(baseline)
+    wait(data)
+    data[2]["items"]["WP-CORE-002"]["state"] = "IN_PROGRESS"
+    assert evaluate(data)["wp_id"] == "WP-CORE-002"
+    data[2]["items"]["WP-CORE-003"]["state"] = "READY"
+    assert evaluate(data)["reasons"] == ["MULTIPLE_ACTIVE_WORK"]
+
+
+def test_deferred_and_external_waits_are_independent_of_each_other(baseline):
+    data = deepcopy(baseline)
+    deferred = defer(data)  # WP-CORE-001 VALIDATING with a deferred proof
+    external = deepcopy(deferred)
+    external.pop("deferred_acceptance")
+    external.update(
+        state="IN_PROGRESS",
+        external_integration_wait=wait(deepcopy(baseline))["external_integration_wait"],
+    )
+    # Each proof exempts only its own state; swapping the states retains the slot.
+    for swapped in (
+        dict(deferred, state="IN_PROGRESS"),
+        dict(external, state="VALIDATING"),
+    ):
+        data[2]["items"]["WP-CORE-001"] = swapped
+        assert evaluate(data)["status"] == "BLOCKED"
