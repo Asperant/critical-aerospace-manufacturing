@@ -12,11 +12,12 @@ CHG-021:
   rules:
   - Dedicated automation identity is not introduced; preparation PRs use real Asrin UID and GitHub identity
   - Machine-derived START assessments are permitted only after exact recomputation from current trusted canonical policy
-  - Full derivation requires zero inbound edges, explicit canonical early-unlocker contract scope and non-R1 work
+  - Full derivation requires no canonical HARD START gate, explicit canonical input scope and non-R1 work
   - First canonical major task is start slice; remaining tasks are a workstream, not completed implementation
   - Canonical source SHA must be an ancestor; all input facts and current artifact existence are freshly checked
   - Generated records are explicitly machine-derived, never falsely attributed owner comments
   - UNKNOWN is never PASS; no synthetic contract, schema, migration, readiness artifact or test result
+  - Later-stage edges require canonical precise consumer or unblock evidence; their readiness remains NOT_CERTIFIED until their actual gate
   - Other candidates require actual precise consumer, contract, research or design evidence and retain UNKNOWN
   - Existing resolver preference and guarded BACKLOG to READY boundary remain authoritative; cycle is not a hard gate
   - One active preparation PR per WP; required CI and current-main mergeability must pass; no blind write retry

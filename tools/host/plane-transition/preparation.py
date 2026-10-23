@@ -1,6 +1,7 @@
 """CTRL-HOST-006: bounded, reproducible governance preparation; no product evidence.
 
-Only zero-inbound, non-research canonical workstreams can be fully derived.
+Only workstreams without HARD START gates, with explicit later-stage evidence,
+can be fully derived. Research and unknown consumer requirements fail closed.
 Everything else retains UNKNOWN and requires actual consumer/readiness decisions.
 """
 
@@ -50,10 +51,13 @@ def derive(context, policy, source_sha):
             "evidence_refs": evidence or refs,
         }
 
-    zero_inbound = not context[
-        "dependency_edges"
-    ] and "no inbound dependency edges in 05" in (
-        w.get("inputs_required_contracts") or ""
+    edges = context["dependency_edges"]
+    # Stage is canonical: INTEGRATION/MILESTONE_EXIT/FREEZE are never START gates.
+    start_clear = bool(w.get("inputs_required_contracts")) and all(
+        edge["semantics"]["blocking_stage"]
+        in {"INTEGRATION", "MILESTONE_EXIT", "FREEZE"}
+        and bool(edge.get("precise_requirement") or edge.get("unblock_evidence"))
+        for edge in edges
     )
     nonresearch = w.get("scope_class") in {"F0", "F1"} and all(
         x.get("scope_class") != "R1" for x in context["requirements"]
@@ -85,13 +89,13 @@ def derive(context, policy, source_sha):
     )
     add(
         "DOR-TASK-04",
-        zero_inbound,
-        "Zero inbound canonical edges; otherwise actual precise consumer and predecessor readiness evidence required.",
+        start_clear,
+        "No canonical HARD START edge. Later-stage exact consumer/evidence obligations are declared and deferred to their actual gates; no readiness asserted.",
     )
     add(
         "DOR-TASK-05",
-        zero_inbound,
-        "Canonical early unlocker has no inbound required contracts; no future contract publication certified.",
+        start_clear,
+        "Canonical graph has no START contract gate. Start slice stays below integration/milestone gates; consumed contract evidence must exist before crossing those gates.",
     )
     add(
         "DOR-TASK-06",
@@ -111,7 +115,7 @@ def derive(context, policy, source_sha):
     )
     add(
         "DOR-TASK-09",
-        zero_inbound and bool(w.get("architecture_refs")),
+        start_clear and bool(w.get("architecture_refs")),
         "Start only canonical first task within listed architecture; no new authority/technology choice authorized. Stop on contradiction.",
         ["repo:docs/02_System_Architecture_Specification.md"],
     )
@@ -123,8 +127,8 @@ def derive(context, policy, source_sha):
     )
     add(
         "DOR-TASK-11",
-        zero_inbound,
-        "No canonical inbound prerequisite; live BLOCKED and current-work exclusion independently rechecked. Future integration readiness not claimed.",
+        start_clear,
+        "No canonical START prerequisite; live BLOCKED and current-work exclusion independently rechecked. Exact later-stage obligations remain unresolved, never certified.",
     )
     add(
         "DOR-TASK-12",
@@ -158,6 +162,16 @@ def derive(context, policy, source_sha):
             for x in context["requirements"]
         ],
         "architecture_refs": w["architecture_refs"],
+        "deferred_dependencies": [
+            {
+                "dependency_id": edge["id"],
+                "semantics": edge["semantics"],
+                "consumer_requirement": edge.get("precise_requirement")
+                or edge.get("unblock_evidence"),
+                "readiness": "NOT_CERTIFIED",
+            }
+            for edge in edges
+        ],
         "start_slice": (w["major_tasks"] or [None])[0],
         "remaining_workstream": w["major_tasks"][1:],
         "planned_acceptance": w["deliverables"],

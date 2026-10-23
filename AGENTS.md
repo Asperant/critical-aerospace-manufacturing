@@ -846,7 +846,8 @@ means actual contract/consumer/design/research evidence or implementation is
 missing. WAITING_DEP requires real HARD START producer evidence. UNAVAILABLE
 means trusted input cannot be read. UNKNOWN never becomes PASS or PREPARED.
 
-The narrow complete recipe requires explicit zero-inbound early-unlocker scope,
+The bounded complete recipe requires no canonical START prerequisite, explicit
+canonical input scope and precise later-stage consumer/evidence obligations,
 non-R1 requirements, canonical outcome/tasks/deliverables/verification/architecture
 and deterministic advisory owner/reviewer evidence routing. The first canonical
 task is the initial slice; the remainder is an explicit workstream. Acceptance is

@@ -118,7 +118,7 @@ class PreparationTests(unittest.TestCase):
 
     def test_even_later_stage_dependencies_not_invented(self):
         self.context["dependency_edges"] = [
-            {"semantics": {"blocking_stage": "INTEGRATION"}}
+            {"id": "DEP-022", "semantics": {"blocking_stage": "INTEGRATION"}}
         ]
         plan = p.derive(self.context, self.policy, SHA)
         self.assertEqual(plan["checks"]["DOR-TASK-05"]["result"], "UNKNOWN")
@@ -337,6 +337,24 @@ class PreparationTests(unittest.TestCase):
             )
         self.assertEqual(result["result"], "VERIFIED")
         self.assertEqual(plane.patches, [{"state": "READY"}])
+
+    def test_later_stage_evidence_is_deferred_not_promoted_to_start_gate(self):
+        self.context["dependency_edges"] = [
+            {
+                "id": "DEP-022",
+                "semantics": {
+                    "blocking_stage": "INTEGRATION",
+                    "strength": "HARD",
+                    "required_readiness": "COMPONENT_READY",
+                },
+                "precise_requirement": None,
+                "unblock_evidence": "atomic mutation+outbox test on real PostgreSQL",
+            }
+        ]
+        plan = p.derive(self.context, self.policy, SHA)
+        self.assertEqual(plan["checks"]["DOR-TASK-04"]["result"], "PASS")
+        self.assertEqual(plan["deferred_dependencies"][0]["readiness"], "NOT_CERTIFIED")
+        self.assertNotIn("dependency_readiness", plan)
 
     def test_controller_uid_rejected_before_loading(self):
         with (
