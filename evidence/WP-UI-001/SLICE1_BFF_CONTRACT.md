@@ -73,3 +73,32 @@ broker or database access, authorization decisions, shell, routes.
 
 Local verification: 51 tests pass (30 new), Ruff lint and format, Pyright 0
 errors. CI for this commit is not yet observed.
+
+## Slice 4: FastAPI transport adapter for the session primitives
+
+Dependencies (repository workflow: `ci/pyproject.toml` plus `uv lock --project ci`,
+consumed by `uv sync --project ci --locked`): `fastapi==0.142.4`,
+`httpx==0.28.1` (TestClient; already in the lock) and `starlette==1.7.0` (pinned
+so the resolver does not take 1.9.0, released 2026-10-18). Lock additions:
+fastapi, starlette, opentelemetry-api.
+
+Wired: `GET /v1/session` (`getSession`) and `POST /v1/session/logout` (`logout`)
+in `src/operations_bff/api.py`, the only module importing FastAPI. Both call the
+existing `authenticate_request`; the adapter maps `BffError` to the contract
+envelopes with a server-generated correlation id. Generated docs and
+`/openapi.json` are disabled; the contract file stays the API description.
+Cookie `cap_session`: HttpOnly and Secure are always on and not configurable;
+`CookieSettings.same_site` (strict or lax) is required configuration with no
+default; Max-Age is the remaining session life; logout clears the cookie. Cookie
+write is implemented as `write_session_cookie` for the later login slice and is
+only exercised by a unit test, since no route sets it yet.
+
+Not wired: startLogin, completeLogin, queries, commands, rotation on read, OIDC,
+tokens, shell, routes, broker or database.
+
+Local verification with the CI commands (`uv run --project ci --locked`): 67
+tests pass (16 new transport tests), Ruff lint and format, Pyright 0 errors,
+`check_contracts.py` PASS, `ci/tests` 26 passed, `static_ratchet check` PASS (the
+earlier 16 mfgctl findings came from an unsynced local environment). One
+Starlette deprecation warning about `httpx` in TestClient (it prefers `httpx2`)
+is unaddressed. CI for this commit is not yet observed.

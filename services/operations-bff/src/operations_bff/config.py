@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import timedelta
+from typing import Literal
 
 MAX_ABSOLUTE_TTL = timedelta(hours=12)
 COOKIE_NAME = "cap_session"
@@ -29,3 +30,18 @@ class SessionConfig:
             raise ValueError("idle_ttl must be positive and within absolute_ttl")
         if not zero < self.rotate_after <= self.idle_ttl:
             raise ValueError("rotate_after must be positive and within idle_ttl")
+
+
+@dataclass(frozen=True)
+class CookieSettings:
+    """Session cookie policy. HttpOnly and Secure are always on and not settable.
+
+    ``same_site`` has no default: the owner chooses Strict or Lax. The cookie
+    lifetime is taken from the session itself, never fixed here.
+    """
+
+    same_site: Literal["strict", "lax"]
+
+    def __post_init__(self) -> None:
+        if self.same_site not in ("strict", "lax"):
+            raise ValueError("same_site must be 'strict' or 'lax'")
