@@ -20,6 +20,7 @@ def restore_targets(mapping):
         str(CONFIG / "catalog.json"),
         "/usr/local/share/cap-plane-transition/policy-manifest.json",
         "/etc/sudoers.d/cap-plane-advance",
+        "/etc/sudoers.d/cap-plane-health",
     }
 
 
@@ -46,6 +47,11 @@ def main():
         "/usr/local/libexec/cap-auto-next.py": "tools/host/plane-transition/auto_next.py",
         "/usr/local/libexec/execution_queue.py": "tools/projectctl/src/projectctl/execution_queue.py",
         "/usr/local/bin/cap-plane-advance": "tools/host/plane-transition/cap-plane-advance",
+        "/usr/local/bin/cap-plane-health": "tools/host/plane-transition/cap-plane-health",
+        "/usr/local/libexec/cap-plane-health.py": "tools/host/plane-transition/health.py",
+        "/usr/local/libexec/cap-plane-health-snapshot.py": "tools/host/plane-transition/health_snapshot.py",
+        "/etc/systemd/system/cap-plane-health.service": "tools/host/plane-transition/cap-plane-health.service",
+        "/etc/systemd/system/cap-plane-health.timer": "tools/host/plane-transition/cap-plane-health.timer",
     }
     policy = json.loads(
         Path("/srv/ailab/remote-ssh/staging/plane-transition-policy.json").read_text()
@@ -66,6 +72,7 @@ def main():
         "/etc/sudoers.d/cap-plane-advance",
         "/etc/sudoers.d/cap-plane-queue",
         "/etc/sudoers.d/cap-plane-transition",
+        "/etc/sudoers.d/cap-plane-health",
     ]
     originals = []
     for name in touched:
@@ -85,12 +92,24 @@ def main():
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(path, target)
     (backup / "inventory.json").write_text(json.dumps(originals, indent=2))
+    timer_state = {
+        name: subprocess.run(
+            ["systemctl", action, name], capture_output=True
+        ).returncode
+        == 0
+        for name, action in [
+            ("cap-plane-health.timer", "is-enabled"),
+            ("cap-plane-health.service", "is-active"),
+        ]
+    }
+    (backup / "timer-state.json").write_text(json.dumps(timer_state))
     # Restores deployment only, never database/state or audit history.
     rollback = """#!/usr/bin/python3 -I
 import json,os,shutil,subprocess
 from pathlib import Path
 assert os.geteuid()==0
 base=Path(__file__).resolve().parent
+subprocess.run(['systemctl','disable','--now','cap-plane-health.timer'],capture_output=True)
 for item in json.loads((base/'inventory.json').read_text()):
     if not item['restore']:
         continue
@@ -102,6 +121,9 @@ for item in json.loads((base/'inventory.json').read_text()):
     elif target.exists():
         target.unlink()
 subprocess.run(['/usr/sbin/visudo','-cf','/etc/sudoers'],check=True)
+subprocess.run(['systemctl','daemon-reload'],check=True)
+if json.loads((base/'timer-state.json').read_text())['cap-plane-health.timer']:
+    subprocess.run(['systemctl','enable','--now','cap-plane-health.timer'],check=True)
 print('AUTO_NEXT deployment restored; Plane states and audit untouched. Source policy drift remains fail-closed.')
 """
     (backup / "rollback.py").write_text(rollback)
@@ -131,13 +153,30 @@ print('AUTO_NEXT deployment restored; Plane states and audit untouched. Source p
             + " ALL=(root) NOPASSWD: NOSETENV: /usr/bin/python3 -I /usr/local/libexec/cap-auto-next.py "
             + profile
         )
+    health_grants = ["# CTRL-HOST-005 exact read-only own-profile invocations"]
+    for profile in ("asrin", "selman", "batuhan", "yavuz"):
+        for suffix in ("", " --json"):
+            health_grants.append(
+                profile
+                + " ALL=(root) NOPASSWD: NOSETENV: /usr/bin/python3 -I /usr/local/libexec/cap-plane-health.py "
+                + profile
+                + suffix
+            )
+    health_draft = backup / "health-sudoers-check"
+    health_draft.write_text("\n".join(health_grants) + "\n")
+    health_draft.chmod(0o440)
+    subprocess.run(["/usr/sbin/visudo", "-cf", str(health_draft)], check=True)
     draft = backup / "sudoers-check"
     draft.write_text("\n".join(grants) + "\n")
     draft.chmod(0o440)
     subprocess.run(["/usr/sbin/visudo", "-cf", str(draft)], check=True)
     try:
         for dest, src in mapping.items():
-            write(dest, (SOURCE / src).read_bytes(), 0o755)
+            write(
+                dest,
+                (SOURCE / src).read_bytes(),
+                0o644 if dest.endswith((".service", ".timer")) else 0o755,
+            )
         write(
             CONFIG / "transition-policy.json",
             json.dumps(policy, ensure_ascii=False, sort_keys=True).encode(),
@@ -160,6 +199,8 @@ print('AUTO_NEXT deployment restored; Plane states and audit untouched. Source p
             "queue": "/usr/local/libexec/cap-plane-queue",
             "auto_next": "/usr/local/libexec/cap-auto-next.py",
             "execution_queue": "/usr/local/libexec/execution_queue.py",
+            "health": "/usr/local/libexec/cap-plane-health.py",
+            "health_snapshot": "/usr/local/libexec/cap-plane-health-snapshot.py",
         }.items():
             if (
                 hashlib.sha256(Path(dest).read_bytes()).hexdigest()
@@ -177,7 +218,21 @@ print('AUTO_NEXT deployment restored; Plane states and audit untouched. Source p
             0o644,
         )
         write("/etc/sudoers.d/cap-plane-advance", draft.read_bytes(), 0o440)
+        write("/etc/sudoers.d/cap-plane-health", health_draft.read_bytes(), 0o440)
         subprocess.run(["/usr/sbin/visudo", "-cf", "/etc/sudoers"], check=True)
+        subprocess.run(
+            [
+                "systemd-analyze",
+                "verify",
+                "/etc/systemd/system/cap-plane-health.service",
+                "/etc/systemd/system/cap-plane-health.timer",
+            ],
+            check=True,
+        )
+        subprocess.run(["systemctl", "daemon-reload"], check=True)
+        subprocess.run(
+            ["systemctl", "enable", "--now", "cap-plane-health.timer"], check=True
+        )
         hashes = {
             dest: hashlib.sha256(Path(dest).read_bytes()).hexdigest()
             for dest in mapping

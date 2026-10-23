@@ -1,0 +1,22 @@
+CHG-020:
+  title: Derived proactive preparation and read-only stall detection
+  class: C2
+  review_risk_class: CR-3
+  owner: Asrın
+  decision: APPROVED
+  status: APPROVED
+  application_control_item: CTRL-HOST-005
+  required_human_approvals: 0
+  human_decision_basis: Explicit project-owner implementation and deployment request, 23 October 2026
+  scope: Extend CTRL-HOST-004 resolver with derived preparation health; lifecycle unchanged
+  rules:
+  - PREPARED is verified eligibility after hypothetical current completion, never a Plane state
+  - Current work plus a verified prepared buffer while scheduled backlog remains
+  - UNKNOWN never PREPARED; no fabricated DoR, artifacts, PASS or N/A
+  - Cycle is preference only; HARD START readiness uses canonical nodes, never invented WP producer edges
+  - Missing credentials, profile mismatch or unreadable sources fail closed as UNAVAILABLE
+  - HEALTHY, STALL_RISK, STALLED and UNAVAILABLE aggregate to project health
+  - Health and queue are read-only; verified transitions refresh affected owners
+  - Existing AUTO_NEXT promotion and READY exclusion remain unchanged
+  rollout: Merge then root-only backup and rollback; deploy hashes and bounded read-only 15-minute timer
+  rollback: Restore helpers, policy and units; preserve audit and Plane execution state

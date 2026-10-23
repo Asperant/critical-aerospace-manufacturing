@@ -184,35 +184,8 @@ def compute_next_eligible(
         item = items[wp]
         if item["state"] in {"DONE", "CANCELED"}:
             continue
-        reason = None
         evidence = evidence_snapshot.get("candidates", {}).get(wp, {})
-        if item["blocked"]:
-            reason = "BLOCKED"
-        elif (
-            evidence.get("result") != "PASS"
-            or evidence.get("dor") != "PASS"
-            or not evidence.get("evidence_refs")
-        ):
-            reason = evidence.get("reason") or "DOR_EVIDENCE_UNKNOWN"
-        else:
-            for edge in cards[wp]["edges"]:
-                sem = edge["semantics"]
-                if sem["strength"] != "HARD" or sem["blocking_stage"] != "START":
-                    continue
-                proof = evidence.get("dependencies", {}).get(edge["id"], {})
-                levels = view["node_levels"].get(edge["predecessor"]["node"], [])
-                required = sem["required_readiness"]
-                actual = proof.get("readiness")
-                if (
-                    proof.get("result") != "PASS"
-                    or not proof.get("evidence_refs")
-                    or not proof.get("precise_consumer_requirement")
-                    or required not in levels
-                    or actual not in levels
-                    or levels.index(actual) < levels.index(required)
-                ):
-                    reason = "HARD_START_READINESS_UNKNOWN:" + edge["id"]
-                    break
+        reason = candidate_reason(view, wp, item, evidence)
         soft = [
             e["id"] for e in cards[wp]["edges"] if e["semantics"]["strength"] == "SOFT"
         ]
@@ -243,3 +216,145 @@ def affected_owners(project: Any, completed_wp: str) -> list[str]:
         if any(edge["predecessor"]["node"] in nodes for edge in consumer["edges"]):
             result.add(consumer["owner"])
     return [owner for owner in OWNERS.values() if owner in result]
+
+
+def candidate_reason(view, wp, item, evidence):
+    """One eligibility predicate for release and derived preflight; UNKNOWN fails closed."""
+    reason = None
+    if item["blocked"]:
+        reason = "BLOCKED"
+    elif (
+        evidence.get("result") != "PASS"
+        or evidence.get("dor") != "PASS"
+        or not evidence.get("evidence_refs")
+    ):
+        reason = evidence.get("reason") or "DOR_EVIDENCE_UNKNOWN"
+    else:
+        for edge in view["cards"][wp]["edges"]:
+            sem = edge["semantics"]
+            if sem["strength"] != "HARD" or sem["blocking_stage"] != "START":
+                continue
+            proof = evidence.get("dependencies", {}).get(edge["id"], {})
+            levels = view["node_levels"].get(edge["predecessor"]["node"], [])
+            required = sem["required_readiness"]
+            actual = proof.get("readiness")
+            if (
+                proof.get("result") != "PASS"
+                or not proof.get("evidence_refs")
+                or not proof.get("precise_consumer_requirement")
+                or required not in levels
+                or actual not in levels
+                or levels.index(actual) < levels.index(required)
+            ):
+                reason = "HARD_START_READINESS_UNKNOWN:" + edge["id"]
+                break
+    return reason
+
+
+def preflight_health(project, live, evidence, owner, preferences):
+    """Derived control-plane status only. Never mutates inputs or Plane."""
+    owner = OWNERS.get(owner, owner)
+    view = project_view(project)
+    decision = compute_next_eligible(view, live, evidence, owner, preferences)
+    result = {
+        "owner": owner,
+        "current": None,
+        "prepared_next": None,
+        "health": "UNAVAILABLE",
+        "candidates": [],
+        "first_blocker": None,
+        "reasons": decision.get("reasons", []),
+    }
+    if decision["status"] in {"UNAVAILABLE", "INVALID_BASELINE"}:
+        return result
+    active = [
+        w
+        for w, item in live["items"].items()
+        if view["cards"][w]["owner"] == owner and item["state"] in ACTIVE
+    ]
+    if active:
+        result["current"] = {
+            "wp_id": active[0],
+            "state": live["items"][active[0]]["state"],
+        }
+    if (
+        evidence.get("complete") is not True
+        or evidence.get("source_manifest") != view["source_manifest"]
+    ):
+        result["reasons"] = ["EVIDENCE_OR_SOURCE_INTEGRITY_UNAVAILABLE"]
+        return result
+    candidates = []
+    for wp in preferences["sequences"][owner]:
+        item = live["items"][wp]
+        if item["state"] != "BACKLOG":
+            continue
+        proof = evidence.get("candidates", {}).get(wp, {})
+        reason = candidate_reason(view, wp, item, proof)
+        gaps = []
+        for edge in view["cards"][wp]["edges"]:
+            sem = edge["semantics"]
+            if sem["strength"] != "HARD" or sem["blocking_stage"] != "START":
+                continue
+            dep = proof.get("dependencies", {}).get(edge["id"], {})
+            levels = view["node_levels"].get(edge["predecessor"]["node"], [])
+            actual, required = dep.get("readiness"), sem["required_readiness"]
+            if (
+                dep.get("result") != "PASS"
+                or not dep.get("evidence_refs")
+                or not dep.get("precise_consumer_requirement")
+                or required not in levels
+                or actual not in levels
+                or levels.index(actual) < levels.index(required)
+            ):
+                gaps.append(
+                    {
+                        "consumer_wp": wp,
+                        "dependency_id": edge["id"],
+                        "readiness_node": edge["predecessor"]["node"],
+                        "required_readiness": required,
+                        "consumer_owner": owner,
+                        "missing": "VERIFIED_READINESS_ARTIFACT_AND_ACCOUNTABLE_EVIDENCE",
+                    }
+                )
+        status = "PREPARED"
+        if reason:
+            status = "NEEDS_EVIDENCE"
+            if reason == "BLOCKED":
+                status = "BLOCKED"
+            elif reason.startswith("HARD_START") or "DEPENDENCY" in reason:
+                status = "WAITING_DEP"
+            elif "DOR" in reason or "CONFIRMATION" in reason or "ASSESSMENT" in reason:
+                status = "NEEDS_DOR"
+            elif "UNAVAILABLE" in reason and reason != "DOR_EVIDENCE_UNAVAILABLE":
+                status = "UNAVAILABLE"
+        candidate = {
+            "wp_id": wp,
+            "status": status,
+            "reason": reason,
+            "hard_start_blockers": gaps,
+            "soft_dependencies": [
+                e["id"]
+                for e in view["cards"][wp]["edges"]
+                if e["semantics"]["strength"] == "SOFT"
+            ],
+        }
+        candidates.append(candidate)
+        if status == "PREPARED" and result["prepared_next"] is None:
+            result["prepared_next"] = wp
+    result["candidates"] = candidates[:3]
+    result["backlog_count"] = len(candidates)
+    result["first_blocker"] = next((c for c in candidates if c["reason"]), None)
+    if any(c["status"] == "UNAVAILABLE" for c in candidates):
+        result["health"] = "UNAVAILABLE"
+    elif not candidates:
+        result["health"] = "HEALTHY"
+    elif result["prepared_next"]:
+        result["health"] = "HEALTHY" if active else "STALL_RISK"
+        if not active:
+            result["reasons"] = ["ELIGIBLE_WORK_AWAITS_GUARDED_RELEASE"]
+    else:
+        result["health"] = "STALL_RISK" if active else "STALLED"
+    if active and live["items"][active[0]]["blocked"]:
+        result["health"] = "STALL_RISK"
+        result["reasons"] = ["ACTIVE_BLOCKER"]
+    return result

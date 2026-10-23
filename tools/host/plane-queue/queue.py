@@ -279,6 +279,18 @@ def main():
                 if decision['status'] in {'UNAVAILABLE','INVALID_BASELINE'}:
                     result['status']='UNAVAILABLE'
                     result['display_status']='UNAVAILABLE'
+            try:
+                auto_loader=__import__('importlib.machinery',fromlist=['SourceFileLoader']).SourceFileLoader('cap_auto_health','/usr/local/libexec/cap-auto-next.py')
+                auto_spec=__import__('importlib.util',fromlist=['spec_from_loader']).spec_from_loader(auto_loader.name,auto_loader)
+                auto=__import__('importlib.util',fromlist=['module_from_spec']).module_from_spec(auto_spec)
+                auto_loader.exec_module(auto)
+                t=auto.load_transition()
+                policy=json.loads((ROOT/'transition-policy.json').read_text())
+                t.verify_policy_sources(policy)
+                health=auto.owner_health(t,profile,policy,t.Plane(key),t.GitHub)
+                result.update(prepared_next=health['prepared_next'],health=health['health'],first_blocker=health['first_blocker'])
+            except Exception:
+                result.update(prepared_next=None,health='UNAVAILABLE',first_blocker={'reason':'PREFLIGHT_SOURCE_UNAVAILABLE'})
         emit(result, key)
         return exit_status(result)
     except Exception:

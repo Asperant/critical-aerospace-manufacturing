@@ -207,3 +207,33 @@ restores deployment only; never replay a stale Plane DB or state snapshot. No se
 restart is required. Missing evidence results in NO_TASK, never synthetic READY.
 
 Verified MERGED contract publication and verified UNBLOCKED resolution also trigger the same guarded affected-owner reevaluation; they never imply DONE. A completed transition remains VERIFIED even if subsequent advance needs recovery.
+
+## Proactive health — CHG-020 / CTRL-HOST-005
+
+PREPARED is derived verified eligibility after hypothetical completion of current work,
+never a Plane state or a write. The shared resolver scans canonical preference and
+reports the top three future candidates, exact unverified DoR criteria and HARD START
+node/level/owner/artifact gaps. A later eligible candidate may fill the buffer;
+cycle remains preference, never a gate. SOFT edges do not block.
+
+Invariant: current/READY/active work plus at least one PREPARED candidate while meaningful
+scheduled backlog remains. HEALTHY means a buffer exists or backlog is exhausted;
+STALL_RISK means current work without a buffer; STALLED means backlog without current
+or eligible work. Required unreadable sources/auth/profile failures are UNAVAILABLE.
+Idle eligible backlog is STALL_RISK until guarded release, never silent healthy NO_TASK.
+Global output is PROJECT_HEALTHY only when every owner is HEALTHY.
+UNKNOWN never qualifies; no assessment or evidence is generated.
+
+`cap-plane-health` reads the real caller profile. Root runs
+`cap-plane-health --all` or `cap-plane-health --all --json`.
+Queue retains its status/current-task contract and adds prepared_next/health/first_blocker.
+Verified lifecycle transitions recalculate owner and canonical consumer health without
+writing a second READY. Existing DONE automatic advancement remains unchanged.
+
+The root-owned oneshot/timer runs every 15 minutes with a 240-second service bound,
+180-second reader bound and nonblocking shared lock. It only invokes the read-only
+health command and atomically writes `/var/lib/cap-plane-health/latest.json` (0600).
+Failed reads replace stale health with UNAVAILABLE; journald contains only aggregate
+health/result. No daemon, Git mutation or unrelated service restart. Existing Selman
+auth failures stay UNAVAILABLE until a human repairs that profile's authentication;
+credentials are never requested or copied between profiles.

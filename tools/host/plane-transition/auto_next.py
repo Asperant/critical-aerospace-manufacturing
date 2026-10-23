@@ -8,6 +8,7 @@ import os
 import pwd
 import re
 import sys
+from copy import copy
 from pathlib import Path
 from typing import Any
 
@@ -78,7 +79,16 @@ def discover(gh, t):
     raise t.Denied("GITHUB_COMMENT_PAGINATION_INCOMPLETE")
 
 
-def candidate_evidence(t, plane, policy, profile, gh, comments, live):
+def candidate_evidence(t, plane, policy, profile, gh, comments, live, future=False):
+    if future:
+        plane = copy(plane)
+        plane.items = [
+            dict(item, state=plane.states["DONE"])
+            if item.get("assignees") == [t.q.PEOPLE[profile][1]]
+            and plane.names.get(item.get("state")) in resolver.ACTIVE
+            else item
+            for item in plane.items
+        ]
     sha = gh.main_sha()
     result = {
         "complete": True,
@@ -109,6 +119,15 @@ def candidate_evidence(t, plane, policy, profile, gh, comments, live):
             "reason": "DOR_EVIDENCE_UNAVAILABLE",
         }
         result["candidates"][wp] = entry
+        ids = policy["dor_task"] + policy["contexts"][wp]["work_package"]["dor_refs"]
+        entry["deficits"] = [
+            {
+                "canonical_id": identity,
+                "reason": "ACCOUNTABLE_ASSESSMENT_UNVERIFIED",
+                "criterion": policy.get("criteria_definitions", {}).get(identity, []),
+            }
+            for identity in ids
+        ]
         if not refs:
             continue
         if len(refs) > 16:
@@ -119,6 +138,27 @@ def candidate_evidence(t, plane, policy, profile, gh, comments, live):
             "evidence_refs": refs,
         }
         try:
+            try:
+                records = t.records(gh, refs, wp, sha)
+                record = t.confirmation(
+                    records, [t.GITHUB[profile]], wp, "BACKLOG", "READY", sha, policy
+                )
+                entry["deficits"] = []
+                for identity in ids:
+                    try:
+                        t.criteria(gh, record, [identity], sha)
+                    except t.Denied as exc:
+                        entry["deficits"].append(
+                            {
+                                "canonical_id": identity,
+                                "reason": exc.code,
+                                "criterion": policy.get("criteria_definitions", {}).get(
+                                    identity, []
+                                ),
+                            }
+                        )
+            except t.Denied:
+                pass  # Diagnostic detail never replaces the authoritative evaluator.
             item = t.find(plane, profile, wp, policy)
             t.evaluate(
                 profile, wp, "BACKLOG", "READY", item, plane, policy, gh, envelope
@@ -150,6 +190,80 @@ def candidate_evidence(t, plane, policy, profile, gh, comments, live):
         except t.Denied as exc:
             entry["reason"] = exc.code
     return result, envelopes
+
+
+def owner_health(t, profile, policy, plane, gh_factory):
+    """Fresh read-only preflight, including GitHub auth even when work is active."""
+    global resolver
+    if resolver is None:
+        resolver = load_resolver()
+    live = live_view(t, plane, policy)
+    evidence = {
+        "complete": True,
+        "source_manifest": policy["source_manifest"],
+        "candidates": {},
+    }
+    try:
+        gh = gh_factory(profile)
+        evidence, _ = candidate_evidence(
+            t, plane, policy, profile, gh, discover(gh, t), live, future=True
+        )
+    except Exception as exc:
+        result = resolver.preflight_health(
+            policy["execution_project"],
+            live,
+            evidence,
+            profile,
+            policy["execution_preferences"],
+        )
+        result.update(
+            health="UNAVAILABLE",
+            prepared_next=None,
+            reasons=[
+                getattr(exc, "code", "GITHUB_AUTH_OR_EVIDENCE_SOURCE_UNAVAILABLE")
+                if isinstance(exc, t.Denied)
+                else "GITHUB_AUTH_OR_EVIDENCE_SOURCE_UNAVAILABLE"
+            ],
+            candidates=[],
+            first_blocker=None,
+        )
+        return result
+    result = resolver.preflight_health(
+        policy["execution_project"],
+        live,
+        evidence,
+        profile,
+        policy["execution_preferences"],
+    )
+    for candidate in result["candidates"]:
+        candidate["deficits"] = (
+            evidence.get("candidates", {})
+            .get(candidate["wp_id"], {})
+            .get("deficits", [])
+        )
+        for blocker in candidate["hard_start_blockers"]:
+            producer = policy.get("node_owners", {}).get(blocker["readiness_node"])
+            if producer:
+                blocker["producer_owner"] = producer
+    return result
+
+
+def after_transition(t, wp, policy, plane_factory, gh_factory):
+    global resolver
+    if resolver is None:
+        resolver = load_resolver()
+    results = {}
+    plane = plane_factory()
+    for owner in resolver.affected_owners(policy["execution_project"], wp):
+        profile = next(p for p, data in t.q.PEOPLE.items() if data[0] == owner)
+        try:
+            results[profile] = owner_health(t, profile, policy, plane, gh_factory)
+        except Exception:
+            results[profile] = {
+                "health": "UNAVAILABLE",
+                "reasons": ["PREFLIGHT_SOURCE_UNAVAILABLE"],
+            }
+    return results
 
 
 def advance_owner(
