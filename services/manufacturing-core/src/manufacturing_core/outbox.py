@@ -1,6 +1,7 @@
 """Core-owned outbox storage. Caller owns authorization and the transaction."""
 
-from typing import Literal
+from collections.abc import Callable
+from typing import Literal, TypeVar
 
 import psycopg
 from psycopg.pq import TransactionStatus
@@ -10,6 +11,8 @@ from pydantic import AwareDatetime, BaseModel, ConfigDict
 
 from manufacturing_core.domain import Identity
 from manufacturing_core.events_v1 import DomainEventV1
+
+T = TypeVar("T")
 
 
 class OutboxRecord(BaseModel):
@@ -52,3 +55,38 @@ class OutboxRepository:
             (outbox_id,),
         ).fetchone()
         return None if row is None else OutboxRecord.model_validate(row)
+
+
+def execute_with_outbox(
+    connection: psycopg.Connection[DictRow],
+    mutation: Callable[[psycopg.Connection[DictRow]], T],
+    record: OutboxRecord | Callable[[T], OutboxRecord],
+) -> T:
+    """Run a caller-supplied mutation and insert a caller-formed outbox fact as one unit.
+
+    Generic atomic boundary only. The caller owns the surrounding transaction, the
+    mutation, authorization, lifecycle eligibility, command idempotency, revisions
+    and event construction; `record` is either the already-formed fact or a
+    callable that forms it from the mutation's result. Both statements run in one
+    savepoint of the caller's transaction, so a failure of the mutation, of the
+    record callable or of the outbox INSERT removes every effect of this unit and
+    leaves the caller's transaction usable. The unit never commits or begins a
+    transaction (psycopg forbids commit/rollback inside it); a caller rollback
+    removes both effects and only the caller's commit makes them visible.
+    """
+    if connection.info.transaction_status != TransactionStatus.INTRANS:
+        raise ValueError(
+            "atomic outbox execution requires an active caller transaction"
+        )
+    if callable(record):
+        form = record
+    else:
+        fixed = OutboxRecord.model_validate(record.model_dump())
+
+        def form(_: T) -> OutboxRecord:
+            return fixed
+
+    with connection.transaction():
+        result = mutation(connection)
+        OutboxRepository(connection).insert(form(result))
+    return result

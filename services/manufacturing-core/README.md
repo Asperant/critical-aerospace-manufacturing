@@ -74,6 +74,19 @@ the inserted row; only caller commit makes it visible to other connections.
 This primitive does not prove atomic domain mutation/outbox, DEP-022 readiness,
 crash consistency or delivery. ReleaseLot still awaits the exact lifecycle binding.
 
+`outbox.execute_with_outbox(connection, mutation, record)` is the generic atomic
+boundary: inside the caller's active transaction it runs a caller-supplied
+`mutation(connection)` and inserts the caller-formed `OutboxRecord` (or a record the
+caller forms from the mutation's result) in one savepoint. A failure of the mutation,
+of record formation or of the outbox INSERT removes every effect of that unit and
+leaves the caller's transaction usable; the unit never begins, commits or ends a
+transaction, so a caller rollback removes both effects and only the caller's commit
+publishes them. It knows no lifecycle, command, revision, idempotency or event type,
+and it does not authorize or certify the mutation. `tests/persistence/
+test_outbox_atomic.py` proves this on PostgreSQL with a test-owned neutral probe table.
+That is a generic primitive proof only; the transition-specific `ReleaseLot`
+atomicity proof still awaits the canonical lifecycle/command binding.
+
 `observability.outbox_pending_age(connection, as_of=..., correlation_id=...)`
 returns a frozen diagnostic with pending_count and oldest_pending_age_seconds,
 and emits the same values through the existing manufacturing_core structured
