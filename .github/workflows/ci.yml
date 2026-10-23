@@ -1,8 +1,9 @@
 # WP-CICD-001 — tiered T1 pipeline (01 Item 41; FR-PLAT-004, NFR-DX-006).
 #
-# Tiers: t1-static (Ruff lint/format + Pyright ratchet), t1-unit (flake policy,
-# CI tooling tests, projectctl and host tests with quarantine), t1-contract
-# (JSON Schema contracts) and t1-integration (REAL PostgreSQL + NATS JetStream).
+# Tiers: t1-static (Ruff lint/format + Pyright ratchet, frontend lint, format,
+# type-check and build), t1-unit (flake policy, CI tooling tests, projectctl and
+# host tests with quarantine, frontend component tests), t1-contract
+# (JSON Schema contracts, Operations BFF v1 contract tests) and t1-integration (REAL PostgreSQL + NATS JetStream).
 # `ci-gate` is the single required check: it fails unless every T1 job ran and
 # succeeded, so a skipped or missing job can never count as a pass (§181–184).
 #
@@ -44,6 +45,25 @@ jobs:
         run: uv sync --project ci --locked
       - name: Static ratchet (Ruff lint + format, Pyright)
         run: uv run --project ci --locked python ci/scripts/static_ratchet.py check
+      - name: Set up Node (version pinned in .node-version)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: services/command-center-web/.node-version
+          cache: npm
+          cache-dependency-path: services/command-center-web/package-lock.json
+      - name: Frontend install (exact committed lockfile, no scripts)
+        working-directory: services/command-center-web
+        run: npm ci
+      - name: Frontend lint, format and type-check (WP-UI-001)
+        working-directory: services/command-center-web
+        run: |
+          npm run contract:check
+          npm run lint
+          npm run format:check
+          npm run typecheck
+      - name: Frontend production build (WP-UI-001)
+        working-directory: services/command-center-web
+        run: npm run build
 
   unit:
     name: t1-unit
@@ -76,6 +96,18 @@ jobs:
         run: uv run --project ci --locked python -m unittest discover -s tools/host/plane-queue -p 'test_*.py'
       - name: Host Plane transition tests (offline)
         run: uv run --project ci --locked python -m unittest discover -s tools/host/plane-transition -p 'test_*.py'
+      - name: Set up Node (version pinned in .node-version)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: services/command-center-web/.node-version
+          cache: npm
+          cache-dependency-path: services/command-center-web/package-lock.json
+      - name: Frontend install (exact committed lockfile, no scripts)
+        working-directory: services/command-center-web
+        run: npm ci
+      - name: Frontend component tests (WP-UI-001)
+        working-directory: services/command-center-web
+        run: npm test
 
   contract:
     name: t1-contract
@@ -91,6 +123,10 @@ jobs:
         run: uv sync --project ci --locked
       - name: JSON Schema contracts
         run: uv run --project ci --locked python ci/scripts/check_contracts.py
+      - name: Operations BFF v1 contract tests and typing (WP-UI-001)
+        run: |
+          uv run --project ci --locked python -m pytest -c services/operations-bff/pyproject.toml services/operations-bff/tests -q
+          uv run --project ci --locked pyright --project services/operations-bff/pyrightconfig.json
 
   integration:
     name: t1-integration
@@ -116,6 +152,21 @@ jobs:
         run: uv run --project ci --locked python -m pytest ci/integration -m integration -p pytest_quarantine
       - name: Core initial migration and persistence (real PostgreSQL 18)
         run: uv run --project ci --locked python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests/persistence -m integration -q -p pytest_quarantine
+      - name: Set up Node (version pinned in .node-version)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: services/command-center-web/.node-version
+          cache: npm
+          cache-dependency-path: services/command-center-web/package-lock.json
+      - name: Frontend install (exact committed lockfile, no scripts)
+        working-directory: services/command-center-web
+        run: npm ci
+      - name: Install Playwright browsers (Chromium and Firefox)
+        working-directory: services/command-center-web
+        run: npx playwright install --with-deps chromium firefox
+      - name: Browser acceptance against a real BFF process (TEST-UI-BROWSER, WP-UI-001)
+        working-directory: services/command-center-web
+        run: npm run e2e
       - name: Service logs on failure
         if: failure()
         run: |

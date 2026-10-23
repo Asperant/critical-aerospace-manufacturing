@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.cap.invalid/operations-bff/v1/session.schema.json",
+  "title": "SessionResponse",
+  "description": "Current authenticated BFF session. Session management belongs to the BFF only; it carries no domain facts and no access, refresh or ID tokens. The browser holds only an HttpOnly session cookie.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "actor",
+    "environment_id",
+    "authenticated_at",
+    "expires_at",
+    "csrf_token"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "bff.session.v1"
+    },
+    "actor": {
+      "$ref": "common.schema.json#/$defs/SessionActor"
+    },
+    "environment_id": {
+      "$ref": "common.schema.json#/$defs/OpaqueId",
+      "description": "Deployment environment bound to the session by the server."
+    },
+    "authenticated_at": {
+      "$ref": "common.schema.json#/$defs/Timestamp"
+    },
+    "expires_at": {
+      "$ref": "common.schema.json#/$defs/Timestamp",
+      "description": "Bounded absolute session expiry."
+    },
+    "csrf_token": {
+      "$ref": "common.schema.json#/$defs/OpaqueId",
+      "description": "Synchronizer token the browser echoes in X-CSRF-Token on state-changing requests. Not an authentication credential."
+    }
+  }
+}

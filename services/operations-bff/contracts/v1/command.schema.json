@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.cap.invalid/operations-bff/v1/command.schema.json",
+  "title": "operations-bff command routing shapes",
+  "description": "COMMAND intent request and acceptance receipt. The BFF routes intent unchanged and returns the backend acceptance verbatim; acceptance is never completion. Actor identity is derived server side from the session and never supplied by the browser.",
+  "$defs": {
+    "CommandRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "command_id",
+        "command_type",
+        "world",
+        "target"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "bff.command.v1"
+        },
+        "command_id": {
+          "$ref": "common.schema.json#/$defs/OpaqueId",
+          "description": "Client-generated idempotency key."
+        },
+        "command_type": {
+          "$ref": "common.schema.json#/$defs/OpaqueId",
+          "description": "Backend-owned command name; the BFF assigns it no semantics."
+        },
+        "world": {
+          "$ref": "common.schema.json#/$defs/WorldContext"
+        },
+        "target": {
+          "$ref": "common.schema.json#/$defs/EntityRef"
+        },
+        "expected_revision": {
+          "$ref": "common.schema.json#/$defs/OpaqueId",
+          "description": "Revision the user acted on, for stale-state rejection by the backend."
+        },
+        "parameters": {
+          "$ref": "#/$defs/ParameterObject",
+          "description": "Backend command payload forwarded unmodified; validated by the owning Command API. It can never carry actor identity, roles or session data."
+        }
+      }
+    },
+    "CommandReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "command_id",
+        "outcome",
+        "acted_as",
+        "correlation_id",
+        "received_at"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "bff.command-receipt.v1"
+        },
+        "command_id": {
+          "$ref": "common.schema.json#/$defs/OpaqueId"
+        },
+        "outcome": {
+          "enum": [
+            "ACCEPTED",
+            "REJECTED",
+            "CONFLICT",
+            "STALE"
+          ],
+          "description": "Backend acceptance result, verbatim. There is no completed or confirmed value: canonical effects arrive as events through the stream."
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "correlation_id": {
+          "$ref": "common.schema.json#/$defs/OpaqueId"
+        },
+        "received_at": {
+          "$ref": "common.schema.json#/$defs/Timestamp"
+        },
+        "acted_as": {
+          "$ref": "common.schema.json#/$defs/ActorRef",
+          "description": "The session actor the BFF attached; shown for transparency, never an input."
+        }
+      }
+    },
+    "ParameterObject": {
+      "type": "object",
+      "propertyNames": {
+        "not": {
+          "pattern": "^([Aa][Cc][Tt][Oo][Rr]|[Uu][Ss][Ee][Rr]|[Rr][Oo][Ll][Ee]|[Pp][Ee][Rr][Mm][Ii][Ss][Ss][Ii][Oo][Nn]|[Pp][Rr][Ii][Nn][Cc][Ii][Pp][Aa][Ll]|[Ii][Dd][Ee][Nn][Tt][Ii][Tt][Yy]|[Ss][Ee][Ss][Ss][Ii][Oo][Nn]|[Cc][Ss][Rr][Ff])"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/ParameterValue"
+      },
+      "description": "Free-form payload whose keys, at any depth, must not start with an actor, user, role, permission, principal, identity, session or csrf name (case-insensitive)."
+    },
+    "ParameterValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ParameterObject"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ParameterValue"
+          }
+        },
+        {
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ]
+        }
+      ]
+    }
+  }
+}
