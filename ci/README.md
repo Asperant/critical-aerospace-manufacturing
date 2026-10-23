@@ -10,7 +10,7 @@ Owner: Yavuz (Platform Engineering, Delivery & Reliability). Sources: 01 Item 41
 | T0 developer feedback | your workspace | the same commands as below | no — local success is not merge authority (Item 41 §2) |
 | T1 `t1-static` | GitHub Actions | `static_ratchet.py check` (Ruff lint + format, Pyright) | via `ci-gate` |
 | T1 `t1-unit` | GitHub Actions | flake policy, CI tooling tests, projectctl + host tests | via `ci-gate` |
-| T1 `t1-contract` | GitHub Actions | `check_contracts.py` (JSON Schema contracts) | via `ci-gate` |
+| T1 `t1-contract` | GitHub Actions | `check_contracts.py` (JSON Schema contracts), Operations BFF v1 contract tests + Pyright | via `ci-gate` |
 | T1 `t1-integration` | GitHub Actions | REAL PostgreSQL 16 + NATS JetStream smoke | via `ci-gate` |
 | T1 `ci-gate` | GitHub Actions | fails unless all four jobs ran and succeeded | **yes** (required check) |
 | T1 `projectctl` | GitHub Actions (`projectctl.yml`) | validate, catalog lint, hygiene | **yes** (required check) |

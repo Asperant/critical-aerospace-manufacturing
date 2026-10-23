@@ -2,7 +2,7 @@
 #
 # Tiers: t1-static (Ruff lint/format + Pyright ratchet), t1-unit (flake policy,
 # CI tooling tests, projectctl and host tests with quarantine), t1-contract
-# (JSON Schema contracts) and t1-integration (REAL PostgreSQL + NATS JetStream).
+# (JSON Schema contracts, Operations BFF v1 contract tests) and t1-integration (REAL PostgreSQL + NATS JetStream).
 # `ci-gate` is the single required check: it fails unless every T1 job ran and
 # succeeded, so a skipped or missing job can never count as a pass (§181–184).
 #
@@ -91,6 +91,10 @@ jobs:
         run: uv sync --project ci --locked
       - name: JSON Schema contracts
         run: uv run --project ci --locked python ci/scripts/check_contracts.py
+      - name: Operations BFF v1 contract tests and typing (WP-UI-001)
+        run: |
+          uv run --project ci --locked python -m pytest -c services/operations-bff/pyproject.toml services/operations-bff/tests -q
+          uv run --project ci --locked pyright --project services/operations-bff/pyrightconfig.json
 
   integration:
     name: t1-integration
