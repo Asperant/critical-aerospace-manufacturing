@@ -19,3 +19,4 @@ CHG-017,Final development review policy,C3,CR-2,Asrın,APPROVED,APPROVED,CTRL-HO
 CHG-018,Advisory development review,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-003
 CHG-019,Canonical execution preferences and guarded AUTO_NEXT,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-004
 CHG-020,Derived proactive preparation and read-only stall detection,C2,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-005
+CHG-021,Bounded canonical preparation and autonomous prepared buffer replenishment,C2,CR-4,Asrın,APPROVED,APPROVED,CTRL-HOST-006
