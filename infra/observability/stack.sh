@@ -58,6 +58,56 @@ mask_in_ci() {
   fi
 }
 
+# Anonymous pulls from public.ecr.aws share a data quota per source IP; on
+# shared CI runners it is sometimes exhausted ("toomanyrequests: Data limit
+# exceeded"). Each pinned image is pulled with retries; OpenObserve publishes the
+# same release to Docker Hub, which is used as a fallback and tagged with the
+# pinned name, so Compose always runs the pinned release.
+mirror_of() {
+  case "$1" in
+    public.ecr.aws/zinclabs/openobserve:*) echo "docker.io/openobserve/openobserve:${1##*:}" ;;
+    *) echo "" ;;
+  esac
+}
+
+pull_with_retries() {
+  local image="$1" attempt
+  for attempt in 1 2 3; do
+    if docker pull --quiet "${image}" >/dev/null; then
+      return 0
+    fi
+    echo "pull of ${image} failed (attempt ${attempt}/3)" >&2
+    [[ $attempt -lt 3 ]] && sleep $((attempt * 10))
+  done
+  return 1
+}
+
+ensure_images() {
+  local image mirror images
+  images="$(sed -n 's/^[[:space:]]*image:[[:space:]]*//p' "${HERE}/compose.yaml" | tr -d "\"'")"
+  if [[ -z "${images}" ]]; then
+    echo "ERROR: no image found in ${HERE}/compose.yaml" >&2
+    exit 1
+  fi
+  while read -r image; do
+    if docker image inspect "${image}" >/dev/null 2>&1; then
+      continue
+    fi
+    if pull_with_retries "${image}"; then
+      echo "pulled ${image}"
+      continue
+    fi
+    mirror="$(mirror_of "${image}")"
+    if [[ -n "${mirror}" ]] && pull_with_retries "${mirror}"; then
+      docker tag "${mirror}" "${image}"
+      echo "pulled ${image} from mirror ${mirror}"
+      continue
+    fi
+    echo "ERROR: cannot pull ${image}${mirror:+ or ${mirror}}" >&2
+    exit 1
+  done <<< "${images}"
+}
+
 wait_for() {
   local name="$1" url="$2" tries=90
   until curl -fsS -o /dev/null "${url}" 2>/dev/null; do
@@ -76,7 +126,8 @@ case "${1:-}" in
   up)
     load_credentials
     mask_in_ci
-    "${COMPOSE[@]}" up --detach
+    ensure_images
+    "${COMPOSE[@]}" up --detach --pull never
     wait_for openobserve "http://127.0.0.1:${O2_HTTP_PORT}/healthz"
     wait_for otel-collector "http://127.0.0.1:${OTEL_HEALTH_PORT}/"
     "${COMPOSE[@]}" images --format json 2>/dev/null \

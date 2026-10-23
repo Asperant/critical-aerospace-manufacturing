@@ -61,6 +61,12 @@ or set `O2_ROOT_PASSWORD` yourself before the first `up`.
   256 MiB (02 resource profiles: OpenObserve must not starve PostgreSQL); the
   Collector's `memory_limiter` keeps it below its limit under bursts.
 - **No phone-home.** `ZO_TELEMETRY=false`.
+- **Resilient pulls.** `stack.sh up` pulls each pinned image with three
+  attempts. Anonymous pulls from `public.ecr.aws` share a data quota per IP and
+  fail on busy CI runners (`toomanyrequests: Data limit exceeded`); OpenObserve
+  publishes the same release to Docker Hub, so `openobserve/openobserve:<same
+  tag>` is the fallback, tagged locally with the pinned name. Compose then
+  starts with `--pull never`, so only the pinned release can run.
 
 ## Not in this slice
 

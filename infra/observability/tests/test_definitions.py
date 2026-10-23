@@ -139,3 +139,12 @@ def test_dashboard_importer_is_valid_python() -> None:
     import py_compile
 
     py_compile.compile(str(HERE / "dashboards.py"), doraise=True)
+
+
+def test_stack_pulls_pinned_images_with_retry_and_mirror() -> None:
+    """A registry quota error must not fail CI, and Compose must run the pins."""
+    script = (HERE / "stack.sh").read_text("utf-8")
+    assert "ensure_images" in script and "up --detach --pull never" in script
+    o2 = SERVICES["openobserve"]["image"]
+    assert o2.startswith("public.ecr.aws/zinclabs/openobserve:")
+    assert "docker.io/openobserve/openobserve:${1##*:}" in script  # same tag
