@@ -1,0 +1,222 @@
+{
+  "$defs": {
+    "Equipment": {
+      "additionalProperties": false,
+      "description": "Equipment reference, without simulated physical state.",
+      "properties": {
+        "id": {
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "pattern": "\\S",
+          "title": "Revision",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "revision"
+      ],
+      "title": "Equipment",
+      "type": "object"
+    },
+    "Lot": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "order_id": {
+          "pattern": "\\S",
+          "title": "Order Id",
+          "type": "string"
+        },
+        "revision": {
+          "pattern": "\\S",
+          "title": "Revision",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "order_id"
+      ],
+      "title": "Lot",
+      "type": "object"
+    },
+    "ManufacturingRoute": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "pattern": "\\S",
+          "title": "Revision",
+          "type": "string"
+        },
+        "visits": {
+          "items": {
+            "$ref": "#/$defs/RouteVisit"
+          },
+          "title": "Visits",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "visits"
+      ],
+      "title": "ManufacturingRoute",
+      "type": "object"
+    },
+    "ProductionOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "pattern": "\\S",
+          "title": "Revision",
+          "type": "string"
+        },
+        "route_id": {
+          "pattern": "\\S",
+          "title": "Route Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "route_id"
+      ],
+      "title": "ProductionOrder",
+      "type": "object"
+    },
+    "RouteVisit": {
+      "additionalProperties": false,
+      "properties": {
+        "equipment_id": {
+          "pattern": "\\S",
+          "title": "Equipment Id",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "operation_class_id": {
+          "pattern": "\\S",
+          "title": "Operation Class Id",
+          "type": "string"
+        },
+        "revision": {
+          "pattern": "\\S",
+          "title": "Revision",
+          "type": "string"
+        },
+        "route_id": {
+          "pattern": "\\S",
+          "title": "Route Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "route_id",
+        "operation_class_id",
+        "equipment_id"
+      ],
+      "title": "RouteVisit",
+      "type": "object"
+    },
+    "SerializedComponent": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "lot_id": {
+          "pattern": "\\S",
+          "title": "Lot Id",
+          "type": "string"
+        },
+        "revision": {
+          "pattern": "\\S",
+          "title": "Revision",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "lot_id"
+      ],
+      "title": "SerializedComponent",
+      "type": "object"
+    }
+  },
+  "$id": "urn:cap:core:order-query-result:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "components": {
+      "items": {
+        "$ref": "#/$defs/SerializedComponent"
+      },
+      "title": "Components",
+      "type": "array"
+    },
+    "contract_version": {
+      "const": "core.order-query.v1",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "equipment": {
+      "items": {
+        "$ref": "#/$defs/Equipment"
+      },
+      "title": "Equipment",
+      "type": "array"
+    },
+    "lots": {
+      "items": {
+        "$ref": "#/$defs/Lot"
+      },
+      "title": "Lots",
+      "type": "array"
+    },
+    "order": {
+      "$ref": "#/$defs/ProductionOrder"
+    },
+    "route": {
+      "$ref": "#/$defs/ManufacturingRoute"
+    }
+  },
+  "required": [
+    "contract_version",
+    "order",
+    "route",
+    "lots",
+    "components",
+    "equipment"
+  ],
+  "title": "OrderQueryResultV1",
+  "type": "object"
+}

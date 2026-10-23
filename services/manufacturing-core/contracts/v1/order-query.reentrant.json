@@ -1,0 +1,69 @@
+{
+  "contract_version": "core.order-query.v1",
+  "order": {
+    "id": "O-REENTRANT",
+    "revision": "order-r2",
+    "route_id": "R-REENTRANT"
+  },
+  "route": {
+    "id": "R-REENTRANT",
+    "revision": "route-r3",
+    "visits": [
+      {
+        "id": "V-30",
+        "revision": "visit-r4",
+        "route_id": "R-REENTRANT",
+        "operation_class_id": "CNC",
+        "equipment_id": "E-CNC"
+      },
+      {
+        "id": "V-10",
+        "revision": "visit-r4",
+        "route_id": "R-REENTRANT",
+        "operation_class_id": "METROLOGY",
+        "equipment_id": "E-MET"
+      },
+      {
+        "id": "V-20",
+        "revision": "visit-r4",
+        "route_id": "R-REENTRANT",
+        "operation_class_id": "CNC",
+        "equipment_id": "E-CNC"
+      }
+    ]
+  },
+  "lots": [
+    {
+      "id": "L-REENTRANT-1",
+      "revision": "lot-r5",
+      "order_id": "O-REENTRANT"
+    },
+    {
+      "id": "L-REENTRANT-2",
+      "revision": "lot-r6",
+      "order_id": "O-REENTRANT"
+    }
+  ],
+  "components": [
+    {
+      "id": "C-REENTRANT-1",
+      "revision": "component-r7",
+      "lot_id": "L-REENTRANT-2"
+    },
+    {
+      "id": "C-REENTRANT-2",
+      "revision": "component-r8",
+      "lot_id": "L-REENTRANT-1"
+    }
+  ],
+  "equipment": [
+    {
+      "id": "E-CNC",
+      "revision": "equipment-r9"
+    },
+    {
+      "id": "E-MET",
+      "revision": "equipment-r10"
+    }
+  ]
+}

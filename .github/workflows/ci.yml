@@ -66,6 +66,10 @@ jobs:
         run: uv run --project ci --locked python -m pytest ci/tests -p pytest_quarantine
       - name: projectctl tests (quarantine-aware)
         run: uv run --project ci --locked python -m pytest tools/projectctl/tests -q -p pytest_quarantine
+      - name: Core pure domain tests and typing (WP-CORE-001)
+        run: |
+          uv run --project ci --locked python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests -m 'not integration' -q -p pytest_quarantine
+          uv run --project ci --locked pyright --project services/manufacturing-core/pyrightconfig.json
       - name: mfgctl tests (quarantine-aware)
         run: uv run --project ci --locked python -m pytest tools/mfgctl/tests -q -p pytest_quarantine
       - name: Host Plane queue tests (offline)
@@ -94,6 +98,8 @@ jobs:
     timeout-minutes: 20
     env:
       PYTHONPATH: ci:ci/scripts
+      CI_POSTGRES_IMAGE: postgres:18-alpine
+      CORE_TEST_DISPOSABLE: "1"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -108,6 +114,8 @@ jobs:
           ci/scripts/integration_services.sh env >> "$GITHUB_ENV"
       - name: Integration smoke (boundary mode REAL)
         run: uv run --project ci --locked python -m pytest ci/integration -m integration -p pytest_quarantine
+      - name: Core initial migration and persistence (real PostgreSQL 18)
+        run: uv run --project ci --locked python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests/persistence -m integration -q -p pytest_quarantine
       - name: Service logs on failure
         if: failure()
         run: |
