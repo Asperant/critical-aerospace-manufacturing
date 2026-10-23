@@ -36,7 +36,12 @@ class HealthTests(unittest.TestCase):
         policy["execution_preferences"] = {"sequences": {t.q.PEOPLE["asrin"][0]: [wp]}}
         gh.main_sha = lambda: "a" * 40
         comments = [{"id": 1, "body": wp + " DOR-TASK-01 " + "a" * 40}]
-        live = {"items": {wp: {"state": "BACKLOG", "blocked": False}}}
+        live = {
+            "items": {
+                wp: {"state": "BACKLOG", "blocked": False},
+                "WP-ACTIVE-001": {"state": "READY", "blocked": False},
+            }
+        }
         with (
             patch.object(auto, "resolver", resolver),
             patch.object(t, "records", return_value=[]),

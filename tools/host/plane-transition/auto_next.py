@@ -47,7 +47,8 @@ def require_caller(profile, caller=None):
         raise PermissionError("PROFILE_UID_MISMATCH")
 
 
-def live_view(t, plane, policy):
+def live_view(t, plane, policy, profile=None, gh=None):
+    requested_profile = profile
     items = {}
     for item in plane.items:
         wp = item.get("external_id", "")
@@ -70,7 +71,101 @@ def live_view(t, plane, policy):
             "assignees": item["assignees"],
             "blocked": plane.blocked in item["labels"],
         }
+        if (
+            requested_profile == profile
+            and policy.get("deferred_acceptance_schema") == "cap-deferred-acceptance-v1"
+            and items[wp]["state"] == "VALIDATING"
+            and items[wp]["blocked"]
+        ):
+            proof = deferred_proof(t, wp, profile, policy, gh or t.GitHub(profile))
+            if proof:
+                items[wp]["deferred_acceptance"] = proof
     return {"complete": True, "items": items}
+
+
+def deferred_proof(t, wp, profile, policy, gh):
+    """Existing attributable owner assessment plus real merged/CI/audit facts.
+
+    Absence, ambiguity or stale canonical scope leaves the slot occupied. No
+    Plane field or free-text reason alone authorizes deferred release.
+    """
+    previous = t.last_blocker(wp)
+    if not (
+        previous
+        and previous.get("result") == "VERIFIED"
+        and previous.get("operation") == "BLOCKED"
+        and previous.get("from_state") == "VALIDATING"
+        and previous.get("to_state") == "VALIDATING"
+        and previous.get("profile") == profile
+    ):
+        return None
+    refs = previous.get("evidence_refs", [])
+    try:
+        pr = t.pr_fact(gh, refs, wp, profile)
+        text = pr.get("body") or ""
+
+        def field(label):
+            values = re.findall(r"(?im)^" + re.escape(label) + r": ([^\r\n]+)$", text)
+            return values[0] if len(values) == 1 else None
+
+        classification = "WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE"
+        if (
+            field("Deferred acceptance class") != classification
+            or field("Owner-executable implementation work") != "NONE"
+            or not previous.get("reason", "").startswith(classification)
+        ):
+            return None
+        t.need(pr.get("merged") is True, "DEFERRED_PR_NOT_MERGED")
+        sha = pr["merge_commit_sha"]
+        gh.merged_shape(pr)
+        # Scope, readiness, architecture and final acceptance must still match.
+        tree = gh._get(f"{t.REPO}/git/trees/{sha}?recursive=1")
+        t.need(tree.get("truncated") is False, "DEFERRED_SOURCE_TREE_INCOMPLETE")
+        blobs = {r["path"]: r.get("sha") for r in tree["tree"]}
+        sources = set(policy["contexts"][wp]["source_manifest"]) | {
+            "docs/02_System_Architecture_Specification.md"
+        }
+        t.need(
+            all(
+                blobs.get(p) == policy["source_git_blobs"].get(p) and blobs.get(p)
+                for p in sources
+            ),
+            "DEFERRED_CANONICAL_SCOPE_CHANGED",
+        )
+        record = t.native_record(text, wp, sha)
+        t.need(
+            record.get("blocker") == previous.get("blocker"),
+            "DEFERRED_BLOCKER_ASSESSMENT_CHANGED",
+        )
+        t.need(record["_artifact_refs"], "DEFERRED_EVIDENCE_MISSING")
+        for ref in record["_artifact_refs"]:
+            gh.artifact(ref, sha)
+        runs = [gh.run(int(r.split(":")[1])) for r in refs if r.startswith("run:")]
+        t.need(
+            any(
+                r.get("head_sha") == sha
+                and r.get("head_branch") == "main"
+                and r.get("event") != "pull_request"
+                and r.get("status") == "completed"
+                and r.get("conclusion") == "success"
+                for r in runs
+            ),
+            "DEFERRED_POST_MERGE_CI_UNVERIFIED",
+        )
+        t.ci(gh, sha, policy)
+        return {
+            "schema": "cap-deferred-acceptance-v1",
+            "wp_id": wp,
+            "owner": t.q.PEOPLE[profile][0],
+            "classification": classification,
+            "implementation_complete": True,
+            "owner_work_remaining": False,
+            "merge_sha": sha,
+            "audit_id": previous["audit_id"],
+            "assessment_digest": hashlib.sha256(text.encode()).hexdigest(),
+        }
+    except t.Denied:
+        return None  # UNKNOWN never frees the slot.
 
 
 def discover(gh, t):
@@ -95,7 +190,9 @@ def candidate_evidence(t, plane, policy, profile, gh, comments, live, future=Fal
         plane.items = [
             dict(item, state=plane.states["DONE"])
             if item.get("assignees") == [t.q.PEOPLE[profile][1]]
-            and plane.names.get(item.get("state")) in resolver.ACTIVE
+            and resolver.occupies_implementation_slot(
+                item.get("external_id"), live["items"].get(item.get("external_id"), {})
+            )
             else item
             for item in plane.items
         ]
@@ -216,7 +313,13 @@ def owner_health(t, profile, policy, plane, gh_factory):
     global resolver
     if resolver is None:
         resolver = load_resolver()
-    live = live_view(t, plane, policy)
+    live = live_view(
+        t,
+        plane,
+        policy,
+        profile,
+        gh_factory(profile) if policy.get("deferred_acceptance_schema") else None,
+    )
     evidence = {
         "complete": True,
         "source_manifest": policy["source_manifest"],
@@ -329,7 +432,13 @@ def advance_owner(
     if resolver is None:
         resolver = load_resolver()
     plane = plane_factory()
-    live = live_view(t, plane, policy)
+    live = live_view(
+        t,
+        plane,
+        policy,
+        profile,
+        gh_factory(profile) if policy.get("deferred_acceptance_schema") else None,
+    )
     project = policy["execution_project"]
     empty = {
         "complete": True,
@@ -371,8 +480,8 @@ def advance_owner(
     wp = result["wp_id"]
     # External writer may change ANY owned active work, not just selected issue.
     fresh = plane_factory()
-    fresh_live = live_view(t, fresh, policy)
     gh.cache.clear()
+    fresh_live = live_view(t, fresh, policy, profile, gh)
     if fresh_live != live or gh.main_sha() != observed_sha:
         return {
             **result,
@@ -384,8 +493,9 @@ def advance_owner(
     t.verify_policy_sources(policy)
 
     def prewrite():
+        gh.cache.clear()
         t.need(
-            live_view(t, plane_factory(), policy) == fresh_live,
+            live_view(t, plane_factory(), policy, profile, gh) == fresh_live,
             "CONCURRENT_CHANGE_RECOMPUTE_REQUIRED",
         )
         gh.cache.clear()

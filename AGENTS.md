@@ -874,3 +874,16 @@ global lock and per-WP locks. Failures do not undo or interrupt developer work.
 Health remains GET-only and does not call this writer. Installer creates root-only
 backup/rollback before deploying merged helpers/policy/units. No unrelated service
 restart or credential copying. Real consumer/readiness/product blockers remain.
+
+## Deferred downstream acceptance — CHG-022 / CTRL-HOST-007
+
+CHG-022 narrowly supersedes the blanket active-work slot prohibition for verified
+`VALIDATING + BLOCKED` work classified exactly
+`WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE`. It requires an existing
+attributable owner assessment that no owner-executable implementation work remains,
+a root verified blocker audit, actual merged WP PR and successful post-merge CI,
+and unchanged canonical scope/architecture/DoD. Missing or ambiguous proof keeps
+occupying the slot. All other active states, ordinary VALIDATING and implementation
+blockers still prevent release. The deferred WP stays visible, open and blocked;
+it is never considered DONE for dependency readiness. Existing canonical preference,
+AUTO_NEXT guards, fresh rechecks, one READY and all actual DONE gates are unchanged.

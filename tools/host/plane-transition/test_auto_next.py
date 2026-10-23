@@ -452,5 +452,163 @@ class AutoNextTests(unittest.TestCase):
         self.assertNotIn("/etc/sudoers.d/cap-plane-transition", paths)
 
 
+class DeferredAcceptanceTests(unittest.TestCase):
+    def fixture(self):
+        wp, policy, plane, fixture_gh, _ = fixture(source="VALIDATING", target="DONE")
+        gh: Any = fixture_gh
+        plane.items[0]["labels"].append(plane.blocked)
+        policy["deferred_acceptance_schema"] = "cap-deferred-acceptance-v1"
+        sources = {
+            "docs/08": "blob1",
+            "docs/02_System_Architecture_Specification.md": "blob2",
+        }
+        policy["source_git_blobs"] = sources
+        policy["contexts"][wp]["source_manifest"] = {"docs/08": "digest"}
+        gh._get = Mock(
+            return_value={
+                "truncated": False,
+                "tree": [{"path": p, "sha": sha} for p, sha in sources.items()],
+            }
+        )
+        gh.pr_data["body"] += """
+Deferred acceptance class: WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE
+Owner-executable implementation work: NONE
+Blocker owner: asrin
+Blocking WP: WP-TEST-002
+External dependency: Real consumer acceptance
+Blocker evidence: repo:evidence/test.json
+"""
+        previous = {
+            "profile": "asrin",
+            "operation": "BLOCKED",
+            "result": "VERIFIED",
+            "from_state": "VALIDATING",
+            "to_state": "VALIDATING",
+            "audit_id": "audit",
+            "reason": "WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE: real acceptance",
+            "evidence_refs": ["pr:1", "run:4"],
+            "blocker": {
+                "owner": "asrin",
+                "wp_id": "WP-TEST-002",
+                "external_dependency": "Real consumer acceptance",
+            },
+        }
+        return wp, policy, plane, gh, previous
+
+    def test_verified_assessment_proof_and_live_binding(self):
+        wp, policy, plane, gh, previous = self.fixture()
+        with patch.object(t, "last_blocker", return_value=previous):
+            live = auto.live_view(t, plane, policy, "asrin", gh)
+        self.assertTrue(resolver.deferred_acceptance(wp, live["items"][wp]))
+        self.assertEqual(live["items"][wp]["state"], "VALIDATING")
+        self.assertTrue(live["items"][wp]["blocked"])
+        self.assertTrue(gh.artifacts)
+
+    def test_proof_fails_closed_for_every_required_fact(self):
+        for gap in (
+            "audit",
+            "unblocked",
+            "not_validating",
+            "class",
+            "unknown_work",
+            "duplicate",
+            "owner",
+            "merge",
+            "branch",
+            "scope",
+            "truncated",
+            "blocker",
+            "artifact",
+            "run_sha",
+            "run_status",
+            "run_event",
+            "ci",
+            "technical_ci",
+        ):
+            with self.subTest(gap=gap):
+                wp, policy, plane, gh, previous = self.fixture()
+                if gap == "audit":
+                    previous["result"] = "INTENT"
+                elif gap == "unblocked":
+                    previous["operation"] = "UNBLOCKED"
+                elif gap == "not_validating":
+                    previous["from_state"] = "MERGED"
+                elif gap == "class":
+                    gh.pr_data["body"] = gh.pr_data["body"].replace(
+                        "Deferred acceptance class: WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE",
+                        "Deferred acceptance class: UNKNOWN",
+                    )
+                elif gap == "unknown_work":
+                    gh.pr_data["body"] = gh.pr_data["body"].replace(
+                        "work: NONE", "work: UNKNOWN"
+                    )
+                elif gap == "duplicate":
+                    gh.pr_data["body"] += "Owner-executable implementation work: NONE\n"
+                elif gap == "owner":
+                    gh.pr_data["user"]["login"] = "someone-else"
+                elif gap == "merge":
+                    gh.pr_data["merged"] = False
+                elif gap == "branch":
+                    gh.undeleted_branch = True
+                elif gap == "scope":
+                    policy["source_git_blobs"]["docs/08"] = "changed"
+                elif gap == "truncated":
+                    gh._get.return_value["truncated"] = True
+                elif gap == "blocker":
+                    previous["blocker"]["wp_id"] = "WP-TEST-003"
+                elif gap == "artifact":
+                    gh.missing_artifact = True
+                elif gap == "run_sha":
+                    gh.run_data["head_sha"] = "c" * 40
+                elif gap == "run_status":
+                    gh.run_data["status"] = "in_progress"
+                elif gap == "run_event":
+                    gh.run_data["event"] = "pull_request"
+                elif gap == "ci":
+                    gh.check_data[0][0]["conclusion"] = "failure"
+                else:
+                    gh.failed_technical_step = True
+                with patch.object(t, "last_blocker", return_value=previous):
+                    self.assertIsNone(auto.deferred_proof(t, wp, "asrin", policy, gh))
+
+    def test_assessment_digest_changes_for_prewrite_comparison(self):
+        wp, policy, plane, gh, previous = self.fixture()
+        with patch.object(t, "last_blocker", return_value=previous):
+            before = auto.live_view(t, plane, policy, "asrin", gh)
+            gh.pr_data["body"] += "Assessment clarification\n"
+            after = auto.live_view(t, plane, policy, "asrin", gh)
+        self.assertNotEqual(before, after)
+
+    def test_done_still_requires_real_final_acceptance(self):
+        # A valid deferred proof cannot turn final DoD UNKNOWN into PASS.
+        wp, policy, plane, gh, previous = self.fixture()
+        for comment in gh.comments.values():
+            import json
+
+            record = json.loads(comment["body"])
+            record["cap_plane_transition"]["checks"].pop("DOD-WP-01", None)
+            comment["body"] = json.dumps(record)
+        with patch.object(t, "last_blocker", return_value=previous):
+            self.assertIsNotNone(auto.deferred_proof(t, wp, "asrin", policy, gh))
+        plane.item["labels"] = [x for x in plane.item["labels"] if x != plane.blocked]
+        with self.assertRaises(t.Denied) as denied:
+            t.evaluate(
+                "asrin",
+                wp,
+                "VALIDATING",
+                "DONE",
+                plane.item,
+                plane,
+                policy,
+                gh,
+                {
+                    "reason": "Real final acceptance",
+                    "evidence_refs": ["pr:1", "comment:2", "run:4"],
+                },
+            )
+
+        self.assertEqual(denied.exception.code, "CRITERION_NOT_CONFIRMED")
+
+
 if __name__ == "__main__":
     unittest.main()

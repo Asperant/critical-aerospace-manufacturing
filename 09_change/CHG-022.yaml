@@ -1,0 +1,23 @@
+CHG-022:
+  title: Release implementation slot during verified deferred downstream acceptance wait
+  class: C3
+  review_risk_class: CR-3
+  owner: Asrın
+  decision: APPROVED
+  status: APPROVED
+  application_control_item: CTRL-HOST-007
+  required_human_approvals: 0
+  human_decision_basis: Explicit project-owner request for this narrow policy and deployment, 23 October 2026
+  scope: Implementation-slot accounting only; canonical preference, readiness and DONE unchanged
+  rules:
+  - Only VALIDATING with orthogonal BLOCKED and exact WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE classification may be deferred
+  - Existing attributable owner assessment must explicitly state no owner-executable implementation work remains
+  - Root verified BLOCKED audit, owner-authored merged WP PR, deleted branch, squash merge and successful post-merge CI are mandatory
+  - Canonical WP inputs, architecture and DoD must match the implementation merge; changed or unavailable proof fails closed
+  - Deferred work stays VALIDATING and BLOCKED, remains visible, and is never treated as DONE for readiness
+  - Ordinary VALIDATING, implementation gaps, UNKNOWN and every other active state still occupy the implementation slot
+  - Shared resolver preference and existing guarded AUTO_NEXT BACKLOG to READY are the only selection and mutation path
+  - Fresh full inventory, owner assessment and main revision are rechecked under the shared lock before writing
+  - No changes to assignment, metadata, other owners, human approval policy, product HITL or final acceptance requirements
+  rollout: Merged source only; generated policy, root-only backup, supported installer and verified hashes
+  rollback: Restore deployment only; never replay Plane state or erase audit
