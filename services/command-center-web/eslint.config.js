@@ -5,7 +5,9 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default defineConfig([
-  { ignores: ["dist", "node_modules", "coverage"] },
+  {
+    ignores: ["dist", "node_modules", "coverage", "src/contract/generated.ts"],
+  },
   js.configs.recommended,
   tseslint.configs.recommended,
   reactHooks.configs.flat.recommended,
@@ -14,7 +16,7 @@ export default defineConfig([
     languageOptions: { globals: globals.browser },
   },
   {
-    files: ["vite.config.ts", "eslint.config.js"],
+    files: ["vite.config.ts", "eslint.config.js", "scripts/**/*.mjs"],
     languageOptions: { globals: globals.node },
   },
 ]);

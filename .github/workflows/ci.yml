@@ -57,6 +57,7 @@ jobs:
       - name: Frontend lint, format and type-check (WP-UI-001)
         working-directory: services/command-center-web
         run: |
+          npm run contract:check
           npm run lint
           npm run format:check
           npm run typecheck

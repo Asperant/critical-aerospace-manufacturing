@@ -283,3 +283,31 @@ production build pass, 8 tests pass; Python side unchanged (208 BFF tests, 26 CI
 tooling tests pass). Not done: MUI, TanStack Query, generated API types,
 Playwright, CSP and security headers, the Node setup action's behaviour on
 GitHub, and any visual design. CI for this commit is not yet observed.
+
+## Slice 9B: browser session consumption
+
+Added to `services/command-center-web`: `scripts/generate-contract-types.mjs`
+(json-schema-to-typescript 16.0.0, resolving the contract `$id` host from disk)
+which generates `src/contract/generated.ts` from `session.schema.json` and the
+`ErrorEnvelope` of `common.schema.json`, so contract types are not hand-copied
+(01 Item 175). `npm run contract:check` fails on drift and runs in `t1-static`.
+`src/session/sessionClient.ts` is the only code that touches the network: one
+`GET /v1/session` with `credentials: "include"`, `Accept` as the only header and
+no body, giving authenticated (200, checked at runtime as a `bff.session.v1`
+with `derived_from` SESSION), unauthenticated (401) or an error (any other
+status, network failure, non-JSON or malformed reply). `SessionProvider` holds
+the state in memory (loading, authenticated, unauthenticated, error), aborts on
+unmount and ignores late answers. The Overview page shows the server-derived
+display name, actor id, roles (marked informational), environment and expiry,
+a neutral "Sign-in required." state with no sign-in control, or an error. The
+CSRF token is kept in memory and never rendered.
+
+Not done: login and logout UI, overview data, streaming, navigation, MUI,
+TanStack Query (a plain provider is enough for one request), visual design.
+
+Local verification from a clean `npm ci`: contract check, ESLint, Prettier,
+`tsc`, 41 tests and the production build pass; BFF side unchanged (208 tests,
+Ruff, `check_contracts.py`, 26 CI tooling tests, `static_ratchet` pass). Tests
+read the real `session.normal.json` contract fixture and assert: request shape,
+401, error statuses, forged actor refused, no storage or cookie writes, no token
+shown, and that `fetch` appears only in the session client with only `/v1/session`.
