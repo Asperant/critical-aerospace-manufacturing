@@ -66,6 +66,16 @@
 > runnable services, so FR-PLAT-001's full composition and the Integration
 > profile remain open; evidence is EVIDENCE_PENDING and `observed` stays null.
 
+> **WP-TEST-001 implementation delta (2026-10-24).** NFR-DX-006 now also
+> references the machine-checked test strategy `ci/test-strategy.json`
+> (`cap.test-strategy/v1`): six tiers with their CI job and allowed boundary
+> modes (§4.5), the TestID convention and every test suite of the repository.
+> `ci/scripts/check_test_strategy.py` runs in t1-unit and fails on an untracked
+> test file, a run outside its tier's CI job or a disallowed boundary mode
+> (§19.6). The shared-host run is recorded under `evidence/WP-TEST-001/`.
+> The release-gate zero count of NFR-DX-006 is measured at the final gates
+> (WP-TEST-008); evidence stays EVIDENCE_PENDING and `observed` stays null.
+
 ---
 
 ## Table of Contents
@@ -6976,10 +6986,10 @@ NFR-DX-006:
   meta: {class: H0, owner: Yavuz, anchor: "01 Item82 NFR-DX-006 L172401"}
   DERIVED_FROM: [ITEM-50, NFR-INV-46, TEST-INV-24]
   ALLOCATED_TO: [ARCH-PLAT-CICD]
-  REALIZED_BY: {surface: "flaky-test quarantine registry + retry-until-green prohibition + quarantine-aware pytest gate", deployable: "repository CI", ref: ".github/workflows/ci.yml; ci/flaky_tests.yaml; ci/scripts/check_flake_policy.py; ci/pytest_quarantine.py"}
+  REALIZED_BY: {surface: "flaky-test quarantine registry + retry-until-green prohibition + quarantine-aware pytest gate + test strategy (tiers, boundary modes, TestIDs, suite-to-CI map) with conformance gate", deployable: "repository CI", ref: ".github/workflows/ci.yml; ci/flaky_tests.yaml; ci/scripts/check_flake_policy.py; ci/pytest_quarantine.py; ci/test-strategy.json; ci/scripts/check_test_strategy.py"}
   MEASUREMENT: {metric: "known unresolved unquarantined flaky tests in final release/benchmark gates", threshold: "= 0", workload: "final required gates", hardware: "N/A (not hardware-bound)", observed: null}
-  VERIFIED_BY: [TEST-CICD-001]
-  EXECUTED_AS: [RUN-CICD-001-LOCAL-001]  # local run; acceptance pending
+  VERIFIED_BY: [TEST-CICD-001, TEST-TEST-001-001]
+  EXECUTED_AS: [RUN-CICD-001-LOCAL-001, RUN-TEST-001-DEV-001]  # local/shared-host runs; final release-gate acceptance pending (WP-TEST-008)
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
@@ -7291,6 +7301,20 @@ validated against the WP-PLAT-002 schema by TEST-PLAT-001-001). CI: the
 "Platform composition definition tests" step of t1-unit and the REAL platform
 steps of t1-integration. TEST-DEP-PLATFORM and INSP-DEP-HOST on the Integration
 host, the full Integration profile and BENCH-E2E-001 remain open.
+EvidenceState is EVIDENCE_PENDING.
+
+### 19.6 WP-TEST-001 concrete implementation and verification assets
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-TEST-001-001 (`ci/tests/test_test_strategy.py`; `ci/scripts/check_test_strategy.py` over the repository, boundary mode REAL) | TEST-DX-FLAKE | NFR-DX-006 (every test suite declared with tier, boundary mode and CI step; untracked test files, wrong-job steps, disallowed boundary modes, unknown families, malformed or duplicate TestIDs rejected) |
+
+Strategy instance: `ci/test-strategy.json` (`cap.test-strategy/v1`, validated
+against `ci/test-strategy.schema.json` by the contract tier); policy text:
+`ci/TEST_STRATEGY.md`. TestIDs follow `TEST-<AREA>-<NNN>-<SSS>`, where
+`<AREA>-<NNN>` names the producing work package; TEST-CICD-001…003 are kept as
+legacy identifiers. CI: the "Test strategy conformance (WP-TEST-001)" step of
+t1-unit. The release-gate zero count is measured by WP-TEST-008.
 EvidenceState is EVIDENCE_PENDING.
 
 ## 20. Rejected Alternatives

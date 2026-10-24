@@ -91,6 +91,8 @@ jobs:
         run: uv run --project ci --locked python ci/scripts/check_flake_policy.py
       - name: CI tooling tests
         run: uv run --project ci --locked python -m pytest ci/tests -p pytest_quarantine
+      - name: Test strategy conformance (WP-TEST-001)
+        run: uv run --project ci --locked python ci/scripts/check_test_strategy.py
       - name: Consumer framework pure checks (WP-EVT-003)
         run: uv run --project ci --locked python -m pytest -c packages/event-consumer/pyproject.toml packages/event-consumer/tests -m 'not integration' -q -p pytest_quarantine
       - name: projectctl tests (quarantine-aware)

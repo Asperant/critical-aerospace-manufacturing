@@ -6312,7 +6312,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-PLAT-REPO |
 | Size band (indicative, no hour estimates) | M (≈4–7 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `ci/test-strategy.json`; `ci/TEST_STRATEGY.md`; `ci/scripts/check_test_strategy.py`; `evidence/WP-TEST-001/` |
 
 **Purpose.** Define what is tested where (unit, component, contract, integration, scenario, benchmark) and which boundaries must be real.
 

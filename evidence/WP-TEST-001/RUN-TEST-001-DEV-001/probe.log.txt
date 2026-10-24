@@ -1,0 +1,2 @@
+VIOLATION wp_test_001_probe/test_untracked_probe.py: test file belongs to no declared suite
+FAIL: test strategy covers 81 test files in 17 suites; 1 violation(s)

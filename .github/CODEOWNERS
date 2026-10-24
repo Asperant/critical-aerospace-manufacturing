@@ -38,3 +38,10 @@
 /infra/mfgctl/ @Yavuzgmus
 /evidence/WP-PLAT-001/ @Yavuzgmus @Asperant
 /evidence/WP-SEC-003/ @Asperant @Yavuzgmus
+
+# WP-TEST-001: test strategy, tiers and boundary-mode policy; canonical owner Yavuz (advisory, CHG-018).
+/ci/TEST_STRATEGY.md @Yavuzgmus
+/ci/test-strategy.json @Yavuzgmus
+/ci/test-strategy.schema.json @Yavuzgmus
+/ci/scripts/check_test_strategy.py @Yavuzgmus
+/evidence/WP-TEST-001/ @Yavuzgmus @Asperant
