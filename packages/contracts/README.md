@@ -81,3 +81,35 @@ results must never be accepted as compatible. Semantic changes absent from decla
 metadata cannot be inferred. Optional-addition policy is not proof that strict old
 consumers accept new payloads: consumer tests remain required. CI integration and
 version-policy enforcement are later slices.
+
+## Local schema references
+
+`load_schema(ref, repo_root, schema_refs=(...))`,
+`BoundaryValidator(declaration, repo_root, schema_refs=(...))` and
+`Registry.verify(repo_root, schema_refs=(...))` accept an explicit tuple of `FileRef`
+approvals for referenced files. Each approval pins a repository-relative file path
+and SHA-256; root schemas keep their existing declaration pins. No registry declaration
+fields or producer-owned schemas change. Example: a schema at
+`packages/contracts/schemas/order.json` may use `$ref: "common.json#/$defs/Id"`
+when `packages/contracts/schemas/common.json` has an approved `FileRef`.
+
+References are resolved offline relative to the physical document's package path,
+not retrieved from a root `$id` (which remains an identifier). Internal `#` JSON
+Pointers are also supported for producer-owned schemas outside the package, including
+the Core exemplar. Every loaded document is hash-verified and schema-checked before
+expansion. Expansion validates even unused definitions, produces a fresh document
+and checks its validity before any boundary payload is accepted. Ref siblings keep
+their evaluation scope, including `unevaluatedProperties`.
+
+File references require canonical relative paths: no absolute paths, schemes,
+remote URLs, `.`/`..`, percent encodings, backslashes or query strings. File targets
+and package-root schema paths must remain physically within `packages/contracts`
+after symlink resolution. Missing files/pointers, duplicate approvals, drift, cycles,
+anchors, dynamic references, nested `$id` rebasing and alternate dialects fail closed.
+Expansion is limited to 10,000 schema-node visits and Python recursion depth; exceeding
+either limit fails closed. JSON Pointer dictionary keys and canonical array indices
+are supported. Payload constants/examples are not traversed as schemas.
+
+The pure compatibility detector's bounded subset is unchanged: raw references and
+expanded constructs such as `$defs`/`allOf` can still be unverifiable. Reference
+resolution does not certify consumer compatibility or full WP acceptance.

@@ -19,6 +19,7 @@ from typing import Any
 from jsonschema import Draft202012Validator
 
 from .errors import ContractError
+from .references import resolve_references
 from .versioning import ContractVersion, is_later_major, parse_contract_id
 
 CONTRACT_TYPES = frozenset(
@@ -229,7 +230,7 @@ class ContractDeclaration:
         )
 
 
-def load_schema(ref: FileRef, repo_root: Path) -> dict[str, Any]:
+def _read_schema(ref: FileRef, repo_root: Path) -> dict[str, Any]:
     """Load a hash-verified JSON Schema (2020-12) and check that it is itself valid."""
     raw = ref.read(repo_root)
     try:
@@ -245,6 +246,46 @@ def load_schema(ref: FileRef, repo_root: Path) -> dict[str, Any]:
             "SCHEMA_INVALID", f"{ref.path} is not a valid 2020-12 schema"
         ) from None
     return schema
+
+
+def load_schema(
+    ref: FileRef, repo_root: Path, *, schema_refs: tuple[FileRef, ...] = ()
+) -> dict[str, Any]:
+    """Load and expand a hash-verified schema using explicitly pinned package files."""
+    approved = {item.path: item for item in schema_refs}
+    if len(approved) != len(schema_refs):
+        raise ContractError("SCHEMA_REF_AMBIGUOUS", "duplicate approved schema path")
+    package_root = repo_root.resolve() / "packages" / "contracts"
+    if (
+        ref.path.startswith("packages/contracts/")
+        and package_root not in (repo_root / ref.path).resolve().parents
+    ):
+        raise ContractError(
+            "SCHEMA_REF_FORBIDDEN", "root schema escapes contracts package"
+        )
+    schema = _read_schema(ref, repo_root)
+
+    def load_local(path: str) -> dict[str, Any]:
+        target = approved.get(path)
+        if target is None:
+            raise ContractError(
+                "SCHEMA_REF_UNAPPROVED", "schema needs an explicit hash pin"
+            )
+        resolved = (repo_root / path).resolve()
+        if package_root not in resolved.parents:
+            raise ContractError(
+                "SCHEMA_REF_FORBIDDEN", "schema escapes contracts package"
+            )
+        return _read_schema(target, repo_root)
+
+    expanded = resolve_references(schema, document_path=ref.path, load_local=load_local)
+    try:
+        Draft202012Validator.check_schema(expanded)
+    except Exception:
+        raise ContractError(
+            "SCHEMA_REF_INVALID", "expanded schema is invalid"
+        ) from None
+    return expanded
 
 
 class Registry:
@@ -299,12 +340,16 @@ class Registry:
         except KeyError:
             raise ContractError("CONTRACT_UNKNOWN", contract_id) from None
 
-    def verify(self, repo_root: Path) -> None:
+    def verify(self, repo_root: Path, *, schema_refs: tuple[FileRef, ...] = ()) -> None:
         """Every referenced file exists, matches its hash, and every fixture validates."""
         for declaration in self._declarations.values():
             if declaration.input_schema is not None:
-                load_schema(declaration.input_schema, repo_root)
-            schema = load_schema(declaration.output_schema, repo_root)
+                load_schema(
+                    declaration.input_schema, repo_root, schema_refs=schema_refs
+                )
+            schema = load_schema(
+                declaration.output_schema, repo_root, schema_refs=schema_refs
+            )
             validator = Draft202012Validator(schema)
             for fixture in declaration.fixtures:
                 raw = fixture.read(repo_root)

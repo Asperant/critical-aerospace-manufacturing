@@ -11,7 +11,7 @@ from typing import Any, Literal
 from jsonschema import Draft202012Validator
 
 from .errors import ContractError
-from .registry import ContractDeclaration, load_schema
+from .registry import ContractDeclaration, FileRef, load_schema
 
 BoundaryRole = Literal["producer", "consumer"]
 _ROLES = ("producer", "consumer")
@@ -56,13 +56,23 @@ def _check(
 class BoundaryValidator:
     """Validators for one registered contract, built from hash-verified schema files."""
 
-    def __init__(self, declaration: ContractDeclaration, repo_root: Path) -> None:
+    def __init__(
+        self,
+        declaration: ContractDeclaration,
+        repo_root: Path,
+        *,
+        schema_refs: tuple[FileRef, ...] = (),
+    ) -> None:
         self.contract_id = declaration.contract_id
-        schema: dict[str, Any] = load_schema(declaration.output_schema, repo_root)
+        schema: dict[str, Any] = load_schema(
+            declaration.output_schema, repo_root, schema_refs=schema_refs
+        )
         self._payload = Draft202012Validator(schema)
         self._request: Draft202012Validator | None = None
         if declaration.input_schema is not None:
-            request = load_schema(declaration.input_schema, repo_root)
+            request = load_schema(
+                declaration.input_schema, repo_root, schema_refs=schema_refs
+            )
             self._request = Draft202012Validator(request)
 
     def validate(self, instance: object, *, role: str) -> None:
