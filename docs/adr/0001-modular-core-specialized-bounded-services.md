@@ -8,7 +8,7 @@
 - **Reviewers**: Yavuz Gümüş
 - **DecisionLevel**: ADR-L3
 - **AffectedCapabilities**: Application architecture style; the nine mandatory logical deployables and their authority boundaries
-- **AffectedRequirements**: None linked yet (no DECIDED_BY edge uses the placeholder `backfill-01`; GAP-RTM-023)
+- **AffectedRequirements**: None linked yet (no DECIDED_BY edge targets this ADR)
 - **AffectedRisks**: None linked yet
 - **AffectedDebt**: None
 - **Supersedes**: None

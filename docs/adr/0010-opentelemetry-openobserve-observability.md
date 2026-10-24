@@ -8,7 +8,7 @@
 - **Reviewers**: Yavuz Gümüş
 - **DecisionLevel**: ADR-L2
 - **AffectedCapabilities**: Telemetry instrumentation and backend (ARCH-OBS-TELEMETRY, ARCH-OBS-STORE)
-- **AffectedRequirements**: None linked yet (no DECIDED_BY edge uses the placeholder `backfill-10`)
+- **AffectedRequirements**: None linked yet (no DECIDED_BY edge targets this ADR)
 - **AffectedRisks**: None linked yet
 - **AffectedDebt**: None
 - **Supersedes**: None

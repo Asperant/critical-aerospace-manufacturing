@@ -8,7 +8,7 @@
 - **Reviewers**: Yavuz Gümüş
 - **DecisionLevel**: ADR-L3
 - **AffectedCapabilities**: Canonical relational store (ARCH-DATA-PG, ARCH-CORE-DB); logical schema ownership; schema migration
-- **AffectedRequirements**: None linked yet (no DECIDED_BY edge uses the placeholder `backfill-02`; GAP-RTM-023)
+- **AffectedRequirements**: None linked yet (no DECIDED_BY edge targets this ADR)
 - **AffectedRisks**: None linked yet
 - **AffectedDebt**: None
 - **Supersedes**: None

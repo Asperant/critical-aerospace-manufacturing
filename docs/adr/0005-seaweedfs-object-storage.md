@@ -8,7 +8,7 @@
 - **Reviewers**: Yavuz Gümüş
 - **DecisionLevel**: ADR-L2
 - **AffectedCapabilities**: S3-compatible object storage (ARCH-DATA-OBJ); artifact storage and lifecycle
-- **AffectedRequirements**: None linked yet (no DECIDED_BY edge uses the placeholder `backfill-05`; GAP-RTM-023)
+- **AffectedRequirements**: None linked yet (no DECIDED_BY edge targets this ADR)
 - **AffectedRisks**: None linked yet
 - **AffectedDebt**: None
 - **Supersedes**: None

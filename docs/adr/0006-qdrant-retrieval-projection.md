@@ -8,7 +8,7 @@
 - **Reviewers**: Yavuz Gümüş
 - **DecisionLevel**: ADR-L2
 - **AffectedCapabilities**: Retrieval projection for RAG (ARCH-DATA-VECTOR); dense, sparse and hybrid retrieval profiles
-- **AffectedRequirements**: None linked yet (no DECIDED_BY edge uses the placeholder `backfill-06`)
+- **AffectedRequirements**: None linked yet (no DECIDED_BY edge targets this ADR)
 - **AffectedRisks**: None linked yet
 - **AffectedDebt**: None
 - **Supersedes**: None

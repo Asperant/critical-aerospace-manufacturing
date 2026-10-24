@@ -1,0 +1,39 @@
+CHG-029:
+  title: DOC-ADR-BACKFILL
+  trigger: WP-DOC-002 ADR backfill and decision index (FR-GOV-004)
+  reason: The 13 backfill ADRs of the 02 backfill list had no minted ADR-NNNN identities; the 03 DECIDED_BY edges used ADR:backfill-NN placeholders (GAP-RTM-023).
+  class: C0
+  review_risk_class: CR-0
+  owner: Asrın
+  decision: APPROVED
+  status: APPROVED
+  application_control_item: WP-DOC-002
+  required_human_approvals: 0
+  human_decision_basis: Explicit project-owner instruction to complete WP-DOC-002 including trace linkage, 24 October 2026; CHG-018 development policy applies
+  affected_requirements:
+  - FR-GOV-004
+  - FR-CORE-012
+  - FR-SIM-001
+  - FR-SCH-009
+  - FR-AUTO-002
+  - FR-PLAT-001
+  affected_architecture: []
+  affected_contracts: []
+  affected_work_packages:
+  - WP-DOC-002
+  affected_dependencies: []
+  affected_evidence:
+  - Documentation and trace identity only; no product evidence is claimed and no ADR is VALIDATED
+  scope: Mint ADR-0001 through ADR-0013 in docs/adr/ exactly as the 02 backfill list order, and repoint the five existing DECIDED_BY edges in 03 from ADR:backfill-NN to the minted IDs
+  rules:
+  - The mapping is positional and fixed; backfill-NN becomes ADR-00NN
+  - Each ADR documents an already-made decision from 02; no architecture decision, requirement, owner, technology or authority boundary changes
+  - No DECIDED_BY edge is created for any requirement that has none; DECIDED_BY never satisfies VERIFIED_BY (RTM-INV-17)
+  - 03 GAP-RTM-023 is resolved; the stale placeholder statements in 04 and 06A for WP-DOC-002 are updated
+  security_authority_impact: NONE — no authority, Oracle access, credentials or protected execution changed
+  documentation_updates:
+  - docs/03_Requirements_Traceability_Matrix.md
+  - docs/04_Work_Breakdown_Structure.md
+  - docs/06A_Asrin_Engineering_Roadmap.md
+  rollout: Merged source only; the pinned canonical policy is refreshed through the supported builder and installer because docs/03 and docs/04 are pinned sources
+  rollback: Revert the atomic WP-DOC-002 commits; do not rewrite history

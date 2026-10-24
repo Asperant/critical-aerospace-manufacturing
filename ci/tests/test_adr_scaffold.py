@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 
 ADR_DIR = Path(__file__).resolve().parents[2] / "docs" / "adr"
+RTM = ADR_DIR.parent / "03_Requirements_Traceability_Matrix.md"
 README = ADR_DIR / "README.md"
 TEMPLATE = ADR_DIR / "TEMPLATE.md"
 PILOT = ADR_DIR / "0003-nats-jetstream-event-backbone.md"
@@ -145,3 +146,39 @@ def test_local_links_resolve(path: Path) -> None:
     targets = [t for t in LINK.findall(text) if not re.match(r"[a-z]+:|#", t)]
     for target in targets:
         assert (path.parent / target.split("#")[0]).resolve().exists(), target
+
+
+DECIDED_BY_EDGES = {
+    "FR-CORE-012": "ADR-0012",
+    "FR-SIM-001": "ADR-0007",
+    "FR-SCH-009": "ADR-0008",
+    "FR-AUTO-002": "ADR-0004",
+    "FR-PLAT-001": "ADR-0011",
+}
+
+
+def test_rtm_has_no_backfill_placeholders_left() -> None:
+    text = RTM.read_text(encoding="utf-8")
+    assert not re.search(r"ADR:backfill-\d", text)
+    assert not re.search(r'DECIDED_BY: \["backfill-', text)
+
+
+@pytest.mark.parametrize(("requirement", "adr_id"), sorted(DECIDED_BY_EDGES.items()))
+def test_rtm_decided_by_edge_points_at_the_minted_adr(
+    requirement: str, adr_id: str
+) -> None:
+    text = RTM.read_text(encoding="utf-8")
+    block = re.search(rf"^{requirement}:\n((?:  .*\n)+)", text, re.MULTILINE)
+    assert block, f"{requirement} trace block not found"
+    assert f'DECIDED_BY: ["{adr_id}"]' in block.group(1)
+    rows = [ln for ln in text.splitlines() if ln.startswith(f"| {requirement} |")]
+    assert any(adr_id in ln for ln in rows)
+    mapped = {row[0]: row for row in backfill_rows()}[adr_id]
+    assert mapped[4] == "ACCEPTED"
+
+
+def test_every_decided_by_target_in_the_rtm_is_minted() -> None:
+    text = RTM.read_text(encoding="utf-8")
+    targets = set(re.findall(r'DECIDED_BY: \["(ADR-\d{4})"\]', text))
+    assert targets == set(DECIDED_BY_EDGES.values())
+    assert targets <= {row[0] for row in backfill_rows()}

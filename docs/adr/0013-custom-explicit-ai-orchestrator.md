@@ -8,7 +8,7 @@
 - **Reviewers**: None named in the specification
 - **DecisionLevel**: ADR-L3
 - **AffectedCapabilities**: AI orchestrator (ARCH-AI-ORCH); structured RCA reasoning
-- **AffectedRequirements**: None linked yet (no DECIDED_BY edge uses the placeholder `backfill-13`)
+- **AffectedRequirements**: None linked yet (no DECIDED_BY edge targets this ADR)
 - **AffectedRisks**: None linked yet
 - **AffectedDebt**: None
 - **Supersedes**: None

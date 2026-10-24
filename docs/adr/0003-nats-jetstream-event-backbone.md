@@ -8,7 +8,7 @@
 - **Reviewers**: Yavuz Gümüş
 - **DecisionLevel**: ADR-L3
 - **AffectedCapabilities**: Durable event backbone (ARCH-EVT-BROKER); transactional outbox relay; durable consumers; replay
-- **AffectedRequirements**: None linked yet (DECIDED_BY edges still use the placeholder `backfill-03`; GAP-RTM-023)
+- **AffectedRequirements**: None linked yet (no DECIDED_BY edge targets this ADR)
 - **AffectedRisks**: None linked yet
 - **AffectedDebt**: None
 - **Supersedes**: None

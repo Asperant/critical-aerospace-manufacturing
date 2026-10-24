@@ -8,7 +8,7 @@
 - **Reviewers**: Yavuz Gümüş
 - **DecisionLevel**: ADR-L3
 - **AffectedCapabilities**: Identity provider (ARCH-SEC-IDP); authentication for operators, HITL approvals and service identity
-- **AffectedRequirements**: None linked yet (no DECIDED_BY edge uses the placeholder `backfill-09`)
+- **AffectedRequirements**: None linked yet (no DECIDED_BY edge targets this ADR)
 - **AffectedRisks**: None linked yet
 - **AffectedDebt**: None
 - **Supersedes**: None
