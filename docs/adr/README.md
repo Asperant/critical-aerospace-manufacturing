@@ -127,11 +127,11 @@ record row marked `Reserved` has its ID minted but its record not yet written.
 
 | ADR ID | Trace placeholder | Decision | Specification source | Status | Record |
 |---|---|---|---|---|---|
-| ADR-0001 | backfill-01 | Modular Core + Specialized Bounded Services | Architecture Style | Reserved | pending |
-| ADR-0002 | backfill-02 | PostgreSQL as the canonical operational store | Technology Baseline | Reserved | pending |
+| ADR-0001 | backfill-01 | Modular Core + Specialized Bounded Services | Architecture Style | ACCEPTED | [0001-modular-core-specialized-bounded-services.md](0001-modular-core-specialized-bounded-services.md) |
+| ADR-0002 | backfill-02 | PostgreSQL as the canonical operational store | Technology Baseline | ACCEPTED | [0002-postgresql-canonical-operational-store.md](0002-postgresql-canonical-operational-store.md) |
 | ADR-0003 | backfill-03 | NATS with JetStream as the event backbone | Technology Baseline | ACCEPTED | [0003-nats-jetstream-event-backbone.md](0003-nats-jetstream-event-backbone.md) |
-| ADR-0004 | backfill-04 | Temporal as the durable workflow engine | Automation Architecture | Reserved | pending |
-| ADR-0005 | backfill-05 | SeaweedFS as object storage | Data Store, Event Backbone, Object Storage, and Local Development Bindings | Reserved | pending |
+| ADR-0004 | backfill-04 | Temporal as the durable workflow engine | Automation Architecture | ACCEPTED | [0004-temporal-durable-workflow-engine.md](0004-temporal-durable-workflow-engine.md) |
+| ADR-0005 | backfill-05 | SeaweedFS as object storage | Data Store, Event Backbone, Object Storage, and Local Development Bindings | ACCEPTED | [0005-seaweedfs-object-storage.md](0005-seaweedfs-object-storage.md) |
 | ADR-0006 | backfill-06 | Qdrant as the retrieval/vector projection | RAG Architecture | Reserved | pending |
 | ADR-0007 | backfill-07 | A custom Python discrete-event simulator, not a generic DES framework | Manufacturing Simulator Architecture | Reserved | pending |
 | ADR-0008 | backfill-08 | OR-Tools CP-SAT as the planning engine | Scheduler Architecture | Reserved | pending |
