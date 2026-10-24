@@ -200,7 +200,7 @@
       }
     }
   ],
-  "input_digest": "7f9e5f9a0f005aba4cdf1e76b4c1d654d65fccc4edf193dcb2f66a059431aefb",
+  "input_digest": "eb9f279a3d10d80a72237f1c74e7acded67d276442a54a3ee3f521c1f096c35a",
   "outcome": "Enforce authorization in the backend for every protected command \u2014 UI visibility is never authorization.",
   "planned_acceptance": [
     "policy enforcement points in Core and Automation",
@@ -221,7 +221,7 @@
     }
   ],
   "schema_version": "cap-preparation-v1",
-  "source_sha": "1b6c5c80da1232c3242355214428f52160f68a9c",
+  "source_sha": "37ee89e7474fc5bbd8838644bcac9d915b1fcadb",
   "start_slice": "define enforcement points per protected action",
   "supporting_reviewers": [
     {
