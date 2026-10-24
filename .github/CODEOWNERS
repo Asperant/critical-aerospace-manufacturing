@@ -32,3 +32,8 @@
 /packages/event-consumer/ @Asperant @Ejlonn
 /evidence/WP-CORE-004/ @Asperant
 /evidence/WP-DOC-002/ @Asperant @Yavuzgmus
+
+# WP-PLAT-001: Compose profiles and runtime composition; canonical owner Yavuz (advisory, CHG-018).
+/infra/compose/ @Yavuzgmus
+/infra/mfgctl/ @Yavuzgmus
+/evidence/WP-PLAT-001/ @Yavuzgmus @Asperant

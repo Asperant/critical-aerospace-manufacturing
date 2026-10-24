@@ -106,6 +106,8 @@ jobs:
           uv run --project ci --locked python -m pytest packages/observability/tests infra/observability/tests -m 'not integration' -q -p pytest_quarantine
           uv run --project ci --locked pyright --project packages/observability/pyrightconfig.json
           uv run --project ci --locked python -m cap_observability check-coverage infra/observability/coverage.json
+      - name: Platform composition definition tests (WP-PLAT-001)
+        run: uv run --project ci --locked python -m pytest infra/compose/tests -m 'not integration' -q -p pytest_quarantine
       - name: Host Plane queue tests (offline)
         run: uv run --project ci --locked python -m unittest discover -s tools/host/plane-queue -p 'test_*.py'
       - name: Host Plane transition tests (offline)
@@ -177,6 +179,12 @@ jobs:
           infra/observability/stack.sh dashboards
       - name: Telemetry pipeline smoke (boundary mode REAL)
         run: uv run --project ci --locked python -m pytest infra/observability/tests -m integration -q -p pytest_quarantine
+      - name: Start REAL platform infra profile (WP-PLAT-001)
+        run: |
+          infra/compose/stack.sh up infra
+          infra/compose/stack.sh env >> "$GITHUB_ENV"
+      - name: Platform runtime tests (boundary mode REAL)
+        run: uv run --project ci --locked python -m pytest infra/compose/tests -m integration -q -p pytest_quarantine
       - name: Set up Node (version pinned in .node-version)
         uses: actions/setup-node@v4
         with:
@@ -198,11 +206,13 @@ jobs:
           docker logs cap-ci-postgres || true
           docker logs cap-ci-nats || true
           infra/observability/stack.sh logs || true
+          infra/compose/stack.sh logs || true
       - name: Stop services
         if: always()
         run: |
           ci/scripts/integration_services.sh down
           infra/observability/stack.sh down || true
+          infra/compose/stack.sh down || true
 
   gate:
     name: ci-gate
