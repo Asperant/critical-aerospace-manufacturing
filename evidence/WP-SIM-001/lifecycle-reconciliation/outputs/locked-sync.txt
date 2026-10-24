@@ -1,0 +1,4 @@
+$ <scratch>/uvtool/bin/uv sync --project ci --locked
+[exit 0]
+Resolved 65 packages in 1ms
+Checked 62 packages in 0.57ms

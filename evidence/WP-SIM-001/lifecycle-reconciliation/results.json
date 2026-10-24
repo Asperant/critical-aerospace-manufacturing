@@ -1,0 +1,241 @@
+{
+  "gate": [
+    {
+      "id": "locked-sync",
+      "command": "<scratch>/uvtool/bin/uv sync --project ci --locked",
+      "started_utc": "2026-10-24T20:34:10+00:00",
+      "finished_utc": "2026-10-24T20:34:10+00:00",
+      "exit_code": 0,
+      "result": "Checked 62 packages in 0.57ms",
+      "output_lines": 2,
+      "log": "outputs/locked-sync.txt"
+    },
+    {
+      "id": "transition-tests",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m unittest discover -s tools/host/plane-transition -p 'test_*.py'",
+      "started_utc": "2026-10-24T20:34:10+00:00",
+      "finished_utc": "2026-10-24T20:34:10+00:00",
+      "exit_code": 0,
+      "result": "OK",
+      "output_lines": 5,
+      "log": "outputs/transition-tests.txt"
+    },
+    {
+      "id": "queue-tests",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m unittest discover -s tools/host/plane-queue -p 'test_*.py'",
+      "started_utc": "2026-10-24T20:34:10+00:00",
+      "finished_utc": "2026-10-24T20:34:12+00:00",
+      "exit_code": 0,
+      "result": "OK",
+      "output_lines": 5,
+      "log": "outputs/queue-tests.txt"
+    },
+    {
+      "id": "flake-policy",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/check_flake_policy.py",
+      "started_utc": "2026-10-24T20:34:12+00:00",
+      "finished_utc": "2026-10-24T20:34:12+00:00",
+      "exit_code": 0,
+      "result": "PASS: 0 active quarantine(s); no retry-until-green.",
+      "output_lines": 1,
+      "log": "outputs/flake-policy.txt"
+    },
+    {
+      "id": "ci-tests",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m pytest ci/tests -p pytest_quarantine",
+      "started_utc": "2026-10-24T20:34:12+00:00",
+      "finished_utc": "2026-10-24T20:34:12+00:00",
+      "exit_code": 0,
+      "result": "============================== 96 passed in 0.41s ==============================",
+      "output_lines": 17,
+      "log": "outputs/ci-tests.txt"
+    },
+    {
+      "id": "projectctl-tests",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m pytest tools/projectctl/tests -q -p pytest_quarantine",
+      "started_utc": "2026-10-24T20:34:12+00:00",
+      "finished_utc": "2026-10-24T20:38:27+00:00",
+      "exit_code": 0,
+      "result": "398 passed in 253.96s (0:04:13)",
+      "output_lines": 9,
+      "log": "outputs/projectctl-tests.txt"
+    },
+    {
+      "id": "contracts",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/check_contracts.py",
+      "started_utc": "2026-10-24T20:38:27+00:00",
+      "finished_utc": "2026-10-24T20:38:27+00:00",
+      "exit_code": 0,
+      "result": "PASS",
+      "output_lines": 16,
+      "log": "outputs/contracts.txt"
+    },
+    {
+      "id": "catalog-lint",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked projectctl catalog-lint",
+      "started_utc": "2026-10-24T20:38:27+00:00",
+      "finished_utc": "2026-10-24T20:38:28+00:00",
+      "exit_code": 0,
+      "result": "Requirement catalog: PASS (306 records)",
+      "output_lines": 5,
+      "log": "outputs/catalog-lint.txt"
+    },
+    {
+      "id": "new-files-ruff-check",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked ruff check tools/host/plane-transition/reconcile.py tools/host/plane-transition/test_reconcile.py tools/host/plane-transition/test_reconcile_main.py tools/host/plane-transition/test_reconcile_adapter.py tools/host/plane-transition/test_pr_files.py tools/host/plane-transition/test_install_reconcile.py",
+      "started_utc": "2026-10-24T20:38:28+00:00",
+      "finished_utc": "2026-10-24T20:38:28+00:00",
+      "exit_code": 0,
+      "result": "All checks passed!",
+      "output_lines": 1,
+      "log": "outputs/new-files-ruff-check.txt"
+    },
+    {
+      "id": "new-files-ruff-format",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked ruff format --check tools/host/plane-transition/reconcile.py tools/host/plane-transition/test_reconcile.py tools/host/plane-transition/test_reconcile_main.py tools/host/plane-transition/test_reconcile_adapter.py tools/host/plane-transition/test_pr_files.py tools/host/plane-transition/test_install_reconcile.py",
+      "started_utc": "2026-10-24T20:38:28+00:00",
+      "finished_utc": "2026-10-24T20:38:28+00:00",
+      "exit_code": 0,
+      "result": "6 files already formatted",
+      "output_lines": 1,
+      "log": "outputs/new-files-ruff-format.txt"
+    },
+    {
+      "id": "new-files-pyright",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked pyright tools/host/plane-transition/reconcile.py tools/host/plane-transition/test_reconcile.py tools/host/plane-transition/test_reconcile_main.py tools/host/plane-transition/test_reconcile_adapter.py tools/host/plane-transition/test_pr_files.py tools/host/plane-transition/test_install_reconcile.py",
+      "started_utc": "2026-10-24T20:38:28+00:00",
+      "finished_utc": "2026-10-24T20:38:29+00:00",
+      "exit_code": 0,
+      "result": "0 errors, 0 warnings, 0 informations",
+      "output_lines": 4,
+      "log": "outputs/new-files-pyright.txt"
+    },
+    {
+      "id": "policy-builder-dry-run",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked python <scratch>/build_policy_dryrun.py",
+      "started_utc": "2026-10-24T20:38:29+00:00",
+      "finished_utc": "2026-10-24T20:38:39+00:00",
+      "exit_code": 0,
+      "result": "Canonical transition policy generated (no execution data, no secrets).",
+      "output_lines": 1,
+      "log": "outputs/policy-builder-dry-run.txt"
+    },
+    {
+      "id": "offline-policy-check",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked python <scratch>/lifecycle_offline_check.py <scratch>/generated-policy.json",
+      "started_utc": "2026-10-24T20:38:39+00:00",
+      "finished_utc": "2026-10-24T20:38:39+00:00",
+      "exit_code": 0,
+      "result": "}",
+      "output_lines": 44
+    },
+    {
+      "id": "mutation-check",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked python <scratch>/mutate_reconcile.py <scratch>",
+      "started_utc": "2026-10-24T20:38:39+00:00",
+      "finished_utc": "2026-10-24T20:38:57+00:00",
+      "exit_code": 0,
+      "result": "BASELINE (unmutated copy): ['Ran 226 tests in 0.319s', 'OK']",
+      "output_lines": 37,
+      "log": "mutation-check.txt"
+    },
+    {
+      "id": "projectctl-validate",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked projectctl validate",
+      "started_utc": "2026-10-24T20:38:57+00:00",
+      "finished_utc": "2026-10-24T20:39:00+00:00",
+      "exit_code": 0,
+      "result": "validation: PASS",
+      "output_lines": 1286
+    },
+    {
+      "id": "catalog-lint-base",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked projectctl catalog-lint --base 5269525ffba3dc73e2d7034dc8f546b6dba98295",
+      "started_utc": "2026-10-24T20:39:00+00:00",
+      "finished_utc": "2026-10-24T20:39:00+00:00",
+      "exit_code": 0,
+      "result": "Requirement catalog: PASS (306 records)",
+      "output_lines": 5,
+      "log": "outputs/catalog-lint-base.txt"
+    },
+    {
+      "id": "static-ratchet",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/static_ratchet.py check",
+      "started_utc": "2026-10-24T20:39:00+00:00",
+      "finished_utc": "2026-10-24T20:39:06+00:00",
+      "exit_code": 0,
+      "result": "PASS: no new static findings; baseline is tight.",
+      "output_lines": 2,
+      "log": "outputs/static-ratchet.txt"
+    },
+    {
+      "id": "test-strategy",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/check_test_strategy.py",
+      "started_utc": "2026-10-24T20:39:06+00:00",
+      "finished_utc": "2026-10-24T20:39:06+00:00",
+      "exit_code": 0,
+      "result": "PASS: test strategy covers 86 test files in 17 suites; 0 violation(s)",
+      "output_lines": 1,
+      "log": "outputs/test-strategy.txt"
+    },
+    {
+      "id": "git-diff-check",
+      "command": "git diff --check 5269525ffba3dc73e2d7034dc8f546b6dba98295",
+      "started_utc": "2026-10-24T20:39:06+00:00",
+      "finished_utc": "2026-10-24T20:39:06+00:00",
+      "exit_code": 0,
+      "result": "",
+      "output_lines": 0
+    }
+  ],
+  "post_evidence": [
+    {
+      "id": "projectctl-validate",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked projectctl validate",
+      "started_utc": "2026-10-24T20:42:43+00:00",
+      "finished_utc": "2026-10-24T20:42:46+00:00",
+      "exit_code": 0,
+      "result": "validation: PASS",
+      "output_lines": 1286
+    },
+    {
+      "id": "catalog-lint-base",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked projectctl catalog-lint --base 5269525ffba3dc73e2d7034dc8f546b6dba98295",
+      "started_utc": "2026-10-24T20:42:46+00:00",
+      "finished_utc": "2026-10-24T20:42:46+00:00",
+      "exit_code": 0,
+      "result": "Requirement catalog: PASS (306 records)",
+      "output_lines": 5,
+      "log": "outputs/catalog-lint-base.txt"
+    },
+    {
+      "id": "static-ratchet",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/static_ratchet.py check",
+      "started_utc": "2026-10-24T20:42:46+00:00",
+      "finished_utc": "2026-10-24T20:42:52+00:00",
+      "exit_code": 0,
+      "result": "PASS: no new static findings; baseline is tight.",
+      "output_lines": 2,
+      "log": "outputs/static-ratchet.txt"
+    },
+    {
+      "id": "test-strategy",
+      "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/check_test_strategy.py",
+      "started_utc": "2026-10-24T20:42:52+00:00",
+      "finished_utc": "2026-10-24T20:42:52+00:00",
+      "exit_code": 0,
+      "result": "PASS: test strategy covers 86 test files in 17 suites; 0 violation(s)",
+      "output_lines": 1,
+      "log": "outputs/test-strategy.txt"
+    },
+    {
+      "id": "git-diff-check",
+      "command": "git diff --check 5269525ffba3dc73e2d7034dc8f546b6dba98295",
+      "started_utc": "2026-10-24T20:42:52+00:00",
+      "finished_utc": "2026-10-24T20:42:52+00:00",
+      "exit_code": 0,
+      "result": "",
+      "output_lines": 0
+    }
+  ]
+}

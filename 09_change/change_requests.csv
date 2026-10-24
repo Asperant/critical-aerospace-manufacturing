@@ -20,3 +20,4 @@ CHG-018,Advisory development review,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-0
 CHG-019,Canonical execution preferences and guarded AUTO_NEXT,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-004
 CHG-020,Derived proactive preparation and read-only stall detection,C2,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-005
 CHG-021,Bounded canonical preparation and autonomous prepared buffer replenishment,C2,CR-4,Asrın,APPROVED,APPROVED,CTRL-HOST-006
+CHG-031,Audited lifecycle reconciliation of already merged work,C3,CR-3,Batuhan,DRAFT,UNDER_REVIEW,WP-SIM-001

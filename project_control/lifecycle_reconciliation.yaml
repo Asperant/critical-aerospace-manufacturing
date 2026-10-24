@@ -1,0 +1,35 @@
+# Allow-list for cap-plane-reconcile (tools/host/plane-transition/reconcile.py).
+# Each case authorizes ONE profile, WP, pull request, head, merge commit and parent set.
+# Values are expectations that the helper re-proves live against GitHub and Plane before
+# any write; they are not themselves evidence. Nothing here asserts DoR/DoD, integrated
+# acceptance or DONE, and it never replaces the ordinary cap-plane-transition rules.
+schema_version: cap-lifecycle-reconciliation-v1
+cases:
+- case_id: RECON-WP-SIM-001-PR52
+  profile: batuhan
+  wp_id: WP-SIM-001
+  pr: 52
+  pr_head_sha: 9bac44c7285846a5d8e2af0565433fd8f88b602e
+  merge_sha: 471a9b19dbd1319727443cee4f50215a371af716
+  parents:
+  - a2e9760c9ffe3c97d4a2d3af60335cfe552df680
+  - 9bac44c7285846a5d8e2af0565433fd8f88b602e
+  changed_files: 131
+  scope_prefixes:
+  - services/manufacturing-simulator/
+  - evidence/WP-SIM-001/
+  targets:
+  - MERGED
+  - VALIDATING
+  validating_runs:
+  - run_id: 40099331443
+    workflow_path: .github/workflows/ci.yml
+  - run_id: 40099331483
+    workflow_path: .github/workflows/projectctl.yml
+  require_successful_runs: true
+  approvals:
+    scope_answer: fcacd0c9-120d-43d1-b1c3-47745195b4d1
+    control_id_exception: 288a928f-67a1-4acd-8ca7-29350bbc2a12
+    plan_sha256: bb3747e3404469ab886ee9d48c37761cc5c050df4fd6bd2fa41f62bcc8042061
+    plan_approval_turn: 52958818-f252-43db-9d51-541cae2df24b
+  change_record: CHG-031

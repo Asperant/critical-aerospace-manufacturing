@@ -1,0 +1,7 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked python -m unittest discover -s tools/host/plane-queue -p 'test_*.py'
+[exit 0]
+.........................
+----------------------------------------------------------------------
+Ran 25 tests in 1.260s
+
+OK
