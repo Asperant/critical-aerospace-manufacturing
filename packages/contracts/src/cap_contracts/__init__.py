@@ -1,5 +1,6 @@
 """Integration Contract Registry foundation and compatibility comparison (WP-EVT-001)."""
 
+from .authority import ProducerAuthorities
 from .boundary import BoundaryRole, BoundaryValidator, ContractViolation
 from .compatibility import (
     CompatibilityResult,
@@ -32,6 +33,7 @@ __all__ = [
     "Deprecation",
     "FileRef",
     "Registry",
+    "ProducerAuthorities",
     "is_successor",
     "parse_contract_id",
 ]

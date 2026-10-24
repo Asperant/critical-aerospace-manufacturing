@@ -48,6 +48,12 @@ def contract(
         version=major,
         canonical_producer=producer,
     )
+    # Explicit synthetic ownership model for this isolated adapter fixture.
+    model: dict[str, Any] = json.loads(
+        (REPO / PACKAGE / "producer-authorities.json").read_text()
+    )
+    model["producers"][0]["source_roots"] = [PACKAGE]
+    write(root, PACKAGE + "producer-authorities.json", model)
     declaration.pop("input_schema", None)
     declaration["output_schema"] = write(
         root, PACKAGE + f"schemas/output.v{major}.json", schema
@@ -124,10 +130,10 @@ def test_breaking_next_major_is_allowed_without_removing_previous(
     assert report["compared"] == 1
 
 
-def test_authority_change_is_compared_not_just_schema(tmp_path: Path) -> None:
+def test_authority_change_is_rejected_before_schema_comparison(tmp_path: Path) -> None:
     contract(tmp_path / "old", shape())
     contract(tmp_path / "new", shape(), producer="vision")
-    assert "BREAKING_CHANGE_REQUIRES_MAJOR" in failures(
+    assert "PRODUCER_UNKNOWN" in failures(
         check_versions(tmp_path / "old", tmp_path / "new")
     )
 
@@ -366,6 +372,11 @@ def test_invalid_baseline_fails_closed(tmp_path: Path) -> None:
 
 def test_absent_candidate_registry_cannot_pass(tmp_path: Path) -> None:
     contract(tmp_path / "old", shape())
+    write(
+        tmp_path / "new",
+        PACKAGE + "producer-authorities.json",
+        json.loads((REPO / PACKAGE / "producer-authorities.json").read_text()),
+    )
     report = check_versions(tmp_path / "old", tmp_path / "new")
     assert report["failures"] == [{"stage": "candidate", "code": "REGISTRY_MISSING"}]
 

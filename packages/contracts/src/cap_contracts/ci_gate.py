@@ -9,6 +9,7 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
+from .authority import ProducerAuthorities
 from .compatibility import compare_contracts, enforce_version_policy
 from .errors import ContractError
 from .registry import ContractDeclaration, FileRef, Registry, load_schema
@@ -16,6 +17,7 @@ from .registry import ContractDeclaration, FileRef, Registry, load_schema
 _PACKAGE = "packages/contracts/"
 _REGISTRY = _PACKAGE + "registry/"
 _APPROVALS = _PACKAGE + "schema-refs.json"
+_AUTHORITIES = _PACKAGE + "producer-authorities.json"
 
 
 def _pins(root: Path) -> tuple[FileRef, ...]:
@@ -37,7 +39,7 @@ def _pins(root: Path) -> tuple[FileRef, ...]:
 
 
 def _documents(
-    root: Path, *, baseline: bool = False
+    root: Path, *, authorities: ProducerAuthorities, baseline: bool = False
 ) -> dict[str, tuple[ContractDeclaration, dict[str, Any], dict[str, Any] | None]]:
     directory = root / _REGISTRY
     if not directory.exists():
@@ -47,6 +49,7 @@ def _documents(
     registry = Registry.load(directory)
     if not registry.contract_ids() and not baseline:
         raise ContractError("REGISTRY_EMPTY")
+    registry.verify_authorities(authorities, repo_root=root)
     pins = _pins(root)
     for pin in pins:
         load_schema(pin, root, schema_refs=pins)
@@ -85,10 +88,24 @@ def check_versions(old_root: Path, new_root: Path) -> dict[str, Any]:
         "unchanged": 0,
         "failures": [],
     }
+    try:
+        candidate_authorities = ProducerAuthorities.load(new_root / _AUTHORITIES)
+    except ContractError as error:
+        report["failures"].append({"stage": "candidate", "code": error.code})
+        return report
     snapshots = []
     for stage, root in (("baseline", old_root), ("candidate", new_root)):
         try:
-            snapshots.append(_documents(root, baseline=stage == "baseline"))
+            # Pre-model history is checked against the explicit candidate model;
+            # no declaration is grandfathered out of authority validation.
+            authorities = (
+                ProducerAuthorities.load(root / _AUTHORITIES)
+                if (root / _AUTHORITIES).exists()
+                else candidate_authorities
+            )
+            snapshots.append(
+                _documents(root, authorities=authorities, baseline=stage == "baseline")
+            )
         except ContractError as error:
             report["failures"].append({"stage": stage, "code": error.code})
         except Exception:
@@ -188,7 +205,11 @@ def _snapshot(repo: Path, revision: str, destination: Path) -> None:
         target.write_bytes(_git(repo, "cat-file", "blob", digest))
 
     for path in sorted(entries):
-        if path.startswith(_REGISTRY) or path in {_REGISTRY.rstrip("/"), _APPROVALS}:
+        if path.startswith(_REGISTRY) or path in {
+            _REGISTRY.rstrip("/"),
+            _APPROVALS,
+            _AUTHORITIES,
+        }:
             materialize(path)
     if (destination / _REGISTRY).exists():
         registry = Registry.load(destination / _REGISTRY)

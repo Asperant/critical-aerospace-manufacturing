@@ -201,3 +201,38 @@ The workflow is a pinned host-policy source. CHG-032 records its impact and requ
 a supported merged-source policy refresh after eventual merge; this source-only
 slice performs no installed-policy, Plane or lifecycle mutation. CI execution and
 full WP acceptance remain separate evidence.
+
+## Registered producer authority
+
+`producer-authorities.json` records explicit producer ownership separately from
+contract declarations. The initial binding comes from 02's Data / Semantic Authority
+Map and Canonical Producer Rule, together with the producer-owned
+`services/manufacturing-core/contracts/v1/README.md`: `manufacturing-core`, Asrın
+Dündar, the `core.order-query` family, QUERY semantics and its exact read-only
+authority. Its published schemas/fixtures belong under
+`services/manufacturing-core/contracts/`. No other producer/family is inferred.
+
+`ProducerAuthorities.load(path)` checks the model;
+`Registry.verify_authorities(model, repo_root=...)` checks every declaration.
+Producer, semantic owner, family, contract type and authority must match exactly.
+Unknown producers/families, missing/placeholder metadata, duplicate producers or
+families, overlapping source ownership and consumer claims fail closed. Root schema
+and fixture paths must belong to the registered producer, and physical containment
+is checked when `repo_root` is supplied. Shared transitive schema libraries remain
+subject to the existing explicit reference approvals and hash verification.
+
+The CI gate requires the candidate's committed model and performs these checks
+before schema comparison or unchanged-contract selection. Existing baseline models
+are validated independently; a historical base predating the model is checked
+against the explicit candidate model, with no declaration exempted. Missing candidate
+models and malformed/conflicting registrations fail closed. The Git snapshot reader
+includes the model as a regular blob and retains its symlink rejection.
+
+Declaration parsing and schema/fixture verification remain separate primitives;
+callers outside the gate invoke `verify_authorities` explicitly. These are static
+catalog and artifact-ownership checks, not authenticated publisher identity, runtime
+authorization, broker enforcement or ACL derivation. A package/service cannot obtain
+a registered family's authority merely by editing its declaration fields or placing
+foreign files behind a producer label. Changing the ownership model itself requires
+canonical ownership evidence and applicable docs/09 change control; it is not a
+self-registration API. No Core schema, fixture or declaration changes in this slice.

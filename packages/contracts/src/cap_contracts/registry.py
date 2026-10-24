@@ -14,13 +14,16 @@ import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from jsonschema import Draft202012Validator
 
 from .errors import ContractError
 from .references import resolve_references
 from .versioning import ContractVersion, is_later_major, parse_contract_id
+
+if TYPE_CHECKING:
+    from .authority import ProducerAuthorities
 
 CONTRACT_TYPES = frozenset(
     {"QUERY", "COMMAND", "EVENT", "SNAPSHOT", "ARTIFACT", "HEALTH"}
@@ -339,6 +342,13 @@ class Registry:
             return self._declarations[contract_id]
         except KeyError:
             raise ContractError("CONTRACT_UNKNOWN", contract_id) from None
+
+    def verify_authorities(
+        self, authorities: "ProducerAuthorities", *, repo_root: Path | None = None
+    ) -> None:
+        """Validate every declaration, including unchanged/deprecated versions."""
+        for contract_id in self.contract_ids():
+            authorities.validate(self.get(contract_id), repo_root=repo_root)
 
     def verify(self, repo_root: Path, *, schema_refs: tuple[FileRef, ...] = ()) -> None:
         """Every referenced file exists, matches its hash, and every fixture validates."""
