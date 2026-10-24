@@ -42,8 +42,24 @@ infra/compose/stack.sh down            # keeps data and credentials; `reset` rem
 ```
 
 Credentials (PostgreSQL user `cap`, Keycloak admin `cap-admin`) are generated
-per machine in `~/.local/state/cap-platform/credentials.env` (mode 0600, never
-committed) and printed only by `env`.
+once per machine by `stack.sh` in `~/.local/state/cap-platform/` (mode 0600,
+never committed; override with `CAP_PLATFORM_STATE_DIR`): `credentials.env` for
+the script, `postgres.env` and `keycloak.env` read by Compose. Because Compose
+reads them itself, plain `docker compose` and `mfgctl` work after the first
+`stack.sh up`; only `stack.sh env` prints them.
+
+## Through mfgctl
+
+`infra/mfgctl/capabilities.json` is the registry instance of the
+`mfgctl.capabilities/v1` contract (DEP-003), so the developer CLI drives the
+same definitions:
+
+```bash
+uv run --project ci --locked mfgctl profile list
+uv run --project ci --locked mfgctl up infra        # docker compose ... --profile infra up --wait
+uv run --project ci --locked mfgctl smoke platform-infra
+uv run --project ci --locked mfgctl down infra
+```
 
 ## Decisions
 
@@ -59,7 +75,6 @@ committed) and printed only by `env`.
 
 ## Not in this slice
 
-Container builds and composition of the application deployables (slice 2),
-`infra/mfgctl/capabilities.json` for `mfgctl profile/up/smoke` (slice 3),
-startup-to-healthy measurement record (slice 4) and the Integration composition
-(slice 5, with WP-PLAT-003).
+Container builds and composition of the application deployables (agreed with
+their owner), the startup-to-healthy measurement record and the Integration
+composition (with WP-PLAT-003).

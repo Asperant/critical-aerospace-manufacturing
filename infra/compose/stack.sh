@@ -3,7 +3,7 @@
 # The same script runs in GitHub Actions (t1-integration) and on a developer or
 # shared host with Docker, so both use identical images and settings.
 #
-# Usage: infra/compose/stack.sh up [PROFILE...]|down|reset|env|status|logs|config [PROFILE]
+# Usage: infra/compose/stack.sh up [PROFILE...]|down|reset|env|status|logs|config [PROFILE]|smoke
 #   up      create credentials if needed, start the profiles (default: infra) and
 #           wait until every service is healthy; prints startup-to-healthy seconds
 #   down    stop all services, keep data and credentials
@@ -12,15 +12,18 @@
 #   status  docker compose ps
 #   logs    recent logs of all services
 #   config  render the definition for a profile (validation, no containers)
+#   smoke   REAL checks of the running infra layer (mfgctl smoke platform-infra)
 #
 # Credentials are generated per machine and kept outside the repository in
-# ${CAP_PLATFORM_STATE_DIR:-$XDG_STATE_HOME/cap-platform} with mode 0600; they are
-# never committed and printed only by `env`.
+# ${CAP_PLATFORM_STATE_DIR:-~/.local/state/cap-platform} with mode 0600:
+# credentials.env for this script, postgres.env and keycloak.env read by Compose.
+# They are never committed and printed only by `env`.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 COMPOSE=(docker compose -f "${HERE}/compose.yaml")
-STATE_DIR="${CAP_PLATFORM_STATE_DIR:-${XDG_STATE_HOME:-${HOME}/.local/state}/cap-platform}"
+STATE_DIR="${CAP_PLATFORM_STATE_DIR:-${HOME}/.local/state/cap-platform}"
+export CAP_PLATFORM_STATE_DIR="${STATE_DIR}"
 CREDENTIALS="${STATE_DIR}/credentials.env"
 CAP_PG_PORT="${CAP_PG_PORT:-56432}"
 CAP_NATS_PORT="${CAP_NATS_PORT:-56222}"
@@ -51,6 +54,10 @@ load_credentials() {
     echo "credentials created in ${CREDENTIALS}" >&2
   fi
   export CAP_POSTGRES_PASSWORD CAP_KEYCLOAK_ADMIN_PASSWORD
+  # Service env files read by Compose (also by `mfgctl up`), regenerated each time.
+  ( umask 077
+    printf 'POSTGRES_PASSWORD=%s\n' "${CAP_POSTGRES_PASSWORD}" > "${STATE_DIR}/postgres.env"
+    printf 'KC_BOOTSTRAP_ADMIN_PASSWORD=%s\n' "${CAP_KEYCLOAK_ADMIN_PASSWORD}" > "${STATE_DIR}/keycloak.env" )
 }
 
 mask_in_ci() {
@@ -134,14 +141,18 @@ case "${1:-}" in
   config)
     profile="${2:-infra}"
     check_profiles "${profile}"
-    # Rendering needs values for the required variables, never real secrets.
-    CAP_POSTGRES_PASSWORD="${CAP_POSTGRES_PASSWORD:-render-only}" \
-    CAP_KEYCLOAK_ADMIN_PASSWORD="${CAP_KEYCLOAK_ADMIN_PASSWORD:-render-only}" \
-      "${COMPOSE[@]}" --profile "${profile}" config --quiet
+    "${COMPOSE[@]}" --profile "${profile}" config --quiet
     echo "profile ${profile} renders"
     ;;
+  smoke)
+    load_credentials
+    eval "$("${HERE}/stack.sh" env | sed 's/^/export /')"
+    cd "${HERE}/../.."
+    PYTHONPATH="${PYTHONPATH:-ci:ci/scripts}" uv run --project ci --locked \
+      python -m pytest infra/compose/tests -m integration -q -p pytest_quarantine
+    ;;
   *)
-    echo "usage: $0 up [PROFILE...]|down|reset|env|status|logs|config [PROFILE]" >&2
+    echo "usage: $0 up [PROFILE...]|down|reset|env|status|logs|config [PROFILE]|smoke" >&2
     exit 2
     ;;
 esac

@@ -86,18 +86,46 @@ def test_infra_memory_budget() -> None:
     assert total <= INFRA_MEMORY_BUDGET_MIB, f"infra limits sum to {total} MiB"
 
 
-@pytest.mark.parametrize("name", sorted(SERVICES))
-def test_credentials_only_from_environment(name: str) -> None:
-    environment = SERVICES[name].get("environment", {})
-    for key, value in environment.items():
-        if re.search(r"PASSWORD|SECRET|TOKEN|KEY", key):
-            assert re.fullmatch(
-                r"\$\{[A-Z0-9_]+:\?[^}]*\}", str(value)
-            ), f"{name}.{key} must come from the environment"
-
-
 def test_stack_script_knows_the_canonical_profiles() -> None:
     script = (HERE / "stack.sh").read_text("utf-8")
     match = re.search(r"PROFILES_ALL=\(([^)]*)\)", script)
     assert match and set(match[1].split()) == CANONICAL_PROFILES
-    assert "--wait" in script and "add-mask" in script
+    assert "--wait" in script and "add-mask" in script and "smoke)" in script
+
+
+# --------------------------------------------- mfgctl registry (DEP-003) ---
+
+REPO = HERE.parents[1]
+REGISTRY_PATH = REPO / "infra/mfgctl/capabilities.json"
+
+
+def test_registry_conforms_to_the_mfgctl_contract() -> None:
+    import json
+
+    import jsonschema
+
+    schema = json.loads(
+        (REPO / "tools/mfgctl/schemas/capabilities.schema.json").read_text("utf-8")
+    )
+    jsonschema.validate(json.loads(REGISTRY_PATH.read_text("utf-8")), schema)
+
+
+def test_registry_matches_the_composition() -> None:
+    from mfgctl import registry
+
+    loaded = registry.load(REPO, {})
+    assert loaded.compose_files == ("infra/compose/compose.yaml",)
+    assert {p.name for p in loaded.profiles} == CANONICAL_PROFILES
+    for capability in loaded.capabilities:
+        assert capability.profile in CANONICAL_PROFILES
+        assert (REPO / capability.smoke[0]).is_file(), capability.smoke
+    for scenario in loaded.scenarios:
+        assert scenario.profile in CANONICAL_PROFILES
+
+
+def test_credentials_never_in_the_definition() -> None:
+    text = (HERE / "compose.yaml").read_text("utf-8")
+    assert not re.search(r"(PASSWORD|SECRET|TOKEN)\s*:", text)
+    for name in ("postgres", "keycloak"):
+        (entry,) = SERVICES[name]["env_file"]
+        assert entry["path"].startswith("${CAP_PLATFORM_STATE_DIR:-${HOME}/"), entry

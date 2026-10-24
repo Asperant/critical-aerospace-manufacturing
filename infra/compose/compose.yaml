@@ -6,10 +6,13 @@
 # object storage, cache, identity provider); application services join their
 # profiles as their container builds land (later WP-PLAT-001 slices).
 #
-# Start it with infra/compose/stack.sh, which generates the credentials outside
-# the repository. Every port is bound to localhost; every image is pinned to an
-# exact release; every service has a health check and a memory limit (02
-# "Resource profiles on the ~16 GB single host": limits are mandatory).
+# Credentials are never in this file: stack.sh generates them once per machine
+# into env files under ${CAP_PLATFORM_STATE_DIR:-~/.local/state/cap-platform}
+# (mode 0600), which Compose reads directly, so `mfgctl up <profile>` and
+# `docker compose` work without exporting anything. Every port is bound to
+# localhost; every image is pinned to an exact release; every service has a
+# health check and a memory limit (02 "Resource profiles on the ~16 GB single
+# host": limits are mandatory).
 name: cap-platform
 
 x-infra-profiles: &infra-profiles
@@ -29,7 +32,9 @@ services:
     environment:
       POSTGRES_USER: cap
       POSTGRES_DB: cap
-      POSTGRES_PASSWORD: ${CAP_POSTGRES_PASSWORD:?run infra/compose/stack.sh}
+    env_file:
+      - path: ${CAP_PLATFORM_STATE_DIR:-${HOME}/.local/state/cap-platform}/postgres.env
+        required: false  # missing credentials stop PostgreSQL with a clear error
     volumes:
       - postgres-data:/var/lib/postgresql
     ports:
@@ -108,7 +113,9 @@ services:
     command: ["start-dev", "--http-port=8080", "--health-enabled=true"]
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: cap-admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: ${CAP_KEYCLOAK_ADMIN_PASSWORD:?run infra/compose/stack.sh}
+    env_file:
+      - path: ${CAP_PLATFORM_STATE_DIR:-${HOME}/.local/state/cap-platform}/keycloak.env
+        required: false
     volumes:
       - keycloak-data:/opt/keycloak/data
     ports:
