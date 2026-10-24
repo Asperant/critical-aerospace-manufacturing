@@ -1,0 +1,22 @@
+CHG-030:
+  title: Re-assert an unchanged VERIFIED deferred acceptance wait against current canonical state
+  class: C3
+  review_risk_class: CR-3
+  owner: Asrın
+  decision: APPROVED
+  status: APPROVED
+  application_control_item: CTRL-HOST-014
+  required_human_approvals: 0
+  human_decision_basis: Explicit project-owner request for this narrow correction and deployment, 24 October 2026
+  scope: Evidence anchor of the CHG-022 deferred acceptance proof only; no change to what qualifies as a deferred wait
+  rules:
+  - Re-asserting BLOCKED on an already blocked WP records UNCHANGED and never becomes equivalent to VERIFIED; no UNBLOCKED transition is faked and no blocker resolution is claimed
+  - The latest VERIFIED BLOCKED audit stays the sole authority that the blocker is active, in the same WP, profile and VALIDATING lifecycle, and every CHG-022 check of the original merged-PR assessment still applies
+  - The re-assertion is consulted only when the original canonical-scope check fails on a changed whole-blob pinned source; a changed WP scope projection, a missing or ambiguous projection and every other failure still deny the proof
+  - A later UNCHANGED BLOCKED record may only supply a fresh owner assessment, and only if it references that VERIFIED audit through active_blocker_audit_id, repeats the identical reason and carries no blocker of its own; the chain must be unique and gap-free with recomputed audit ids
+  - The referenced owner comment must be unedited and authored by the owner, state the exact fields Canonical main revision, Deferred acceptance class and Owner-executable implementation work NONE, restate the identical blocker (owner, blocking WP, external dependency), claim no resolution, cite existing evidence artifacts, and match the pinned canonical sources and this WP's scope projection at its own revision
+  - The WP scope projection at the original merge commit must still equal the pinned current projection, so the WP's own scope is semantically unchanged
+  - A changed blocker code, blocking WP or dependency, changed scope, owner-executable or UNKNOWN work, a missing, unverified or ambiguous previous proof, or any UNKNOWN evidence keeps the slot occupied
+  - No WP is special-cased; DONE, lifecycle states, blocker attribution, Plane state and candidate ordering are unchanged
+  rollout: Merged source only; generated policy, root-only backup, supported installer and verified hashes
+  rollback: Restore deployment only; never replay Plane state or erase audit

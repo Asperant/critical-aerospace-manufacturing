@@ -174,7 +174,7 @@ def exact_field(text, label):
 AMBIGUOUS = object()
 
 
-def reassertion(t, wp, profile, verified):
+def reassertion(t, wp, profile, verified, state="IN_PROGRESS"):
     """Latest UNCHANGED BLOCKED re-assertion of the same verified active blocker.
 
     The VERIFIED record stays the only authority that the blocker is active; a
@@ -204,8 +204,8 @@ def reassertion(t, wp, profile, verified):
             and row.get("operation") == "BLOCKED"
             and row.get("wp_id") == wp
             and row.get("profile") == profile
-            and row.get("from_state") == "IN_PROGRESS"
-            and row.get("to_state") == "IN_PROGRESS"
+            and row.get("from_state") == state
+            and row.get("to_state") == state
             and row.get("active_blocker_audit_id") == verified["audit_id"]
             and row.get("reason") == verified.get("reason")
             and "blocker" not in row
@@ -334,6 +334,71 @@ def assess_external_wait(t, wp, profile, policy, gh, verified, source, classific
         return None
 
 
+def deferred_reassertion(
+    t, gh, wp, profile, policy, verified, merge_sha, classification
+):
+    """CHG-030: continuity of an unchanged VERIFIED deferred wait at current state.
+
+    The latest VERIFIED BLOCKED audit stays the sole authority that the blocker is
+    active; a later UNCHANGED BLOCKED row (same reason, no blocker of its own, linked
+    through active_blocker_audit_id) only supplies a fresh owner assessment. That
+    assessment must restate the identical blocker and `Owner-executable
+    implementation work: NONE`, claim no resolution, satisfy the canonical sources at
+    its own revision, and the WP's merge-time scope projection must be unchanged.
+    Anything missing, ambiguous or UNKNOWN raises: the original proof then fails.
+    """
+    again = reassertion(t, wp, profile, verified, "VALIDATING")
+    if not isinstance(again, dict):  # None (no re-assertion) or AMBIGUOUS chain
+        raise t.Denied("DEFERRED_REASSERTION_UNAVAILABLE")
+    ids = [
+        r[8:]
+        for r in again.get("evidence_refs", [])
+        if re.fullmatch(r"comment:[1-9][0-9]{0,15}", r)
+    ]
+    t.need(len(ids) == 1, "DEFERRED_REASSERTION_ASSESSMENT_REQUIRED")
+    comment = gh._get(f"{t.REPO}/issues/comments/{ids[0]}")
+    text = comment.get("body")
+    t.need(
+        isinstance(text, str)
+        and str((comment.get("user") or {}).get("login", "")).casefold()
+        == t.GITHUB[profile].casefold()
+        and comment.get("created_at")
+        and comment.get("created_at") == comment.get("updated_at"),
+        "DEFERRED_REASSERTION_NOT_OWNER_UNEDITED",
+    )
+    sha = exact_field(text, "Canonical main revision")
+    t.need(
+        sha is not None
+        and re.fullmatch(r"[0-9a-f]{40}", sha)
+        and exact_field(text, "Deferred acceptance class") == classification
+        and exact_field(text, "Owner-executable implementation work") == "NONE"
+        and exact_field(text, "Resolves blocker") is None,
+        "DEFERRED_REASSERTION_INCOMPLETE",
+    )
+    record = t.native_record(text, wp, sha)
+    t.need(
+        record.get("blocker") == verified.get("blocker")
+        and not record.get("resolves_audit_id"),
+        "DEFERRED_REASSERTION_BLOCKER_CHANGED",
+    )
+    t.need(record["_artifact_refs"], "DEFERRED_REASSERTION_EVIDENCE_MISSING")
+    for ref in record["_artifact_refs"]:
+        gh.artifact(ref, sha)
+    # Current canonical sources and this WP's scope at the assessed revision...
+    check_canonical_scope(t, gh, wp, sha, policy)
+    # ...and the scope projection at the original merge must be semantically unchanged.
+    tree = gh._get(f"{t.REPO}/git/trees/{merge_sha}?recursive=1")
+    t.need(tree.get("truncated") is False, "DEFERRED_SOURCE_TREE_INCOMPLETE")
+    check_scope_projection(
+        t, gh, wp, {r["path"]: r.get("sha") for r in tree["tree"]}, policy
+    )
+    return {
+        "audit_id": again["audit_id"],
+        "comment_id": ids[0],
+        "digest": hashlib.sha256(text.encode()).hexdigest(),
+    }
+
+
 def deferred_proof(t, wp, profile, policy, gh):
     """Existing attributable owner assessment plus real merged/CI/audit facts.
 
@@ -373,7 +438,17 @@ def deferred_proof(t, wp, profile, policy, gh):
         sha = pr["merge_commit_sha"]
         gh.merged_shape(pr)
         # Scope, readiness, architecture and final acceptance must still match.
-        check_canonical_scope(t, gh, wp, sha, policy)
+        # A changed whole-blob pinned source (never the WP's own scope projection)
+        # may be bridged only by a CHG-030 UNCHANGED re-assertion of this blocker.
+        again = None
+        try:
+            check_canonical_scope(t, gh, wp, sha, policy)
+        except t.Denied as exc:
+            if exc.code != "DEFERRED_CANONICAL_SCOPE_CHANGED":
+                raise
+            again = deferred_reassertion(
+                t, gh, wp, profile, policy, previous, sha, classification
+            )
         record = t.native_record(text, wp, sha)
         t.need(
             record.get("blocker") == previous.get("blocker"),
@@ -395,7 +470,7 @@ def deferred_proof(t, wp, profile, policy, gh):
             "DEFERRED_POST_MERGE_CI_UNVERIFIED",
         )
         t.ci(gh, sha, policy)
-        return {
+        proof = {
             "schema": "cap-deferred-acceptance-v1",
             "wp_id": wp,
             "owner": t.q.PEOPLE[profile][0],
@@ -406,6 +481,13 @@ def deferred_proof(t, wp, profile, policy, gh):
             "audit_id": previous["audit_id"],
             "assessment_digest": hashlib.sha256(text.encode()).hexdigest(),
         }
+        if again:
+            proof.update(
+                reassertion_audit_id=again["audit_id"],
+                reassertion_comment_id=again["comment_id"],
+                reassertion_digest=again["digest"],
+            )
+        return proof
     except t.Denied:
         return None  # UNKNOWN never frees the slot.
 

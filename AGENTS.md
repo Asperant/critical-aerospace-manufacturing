@@ -917,6 +917,14 @@ every audit row must recompute its `audit_id`. The comment still has to satisfy 
 CHG-024 requirement. `UNCHANGED` is never equivalent to `VERIFIED`; duplicate, edited,
 foreign or contradictory chains fail closed and keep the slot.
 
+CHG-030 / CTRL-HOST-014 lets an unchanged `VALIDATING + BLOCKED` deferred wait be re-asserted
+against current canonical state when only a whole-blob pinned source changed after the
+merge. A later `UNCHANGED` BLOCKED row linked to the VERIFIED audit, with a fresh unedited
+owner comment that restates the identical blocker and `Owner-executable implementation work:
+NONE` and claims no resolution, may bridge the proof; the WP's own scope projection must
+stay unchanged. `UNCHANGED` is never a new VERIFIED blocker, no UNBLOCKED is faked, and
+every other denial keeps the slot.
+
 CHG-026 / CTRL-HOST-011: the health/preparation candidate window no longer stops at the
 first three canonical candidates. It is the canonical-order prefix through the first
 candidate the preparation engine classifies AUTO_PREPARABLE or VERIFIED_PREPARED (never

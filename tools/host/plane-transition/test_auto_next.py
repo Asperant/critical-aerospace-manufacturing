@@ -10,7 +10,7 @@ from types import SimpleNamespace
 from typing import Any
 from unittest.mock import Mock, patch
 
-from test_transition import SECRET, fixture, t
+from test_transition import MERGE, SECRET, fixture, t
 
 HERE = Path(__file__).resolve().parent
 
@@ -1205,6 +1205,304 @@ class ExternalIntegrationWaitTests(unittest.TestCase):
         released.pop("external_integration_wait")
         self.assertFalse(resolver.occupies_implementation_slot(wp, released))
         self.assertEqual(resolver.released_wait(wp, released), resolver.DEFERRED_CLASS)
+
+
+class DeferredReassertionTests(unittest.TestCase):
+    """CHG-030: UNCHANGED re-assertion of a VERIFIED deferred wait (generic)."""
+
+    REVISION = "c" * 40
+    CLASS = "WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE"
+
+    def comment(self, **overrides):
+        fields = {
+            "Canonical main revision": self.REVISION,
+            "Deferred acceptance class": self.CLASS,
+            "Owner-executable implementation work": "NONE",
+            "Reason": self.CLASS + ": real acceptance",
+            "Blocker owner": "asrin",
+            "Blocking WP": "WP-TEST-002",
+            "External dependency": "Real consumer acceptance",
+        }
+        fields.update(overrides)
+        return (
+            "Deferred wait re-assertion.\n\n"
+            + "".join(f"{k}: {v}\n" for k, v in fields.items() if v is not None)
+            + "Evidence: repo:evidence/test.json\n"
+        )
+
+    def fixture(self):
+        wp, policy, plane, gh, previous = DeferredAcceptanceTests().fixture()
+        current_tree = deepcopy(gh.tree)
+        merge_tree = deepcopy(gh.tree)
+        # A whole-blob pinned source drifted after the merge; the WP scope did not.
+        for row in merge_tree["tree"]:
+            if row["path"] == "docs/08":
+                row["sha"] = "blob-at-merge"
+        gh.trees = {MERGE: merge_tree}
+        gh.current_tree = current_tree
+        gh.comments = {}
+        gh.comment = {
+            "user": {"login": "Asperant"},
+            "created_at": "2026-10-24T17:00:00Z",
+            "updated_at": "2026-10-24T17:00:00Z",
+            "body": self.comment(),
+        }
+        blobs = gh.blobs
+
+        def route(path):
+            if "/issues/comments/" in path:
+                return gh.comments.get(path.rsplit("/", 1)[1], gh.comment)
+            if "/git/blobs/" in path:
+                return blobs.get(path.rsplit("/", 1)[1], {})
+            for sha, tree in gh.trees.items():
+                if f"/git/trees/{sha}" in path:
+                    return tree
+            return gh.current_tree
+
+        gh._get = Mock(side_effect=route)
+        base = {
+            "timestamp": "2026-10-24T16:50:25+00:00",
+            "profile": "asrin",
+            "wp_id": wp,
+            "from_state": "VALIDATING",
+            "to_state": "VALIDATING",
+            "operation": "BLOCKED",
+            "reason": previous["reason"],
+            "evidence_refs": previous["evidence_refs"],
+            "policy_digest": "digest",
+        }
+        verified = dict(base, result="VERIFIED", blocker=previous["blocker"])
+        verified["audit_id"] = t.audit_identity(verified)
+        again = dict(
+            base,
+            timestamp="2026-10-24T18:00:00+00:00",
+            evidence_refs=["comment:222"],
+            result="UNCHANGED",
+        )
+        again["audit_id"] = t.audit_identity(again)
+        again["active_blocker_audit_id"] = verified["audit_id"]
+        return wp, policy, plane, gh, verified, again
+
+    def proof(self, wp, policy, gh, verified, rows):
+        with (
+            patch.object(t, "last_blocker", return_value=verified),
+            patch.object(t, "blocker_rows", return_value=rows),
+        ):
+            return auto.deferred_proof(t, wp, "asrin", policy, gh)
+
+    def test_changed_source_is_bridged_only_by_a_reassertion(self):
+        wp, policy, plane, gh, verified, again = self.fixture()
+        # The original anchor alone no longer matches the pinned canonical source.
+        self.assertIsNone(self.proof(wp, policy, gh, verified, [verified]))
+        # UNCHANGED alone proves nothing.
+        self.assertIsNone(self.proof(wp, policy, gh, None, [again]))
+        proof = self.proof(wp, policy, gh, verified, [verified, again])
+        assert proof is not None
+        self.assertEqual(proof["audit_id"], verified["audit_id"])
+        self.assertEqual(proof["reassertion_audit_id"], again["audit_id"])
+        self.assertEqual(proof["reassertion_comment_id"], "222")
+        item = {
+            "owner": proof["owner"],
+            "state": "VALIDATING",
+            "blocked": True,
+            "deferred_acceptance": proof,
+        }
+        self.assertTrue(resolver.deferred_acceptance(wp, item))
+        self.assertFalse(resolver.occupies_implementation_slot(wp, item))
+        with (
+            patch.object(t, "last_blocker", return_value=verified),
+            patch.object(t, "blocker_rows", return_value=[verified, again]),
+        ):
+            live = auto.live_view(t, plane, policy, "asrin", gh)
+        self.assertTrue(resolver.deferred_acceptance(wp, live["items"][wp]))
+        self.assertEqual(live["items"][wp]["state"], "VALIDATING")
+        self.assertTrue(live["items"][wp]["blocked"])
+
+    def test_unchanged_original_anchor_needs_no_reassertion(self):
+        wp, policy, plane, gh, verified, again = self.fixture()
+        gh.trees = {}  # merge-time tree equals the pinned current tree
+        proof = self.proof(wp, policy, gh, verified, [verified])
+        assert proof is not None
+        self.assertNotIn("reassertion_audit_id", proof)
+
+    def test_resolver_rejects_incomplete_reassertion_proof(self):
+        wp, policy, plane, gh, verified, again = self.fixture()
+        proof = self.proof(wp, policy, gh, verified, [verified, again])
+        assert proof is not None
+        for key in (
+            "reassertion_audit_id",
+            "reassertion_comment_id",
+            "reassertion_digest",
+        ):
+            broken = dict(proof, **{key: ""})
+            item = {
+                "owner": proof["owner"],
+                "state": "VALIDATING",
+                "blocked": True,
+                "deferred_acceptance": broken,
+            }
+            with self.subTest(key=key):
+                self.assertFalse(resolver.deferred_acceptance(wp, item))
+                self.assertTrue(resolver.occupies_implementation_slot(wp, item))
+
+    def test_reassertion_fails_closed(self):
+        def blocker_code_changed(verified, again, gh, policy):
+            gh.comment = dict(
+                gh.comment,
+                body=self.comment(**{"Deferred acceptance class": "OTHER_WAIT"}),
+            )
+
+        def reason_changed(verified, again, gh, policy):
+            again["reason"] = self.CLASS + ": edited"
+
+        def dependency_changed(verified, again, gh, policy):
+            gh.comment = dict(
+                gh.comment,
+                body=self.comment(**{"External dependency": "Something new"}),
+            )
+
+        def blocking_wp_changed(verified, again, gh, policy):
+            gh.comment = dict(
+                gh.comment, body=self.comment(**{"Blocking WP": "WP-TEST-003"})
+            )
+
+        def own_scope_changed_now(verified, again, gh, policy):
+            policy["scope_projections"][verified["wp_id"]] = "0" * 64
+
+        def own_scope_changed_at_merge(verified, again, gh, policy):
+            wbs, rtm = scope_docs(verified["wp_id"], own="own changed")
+            gh.trees[MERGE] = deepcopy(gh.trees[MERGE])
+            for row in gh.trees[MERGE]["tree"]:
+                if row["path"] == resolver.WBS_PATH:
+                    row["sha"] = git_blob(gh.blobs, wbs)
+
+        def current_source_invalid(verified, again, gh, policy):
+            policy["source_git_blobs"]["docs/08"] = "not-the-assessed-blob"
+
+        def owner_work_executable(verified, again, gh, policy):
+            gh.comment = dict(
+                gh.comment,
+                body=self.comment(**{"Owner-executable implementation work": "ANY"}),
+            )
+
+        def unknown_work(verified, again, gh, policy):
+            gh.comment = dict(
+                gh.comment,
+                body=self.comment(
+                    **{"Owner-executable implementation work": "UNKNOWN"}
+                ),
+            )
+
+        def unknown_revision(verified, again, gh, policy):
+            gh.comment = dict(
+                gh.comment, body=self.comment(**{"Canonical main revision": "UNKNOWN"})
+            )
+
+        def resolution_claimed(verified, again, gh, policy):
+            gh.comment = dict(
+                gh.comment,
+                body=self.comment(**{"Resolves blocker": verified["audit_id"]}),
+            )
+
+        def comment_edited(verified, again, gh, policy):
+            gh.comment = dict(gh.comment, updated_at="2026-10-25T00:00:00Z")
+
+        def comment_foreign(verified, again, gh, policy):
+            gh.comment = dict(gh.comment, user={"login": "someone-else"})
+
+        def evidence_missing(verified, again, gh, policy):
+            gh.comment = dict(
+                gh.comment,
+                body=self.comment().replace("Evidence: repo:evidence/test.json\n", ""),
+            )
+
+        def artifact_missing(verified, again, gh, policy):
+            gh.missing_artifact = True
+
+        def no_comment(verified, again, gh, policy):
+            again["evidence_refs"] = ["pr:1"]
+
+        def two_comments(verified, again, gh, policy):
+            again["evidence_refs"] = ["comment:222", "comment:223"]
+
+        def carries_blocker(verified, again, gh, policy):
+            again["blocker"] = verified["blocker"]
+
+        def wrong_link(verified, again, gh, policy):
+            again["active_blocker_audit_id"] = "someone-elses"
+
+        def unblocked_row(verified, again, gh, policy):
+            again["operation"] = "UNBLOCKED"
+
+        def other_state(verified, again, gh, policy):
+            again["from_state"] = "IN_PROGRESS"
+            again["to_state"] = "IN_PROGRESS"
+
+        def other_wp(verified, again, gh, policy):
+            again["wp_id"] = "WP-OTHER-999"
+
+        def tree_truncated(verified, again, gh, policy):
+            gh.trees[MERGE] = dict(gh.trees[MERGE], truncated=True)
+
+        for case in (
+            blocker_code_changed,
+            reason_changed,
+            dependency_changed,
+            blocking_wp_changed,
+            own_scope_changed_now,
+            own_scope_changed_at_merge,
+            current_source_invalid,
+            owner_work_executable,
+            unknown_work,
+            unknown_revision,
+            resolution_claimed,
+            comment_edited,
+            comment_foreign,
+            evidence_missing,
+            artifact_missing,
+            no_comment,
+            two_comments,
+            carries_blocker,
+            wrong_link,
+            unblocked_row,
+            other_state,
+            other_wp,
+            tree_truncated,
+        ):
+            with self.subTest(case=case.__name__):
+                wp, policy, plane, gh, verified, again = self.fixture()
+                case(verified, again, gh, policy)
+                self.assertIsNone(
+                    self.proof(wp, policy, gh, verified, [verified, again])
+                )
+
+    def test_missing_or_unverified_previous_proof_fails_closed(self):
+        for gap in ("missing", "intent", "unblocked", "other_state"):
+            with self.subTest(gap=gap):
+                wp, policy, plane, gh, verified, again = self.fixture()
+                rows = [verified, again]
+                previous = verified
+                if gap == "missing":
+                    previous = None
+                elif gap == "intent":
+                    previous = dict(verified, result="INTENT")
+                elif gap == "unblocked":
+                    previous = dict(verified, operation="UNBLOCKED")
+                else:
+                    previous = dict(verified, from_state="MERGED")
+                self.assertIsNone(self.proof(wp, policy, gh, previous, rows))
+
+    def test_pr_body_assessment_still_governs_the_original_wait(self):
+        wp, policy, plane, gh, verified, again = self.fixture()
+        self.assertIsNotNone(self.proof(wp, policy, gh, verified, [verified, again]))
+        # A re-assertion cannot repair an owner-executable or unknown original wait.
+        for old, new in (("work: NONE", "work: UNKNOWN"),):
+            with self.subTest(new=new):
+                wp, policy, plane, gh, verified, again = self.fixture()
+                gh.pr_data["body"] = gh.pr_data["body"].replace(old, new)
+                self.assertIsNone(
+                    self.proof(wp, policy, gh, verified, [verified, again])
+                )
 
 
 if __name__ == "__main__":
