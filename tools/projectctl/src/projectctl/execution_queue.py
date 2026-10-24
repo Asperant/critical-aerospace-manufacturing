@@ -118,6 +118,17 @@ def deferred_acceptance(wp: str, item: dict[str, Any]) -> bool:
             isinstance(proof.get(k), str) and proof[k]
             for k in ("merge_sha", "audit_id", "assessment_digest")
         )
+        and (
+            "reassertion_audit_id" not in proof
+            or all(
+                isinstance(proof.get(k), str) and proof[k]
+                for k in (
+                    "reassertion_audit_id",
+                    "reassertion_comment_id",
+                    "reassertion_digest",
+                )
+            )
+        )
     )
 
 

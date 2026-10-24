@@ -288,6 +288,15 @@ view or verification exception retains the original active set. General limits,
 the size-L/Core definition, readiness and lifecycle rules are unchanged. This
 read-only classification does not invoke AUTO_NEXT or perform any Plane write.
 
+CHG-030 / CTRL-HOST-014: `deferred_proof` falls back to `deferred_reassertion` only when the
+original canonical-scope check fails on a changed whole-blob pinned source. The latest
+`UNCHANGED` VALIDATING `BLOCKED` row must link the VERIFIED audit through
+`active_blocker_audit_id`, repeat its reason and carry no blocker; its owner comment must
+restate the identical blocker, `Owner-executable implementation work: NONE` and claim no
+resolution, and the WP scope projection must be unchanged at the merge commit and at the
+assessed revision. The proof then carries `reassertion_audit_id`, `reassertion_comment_id`
+and `reassertion_digest`. No UNBLOCKED is faked and no WP is special-cased.
+
 CHG-026 / CTRL-HOST-011: `execution_queue.candidate_window(candidates, actionable)` returns
 the canonical-order prefix through the first actionable candidate (at least three). The
 adapter's `owner_health` passes the preparation engine's own `classify` as `actionable`;
