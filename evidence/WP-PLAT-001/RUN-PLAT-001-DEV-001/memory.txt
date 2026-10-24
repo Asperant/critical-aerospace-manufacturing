@@ -1,0 +1,5 @@
+cap-platform-postgres-1 29.96MiB / 1GiB 0.02%
+cap-platform-seaweedfs-1 25.66MiB / 512MiB 2.52%
+cap-platform-nats-1 3.625MiB / 256MiB 0.01%
+cap-platform-keycloak-1 607.5MiB / 1GiB 0.10%
+cap-platform-valkey-1 3.203MiB / 256MiB 0.13%
