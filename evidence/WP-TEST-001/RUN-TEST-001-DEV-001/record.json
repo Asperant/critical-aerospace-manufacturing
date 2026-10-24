@@ -1,0 +1,56 @@
+{
+  "run_id": "RUN-TEST-001-DEV-001",
+  "work_package": "WP-TEST-001",
+  "kind": "DEV run on the shared host against the actual repository, workflow, 03 and 04",
+  "boundary_mode": "REAL",
+  "test_ids": [
+    "TEST-TEST-001-001"
+  ],
+  "code_revision": "7250b78eb1a51854b943e219076fb87562005311",
+  "branch": "wp/WP-TEST-001-test-strategy",
+  "recorded_at": "2026-10-24T15:41:14+00:00",
+  "host": {
+    "machine": "x86_64",
+    "system": "Linux",
+    "python": "3.11.16"
+  },
+  "outcome": {
+    "test_files": 80,
+    "suites": 17,
+    "violations": 0,
+    "deterministic_repeat": true,
+    "negative_and_positive_cases_passed": 19,
+    "probe_rejected_and_named": true
+  },
+  "steps": [
+    {
+      "step": "conformance",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "wall_s": 0.2,
+      "output": "conformance.log.txt"
+    },
+    {
+      "step": "repeat",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "wall_s": 0.2,
+      "output": "repeat.log.txt"
+    },
+    {
+      "step": "negative",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "wall_s": 0.5,
+      "output": "negative.log.txt"
+    },
+    {
+      "step": "probe",
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "wall_s": 0.2,
+      "output": "probe.log.txt"
+    }
+  ],
+  "unexpected": {}
+}
