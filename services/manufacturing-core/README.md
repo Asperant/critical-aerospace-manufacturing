@@ -60,3 +60,23 @@ roles, never as administrator. Cleanup affects only fixture-created objects.
 The opt-in must never target a shared/production database. Missing configuration
 fails the integration tests; it never becomes a passing skip. Pure unit runs
 select `-m 'not integration'` and need no database.
+
+## Internal rework history values — WP-CORE-004 slice 1
+
+`manufacturing_core.rework.ComponentExecutionHistory.append_rework(segment)`
+returns a new immutable value containing the original route/execution snapshot
+and a separate, directive-linked rework segment. Earlier segments are retained.
+Each execution has its own identity, component/lot references and aware start/end
+timestamps. Duplicate execution/directive identities, an unknown origin/return
+visit, a mismatched rework-route revision or a different component are rejected.
+Tuple order is append order; timestamps retain occurrence time without asserting
+cross-event arrival order. Approval/policy states and rework counts are recorded
+from the caller, without choosing numeric limits or treating a stored state as
+execution permission.
+
+This is an internal component-scoped domain value API, not the
+`ExecuteApprovedReworkDirective` contract or its handler. It does not persist,
+dispatch, alter membership/lifecycle, authenticate approval or execute a directive.
+Core's canonical lifecycle/authorization caller must supply validated facts before
+future integration; DEP-029 remains HARD/INTEGRATION at COMPONENT_READY. The initial
+database schema and published order-query contracts are unchanged.
