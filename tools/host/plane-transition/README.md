@@ -284,3 +284,15 @@ the canonical-order prefix through the first actionable candidate (at least thre
 adapter's `owner_health` passes the preparation engine's own `classify` as `actionable`;
 `prepare.py` iterates that same `health["candidates"]` window with one GitHub client per
 profile. `health["actionable_next"]` names the first actionable candidate or is null.
+
+## Automatic readiness attestation — CHG-028 / CTRL-HOST-013
+
+For a canonical CONTRACT edge requiring CONTRACT_READY, the transition evaluator may
+package an existing `evidence/readiness/<node>.json` semantic basis instead of requiring
+a duplicate downstream readiness comment. The producer-authored basis is accepted only
+when its merged-PR attribution and ancestry, current-main source, exact artifact/test/trace
+blobs, green SHA-bound checks, policy digest inputs, producer scope projections, consumer
+edge and non-null precise requirement all validate. Stability, usability, compatibility
+intent and scope meaning remain owner-authored semantic fields. Missing, stale, ambiguous,
+explicitly uncertified or UNKNOWN input remains UNKNOWN. Manual readiness evidence is
+unchanged; an automatic UNKNOWN never writes Plane or releases work.

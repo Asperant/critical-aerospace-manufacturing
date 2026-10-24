@@ -1,0 +1,23 @@
+CHG-028:
+  title: Automatically package existing attributable CONTRACT_READY evidence
+  class: C2
+  review_risk_class: CR-3
+  owner: Asrın
+  decision: APPROVED
+  status: APPROVED
+  application_control_item: CTRL-HOST-013
+  required_human_approvals: 0
+  human_decision_basis: Explicit project-owner request for this bounded readiness evaluator and deployment, 24 October 2026
+  scope: Mechanically package already-existing attributable semantic readiness evidence for CONTRACT_READY dependencies; readiness semantics and Plane workflow are unchanged
+  rules:
+  - Only canonical CONTRACT edges requiring CONTRACT_READY are eligible
+  - Canonical node, edge, producer, consumer, readiness level, current main SHA and policy digest are exact proof bindings
+  - A merged producer PR, main ancestry, exact artifact and test blobs, current-SHA green checks, trace references and unchanged producer scope projections are mandatory
+  - The canonical edge must contain a non-null precise consumer requirement
+  - Semantic stability, consumer usability, compatibility intent and scope meaning must already exist in an attributable producer-authored semantic basis
+  - Explicit non-certification, missing, stale, ambiguous or UNKNOWN evidence never passes
+  - Manual producer-authored readiness evidence remains valid and unchanged
+  - No WP or dependency node is special-cased and no readiness-ladder or HARD-edge rule is weakened
+  - An UNKNOWN automatic proof never causes a Plane mutation or independently releases work
+  rollout: Merged source only; generated policy, root-only backup, supported installer and verified hashes
+  rollback: Restore deployment only; never replay Plane state or erase audit

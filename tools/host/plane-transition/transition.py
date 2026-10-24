@@ -212,6 +212,23 @@ class GitHub:
         else:
             raise Denied('INVALID_ARTIFACT_REF')
 
+    def repository_file(self, path, sha, limit=65536):
+        need(isinstance(path,str) and re.fullmatch(r'[A-Za-z0-9_./-]+',path)
+             and not path.startswith('/') and all(p not in {'','.','..'} for p in path.split('/'))
+             and SHA.fullmatch(sha), 'INVALID_ARTIFACT_PATH')
+        value=self._get(f'{REPO}/contents/{path}?ref={sha}')
+        need(isinstance(value,dict) and value.get('type')=='file' and value.get('encoding')=='base64'
+             and 0 < value.get('size',0) <= limit and SHA.fullmatch(value.get('sha','')), 'ARTIFACT_NOT_A_FILE')
+        raw=base64.b64decode(value.get('content',''))
+        need(0 < len(raw) <= limit, 'ARTIFACT_CONTENT_UNAVAILABLE')
+        return raw,value['sha']
+
+    def ancestor(self, base, head):
+        need(SHA.fullmatch(base or '') and SHA.fullmatch(head or ''), 'INVALID_REVISION')
+        value=self._get(f'{REPO}/compare/{base}...{head}')
+        need(value.get('status') in {'ahead','identical'} and value.get('behind_by')==0,
+             'PRODUCER_MERGE_NOT_IN_MAIN_ANCESTRY')
+
     def evidence_text(self,path,sha):
         # Only immutable repository evidence, never user URLs or executable code.
         need(isinstance(path,str) and path.startswith(('evidence/','09_change/','project_control/'))
@@ -302,6 +319,278 @@ def artifact_refs(text):
         if '/' in path and not path.startswith('/') and not any(p in {'','.','..'} for p in path.split('/')):
             refs.append('repo:'+path)
     return sorted(set(refs))
+
+
+def evidence_digest(value):
+    raw = json.dumps(
+        value, ensure_ascii=True, sort_keys=True, separators=(",", ":")
+    ).encode()
+    return hashlib.sha256(raw).hexdigest()
+
+
+def automatic_readiness_attestation(gh, context, edge, sha, policy):
+    """Package existing CONTRACT_READY evidence; never manufacture semantic judgment."""
+    assert q is not None
+    reasons = []
+
+    def reject(code):
+        if code not in reasons:
+            reasons.append(code)
+
+    semantics = edge.get("semantics", {})
+    node = edge.get("predecessor", {}).get("node")
+    successor = edge.get("successor", {}).get("node")
+    wp = context.get("work_package", {}).get("id")
+    producer = policy.get("node_owners", {}).get(node)
+    consumer = policy.get("node_owners", {}).get(successor)
+    profiles = {value[0]: profile for profile, value in q.PEOPLE.items()}
+    expected_consumer = profiles.get(
+        context.get("work_package", {}).get("primary_owner", {}).get("canonical_name")
+    )
+    if policy.get("auto_readiness_attestation_schema") != "auto-readiness-attestation-v1":
+        reject("AUTO_READINESS_FEATURE_UNAVAILABLE")
+    if (
+        semantics.get("kind") != "CONTRACT"
+        or semantics.get("required_readiness") != "CONTRACT_READY"
+    ):
+        reject("AUTO_READINESS_NOT_APPLICABLE")
+    if not re.fullmatch(r"DN-[A-Z0-9-]+", node or "") or not re.fullmatch(
+        r"DEP-[0-9]+", edge.get("id", "")
+    ):
+        reject("CANONICAL_READINESS_IDENTITY_INVALID")
+    if (
+        producer not in q.PEOPLE
+        or consumer not in q.PEOPLE
+        or consumer != expected_consumer
+    ):
+        reject("CANONICAL_READINESS_OWNERSHIP_INVALID")
+    if not isinstance(edge.get("precise_requirement"), str) or not edge[
+        "precise_requirement"
+    ].strip():
+        reject("PRECISE_CONSUMER_REQUIREMENT_MISSING")
+    levels = policy.get("node_levels", {}).get(node, [])
+    if "CONTRACT_READY" not in levels:
+        reject("REQUIRED_READINESS_LEVEL_INVALID")
+    try:
+        if gh.main_sha() != sha:
+            reject("SOURCE_SHA_NOT_CURRENT_MAIN")
+    except Denied as exc:
+        reject(exc.code)
+    basis_path = f"evidence/readiness/{node}.json" if isinstance(node, str) else ""
+    basis = None
+    basis_blob = None
+    raw = b""
+    try:
+        raw, basis_blob = gh.repository_file(basis_path, sha)
+        basis = json.loads(raw.decode("utf-8"), object_pairs_hook=q.unique)
+    except Denied as exc:
+        reject(
+            "SEMANTIC_BASIS_MISSING"
+            if exc.code in {"ARTIFACT_NOT_A_FILE", "ARTIFACT_CONTENT_UNAVAILABLE"}
+            else exc.code
+        )
+    except (ValueError, UnicodeDecodeError, TypeError):
+        reject("SEMANTIC_BASIS_INVALID")
+    if not isinstance(basis, dict):
+        reject("SEMANTIC_BASIS_MISSING")
+        reject("CONTRACT_ARTIFACTS_UNDECLARED")
+        reject("TEST_EVIDENCE_UNDECLARED")
+        reject("TRACE_EVIDENCE_UNDECLARED")
+        return {
+            "schema": "auto-readiness-attestation-v1",
+            "status": "UNKNOWN",
+            "node": node,
+            "level": "CONTRACT_READY",
+            "consumer": {"edge_id": edge.get("id"), "wp_id": wp, "node": successor},
+            "source_sha": sha,
+            "reasons": reasons,
+        }
+    expected_keys = {
+        "schema", "node", "level", "producer", "producer_wp", "producer_pr",
+        "producer_merge_sha", "scope_projections", "certification", "semantic_basis",
+        "consumer_edges", "artifacts", "tests", "trace",
+    }
+    if set(basis) != expected_keys or basis.get("schema") != "auto-readiness-semantic-basis-v1":
+        reject("SEMANTIC_BASIS_SCHEMA_INVALID")
+    if basis.get("node") != node or basis.get("level") != "CONTRACT_READY":
+        reject("SEMANTIC_BASIS_NODE_OR_LEVEL_MISMATCH")
+    negative = r"(?is)(?:does\s+not|not|no)\s+(?:declare|certif\w*)?\s*CONTRACT_READY"
+    if basis.get("certification") != "CONTRACT_READY" or re.search(
+        negative, raw.decode("utf-8", "replace")
+    ):
+        reject("EXPLICIT_NON_CERTIFICATION")
+    owner = q.PEOPLE.get(producer, (None,))[0] if producer in q.PEOPLE else None
+    login = GITHUB.get(producer)
+    if basis.get("producer") != {"owner": owner, "login": login}:
+        reject("PRODUCER_ATTRIBUTION_MISMATCH")
+    producer_wps = policy.get("node_producers", {}).get(node, [])
+    if (
+        not isinstance(producer_wps, list)
+        or not producer_wps
+        or basis.get("producer_wp") not in producer_wps
+    ):
+        reject("PRODUCER_SCOPE_UNKNOWN")
+    scope = basis.get("scope_projections")
+    if not isinstance(scope, dict) or set(scope) != set(producer_wps):
+        reject("PRODUCER_SCOPE_PROJECTION_MISMATCH")
+    else:
+        for producer_wp in producer_wps:
+            projection = policy.get("scope_projections", {}).get(producer_wp)
+            if projection is None or scope.get(producer_wp) != evidence_digest(projection):
+                reject("PRODUCER_SCOPE_PROJECTION_MISMATCH")
+    judgment = basis.get("semantic_basis")
+    semantic_fields = {
+        "stability", "consumer_usability", "compatibility_intent", "scope_meaning"
+    }
+    if (
+        not isinstance(judgment, dict)
+        or set(judgment) != semantic_fields
+        or any(
+            not isinstance(judgment.get(key), str)
+            or not judgment[key].strip()
+            or re.match(r"^(?:UNKNOWN|TBD|TODO|PENDING)\b", judgment[key], re.I)
+            for key in semantic_fields
+        )
+    ):
+        reject("ATTRIBUTABLE_SEMANTIC_BASIS_MISSING")
+    normalized_judgment = judgment if isinstance(judgment, dict) else {}
+    edges = basis.get("consumer_edges")
+    if (
+        not isinstance(edges, list)
+        or edge.get("id") not in edges
+        or len(edges) != len(set(edges))
+    ):
+        reject("CONSUMER_EDGE_BINDING_MISSING")
+    merge = basis.get("producer_merge_sha")
+    pr_number = basis.get("producer_pr")
+    if not isinstance(merge, str) or not SHA.fullmatch(merge) or type(pr_number) is not int:
+        reject("PRODUCER_MERGE_BINDING_INVALID")
+    else:
+        try:
+            pr = gh.pr(pr_number)
+            author = pr.get("user", {}).get("login", "")
+            if (
+                not pr.get("merged")
+                or pr.get("merge_commit_sha") != merge
+                or author.casefold() != (login or "").casefold()
+            ):
+                reject("PRODUCER_MERGE_ATTRIBUTION_INVALID")
+            files = gh.files(pr)
+            authored = {
+                item.get("filename") for item in files if item.get("status") != "removed"
+            }
+            if basis_path not in authored:
+                reject("SEMANTIC_BASIS_NOT_PRODUCER_AUTHORED")
+            gh.ancestor(merge, sha)
+        except Denied as exc:
+            reject(exc.code)
+    normalized = {}
+    for field, roles in [
+        ("artifacts", {"contract", "schema", "fixture"}),
+        ("tests", None),
+        ("trace", None),
+    ]:
+        rows = basis.get(field)
+        if not isinstance(rows, list) or not rows:
+            reject(field.upper() + "_EVIDENCE_UNDECLARED")
+            continue
+        seen = set()
+        normalized[field] = []
+        for row in rows:
+            if field == "artifacts":
+                required = {"path", "blob", "role"}
+            elif field == "tests":
+                required = {"test_id", "check", "path", "blob"}
+            else:
+                required = {"requirement", "path", "blob"}
+            if not isinstance(row, dict) or set(row) != required or row.get("path") in seen:
+                reject(field.upper() + "_EVIDENCE_INVALID")
+                continue
+            if (
+                field == "tests"
+                and (
+                    not re.fullmatch(r"TEST-[A-Z0-9-]+", row.get("test_id", ""))
+                    or not isinstance(row.get("check"), str)
+                    or not row["check"].strip()
+                )
+            ):
+                reject("TEST_EVIDENCE_INVALID")
+                continue
+            if field == "trace" and not re.fullmatch(
+                r"(?:FR|NFR)-[A-Z0-9]+-[0-9]{3}", row.get("requirement", "")
+            ):
+                reject("TRACE_EVIDENCE_INVALID")
+                continue
+            seen.add(row["path"])
+            try:
+                _, blob = gh.repository_file(row["path"], sha)
+                if blob != row.get("blob"):
+                    reject("STALE_" + field.upper() + "_BLOB")
+            except Denied as exc:
+                reject(exc.code)
+                continue
+            normalized[field].append(row)
+        if roles is not None and {row.get("role") for row in rows} != roles:
+            reject("CONTRACT_ARTIFACT_ROLES_INCOMPLETE")
+    required_trace = set(policy.get("node_requirements", {}).get(node, []))
+    if isinstance(basis.get("trace"), list) and {
+        row.get("requirement") for row in basis["trace"] if isinstance(row, dict)
+    } != required_trace:
+        reject("TRACE_REQUIREMENT_COVERAGE_MISMATCH")
+    checks = []
+    try:
+        checks, _ = gh.checks(sha)
+    except Denied as exc:
+        reject(exc.code)
+    required_checks = set(policy.get("required_ci", [])) | set(
+        policy.get("required_aggregate_ci", [])
+    )
+    if isinstance(basis.get("tests"), list):
+        required_checks |= {
+            row.get("check") for row in basis["tests"] if isinstance(row, dict)
+        }
+    for name in sorted(required_checks):
+        matches = [check for check in checks if check.get("name") == name]
+        if (
+            len(matches) != 1
+            or matches[0].get("head_sha", sha) != sha
+            or matches[0].get("status") != "completed"
+            or matches[0].get("conclusion") != "success"
+        ):
+            reject("SHA_BOUND_REQUIRED_TEST_NOT_GREEN")
+    if reasons:
+        return {
+            "schema": "auto-readiness-attestation-v1",
+            "status": "UNKNOWN",
+            "node": node,
+            "level": "CONTRACT_READY",
+            "producer": producer,
+            "consumer": {"edge_id": edge.get("id"), "wp_id": wp, "node": successor},
+            "source_sha": sha,
+            "reasons": reasons,
+        }
+    proof = {
+        "schema": "auto-readiness-attestation-v1",
+        "status": "PASS",
+        "node": node,
+        "level": "CONTRACT_READY",
+        "producer": {"profile": producer, "owner": owner, "login": login},
+        "consumer": {
+            "edge_id": edge["id"], "wp_id": wp, "node": successor,
+            "required_level": "CONTRACT_READY",
+        },
+        "source_sha": sha,
+        "producer_merge_sha": merge,
+        "policy_digest": policy["policy_digest"],
+        "artifacts": normalized["artifacts"],
+        "tests": normalized["tests"],
+        "trace": normalized["trace"],
+        "semantic_basis": dict(
+            normalized_judgment, path=basis_path, blob=basis_blob, author=login
+        ),
+    }
+    proof["proof_digest"] = evidence_digest(proof)
+    return proof
 
 
 def existing_assessment(gh,text,wp,sha):
@@ -489,7 +778,13 @@ def dependencies(gh, rows, context, record, sha, policy, final=False):
                  and data.get('head_sha')==sha and (data.get('_native') or
                  data.get('source_manifest')==policy['source_manifest'] and data.get('policy_digest')==policy['policy_digest'])]
         matches=[m for m in matches if isinstance(m,dict)]
-        need(len(matches)==1,'DEPENDENCY_READINESS_UNKNOWN')
+        need(len(matches)<=1,'DEPENDENCY_READINESS_AMBIGUOUS')
+        if not matches:
+            automatic=automatic_readiness_attestation(
+                gh,context,edge,gh.main_sha(),policy
+            )
+            need(automatic.get('status')=='PASS', automatic.get('reasons',['DEPENDENCY_READINESS_UNKNOWN'])[0])
+            continue
         data=matches[0]
         levels=policy['node_levels'].get(edge['predecessor']['node'],[])
         required=semantics['required_readiness']
