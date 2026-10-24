@@ -5866,7 +5866,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-SEC-BASE |
 | Size band (indicative, no hour estimates) | S (≈1–3 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `services/manufacturing-core/src/manufacturing_core/authz.py`; `services/manufacturing-core/src/manufacturing_core/enforcement.py`; `evidence/WP-SEC-003/` |
 
 **Purpose.** Enforce authorization in the backend for every protected command — UI visibility is never authorization.
 

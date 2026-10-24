@@ -79,3 +79,20 @@ are not bound to code: no Core command handler exists yet. The module reads no
 identity, token, configuration or secret and is not wired to HTTP, an identity
 provider or Automation. It is unit-level evidence only; it does not claim
 AV-SCEN-04, BENCH-RQ3-001 or the integrated TEST-SEC-AUTHZ-NEG suite.
+
+### Enforcement mechanism (slice 2) — WP-SEC-003
+
+`manufacturing_core.enforcement` puts the slice 1 policy in front of a protected
+handler. `authorize(permissions, action)` returns only on ALLOW and otherwise raises
+`AuthorizationDenied`; `enforce(permissions, action, handler, *args, **kwargs)`
+authorizes first and then calls the handler exactly once, never on DENY. Any fault
+while evaluating also denies. `EnforcementRegistry.bind(action)` decorates a handler
+(the guarded callable takes the permissions as its first argument), and
+`unbound_actions()` / `assert_fully_bound()` report catalogued protected actions that
+have no binding.
+
+No Core command handler exists yet, so the registry starts empty and no action is
+bound; handlers bind themselves when they are written. There is no role-to-permission
+mapping, no Automation binding and no HTTP or IdP wiring, and nothing here claims
+API or integration acceptance (TEST-SEC-AUTHZ-NEG at INTEGRATION, AV-SCEN-04 and
+BENCH-RQ3-001 remain unexecuted).
