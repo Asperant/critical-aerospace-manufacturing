@@ -4933,7 +4933,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-PLAT-COMPOSE |
 | Size band (indicative, no hour estimates) | M (≈4–7 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `infra/compose/`; `infra/mfgctl/capabilities.json`; `evidence/WP-PLAT-001/` |
 
 **Purpose.** Define the containerized runtime composition (local profiles and the shared Integration profile) that hosts all nine deployables plus infrastructure.
 

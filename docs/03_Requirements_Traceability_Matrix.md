@@ -55,6 +55,17 @@
 > `observed` stays null. No accepted measurement, sealed EvidenceID or VERIFIED
 > state is asserted.
 
+> **WP-PLAT-001 implementation delta (2026-10-24).** FR-PLAT-001 and FR-PLAT-002
+> now reference the canonical Compose definition in `infra/compose/` with the
+> eight 02 runtime profiles and its `infra` layer (PostgreSQL, NATS JetStream,
+> Valkey, SeaweedFS, Keycloak), validated by TEST-PLAT-COMPOSE assets (§19.5);
+> `infra/mfgctl/capabilities.json` instantiates the mfgctl registry contract.
+> NFR-DEP-002 references the startup-to-healthy instrumentation; the shared-host
+> run is recorded under `evidence/WP-PLAT-001/` as a DEV observation of the
+> `infra` profile only. Application deployables join the profiles as they become
+> runnable services, so FR-PLAT-001's full composition and the Integration
+> profile remain open; evidence is EVIDENCE_PENDING and `observed` stays null.
+
 ---
 
 ## Table of Contents
@@ -552,8 +563,8 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 
 | ID | Class | PrimaryOwner | Catalog anchor | Source decisions (DERIVED_FROM) | Planning state | Flags |
 |---|---|---|---|---|---|---|
-| FR-PLAT-001 | F0 | Yavuz | 01 Item81 FR-PLAT-001 L170079 | ITEM-39, ITEM-61, ITEM-68, NFR-INV-44, INTEG-INV-20 | VERIFY_PLANNED | — |
-| FR-PLAT-002 | F1 | Yavuz | 01 Item81 FR-PLAT-002 L170080 | ITEM-38, DX-INV-07, DX-INV-08 | VERIFY_PLANNED | — |
+| FR-PLAT-001 | F0 | Yavuz | 01 Item81 FR-PLAT-001 L170079 | ITEM-39, ITEM-61, ITEM-68, NFR-INV-44, INTEG-INV-20 | EVIDENCE_PENDING | — |
+| FR-PLAT-002 | F1 | Yavuz | 01 Item81 FR-PLAT-002 L170080 | ITEM-38, DX-INV-07, DX-INV-08 | EVIDENCE_PENDING | — |
 | FR-PLAT-003 | F1 | Yavuz | 01 Item81 FR-PLAT-003 L170081 | ITEM-74, DX-INV-02, DX-INV-03 | EVIDENCE_PENDING | — |
 | FR-PLAT-004 | F1 | Yavuz | 01 Item81 FR-PLAT-004 L170082 | ITEM-42, CD-INV-01, PLAT-INV-01, INTEG-INV-03 | VERIFY_PLANNED | — |
 | FR-PLAT-005 | F1 | Yavuz | 01 Item81 FR-PLAT-005 L170083 | ITEM-42, CD-INV-03, PLAT-INV-10 | VERIFY_PLANNED | — |
@@ -735,7 +746,7 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 | ID | Class | PrimaryOwner | Catalog anchor | Source decisions (DERIVED_FROM) | Planning state | Flags |
 |---|---|---|---|---|---|---|
 | NFR-DEP-001 | A1 | Yavuz | 01 Item82 NFR-DEP-001 L172262 | ITEM-39, ITEM-61, NFR-INV-44 | VERIFY_PLANNED | — |
-| NFR-DEP-002 | S2 | Yavuz | 01 Item82 NFR-DEP-002 L172275 | ITEM-39, ITEM-42 | VERIFY_PLANNED | — |
+| NFR-DEP-002 | S2 | Yavuz | 01 Item82 NFR-DEP-002 L172275 | ITEM-39, ITEM-42 | EVIDENCE_PENDING | — |
 | NFR-DEP-003 | H0 | Yavuz | 01 Item82 NFR-DEP-003 L172286 | ITEM-42, INTEG-INV-02, CD-INV-17 | VERIFY_PLANNED | — |
 | NFR-DEP-004 | A1 | Yavuz | 01 Item82 NFR-DEP-004 L172299 | ITEM-35, ITEM-42, CD-INV-08, LOCAL-INV-12 | VERIFY_PLANNED | — |
 | NFR-DEP-005 | H0 | Yavuz | 01 Item82 NFR-DEP-005 L172308 | ITEM-84, NFR-INV-44, DX-INV-51 | VERIFY_PLANNED | — |
@@ -5451,26 +5462,27 @@ FR-PLAT-001:
   meta: {class: F0, owner: Yavuz, anchor: "01 Item81 FR-PLAT-001 L170079"}
   DERIVED_FROM: [ITEM-39, ITEM-61, ITEM-68, NFR-INV-44, INTEG-INV-20]
   ALLOCATED_TO: [ARCH-PLAT-COMPOSE, ARCH-PLAT-RELEASE]
-  REALIZED_BY: {surface: "Compose-based INTEGRATION composition of 9 deployables + infrastructure (backfill ADR 11)", deployable: "shared Linux host runtime", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "Compose-based INTEGRATION composition of 9 deployables + infrastructure (backfill ADR 11)", deployable: "shared Linux host runtime", ref: "infra/compose/compose.yaml; infra/compose/stack.sh"}
   GOVERNED_BY: ["EnvironmentManifest"]
   DECIDED_BY: ["backfill-11"]
   VERIFIED_BY: [TEST-PLAT-COMPOSE, TEST-DEP-PLATFORM, BENCH-E2E-001]
   EXERCISED_IN: [E2E-01, AV-SCEN-12]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-PLAT-001-DEV-001]  # infra layer on the shared host and in CI t1-integration; deployables and Integration profile pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "CI + INTEGRATION + EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "infrastructure layer composed; application deployables join the profiles when they are runnable services (manufacturing-core has no service process yet; operations-bff needs an identity client and edge topology)."
 FR-PLAT-002:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-PLAT-002 L170080"}
   DERIVED_FROM: [ITEM-38, DX-INV-07, DX-INV-08]
   ALLOCATED_TO: [ARCH-PLAT-COMPOSE]
-  REALIZED_BY: {surface: "capability-group Compose profiles", deployable: "repository platform definitions", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "capability-group Compose profiles", deployable: "repository platform definitions", ref: "infra/compose/compose.yaml; infra/mfgctl/capabilities.json"}
   GOVERNED_BY: ["Compose profiles"]
   VERIFIED_BY: [TEST-PLAT-COMPOSE, BENCH-DX-001]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-PLAT-001-DEV-001]  # all eight profiles render in CI; infra profile started through mfgctl on the shared host
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "DEV + CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 FR-PLAT-003:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-PLAT-003 L170081"}
   DERIVED_FROM: [ITEM-74, DX-INV-02, DX-INV-03]
@@ -6853,12 +6865,13 @@ NFR-DEP-002:
   meta: {class: S2, owner: Yavuz, anchor: "01 Item82 NFR-DEP-002 L172275"}
   DERIVED_FROM: [ITEM-39, ITEM-42]
   ALLOCATED_TO: [ARCH-PLAT-COMPOSE, ARCH-OBS-HEALTH]
+  REALIZED_BY: {surface: "startup-to-healthy measurement (stack.sh up --wait)", deployable: "platform runtime tooling", ref: "infra/compose/stack.sh; evidence/WP-PLAT-001/collect_run.py"}
   MEASUREMENT: {metric: "startup → healthy or explicit known-degraded with images local", threshold: "≤ 10 min", workload: "full mandatory Integration profile", hardware: "HP: accepted 16 GiB shared Linux host (EVALUATION HardwareProfile)", observed: null}
   VERIFIED_BY: [BENCH-DEP-STARTUP]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-PLAT-001-DEV-001]  # DEV observation of the infra profile only; the full Integration profile is not yet composed
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 NFR-DEP-003:
   meta: {class: H0, owner: Yavuz, anchor: "01 Item82 NFR-DEP-003 L172286"}
   DERIVED_FROM: [ITEM-42, INTEG-INV-02, CD-INV-17]
@@ -7263,6 +7276,21 @@ Contracts: `cap.resource/v1`, `cap.log/v1`, `cap.health/v1` in
 validated by the tests). CI: the "Observability standard tests and typing" step
 of t1-unit and the REAL telemetry pipeline steps of t1-integration. The failure
 detection latency of NFR-OBS-004 and the INTEGRATION-host run remain open.
+EvidenceState is EVIDENCE_PENDING.
+
+### 19.5 WP-PLAT-001 concrete implementation and verification assets
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-PLAT-001-001 (`infra/compose/tests/test_definitions.py`) | TEST-PLAT-COMPOSE | FR-PLAT-002 (canonical profile set, exact pins, localhost ports, health checks, memory limits and budget, no credentials in the definition, registry conformance) |
+| TEST-PLAT-001-002 (`infra/compose/tests/test_runtime_integration.py`) | TEST-PLAT-COMPOSE | FR-PLAT-001, FR-PLAT-002 (every profile renders; REAL PostgreSQL, NATS JetStream, Valkey, SeaweedFS S3 and Keycloak answer their protocols) |
+| BENCH-PLAT-001-001 (`stack.sh up` startup-to-healthy, `evidence/WP-PLAT-001/collect_run.py`) | BENCH-DEP-STARTUP instrumentation | NFR-DEP-002 |
+
+Registry instance: `infra/mfgctl/capabilities.json` (`mfgctl.capabilities/v1`,
+validated against the WP-PLAT-002 schema by TEST-PLAT-001-001). CI: the
+"Platform composition definition tests" step of t1-unit and the REAL platform
+steps of t1-integration. TEST-DEP-PLATFORM and INSP-DEP-HOST on the Integration
+host, the full Integration profile and BENCH-E2E-001 remain open.
 EvidenceState is EVIDENCE_PENDING.
 
 ## 20. Rejected Alternatives
