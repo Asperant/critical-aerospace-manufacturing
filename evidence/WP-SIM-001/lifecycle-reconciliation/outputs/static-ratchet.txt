@@ -1,0 +1,4 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/static_ratchet.py check
+[exit 0]
+Current: ruff=307 pyright=189 unformatted=56 ({'ruff': 'ruff 0.7.4', 'pyright': 'pyright 1.1.389'})
+PASS: no new static findings; baseline is tight.

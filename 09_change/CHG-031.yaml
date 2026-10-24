@@ -1,0 +1,34 @@
+CHG-031:
+  title: Audited lifecycle reconciliation of already merged work
+  class: C3
+  review_risk_class: CR-3
+  owner: Batuhan
+  decision: DRAFT
+  status: UNDER_REVIEW
+  application_control_item: WP-SIM-001
+  required_human_approvals: 0
+  human_decision_basis: Project-owner approval of the proposed reconciliation scope (supervisor
+    answer fcacd0c9-120d-43d1-b1c3-47745195b4d1, 24 October 2026) and an explicit task-local
+    exception to opening a new control item (answer 288a928f-67a1-4acd-8ca7-29350bbc2a12).
+    This record is not yet approved or implemented; its decision follows the ordinary
+    development gates, not the supervisor answers.
+  scope: Repository tooling and workflow governance only; a narrow, audited, allow-listed
+    repair for work whose pull request really merged while Plane still shows a premerge state.
+    Product HITL, DoR/DoD, requirements, DONE and the ordinary transition rules are unchanged
+  policy_source: project_control/lifecycle_reconciliation.yaml
+  rules:
+  - Only MERGED, or VALIDATING with actual started main runs at the exact merge SHA, can be recorded
+  - Each case binds one profile, WP, pull request, head, merge commit, parents, file count and runs
+  - Current observed GitHub facts are re-proved live; the merge must be reachable from main
+  - Only premerge sources READY, IN_PROGRESS, IN_REVIEW and MERGE_READY; same target is a verified no-op
+  - Terminal, backwards and BLOCKED work fail closed; blockers are surfaced, never cleared
+  - The audit operation LIFECYCLE_RECONCILE records now, with skipped_state_history_not_asserted
+  - No fabricated historical transitions, no DONE, no AUTO_NEXT, no assignment or cycle change
+  - A durable INTENT audit row precedes one narrow state PATCH followed by a fresh exact readback
+  - Reconciliation is not DoR/DoD evidence and does not establish integrated acceptance
+  - Ordinary cap-plane-transition rules and the DONE validator are not weakened
+  - Complete bounded GitHub PR file pagination (ceiling 1000 files) replaces the single-page read
+  rollout: Merge reviewed source only; separate root installation proposal and authorization,
+    then a distinct live application authorization bound to the exact case
+  rollback: Restore deployed helper files from the root-only backup; never delete audit or
+    silently revert Plane state

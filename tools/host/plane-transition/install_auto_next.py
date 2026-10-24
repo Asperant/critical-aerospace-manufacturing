@@ -6,12 +6,86 @@ import fcntl
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 from pathlib import Path
 
 SOURCE = Path("/srv/ailab/project")
 CONFIG = Path("/etc/cap-plane-queue")
+RECONCILE_LIBEXEC = "/usr/local/libexec/cap-plane-reconcile.py"
+RECONCILE_SUDOERS = "/etc/sudoers.d/cap-plane-reconcile"
+PROFILES = ("asrin", "selman", "batuhan", "yavuz")
+RECONCILE_TARGETS = ("MERGED", "VALIDATING")
+
+
+def deployment_mapping():
+    """Installed path -> reviewed repository source, for every deployed file."""
+    mapping = {
+        "/usr/local/libexec/cap-plane-transition": "tools/host/plane-transition/transition.py",
+        "/usr/local/bin/cap-plane-transition": "tools/host/plane-transition/cap-plane-transition",
+        "/usr/local/libexec/cap-plane-queue": "tools/host/plane-queue/queue.py",
+        "/usr/local/bin/cap-plane-queue": "tools/host/plane-queue/cap-plane-queue",
+        "/usr/local/libexec/cap-auto-next.py": "tools/host/plane-transition/auto_next.py",
+        "/usr/local/libexec/execution_queue.py": "tools/projectctl/src/projectctl/execution_queue.py",
+        "/usr/local/bin/cap-plane-advance": "tools/host/plane-transition/cap-plane-advance",
+        "/usr/local/bin/cap-plane-health": "tools/host/plane-transition/cap-plane-health",
+        "/usr/local/libexec/cap-plane-health.py": "tools/host/plane-transition/health.py",
+        "/usr/local/libexec/cap-plane-health-snapshot.py": "tools/host/plane-transition/health_snapshot.py",
+        "/etc/systemd/system/cap-plane-health.service": "tools/host/plane-transition/cap-plane-health.service",
+        "/etc/systemd/system/cap-plane-health.timer": "tools/host/plane-transition/cap-plane-health.timer",
+    }
+    mapping.update(
+        {
+            "/usr/local/libexec/cap-preparation.py": "tools/host/plane-transition/preparation.py",
+            "/usr/local/libexec/cap-plane-prepare.py": "tools/host/plane-transition/prepare.py",
+            "/usr/local/bin/cap-plane-prepare": "tools/host/plane-transition/cap-plane-prepare",
+            "/etc/systemd/system/cap-plane-prepare.service": "tools/host/plane-transition/cap-plane-prepare.service",
+            "/etc/systemd/system/cap-plane-prepare.timer": "tools/host/plane-transition/cap-plane-prepare.timer",
+        }
+    )
+    mapping.update(
+        {
+            RECONCILE_LIBEXEC: "tools/host/plane-transition/reconcile.py",
+            "/usr/local/bin/cap-plane-reconcile": "tools/host/plane-transition/cap-plane-reconcile",
+        }
+    )
+    return mapping
+
+
+# Installed implementation files whose hashes the generated policy pins.
+IMPLEMENTATION_TARGETS = {
+    "transition": "/usr/local/libexec/cap-plane-transition",
+    "queue": "/usr/local/libexec/cap-plane-queue",
+    "auto_next": "/usr/local/libexec/cap-auto-next.py",
+    "execution_queue": "/usr/local/libexec/execution_queue.py",
+    "health": "/usr/local/libexec/cap-plane-health.py",
+    "health_snapshot": "/usr/local/libexec/cap-plane-health-snapshot.py",
+    "preparation": "/usr/local/libexec/cap-preparation.py",
+    "prepare": "/usr/local/libexec/cap-plane-prepare.py",
+    "reconcile": RECONCILE_LIBEXEC,
+}
+
+
+def reconcile_grants(policy):
+    """Exact-argv sudo lines derived from the policy allow-list; no globs or regexes.
+
+    One line per allow-listed profile, WP and target. Every value is validated
+    before it becomes privileged command text.
+    """
+    lines = ["# Lifecycle reconciliation: exact allow-listed own-profile invocations"]
+    for case in policy["lifecycle_reconciliation"]["cases"]:
+        profile, wp = case["profile"], case["wp_id"]
+        if profile not in PROFILES or not re.fullmatch(r"WP-[A-Z0-9]+-[0-9]{3}", wp):
+            raise ValueError("Invalid reconciliation grant identity")
+        for target in case["targets"]:
+            if target not in RECONCILE_TARGETS:
+                raise ValueError("Invalid reconciliation grant target")
+            lines.append(
+                f"{profile} ALL=(root) NOPASSWD: NOSETENV: /usr/bin/python3 -I "
+                f"{RECONCILE_LIBEXEC} {profile} {wp} {target}"
+            )
+    return lines
 
 
 def restore_targets(mapping):
@@ -22,6 +96,7 @@ def restore_targets(mapping):
         "/usr/local/share/cap-plane-transition/policy-manifest.json",
         "/etc/sudoers.d/cap-plane-advance",
         "/etc/sudoers.d/cap-plane-health",
+        RECONCILE_SUDOERS,
     }
 
 
@@ -47,29 +122,7 @@ def main():
     ).strip()
     if status or head != remote:
         raise ValueError("Clean merged reference source required")
-    mapping = {
-        "/usr/local/libexec/cap-plane-transition": "tools/host/plane-transition/transition.py",
-        "/usr/local/bin/cap-plane-transition": "tools/host/plane-transition/cap-plane-transition",
-        "/usr/local/libexec/cap-plane-queue": "tools/host/plane-queue/queue.py",
-        "/usr/local/bin/cap-plane-queue": "tools/host/plane-queue/cap-plane-queue",
-        "/usr/local/libexec/cap-auto-next.py": "tools/host/plane-transition/auto_next.py",
-        "/usr/local/libexec/execution_queue.py": "tools/projectctl/src/projectctl/execution_queue.py",
-        "/usr/local/bin/cap-plane-advance": "tools/host/plane-transition/cap-plane-advance",
-        "/usr/local/bin/cap-plane-health": "tools/host/plane-transition/cap-plane-health",
-        "/usr/local/libexec/cap-plane-health.py": "tools/host/plane-transition/health.py",
-        "/usr/local/libexec/cap-plane-health-snapshot.py": "tools/host/plane-transition/health_snapshot.py",
-        "/etc/systemd/system/cap-plane-health.service": "tools/host/plane-transition/cap-plane-health.service",
-        "/etc/systemd/system/cap-plane-health.timer": "tools/host/plane-transition/cap-plane-health.timer",
-    }
-    mapping.update(
-        {
-            "/usr/local/libexec/cap-preparation.py": "tools/host/plane-transition/preparation.py",
-            "/usr/local/libexec/cap-plane-prepare.py": "tools/host/plane-transition/prepare.py",
-            "/usr/local/bin/cap-plane-prepare": "tools/host/plane-transition/cap-plane-prepare",
-            "/etc/systemd/system/cap-plane-prepare.service": "tools/host/plane-transition/cap-plane-prepare.service",
-            "/etc/systemd/system/cap-plane-prepare.timer": "tools/host/plane-transition/cap-plane-prepare.timer",
-        }
-    )
+    mapping = deployment_mapping()
     policy = json.loads(
         Path("/srv/ailab/remote-ssh/staging/plane-transition-policy.json").read_text()
     )
@@ -90,6 +143,7 @@ def main():
         "/etc/sudoers.d/cap-plane-queue",
         "/etc/sudoers.d/cap-plane-transition",
         "/etc/sudoers.d/cap-plane-health",
+        RECONCILE_SUDOERS,
     ]
     originals = []
     for name in touched:
@@ -194,6 +248,10 @@ print('AUTO_NEXT deployment restored; Plane states and audit untouched. Source p
     health_draft.write_text("\n".join(health_grants) + "\n")
     health_draft.chmod(0o440)
     subprocess.run(["/usr/sbin/visudo", "-cf", str(health_draft)], check=True)
+    reconcile_draft = backup / "reconcile-sudoers-check"
+    reconcile_draft.write_text("\n".join(reconcile_grants(policy)) + "\n")
+    reconcile_draft.chmod(0o440)
+    subprocess.run(["/usr/sbin/visudo", "-cf", str(reconcile_draft)], check=True)
     draft = backup / "sudoers-check"
     draft.write_text("\n".join(grants) + "\n")
     draft.chmod(0o440)
@@ -222,16 +280,7 @@ print('AUTO_NEXT deployment restored; Plane states and audit untouched. Source p
             json.dumps(catalog, ensure_ascii=False, sort_keys=True).encode(),
             0o600,
         )
-        for kind, dest in {
-            "transition": "/usr/local/libexec/cap-plane-transition",
-            "queue": "/usr/local/libexec/cap-plane-queue",
-            "auto_next": "/usr/local/libexec/cap-auto-next.py",
-            "execution_queue": "/usr/local/libexec/execution_queue.py",
-            "health": "/usr/local/libexec/cap-plane-health.py",
-            "health_snapshot": "/usr/local/libexec/cap-plane-health-snapshot.py",
-            "preparation": "/usr/local/libexec/cap-preparation.py",
-            "prepare": "/usr/local/libexec/cap-plane-prepare.py",
-        }.items():
+        for kind, dest in IMPLEMENTATION_TARGETS.items():
             if (
                 hashlib.sha256(Path(dest).read_bytes()).hexdigest()
                 != policy["implementation_sha256"][kind]
@@ -249,6 +298,7 @@ print('AUTO_NEXT deployment restored; Plane states and audit untouched. Source p
         )
         write("/etc/sudoers.d/cap-plane-advance", draft.read_bytes(), 0o440)
         write("/etc/sudoers.d/cap-plane-health", health_draft.read_bytes(), 0o440)
+        write(RECONCILE_SUDOERS, reconcile_draft.read_bytes(), 0o440)
         subprocess.run(["/usr/sbin/visudo", "-cf", "/etc/sudoers"], check=True)
         subprocess.run(
             [

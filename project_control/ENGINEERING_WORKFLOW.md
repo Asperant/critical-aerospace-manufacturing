@@ -56,3 +56,8 @@ root-only timestamped `/root` backup and rollback script before replacing helper
 files, refreshes source/helper hashes, verifies sudoers and preserves audit. Rollback
 restores deployment only; never replay a stale Plane DB or state snapshot. No service
 restart is required. Missing evidence results in NO_TASK, never synthetic READY.
+
+
+### Lifecycle reconciliation of merged work — CHG-031 (proposed, UNDER_REVIEW)
+
+When a work package's PR really merged but Plane was never advanced, `cap-plane-reconcile <WP-ID> <MERGED|VALIDATING>` can record the current observed fact. It is not a general bypass: only cases allow-listed in `project_control/lifecycle_reconciliation.yaml` work, for the named profile, WP, PR, head, merge commit and parents. Evidence is exactly `pr:N` (plus the policy's `run:N` refs for VALIDATING). The helper re-proves the merge, the complete file scope and the started main runs live, writes a durable INTENT audit row, performs one state PATCH and reads it back; a lost response is read back, never blindly retried. It does not fabricate skipped history, set DONE, clear BLOCKED, call AUTO_NEXT or touch other work, and it is not DoR/DoD or acceptance evidence. Installing it on the host and each live application are separately authorized steps.

@@ -1,0 +1,7 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked projectctl catalog-lint --base 5269525ffba3dc73e2d7034dc8f546b6dba98295
+[exit 0]
+Requirement catalog: PASS (306 records)
+History: CHECKED
+SOURCE_GAP: Unspecified canonical Revision/Status remain null (GAP-RTM-004/005)
+SOURCE_GAP: NFR measurement metadata remains owner-confirmation work (GAP-RTM-004)
+Readiness/evidence: NOT_CERTIFIED
