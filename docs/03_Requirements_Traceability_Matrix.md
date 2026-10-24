@@ -3772,7 +3772,7 @@ FR-CORE-010:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-010 L169858"}
   DERIVED_FROM: [ITEM-09, WL-INV-02, WL-INV-03]
   ALLOCATED_TO: [ARCH-CORE-GENEALOGY]
-  REALIZED_BY: {surface: "lot split relation model", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "lot split relation model", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/lineage.py"} # internal model only; persistence/query exposure pending
   EXPOSED_BY: ["Core Query API (genealogy)"]
   VERIFIED_BY: [TEST-CORE-GENEALOGY]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
@@ -3783,7 +3783,7 @@ FR-CORE-011:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-011 L169859"}
   DERIVED_FROM: [ITEM-09, WL-INV-02, WL-INV-03]
   ALLOCATED_TO: [ARCH-CORE-GENEALOGY]
-  REALIZED_BY: {surface: "lot merge relation model (policy-permitted)", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "lot merge relation model (policy-permitted)", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/lineage.py"} # internal facts only; merge eligibility/execution not inferred
   EXPOSED_BY: ["Core Query API (genealogy)"]
   VERIFIED_BY: [TEST-CORE-GENEALOGY]
   EXECUTED_AS: []  # NOT_YET_EXECUTED

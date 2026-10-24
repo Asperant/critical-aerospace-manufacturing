@@ -255,3 +255,38 @@ Provide `CI_PG_DSN` and `CORE_TEST_DISPOSABLE=1` only for a disposable PostgreSQ
 18 test administrator, as above. These tests create another isolated database
 using the existing test roles and drop it on exit; original-schema fixtures and
 shared databases are untouched.
+
+## Split/merge lineage values — WP-CORE-004 slice 3
+
+`manufacturing_core.lineage` contains frozen `LotMembershipSnapshot`,
+`LotLineageEvent` and `LotLineageHistory` values. A split records one source lot
+and at least two fresh successor lots; a merge records at least two source lots
+and one fresh successor. Component identities are references, never copied into
+new serialized-component entities. Each operation conserves the exact component
+set; successor memberships cannot overlap. Original lot snapshots and events
+remain intact, including after later generations split or merge again.
+
+The supplied roots explicitly bound a complete local history closure; no unknown
+parent is silently promoted to a root. Lot identities have one producer and at
+most one split/merge consumer within that closure. Cycles, reused successor IDs,
+duplicate source-event/record IDs and cross-world facts are rejected. These
+structural checks do not decide product/route/quality/capacity compatibility or
+authorize a merge; a Core caller must supply the already-governed facts.
+
+Each fact retains its source-event identity, opaque revision, reason, world,
+`occurred_at`, `effective_from` and `recorded_at`. All three times are aware and
+remain separate. A successor cannot occur or become effective before its
+explicit producer ancestry (comparing UTC instants, including repeated local
+hours); equality is allowed because the lot links already
+order dependent facts. Recording time never substitutes for occurrence time.
+There is no global sequence assumption: unrelated facts can share timestamps,
+and complete out-of-order input is validated by ancestry without reordering or
+rewriting the supplied facts. Roots do not invent birth timestamps. Permanent
+lineage links are not expiring membership intervals or a generic temporal engine.
+
+`history.append(event)` returns a new validated value, preserving the previous
+history. This slice adds no database tables, repository path, command handler,
+current-state update, simulation-time conversion or external event/query contract.
+Canonical envelope sequencing and producer/eligibility binding remain at their
+existing integration boundaries. Run only `tests/test_lineage.py` for the focused
+model checks; no database is required.
