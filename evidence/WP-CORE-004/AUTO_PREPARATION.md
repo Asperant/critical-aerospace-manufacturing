@@ -190,7 +190,7 @@
       }
     }
   ],
-  "input_digest": "a77562b9b37e4dc0c64bc96f7233c60c00bf92d2cd13b0894d522feff7f51237",
+  "input_digest": "60423ea49812b210586c72023253b8cf472a10ce5c1dc2c738a0272669883068",
   "outcome": "Preserve full material history so RCA and exposure analysis can reason over lineage rather than current state only.",
   "planned_acceptance": [
     "append-only route-visit history",
@@ -224,7 +224,7 @@
     }
   ],
   "schema_version": "cap-preparation-v1",
-  "source_sha": "1c03d456df3308d495796538d59390e14594bb9c",
+  "source_sha": "f646da67c28cdbda3fd197a541b9b009d4a7ea7c",
   "start_slice": "implement ReworkDirective execution without overwriting history",
   "supporting_reviewers": [
     {
