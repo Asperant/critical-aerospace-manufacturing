@@ -38,7 +38,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql
     ports:
-      - "127.0.0.1:${CAP_PG_PORT:-56432}:5432"
+      - "127.0.0.1:${CAP_PG_PORT:-25432}:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U cap -d cap"]
       interval: 5s
@@ -57,8 +57,8 @@ services:
     volumes:
       - nats-data:/data
     ports:
-      - "127.0.0.1:${CAP_NATS_PORT:-56222}:4222"
-      - "127.0.0.1:${CAP_NATS_MON_PORT:-56822}:8222"
+      - "127.0.0.1:${CAP_NATS_PORT:-24222}:4222"
+      - "127.0.0.1:${CAP_NATS_MON_PORT:-28222}:8222"
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- 'http://127.0.0.1:8222/healthz?js-enabled-only=true' >/dev/null"]
       interval: 5s
@@ -75,7 +75,7 @@ services:
     profiles: *infra-profiles
     command: ["valkey-server", "--save", "", "--appendonly", "no", "--maxmemory", "192mb", "--maxmemory-policy", "allkeys-lru"]
     ports:
-      - "127.0.0.1:${CAP_VALKEY_PORT:-56379}:6379"
+      - "127.0.0.1:${CAP_VALKEY_PORT:-26379}:6379"
     healthcheck:
       test: ["CMD-SHELL", "valkey-cli ping | grep -q PONG"]
       interval: 5s
@@ -94,8 +94,8 @@ services:
     volumes:
       - seaweedfs-data:/data
     ports:
-      - "127.0.0.1:${CAP_S3_PORT:-56333}:8333"
-      - "127.0.0.1:${CAP_SEAWEED_MASTER_PORT:-56933}:9333"
+      - "127.0.0.1:${CAP_S3_PORT:-28333}:8333"
+      - "127.0.0.1:${CAP_SEAWEED_MASTER_PORT:-29333}:9333"
     healthcheck:
       # Healthy only when the master answers AND the S3 gateway returns an HTTP
       # status (any status: 403 without identities is fine); a refused or reset
@@ -127,7 +127,7 @@ services:
     volumes:
       - keycloak-data:/opt/keycloak/data
     ports:
-      - "127.0.0.1:${CAP_KEYCLOAK_PORT:-56080}:8080"
+      - "127.0.0.1:${CAP_KEYCLOAK_PORT:-28080}:8080"
     healthcheck:
       # The image ships no curl/wget; bash /dev/tcp queries the management port.
       test:

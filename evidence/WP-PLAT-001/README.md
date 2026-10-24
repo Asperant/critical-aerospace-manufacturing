@@ -58,6 +58,24 @@ environment class, not a runtime profile (02, Item 43 §7).
   (`Connection reset by peer`). The health check now also requires an HTTP
   answer from the S3 gateway; the test was not relaxed.
 
+- **Host ports in the ephemeral range (PR #53 CI, run 40099708897).** Docker
+  could not bind a fixed host port on the runner (`driver failed programming
+  external connectivity`) because ports in 32768–60999 can be taken by outgoing
+  client connections. The push run of the same commit was green; only the failed
+  job was re-run, once, with the cause recorded on PR #53. The platform ports now
+  default to 24222–29333 and a static test keeps every host port below 32768.
+  The observability stack's ports (53133–55080) have the same exposure and move
+  with WP-OBS-001.
+
+## Merge and post-merge validation
+
+| Fact | Value |
+|---|---|
+| Implementation PR | #53, squash-merged as `932edba` |
+| Post-merge CI | run 40101528460 on main at `932edba`, success |
+| Plane | VALIDATING verified for PR #53 |
+| Follow-up | port range fix and deferred acceptance assessment (this PR) |
+
 ## Limitations and follow-ups
 
 - **Application deployables.** manufacturing-core is a library plus a migration

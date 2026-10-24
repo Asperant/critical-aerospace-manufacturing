@@ -129,3 +129,24 @@ def test_credentials_never_in_the_definition() -> None:
     for name in ("postgres", "keycloak"):
         (entry,) = SERVICES[name]["env_file"]
         assert entry["path"].startswith("${CAP_PLATFORM_STATE_DIR:-${HOME}/"), entry
+
+
+EPHEMERAL_PORT_FLOOR = 32768  # Linux default ip_local_port_range starts here
+
+
+@pytest.mark.parametrize("name", sorted(SERVICES))
+def test_host_ports_are_outside_the_ephemeral_range(name: str) -> None:
+    for port in SERVICES[name].get("ports", []):
+        match = re.search(r"\$\{[A-Z0-9_]+:-(\d+)\}:\d+$", str(port))
+        assert match, f"{name}: host port must be ${{VAR:-default}}: {port}"
+        assert int(match[1]) < EPHEMERAL_PORT_FLOOR, f"{name}: {port}"
+
+
+def test_stack_script_defaults_match_the_definition() -> None:
+    script = (HERE / "stack.sh").read_text("utf-8")
+    defaults = dict(
+        re.findall(r'(CAP_[A-Z_]+_PORT)="\$\{CAP_[A-Z_]+_PORT:-(\d+)\}"', script)
+    )
+    compose = (HERE / "compose.yaml").read_text("utf-8")
+    declared = dict(re.findall(r"\$\{(CAP_[A-Z_]+_PORT):-(\d+)\}", compose))
+    assert defaults == declared and declared
