@@ -8,7 +8,7 @@
 - **Reviewers**: Batu, Yavuz Gümüş
 - **DecisionLevel**: ADR-L3
 - **AffectedCapabilities**: Durable workflow engine binding (ARCH-AUTO-WORKFLOW); Automation durable execution
-- **AffectedRequirements**: FR-AUTO-002 (existing placeholder edge `DECIDED_BY: backfill-04` in the RTM, not yet repointed to ADR-0004; GAP-RTM-023)
+- **AffectedRequirements**: FR-AUTO-002 (DECIDED_BY edge in the RTM; a decision link, never verification)
 - **AffectedRisks**: None linked yet
 - **AffectedDebt**: None
 - **Supersedes**: None

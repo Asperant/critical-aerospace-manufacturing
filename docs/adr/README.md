@@ -123,7 +123,8 @@ count as verification (RTM-INV-17).
 The 13 foundational decisions of the backfill set, in the order of the
 architecture specification. The ID-to-position mapping is **fixed**: `ADR-00NN`
 is the minted ID of the trace placeholder `backfill-NN` (see GAP-RTM-023). A
-record row marked `Reserved` has its ID minted but its record not yet written.
+row marked `Reserved` would have its ID minted but its record not yet written;
+all 13 records are now written.
 
 | ADR ID | Trace placeholder | Decision | Specification source | Status | Record |
 |---|---|---|---|---|---|
@@ -132,11 +133,11 @@ record row marked `Reserved` has its ID minted but its record not yet written.
 | ADR-0003 | backfill-03 | NATS with JetStream as the event backbone | Technology Baseline | ACCEPTED | [0003-nats-jetstream-event-backbone.md](0003-nats-jetstream-event-backbone.md) |
 | ADR-0004 | backfill-04 | Temporal as the durable workflow engine | Automation Architecture | ACCEPTED | [0004-temporal-durable-workflow-engine.md](0004-temporal-durable-workflow-engine.md) |
 | ADR-0005 | backfill-05 | SeaweedFS as object storage | Data Store, Event Backbone, Object Storage, and Local Development Bindings | ACCEPTED | [0005-seaweedfs-object-storage.md](0005-seaweedfs-object-storage.md) |
-| ADR-0006 | backfill-06 | Qdrant as the retrieval/vector projection | RAG Architecture | Reserved | pending |
-| ADR-0007 | backfill-07 | A custom Python discrete-event simulator, not a generic DES framework | Manufacturing Simulator Architecture | Reserved | pending |
-| ADR-0008 | backfill-08 | OR-Tools CP-SAT as the planning engine | Scheduler Architecture | Reserved | pending |
-| ADR-0009 | backfill-09 | Keycloak as the identity architecture | Security Architecture | Reserved | pending |
-| ADR-0010 | backfill-10 | OpenTelemetry + OpenObserve as the observability stack | Observability Architecture | Reserved | pending |
-| ADR-0011 | backfill-11 | Docker Compose as the shared-integration runtime orchestrator | Platform & Deployment Architecture | Reserved | pending |
-| ADR-0012 | backfill-12 | Relational genealogy without a mandatory graph database | Data Architecture 10.6 | Reserved | pending |
-| ADR-0013 | backfill-13 | A custom, explicit AI orchestrator rather than a heavy agent framework | AI Intelligence Service Architecture | Reserved | pending |
+| ADR-0006 | backfill-06 | Qdrant as the retrieval/vector projection | RAG Architecture | ACCEPTED | [0006-qdrant-retrieval-projection.md](0006-qdrant-retrieval-projection.md) |
+| ADR-0007 | backfill-07 | A custom Python discrete-event simulator, not a generic DES framework | Manufacturing Simulator Architecture | ACCEPTED | [0007-custom-python-des-simulator.md](0007-custom-python-des-simulator.md) |
+| ADR-0008 | backfill-08 | OR-Tools CP-SAT as the planning engine | Scheduler Architecture | ACCEPTED | [0008-ortools-cp-sat-planning-engine.md](0008-ortools-cp-sat-planning-engine.md) |
+| ADR-0009 | backfill-09 | Keycloak as the identity architecture | Security Architecture | ACCEPTED | [0009-keycloak-identity-architecture.md](0009-keycloak-identity-architecture.md) |
+| ADR-0010 | backfill-10 | OpenTelemetry + OpenObserve as the observability stack | Observability Architecture | ACCEPTED | [0010-opentelemetry-openobserve-observability.md](0010-opentelemetry-openobserve-observability.md) |
+| ADR-0011 | backfill-11 | Docker Compose as the shared-integration runtime orchestrator | Platform & Deployment Architecture | ACCEPTED | [0011-docker-compose-runtime-orchestrator.md](0011-docker-compose-runtime-orchestrator.md) |
+| ADR-0012 | backfill-12 | Relational genealogy without a mandatory graph database | Data Architecture 10.6 | ACCEPTED | [0012-relational-genealogy-no-mandatory-graph-db.md](0012-relational-genealogy-no-mandatory-graph-db.md) |
+| ADR-0013 | backfill-13 | A custom, explicit AI orchestrator rather than a heavy agent framework | AI Intelligence Service Architecture | ACCEPTED | [0013-custom-explicit-ai-orchestrator.md](0013-custom-explicit-ai-orchestrator.md) |
