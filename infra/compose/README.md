@@ -22,7 +22,7 @@ definitions are the basis of the shared Integration environment (WP-PLAT-003).
 | PostgreSQL | `postgres:18.6-alpine` | 56432 | 1 GiB | `pg_isready` |
 | NATS JetStream | `nats:2.10.22-alpine` | 56222 (monitor 56822) | 256 MiB | `/healthz?js-enabled-only=true` |
 | Valkey | `valkey/valkey:8.0.1-alpine` | 56379 | 256 MiB | `PING` |
-| SeaweedFS (S3) | `chrislusf/seaweedfs:3.80` | 56333 (master 56933) | 512 MiB | master `/cluster/status` |
+| SeaweedFS (S3) | `chrislusf/seaweedfs:3.80` | 56333 (master 56933) | 512 MiB | master `/cluster/status` and an HTTP answer from the S3 gateway |
 | Keycloak | `quay.io/keycloak/keycloak:26.0.5` | 56080 | 1 GiB | management `/health/ready` |
 
 Total infra limit: 3 GiB of the ~16 GiB single host (02 resource profiles:

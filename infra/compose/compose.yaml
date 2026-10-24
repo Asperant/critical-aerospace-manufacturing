@@ -97,7 +97,15 @@ services:
       - "127.0.0.1:${CAP_S3_PORT:-56333}:8333"
       - "127.0.0.1:${CAP_SEAWEED_MASTER_PORT:-56933}:9333"
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:9333/cluster/status >/dev/null"]
+      # Healthy only when the master answers AND the S3 gateway returns an HTTP
+      # status (any status: 403 without identities is fine); a refused or reset
+      # connection means the gateway is not up yet.
+      test:
+        - "CMD-SHELL"
+        - >-
+          wget -qO- http://127.0.0.1:9333/cluster/status >/dev/null &&
+          wget -S --spider http://127.0.0.1:8333/ 2>&1 | grep -q 'HTTP/'
+      start_period: 10s
       interval: 5s
       timeout: 5s
       retries: 36

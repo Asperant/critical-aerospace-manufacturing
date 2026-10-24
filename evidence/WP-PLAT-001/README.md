@@ -20,3 +20,11 @@ SKELETON_READY (READY verified 2026-10-24).
 full, e2e`; the 04 card lists `core, vision, ai, automation, full`. The 02 set
 is implemented: automation belongs to `planning` in 02, and Integration is an
 environment class, not a runtime profile (02, Item 43 §7).
+
+## Findings
+
+- **SeaweedFS health (slice 2 CI, run 40095981274).** The health check covered
+  only the master; on the fast CI runner the container was reported healthy
+  before the S3 gateway accepted connections, and the REAL test caught it
+  (`Connection reset by peer`). The health check now also requires an HTTP
+  answer from the S3 gateway; the test was not relaxed.
