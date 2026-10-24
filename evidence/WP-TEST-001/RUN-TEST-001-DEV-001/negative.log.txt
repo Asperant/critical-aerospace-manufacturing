@@ -1,0 +1,31 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.16, pytest-8.3.3, pluggy-1.7.0 -- <repo>/ci/.venv/bin/python3
+hypothesis profile 'default'
+rootdir: <repo>/ci
+configfile: pyproject.toml
+plugins: hypothesis-6.168.1, anyio-4.15.1
+collecting ... collected 19 items
+
+ci/tests/test_test_strategy.py::test_conforming_strategy_passes PASSED   [  5%]
+ci/tests/test_test_strategy.py::test_untracked_test_file_fails PASSED    [ 10%]
+ci/tests/test_test_strategy.py::test_violations_are_reported[0-ci_step-Missing-not found] PASSED [ 15%]
+ci/tests/test_test_strategy.py::test_violations_are_reported[0-ci_step-Integ-is in job integration] PASSED [ 21%]
+ci/tests/test_test_strategy.py::test_violations_are_reported[0-ci_step-Other-does not execute this path] PASSED [ 26%]
+ci/tests/test_test_strategy.py::test_violations_are_reported[1-boundary_mode-MOCK_ONLY-not allowed in tier integration] PASSED [ 31%]
+ci/tests/test_test_strategy.py::test_violations_are_reported[1-boundary_mode-FIXTURE_ALLOWED-must name fixture_boundaries] PASSED [ 36%]
+ci/tests/test_test_strategy.py::test_violations_are_reported[None-families-value5-not declared in 03] PASSED [ 42%]
+ci/tests/test_test_strategy.py::test_violations_are_reported[None-families-value6-no family_note] PASSED [ 47%]
+ci/tests/test_test_strategy.py::test_violations_are_reported[None-test_ids-value7-breaks] PASSED [ 52%]
+ci/tests/test_test_strategy.py::test_violations_are_reported[None-test_ids-value8-unknown WP-XYZ-009] PASSED [ 57%]
+ci/tests/test_test_strategy.py::test_violations_are_reported[None-test_ids-value9-declared twice] PASSED [ 63%]
+ci/tests/test_test_strategy.py::test_violations_are_reported[None-work_package-WP-NOPE-001-not a work package in 04] PASSED [ 68%]
+ci/tests/test_test_strategy.py::test_violations_are_reported[None-path-missing/tests-suite path does not exist] PASSED [ 73%]
+ci/tests/test_test_strategy.py::test_violations_are_reported[0-ci_step-None-no on_request explanation] PASSED [ 78%]
+ci/tests/test_test_strategy.py::test_legacy_ids_and_on_request_runs_are_accepted PASSED [ 84%]
+ci/tests/test_test_strategy.py::test_most_specific_suite_owns_the_file PASSED [ 89%]
+ci/tests/test_test_strategy.py::test_discovery_skips_dependencies PASSED [ 94%]
+ci/tests/test_test_strategy.py::test_repository_strategy_conforms PASSED [100%]
+
+----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------
+0 registry entr(y/ies); 0 applied in this run
+============================== 19 passed in 0.28s ==============================
