@@ -290,3 +290,41 @@ current-state update, simulation-time conversion or external event/query contrac
 Canonical envelope sequencing and producer/eligibility binding remain at their
 existing integration boundaries. Run only `tests/test_lineage.py` for the focused
 model checks; no database is required.
+
+
+## Relational lineage snapshots — WP-CORE-004 slice 4
+
+`LotLineageRepository.create(history)`, `append(world_id, event)` and
+`get(world_id)` persist the slice 3 values in normalized event, lot snapshot,
+component membership and parent relation tables. One stored complete local
+closure is keyed by its model's `world_id`; roots are fixed at creation. This is
+internal history storage, not a public ingestion/query contract. Canonical lot
+and component references must already exist; current component membership is
+never reassigned. No protected action or merge-eligibility decision is added.
+
+Apply the additive migration with explicit `CORE_MIGRATION_DSN` and
+`CORE_RUNTIME_ROLE`, as for the other scoped migration:
+
+```
+python -m manufacturing_core.lineage_migrate
+```
+
+The unchanged base migration is verified first. A separate checksum ledger and
+the existing migration lock keep this additive migration independently replayable
+alongside rework storage. Runtime receives SELECT/INSERT only. Create/append use
+per-world transaction locks and savepoints; callers retain outer rollback control.
+All inputs are revalidated by the complete lineage model, including ancestry,
+world isolation and exact component conservation, before insertion. There is no
+update/delete/upsert repository path. Delivery positions retain tuple ordering,
+including out-of-order complete ancestry; timestamps remain separate PostgreSQL
+`timestamptz` instants (original timezone spelling is not stored). Opaque revisions,
+source event IDs, parent/child order and component order round-trip unchanged.
+
+With disposable PostgreSQL 18 `CI_PG_DSN` and `CORE_TEST_DISPOSABLE=1`, run only:
+
+```
+python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests/persistence/test_lineage_persistence.py -m integration -q
+```
+
+The fixture creates/drops its own database and uses separate restricted migrator
+and runtime roles. No shared schema or existing migration contract is changed.
