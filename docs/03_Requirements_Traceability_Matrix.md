@@ -590,7 +590,7 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 |---|---|---|---|---|---|---|
 | FR-SEC-001 | F1 | Yavuz | 01 Item81 FR-SEC-001 L170096 | ITEM-48, ITEM-61, DX-INV-14, SEC-INV-01 | VERIFY_PLANNED | — |
 | FR-SEC-002 | F1 | Yavuz | 01 Item81 FR-SEC-002 L170097 | ITEM-48, SEC-INV-10, SEC-INV-09 | VERIFY_PLANNED | — |
-| FR-SEC-003 | F1 | Asrın | 01 Item81 FR-SEC-003 L170098 | ITEM-48, UI-INV-01, SEC-INV-03, TECH-INV-18 | VERIFY_PLANNED | — |
+| FR-SEC-003 | F1 | Asrın | 01 Item81 FR-SEC-003 L170098 | ITEM-48, UI-INV-01, SEC-INV-03, TECH-INV-18 | EVIDENCE_PENDING | — |
 | FR-SEC-004 | F1 | Yavuz | 01 Item81 FR-SEC-004 L170099 | ITEM-48, SEC-INV-17, AGENT-INV-04 | VERIFY_PLANNED | — |
 | FR-SEC-005 | F1 | Yavuz | 01 Item81 FR-SEC-005 L170100 | ITEM-48, SEC-INV-17, KG-INV-08, AGENT-INV-05 | VERIFY_PLANNED | — |
 | FR-SEC-006 | F1 | Yavuz | 01 Item81 FR-SEC-006 L170101 | ITEM-48, ITEM-49, SEC-INV-12, PLAT-INV-04, GIT-INV-14 | VERIFY_PLANNED | — |
@@ -7316,6 +7316,21 @@ against `ci/test-strategy.schema.json` by the contract tier); policy text:
 legacy identifiers. CI: the "Test strategy conformance (WP-TEST-001)" step of
 t1-unit. The release-gate zero count is measured by WP-TEST-008.
 EvidenceState is EVIDENCE_PENDING.
+
+### 19.7 WP-SEC-003 concrete implementation and verification assets
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-SEC-003-001 (`services/manufacturing-core/tests/test_authz.py`, `services/manufacturing-core/tests/test_authz_enforcement.py`; unit level, boundary mode FIXTURE_ALLOWED) | TEST-SEC-AUTHZ-NEG (unit subset) | FR-SEC-003 (closed protected-action catalog; unknown action, missing context, missing or inexact permission and evaluation faults deny; the handler is never invoked on DENY and exactly once on ALLOW; catalogued actions without an enforcement binding are detected) |
+
+Implementation: `services/manufacturing-core/src/manufacturing_core/authz.py`
+(catalog and evaluator) and `enforcement.py` (guard and binding registry).
+Permission names are provisional pending the RBAC matrix; no Core command handler
+or Automation service exists to bind, and no role-to-permission mapping is
+implemented. TEST-SEC-AUTHZ-NEG at INTEGRATION, AV-SCEN-04 and BENCH-RQ3-001 are
+not executed: the REAL boundary awaits the identity runtime (DEP-016), the Core
+command pipeline and the Automation authorization gate. EvidenceState is
+EVIDENCE_PENDING.
 
 ## 20. Rejected Alternatives
 
