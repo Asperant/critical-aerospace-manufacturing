@@ -1,0 +1,5 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked python -m cap_observability check-coverage infra/observability/coverage.json
+[exit 0]
+--- stdout ---
+telemetry coverage: 4/9 mandatory deployables exist; logging 0/4 adopted (4 pending); health 0/4 adopted (4 pending); 5 not yet present
+--- stderr ---

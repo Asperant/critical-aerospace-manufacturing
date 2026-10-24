@@ -1,0 +1,25 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked python -m pytest packages/observability/tests infra/observability/tests -m 'not integration' -q -p pytest_quarantine
+[exit 1]
+--- stdout ---
+......................F................................................. [ 57%]
+.....................................................                    [100%]
+=================================== FAILURES ===================================
+_______________ test_repository_registry_matches_the_repository ________________
+
+    def test_repository_registry_matches_the_repository() -> None:
+        data = json.loads((REPO / "infra/observability/coverage.json").read_text("utf-8"))
+        result = check(data, REPO, date.today())
+>       assert result.violations == [], result.violations
+E       AssertionError: ['manufacturing-simulator: exists at /srv/ailab/workspaces/batuhan/project/services/manufacturing-simulator; declare l...: exists at /srv/ailab/workspaces/batuhan/project/services/manufacturing-simulator; declare health ADOPTED or PENDING']
+E       assert ['manufacturi...D or PENDING'] == []
+E
+E         Left contains 2 more items, first extra item: 'manufacturing-simulator: exists at /srv/ailab/workspaces/batuhan/project/services/manufacturing-simulator; declare logging ADOPTED or PENDING'
+E         Use -v to get more diff
+
+packages/observability/tests/test_health_coverage.py:196: AssertionError
+----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------
+0 registry entr(y/ies); 0 applied in this run
+=========================== short test summary info ============================
+FAILED packages/observability/tests/test_health_coverage.py::test_repository_registry_matches_the_repository
+1 failed, 124 passed, 6 deselected in 0.55s
+--- stderr ---

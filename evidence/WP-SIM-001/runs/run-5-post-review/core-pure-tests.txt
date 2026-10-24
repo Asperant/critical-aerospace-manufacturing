@@ -1,0 +1,9 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests -m 'not integration' -q -p pytest_quarantine
+[exit 0]
+--- stdout ---
+........................................................................ [ 84%]
+.............                                                            [100%]
+----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------
+0 registry entr(y/ies); 0 applied in this run
+85 passed, 31 deselected in 0.27s
+--- stderr ---

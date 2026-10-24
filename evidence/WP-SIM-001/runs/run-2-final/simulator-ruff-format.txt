@@ -1,0 +1,5 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked ruff format --check services/manufacturing-simulator
+[exit 0]
+--- stdout ---
+16 files already formatted
+--- stderr ---

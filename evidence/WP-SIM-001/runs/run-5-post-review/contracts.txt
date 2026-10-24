@@ -1,0 +1,19 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/check_contracts.py
+[exit 0]
+--- stdout ---
+OK    infra/observability/coverage.schema.json (+instance)
+OK    packages/observability/src/cap_observability/schemas/health.schema.json (+instance)
+OK    packages/observability/src/cap_observability/schemas/log-record.schema.json (+instance)
+OK    packages/observability/src/cap_observability/schemas/resource.schema.json (+instance)
+OK    requirements/catalog.schema.json (+instance)
+OK    services/manufacturing-core/contracts/v1/order-query-request.schema.json
+OK    services/manufacturing-core/contracts/v1/order-query.schema.json
+OK    services/operations-bff/contracts/v1/command.schema.json
+OK    services/operations-bff/contracts/v1/common.schema.json
+OK    services/operations-bff/contracts/v1/overview-query.schema.json
+OK    services/operations-bff/contracts/v1/session.schema.json
+OK    services/operations-bff/contracts/v1/stream-message.schema.json
+OK    tools/mfgctl/schemas/capabilities.schema.json (+instance)
+Contracts: 13 schema(s), 6 instance(s) validated.
+PASS
+--- stderr ---
