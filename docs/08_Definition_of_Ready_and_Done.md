@@ -911,3 +911,8 @@ This changes ONLY development/GitHub/repository governance. Product HITL, protec
 ## CHG-019 — guarded automatic next-work planning
 
 Explicit owner decision, 22 October 2026: `project_control/execution_preferences.yaml` defines total planning preference for 174 scheduled WPs using milestone/window, canonical task-priority class and owner roadmap order as final tie-breaker. The central AUTO_NEXT resolver may release only the first evidenced eligible BACKLOG WP to READY after VERIFIED DONE or explicit recovery, and only when no READY/active/pending WP exists. Node readiness, HARD blocking stages, accountable DoR/DoD/evidence, blockers, exact ownership/assignment and CHG-018 remain authoritative. Preference is not dependency truth, readiness or execution state. No calendar gate, cycle/assignment mutation or automatic DONE is introduced. CHG-019 records the authorized governance change.
+
+
+## CHG-031 — reconciliation is not readiness or completion evidence
+
+A lifecycle reconciliation records observed GitHub facts in Plane only. It is not DoR, DoD, accountable-owner assessment, trace, evidence or integrated-acceptance evidence, and it does not satisfy any criterion in this document. A work package reconciled to MERGED or VALIDATING still needs completed actual post-merge validation, every applicable DoD criterion and attributable owner assessment before DONE. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted. Reconciliation does not alter the transition predicates for ordinary work.

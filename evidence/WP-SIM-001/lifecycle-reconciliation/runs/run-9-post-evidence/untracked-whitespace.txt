@@ -1,0 +1,9 @@
+$ python3 -c "import subprocess,sys;paths=subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).split();bad=[]
+for p in paths:
+    out=subprocess.run(['git','diff','--no-index','--check','/dev/null',p],capture_output=True,text=True).stdout
+    if 'trailing whitespace' in out or 'blank line at EOF' in out: bad.append(p)
+print('untracked files scanned:',len(paths),'with whitespace errors:',bad);sys.exit(1 if bad else 0)"
+[exit 0]
+--- stdout ---
+untracked files scanned: 154 with whitespace errors: []
+--- stderr ---

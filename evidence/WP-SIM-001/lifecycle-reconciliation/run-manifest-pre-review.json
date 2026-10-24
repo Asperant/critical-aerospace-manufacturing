@@ -1,0 +1,60 @@
+{
+  "work": "WP-SIM-001 lifecycle reconciliation tooling (CHG-030, UNDER_REVIEW)",
+  "created_utc": "2026-10-24T16:51:46+00:00",
+  "kind": "local development evidence; not a sealed EvidenceBundle, remote CI result, installation, live Plane application or acceptance record",
+  "approved_plan_sha256": "bb3747e3404469ab886ee9d48c37761cc5c050df4fd6bd2fa41f62bcc8042061",
+  "source": {
+    "branch": "wp/WP-SIM-001-lifecycle-reconciliation",
+    "base_commit": "ee058f0bdec8d501a51061a972c1ffc5d8f5d364",
+    "base_is_origin_main": true,
+    "committed": false,
+    "changed_or_new_files": 20,
+    "per_file_sha256": {
+      "09_change/CHG-030.yaml": "07dbe6f94caa4ef9fda88bbc2a4f2569766085051a387981085e1272797da0e3",
+      "09_change/change_requests.csv": "b68d2fcaeb280e8bc1b82cad2b77e5db21c119fa19905ca2eb4af74167884a1d",
+      "docs/01_Master_Project_Specification.md": "9f8fb84c4db2712cdce5d9dce13f8ef773bef81274a4086ff68ee31b2b18fa18",
+      "docs/08_Definition_of_Ready_and_Done.md": "18e14b5acbd899b3a1fe0df47e2df1ee0be8e6be086260e50b437c8635e5fe8b",
+      "docs/09_Change_Control_Process.md": "61a28005b145d046ad023014beec3ca6cc78f71fd5598eb17545db75920a08a6",
+      "project_control/ENGINEERING_WORKFLOW.md": "66ef9c80de260589d7b0aa0973ce4284710a15de2ac0fe6a793116e37a01f00f",
+      "project_control/TEAM_WORKFLOW.md": "69689690326f19e24f2869418cefc246a49c601cecf38155a6a0abf6986c2f7c",
+      "project_control/lifecycle_reconciliation.yaml": "ad445844e41098ca483b27d9bd618cc653f438fc7301d7f26ab885e50393adc9",
+      "requirements/catalog.json": "2972cf2d66b1e4f88853d38926f85167b339af6836e33400c403cfa771b5bdf9",
+      "requirements/coverage_counts.json": "ebf20f6653b4c11d53c43decefc71a68bb244f83d98fed633905ee0d8c9e7881",
+      "tools/host/plane-transition/README.md": "20f67add2e135f77141aa586daa7c40bbcb880963069d58f691167596c226f5a",
+      "tools/host/plane-transition/build_policy.py": "e6412b50cb81c0d473ec8211f48c9abab4841591f0b8193a743dba006f9c5798",
+      "tools/host/plane-transition/cap-plane-reconcile": "b915dd88747cd95aef7ca3feafa63993be86a7f96aeb7cc88bd920ae906fd140",
+      "tools/host/plane-transition/install_auto_next.py": "2bc0055e21ff4484a99ccb83a199786bde58536d4b711390dade48a6885fc761",
+      "tools/host/plane-transition/reconcile.py": "fd68697dd47206e1b9cf45837ec94aaa1098c23cdfa72638973aec9127c50753",
+      "tools/host/plane-transition/test_install_reconcile.py": "0c72ae58681b83fd7a891fbd63b94a0282a41601bd08d770cf01f3f5adf5a3e8",
+      "tools/host/plane-transition/test_pr_files.py": "bf720c11933dbcf5ebd13ef768e1966ddb96212eefd2f0e7d8989e6c1a76b56c",
+      "tools/host/plane-transition/test_reconcile.py": "d9f1ec861c1d7cb7673d5a264f40074fc18079561249381d21eb541e88baa07a",
+      "tools/host/plane-transition/test_reconcile_main.py": "f4f5e01b7018c3943cbcf308322d55d49ba3f8ce1131d4b7e2e12bf0d9deff73",
+      "tools/host/plane-transition/transition.py": "fea1159a128a32f9922253203b7e99dbfaf96c26fb88b9b968774968d4b123e0"
+    },
+    "source_manifest_sha256": "f288b5f8aa1fef8ad7d460598785d5c260418700e18a3c73419a8761a55c1733",
+    "note": "Hashes cover every changed or new file except this evidence directory. Nothing is committed."
+  },
+  "runtime": {
+    "python": "3.11.16",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+    "packages": {
+      "pytest": "8.3.3",
+      "ruff": "0.7.4",
+      "pyright": "1.1.389",
+      "PyYAML": "6.0.2"
+    },
+    "uv": "0.12.13 (pinned UV_VERSION in .github/workflows/ci.yml)",
+    "environment": "uv project environment outside the repository via UV_PROJECT_ENVIRONMENT; ci/uv.lock used with --locked"
+  },
+  "policy_dry_run": {
+    "policy_digest": "f3d7922b3aa42bac8a5657bf731c39a504406316a9f76c40bc29d5b72a8431e5",
+    "reconcile_sha256_in_policy": "fd68697dd47206e1b9cf45837ec94aaa1098c23cdfa72638973aec9127c50753",
+    "note": "Generated into the session scratch directory from this checkout; it is NOT the installed policy and its digest changes with any source change"
+  },
+  "final_run": {
+    "directory": "runs/run-1",
+    "commands": 20,
+    "all_exit_zero": true
+  },
+  "workload": "single local session on the shared development host; no containers or services started; no root write; no Plane or GitHub call"
+}

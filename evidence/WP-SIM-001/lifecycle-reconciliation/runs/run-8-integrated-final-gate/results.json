@@ -1,0 +1,162 @@
+[
+  {
+    "id": "sync",
+    "command": "<scratch>/uvtool/bin/uv sync --project ci --locked",
+    "started_utc": "2026-10-24T19:55:09+00:00",
+    "finished_utc": "2026-10-24T19:55:09+00:00",
+    "exit_code": 0,
+    "output_file": "sync.txt"
+  },
+  {
+    "id": "transition-tests",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m unittest discover -s tools/host/plane-transition -p 'test_*.py'",
+    "started_utc": "2026-10-24T19:55:09+00:00",
+    "finished_utc": "2026-10-24T19:55:09+00:00",
+    "exit_code": 0,
+    "output_file": "transition-tests.txt"
+  },
+  {
+    "id": "queue-tests",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m unittest discover -s tools/host/plane-queue -p 'test_*.py'",
+    "started_utc": "2026-10-24T19:55:09+00:00",
+    "finished_utc": "2026-10-24T19:55:10+00:00",
+    "exit_code": 0,
+    "output_file": "queue-tests.txt"
+  },
+  {
+    "id": "static-ratchet",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/static_ratchet.py check",
+    "started_utc": "2026-10-24T19:55:10+00:00",
+    "finished_utc": "2026-10-24T19:55:16+00:00",
+    "exit_code": 0,
+    "output_file": "static-ratchet.txt"
+  },
+  {
+    "id": "flake-policy",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/check_flake_policy.py",
+    "started_utc": "2026-10-24T19:55:16+00:00",
+    "finished_utc": "2026-10-24T19:55:16+00:00",
+    "exit_code": 0,
+    "output_file": "flake-policy.txt"
+  },
+  {
+    "id": "ci-tests",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m pytest ci/tests -p pytest_quarantine",
+    "started_utc": "2026-10-24T19:55:16+00:00",
+    "finished_utc": "2026-10-24T19:55:17+00:00",
+    "exit_code": 0,
+    "output_file": "ci-tests.txt"
+  },
+  {
+    "id": "test-strategy",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/check_test_strategy.py",
+    "started_utc": "2026-10-24T19:55:17+00:00",
+    "finished_utc": "2026-10-24T19:55:17+00:00",
+    "exit_code": 0,
+    "output_file": "test-strategy.txt"
+  },
+  {
+    "id": "projectctl-tests",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m pytest tools/projectctl/tests -q -p pytest_quarantine",
+    "started_utc": "2026-10-24T19:55:17+00:00",
+    "finished_utc": "2026-10-24T19:59:27+00:00",
+    "exit_code": 0,
+    "output_file": "projectctl-tests.txt"
+  },
+  {
+    "id": "contracts",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/check_contracts.py",
+    "started_utc": "2026-10-24T19:59:27+00:00",
+    "finished_utc": "2026-10-24T19:59:28+00:00",
+    "exit_code": 0,
+    "output_file": "contracts.txt"
+  },
+  {
+    "id": "projectctl-validate",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked projectctl validate",
+    "started_utc": "2026-10-24T19:59:28+00:00",
+    "finished_utc": "2026-10-24T19:59:31+00:00",
+    "exit_code": 0,
+    "output_file": "projectctl-validate.txt"
+  },
+  {
+    "id": "catalog-lint",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked projectctl catalog-lint",
+    "started_utc": "2026-10-24T19:59:31+00:00",
+    "finished_utc": "2026-10-24T19:59:31+00:00",
+    "exit_code": 0,
+    "output_file": "catalog-lint.txt"
+  },
+  {
+    "id": "catalog-lint-base",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked projectctl catalog-lint --base 5269525ffba3dc73e2d7034dc8f546b6dba98295",
+    "started_utc": "2026-10-24T19:59:31+00:00",
+    "finished_utc": "2026-10-24T19:59:32+00:00",
+    "exit_code": 0,
+    "output_file": "catalog-lint-base.txt"
+  },
+  {
+    "id": "new-files-ruff-check",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked ruff check tools/host/plane-transition/reconcile.py tools/host/plane-transition/test_reconcile.py tools/host/plane-transition/test_reconcile_main.py tools/host/plane-transition/test_reconcile_adapter.py tools/host/plane-transition/test_pr_files.py tools/host/plane-transition/test_install_reconcile.py",
+    "started_utc": "2026-10-24T19:59:32+00:00",
+    "finished_utc": "2026-10-24T19:59:32+00:00",
+    "exit_code": 0,
+    "output_file": "new-files-ruff-check.txt"
+  },
+  {
+    "id": "new-files-ruff-format",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked ruff format --check tools/host/plane-transition/reconcile.py tools/host/plane-transition/test_reconcile.py tools/host/plane-transition/test_reconcile_main.py tools/host/plane-transition/test_reconcile_adapter.py tools/host/plane-transition/test_pr_files.py tools/host/plane-transition/test_install_reconcile.py",
+    "started_utc": "2026-10-24T19:59:32+00:00",
+    "finished_utc": "2026-10-24T19:59:32+00:00",
+    "exit_code": 0,
+    "output_file": "new-files-ruff-format.txt"
+  },
+  {
+    "id": "new-files-pyright",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked pyright tools/host/plane-transition/reconcile.py tools/host/plane-transition/test_reconcile.py tools/host/plane-transition/test_reconcile_main.py tools/host/plane-transition/test_reconcile_adapter.py tools/host/plane-transition/test_pr_files.py tools/host/plane-transition/test_install_reconcile.py",
+    "started_utc": "2026-10-24T19:59:32+00:00",
+    "finished_utc": "2026-10-24T19:59:34+00:00",
+    "exit_code": 0,
+    "output_file": "new-files-pyright.txt"
+  },
+  {
+    "id": "policy-builder-dry-run",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python <scratch>/build_policy_dryrun.py",
+    "started_utc": "2026-10-24T19:59:34+00:00",
+    "finished_utc": "2026-10-24T19:59:44+00:00",
+    "exit_code": 0,
+    "output_file": "policy-builder-dry-run.txt"
+  },
+  {
+    "id": "offline-policy-check",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python <scratch>/lifecycle_offline_check.py <scratch>/generated-policy.json",
+    "started_utc": "2026-10-24T19:59:44+00:00",
+    "finished_utc": "2026-10-24T19:59:44+00:00",
+    "exit_code": 0,
+    "output_file": "offline-policy-check.txt"
+  },
+  {
+    "id": "mutation-check",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python <scratch>/mutate_reconcile.py <scratch>",
+    "started_utc": "2026-10-24T19:59:44+00:00",
+    "finished_utc": "2026-10-24T20:00:03+00:00",
+    "exit_code": 0,
+    "output_file": "mutation-check.txt"
+  },
+  {
+    "id": "git-diff-check",
+    "command": "git diff --check HEAD",
+    "started_utc": "2026-10-24T20:00:03+00:00",
+    "finished_utc": "2026-10-24T20:00:03+00:00",
+    "exit_code": 0,
+    "output_file": "git-diff-check.txt"
+  },
+  {
+    "id": "untracked-whitespace",
+    "command": "python3 -c \"import subprocess,sys;paths=subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).split();bad=[]\nfor p in paths:\n    out=subprocess.run(['git','diff','--no-index','--check','/dev/null',p],capture_output=True,text=True).stdout\n    if 'trailing whitespace' in out or 'blank line at EOF' in out: bad.append(p)\nprint('untracked files scanned:',len(paths),'with whitespace errors:',bad);sys.exit(1 if bad else 0)\"",
+    "started_utc": "2026-10-24T20:00:03+00:00",
+    "finished_utc": "2026-10-24T20:00:03+00:00",
+    "exit_code": 0,
+    "output_file": "untracked-whitespace.txt"
+  }
+]

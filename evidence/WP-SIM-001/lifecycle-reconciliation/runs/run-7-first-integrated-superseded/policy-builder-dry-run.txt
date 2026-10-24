@@ -1,0 +1,5 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked python <scratch>/build_policy_dryrun.py
+[exit 0]
+--- stdout ---
+Canonical transition policy generated (no execution data, no secrets).
+--- stderr ---

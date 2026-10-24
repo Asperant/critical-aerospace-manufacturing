@@ -1,0 +1,5 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/check_test_strategy.py
+[exit 0]
+--- stdout ---
+PASS: test strategy covers 86 test files in 17 suites; 0 violation(s)
+--- stderr ---

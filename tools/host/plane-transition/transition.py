@@ -43,6 +43,9 @@ FORWARD = dict(zip(['BACKLOG','READY','IN_PROGRESS','IN_REVIEW','MERGE_READY','M
                    ['READY','IN_PROGRESS','IN_REVIEW','MERGE_READY','MERGED','VALIDATING','DONE']))
 # Edges alone never authorize anything: actual facts and semantic evidence below do.
 REWORK = {('IN_REVIEW','IN_PROGRESS'), ('MERGE_READY','IN_REVIEW'), ('DONE','VALIDATING')}
+FILE_PAGE = 100          # GitHub's per-page maximum for the pull-request files route
+FILE_PAGE_CEILING = 10   # bounded inventory: at most 1000 files (10 pages); larger PRs are rejected
+PR_FILE_STATUSES = {'added','removed','modified','renamed','copied','changed','unchanged'}
 PROTECTED = ('id','name','description_html','assignees','external_id','external_source','project','workspace',
              'parent','priority','start_date','target_date','cycle','module','modules','milestone','type','estimate_point')
 
@@ -117,6 +120,17 @@ class GitHub:
         need(type(number) is int and 0 < number < 10**10, 'INVALID_PR')
         return self._get(f'{REPO}/pulls/{number}')
 
+    def invalidate(self):
+        """Forget every cached read except immutable SHA-addressed commits.
+
+        Mutable evidence (main, refs, PR bodies and files, comparisons, runs) must be read
+        again from GitHub when a caller needs a genuinely fresh snapshot.
+        """
+        immutable=re.compile(re.escape(REPO)+r'/commits/[0-9a-f]{40}')
+        keep={route:value for route,value in self.cache.items() if immutable.fullmatch(route)}
+        self.cache.clear()
+        self.cache.update(keep)
+
     def fresh_pr(self,number):
         need(type(number) is int and 0<number<10**10, 'INVALID_PR')
         self.cache.pop(f'{REPO}/pulls/{number}',None)
@@ -151,9 +165,52 @@ class GitHub:
         return value['check_runs'], statuses['statuses']
 
     def files(self,pr):
-        rows=self._get(f'{REPO}/pulls/{pr["number"]}/files?per_page=100')
-        need(isinstance(rows,list) and len(rows)<100 and len(rows)==pr.get('changed_files'), 'INCOMPLETE_PR_FILE_SCOPE')
+        """Complete, bounded PR file inventory: every page, exact count, no truncation.
+
+        The inventory must equal the PR's own changed_files count, contain no duplicate or
+        malformed row, and stay unchanged while it is read. More than FILE_PAGE_CEILING pages
+        is refused rather than silently truncated.
+        """
+        number=pr.get('number')
+        need(type(number) is int and 0<number<10**10, 'INVALID_PR')
+        expected=pr.get('changed_files')
+        need(type(expected) is int and expected>=0, 'INCOMPLETE_PR_FILE_SCOPE')
+        need(expected<=FILE_PAGE*FILE_PAGE_CEILING, 'PR_FILE_SCOPE_EXCEEDS_CEILING')
+        pages=-(-expected//FILE_PAGE)
+        rows=[]
+        for page in range(1,pages+1):
+            chunk=self._get(f'{REPO}/pulls/{number}/files?per_page={FILE_PAGE}&page={page}')
+            need(isinstance(chunk,list) and len(chunk)==min(FILE_PAGE,expected-FILE_PAGE*(page-1)),
+                 'INCOMPLETE_PR_FILE_SCOPE')
+            rows.extend(chunk)
+        if pages<FILE_PAGE_CEILING:
+            # An empty terminal page proves nothing was left unread (exact 100/200/... files).
+            need(self._get(f'{REPO}/pulls/{number}/files?per_page={FILE_PAGE}&page={pages+1}')==[],
+                 'INCOMPLETE_PR_FILE_SCOPE')
+        names=[]
+        for row in rows:
+            need(isinstance(row,dict) and isinstance(row.get('filename'),str) and row['filename']
+                 and row.get('status') in PR_FILE_STATUSES, 'MALFORMED_PR_FILE_ROW')
+            names.append(row['filename'])
+        need(len(names)==len(set(names)), 'DUPLICATE_PR_FILE_PATH')
+        need(self.fresh_pr(number).get('changed_files')==expected, 'PR_FILE_SCOPE_CHANGED')
         return rows
+
+    def commit(self,sha):
+        need(isinstance(sha,str) and SHA.fullmatch(sha), 'INVALID_REVISION')
+        value=self._get(f'{REPO}/commits/{sha}')
+        need(isinstance(value,dict) and value.get('sha')==sha, 'COMMIT_IDENTITY_MISMATCH')
+        return value
+
+    def branch_deleted(self,branch):
+        need(isinstance(branch,str) and re.fullmatch(r'wp/[A-Za-z0-9_./-]+',branch) and '..' not in branch, 'INVALID_PR_BRANCH')
+        refs=self._get(f'{REPO}/git/matching-refs/heads/{branch}')
+        need(isinstance(refs,list) and not any(r.get('ref')=='refs/heads/'+branch for r in refs), 'MERGED_BRANCH_NOT_DELETED')
+
+    def fresh_run(self,number):
+        need(type(number) is int and 0<number<10**18, 'INVALID_RUN')
+        self.cache.pop(f'{REPO}/actions/runs/{number}',None)
+        return self.run(number)
 
     def technical_ci(self,sha,policy,extra=()):
         checks,_=self.checks(sha)
@@ -274,6 +331,11 @@ class Plane:
 
     def issue(self, identity):
         return self._issue(identity)
+
+    def refresh_items(self):
+        """Re-read the project's issue list (a fresh queue snapshot); never writes."""
+        self.items = self.reader.rows('issues/')
+        return self.items
 
     def patch(self, before, target):
         body = patch_body(before, target, self.states, self.blocked)
@@ -797,6 +859,17 @@ def dependencies(gh, rows, context, record, sha, policy, final=False):
         for ref in refs: gh.artifact(ref,sha)
 
 
+def pr_scope_paths(files):
+    """Reject unsafe, secret or runtime paths in a complete PR file inventory."""
+    for file in files:
+        path=file.get('filename','')
+        need(isinstance(path,str) and path and not path.startswith('/') and '..' not in path.split('/'), 'INVALID_PR_SCOPE_PATH')
+        if file.get('status')!='removed':
+            need(not path.startswith('project_control/local/') and
+                 not any(part in {'.venv','__pycache__','.pytest_cache'} or part.endswith('.egg-info') for part in path.split('/'))
+                 and path.rsplit('/',1)[-1] not in {'.env','plane.env','id_rsa','id_ed25519'}, 'PR_SECRET_OR_RUNTIME_PATH')
+
+
 def pr_governance(gh,pr,wp,context,policy):
     """Check native PR scope/DoR-PR/pre-merge DoD declarations and real artifacts.
 
@@ -840,13 +913,7 @@ def pr_governance(gh,pr,wp,context,policy):
     need(refs, 'PR_EVIDENCE_ARTIFACTS_MISSING')
     for ref in refs: gh.artifact(ref,pr['head']['sha'])
     files=gh.files(pr)
-    for file in files:
-        path=file.get('filename','')
-        need(isinstance(path,str) and path and not path.startswith('/') and '..' not in path.split('/'), 'INVALID_PR_SCOPE_PATH')
-        if file.get('status')!='removed':
-            need(not path.startswith('project_control/local/') and
-                 not any(part in {'.venv','__pycache__','.pytest_cache'} or part.endswith('.egg-info') for part in path.split('/'))
-                 and path.rsplit('/',1)[-1] not in {'.env','plane.env','id_rsa','id_ed25519'}, 'PR_SECRET_OR_RUNTIME_PATH')
+    pr_scope_paths(files)
     if any(f['filename'].startswith('tools/host/plane-') for f in files):
         gh.technical_ci(pr['head']['sha'],policy,('Host Plane queue security tests (offline)',
                          'Plane transition policy tests (offline fixtures only)'))

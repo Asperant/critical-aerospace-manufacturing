@@ -1,0 +1,4 @@
+$ git diff --check HEAD
+[exit 0]
+--- stdout ---
+--- stderr ---

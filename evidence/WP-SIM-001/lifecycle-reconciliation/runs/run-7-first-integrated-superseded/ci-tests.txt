@@ -1,0 +1,21 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked python -m pytest ci/tests -p pytest_quarantine
+[exit 0]
+--- stdout ---
+============================= test session starts ==============================
+platform linux -- Python 3.11.16, pytest-8.3.3, pluggy-1.7.0
+rootdir: /srv/ailab/workspaces/batuhan/project/ci
+configfile: pyproject.toml
+plugins: hypothesis-6.168.1, anyio-4.15.1
+collected 96 items
+
+ci/tests/test_adr_scaffold.py .......................................... [ 43%]
+.........                                                                [ 53%]
+ci/tests/test_contracts.py ....                                          [ 57%]
+ci/tests/test_flake_policy.py ..............                             [ 71%]
+ci/tests/test_static_ratchet.py ........                                 [ 80%]
+ci/tests/test_test_strategy.py ...................                       [100%]
+
+----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------
+0 registry entr(y/ies); 0 applied in this run
+============================== 96 passed in 0.42s ==============================
+--- stderr ---

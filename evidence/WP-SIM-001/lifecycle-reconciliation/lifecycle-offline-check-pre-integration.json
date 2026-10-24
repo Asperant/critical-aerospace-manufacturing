@@ -1,0 +1,43 @@
+{
+  "policy_digest": "185310be461c7ff8a2dcde70b52b85c82edfe161f2037de5b8096bb7b3e904bc",
+  "reconcile_impl_sha256_in_policy": "d68d95c02467117f3451485e36c690d62abe7ed4eb6528bd486b310308b4ba60",
+  "reconcile_py_sha256_actual": "d68d95c02467117f3451485e36c690d62abe7ed4eb6528bd486b310308b4ba60",
+  "transition_impl_matches": true,
+  "manifest_has_policy_file": true,
+  "manifest_has_chg030": true,
+  "case": {
+    "case_id": "RECON-WP-SIM-001-PR52",
+    "profile": "batuhan",
+    "wp_id": "WP-SIM-001",
+    "pr": 52,
+    "targets": [
+      "MERGED",
+      "VALIDATING"
+    ]
+  },
+  "grants": [
+    "# Lifecycle reconciliation: exact allow-listed own-profile invocations",
+    "batuhan ALL=(root) NOPASSWD: NOSETENV: /usr/bin/python3 -I /usr/local/libexec/cap-plane-reconcile.py batuhan WP-SIM-001 MERGED",
+    "batuhan ALL=(root) NOPASSWD: NOSETENV: /usr/bin/python3 -I /usr/local/libexec/cap-plane-reconcile.py batuhan WP-SIM-001 VALIDATING"
+  ],
+  "offline_reconcile": {
+    "result": "VERIFIED",
+    "patches": [
+      {
+        "state": "VALIDATING"
+      }
+    ],
+    "audit_results": [
+      "INTENT",
+      "VERIFIED"
+    ],
+    "operation": "LIFECYCLE_RECONCILE",
+    "skipped_state_history_not_asserted": true,
+    "outstanding": [
+      "skipped_state_history_not_asserted",
+      "dor_dod_owner_assessment_not_established_by_reconciliation",
+      "integrated_acceptance_not_established",
+      "done_not_claimed"
+    ]
+  }
+}

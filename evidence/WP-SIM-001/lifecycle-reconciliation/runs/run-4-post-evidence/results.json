@@ -1,0 +1,50 @@
+[
+  {
+    "id": "projectctl-validate",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked projectctl validate",
+    "started_utc": "2026-10-24T17:10:12+00:00",
+    "finished_utc": "2026-10-24T17:10:15+00:00",
+    "exit_code": 0,
+    "output_file": "projectctl-validate.txt"
+  },
+  {
+    "id": "catalog-lint-base",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked projectctl catalog-lint --base ee058f0bdec8d501a51061a972c1ffc5d8f5d364",
+    "started_utc": "2026-10-24T17:10:15+00:00",
+    "finished_utc": "2026-10-24T17:10:16+00:00",
+    "exit_code": 0,
+    "output_file": "catalog-lint-base.txt"
+  },
+  {
+    "id": "static-ratchet",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/static_ratchet.py check",
+    "started_utc": "2026-10-24T17:10:16+00:00",
+    "finished_utc": "2026-10-24T17:10:21+00:00",
+    "exit_code": 0,
+    "output_file": "static-ratchet.txt"
+  },
+  {
+    "id": "test-strategy",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/check_test_strategy.py",
+    "started_utc": "2026-10-24T17:10:21+00:00",
+    "finished_utc": "2026-10-24T17:10:21+00:00",
+    "exit_code": 0,
+    "output_file": "test-strategy.txt"
+  },
+  {
+    "id": "git-diff-check",
+    "command": "git diff --check HEAD",
+    "started_utc": "2026-10-24T17:10:21+00:00",
+    "finished_utc": "2026-10-24T17:10:21+00:00",
+    "exit_code": 0,
+    "output_file": "git-diff-check.txt"
+  },
+  {
+    "id": "untracked-whitespace",
+    "command": "python3 -c \"import subprocess,sys;paths=subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).split();bad=[]\nfor p in paths:\n    out=subprocess.run(['git','diff','--no-index','--check','/dev/null',p],capture_output=True,text=True).stdout\n    if 'trailing whitespace' i",
+    "started_utc": "2026-10-24T17:10:21+00:00",
+    "finished_utc": "2026-10-24T17:10:21+00:00",
+    "exit_code": 0,
+    "output_file": "untracked-whitespace.txt"
+  }
+]

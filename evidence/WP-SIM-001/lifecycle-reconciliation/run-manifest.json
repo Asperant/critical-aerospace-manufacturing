@@ -1,0 +1,81 @@
+{
+  "work": "WP-SIM-001 lifecycle reconciliation tooling (CHG-031, UNDER_REVIEW)",
+  "revision": "integrated onto origin/main 5269525; change record renumbered 030 -> 031 (030 is upstream CTRL-HOST-014, preserved untouched)",
+  "created_utc": "2026-10-24T20:00:37+00:00",
+  "kind": "local development evidence; not a sealed EvidenceBundle, remote CI result, installation, live Plane application or acceptance record",
+  "approved_plan_sha256": "bb3747e3404469ab886ee9d48c37761cc5c050df4fd6bd2fa41f62bcc8042061",
+  "source": {
+    "branch": "wp/WP-SIM-001-lifecycle-reconciliation",
+    "base_commit": "5269525ffba3dc73e2d7034dc8f546b6dba98295",
+    "base_is_origin_main": true,
+    "committed": false,
+    "changed_or_new_files": 21,
+    "per_file_sha256": {
+      "09_change/CHG-031.yaml": "e4e9956e2716c4cd2234d6d289fed038735293f813cbfe0eba1b0f50260f7a3d",
+      "09_change/change_requests.csv": "063a58bd720d21458e2b108e63ac030f41d33c80b9a1e6517fc1a5ee2c353cb4",
+      "docs/01_Master_Project_Specification.md": "fade5b07418cd62d32a291018b66a50f424412d09a094d743d47ba0b43c2e6c8",
+      "docs/08_Definition_of_Ready_and_Done.md": "78bec6f38eef1a59085092029ac1b917ff07f2b066af404821b60d3d1fa454d9",
+      "docs/09_Change_Control_Process.md": "6bfee72e236cbf104b234eff69fd6ff0c1b844df4775af054930a297007ff3c9",
+      "project_control/ENGINEERING_WORKFLOW.md": "453937ead6fe3499ba4cbb6ac475fd98d4ed6aa5d7363de0fbc6f6efba8bc719",
+      "project_control/TEAM_WORKFLOW.md": "627b18ad1158767e5f9d16798ee4bb2d266fa2accfef2951d3457bb838c5853e",
+      "project_control/lifecycle_reconciliation.yaml": "1eb4e154841dc9b5bb13d11de763b37960a68c2cb7d2e70ac2bf50194b5c9ee1",
+      "requirements/catalog.json": "9769d3d3c6883abb160fe8540f3803e2cab77213365272b0d32d9f67efed0d47",
+      "requirements/coverage_counts.json": "104e53cef2cdd64c8a0677abc1e6c9f0fd34c5e4cbfea8fa1878847e4aa24e5a",
+      "tools/host/plane-transition/README.md": "51649522aa9ece144800018526a66a652cab64db7346b91b49e80c357bff27df",
+      "tools/host/plane-transition/build_policy.py": "4031061a3d3f0ffddb9dabc9ce402bc7cce5396c3f8a7fba69a58e76e4c062b3",
+      "tools/host/plane-transition/cap-plane-reconcile": "b915dd88747cd95aef7ca3feafa63993be86a7f96aeb7cc88bd920ae906fd140",
+      "tools/host/plane-transition/install_auto_next.py": "2bc0055e21ff4484a99ccb83a199786bde58536d4b711390dade48a6885fc761",
+      "tools/host/plane-transition/reconcile.py": "d68d95c02467117f3451485e36c690d62abe7ed4eb6528bd486b310308b4ba60",
+      "tools/host/plane-transition/test_install_reconcile.py": "0c72ae58681b83fd7a891fbd63b94a0282a41601bd08d770cf01f3f5adf5a3e8",
+      "tools/host/plane-transition/test_pr_files.py": "bf720c11933dbcf5ebd13ef768e1966ddb96212eefd2f0e7d8989e6c1a76b56c",
+      "tools/host/plane-transition/test_reconcile.py": "b42b50c1be91995f9ba3d3abe86a045ca13b53c46e16959c55e8b128b0bf89ba",
+      "tools/host/plane-transition/test_reconcile_adapter.py": "ca8f8a2c842afd9e1985bf05b343f4dfcaf8a4dac02165d48b900d3ef1a18be2",
+      "tools/host/plane-transition/test_reconcile_main.py": "5f91a4e1760f9eb6f265974ab3af58df71b3024611508f95cebe7666ac80c712",
+      "tools/host/plane-transition/transition.py": "637aca56325d4ce53cbe0c35fc9e965dc74c329d0612ccc243e0724a1e6ab7e8"
+    },
+    "per_source_map_sha256": "789f0ffaa72f50cf66b61cc26ae1169aabcc410376ead4317faca87ce9346d60",
+    "per_source_map_sha256_note": "SHA-256 of json.dumps(per_file_sha256, sort_keys=True); NOT the digest of this file. The SHA-256 of the exact bytes of run-manifest.json is stated in the evidence README and the workflow handoff, because a file cannot contain its own digest.",
+    "previous_source_map_sha256": "7642fa5bb6721f682c661625347e628ce308f8474d07719c254a7d800f2947fd",
+    "note": "Hashes cover every changed or new file except this evidence directory. Nothing is committed."
+  },
+  "upstream_integration": {
+    "origin_main": "5269525ffba3dc73e2d7034dc8f546b6dba98295",
+    "previous_base": "ee058f0bdec8d501a51061a972c1ffc5d8f5d364",
+    "preserved_byte_identical_to_origin_main": [
+      "09_change/CHG-029.yaml",
+      "09_change/CHG-030.yaml",
+      "tools/host/plane-transition/auto_next.py",
+      "tools/host/plane-transition/test_auto_next.py",
+      "AGENTS.md (index entry; local operator copy kept)"
+    ],
+    "conflict_resolved": "tools/host/plane-transition/build_policy.py source-manifest list: upstream's CHG-030 entry kept, CHG-031 and project_control/lifecycle_reconciliation.yaml added"
+  },
+  "runtime": {
+    "python": "3.11.16",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+    "packages": {
+      "pytest": "8.3.3",
+      "ruff": "0.7.4",
+      "pyright": "1.1.389",
+      "PyYAML": "6.0.2"
+    },
+    "uv": "0.12.13 (pinned UV_VERSION in .github/workflows/ci.yml)",
+    "environment": "uv project environment outside the repository via UV_PROJECT_ENVIRONMENT; ci/uv.lock used with --locked"
+  },
+  "policy_dry_run": {
+    "policy_digest": "fbd0a35b520169472e82116564a758b3a7b80d3a98f0cd8a8f80e55a7a00eedc",
+    "reconcile_sha256_in_policy": "d68d95c02467117f3451485e36c690d62abe7ed4eb6528bd486b310308b4ba60",
+    "note": "Generated into the session scratch directory from this checkout; NOT the installed policy; changes with any source change"
+  },
+  "final_run": {
+    "directory": "runs/run-8-integrated-final-gate",
+    "commands": 20,
+    "all_exit_zero": true,
+    "applies_to": "the source revision hashed above (executed after the last source edit)"
+  },
+  "historical_runs": {
+    "runs/run-1..run-6": "revisions before integration (manifests retained as run-manifest-pre-review.json, run-manifest-run-3-revision.json, run-manifest-pre-integration.json)",
+    "runs/run-7-first-integrated-superseded": "first gate on the integrated tree; same source, all exit 0; superseded only because the offline-check script mislabeled a key"
+  },
+  "workload": "single local session on the shared development host; no containers or services started; no root write; no Plane or GitHub call"
+}
