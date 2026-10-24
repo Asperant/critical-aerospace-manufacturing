@@ -3718,7 +3718,7 @@ FR-CORE-009:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-009 L169857"}
   DERIVED_FROM: [ITEM-09, WL-INV-04, WL-INV-05, KG-INV-04]
   ALLOCATED_TO: [ARCH-CORE-DOMAIN, ARCH-CORE-GENEALOGY]
-  REALIZED_BY: {surface: "ReworkDirective + append-only route-visit history", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/rework.py"} # internal value foundation only; protected command/persistence pending
+  REALIZED_BY: {surface: "ReworkDirective + append-only route-visit history", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/rework_repository.py"} # internal values/persistence only; protected command pending
   EXPOSED_BY: ["ExecuteApprovedReworkDirective command"]
   VERIFIED_BY: [TEST-CORE-STATEMACHINE, TEST-CORE-GENEALOGY, BENCH-E2E-001]
   EXECUTED_AS: []  # NOT_YET_EXECUTED

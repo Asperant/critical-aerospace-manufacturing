@@ -80,3 +80,45 @@ dispatch, alter membership/lifecycle, authenticate approval or execute a directi
 Core's canonical lifecycle/authorization caller must supply validated facts before
 future integration; DEP-029 remains HARD/INTEGRATION at COMPONENT_READY. The initial
 database schema and published order-query contracts are unchanged.
+
+## Append-only rework persistence — WP-CORE-004 slice 2
+
+With the same explicit migration DSN and restricted runtime role as above, run
+`python -m manufacturing_core.rework_migrate`. This verifies/applies the unchanged
+initial domain migration first, then atomically applies the additive
+`0002_rework_history.sql`. A separate checksum/runtime-role ledger preserves the
+initial runner's single-migration contract. Replays verify both ledgers; a changed
+checksum or runtime-role binding fails closed. No platform roles are provisioned.
+
+`ReworkHistoryRepository(connection)` provides only `create(history)`,
+`append_rework(component_id, segment)` and `get(component_id)`. Component, lot and
+equipment references use existing Core identities. Route snapshots are stored per
+segment with their original identities, revisions and ordered visits; they never
+overwrite current route definitions. Directives are linked to their segment and
+prior component execution through foreign keys. Execution occurrence times use
+PostgreSQL `timestamptz`; caller model values remain unchanged.
+
+Each create/append uses a transaction (a savepoint inside a caller transaction)
+and a per-component transaction advisory lock. Append reads and validates the
+existing history before inserting the next segment. Duplicate creation is an
+error, with no replace/upsert path. Any failure rolls back all rows of that call;
+the caller's outer rollback also rolls back successful nested calls. Runtime
+grants on the five history tables are SELECT/INSERT only; there is no runtime
+UPDATE/DELETE/TRUNCATE or migration-ledger access. Errors propagate to the caller.
+
+This is internal storage of caller-validated history, not protected rework
+execution, a lifecycle transition or active membership management. Integration
+still requires the actual canonical producer/authorization binding under DEP-029.
+No schema deployment is automatic. A code rollback can leave the additive tables
+intact; never delete history to roll back an application version.
+
+Focused database verification uses the existing disposable-DB opt-in:
+
+```
+python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests/persistence/test_rework_persistence.py -m integration -q
+```
+
+Provide `CI_PG_DSN` and `CORE_TEST_DISPOSABLE=1` only for a disposable PostgreSQL
+18 test administrator, as above. These tests create another isolated database
+using the existing test roles and drop it on exit; original-schema fixtures and
+shared databases are untouched.
