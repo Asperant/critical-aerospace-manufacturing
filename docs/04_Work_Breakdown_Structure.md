@@ -7734,7 +7734,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-PLAT-REPO |
 | Size band (indicative, no hour estimates) | S (≈1–3 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `docs/adr/`; `ci/tests/test_adr_scaffold.py`; `evidence/WP-DOC-002/` |
 
 **Purpose.** Mint the backfill ADRs for decisions already made and keep new decisions recorded as they happen.
 
@@ -7762,7 +7762,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 
 **DoR / DoD.** DOR-WP-01…08 apply; DoD: DOD-WP-01…04, 06, 07, 12.
 
-**Cut / fallback semantics.** No cut; DECIDED_BY edges in 03 currently point at placeholders (GAP-RTM-023).
+**Cut / fallback semantics.** No cut; DECIDED_BY edges in 03 point at minted ADR IDs (GAP-RTM-023 RESOLVED by CHG-029).
 
 
 #### WP-DOC-003 — Thesis and portfolio artifact production

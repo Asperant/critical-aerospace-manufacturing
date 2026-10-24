@@ -263,7 +263,7 @@ Solid edges are populated in this Draft (planned). Dotted edges are structurally
 |---|---|---|---|
 | DERIVED_FROM | REQ → DEC | Yes, all 306 | Item + invariant granularity; owner semantic confirmation pending (GAP-RTM-006) |
 | ALLOCATED_TO | REQ → ARCH | Yes, all 306 | Only 02 registry IDs; coarse allocations flagged |
-| DECIDED_BY | REQ → ADR | Partial (backfill ADR topics) | ADR IDs not yet minted; referenced as `ADR:backfill-NN` (02 backfill list position) — never counts as verification (RTM-INV-17) |
+| DECIDED_BY | REQ → ADR | Partial (5 requirements carry edges) | ADR IDs minted in `docs/adr/` (ADR-0001…ADR-0013 by 02 backfill list position, CHG-029); edges reference `ADR-NNNN` — never counts as verification (RTM-INV-17) |
 | EXPOSED_BY | REQ → CONTRACT | Where cross-service | IC-* namespaces from 02; exact schema versions TBD |
 | REALIZED_BY | REQ → IMPL | Planned surface only | Repository path = TBD_BY_IMPLEMENTATION (00 §7.3) |
 | USES_DATA / USES_MODEL / GOVERNED_BY | REQ → DATA/MODEL/POLICY | Artifact *types* | No DatasetVersion/ModelPackage IDs invented |
@@ -340,7 +340,7 @@ Evidence environment classes (Item 83 #70): DEV · CI · INTEGRATION · EVALUATI
 | <AREA>-Rnn (ARCH-R01, AUTO-R04, …) | EXISTING | 01 Item 69 Risk Register | MITIGATES hook targets (priority not restated) |
 | OD-*, R-001…R-009 | EXISTING | 02 Open Decisions / Reconciliation Register | Referenced, never resolved |
 | GAP-RTM-nnn | DERIVED (document-local) | This RTM | Findings register (View I) |
-| ADR:backfill-NN | DERIVED placeholder reference | 02 "Backfill ADR Set" list position | Pending real ADR-NNNN minting; not an ADR ID |
+| ADR-NNNN | EXISTING | `docs/adr/README.md` (CHG-029) | Minted ADR identity (ADR-0001…ADR-0013 backfill set); replaces the former `ADR:backfill-NN` placeholder reference |
 
 **Namespace hazards:** `WP-*` (Item 82 workload profiles) versus WBS work-package IDs was recorded as GAP-RTM-013 and is resolved by convention in 04 (full-pattern parsing `WP-[A-Z0-9]+-[0-9]{3}`; profiles carry no numeric suffix); `CP-SMALL/NORMAL/STRESS` (Item 51) vs `CP-1/2/3` critical paths (GAP-RTM-014); `RES-*` drills vs `NFR-RES-*` vs `RES-INV-*`, and 01 Item 34 two-digit `ARCH-INV-nn` vs 02 global three-digit `ARCH-INV-nnn` (GAP-RTM-016). This RTM cites only 01 two-digit `ARCH-INV-04` and avoids 02's global sequence in DERIVED_FROM.
 
@@ -1311,7 +1311,7 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 | FR-CORE-009 | ReworkDirective + append-only route-visit history | CONTRACT:ExecuteApprovedReworkDirective command | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-010 | lot split relation model | CONTRACT:Core Query API (genealogy) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-011 | lot merge relation model (policy-permitted) | CONTRACT:Core Query API (genealogy) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-CORE-012 | relational temporal genealogy (no mandatory graph DB, backfill ADR 12) | CONTRACT:Core Query API (genealogy) · ADR:backfill-12 | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
+| FR-CORE-012 | relational temporal genealogy (no mandatory graph DB, backfill ADR 12) | CONTRACT:Core Query API (genealogy) · ADR-0012 | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-013 | schema-level grants; per-service DB roles; `core` schema privacy | POLICY:DB role/grant configuration | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-014 | domain-event emission per accepted transition | CONTRACT:Core domain event schemas (Production/Equipment/Quality/Schedule namespaces) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-015 | transactional outbox table + relay | CONTRACT:Outbox record schema | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
@@ -1321,7 +1321,7 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 
 | ID | Planned implementation surface (REALIZED_BY) | Contract / policy / data / model identities (EXPOSED_BY · GOVERNED_BY · USES_*) | Repo reference | Target |
 |---|---|---|---|---|
-| FR-SIM-001 | custom deterministic Python DES kernel (backfill ADR 7) | ADR:backfill-07 | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
+| FR-SIM-001 | custom deterministic Python DES kernel (backfill ADR 7) | ADR-0007 | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-SIM-002 | reentrant lot routing executor | CONTRACT:physical execution events | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-SIM-003 | equipment queue model | SCENARIO:ScenarioVersion | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-SIM-004 | equipment availability/failure/repair model | SCENARIO:failure scenarios | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
@@ -1445,7 +1445,7 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 | FR-SCH-006 | execution-eligibility flag gated by validator result; Automation rejects ineligible | CONTRACT:IC-SCH-004 RecoveryPlan (eligibility) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-SCH-007 | plan ↔ SchedulingSnapshot revision binding | CONTRACT:IC-SCH-004 RecoveryPlan (source revision) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-SCH-008 | RecoveryPlan schema (Item 83 example: CONTRACT-RecoveryPlan-v1) | CONTRACT:IC-SCH-004 RecoveryPlan | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-SCH-009 | OR-Tools CP-SAT candidate strategy (backfill ADR 8) | ADR:backfill-08 · POLICY:SchedulerPolicy | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
+| FR-SCH-009 | OR-Tools CP-SAT candidate strategy (backfill ADR 8) | ADR-0008 · POLICY:SchedulerPolicy | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-SCH-010 | FIFO/EDD/CR/SPT/SRPT baseline implementations (BaselineDefinition) | DATA:BaselineDefinition | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-SCH-011 | churn/stability metric calculators separate from objective | DATA:MetricDefinitions | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-SCH-012 | bounded fallback policy + explicit failure state | POLICY:SchedulerPolicy (fallback) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
@@ -1458,7 +1458,7 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 | ID | Planned implementation surface (REALIZED_BY) | Contract / policy / data / model identities (EXPOSED_BY · GOVERNED_BY · USES_*) | Repo reference | Target |
 |---|---|---|---|---|
 | FR-AUTO-001 | durable recovery WorkflowDefinitions (WorkflowBundle) | POLICY:WorkflowBundle · CONTRACT:IC-AUTO-001 WorkflowState | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-AUTO-002 | Temporal workers/workflows (backfill ADR 4) | ADR:backfill-04 | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
+| FR-AUTO-002 | Temporal workers/workflows (backfill ADR 4) | ADR-0004 | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-AUTO-003 | durable approval-wait signal handling | CONTRACT:IC-AUTO-002 ApprovalRequest | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-AUTO-004 | final revalidation activity (target state, freshness, validator result, policy) | POLICY:AuthorityPolicy | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-AUTO-005 | activity idempotency keys propagated to Core commands | CONTRACT:IC-AUTO-003 Typed Operational Command (idempotency key) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
@@ -1506,7 +1506,7 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 
 | ID | Planned implementation surface (REALIZED_BY) | Contract / policy / data / model identities (EXPOSED_BY · GOVERNED_BY · USES_*) | Repo reference | Target |
 |---|---|---|---|---|
-| FR-PLAT-001 | Compose-based INTEGRATION composition of 9 deployables + infrastructure (backfill ADR 11) | POLICY:EnvironmentManifest · ADR:backfill-11 | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
+| FR-PLAT-001 | Compose-based INTEGRATION composition of 9 deployables + infrastructure (backfill ADR 11) | POLICY:EnvironmentManifest · ADR-0011 | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-PLAT-002 | capability-group Compose profiles | POLICY:Compose profiles | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-PLAT-003 | bootstrap/doctor/profile/scenario/smoke commands | CONTRACT:mfgctl command surface | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-PLAT-004 | main-derived immutable artifact promotion to INTEGRATION | POLICY:deployment workflow | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
@@ -3285,7 +3285,7 @@ Severity: **B-M4 / B-M5 / B-M6** = blocks the named gate if unresolved; **MAJOR*
 | GAP-RTM-020 | RESOLVED_BY_FINAL_HUMAN_DECISION | RESOLVED — Asrın Dündar accountable for MC-2; underlying WP owners unchanged | MC-2 claim trace (View H) | 01/02 final reconciliation binding; peer review pending | team (change control) | INFO — implementation/evidence gates remain |
 | GAP-RTM-021 | RESOLVED_BY_FINAL_HUMAN_DECISION | RESOLVED — primary shared-host profile pinned in01; actual run measurement/identity remains required | NFR-PERF-009, NFR-PERF-010, NFR-DX-001…005 | 01/02 final reconciliation binding; peer review pending | Selman · Yavuz | INFO — implementation/evidence gates remain |
 | GAP-RTM-022 | KNOWN_SOURCE_DEFECT (closed) | Item 43 heading duplicated verbatim in 01 (ENV-INV-01…20 appear twice). | — | Treated as one logical Item (02 R-001); trace linter must de-duplicate invariant IDs | — | CLOSED/INFO |
-| GAP-RTM-023 | ADR_IDENTITY_PENDING | Backfill ADRs (02 list of 13) have no minted ADR-NNNN IDs; DECIDED_BY uses `ADR:backfill-NN` placeholders. | FR-CORE-012, FR-SIM-001, FR-SCH-009, FR-AUTO-002, FR-AI-001, FR-SEC-001, FR-PLAT-001/006, FR-RAG-005 | Mint ADR IDs at M1 (02 Milestone ADR Gates); update edges; DECIDED_BY never satisfies VERIFIED_BY | Asrın (index) · decision owners | MINOR |
+| GAP-RTM-023 | RESOLVED | CHG-029 minted ADR-0001…ADR-0013 in `docs/adr/` and repointed the five existing DECIDED_BY edges from `ADR:backfill-NN` to the minted IDs. FR-AI-001, FR-SEC-001, FR-PLAT-006 and FR-RAG-005 were listed here but carry no DECIDED_BY edge; none was created. | FR-CORE-012, FR-SIM-001, FR-SCH-009, FR-AUTO-002, FR-PLAT-001 | Editorial update of 03 (C0); ADR validation evidence stays tracked by each ADR's ValidationState | Asrın (index) · decision owners | INFO — DECIDED_BY never satisfies VERIFIED_BY |
 
 No finding requires changing an approved requirement, owner, technology or authority boundary. Findings marked CHANGE_CONTROL_REQUIRED must follow the existing 09 Change Control process.
 
@@ -3774,7 +3774,7 @@ FR-CORE-012:
   ALLOCATED_TO: [ARCH-CORE-GENEALOGY, ARCH-CORE-DB]
   REALIZED_BY: {surface: "relational temporal genealogy (no mandatory graph DB, backfill ADR 12)", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
   EXPOSED_BY: ["Core Query API (genealogy)"]
-  DECIDED_BY: ["backfill-12"]
+  DECIDED_BY: ["ADR-0012"]
   VERIFIED_BY: [TEST-CORE-GENEALOGY, BENCH-RQ1-001]
   EXERCISED_IN: [AV-SCEN-01]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
@@ -3838,7 +3838,7 @@ FR-SIM-001:
   DERIVED_FROM: [ITEM-10, ITEM-68, ITEM-61, SCOPE-INV-01]
   ALLOCATED_TO: [ARCH-SIM-ENGINE, ARCH-SIM-CLOCK]
   REALIZED_BY: {surface: "custom deterministic Python DES kernel (backfill ADR 7)", deployable: "manufacturing-simulator", ref: TBD_BY_IMPLEMENTATION}
-  DECIDED_BY: ["backfill-07"]
+  DECIDED_BY: ["ADR-0007"]
   VERIFIED_BY: [TEST-SIM-KERNEL, BENCH-SIMVAL-001]
   EXERCISED_IN: [E2E-01, AV-SCEN-01]
   MITIGATES: [SIM-R01, SIM-R02]
@@ -4951,7 +4951,7 @@ FR-SCH-009:
   ALLOCATED_TO: [ARCH-SCH-ENGINE]
   REALIZED_BY: {surface: "OR-Tools CP-SAT candidate strategy (backfill ADR 8)", deployable: "scheduler-service", ref: TBD_BY_IMPLEMENTATION}
   GOVERNED_BY: ["SchedulerPolicy"]
-  DECIDED_BY: ["backfill-08"]
+  DECIDED_BY: ["ADR-0008"]
   VERIFIED_BY: [TEST-SCH-CONSTRAINTS, BENCH-SCH-001, BENCH-PERF-SCH]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
@@ -5054,7 +5054,7 @@ FR-AUTO-002:
   DERIVED_FROM: [ITEM-61, ITEM-18, TECH-INV-11, E2E-INV-13]
   ALLOCATED_TO: [ARCH-AUTO-WORKFLOW]
   REALIZED_BY: {surface: "Temporal workers/workflows (backfill ADR 4)", deployable: "automation-service + Temporal runtime", ref: TBD_BY_IMPLEMENTATION}
-  DECIDED_BY: ["backfill-04"]
+  DECIDED_BY: ["ADR-0004"]
   VERIFIED_BY: [TEST-AUTO-WORKFLOW]
   EXERCISED_IN: [E2E-01, AV-SCEN-01]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
@@ -5474,7 +5474,7 @@ FR-PLAT-001:
   ALLOCATED_TO: [ARCH-PLAT-COMPOSE, ARCH-PLAT-RELEASE]
   REALIZED_BY: {surface: "Compose-based INTEGRATION composition of 9 deployables + infrastructure (backfill ADR 11)", deployable: "shared Linux host runtime", ref: "infra/compose/compose.yaml; infra/compose/stack.sh"}
   GOVERNED_BY: ["EnvironmentManifest"]
-  DECIDED_BY: ["backfill-11"]
+  DECIDED_BY: ["ADR-0011"]
   VERIFIED_BY: [TEST-PLAT-COMPOSE, TEST-DEP-PLATFORM, BENCH-E2E-001]
   EXERCISED_IN: [E2E-01, AV-SCEN-12]
   EXECUTED_AS: [RUN-PLAT-001-DEV-001]  # infra layer on the shared host and in CI t1-integration; deployables and Integration profile pending
@@ -7367,7 +7367,7 @@ EvidenceState is EVIDENCE_PENDING.
 | 27 | architecture-allocation view | MET | View B |
 | 28 | implementation-coverage view | MET (planned surfaces) | View C |
 | 29 | contract-trace view | PARTIAL (IC namespaces; exact versions TBD) | View C, GAP-RTM-009/010 |
-| 30 | ADR trace supported | PARTIAL (backfill placeholders) | GAP-RTM-023 |
+| 30 | ADR trace supported | PARTIAL (13 ADR IDs minted; DECIDED_BY edges exist for 5 requirements) | GAP-RTM-023 (RESOLVED), CHG-029 |
 | 31 | scenario traceability | MET | §16.1 |
 | 32 | GS-01 dedicated trace view | MET | §11.3 |
 | 33 | every F0 on ≥1 integrated path | MET (planning) | §11.2 |
