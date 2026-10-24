@@ -388,13 +388,13 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 
 | ID | Class | PrimaryOwner | Catalog anchor | Source decisions (DERIVED_FROM) | Planning state | Flags |
 |---|---|---|---|---|---|---|
-| FR-SIM-001 | F0 | Batu | 01 Item81 FR-SIM-001 L169872 | ITEM-10, ITEM-68, ITEM-61, SCOPE-INV-01 | VERIFY_PLANNED | — |
+| FR-SIM-001 | F0 | Batu | 01 Item81 FR-SIM-001 L169872 | ITEM-10, ITEM-68, ITEM-61, SCOPE-INV-01 | EVIDENCE_PENDING | — |
 | FR-SIM-002 | F0 | Batu | 01 Item81 FR-SIM-002 L169873 | ITEM-10, ITEM-09, ITEM-68 | VERIFY_PLANNED | — |
 | FR-SIM-003 | F1 | Batu | 01 Item81 FR-SIM-003 L169874 | ITEM-10, ITEM-57 | VERIFY_PLANNED | — |
 | FR-SIM-004 | F1 | Batu | 01 Item81 FR-SIM-004 L169875 | ITEM-10, WL-INV-08 | VERIFY_PLANNED | — |
 | FR-SIM-005 | F1 | Batu | 01 Item81 FR-SIM-005 L169876 | ITEM-10, ITEM-57 | VERIFY_PLANNED | — |
 | FR-SIM-006 | F1 | Batu | 01 Item81 FR-SIM-006 L169877 | ITEM-10, WL-INV-05 | VERIFY_PLANNED | — |
-| FR-SIM-007 | F1 | Batu | 01 Item81 FR-SIM-007 L169878 | ITEM-10, ITEM-60, EXP-INV-10 | VERIFY_PLANNED | — |
+| FR-SIM-007 | F1 | Batu | 01 Item81 FR-SIM-007 L169878 | ITEM-10, ITEM-60, EXP-INV-10 | EVIDENCE_PENDING | — |
 | FR-SIM-008 | F1 | Batu | 01 Item81 FR-SIM-008 L169879 | ITEM-10, ITEM-60, TEST-INV-06 | VERIFY_PLANNED | — |
 | FR-SIM-009 | F1 | Batu | 01 Item81 FR-SIM-009 L169880 | ITEM-10, ITEM-37, DT-INV-10 | VERIFY_PLANNED | — |
 | FR-SIM-010 | F1 | Batu | 01 Item81 FR-SIM-010 L169881 | ITEM-10, ITEM-19, SCH-INV-10 | VERIFY_PLANNED | — |
@@ -3837,15 +3837,16 @@ FR-SIM-001:
   meta: {class: F0, owner: Batu, anchor: "01 Item81 FR-SIM-001 L169872"}
   DERIVED_FROM: [ITEM-10, ITEM-68, ITEM-61, SCOPE-INV-01]
   ALLOCATED_TO: [ARCH-SIM-ENGINE, ARCH-SIM-CLOCK]
-  REALIZED_BY: {surface: "custom deterministic Python DES kernel (backfill ADR 7)", deployable: "manufacturing-simulator", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "custom deterministic Python DES kernel (backfill ADR 7)", deployable: "manufacturing-simulator", ref: "services/manufacturing-simulator/src/manufacturing_simulator/; services/manufacturing-simulator/tests/"}
   DECIDED_BY: ["ADR-0007"]
   VERIFIED_BY: [TEST-SIM-KERNEL, BENCH-SIMVAL-001]
   EXERCISED_IN: [E2E-01, AV-SCEN-01]
   MITIGATES: [SIM-R01, SIM-R02]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-SIM-001-LOCAL-001]  # kernel-level local run (toy scenario); REAL/integrated acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L4, env: "CI + INTEGRATION + EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "RUN-SIM-001-LOCAL-001 is evidence/WP-SIM-001/runs/run-5-post-review (run-manifest.json). WP-SIM-001 delivers the deterministic DES kernel only; operation semantics belong to later simulator WPs. evidence/WP-SIM-001/README.md records limits: toy fixture scenario, no REAL integrated path, E2E-01, AV-SCEN-01 and BENCH-SIMVAL-001 not executed, no VERIFIED claim."
 FR-SIM-002:
   meta: {class: F0, owner: Batu, anchor: "01 Item81 FR-SIM-002 L169873"}
   DERIVED_FROM: [ITEM-10, ITEM-09, ITEM-68]
@@ -3909,13 +3910,14 @@ FR-SIM-007:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SIM-007 L169878"}
   DERIVED_FROM: [ITEM-10, ITEM-60, EXP-INV-10]
   ALLOCATED_TO: [ARCH-SIM-ENGINE, ARCH-SIM-SCENARIO]
-  REALIZED_BY: {surface: "named RNG stream registry (arrival/processing/failure/repair/quality/inspection)", deployable: "manufacturing-simulator", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "named RNG stream registry (arrival/processing/failure/repair/quality/inspection)", deployable: "manufacturing-simulator", ref: "services/manufacturing-simulator/src/manufacturing_simulator/; services/manufacturing-simulator/tests/"}
   USES_DATA: ["SeedSet"]
   VERIFIED_BY: [TEST-SIM-DETERMINISM, BENCH-SIMVAL-001]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-SIM-001-LOCAL-001]  # kernel-level local run (toy scenario); REAL/integrated acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L4, env: "CI + EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "RUN-SIM-001-LOCAL-001 is evidence/WP-SIM-001/runs/run-5-post-review (run-manifest.json). WP-SIM-001 provides the named RNG registry and local determinism tests (TEST-SIM-DETERMINISM). evidence/WP-SIM-001/README.md records limits: toy fixture scenario, BENCH-SIMVAL-001 not executed, no VERIFIED claim."
 FR-SIM-008:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SIM-008 L169879"}
   DERIVED_FROM: [ITEM-10, ITEM-60, TEST-INV-06]

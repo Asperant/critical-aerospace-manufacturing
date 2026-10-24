@@ -1293,7 +1293,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-SIM-KERNEL |
 | Size band (indicative, no hour estimates) | M (≈4–7 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `services/manufacturing-simulator/`; `evidence/WP-SIM-001/` |
 
 **Purpose.** Build the discrete-event simulation core (event queue, simulation clock, named RNG streams) that produces the operational world the whole product observes.
 
