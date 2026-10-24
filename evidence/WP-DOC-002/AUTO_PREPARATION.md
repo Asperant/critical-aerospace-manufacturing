@@ -176,7 +176,7 @@
     }
   },
   "deferred_dependencies": [],
-  "input_digest": "c79658b1e9f3f58985ae5c9a05ef1bcf222bc106948d80604ded3631243725e1",
+  "input_digest": "671be53987ad6222c844a125bb08a23dbf9cc3c883a986334dd5be070e94b8f4",
   "outcome": "Mint the backfill ADRs for decisions already made and keep new decisions recorded as they happen.",
   "planned_acceptance": [
     "ADR template and index",
@@ -197,7 +197,7 @@
     }
   ],
   "schema_version": "cap-preparation-v1",
-  "source_sha": "e1b5e5d2f9697384519a56d7a80875b9a8efefab",
+  "source_sha": "e5e9aeb65ff398f8d908277ea47e606b576f444e",
   "start_slice": "mint ADR IDs and write records",
   "supporting_reviewers": [
     {
