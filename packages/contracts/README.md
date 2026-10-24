@@ -236,3 +236,25 @@ a registered family's authority merely by editing its declaration fields or plac
 foreign files behind a producer label. Changing the ownership model itself requires
 canonical ownership evidence and applicable docs/09 change control; it is not a
 self-registration API. No Core schema, fixture or declaration changes in this slice.
+
+## Pre-freeze naming validation
+
+The existing names are already aligned: `core.order-query` is the contract family,
+`core.order-query.v1` is its versioned identity, and `manufacturing-core` is its
+registered producer. These fields represent different concepts; no alias or rename
+is introduced. Human titles, semantic-owner names and existing consumer display
+labels retain their meaning and spelling.
+
+The established contract-ID grammar is unchanged. Declaration `version` must equal
+the parsed ID major, and authority-family bindings match the parsed family exactly.
+Producer machine identifiers use lower-case ASCII kebab case
+(`[a-z][a-z0-9]*(?:-[a-z0-9]+)*`), shared by declarations and ownership registration.
+Case folding, underscore/space substitution, Unicode lookalikes and implicit aliases
+are rejected rather than normalized.
+
+A programmatic registry key must equal its declaration's exact ID, with a matching
+integer major and canonical producer name. File-backed registries retain their exact
+`<contract_id>.json` filename rule and now reject duplicate JSON fields before a
+last-value interpretation can hide an ambiguous identity. Duplicate family ownership
+remains rejected by the existing producer-authority model. Existing declarations,
+producer bindings, schemas, fixtures and their hashes are unchanged.

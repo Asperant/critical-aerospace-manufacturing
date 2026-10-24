@@ -20,7 +20,12 @@ from jsonschema import Draft202012Validator
 
 from .errors import ContractError
 from .references import resolve_references
-from .versioning import ContractVersion, is_later_major, parse_contract_id
+from .versioning import (
+    ContractVersion,
+    is_later_major,
+    parse_contract_id,
+    validate_producer_name,
+)
 
 if TYPE_CHECKING:
     from .authority import ProducerAuthorities
@@ -182,7 +187,7 @@ class ContractDeclaration:
             raise ContractError(
                 "PRODUCER_NOT_SINGULAR", "exactly one canonical producer"
             )
-        producer = _text(record, "canonical_producer")
+        producer = validate_producer_name(_text(record, "canonical_producer"))
         consumers = record["declared_consumers"]
         if (
             not isinstance(consumers, list)
@@ -291,12 +296,34 @@ def load_schema(
     return expanded
 
 
+def _declaration_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    record: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in record:
+            raise ContractError("DECLARATION_INVALID", "duplicate JSON field")
+        record[key] = value
+    return record
+
+
 class Registry:
     """Declarations loaded from one directory, with cross-declaration rules checked."""
 
     def __init__(self, declarations: Mapping[str, ContractDeclaration]) -> None:
         self._declarations = dict(declarations)
-        for declaration in self._declarations.values():
+        for key, declaration in self._declarations.items():
+            parsed = declaration.parsed_id
+            if key != parsed.contract_id:
+                raise ContractError(
+                    "REGISTRY_ID_MISMATCH", "registry key must equal contract ID"
+                )
+            if (
+                type(declaration.version) is not int
+                or declaration.version != parsed.major
+            ):
+                raise ContractError(
+                    "VERSION_MISMATCH", "version must equal the ID's major"
+                )
+            validate_producer_name(declaration.canonical_producer)
             self._check_deprecation(declaration)
 
     def _check_deprecation(self, declaration: ContractDeclaration) -> None:
@@ -323,10 +350,13 @@ class Registry:
             if path.suffix != ".json" or not path.is_file():
                 raise ContractError("REGISTRY_ENTRY_UNEXPECTED", path.name)
             try:
-                raw = json.loads(path.read_text(encoding="utf-8"))
+                raw = json.loads(
+                    path.read_text(encoding="utf-8"),
+                    object_pairs_hook=_declaration_object,
+                )
             except ValueError:
                 raise ContractError(
-                    "DECLARATION_INVALID", f"{path.name} is not JSON"
+                    "DECLARATION_INVALID", f"{path.name} is not unambiguous JSON"
                 ) from None
             declaration = ContractDeclaration.from_mapping(raw)
             if path.stem != declaration.contract_id:

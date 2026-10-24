@@ -7,7 +7,7 @@ from typing import Any
 
 from .errors import ContractError
 from .registry import CONTRACT_TYPES, ContractDeclaration, FileRef
-from .versioning import parse_contract_id
+from .versioning import parse_contract_id, validate_producer_name
 
 
 def _text(value: object) -> bool:
@@ -57,7 +57,7 @@ class ProducerAuthorities:
                 or not source["contracts"]
             ):
                 raise ContractError("AUTHORITY_MODEL_INVALID")
-            producer = source["producer"]
+            producer = validate_producer_name(source["producer"])
             if producer in self._producers:
                 raise ContractError("PRODUCER_AUTHORITY_CONFLICT")
             for root in source["source_roots"]:

@@ -12,6 +12,8 @@ from dataclasses import dataclass
 
 from .errors import ContractError
 
+_PRODUCER_NAME = re.compile(r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*")
+
 _CONTRACT_ID = re.compile(
     r"^(?P<family>[a-z][a-z0-9]*(?:\.[a-z][a-z0-9-]*)+)\.v(?P<major>[1-9][0-9]*)$"
 )
@@ -48,3 +50,12 @@ def is_successor(older: ContractVersion, newer: ContractVersion) -> bool:
 def is_later_major(older: ContractVersion, newer: ContractVersion) -> bool:
     """Same family, higher major; the rule for naming a deprecation replacement."""
     return newer.family == older.family and newer.major > older.major
+
+
+def validate_producer_name(value: object) -> str:
+    """Canonical lower-case ASCII service/package name; never normalize aliases."""
+    if not isinstance(value, str) or _PRODUCER_NAME.fullmatch(value) is None:
+        raise ContractError(
+            "PRODUCER_NAME_INVALID", "lower-case kebab-case identifier required"
+        )
+    return value
