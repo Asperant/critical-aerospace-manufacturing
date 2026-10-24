@@ -16,6 +16,7 @@ from .registry import (
     FileRef,
     Registry,
 )
+from .streams import StreamDefinition, StreamDefinitions, SubjectBinding
 from .versioning import ContractVersion, is_successor, parse_contract_id
 
 __all__ = [
@@ -33,6 +34,9 @@ __all__ = [
     "Deprecation",
     "FileRef",
     "Registry",
+    "StreamDefinition",
+    "StreamDefinitions",
+    "SubjectBinding",
     "ProducerAuthorities",
     "is_successor",
     "parse_contract_id",

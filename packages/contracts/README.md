@@ -258,3 +258,58 @@ integer major and canonical producer name. File-backed registries retain their e
 last-value interpretation can hide an ambiguous identity. Duplicate family ownership
 remains rejected by the existing producer-authority model. Existing declarations,
 producer bindings, schemas, fixtures and their hashes are unchanged.
+
+## Versioned StreamDefinition and subject bindings
+
+`StreamDefinitions(mapping, registry, authorities)` validates the definition-only
+`cap-stream-definitions-v1` catalog (`schema_version`, nonempty `streams`). Use this
+catalog constructor for the global ownership check; `StreamDefinition.from_mapping`
+and `SubjectBinding.from_mapping` validate individual records against the same
+registry and producer-ownership model. Typed records are immutable after validation.
+`to_json()` emits sorted, compact JSON; input order has no semantic significance.
+These APIs perform no broker operations or filesystem loading.
+
+Each stream requires the specification's complete minimum metadata: `stream_id`,
+`stream_class`, `semantic_owner`, `allowed_publishers`, `known_consumers`,
+`partition_key_policy`, `ordering_scope`, `retention_class`, `replay_policy`,
+`schema_family`, `data_classification`, `message_size_class`, `dlq_policy`, plus
+integer `version` and nonempty `bindings`. Missing/unknown fields, duplicate names,
+blank/placeholder metadata and undeclared consumers fail closed. Policy strings
+are explicit semantic declarations, not inferred NATS configuration or validated
+runtime settings. Consumers retain the registry's exact display labels.
+
+Each binding requires `binding_id`, integer `version`, `contract_id`, `schema_family`,
+`subject` and `canonical_producer`. Binding identities reuse `<family>.v<major>`;
+family and major must exactly match the referenced registered contract. In v1 there
+is one active binding per contract version. A stream's own version must match its
+`stream_id` major; stream-definition and payload versions are independent.
+
+Subjects are exact lower-case ASCII dot-separated literals, with at least two
+segments. Segments follow `[a-z][a-z0-9]*(?:-[a-z0-9]+)*`. No case folding, aliases,
+whitespace, empty segments, `*`, `>` or inline wildcard override is accepted. The
+subject need not encode the family/version: its explicit binding is authoritative.
+This format defines no production subject namespace. Canonical wildcard ownership
+is not defined by this format and would require a separate explicit contract.
+
+A binding resolves one exact contract version and validates its registered producer,
+owner, authority and source ownership with `ProducerAuthorities.validate`. Its
+producer must match exactly; stream publishers must equal the bound producers,
+with no extra grants. Stream owner/family must match every bound declaration.
+Duplicate subjects anywhere in the active catalog are rejected even for the same
+producer; duplicate binding and stream identities are also rejected. A changed
+owner cannot hide behind another stream or binding version.
+
+This initial subset supports ASYNC EVENT / DOMAIN_EVENT and ASYNC COMMAND /
+WORK_COMMAND. Retention classes are DOMAIN_CRITICAL/DOMAIN_STANDARD for events and
+WORK_OPERATIONAL for commands; classifications are PUBLIC_INTERNAL, INTERNAL or
+SENSITIVE. Other classes, including telemetry and Oracle, fail closed until their
+specific binding contracts are implemented. The real `core.order-query.v1` remains
+a synchronous query and cannot be registered as a publishable event. Tests use
+synthetic async contracts; no production stream or subject is registered here.
+
+Registry hash/schema/reference verification remains a separate prerequisite via
+`Registry.verify` and the existing gate. This model does not replace that verification
+or certify artifact validity, authenticated publishers, NATS/JetStream readiness,
+consumer integration, ACL enforcement or freeze readiness. Catalog file loading,
+gate integration and approved production bindings remain subsequent slices; final
+ACL derivation requires those explicit validated bindings.
