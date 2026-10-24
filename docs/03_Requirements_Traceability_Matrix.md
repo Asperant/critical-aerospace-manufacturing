@@ -3729,7 +3729,7 @@ FR-CORE-010:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-010 L169858"}
   DERIVED_FROM: [ITEM-09, WL-INV-02, WL-INV-03]
   ALLOCATED_TO: [ARCH-CORE-GENEALOGY]
-  REALIZED_BY: {surface: "lot split relation model", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/lineage_repository.py"} # internal model + relational storage; query exposure pending
+  REALIZED_BY: {surface: "lot split relation model", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/genealogy_queries.py"} # persisted split ancestry/exposure reads; real producer integration pending
   EXPOSED_BY: ["Core Query API (genealogy)"]
   VERIFIED_BY: [TEST-CORE-GENEALOGY]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
@@ -3740,7 +3740,7 @@ FR-CORE-011:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-011 L169859"}
   DERIVED_FROM: [ITEM-09, WL-INV-02, WL-INV-03]
   ALLOCATED_TO: [ARCH-CORE-GENEALOGY]
-  REALIZED_BY: {surface: "lot merge relation model (policy-permitted)", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/lineage_repository.py"} # internal model + relational storage; merge eligibility/execution not inferred
+  REALIZED_BY: {surface: "lot merge relation model (policy-permitted)", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/genealogy_queries.py"} # persisted merge ancestry/exposure reads; merge eligibility/execution not inferred
   EXPOSED_BY: ["Core Query API (genealogy)"]
   VERIFIED_BY: [TEST-CORE-GENEALOGY]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
@@ -3751,7 +3751,7 @@ FR-CORE-012:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-012 L169860"}
   DERIVED_FROM: [ITEM-25, KG-INV-05, KG-INV-16, WL-INV-04]
   ALLOCATED_TO: [ARCH-CORE-GENEALOGY, ARCH-CORE-DB]
-  REALIZED_BY: {surface: "relational temporal genealogy (no mandatory graph DB, backfill ADR 12)", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "relational temporal genealogy (no mandatory graph DB, backfill ADR 12)", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/genealogy_queries.py"} # stored execution/lineage facts only; full real lineage integration pending
   EXPOSED_BY: ["Core Query API (genealogy)"]
   DECIDED_BY: ["backfill-12"]
   VERIFIED_BY: [TEST-CORE-GENEALOGY, BENCH-RQ1-001]

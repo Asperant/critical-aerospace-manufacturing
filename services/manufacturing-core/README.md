@@ -195,3 +195,70 @@ python -m pytest -c services/manufacturing-core/pyproject.toml services/manufact
 
 The fixture creates/drops its own database and uses separate restricted migrator
 and runtime roles. No shared schema or existing migration contract is changed.
+
+
+## Genealogy exposure reads — WP-CORE-004
+
+`GenealogyQueries(connection)` provides a controlled transport-free read interface
+for Core callers. It adds no HTTP endpoints, UI, command execution or database
+writes. Callers own authorization and transaction isolation; a result is a read
+of stored facts, not certification of producer completeness or current membership.
+
+- `rework_history(component_id)` returns immutable original/rework segments in
+  persisted append/visit order, preserving directive linkage, execution IDs,
+  equipment references and historical route revisions.
+- `lot(LotTraceRequest(world_id=..., lot_id=..., direction="BACKWARD"))` traverses
+  complete ancestry; `FORWARD` traces descendant lot impact. Relational recursive
+  traversal deduplicates diamonds without a depth cutoff. Full event parent/child
+  membership snapshots remain attached, including sibling/merge context.
+- `component(ComponentTraceRequest(world_id=..., component_id=...))` starts at
+  every recorded membership of that immutable component identity. `focus_lot_ids`
+  lists the component's actual stored memberships. Other merge parents in the
+  returned facts are context, not evidence of target membership in those lots.
+- `equipment_exposure(EquipmentExposureRequest(...))` returns actual execution
+  visits overlapping `[started_at, ended_at)`, optionally restricted by historical
+  operation class. Zero-duration visits are included as instants at the start and
+  excluded at the end. Planned equipment assignments do not count as exposure.
+- `common_equipment_exposure(CohortExposureRequest(component_ids=(...)))` groups
+  actual execution references by equipment and operation class. Counts/ratios use
+  distinct requested components, preserving separate re-entrant execution IDs.
+  Missing history is explicit; it never proves no prior exposure. The ratio's
+  denominator is the full requested distinct cohort, including missing histories.
+
+Lineage results order facts causally, then by UTC occurrence/effectivity and
+identity between ready independent facts. Receipt time never replaces occurrence
+or causality. Each fact retains its original persisted `position`, timestamps,
+parent/child tuple order and opaque revision. Lot collections sort by identity;
+execution exposure sorts by UTC start/end, component, stored segment/visit and
+execution identity. Rework retrieval retains its original supplied ordering.
+Unknown world/lot/component history returns `None`; empty equipment exposure
+returns `()`. Known identities with no history also return `None`, not a fabricated
+empty manufacturing history. Invalid typed requests and real database failures
+propagate; missing schemas/unavailability are never silently returned as empty.
+
+Lineage is world-scoped. Existing execution persistence uses global canonical
+component identity and has no world field; these queries do not invent world
+binding for it. RecipeVersion, inspection/hold/maintenance and protected producer
+fields are not synthesized. This interface supports stored WP-CORE-004 facts;
+it does not certify the broader Item 25 integration families as implemented.
+`ExecuteApprovedReworkDirective` command execution remains unimplemented.
+
+`health(correlation_id=...)` checks SELECT access to both storage surfaces and
+reports READY/UNAVAILABLE as read-access health only. Query methods accept an
+optional validated `correlation_id` and emit existing structured outcome/duration
+telemetry without IDs, payloads, DSNs or exception text. Production freshness and
+cross-read snapshot guarantees require caller-managed isolation and producer
+bindings. Reads capture relevant immutable lineage event IDs before fetching
+snapshots so later supported appends cannot rewrite the selected fact set.
+
+After applying both scoped history migrations, use only the focused query checks:
+
+```
+python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests/persistence/test_genealogy_queries.py -m integration -q -s
+```
+
+Use disposable PostgreSQL 18 `CI_PG_DSN` and `CORE_TEST_DISPOSABLE=1`. The module
+creates/drops its own database and rolls back its synthetic fixtures. Its bounded
+WP-NORMAL sanity case uses 100 equipment identities and 1,000 terminal lots plus
+retained ancestors; 30 ancestry/exposure samples report median/p95/max. This is
+local query sanity evidence, not integrated workload acceptance or factory data.
