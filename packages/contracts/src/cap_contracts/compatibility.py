@@ -16,6 +16,7 @@ from jsonschema.exceptions import SchemaError
 from .errors import ContractError
 from .references import resolve_references
 from .registry import ContractDeclaration, FileRef, load_schema
+from .versioning import is_later_major, parse_contract_id
 
 # This is deliberately a bounded subset, not a general JSON Schema implication solver.
 _MAPS = {"properties"}
@@ -294,3 +295,39 @@ def compare_contracts(
             breaking.extend(f"{label}{item}" for item in result.breaking)
             unknown.extend(f"{label}: {item}" for item in result.unverifiable)
     return CompatibilityResult(tuple(breaking), tuple(unknown))
+
+
+def enforce_version_policy(old_id: str, new_id: str, compatibility: object) -> None:
+    """Raise ContractError unless compatibility permits this family/version change.
+
+    Any higher major can carry a verified breaking change. Unknown or malformed
+    results never pass, even with a major increase. Deprecation target existence
+    and later-major/same-family checks remain enforced separately by Registry.
+    This check performs no I/O, deprecation updates or registry mutation.
+    """
+    old, new = parse_contract_id(old_id), parse_contract_id(new_id)
+    if old.family != new.family:
+        raise ContractError(
+            "CONTRACT_FAMILY_MISMATCH", "versions must share one family"
+        )
+    if new.major < old.major:
+        raise ContractError("VERSION_ROLLBACK", "major version cannot decrease")
+    if not isinstance(compatibility, CompatibilityResult):
+        raise ContractError("COMPATIBILITY_UNVERIFIABLE", "detector result required")
+    if (
+        any(
+            not isinstance(reasons, tuple)
+            or any(
+                not isinstance(reason, str) or not reason.strip() for reason in reasons
+            )
+            for reasons in (compatibility.breaking, compatibility.unverifiable)
+        )
+        or compatibility.unverifiable
+    ):
+        raise ContractError(
+            "COMPATIBILITY_UNVERIFIABLE", "compatibility is not verified"
+        )
+    if compatibility.breaking and not is_later_major(old, new):
+        raise ContractError(
+            "BREAKING_CHANGE_REQUIRES_MAJOR", "breaking change needs a higher major"
+        )

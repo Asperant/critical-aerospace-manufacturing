@@ -6,6 +6,7 @@ from .compatibility import (
     compare_contracts,
     compare_schema_files,
     compare_schemas,
+    enforce_version_policy,
 )
 from .errors import ContractError
 from .registry import (
@@ -23,6 +24,7 @@ __all__ = [
     "compare_contracts",
     "compare_schemas",
     "compare_schema_files",
+    "enforce_version_policy",
     "ContractDeclaration",
     "ContractError",
     "ContractVersion",

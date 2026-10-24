@@ -81,8 +81,8 @@ exemplar still has unsupported keywords, including `$id`; this slice does not
 certify its compatibility. Unverifiable
 results must never be accepted as compatible. Semantic changes absent from declared
 metadata cannot be inferred. Optional-addition policy is not proof that strict old
-consumers accept new payloads: consumer tests remain required. CI integration and
-version-policy enforcement are later slices.
+consumers accept new payloads: consumer tests remain required. CI integration
+remains a later slice; explicit version-policy enforcement is described below.
 
 ## Local schema references
 
@@ -142,3 +142,23 @@ changing the referenced shape is assessed by the same rules as inline schemas.
 Equal unresolved reference strings are never accepted as compatibility proof.
 Missing/invalid/cyclic references fail closed even when both versions are identical,
 and unused definitions are still inspected by the resolver before being removed.
+
+## Explicit major-version policy gate
+
+`enforce_version_policy(old_id, new_id, compatibility_result)` returns `None` only
+when the version transition is permitted; otherwise it raises `ContractError`:
+
+- Breaking change with the same major: `BREAKING_CHANGE_REQUIRES_MAJOR`.
+- Verified breaking change with any higher major of the same family: allowed.
+- Verified non-breaking change with the same or a higher major: allowed.
+- Lower major: `VERSION_ROLLBACK`; different family: `CONTRACT_FAMILY_MISMATCH`.
+- Unverifiable, missing, foreign or malformed result: `COMPATIBILITY_UNVERIFIABLE`,
+  including when a major increase was proposed.
+
+Pass a result from the existing comparison APIs, using `compare_schema_files` for
+hash-verified package references or `compare_contracts` for declared authority and
+semantics. The gate does not alter a breaking classification, bypass loading, mutate
+versions or deprecate a contract. `Registry` independently retains its existing
+replacement-existence and later-major/same-family checks. The `is_successor` helper
+continues to identify exactly the next major; this gate accepts any higher major.
+Neither the gate nor a passing result claims consumer acceptance or WP completion.
