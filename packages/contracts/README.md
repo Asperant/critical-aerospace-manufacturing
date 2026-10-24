@@ -4,8 +4,8 @@ The version-controlled Integration Contract Registry of the architecture
 specification (02, "Integration Contract Registry"): a Git-backed semantic catalog,
 not a runtime schema registry. Slice 1 provides the layout, the version rules and the
 boundary-validation primitives. It does not provide the EVT message envelope, broker
-or NATS behaviour, Core command contracts, the outbox, the CI compatibility
-gate, producer-ACL generation or any INTEGRATION/FROZEN
+or NATS behaviour, Core command contracts, the outbox, producer-ACL generation
+or any INTEGRATION/FROZEN
 behaviour.
 
 ## Layout
@@ -81,8 +81,8 @@ exemplar still has unsupported keywords, including `$id`; this slice does not
 certify its compatibility. Unverifiable
 results must never be accepted as compatible. Semantic changes absent from declared
 metadata cannot be inferred. Optional-addition policy is not proof that strict old
-consumers accept new payloads: consumer tests remain required. CI integration
-remains a later slice; explicit version-policy enforcement is described below.
+consumers accept new payloads: consumer tests remain required. Explicit version-policy
+enforcement and its CI adapter are described below.
 
 ## Local schema references
 
@@ -162,3 +162,42 @@ versions or deprecate a contract. `Registry` independently retains its existing
 replacement-existence and later-major/same-family checks. The `is_successor` helper
 continues to identify exactly the next major; this gate accepts any higher major.
 Neither the gate nor a passing result claims consumer acceptance or WP completion.
+
+## CI contract gate (CHG-032)
+
+The existing `t1-contract` job checks out full history and runs
+`PYTHONPATH=packages/contracts/src uv run --project ci --locked python -m cap_contracts.ci_gate`.
+`CONTRACT_BASE` comes from the PR base SHA or push-before SHA; an empty/new-branch
+value uses the merge base with `origin/main`. A local invocation can supply
+`--base <revision>`. Missing history fails closed; the adapter fetches no network data.
+
+The adapter reads **committed Git blobs** at the base and `HEAD`, materializing only
+registry entries, explicit approvals and pinned schema/fixture files in temporary
+directories. It ignores worktree/untracked files, rejects symlinks/submodules and
+reuses `Registry.verify`, `load_schema`, `compare_contracts` and
+`enforce_version_policy`; it contains no schema-compatibility algorithm.
+
+`schema-refs.json` at this package root is an array of existing `{path, sha256}`
+FileRefs approving package-local dependencies. Its absence means no approved file
+references (including on historical bases). Every listed file is hash-verified and
+resolved, including unused approvals. Missing or duplicate approvals fail closed.
+Schemas and fixtures retain their declaration pins.
+
+Both snapshots undergo registry/schema/fixture validation. Exact unchanged
+declarations and resolved documents are reported as unchanged, without claiming a
+new compatibility decision for unsupported schema keywords. Changed declarations
+are compared to their previous version; an added major is compared to the highest
+base major of its family. A new family has no predecessor: it receives boundary
+validation and an explicit added count, with no previous-version compatibility
+claim. Removing a previous declaration fails closed; no removal policy is inferred.
+
+Output is one deterministic `cap-contract-ci-v1` JSON object with counts, PASS/FAIL
+and stable failure codes/stages/contract IDs. Payload values, parser exceptions and
+compatibility reason text are omitted. Invalid or unverifiable changed contracts
+fail even with a major increase. Only this package and its registered/pinned files
+are read; unrelated CI jobs and the existing generic schema tier are unchanged.
+
+The workflow is a pinned host-policy source. CHG-032 records its impact and requires
+a supported merged-source policy refresh after eventual merge; this source-only
+slice performs no installed-policy, Plane or lifecycle mutation. CI execution and
+full WP acceptance remain separate evidence.

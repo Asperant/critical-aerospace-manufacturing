@@ -1,0 +1,56 @@
+CHG-032:
+  title: Wire the WP-EVT-001 compatibility and major-version gate into contract CI
+  trigger: Explicit project-owner request for the CI compatibility gate wiring slice, 25 October 2026
+  reason: The approved WP-EVT-001 compatibility-in-CI task is not yet executed by the existing contract tier
+  class: C1
+  review_risk_class: CR-2
+  raised_in: S2
+  owner: Asrın
+  application_control_item: WP-EVT-001
+  required_human_approvals: 0
+  reviewers:
+    - Selman (contract semantics, advisory routing; no review claimed)
+    - Yavuz (CI and pinned-source rollout, advisory routing; no review claimed)
+  decision: APPROVED_WITH_CONDITIONS
+  decision_basis: The project-owner request explicitly authorizes this scoped CI wiring and the normal canonical change-control path for a pinned-source edit; CHG-018 requires zero development approvals
+  status: APPROVED
+  scope:
+    - Only the existing t1-contract job receives full-history checkout and one read-only package gate step
+    - Other jobs, required checks, permissions, product authority and Plane lifecycle remain unchanged
+    - The adapter reuses Registry, local-reference loading, compatibility comparison and version enforcement
+    - A package-local schema-refs.json stores explicit existing FileRef path/hash approvals; it changes no cross-service declaration fields
+  affected_requirements: [FR-EVT-001, FR-EVT-006, FR-EVT-008, NFR-DATA-005]
+  affected_architecture: [ARCH-CTR-VERSIONING, ARCH-EVT-SCHEMA]
+  affected_contracts:
+    - id: core.order-query.v1
+      compatibility: NON_BREAKING
+      note: No declaration, schema, fixture, producer or consumer semantics change
+      consumers_reviewed: []
+  affected_work_packages: [WP-EVT-001]
+  affected_dependencies: []
+  affected_evidence:
+    - TEST-EVT-SCHEMA
+    - TEST-DATA-CONTRACTVALID
+    - deployed transition-policy source hashes of .github/workflows/ci.yml after merge
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - Earlier contract slices remain historical scoped unit evidence; their files are unchanged
+      - Product acceptance, dependency readiness and owner-executable scope are unchanged
+    rerun_required:
+      - Canonical validation and focused gate/static checks on this branch
+      - After merge, regenerate and install the source-bound host policy through the supported merged-source installer before using affected lifecycle/deferred-wait evaluations
+    limitation: The workflow whole-blob pin changes on main when merged; existing deployed source-hash proofs cannot be treated as current until the supported refresh and any required attributable re-assertion
+  security_authority_impact: Read-only Git snapshots and local schema files only; no credentials, egress, product authority, HITL or Plane writes are introduced
+  conditions:
+    - Focused gate tests, changed-file static checks and projectctl validate must pass before this slice is committed
+    - No full CI success, merged rollout, installed policy refresh, lifecycle state or WP DONE is claimed
+    - Deploy only merged reference source; never refresh installed policy from this unmerged branch
+  rollout: Push the scoped WP branch for reviewable source; after its later authorized merge, use the existing policy builder and supported installer with root-only backup/rollback and verified source hashes. No live deployment in this slice
+  rollback: Revert this workflow gate and adapter together through Git; if already deployed, restore policy deployment with the supported rollback. Never replay Plane state
+  required_rerun: [focused gate tests, changed-file static checks, projectctl validate]
+  documentation_updates:
+    - packages/contracts/README.md
+    - evidence/WP-EVT-001/CI-GATE-SLICE.md
+  freeze_context: PRE_M6
