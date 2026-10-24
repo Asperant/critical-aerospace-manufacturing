@@ -1103,7 +1103,7 @@ Each package below is owned by this role. Deliverables and tasks are the 04 defi
 - link ADRs to requirements and architecture components
 - define when a new ADR is required
 
-**Cut/fallback.** No cut; DECIDED_BY edges in 03 point at minted ADR IDs (GAP-RTM-023 RESOLVED by CHG-029).
+**Cut/fallback.** No cut; DECIDED_BY edges in 03 currently point at placeholders (GAP-RTM-023).
 
 
 ### 9.WP-EVT-003 — Idempotent consumer framework
