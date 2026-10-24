@@ -100,6 +100,8 @@ class FakeGH:
         self.artifacts=[]
         self.missing_artifact=False
         self.documents={}
+        self.repo_files={}
+        self.file_rows=[{'filename':'src/project.py'},{'filename':'evidence/test.json'}]
     def evidence_text(self,path,sha):
         if path not in self.documents: raise t.Denied('ASSESSMENT_CONTENT_UNAVAILABLE')
         self.artifact('repo:'+path,sha)
@@ -115,7 +117,7 @@ class FakeGH:
     def checks(self,sha): return deepcopy(self.check_data)
     def reviews(self,number): raise AssertionError('Advisory review API must not be queried')
     def files(self,pr):
-        return getattr(self,'file_rows',[{'filename':'src/project.py'},{'filename':'evidence/test.json'}])
+        return self.file_rows
     def technical_ci(self,sha,policy,extra=()):
         if getattr(self,'failed_technical_step',False): raise t.Denied('REQUIRED_TECHNICAL_STEP_NOT_PASSED')
     def current_main(self,pr):
@@ -126,6 +128,14 @@ class FakeGH:
     def artifact(self,ref,sha):
         if self.missing_artifact: raise t.Denied('ARTIFACT_MISSING')
         self.artifacts.append((ref,sha))
+    def repository_file(self,path,sha,limit=65536):
+        if path not in self.repo_files:
+            raise t.Denied('ARTIFACT_NOT_A_FILE')
+        raw,blob=self.repo_files[path]
+        return raw,blob
+    def ancestor(self,base,head):
+        if getattr(self,'stale_ancestry',False):
+            raise t.Denied('PRODUCER_MERGE_NOT_IN_MAIN_ANCESTRY')
 
 
 def fixture(profile='asrin',source='READY',target='IN_PROGRESS'):
@@ -167,6 +177,84 @@ def run_case(profile='asrin',source='READY',target='IN_PROGRESS',mutate=None):
 
 
 class TransitionTests(unittest.TestCase):
+    def automatic_fixture(self):
+        wp,policy,plane,gh,envelope=fixture()
+        producer_wp=next(k for k,v in policy['contexts'].items()
+                         if v['work_package']['primary_owner']['canonical_name']=='Selman Özdemir')
+        node='DN-TEST-CONTRACT'
+        successor='DN-TEST-CONSUMER'
+        edge={'id':'DEP-900','predecessor':{'node':node,'owner':'Selman'},
+              'successor':{'node':successor,'owner':'Asrın'},'precise_requirement':'Exact v1 command fields',
+              'semantics':{'kind':'CONTRACT','strength':'HARD','blocking_stage':'START','required_readiness':'CONTRACT_READY'}}
+        context=policy['contexts'][wp]
+        context['dependency_edges']=[edge]
+        policy.update(auto_readiness_attestation_schema='auto-readiness-attestation-v1',
+                      node_owners={node:'selman',successor:'asrin'},
+                      node_levels={node:['DEFINED','CONTRACT_READY']},
+                      node_requirements={node:['FR-TEST-001']},node_producers={node:[producer_wp]},
+                      scope_projections={producer_wp:{'scope':'canonical'}})
+        policy['required_aggregate_ci']=[]
+        files={'contracts/test.json':'1'*40,'contracts/test.schema.json':'2'*40,
+               'contracts/test.fixture.json':'3'*40,'tests/test_contract.py':'4'*40,
+               'docs/trace.md':'5'*40}
+        for path,blob in files.items():
+            gh.repo_files[path]=(b'content',blob)
+        basis={'schema':'auto-readiness-semantic-basis-v1','node':node,'level':'CONTRACT_READY',
+               'producer':{'owner':'Selman Özdemir','login':'selorito'},'producer_wp':producer_wp,
+               'producer_pr':9,'producer_merge_sha':MERGE,
+               'scope_projections':{producer_wp:t.evidence_digest({'scope':'canonical'})},
+               'certification':'CONTRACT_READY','semantic_basis':{
+                   'stability':'v1 interface is stable','consumer_usability':'Exact fields usable by declared consumer',
+                   'compatibility_intent':'Compatible v1 evolution','scope_meaning':'Contract boundary is unchanged'},
+               'consumer_edges':['DEP-900'],'artifacts':[
+                   {'path':'contracts/test.json','blob':files['contracts/test.json'],'role':'contract'},
+                   {'path':'contracts/test.schema.json','blob':files['contracts/test.schema.json'],'role':'schema'},
+                   {'path':'contracts/test.fixture.json','blob':files['contracts/test.fixture.json'],'role':'fixture'}],
+               'tests':[{'test_id':'TEST-CONTRACT','check':'t1-contract','path':'tests/test_contract.py','blob':files['tests/test_contract.py']}],
+               'trace':[{'requirement':'FR-TEST-001','path':'docs/trace.md','blob':files['docs/trace.md']}]}
+        basis_path=f'evidence/readiness/{node}.json'
+        basis_blob='6'*40
+        def store():
+            gh.repo_files[basis_path]=(json.dumps(basis).encode(),basis_blob)
+        store()
+        gh.pr_data.update(number=9,user={'login':'selorito'},merged=True,merge_commit_sha=MERGE,
+                          changed_files=1,state='closed')
+        gh.file_rows=[{'filename':basis_path,'status':'added'}]
+        gh.check_data=([{'name':'projectctl','head_sha':HEAD,'status':'completed','conclusion':'success'},
+                        {'name':'t1-contract','head_sha':HEAD,'status':'completed','conclusion':'success'}],[])
+        return context,edge,policy,gh,basis,store
+
+    def test_automatic_contract_readiness_is_accepted_by_dependency_path(self):
+        context,edge,policy,gh,basis,store=self.automatic_fixture()
+        proof=t.automatic_readiness_attestation(gh,context,edge,HEAD,policy)
+        self.assertEqual(proof['status'],'PASS')
+        self.assertRegex(proof['proof_digest'],r'^[0-9a-f]{64}$')
+        t.dependencies(gh,[],context,{},HEAD,policy)
+
+    def test_automatic_contract_readiness_fail_closed_cases(self):
+        cases={
+            'precise':lambda c,e,p,g,b: e.update(precise_requirement=None),
+            'semantic':lambda c,e,p,g,b: b.update(semantic_basis={}),
+            'noncertification':lambda c,e,p,g,b: b.update(certification='NOT_CERTIFIED'),
+            'blob':lambda c,e,p,g,b: b['artifacts'][0].update(blob='f'*40),
+            'sha':lambda c,e,p,g,b: setattr(g,'main_sha',lambda:'e'*40),
+            'test':lambda c,e,p,g,b: g.check_data[0][1].update(conclusion='failure'),
+            'owner':lambda c,e,p,g,b: b.update(producer={'owner':'Selman Özdemir','login':'foreign'}),
+            'scope':lambda c,e,p,g,b: p['scope_projections'][b['producer_wp']].update(scope='changed'),
+        }
+        expected={'precise':'PRECISE_CONSUMER_REQUIREMENT_MISSING','semantic':'ATTRIBUTABLE_SEMANTIC_BASIS_MISSING',
+                  'noncertification':'EXPLICIT_NON_CERTIFICATION','blob':'STALE_ARTIFACTS_BLOB',
+                  'sha':'SOURCE_SHA_NOT_CURRENT_MAIN','test':'SHA_BOUND_REQUIRED_TEST_NOT_GREEN',
+                  'owner':'PRODUCER_ATTRIBUTION_MISMATCH','scope':'PRODUCER_SCOPE_PROJECTION_MISMATCH'}
+        for name,change in cases.items():
+            context,edge,policy,gh,basis,store=self.automatic_fixture()
+            change(context,edge,policy,gh,basis)
+            store()
+            result=t.automatic_readiness_attestation(gh,context,edge,HEAD,policy)
+            with self.subTest(name=name):
+                self.assertEqual(result['status'],'UNKNOWN')
+                self.assertIn(expected[name],result['reasons'])
+
     def test_all_profiles_can_transition_only_their_wp(self):
         for profile in t.q.PEOPLE:
             with self.subTest(profile=profile):

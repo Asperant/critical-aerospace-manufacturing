@@ -30,6 +30,8 @@ for w in p.catalog.work_packages:
 nodes={n.id:n for n in p.catalog.dependencies.nodes}
 people={'Asrın Dündar':'asrin','Selman Özdemir':'selman','Batuhan Kaya':'batuhan','Yavuz Gümüş':'yavuz'}
 node_owners={n.id:people.get(resolve_owner(n.raw_owner).canonical_name) for n in nodes.values()}
+node_producers={n.id:sorted(w.id for w in p.catalog.work_packages
+                           if n.id in (w.readiness_refs or [])) for n in nodes.values()}
 manifest=dict(p.source_manifest)
 for name in ['AGENTS.md','docs/02_System_Architecture_Specification.md','docs/08_Definition_of_Ready_and_Done.md',
              'docs/09_Change_Control_Process.md',POLICY_PATH,'09_change/CHG-018.yaml','09_change/CHG-017.yaml',
@@ -38,6 +40,9 @@ for name in ['AGENTS.md','docs/02_System_Architecture_Specification.md','docs/08
 policy={'schema_version':'cap-transition-policy-v1','evaluation_revision':'chg018-advisory-only','source_manifest':manifest,'contexts':contexts,
         'criteria_definitions':criteria, 'node_owners':node_owners,
         'node_levels':{n.id:[str(v) for v in n.readiness_levels] for n in nodes.values()},
+        'node_requirements':{n.id:sorted(set(re.findall(r'(?:FR|NFR)-[A-Z0-9]+-[0-9]{3}',
+                                                       n.raw_requirement_refs))) for n in nodes.values()},
+        'node_producers':node_producers,
         'required_ci':['projectctl'], 'review_policy':read_review_policy(ROOT), 'required_technical_steps':['Syntax sanity','Projectctl tests','Canonical validation','Whitespace and repository hygiene']}
 for key,prefix,count in [('dor_task','DOR-TASK-',12),('dor_pr','DOR-PR-',8),('dod_pr','DOD-PR-',12),
                          ('dod_wp','DOD-WP-',12),('dod_research','DOD-RES-',11)]:
@@ -56,7 +61,7 @@ preferences=yaml.safe_load((ROOT/'project_control/execution_preferences.yaml').r
 assert not validate_preferences(p,preferences), 'Invalid execution preferences'
 policy['execution_preferences']=preferences
 policy['execution_project']=project_view(p)
-for name in ['project_control/execution_preferences.yaml','09_change/CHG-019.yaml','09_change/CHG-020.yaml','09_change/CHG-021.yaml','09_change/CHG-022.yaml','09_change/CHG-023.yaml','09_change/CHG-024.yaml','09_change/CHG-025.yaml','09_change/CHG-026.yaml','09_change/CHG-027.yaml']:
+for name in ['project_control/execution_preferences.yaml','09_change/CHG-019.yaml','09_change/CHG-020.yaml','09_change/CHG-021.yaml','09_change/CHG-022.yaml','09_change/CHG-023.yaml','09_change/CHG-024.yaml','09_change/CHG-025.yaml','09_change/CHG-026.yaml','09_change/CHG-027.yaml','09_change/CHG-028.yaml']:
     manifest[name]=sha256((ROOT/name).read_bytes()).hexdigest()
 policy['execution_project']['source_manifest']=manifest
 for kind,name in [('auto_next','tools/host/plane-transition/auto_next.py'),('execution_queue','tools/projectctl/src/projectctl/execution_queue.py')]:
@@ -65,6 +70,7 @@ policy['preparation_schema']='cap-preparation-v1'
 policy['deferred_acceptance_schema']='cap-deferred-acceptance-v1'
 policy['scope_projection_schema']='cap-scope-projection-v1'
 policy['external_wait_schema']='cap-external-integration-wait-v1'
+policy['auto_readiness_attestation_schema']='auto-readiness-attestation-v1'
 wbs_text,rtm_text=(ROOT/WBS_PATH).read_text(),(ROOT/RTM_PATH).read_text()
 policy['scope_projections']={}
 for w in p.catalog.work_packages:
