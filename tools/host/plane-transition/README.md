@@ -279,6 +279,15 @@ comment. The re-assertion must reference the latest VERIFIED BLOCKED audit throu
 recompute `audit_id` (`audit_identity()`); any other later row makes the chain ambiguous
 and denies the proof.
 
+CTRL-HOST-009 compatible correction: the IN_PROGRESS transition's existing general
+and heavy-Core WIP limits now use the same fresh `live_view()` released-wait proof
+as queue/health. Only `execution_queue.released_wait()` returning a positive
+classification removes an otherwise-counted IN_PROGRESS item. Missing, invalid,
+stale, ambiguous or unavailable evidence keeps the item counted; an incomplete
+view or verification exception retains the original active set. General limits,
+the size-L/Core definition, readiness and lifecycle rules are unchanged. This
+read-only classification does not invoke AUTO_NEXT or perform any Plane write.
+
 CHG-026 / CTRL-HOST-011: `execution_queue.candidate_window(candidates, actionable)` returns
 the canonical-order prefix through the first actionable candidate (at least three). The
 adapter's `owner_health` passes the preparation engine's own `classify` as `actionable`;

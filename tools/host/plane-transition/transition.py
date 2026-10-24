@@ -948,6 +948,18 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
         if source=='IN_REVIEW': need(pr.get('draft') is True, 'REWORK_REQUIRES_DRAFT_PR')
         active=[r for r in plane.items if r.get('assignees')==[q.PEOPLE[profile][1]] and
                 r.get('state')==plane.states['IN_PROGRESS'] and r['id']!=item['id']]
+        if active:
+            try:
+                auto=auto_next_support()
+                resolver=auto.load_resolver()
+                live=auto.live_view(sys.modules[__name__],plane,policy,profile,gh)
+                need(live.get('complete') is True, 'WIP_LIVE_VIEW_INCOMPLETE')
+                # Only a fresh, positively verified released wait frees a slot.
+                # Missing/invalid/UNKNOWN evidence keeps the original active set.
+                active=[r for r in active if resolver.released_wait(
+                    r['external_id'],live['items'][r['external_id']]) is None]
+            except Exception:
+                pass
         need(len(active)<2, 'IMPLEMENTATION_WIP_LIMIT')
         def heavy(identity):
             c=policy['contexts'][identity]['work_package']
