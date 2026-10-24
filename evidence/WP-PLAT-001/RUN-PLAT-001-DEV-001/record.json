@@ -1,0 +1,72 @@
+{
+  "run_id": "RUN-PLAT-001-DEV-001",
+  "work_package": "WP-PLAT-001",
+  "kind": "DEV run on the shared host; infra profile only (not the full Integration profile)",
+  "boundary_mode": "REAL",
+  "code_revision": "a59c3c8ca53fed0907cd935aaeb1e2f403790ba5",
+  "branch": "wp/WP-PLAT-001-compose-profiles",
+  "recorded_at": "2026-10-24T13:28:20+00:00",
+  "host": {
+    "machine": "x86_64",
+    "system": "Linux",
+    "cpus": 8,
+    "docker": "29.9.2",
+    "compose": "5.6.1"
+  },
+  "startup_to_healthy_s": {
+    "fresh_start_images_local": 118,
+    "restart_with_data": 164,
+    "nfr_dep_002_threshold_s": 600
+  },
+  "steps": [
+    {
+      "step": "reset",
+      "exit_code": 0,
+      "wall_s": 0.2,
+      "output": "reset.log.txt"
+    },
+    {
+      "step": "fresh-start",
+      "exit_code": 0,
+      "wall_s": 143.2,
+      "output": "fresh-start.log.txt"
+    },
+    {
+      "step": "smoke",
+      "exit_code": 0,
+      "wall_s": 1.1,
+      "output": "smoke.log.txt"
+    },
+    {
+      "step": "memory",
+      "exit_code": 0,
+      "wall_s": 2.1,
+      "output": "memory.txt"
+    },
+    {
+      "step": "status",
+      "exit_code": 0,
+      "wall_s": 0.1,
+      "output": "status.log.txt"
+    },
+    {
+      "step": "down",
+      "exit_code": 0,
+      "wall_s": 32.7,
+      "output": "down.log.txt"
+    },
+    {
+      "step": "restart",
+      "exit_code": 0,
+      "wall_s": 204.2,
+      "output": "restart.log.txt"
+    },
+    {
+      "step": "final-down",
+      "exit_code": 0,
+      "wall_s": 15.3,
+      "output": "final-down.log.txt"
+    }
+  ],
+  "non_zero_explained": {}
+}

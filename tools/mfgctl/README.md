@@ -37,8 +37,8 @@ overrides it and must point at the root (no silent fallback, DX-INV-10).
 | `bootstrap [--dry-run]` | B | available |
 | `check [--fast \| --pr]` | B | available |
 | `timings [--json]` | B | available |
-| `profile list`, `up NAME`, `down NAME`, `status` | C | available; needs the registry from WP-PLAT-001 |
-| `smoke CAPABILITY`, `scenario list`, `scenario run ID` | C | available; needs the registry from WP-PLAT-001 |
+| `profile list`, `up NAME`, `down NAME`, `status` | C | available; registry `infra/mfgctl/capabilities.json` (WP-PLAT-001) |
+| `smoke CAPABILITY`, `scenario list`, `scenario run ID` | C | available; registry `infra/mfgctl/capabilities.json` (WP-PLAT-001) |
 | `diagnose bundle [--output DIR]` | C | available |
 
 Exit codes for every command: `0` success (warnings allowed), `1` a check or

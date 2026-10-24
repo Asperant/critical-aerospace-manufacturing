@@ -1,0 +1,9 @@
+platform data volumes and credentials removed
+ Volume cap-platform_postgres-data Removing
+ Volume cap-platform_nats-data Removing
+ Volume cap-platform_seaweedfs-data Removing
+ Volume cap-platform_keycloak-data Removing
+ Volume cap-platform_postgres-data Removed
+ Volume cap-platform_nats-data Removed
+ Volume cap-platform_seaweedfs-data Removed
+ Volume cap-platform_keycloak-data Removed

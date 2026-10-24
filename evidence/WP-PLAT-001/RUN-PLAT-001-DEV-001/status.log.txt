@@ -1,0 +1,8 @@
+$ docker compose -f infra/compose/compose.yaml ps --all
+NAME                       IMAGE                              COMMAND                  SERVICE     CREATED         STATUS                        PORTS
+cap-platform-keycloak-1    quay.io/keycloak/keycloak:26.0.5   "/opt/keycloak/bin/k…"   keycloak    2 minutes ago   Up About a minute (healthy)   8443/tcp, 9000/tcp, 127.0.0.1:56080->8080/tcp
+cap-platform-nats-1        nats:2.10.22-alpine                "docker-entrypoint.s…"   nats        2 minutes ago   Up About a minute (healthy)   6222/tcp, 127.0.0.1:56222->4222/tcp, 127.0.0.1:56822->8222/tcp
+cap-platform-postgres-1    postgres:18.6-alpine               "docker-entrypoint.s…"   postgres    2 minutes ago   Up About a minute (healthy)   127.0.0.1:56432->5432/tcp
+cap-platform-seaweedfs-1   chrislusf/seaweedfs:3.80           "/entrypoint.sh serv…"   seaweedfs   2 minutes ago   Up About a minute (healthy)   7333/tcp, 8080/tcp, 8888/tcp, 18080/tcp, 18888/tcp, 19333/tcp, 127.0.0.1:56333->8333/tcp, 127.0.0.1:56933->9333/tcp
+cap-platform-valkey-1      valkey/valkey:8.0.1-alpine         "docker-entrypoint.s…"   valkey      2 minutes ago   Up About a minute (healthy)   127.0.0.1:56379->6379/tcp
+status: PASS in 0.1 s

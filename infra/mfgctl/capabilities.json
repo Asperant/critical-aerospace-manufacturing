@@ -1,0 +1,24 @@
+{
+  "schema": "mfgctl.capabilities/v1",
+  "compose_files": ["infra/compose/compose.yaml"],
+  "profiles": [
+    {"name": "infra", "description": "PostgreSQL, NATS JetStream, Valkey, SeaweedFS (S3), Keycloak"},
+    {"name": "core", "description": "infra + Core, Simulator, Digital Twin, Operations BFF (services join as their container builds land)"},
+    {"name": "vision", "description": "infra + Vision runtime and inspection fixtures (services join as they land)"},
+    {"name": "ai", "description": "infra + AI Intelligence and knowledge/RAG dependencies (services join as they land)"},
+    {"name": "planning", "description": "infra + Simulator, Scheduler, Automation (services join as they land)"},
+    {"name": "platform", "description": "application services + observability + operational tooling (services join as they land)"},
+    {"name": "full", "description": "full logical topology under local resource limits; not the daily default"},
+    {"name": "e2e", "description": "deterministic test environment: fresh runtime, known schema, scenario and seed"}
+  ],
+  "capabilities": [
+    {
+      "name": "platform-infra",
+      "owner": "Yavuz",
+      "profile": "infra",
+      "smoke": ["infra/compose/stack.sh", "smoke"],
+      "timeout_s": 300
+    }
+  ],
+  "scenarios": []
+}
