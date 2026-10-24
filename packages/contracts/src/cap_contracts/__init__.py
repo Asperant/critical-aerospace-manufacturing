@@ -1,7 +1,12 @@
 """Integration Contract Registry foundation and compatibility comparison (WP-EVT-001)."""
 
 from .boundary import BoundaryRole, BoundaryValidator, ContractViolation
-from .compatibility import CompatibilityResult, compare_contracts, compare_schemas
+from .compatibility import (
+    CompatibilityResult,
+    compare_contracts,
+    compare_schema_files,
+    compare_schemas,
+)
 from .errors import ContractError
 from .registry import (
     ContractDeclaration,
@@ -17,6 +22,7 @@ __all__ = [
     "CompatibilityResult",
     "compare_contracts",
     "compare_schemas",
+    "compare_schema_files",
     "ContractDeclaration",
     "ContractError",
     "ContractVersion",

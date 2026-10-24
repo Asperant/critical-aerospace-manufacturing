@@ -7,12 +7,15 @@ when unchanged: equality alone cannot prove reference or vocabulary semantics.
 
 import json
 from dataclasses import dataclass
-from typing import Any, cast
+from pathlib import Path
+from typing import Any
 
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import SchemaError
 
-from .registry import ContractDeclaration
+from .errors import ContractError
+from .references import resolve_references
+from .registry import ContractDeclaration, FileRef, load_schema
 
 # This is deliberately a bounded subset, not a general JSON Schema implication solver.
 _MAPS = {"properties"}
@@ -39,6 +42,16 @@ _KEYWORDS = {
     "uniqueItems",
     "minProperties",
     "maxProperties",
+    "title",
+    "description",
+    "default",
+    "examples",
+    "readOnly",
+    "writeOnly",
+    "deprecated",
+}
+_ANNOTATIONS = {
+    "$schema",
     "title",
     "description",
     "default",
@@ -119,14 +132,46 @@ def _compare(
             _compare(old[key], new[key], child_path, changes)
 
 
-def compare_schemas(old: object, new: object) -> CompatibilityResult:
-    """Compare old -> new using the architecture's optional-addition policy.
+def _effective(schema: Any) -> Any:
+    """Drop resolved definition containers; flatten only unambiguous conjunctions.
 
-    This is a structural policy check, not proof that every strict old consumer
-    accepts new payloads. Consumer compatibility tests remain separately required.
-    No semantic meaning is inferred from prose; changed annotations are breaking.
+    Literal annotations/enum/const values are never traversed as schema nodes.
+    Only annotation siblings can be flattened: moving validation keywords could
+    change adjacency semantics (for example additionalProperties vs properties).
     """
+    if not isinstance(schema, dict):
+        return schema
+    result = {
+        key: value
+        for key, value in schema.items()
+        if key not in {"$defs", "definitions"}
+    }
+    for key in _MAPS & result.keys():
+        result[key] = {name: _effective(child) for name, child in result[key].items()}
+    for key in _CHILDREN & result.keys():
+        result[key] = _effective(result[key])
+    branches = result.get("allOf")
+    if isinstance(branches, list) and len(branches) == 1:
+        child = _effective(branches[0])
+        siblings = {key: value for key, value in result.items() if key != "allOf"}
+        if (
+            isinstance(child, dict)
+            and siblings.keys() <= _ANNOTATIONS
+            and all(
+                json.dumps(child[key], sort_keys=True)
+                == json.dumps(siblings[key], sort_keys=True)
+                for key in child.keys() & siblings.keys()
+            )
+        ):
+            return {**child, **siblings}
+    return result
+
+
+def _compare_documents(
+    old: object, new: object, *, resolve: bool
+) -> CompatibilityResult:
     issues: list[str] = []
+    effective: list[dict[str, Any]] = []
     for label, schema in (("old", old), ("new", new)):
         if not isinstance(schema, dict):
             issues.append(f"{label}: schema object required")
@@ -134,15 +179,60 @@ def compare_schemas(old: object, new: object) -> CompatibilityResult:
         try:
             json.dumps(schema, sort_keys=True, allow_nan=False)
             Draft202012Validator.check_schema(schema)
+            expanded = resolve_references(schema) if resolve else schema
+            Draft202012Validator.check_schema(expanded)
+            shape = _effective(expanded)
+            Draft202012Validator.check_schema(shape)
+            _supported(shape, label, issues)
+            effective.append(shape)
+        except ContractError as error:
+            issues.append(f"{label}: {error.code}")
         except (SchemaError, TypeError, ValueError, RecursionError):
             issues.append(f"{label}: invalid JSON Schema")
-            continue
-        _supported(schema, label, issues)
     if issues:
         return CompatibilityResult(unverifiable=tuple(sorted(issues)))
     changes: list[str] = []
-    _compare(cast(dict[str, Any], old), cast(dict[str, Any], new), "", changes)
+    _compare(effective[0], effective[1], "", changes)
     return CompatibilityResult(breaking=tuple(changes))
+
+
+def compare_schemas(old: object, new: object) -> CompatibilityResult:
+    """Compare effective shapes after offline internal-reference resolution.
+
+    File references require compare_schema_files with explicit path/hash pins.
+    This remains a structural policy check; consumer tests remain required.
+    Changed semantic annotations are breaking; no meaning is inferred from prose.
+    """
+    return _compare_documents(old, new, resolve=True)
+
+
+def compare_schema_files(
+    old: FileRef,
+    new: FileRef,
+    *,
+    old_repo_root: Path,
+    new_repo_root: Path,
+    old_schema_refs: tuple[FileRef, ...] = (),
+    new_schema_refs: tuple[FileRef, ...] = (),
+) -> CompatibilityResult:
+    """Resolve separately pinned old/new package schemas, then compare shapes.
+
+    Uses the existing loader's approval, containment, hash and cycle checks.
+    Any loading failure is unverifiable, never proof of compatibility.
+    """
+    issues: list[str] = []
+    documents: list[dict[str, Any]] = []
+    for label, ref, root, pins in (
+        ("old", old, old_repo_root, old_schema_refs),
+        ("new", new, new_repo_root, new_schema_refs),
+    ):
+        try:
+            documents.append(load_schema(ref, root, schema_refs=pins))
+        except ContractError as error:
+            issues.append(f"{label}: {error.code}")
+    if issues:
+        return CompatibilityResult(unverifiable=tuple(issues))
+    return _compare_documents(documents[0], documents[1], resolve=False)
 
 
 def compare_contracts(

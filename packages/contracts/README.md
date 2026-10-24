@@ -74,9 +74,11 @@ Missing declared documents, unrelated families or reversed versions fail closed.
 
 The bounded schema subset supports explicit types, properties, required fields,
 boolean additionalProperties, items, enum/const and scalar/collection constraints.
-References, composition, formats, alternate dialects, unknown keywords and schemas
-without explicit types are unverifiable even when unchanged. Thus the reference-based
-Core output exemplar is not yet positively verifiable by this detector. Unverifiable
+Local references are resolved before comparing their effective shape (see below).
+General composition, formats, alternate dialects, unknown keywords and schemas
+without explicit types remain unverifiable even when unchanged. The Core output
+exemplar still has unsupported keywords, including `$id`; this slice does not
+certify its compatibility. Unverifiable
 results must never be accepted as compatible. Semantic changes absent from declared
 metadata cannot be inferred. Optional-addition policy is not proof that strict old
 consumers accept new payloads: consumer tests remain required. CI integration and
@@ -110,6 +112,33 @@ Expansion is limited to 10,000 schema-node visits and Python recursion depth; ex
 either limit fails closed. JSON Pointer dictionary keys and canonical array indices
 are supported. Payload constants/examples are not traversed as schemas.
 
-The pure compatibility detector's bounded subset is unchanged: raw references and
-expanded constructs such as `$defs`/`allOf` can still be unverifiable. Reference
-resolution does not certify consumer compatibility or full WP acceptance.
+Reference resolution does not certify consumer compatibility or full WP acceptance.
+The detector now supports resolved local definitions as described below.
+
+## Resolved-definition compatibility
+
+`compare_schemas(old, new)` resolves internal JSON Pointer references using the
+existing offline resolver before comparison. `compare_contracts` uses this same
+comparison for supplied input/output documents and retains its authority/semantic
+checks. Raw file references have no approval context and remain unverifiable.
+
+`compare_schema_files(old_ref, new_ref, old_repo_root=..., new_repo_root=...,
+old_schema_refs=(...), new_schema_refs=(...))` loads each version with the existing
+pinned-file loader, then compares effective shapes. Root and transitive dependency
+hashes, approval, package containment and cycle checks remain mandatory. Separate
+repository roots/pin sets permit comparing two checked-out versions. Loading errors
+return `unverifiable` reasons labelled `old` or `new`; they never imply compatibility.
+
+After resolution and schema validation, definition containers are removed from the
+comparison shape. Single-branch `allOf` wrappers are flattened only with annotation
+siblings whose keys do not conflict. Validation siblings and multiple branches
+remain unverifiable: moving validation keywords between schema scopes can change
+their meaning. All remaining keywords retain the existing bounded-subset rules.
+
+Effective optional property additions remain non-breaking. Required removals,
+field/type/constraint or declared semantic changes inside referenced targets are
+breaking. A reference-target rename with identical shape/annotations is compatible;
+changing the referenced shape is assessed by the same rules as inline schemas.
+Equal unresolved reference strings are never accepted as compatibility proof.
+Missing/invalid/cyclic references fail closed even when both versions are identical,
+and unused definitions are still inspected by the resolver before being removed.
