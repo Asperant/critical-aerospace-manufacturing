@@ -1,0 +1,138 @@
+{
+  "wp_id": "WP-SIM-001",
+  "created_utc": "2026-10-24T12:28:30+00:00",
+  "revision": "post-review (Codex CHANGES_REQUESTED R1-R3 addressed)",
+  "kind": "local development evidence; not a sealed EvidenceBundle, remote CI result or acceptance record",
+  "source": {
+    "branch": "wp/WP-SIM-001-deterministic-des-kernel",
+    "base_commit": "ff56cfeb3142a41e0eb77b0649e6d8ab0fb7c506",
+    "base_is_origin_main": true,
+    "committed": false,
+    "changed_or_new_files": 24,
+    "per_file_sha256": {
+      ".github/workflows/ci.yml": "f4515384ff196571375dba2fb15d753bcbd5330346599b26a73fee29c5c20d9f",
+      "ci/pyproject.toml": "8509e944c077caf3e29b32550d7f541691eec2abf0c07329b8468303c5493b96",
+      "ci/uv.lock": "914da9c1c3e866ef5df9964b915aa2b2830786257913da8dfb490f1ea9a2b4d7",
+      "infra/observability/coverage.json": "21420305a2f7c50b890cedace98c439701a2723237fc965f8a4e506e3d109c07",
+      "pyrightconfig.json": "a96aa05e50293f36fe1f5ac374b6858aadc358c65ba56eff4bfe22782243be68",
+      "services/manufacturing-simulator/README.md": "e2c76c45e5f8376a0a86d44e5c142573198471da680ef356fdd67ea256127902",
+      "services/manufacturing-simulator/pyproject.toml": "f63077363d7dfc5d851843f5d0263ed600c4c930682ca33857032c34be8e93ed",
+      "services/manufacturing-simulator/pyrightconfig.json": "ba97f81efb14bdeb8933af303e6a379c5853e631e3557d641fc85a2852b82d41",
+      "services/manufacturing-simulator/src/manufacturing_simulator/__init__.py": "6a6ef3471f822934731e5b8cdc3aa0952a15c477ebc979d113ba097f79c99c0c",
+      "services/manufacturing-simulator/src/manufacturing_simulator/clock.py": "55799735b74a1d2e0a48a891382aa32dee0c7e85864f5d9697ef7b60bf04e1c3",
+      "services/manufacturing-simulator/src/manufacturing_simulator/errors.py": "727c78def1cce79c372a68051375e7dc5f88b6ca03d29d9ecbd6545771b62aef",
+      "services/manufacturing-simulator/src/manufacturing_simulator/events.py": "a44df723170bd99f47aa142296f10985ab42e4604671d431d9ebb68d479ffcc1",
+      "services/manufacturing-simulator/src/manufacturing_simulator/kernel.py": "e27517e023281f6f6185a44bbbf59d135cd466af7c4f9b35001d1ebd0bcc5472",
+      "services/manufacturing-simulator/src/manufacturing_simulator/rng.py": "5201ba4a3484a2ef1b8f9bd55e0182262c801adb0b49171bf565c3c6793eb9d1",
+      "services/manufacturing-simulator/src/manufacturing_simulator/scenario.py": "e70be4aa1c272acbf499479f5e6f8197978431bae481891724f98bf86b82cdce",
+      "services/manufacturing-simulator/src/manufacturing_simulator/validation.py": "0dda5985b909cdd7dd4119e427650323d71d7bd423438c51ab5f04536e904f6d",
+      "services/manufacturing-simulator/tests/conftest.py": "a7e4aba32e61df0f879b176459cfccaffad53ef42898bad51dd8215fd5644a7e",
+      "services/manufacturing-simulator/tests/replay_worker.py": "979dd657d5fbe87c527410e8248942110ea4884771ddb9ff35485430d7f15e68",
+      "services/manufacturing-simulator/tests/sim_fixtures.py": "cdd7326ae6b5579230dba6df8de2295462398c34f88af1491e916ea1e92572aa",
+      "services/manufacturing-simulator/tests/test_determinism.py": "c824064eab8abd8af8fd4b8bf57706df42d95f1f611673781e9d743481c835f3",
+      "services/manufacturing-simulator/tests/test_kernel.py": "1c81f4aa658ce03fe2617b801ff2a1348d946205f81d6b91a52cb7e106b18c56",
+      "services/manufacturing-simulator/tests/test_queue_clock.py": "5bebf383b645167059f6996228463f286242005a8390f8f72f794cd85d47e3c3",
+      "services/manufacturing-simulator/tests/test_rng.py": "ce9368943094cebee680b0988f833be03c8cf8908d5f6d39b93c376760a232cd",
+      "services/manufacturing-simulator/tests/test_scenario.py": "515178e5b2e71506729aa2b2268339eaff6dfc9d11e885ae1ded8f8e0dda7dee"
+    },
+    "source_manifest_sha256": "8955880d41fefe8eb4b1dd1ed3cbf37a543e8792ecec155840d02c70ebff3609",
+    "tracked_diff_sha256": "442ee0c3783d99436eec68934fd5e025d660e5a0d5eac1d2ef56b149482100b1",
+    "files_changed_since_pre_review_manifest": [
+      "infra/observability/coverage.json",
+      "services/manufacturing-simulator/src/manufacturing_simulator/events.py",
+      "services/manufacturing-simulator/src/manufacturing_simulator/kernel.py",
+      "services/manufacturing-simulator/src/manufacturing_simulator/scenario.py",
+      "services/manufacturing-simulator/tests/test_kernel.py",
+      "services/manufacturing-simulator/tests/test_queue_clock.py",
+      "services/manufacturing-simulator/tests/test_scenario.py"
+    ],
+    "note": "Hashes cover every changed or new file except evidence/WP-SIM-001/ itself. Nothing is committed."
+  },
+  "scenario_config": {
+    "fixture": "toy-kernel v1 (opaque counters; not the canonical ScenarioDefinition)",
+    "master_seed": 20261024,
+    "config_sha256": "b059aba725ace525a02475254beec0393fdb54f064efdb3f386d63c1e8cba655",
+    "config": {
+      "scenario_id": "toy-kernel",
+      "scenario_version": "1",
+      "seed": 20261024,
+      "simulator_version": "kernel-test-0",
+      "horizon": 5000,
+      "time_unit": "us",
+      "initial_events": [
+        {
+          "event_id": "init-arrive",
+          "time": 0,
+          "kind": "arrive",
+          "payload": []
+        },
+        {
+          "event_id": "init-late-arrive",
+          "time": 0,
+          "kind": "arrive",
+          "payload": [
+            [
+              "note",
+              "same-time"
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "seeds": {
+    "replay_comparison_seeds": [
+      0,
+      1,
+      2,
+      7,
+      20261024,
+      18446744073709551621
+    ],
+    "hypothesis_profile": {
+      "name": "wp-sim-001",
+      "max_examples": 100,
+      "derandomize": true,
+      "database": null,
+      "deadline": null
+    }
+  },
+  "stream_mapping": {
+    "arrival": 1,
+    "processing": 2,
+    "failure": 3,
+    "repair": 4,
+    "quality": 5,
+    "inspection": 6,
+    "telemetry": 7,
+    "transport": 8
+  },
+  "runtime": {
+    "python": "3.11.16",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+    "packages": {
+      "numpy": "2.4.6",
+      "hypothesis": "6.168.1",
+      "pytest": "8.3.3",
+      "ruff": "0.7.4",
+      "pyright": "1.1.389",
+      "manufacturing-simulator": "0.1.0"
+    },
+    "uv": "0.12.13 (pinned as UV_VERSION in .github/workflows/ci.yml)",
+    "environment": "uv project environment kept outside the repository via UV_PROJECT_ENVIRONMENT (CI uses ci/.venv); ci/uv.lock used with --locked"
+  },
+  "workload": "single local session on the shared development host; no containers or shared services started; commands run sequentially",
+  "final_run": {
+    "directory": "runs/run-5-post-review",
+    "commands": 20,
+    "all_exit_zero": true,
+    "applies_to": "the source revision hashed above (executed after the last source edit)"
+  },
+  "historical_runs": {
+    "runs/run-1-failed": "pre-review source revision before the observability registry entry existed; observability-pure-tests failed (exit 1)",
+    "runs/run-2-final": "pre-review revision (168 tests) after the registry entry; superseded by run-5",
+    "runs/run-3-post-evidence": "pre-review revision, repository-wide checks after the first evidence files; superseded",
+    "runs/run-4-failed-contracts": "post-review fixes with an over-long registry reason; contracts failed (exit 1) on the coverage schema maxLength 300",
+    "run-manifest-pre-review.json": "manifest of the pre-review source revision (runs 1-3)"
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "generated_utc": "2026-10-24T12:06:10+00:00",
+  "scenario": "toy-kernel v1 (opaque counters; kernel mechanics only)",
+  "python": "3.11.16",
+  "numpy": "2.4.6",
+  "runs": [
+    {
+      "seed": 0,
+      "in_process_sha256": "41801a6ffb2448fab06c50cbd59db111294767d40d1a404b904c67803e466d87",
+      "fresh_processes": [
+        {
+          "pythonhashseed": "0",
+          "sha256": "41801a6ffb2448fab06c50cbd59db111294767d40d1a404b904c67803e466d87",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "1",
+          "sha256": "41801a6ffb2448fab06c50cbd59db111294767d40d1a404b904c67803e466d87",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "424242",
+          "sha256": "41801a6ffb2448fab06c50cbd59db111294767d40d1a404b904c67803e466d87",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "random",
+          "sha256": "41801a6ffb2448fab06c50cbd59db111294767d40d1a404b904c67803e466d87",
+          "equal_to_in_process": true
+        }
+      ]
+    },
+    {
+      "seed": 1,
+      "in_process_sha256": "d92a80bcff0ee4cb8cde24d55105fe5af7feefa035744d07ccde87e607817d83",
+      "fresh_processes": [
+        {
+          "pythonhashseed": "0",
+          "sha256": "d92a80bcff0ee4cb8cde24d55105fe5af7feefa035744d07ccde87e607817d83",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "1",
+          "sha256": "d92a80bcff0ee4cb8cde24d55105fe5af7feefa035744d07ccde87e607817d83",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "424242",
+          "sha256": "d92a80bcff0ee4cb8cde24d55105fe5af7feefa035744d07ccde87e607817d83",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "random",
+          "sha256": "d92a80bcff0ee4cb8cde24d55105fe5af7feefa035744d07ccde87e607817d83",
+          "equal_to_in_process": true
+        }
+      ]
+    },
+    {
+      "seed": 2,
+      "in_process_sha256": "70b9ade7d1ced3df336e4ba0eb5acb76521f32d13cd28e0789502dc6829d7a42",
+      "fresh_processes": [
+        {
+          "pythonhashseed": "0",
+          "sha256": "70b9ade7d1ced3df336e4ba0eb5acb76521f32d13cd28e0789502dc6829d7a42",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "1",
+          "sha256": "70b9ade7d1ced3df336e4ba0eb5acb76521f32d13cd28e0789502dc6829d7a42",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "424242",
+          "sha256": "70b9ade7d1ced3df336e4ba0eb5acb76521f32d13cd28e0789502dc6829d7a42",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "random",
+          "sha256": "70b9ade7d1ced3df336e4ba0eb5acb76521f32d13cd28e0789502dc6829d7a42",
+          "equal_to_in_process": true
+        }
+      ]
+    },
+    {
+      "seed": 7,
+      "in_process_sha256": "37ca4699755b776a92a5686ada357ff0e660cc69e843edb32a8fe8ed11e3c2c2",
+      "fresh_processes": [
+        {
+          "pythonhashseed": "0",
+          "sha256": "37ca4699755b776a92a5686ada357ff0e660cc69e843edb32a8fe8ed11e3c2c2",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "1",
+          "sha256": "37ca4699755b776a92a5686ada357ff0e660cc69e843edb32a8fe8ed11e3c2c2",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "424242",
+          "sha256": "37ca4699755b776a92a5686ada357ff0e660cc69e843edb32a8fe8ed11e3c2c2",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "random",
+          "sha256": "37ca4699755b776a92a5686ada357ff0e660cc69e843edb32a8fe8ed11e3c2c2",
+          "equal_to_in_process": true
+        }
+      ]
+    },
+    {
+      "seed": 20261024,
+      "in_process_sha256": "61e2a438d8bd461cb0b783bf8151bb43b755c4c7cd0e5b2c1ab1032afec61642",
+      "fresh_processes": [
+        {
+          "pythonhashseed": "0",
+          "sha256": "61e2a438d8bd461cb0b783bf8151bb43b755c4c7cd0e5b2c1ab1032afec61642",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "1",
+          "sha256": "61e2a438d8bd461cb0b783bf8151bb43b755c4c7cd0e5b2c1ab1032afec61642",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "424242",
+          "sha256": "61e2a438d8bd461cb0b783bf8151bb43b755c4c7cd0e5b2c1ab1032afec61642",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "random",
+          "sha256": "61e2a438d8bd461cb0b783bf8151bb43b755c4c7cd0e5b2c1ab1032afec61642",
+          "equal_to_in_process": true
+        }
+      ]
+    },
+    {
+      "seed": 18446744073709551621,
+      "in_process_sha256": "4648c60aedab7ee1945a81da059a7f24cb0cc5ad5fcdca051200414c5801b1d0",
+      "fresh_processes": [
+        {
+          "pythonhashseed": "0",
+          "sha256": "4648c60aedab7ee1945a81da059a7f24cb0cc5ad5fcdca051200414c5801b1d0",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "1",
+          "sha256": "4648c60aedab7ee1945a81da059a7f24cb0cc5ad5fcdca051200414c5801b1d0",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "424242",
+          "sha256": "4648c60aedab7ee1945a81da059a7f24cb0cc5ad5fcdca051200414c5801b1d0",
+          "equal_to_in_process": true
+        },
+        {
+          "pythonhashseed": "random",
+          "sha256": "4648c60aedab7ee1945a81da059a7f24cb0cc5ad5fcdca051200414c5801b1d0",
+          "equal_to_in_process": true
+        }
+      ]
+    }
+  ],
+  "all_fresh_process_traces_equal_in_process": true,
+  "distinct_trace_hashes_across_seeds": 6,
+  "note": "Equality is asserted per seed between processes. Different seeds producing different traces here is an observation about these fixture seeds, not a claim about every scenario."
+}

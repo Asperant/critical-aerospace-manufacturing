@@ -40,7 +40,19 @@
         "expires_on": "2026-11-20"
       }
     },
-    {"name": "manufacturing-simulator", "owner": "Batu", "runtime": "python", "path": "services/manufacturing-simulator", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
+    {
+      "name": "manufacturing-simulator",
+      "owner": "Batu",
+      "runtime": "python",
+      "path": "services/manufacturing-simulator",
+      "logging": "PENDING",
+      "health": "PENDING",
+      "exemption": {
+        "reason": "In-memory kernel library (WP-SIM-001) with no process, endpoint or log sink; adoption waits for a simulator service runtime. Owner and expiry are PROPOSED, NOT confirmed by an attributable platform-owner decision.",
+        "owner": "Yavuz",
+        "expires_on": "2026-11-20"
+      }
+    },
     {"name": "digital-twin-service", "owner": "Asrın", "runtime": "python", "path": "services/digital-twin-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
     {"name": "vision-service", "owner": "Selman", "runtime": "python", "path": "services/vision-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
     {"name": "ai-intelligence-service", "owner": "Asrın", "runtime": "python", "path": "services/ai-intelligence-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},

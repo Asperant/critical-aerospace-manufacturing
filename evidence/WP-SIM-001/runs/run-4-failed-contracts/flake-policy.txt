@@ -1,0 +1,5 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/check_flake_policy.py
+[exit 0]
+--- stdout ---
+PASS: 0 active quarantine(s); no retry-until-green.
+--- stderr ---
