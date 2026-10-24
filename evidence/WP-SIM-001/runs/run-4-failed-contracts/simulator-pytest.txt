@@ -1,0 +1,11 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked python -m pytest -c services/manufacturing-simulator/pyproject.toml services/manufacturing-simulator/tests -q -p pytest_quarantine --junitxml=<scratch>/gate-run-4/test-results.xml
+[exit 0]
+--- stdout ---
+........................................................................ [ 35%]
+........................................................................ [ 71%]
+..........................................................               [100%]
+- generated xml file: <scratch>/gate-run-4/test-results.xml -
+----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------
+0 registry entr(y/ies); 0 applied in this run
+202 passed in 2.05s
+--- stderr ---

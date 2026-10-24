@@ -1,0 +1,8 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked python -m pytest -c packages/event-consumer/pyproject.toml packages/event-consumer/tests -m 'not integration' -q -p pytest_quarantine
+[exit 0]
+--- stdout ---
+......                                                                   [100%]
+----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------
+0 registry entr(y/ies); 0 applied in this run
+6 passed, 33 deselected in 0.11s
+--- stderr ---

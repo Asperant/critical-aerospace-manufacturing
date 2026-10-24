@@ -1,11 +1,23 @@
 {
-  "include": ["tools", "ci"],
+  "include": [
+    "tools",
+    "ci",
+    "services/manufacturing-simulator/src",
+    "services/manufacturing-simulator/tests"
+  ],
   "exclude": ["**/.venv", "**/__pycache__"],
   "pythonVersion": "3.11",
   "typeCheckingMode": "standard",
   "strict": ["ci"],
   "reportMissingModuleSource": "none",
   "executionEnvironments": [
-    {"root": "ci", "extraPaths": ["ci", "ci/scripts"]}
+    {"root": "ci", "extraPaths": ["ci", "ci/scripts"]},
+    {
+      "root": "services/manufacturing-simulator",
+      "extraPaths": [
+        "services/manufacturing-simulator/src",
+        "services/manufacturing-simulator/tests"
+      ]
+    }
   ]
 }

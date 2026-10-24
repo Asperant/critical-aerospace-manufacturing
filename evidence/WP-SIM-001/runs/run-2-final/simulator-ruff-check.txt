@@ -1,0 +1,5 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked ruff check services/manufacturing-simulator
+[exit 0]
+--- stdout ---
+All checks passed!
+--- stderr ---

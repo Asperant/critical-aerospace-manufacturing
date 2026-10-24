@@ -1,0 +1,20 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/check_contracts.py
+[exit 1]
+--- stdout ---
+FAIL  infra/observability/coverage.schema.json (+instance)
+OK    packages/observability/src/cap_observability/schemas/health.schema.json (+instance)
+OK    packages/observability/src/cap_observability/schemas/log-record.schema.json (+instance)
+OK    packages/observability/src/cap_observability/schemas/resource.schema.json (+instance)
+OK    requirements/catalog.schema.json (+instance)
+OK    services/manufacturing-core/contracts/v1/order-query-request.schema.json
+OK    services/manufacturing-core/contracts/v1/order-query.schema.json
+OK    services/operations-bff/contracts/v1/command.schema.json
+OK    services/operations-bff/contracts/v1/common.schema.json
+OK    services/operations-bff/contracts/v1/overview-query.schema.json
+OK    services/operations-bff/contracts/v1/session.schema.json
+OK    services/operations-bff/contracts/v1/stream-message.schema.json
+OK    tools/mfgctl/schemas/capabilities.schema.json (+instance)
+  coverage.json: deployables/3/exemption/reason: "Created by WP-SIM-001 as an in-memory kernel library with no process, endpoint or log sink; it keeps only local SIMULATION-provenance execution records. Adopting configure() and health_report() waits for a simulator service runtime. PROPOSED, NOT YET CONFIRMED by an attributable platform-owner decision: this exemption's owner (Yavuz) and its expiry (2026-11-20, the neighbouring entries' date); WP-SIM-001 only needs a valid PENDING declaration because the registry rejects NOT_PRESENT once the directory exists." is too long
+Contracts: 13 schema(s), 6 instance(s) validated.
+FAIL: contract validation errors.
+--- stderr ---

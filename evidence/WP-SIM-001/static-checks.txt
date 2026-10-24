@@ -1,0 +1,58 @@
+===== simulator-ruff-check =====
+$ <scratch>/uvtool/bin/uv run --project ci --locked ruff check services/manufacturing-simulator
+[exit 0]
+--- stdout ---
+All checks passed!
+--- stderr ---
+
+===== simulator-ruff-format =====
+$ <scratch>/uvtool/bin/uv run --project ci --locked ruff format --check services/manufacturing-simulator
+[exit 0]
+--- stdout ---
+16 files already formatted
+--- stderr ---
+
+===== simulator-pyright =====
+$ <scratch>/uvtool/bin/uv run --project ci --locked pyright --project services/manufacturing-simulator/pyrightconfig.json
+[exit 0]
+--- stdout ---
+0 errors, 0 warnings, 0 informations
+WARNING: there is a new pyright version available (v1.1.389 -> v1.1.414).
+Please install the new version or set PYRIGHT_PYTHON_FORCE_VERSION to `latest`
+
+--- stderr ---
+
+===== static-ratchet =====
+$ <scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/static_ratchet.py check
+[exit 0]
+--- stdout ---
+Current: ruff=307 pyright=189 unformatted=56 ({'ruff': 'ruff 0.7.4', 'pyright': 'pyright 1.1.389'})
+PASS: no new static findings; baseline is tight.
+--- stderr ---
+
+===== observability-coverage =====
+$ <scratch>/uvtool/bin/uv run --project ci --locked python -m cap_observability check-coverage infra/observability/coverage.json
+[exit 0]
+--- stdout ---
+telemetry coverage: 4/9 mandatory deployables exist; logging 0/4 adopted (4 pending); health 0/4 adopted (4 pending); 5 not yet present
+--- stderr ---
+
+===== core-pyright =====
+$ <scratch>/uvtool/bin/uv run --project ci --locked pyright --project services/manufacturing-core/pyrightconfig.json
+[exit 0]
+--- stdout ---
+0 errors, 0 warnings, 0 informations
+WARNING: there is a new pyright version available (v1.1.389 -> v1.1.414).
+Please install the new version or set PYRIGHT_PYTHON_FORCE_VERSION to `latest`
+
+--- stderr ---
+
+===== operations-bff-pyright =====
+$ <scratch>/uvtool/bin/uv run --project ci --locked pyright --project services/operations-bff/pyrightconfig.json
+[exit 0]
+--- stdout ---
+0 errors, 0 warnings, 0 informations
+WARNING: there is a new pyright version available (v1.1.389 -> v1.1.414).
+Please install the new version or set PYRIGHT_PYTHON_FORCE_VERSION to `latest`
+
+--- stderr ---

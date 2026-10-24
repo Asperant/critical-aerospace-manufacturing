@@ -1,0 +1,9 @@
+$ <scratch>/uvtool/bin/uv run --project ci --locked python -m pytest tools/mfgctl/tests -q -p pytest_quarantine
+[exit 0]
+--- stdout ---
+........................................................................ [ 67%]
+..................................                                       [100%]
+----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------
+0 registry entr(y/ies); 0 applied in this run
+106 passed in 0.73s
+--- stderr ---

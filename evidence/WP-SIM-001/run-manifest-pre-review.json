@@ -1,0 +1,124 @@
+{
+  "wp_id": "WP-SIM-001",
+  "created_utc": "2026-10-24T12:06:49+00:00",
+  "kind": "local development evidence; not a sealed EvidenceBundle, remote CI result or acceptance record",
+  "source": {
+    "branch": "wp/WP-SIM-001-deterministic-des-kernel",
+    "base_commit": "ff56cfeb3142a41e0eb77b0649e6d8ab0fb7c506",
+    "base_is_origin_main": true,
+    "committed": false,
+    "changed_or_new_files": 24,
+    "per_file_sha256": {
+      ".github/workflows/ci.yml": "f4515384ff196571375dba2fb15d753bcbd5330346599b26a73fee29c5c20d9f",
+      "ci/pyproject.toml": "8509e944c077caf3e29b32550d7f541691eec2abf0c07329b8468303c5493b96",
+      "ci/uv.lock": "914da9c1c3e866ef5df9964b915aa2b2830786257913da8dfb490f1ea9a2b4d7",
+      "infra/observability/coverage.json": "06d11cf32ba05267598206da7aee7bb8863c33d2680ba642e7ee607ca4279e1b",
+      "pyrightconfig.json": "a96aa05e50293f36fe1f5ac374b6858aadc358c65ba56eff4bfe22782243be68",
+      "services/manufacturing-simulator/README.md": "e2c76c45e5f8376a0a86d44e5c142573198471da680ef356fdd67ea256127902",
+      "services/manufacturing-simulator/pyproject.toml": "f63077363d7dfc5d851843f5d0263ed600c4c930682ca33857032c34be8e93ed",
+      "services/manufacturing-simulator/pyrightconfig.json": "ba97f81efb14bdeb8933af303e6a379c5853e631e3557d641fc85a2852b82d41",
+      "services/manufacturing-simulator/src/manufacturing_simulator/__init__.py": "6a6ef3471f822934731e5b8cdc3aa0952a15c477ebc979d113ba097f79c99c0c",
+      "services/manufacturing-simulator/src/manufacturing_simulator/clock.py": "55799735b74a1d2e0a48a891382aa32dee0c7e85864f5d9697ef7b60bf04e1c3",
+      "services/manufacturing-simulator/src/manufacturing_simulator/errors.py": "727c78def1cce79c372a68051375e7dc5f88b6ca03d29d9ecbd6545771b62aef",
+      "services/manufacturing-simulator/src/manufacturing_simulator/events.py": "feae07c4c78f4343f0e6c25e8840862c4ff16ca154b1dfc472e28eab4335ca1b",
+      "services/manufacturing-simulator/src/manufacturing_simulator/kernel.py": "41e3d20fd8dc9de8cfd28e1063192ae02f3f5a267d52c0e51c6dd0cf5ba437d6",
+      "services/manufacturing-simulator/src/manufacturing_simulator/rng.py": "5201ba4a3484a2ef1b8f9bd55e0182262c801adb0b49171bf565c3c6793eb9d1",
+      "services/manufacturing-simulator/src/manufacturing_simulator/scenario.py": "765a0a675c863e7210ed44312fac9ded97f416da907c131e56a5e1810496eaa6",
+      "services/manufacturing-simulator/src/manufacturing_simulator/validation.py": "0dda5985b909cdd7dd4119e427650323d71d7bd423438c51ab5f04536e904f6d",
+      "services/manufacturing-simulator/tests/conftest.py": "a7e4aba32e61df0f879b176459cfccaffad53ef42898bad51dd8215fd5644a7e",
+      "services/manufacturing-simulator/tests/replay_worker.py": "979dd657d5fbe87c527410e8248942110ea4884771ddb9ff35485430d7f15e68",
+      "services/manufacturing-simulator/tests/sim_fixtures.py": "cdd7326ae6b5579230dba6df8de2295462398c34f88af1491e916ea1e92572aa",
+      "services/manufacturing-simulator/tests/test_determinism.py": "c824064eab8abd8af8fd4b8bf57706df42d95f1f611673781e9d743481c835f3",
+      "services/manufacturing-simulator/tests/test_kernel.py": "754d599b105e8ca63a6e096db934b035e3c72a3f525a57ac52e3dc8f1745a680",
+      "services/manufacturing-simulator/tests/test_queue_clock.py": "bbb582ffff9b26fcd63e7c6836423bb2d8a57a414d251fe5b12c651aac32e694",
+      "services/manufacturing-simulator/tests/test_rng.py": "ce9368943094cebee680b0988f833be03c8cf8908d5f6d39b93c376760a232cd",
+      "services/manufacturing-simulator/tests/test_scenario.py": "ba09705ad9406c4b75b926091d1ecfc5c4477051043f79e256085324071eeed8"
+    },
+    "source_manifest_sha256": "f2b4d829eaf1d74b35cfa9f430cace70a7ccae0ac185828bb9a22c38cba4817a",
+    "tracked_diff_sha256": "e00d3741a232aee00c0a54baeea6ae28e4e9bfbdfe917273f74646be43639df6",
+    "note": "Hashes cover every changed or new file except evidence/WP-SIM-001/ itself. Nothing is committed."
+  },
+  "scenario_config": {
+    "fixture": "toy-kernel v1 (opaque counters; not the canonical ScenarioDefinition)",
+    "master_seed": 20261024,
+    "config_sha256": "b059aba725ace525a02475254beec0393fdb54f064efdb3f386d63c1e8cba655",
+    "config": {
+      "scenario_id": "toy-kernel",
+      "scenario_version": "1",
+      "seed": 20261024,
+      "simulator_version": "kernel-test-0",
+      "horizon": 5000,
+      "time_unit": "us",
+      "initial_events": [
+        {
+          "event_id": "init-arrive",
+          "time": 0,
+          "kind": "arrive",
+          "payload": []
+        },
+        {
+          "event_id": "init-late-arrive",
+          "time": 0,
+          "kind": "arrive",
+          "payload": [
+            [
+              "note",
+              "same-time"
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "seeds": {
+    "replay_comparison_seeds": [
+      0,
+      1,
+      2,
+      7,
+      20261024,
+      18446744073709551621
+    ],
+    "hypothesis_profile": {
+      "name": "wp-sim-001",
+      "max_examples": 100,
+      "derandomize": true,
+      "database": null,
+      "deadline": null
+    }
+  },
+  "stream_mapping": {
+    "arrival": 1,
+    "processing": 2,
+    "failure": 3,
+    "repair": 4,
+    "quality": 5,
+    "inspection": 6,
+    "telemetry": 7,
+    "transport": 8
+  },
+  "runtime": {
+    "python": "3.11.16",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+    "packages": {
+      "numpy": "2.4.6",
+      "hypothesis": "6.168.1",
+      "pytest": "8.3.3",
+      "ruff": "0.7.4",
+      "pyright": "1.1.389",
+      "manufacturing-simulator": "0.1.0"
+    },
+    "uv": "0.12.13 (pinned as UV_VERSION in .github/workflows/ci.yml)",
+    "environment": "uv project environment kept outside the repository via UV_PROJECT_ENVIRONMENT (CI uses ci/.venv); lock ci/uv.lock used with --locked"
+  },
+  "workload": "single local session on the shared development host; no containers or shared services started; commands run sequentially",
+  "final_run": {
+    "directory": "runs/run-2-final",
+    "commands": 20,
+    "all_exit_zero": true
+  },
+  "preserved_failed_run": {
+    "directory": "runs/run-1-failed",
+    "reason": "observability coverage registry did not declare services/manufacturing-simulator; fixed by a one-entry registry change, then the full gate was re-run"
+  }
+}

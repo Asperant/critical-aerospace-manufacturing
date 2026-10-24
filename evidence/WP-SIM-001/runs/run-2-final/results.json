@@ -1,0 +1,162 @@
+[
+  {
+    "id": "sync",
+    "command": "<scratch>/uvtool/bin/uv sync --project ci --locked",
+    "started_utc": "2026-10-24T12:01:07+00:00",
+    "finished_utc": "2026-10-24T12:01:07+00:00",
+    "exit_code": 0,
+    "output_file": "sync.txt"
+  },
+  {
+    "id": "simulator-pytest",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m pytest -c services/manufacturing-simulator/pyproject.toml services/manufacturing-simulator/tests -q -p pytest_quarantine --junitxml=<scratch>/gate-run-2/test-results.xml",
+    "started_utc": "2026-10-24T12:01:07+00:00",
+    "finished_utc": "2026-10-24T12:01:10+00:00",
+    "exit_code": 0,
+    "output_file": "simulator-pytest.txt"
+  },
+  {
+    "id": "simulator-pyright",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked pyright --project services/manufacturing-simulator/pyrightconfig.json",
+    "started_utc": "2026-10-24T12:01:10+00:00",
+    "finished_utc": "2026-10-24T12:01:12+00:00",
+    "exit_code": 0,
+    "output_file": "simulator-pyright.txt"
+  },
+  {
+    "id": "simulator-ruff-check",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked ruff check services/manufacturing-simulator",
+    "started_utc": "2026-10-24T12:01:12+00:00",
+    "finished_utc": "2026-10-24T12:01:12+00:00",
+    "exit_code": 0,
+    "output_file": "simulator-ruff-check.txt"
+  },
+  {
+    "id": "simulator-ruff-format",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked ruff format --check services/manufacturing-simulator",
+    "started_utc": "2026-10-24T12:01:12+00:00",
+    "finished_utc": "2026-10-24T12:01:12+00:00",
+    "exit_code": 0,
+    "output_file": "simulator-ruff-format.txt"
+  },
+  {
+    "id": "static-ratchet",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/static_ratchet.py check",
+    "started_utc": "2026-10-24T12:01:12+00:00",
+    "finished_utc": "2026-10-24T12:01:17+00:00",
+    "exit_code": 0,
+    "output_file": "static-ratchet.txt"
+  },
+  {
+    "id": "flake-policy",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/check_flake_policy.py",
+    "started_utc": "2026-10-24T12:01:17+00:00",
+    "finished_utc": "2026-10-24T12:01:17+00:00",
+    "exit_code": 0,
+    "output_file": "flake-policy.txt"
+  },
+  {
+    "id": "ci-tests",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m pytest ci/tests -p pytest_quarantine",
+    "started_utc": "2026-10-24T12:01:17+00:00",
+    "finished_utc": "2026-10-24T12:01:17+00:00",
+    "exit_code": 0,
+    "output_file": "ci-tests.txt"
+  },
+  {
+    "id": "projectctl-tests",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m pytest tools/projectctl/tests -q -p pytest_quarantine",
+    "started_utc": "2026-10-24T12:01:17+00:00",
+    "finished_utc": "2026-10-24T12:05:28+00:00",
+    "exit_code": 0,
+    "output_file": "projectctl-tests.txt"
+  },
+  {
+    "id": "contracts",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/check_contracts.py",
+    "started_utc": "2026-10-24T12:05:28+00:00",
+    "finished_utc": "2026-10-24T12:05:28+00:00",
+    "exit_code": 0,
+    "output_file": "contracts.txt"
+  },
+  {
+    "id": "projectctl-validate",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked projectctl validate",
+    "started_utc": "2026-10-24T12:05:28+00:00",
+    "finished_utc": "2026-10-24T12:05:31+00:00",
+    "exit_code": 0,
+    "output_file": "projectctl-validate.txt"
+  },
+  {
+    "id": "projectctl-catalog-lint",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked projectctl catalog-lint",
+    "started_utc": "2026-10-24T12:05:31+00:00",
+    "finished_utc": "2026-10-24T12:05:32+00:00",
+    "exit_code": 0,
+    "output_file": "projectctl-catalog-lint.txt"
+  },
+  {
+    "id": "core-pure-tests",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests -m 'not integration' -q -p pytest_quarantine",
+    "started_utc": "2026-10-24T12:05:32+00:00",
+    "finished_utc": "2026-10-24T12:05:32+00:00",
+    "exit_code": 0,
+    "output_file": "core-pure-tests.txt"
+  },
+  {
+    "id": "core-pyright",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked pyright --project services/manufacturing-core/pyrightconfig.json",
+    "started_utc": "2026-10-24T12:05:32+00:00",
+    "finished_utc": "2026-10-24T12:05:34+00:00",
+    "exit_code": 0,
+    "output_file": "core-pyright.txt"
+  },
+  {
+    "id": "consumer-pure-tests",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m pytest -c packages/event-consumer/pyproject.toml packages/event-consumer/tests -m 'not integration' -q -p pytest_quarantine",
+    "started_utc": "2026-10-24T12:05:34+00:00",
+    "finished_utc": "2026-10-24T12:05:34+00:00",
+    "exit_code": 0,
+    "output_file": "consumer-pure-tests.txt"
+  },
+  {
+    "id": "observability-pure-tests",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m pytest packages/observability/tests infra/observability/tests -m 'not integration' -q -p pytest_quarantine",
+    "started_utc": "2026-10-24T12:05:34+00:00",
+    "finished_utc": "2026-10-24T12:05:35+00:00",
+    "exit_code": 0,
+    "output_file": "observability-pure-tests.txt"
+  },
+  {
+    "id": "observability-coverage",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m cap_observability check-coverage infra/observability/coverage.json",
+    "started_utc": "2026-10-24T12:05:35+00:00",
+    "finished_utc": "2026-10-24T12:05:35+00:00",
+    "exit_code": 0,
+    "output_file": "observability-coverage.txt"
+  },
+  {
+    "id": "operations-bff-tests",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m pytest -c services/operations-bff/pyproject.toml services/operations-bff/tests -q",
+    "started_utc": "2026-10-24T12:05:35+00:00",
+    "finished_utc": "2026-10-24T12:05:38+00:00",
+    "exit_code": 0,
+    "output_file": "operations-bff-tests.txt"
+  },
+  {
+    "id": "operations-bff-pyright",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked pyright --project services/operations-bff/pyrightconfig.json",
+    "started_utc": "2026-10-24T12:05:38+00:00",
+    "finished_utc": "2026-10-24T12:05:41+00:00",
+    "exit_code": 0,
+    "output_file": "operations-bff-pyright.txt"
+  },
+  {
+    "id": "mfgctl-tests",
+    "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m pytest tools/mfgctl/tests -q -p pytest_quarantine",
+    "started_utc": "2026-10-24T12:05:41+00:00",
+    "finished_utc": "2026-10-24T12:05:41+00:00",
+    "exit_code": 0,
+    "output_file": "mfgctl-tests.txt"
+  }
+]

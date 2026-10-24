@@ -10,6 +10,7 @@ dependencies = [
     "projectctl[dev]",
     "mfgctl[dev]",
     "cap-observability[dev]",
+    "manufacturing-simulator[dev]",
     "ruff==0.7.4",
     "pyright==1.1.389",
     "pytest==8.3.3",
@@ -23,6 +24,8 @@ dependencies = [
     "pyjwt[crypto]==2.15.1",
     "cryptography==50.0.2",
     "uvicorn==0.54.0",
+    "numpy==2.4.6",
+    "hypothesis==6.168.1",
 ]
 
 [tool.uv]
@@ -32,6 +35,7 @@ package = false
 projectctl = { path = "../tools/projectctl", editable = true }
 mfgctl = { path = "../tools/mfgctl", editable = true }
 cap-observability = { path = "../packages/observability", editable = true }
+manufacturing-simulator = { path = "../services/manufacturing-simulator", editable = true }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
