@@ -262,3 +262,15 @@ creates/drops its own database and rolls back its synthetic fixtures. Its bounde
 WP-NORMAL sanity case uses 100 equipment identities and 1,000 terminal lots plus
 retained ancestors; 30 ancestry/exposure samples report median/p95/max. This is
 local query sanity evidence, not integrated workload acceptance or factory data.
+
+
+## WP-CORE-004 closeout boundary
+
+Implemented slice evidence and exact commit bindings are reconciled in
+[`CLOSEOUT-PART1.md`](../../evidence/WP-CORE-004/CLOSEOUT-PART1.md).
+`ExecuteApprovedReworkDirective` is blocked by missing authoritative approval
+lookup, lifecycle transition interface, and frozen protected-command contract.
+A historical `approval_state` string does not supply these bindings. Existing
+history/query capabilities do not execute the command; the requirement stays
+unimplemented and the WP is not claimed complete. Part 1 opens the engineering
+PR without lifecycle changes or waiting for CI.

@@ -126,3 +126,14 @@ producer contracts, rather than inferred data. AV-SCEN-01, BENCH-E2E-001,
 BENCH-RQ1-001, protected execution tests, CI/post-merge validation and final DoD
 remain unproven. No lifecycle state or blocker projection was changed. AUTO_NEXT,
 deployment and the two pre-existing untracked Asrın audit files were untouched.
+
+
+## Closeout classification clarification
+
+[CLOSEOUT-PART1.md](CLOSEOUT-PART1.md) reconciles the completed slice commits and
+clarifies the remaining requirement after binding inspection:
+`ExecuteApprovedReworkDirective` is blocked by missing authoritative approval
+lookup, lifecycle transition interface, and frozen protected-command contract.
+The command gap is not currently independently owner-executable on this branch;
+no full-WP implementation/DoD completion is asserted. The historical query test
+results and limitations above remain unchanged.
