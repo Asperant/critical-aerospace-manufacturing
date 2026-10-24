@@ -70,6 +70,40 @@ def sections(text: str) -> list[str]:
     return re.findall(r"^## (.+)$", text, re.MULTILINE)
 
 
+def record_errors(text: str, adr_id: str) -> list[str]:
+    """Every structural problem of one ADR record (empty when valid)."""
+    errors: list[str] = []
+    found = re.findall(r"^- \*\*([A-Za-z-]+)\*\*: (.*)$", text, re.MULTILINE)
+    keys = [key for key, _ in found]
+    meta = dict(found)
+    if keys != METADATA_FIELDS:
+        errors.append("metadata fields missing, duplicated, extra or out of order")
+    if any(not value.strip() for value in meta.values()):
+        errors.append("empty metadata value")
+    if meta.get("ADR-ID") != adr_id:
+        errors.append("ADR-ID does not match the record")
+    if not text.startswith(f"# {adr_id}: {meta.get('Title', '')}\n"):
+        errors.append("title heading does not match")
+    if meta.get("Status") not in STATUSES:
+        errors.append("invalid Status")
+    if meta.get("DecisionLevel") not in LEVELS:
+        errors.append("invalid DecisionLevel")
+    if meta.get("ValidationState") not in VALIDATION_STATES:
+        errors.append("invalid ValidationState")
+    try:
+        dt.date.fromisoformat(meta.get("Date", ""))
+    except ValueError:
+        errors.append("Date is not ISO 8601")
+    if sections(text) != BODY_SECTIONS:
+        errors.append("body sections missing, extra or out of order")
+    return errors
+
+
+def unresolved_links(text: str, base: Path) -> list[str]:
+    targets = [t for t in LINK.findall(text) if not re.match(r"[a-z]+:|#", t)]
+    return [t for t in targets if not (base / t.split("#")[0]).resolve().exists()]
+
+
 def backfill_rows() -> list[tuple[str, ...]]:
     return [m.groups() for m in MAP_ROW.finditer(README.read_text(encoding="utf-8"))]
 
@@ -121,31 +155,55 @@ def test_every_record_is_in_the_map_and_every_mapped_record_exists() -> None:
 @pytest.mark.parametrize("path", records(), ids=lambda p: p.name)
 def test_record_metadata_is_valid_and_matches_the_map(path: Path) -> None:
     text = path.read_text(encoding="utf-8")
-    meta = metadata(text)
     adr_id = f"ADR-{path.name[:4]}"
-    assert list(meta) == METADATA_FIELDS
-    assert all(value.strip() for value in meta.values())
-    assert meta["ADR-ID"] == adr_id
-    assert text.startswith(f"# {adr_id}: {meta['Title']}\n")
-    assert meta["Status"] in STATUSES
-    assert meta["DecisionLevel"] in LEVELS
-    assert meta["ValidationState"] in VALIDATION_STATES
+    assert record_errors(text, adr_id) == []
+    meta = metadata(text)
     assert meta["Supersedes"] == "None"
     assert meta["SupersededBy"] == "None"
-    dt.date.fromisoformat(meta["Date"])
-    assert sections(text) == BODY_SECTIONS
     mapped = {row[0]: row for row in backfill_rows()}[adr_id]
     assert meta["Title"] == mapped[2]
     assert mapped[4] == meta["Status"]
     assert path.name in mapped[5]
 
 
+MUTATIONS = [
+    ("- **Status**: ACCEPTED", "- **Status**: DONE"),
+    ("- **DecisionLevel**: ADR-L3", "- **DecisionLevel**: ADR-L9"),
+    ("- **ValidationState**: PENDING", "- **ValidationState**: MAYBE"),
+    ("- **Date**: 2026-10-24", "- **Date**: 24/10/2026"),
+    ("- **ADR-ID**: ADR-0003", "- **ADR-ID**: ADR-0004"),
+    ("## Rationale\n", "## Reasons\n"),
+    ("- **Reviewers**: Yavuz Gümüş\n", ""),
+    ("- **AffectedDebt**: None", "- **AffectedDebt**:  "),
+    ("## References", "## Decision\n\n## References"),
+]
+
+
+@pytest.mark.parametrize(("old", "new"), MUTATIONS)
+def test_a_malformed_record_is_rejected(old: str, new: str) -> None:
+    text = PILOT.read_text(encoding="utf-8")
+    assert old in text
+    assert record_errors(text.replace(old, new, 1), "ADR-0003")
+
+
+def test_a_duplicated_metadata_field_is_rejected() -> None:
+    text = PILOT.read_text(encoding="utf-8")
+    duplicated = text.replace(
+        "- **Status**: ACCEPTED", "- **Status**: ACCEPTED\n- **Status**: ACCEPTED", 1
+    )
+    assert record_errors(duplicated, "ADR-0003")
+
+
+def test_a_broken_local_link_is_reported() -> None:
+    assert unresolved_links("[gone](missing-record.md)", ADR_DIR) == [
+        "missing-record.md"
+    ]
+    assert unresolved_links("[ok](README.md#top) [web](https://x.test)", ADR_DIR) == []
+
+
 @pytest.mark.parametrize("path", [README, TEMPLATE, *records()], ids=lambda p: p.name)
 def test_local_links_resolve(path: Path) -> None:
-    text = path.read_text(encoding="utf-8")
-    targets = [t for t in LINK.findall(text) if not re.match(r"[a-z]+:|#", t)]
-    for target in targets:
-        assert (path.parent / target.split("#")[0]).resolve().exists(), target
+    assert unresolved_links(path.read_text(encoding="utf-8"), path.parent) == []
 
 
 DECIDED_BY_EDGES = {
