@@ -27,3 +27,7 @@ verification, ADR validation or Plane state.
 - Requirement, risk and debt links are `None linked yet` where the canonical sources record none. No `DECIDED_BY` edge was created for a requirement that had none. FR-AI-001, FR-SEC-001, FR-PLAT-006 and FR-RAG-005 were listed in the old GAP-RTM-023 text but never carried an edge.
 - FR-GOV-004 is co-allocated to WP-GOV-002, which owns the trace registry and the trace linter (`TEST-GOV-TRACELINT`, TL-01…TL-13). That linter does not exist yet, so FR-GOV-004 coverage stays ALLOCATED and its evidence state stays `NOT_YET_EXECUTED`. This WP does not set `REALIZED_BY` or `VERIFIED_BY` for FR-GOV-004.
 - The architecture-changing ADR update flow (02 updated after an accepted ADR) is not triggered: every record documents a decision already incorporated in 02.
+
+## Pinned-source note
+
+`docs/06A_Asrin_Engineering_Roadmap.md` is a whole-blob pinned source in every Asrın work package manifest. An edit to its WP-DOC-002 cut/fallback sentence invalidated the released-wait proofs of the other Asrın work packages, which are anchored to older revisions, so the edit was reverted to the exact earlier blob. That sentence ("DECIDED_BY edges in 03 currently point at placeholders") is therefore stale until a planned canonical refresh; 03 and the 04 card carry the current truth. `docs/03` and `docs/04` are compared by per-work-package projection and are unaffected.

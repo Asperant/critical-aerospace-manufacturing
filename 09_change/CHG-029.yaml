@@ -29,11 +29,11 @@ CHG-029:
   - The mapping is positional and fixed; backfill-NN becomes ADR-00NN
   - Each ADR documents an already-made decision from 02; no architecture decision, requirement, owner, technology or authority boundary changes
   - No DECIDED_BY edge is created for any requirement that has none; DECIDED_BY never satisfies VERIFIED_BY (RTM-INV-17)
-  - 03 GAP-RTM-023 is resolved; the stale placeholder statements in 04 and 06A for WP-DOC-002 are updated
+  - 03 GAP-RTM-023 is resolved; the stale placeholder statement in the 04 WP-DOC-002 card is updated
+  - docs/06A is a whole-blob pinned source for every Asrın work package; its placeholder sentence for WP-DOC-002 was left unchanged so existing released-wait proofs stay valid
   security_authority_impact: NONE — no authority, Oracle access, credentials or protected execution changed
   documentation_updates:
   - docs/03_Requirements_Traceability_Matrix.md
   - docs/04_Work_Breakdown_Structure.md
-  - docs/06A_Asrin_Engineering_Roadmap.md
   rollout: Merged source only; the pinned canonical policy is refreshed through the supported builder and installer because docs/03 and docs/04 are pinned sources
   rollback: Revert the atomic WP-DOC-002 commits; do not rewrite history
