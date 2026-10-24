@@ -19,16 +19,18 @@ definitions are the basis of the shared Integration environment (WP-PLAT-003).
 
 | Service | Image (exact pin) | Host port (localhost) | Memory limit | Health check |
 |---|---|---|---|---|
-| PostgreSQL | `postgres:18.6-alpine` | 56432 | 1 GiB | `pg_isready` |
-| NATS JetStream | `nats:2.10.22-alpine` | 56222 (monitor 56822) | 256 MiB | `/healthz?js-enabled-only=true` |
-| Valkey | `valkey/valkey:8.0.1-alpine` | 56379 | 256 MiB | `PING` |
-| SeaweedFS (S3) | `chrislusf/seaweedfs:3.80` | 56333 (master 56933) | 512 MiB | master `/cluster/status` and an HTTP answer from the S3 gateway |
-| Keycloak | `quay.io/keycloak/keycloak:26.0.5` | 56080 | 1 GiB | management `/health/ready` |
+| PostgreSQL | `postgres:18.6-alpine` | 25432 | 1 GiB | `pg_isready` |
+| NATS JetStream | `nats:2.10.22-alpine` | 24222 (monitor 28222) | 256 MiB | `/healthz?js-enabled-only=true` |
+| Valkey | `valkey/valkey:8.0.1-alpine` | 26379 | 256 MiB | `PING` |
+| SeaweedFS (S3) | `chrislusf/seaweedfs:3.80` | 28333 (master 29333) | 512 MiB | master `/cluster/status` and an HTTP answer from the S3 gateway |
+| Keycloak | `quay.io/keycloak/keycloak:26.0.5` | 28080 | 1 GiB | management `/health/ready` |
 
 Total infra limit: 3 GiB of the ~16 GiB single host (02 resource profiles:
 limits are mandatory so that OpenObserve/Qdrant cannot starve PostgreSQL).
-Ports differ from the CI integration services (55xxx) and the observability
-stack (53xxx–55080), so all three can run side by side.
+Host ports stay below 32768, outside the Linux ephemeral port range
+(32768–60999): a fixed host port inside that range can be taken by an outgoing
+client connection, and Docker then fails to bind it (seen on a CI runner in run
+40099708897). A static test enforces this.
 
 ## Run it
 
