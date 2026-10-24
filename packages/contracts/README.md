@@ -4,8 +4,8 @@ The version-controlled Integration Contract Registry of the architecture
 specification (02, "Integration Contract Registry"): a Git-backed semantic catalog,
 not a runtime schema registry. Slice 1 provides the layout, the version rules and the
 boundary-validation primitives. It does not provide the EVT message envelope, broker
-or NATS behaviour, Core command contracts, the outbox, the compatibility
-(breaking-change) detector, producer-ACL generation or any INTEGRATION/FROZEN
+or NATS behaviour, Core command contracts, the outbox, the CI compatibility
+gate, producer-ACL generation or any INTEGRATION/FROZEN
 behaviour.
 
 ## Layout
@@ -55,3 +55,29 @@ declaration: it does not make DN-CORE-CONTRACTS CONTRACT_READY.
 
 Verification: `Registry.load(...).verify(repo_root)` checks hashes, schema validity
 and that every fixture validates. The tests run in the `CI tooling tests` CI step.
+
+## Pure compatibility comparison
+
+`compare_schemas(old, new)` returns an immutable `CompatibilityResult` with
+`breaking`, `unverifiable` reasons and `compatible` (true only when both are empty).
+Optional property additions, including nested object/array items, are non-breaking
+under the architecture policy. Required-field removal or relaxation, required
+additions, field removal, type/constraint/enum changes and changed annotations
+(including descriptions of units or identifier meaning) are conservatively breaking.
+
+`compare_contracts(old_declaration, new_declaration, old_output_schema=...,
+new_output_schema=..., old_input_schema=..., new_input_schema=...)` also compares
+canonical producer, owner, authority and declared semantics. A new major never
+hides a breaking result. Callers supply schema documents loaded/hash-verified with
+the existing registry primitives; the comparison itself performs no I/O or writes.
+Missing declared documents, unrelated families or reversed versions fail closed.
+
+The bounded schema subset supports explicit types, properties, required fields,
+boolean additionalProperties, items, enum/const and scalar/collection constraints.
+References, composition, formats, alternate dialects, unknown keywords and schemas
+without explicit types are unverifiable even when unchanged. Thus the reference-based
+Core output exemplar is not yet positively verifiable by this detector. Unverifiable
+results must never be accepted as compatible. Semantic changes absent from declared
+metadata cannot be inferred. Optional-addition policy is not proof that strict old
+consumers accept new payloads: consumer tests remain required. CI integration and
+version-policy enforcement are later slices.

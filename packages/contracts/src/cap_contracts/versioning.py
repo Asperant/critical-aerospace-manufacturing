@@ -4,7 +4,7 @@ A contract ID is ``<family>.v<major>``, for example ``core.order-query.v1``. A
 breaking change (02 "Contract Versioning and Compatibility") is expressed only as a new
 major, that is a new contract ID; the previous major is deprecated, never edited in
 place. Deciding whether a concrete schema change is breaking belongs to the
-compatibility detector, which is not part of this foundation.
+pure comparison functions in ``compatibility``; this module only handles IDs.
 """
 
 import re
