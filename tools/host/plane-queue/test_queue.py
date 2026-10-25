@@ -159,6 +159,7 @@ class QueueTests(unittest.TestCase):
         self.assertIsNone(q._cached_slot_source(
             dict(entry, fingerprint='changed'), {'policy_digest': 'p'}
         ))
+        self.assertEqual(q.SNAPSHOT_CACHE_TTL_SECONDS, 60.0)
         self.assertEqual(q.SOURCE_CACHE_TTL_SECONDS, 60.0)
         expired = dict(entry, source_captured_at=time.time() - q.SOURCE_CACHE_TTL_SECONDS - 1)
         self.assertIsNone(q._cached_slot_source(expired, {'policy_digest': 'p'}))
