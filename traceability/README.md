@@ -27,7 +27,8 @@ NFR-GOV-009. Tooling: `tools/trace` (`cap_trace`).
 mfgctl trace validate --base origin/main   # what CI runs
 mfgctl trace generate                      # refresh traceability/generated/
 mfgctl trace seed                          # registry from 03 §17, then the views
-mfgctl trace drift                         # registry vs 03 §17
+mfgctl trace drift                         # registry vs 03 §17 (CI: --strict)
+mfgctl trace impact --body-file pr.md      # TL-13 on a PR description
 mfgctl trace requirement FR-GOV-009        # one requirement's node and edges
 mfgctl trace orphans                       # orphan report summary
 ```
@@ -62,7 +63,7 @@ Exit codes: 0 clean; 1 findings (or drift with `--strict`); 2 inputs unreadable
 | TL-11 class sufficiency | slice 3 | F0 ⇒ integrated scenario/demo path; H0 ⇒ TEST/DRILL/SCENARIO asset, not inspection- or benchmark-only; FR verify codes (03 View D) E → integrated asset (scenario, demo, or a family whose minimum environment is INTEGRATION or later), B → BENCH, R → DRILL or restart test, N → executable TEST/DRILL, D → DEMO, I → inspection or lint; T is not an audited code (03 §22 C-08…C-13) |
 | TL-12 evidence | slice 3 | coverage VERIFIED or evidence CURRENT ⇒ ≥1 EVIDENCED_BY; a final NFR also needs an observed measurement (NFR-GOV-009) |
 | TL-07 freshness | slice 4 | every file in `generated/` equals what the registry produces now; missing, stale or foreign files fail |
-| TL-13 | slice 5 | PR Requirement-Impact declared |
+| TL-13 impact | slice 5 | a PR that changes anything outside `docs/`, `evidence/`, `09_change/`, `project_control/` or Markdown names its impacted requirements in the template field `Requirements (...)`: active catalog IDs, or `NONE — reason` / a control-only explanation; the check also lists each declared requirement's owner for advisory review (CHG-018) |
 
 ## Where TL-02 resolves each relation
 
@@ -81,10 +82,10 @@ Exit codes: 0 clean; 1 findings (or drift with `--strict`); 2 inputs unreadable
 `validate` prints how many edges fall into each mode, so nothing is silently
 treated as checked.
 
-## Relation to 03 (until slice 4)
+## 03 §17 is the source (decided 25 October 2026)
 
-03 stays the canonical document and every owner keeps updating 03 §17 in their
-own PRs (03 §19). The registry is seeded from it; `drift` reports any
-difference and does not fail CI, so another owner's 03 edit never blocks their
-work. Refresh with `seed` when drift is reported. Which side is generated from
-which is settled in slice 4 together with the 03 maintainers.
+Owners keep editing the 03 §17 records in their own PRs, as 03 §19 describes.
+In the same PR they run `mfgctl trace seed`, which refreshes
+`trace_edges.yaml` and `generated/`. CI runs `drift --strict` and TL-07, so a
+PR that changes 03 §17 without refreshing fails with the command to run. The
+registry is never edited by hand.

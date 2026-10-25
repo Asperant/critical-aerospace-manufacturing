@@ -3,7 +3,7 @@
 Slice A: ``doctor``. Slice B: ``bootstrap``, ``check`` and ``timings``.
 Slice C: ``profile list``, ``up``, ``down``, ``status``, ``smoke``, ``scenario``
 and ``diagnose bundle`` over the capability registry (mfgctl.capabilities/v1).
-WP-GOV-002: ``trace validate|generate|seed|drift|requirement|orphans``.
+WP-GOV-002: ``trace validate|generate|seed|drift|impact|requirement|orphans``.
 
 Exit codes: 0 success (warnings allowed), 1 a check or step failed, 2 mfgctl
 could not run (outside the repository, ci.yml unusable, registry missing or
@@ -326,3 +326,14 @@ def trace_requirement(identity: str = typer.Argument(..., help="FR-/NFR- ID.")) 
 def trace_orphans() -> None:
     """Summarize the orphan report."""
     _trace("orphans", [])
+
+
+@trace_app.command("impact")
+def trace_impact(
+    body_file: Path = typer.Option(..., "--body-file", help="PR description file."),
+    base: str = typer.Option(
+        "origin/main", "--base", help="Revision the PR merges into."
+    ),
+) -> None:
+    """Check a PR description's requirement impact (TL-13)."""
+    _trace("impact", ["--body-file", str(body_file.resolve()), "--base", base])

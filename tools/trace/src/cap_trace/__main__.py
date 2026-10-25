@@ -1,4 +1,4 @@
-"""python -m cap_trace {validate|seed|generate|drift|requirement|orphans} — run
+"""python -m cap_trace {validate|seed|generate|drift|impact|requirement|orphans} — run
 from the repository root (mfgctl trace … wraps the same commands).
 
 Exit codes: 0 clean; 1 findings (validate) or drift with --strict; 2 the inputs
@@ -9,15 +9,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from collections import Counter
 from pathlib import Path
 from typing import Any, cast
 
+from . import impact
 from .drift import compare
 from .lint import IMPLEMENTED_CHECKS, REGISTRY, RegistryError, lint_files, load_yaml
 from .references import coverage
 from .seed import RTM, SeedError, dump, seed
+from .sources import load as load_index
 from .views import write
 
 
@@ -108,6 +111,45 @@ def cmd_orphans(root: Path) -> int:
     return 0
 
 
+def changed_files(root: Path, base: str) -> list[str]:
+    result = subprocess.run(
+        ["git", "-C", str(root), "diff", "--name-only", f"{base}...HEAD"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise RegistryError(f"cannot list the files changed since {base}")
+    return [line for line in result.stdout.splitlines() if line]
+
+
+def cmd_impact(
+    root: Path, body_file: Path, base: str | None, files_from: Path | None
+) -> int:
+    body = body_file.read_text("utf-8")
+    if files_from is not None:
+        files = [f for f in files_from.read_text("utf-8").splitlines() if f]
+    elif base is not None:
+        files = changed_files(root, base)
+    else:
+        raise RegistryError("impact needs --base or --files-from")
+    registry = load_yaml(root / REGISTRY)
+    handles = impact.owners(root)
+    nodes = cast(dict[str, dict[str, Any]], registry.get("requirements", {}))
+    requirement_owner: dict[str, str] = {}
+    for requirement, node in nodes.items():
+        owner = str(cast(dict[str, Any], node.get("meta", {})).get("owner", ""))
+        handle = next((h for n, h in handles.items() if n.startswith(owner)), None)
+        requirement_owner[requirement] = f"{owner} (@{handle})" if handle else owner
+    findings, notes = impact.check(body, files, load_index(root), requirement_owner)
+    for note in notes:
+        print(note)
+    for finding in findings:
+        print(finding.line())
+    print(f"requirement impact (TL-13): {'PASS' if not findings else 'FAIL'}")
+    return 1 if findings else 0
+
+
 def cmd_drift(root: Path, strict: bool) -> int:
     drift = compare(load_yaml(root / REGISTRY), seed(root))
     for line in drift.lines():
@@ -117,7 +159,7 @@ def cmd_drift(root: Path, strict: bool) -> int:
         return 0
     print(
         f"drift: {len(drift.lines())} difference(s); refresh with "
-        "`python -m cap_trace seed` (reported, not failed, until slice 4)"
+        "`mfgctl trace seed` (03 §17 is the source; CI runs drift --strict)"
     )
     return 1 if strict else 0
 
@@ -137,6 +179,10 @@ def main(argv: list[str] | None = None) -> int:
     requirement = sub.add_parser("requirement", help="one requirement's node and edges")
     requirement.add_argument("id")
     sub.add_parser("orphans", help="summary of the orphan report")
+    pr = sub.add_parser("impact", help="TL-13: PR Requirement-Impact declaration")
+    pr.add_argument("--body-file", required=True, type=Path)
+    pr.add_argument("--base", help="Git revision the PR merges into")
+    pr.add_argument("--files-from", type=Path, help="changed file list, one per line")
     drift = sub.add_parser("drift", help="compare the registry with 03 §17")
     drift.add_argument("--strict", action="store_true", help="exit 1 on any drift")
     args = parser.parse_args(argv)
@@ -152,6 +198,13 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_requirement(root, str(args.id))
         if args.command == "orphans":
             return cmd_orphans(root)
+        if args.command == "impact":
+            return cmd_impact(
+                root,
+                Path(args.body_file),
+                args.base,
+                Path(args.files_from) if args.files_from else None,
+            )
         return cmd_drift(root, bool(args.strict))
     except (RegistryError, SeedError, OSError, KeyError) as exc:
         print(f"{args.command} failed: {exc}", file=sys.stderr)

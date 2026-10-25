@@ -1,9 +1,9 @@
 """Drift between the committed registry and the current 03 §17 records.
 
-Until the generation direction is settled (slice 4, with the 03 maintainers),
-03 §17 stays canonical and every owner keeps editing it in their own PRs. The
-drift report shows what the registry is missing; by default it reports and does
-not fail, so another owner's 03 edit never blocks their work.
+03 §17 is the source (decision of 25 October 2026, option A): owners keep editing
+03 §17 in their own PRs and refresh the registry and its views with
+`mfgctl trace seed`. CI runs `drift --strict`, so a PR that changes 03 §17
+without refreshing the registry fails with the exact command to run.
 """
 
 from __future__ import annotations

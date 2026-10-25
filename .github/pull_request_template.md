@@ -2,7 +2,7 @@
 
 WP/control ID:
 Plane reference (or explain not applicable):
-Requirements (stable IDs, or explain control-only scope):
+Requirements (stable IDs, or NONE — reason / control-only scope; checked by TL-13):
 Architecture surfaces and authority boundaries:
 Change class (C0–C3) and review risk class (CR-0–CR-4):
 Contract/compatibility and migration impact:
