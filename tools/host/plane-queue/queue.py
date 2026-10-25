@@ -7,6 +7,7 @@ import html.parser
 import json
 import os
 import pwd
+import threading
 from pathlib import Path
 import re
 import resource
@@ -43,6 +44,8 @@ WP = re.compile(r'WP-[A-Z0-9]+-[0-9]{3}')
 # before health evaluation even started.
 REQUEST_INTERVAL = 0.9
 HEALTH_BUDGET_SECONDS = 4
+MAX_READ_WORKERS = 4
+PARALLEL_REQUEST_INTERVAL = REQUEST_INTERVAL / MAX_READ_WORKERS
 
 
 class Unsafe(Exception):
@@ -107,19 +110,38 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
         raise Unsafe()
 
 
+class RateLimiter:
+    """Bound aggregate read rate while allowing independent GETs to overlap."""
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.next_at = 0.0
+
+    def wait(self):
+        with self.lock:
+            now = time.monotonic()
+            delay = max(0.0, self.next_at - now)
+            self.next_at = max(now, self.next_at) + PARALLEL_REQUEST_INTERVAL
+        if delay:
+            time.sleep(delay)
+
+
 class Reader:
-    def __init__(self, key):
+    def __init__(self, key, limiter=None):
         self.key = key
         self.opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
         self.last = 0
         self.calls = []
+        self.limiter = limiter
 
     def get(self, route, cursor=None):
         require(route in ROUTES)
         require(cursor is None or isinstance(cursor, str) and re.fullmatch(r'[A-Za-z0-9:_=.-]{1,128}', cursor))
         query = '' if cursor is None else '?' + urllib.parse.urlencode({'cursor': cursor})
-        time.sleep(max(0, REQUEST_INTERVAL - (time.monotonic() - self.last)))
-        self.last = time.monotonic()
+        if self.limiter is None:
+            time.sleep(max(0, REQUEST_INTERVAL - (time.monotonic() - self.last)))
+            self.last = time.monotonic()
+        else:
+            self.limiter.wait()
         request = urllib.request.Request(ORIGIN + PREFIX + route + query,
                                         headers={'X-API-Key': self.key}, method='GET')
         self.calls.append(('GET', route))
@@ -153,21 +175,58 @@ class Reader:
         raise Unsafe()
 
 
+def _read_routes(reader, routes, limiter=None):
+    """Read independent routes with bounded concurrency; preserve fake readers."""
+    routes = list(routes)
+    if not isinstance(reader, Reader):
+        return {route: reader.rows(route) for route in routes}
+    result, errors = {}, []
+    next_route = 0
+    state_lock = threading.Lock()
+
+    def worker():
+        nonlocal next_route
+        while True:
+            with state_lock:
+                if next_route >= len(routes):
+                    return
+                route = routes[next_route]
+                next_route += 1
+            try:
+                result[route] = Reader(reader.key, limiter).rows(route)
+            except BaseException as exc:
+                with state_lock:
+                    errors.append(exc)
+                return
+
+    workers = [threading.Thread(target=worker)
+               for _ in range(min(MAX_READ_WORKERS, len(routes)))]
+    for thread in workers:
+        thread.start()
+    for thread in workers:
+        thread.join()
+    if errors:
+        raise errors[0]
+    return result
+
+
 def snapshot(reader, catalog):
     project = reader.get('')
     require(project.get('id') == PREFIX.split('/')[-2] and project.get('name') == 'Graduation Project'
             and project.get('identifier') == 'CAP')
-    members = reader.rows('members/')
+    limiter = reader.limiter if isinstance(reader, Reader) else None
+    route_rows = _read_routes(reader, ('members/', 'states/', 'labels/', 'issues/', 'cycles/'), limiter)
+    members = route_rows['members/']
     for owner, identity, email in PEOPLE.values():
         require(len([m for m in members if m['id'] == identity and m.get('email', '').casefold() == email]) == 1)
         require(len([m for m in members if m.get('email', '').casefold() == email]) == 1)
-    states = reader.rows('states/')
+    states = route_rows['states/']
     require(len({s['name'] for s in states}) == len(states) and {s['name'] for s in states} == STATES)
     state_map = {s['id']: s['name'] for s in states}
-    labels = reader.rows('labels/')
+    labels = route_rows['labels/']
     require(len([x for x in labels if x['name'] == 'BLOCKED']) == 1)
     blocked_id = next(x['id'] for x in labels if x['name'] == 'BLOCKED')
-    issues = reader.rows('issues/')
+    issues = route_rows['issues/']
     rows = {}
     for item in issues:
         wp = item.get('external_id', '')
@@ -184,11 +243,13 @@ def snapshot(reader, catalog):
         rows[wp] = {'wp_id': wp, 'title': item['name'].split('] ', 1)[1], 'plane_state': state_map[item['state']],
                     'blocked': blocked_id in item['labels'], 'cycle': None, '_id': item['id'], '_profile': owner}
     require(set(rows) == set(catalog['owners']))
-    cycles = reader.rows('cycles/')
+    cycles = route_rows['cycles/']
     require({c['id']: c['name'] for c in cycles} == {identity: 'S' + str(n) for n, identity in CYCLES.items()})
     by_id = {r['_id']: r for r in rows.values()}
+    membership_routes = [f'cycles/{identity}/cycle-issues/' for identity in CYCLES.values()]
+    memberships = _read_routes(reader, membership_routes, limiter)
     for n, identity in CYCLES.items():
-        for item in reader.rows(f'cycles/{identity}/cycle-issues/'):
+        for item in memberships[f'cycles/{identity}/cycle-issues/']:
             require(item['id'] in by_id)
             row = by_id[item['id']]
             require(row['cycle'] is None)
@@ -316,8 +377,7 @@ def main():
         with os.fdopen(fd, 'r+') as lock:
             require(os.fstat(lock.fileno()).st_uid == 0)
             fcntl.flock(lock, fcntl.LOCK_EX)
-            time.sleep(1.25)
-            rows = snapshot(Reader(key), catalog)
+            rows = snapshot(Reader(key, RateLimiter()), catalog)
             result = combine(profile, rows, bounded_preflight(profile, key))
             if result['status']=='BLOCKED':
                 result['reason']='ACTIVE_BLOCKER; accountable reason unavailable from live label alone'
