@@ -1,0 +1,133 @@
+{
+  "schema": "evt002-binding-provenance-observations-v1",
+  "canonical_main": "d45173359f01c7471339eb63c2c8b4e4cb8e8760",
+  "active_blocker_audit_id": "76d43026b7d9401c55ba81a570a457b84144767d3dc9b49b4e333f632ec90fb9",
+  "external_dependency_exactly_as_audited": "Bound backend HTTP producer/consumer adapters; actual NATS production publisher/application consumer bindings; Temporal workflow/activity context hooks; participating downstream consumers and runtime/evidence owners for integrated acceptanc",
+  "consumer": {
+    "wp": "WP-EVT-002",
+    "owner": "asrin",
+    "scope_digest": "052d908bb24769d74259a455d99c53567dfaa8faafcb8977bf780d154973d499"
+  },
+  "observations": [
+    {
+      "transport": "HTTP",
+      "status": "UNKNOWN",
+      "producer": {
+        "wp": "UNKNOWN",
+        "owner": "UNKNOWN",
+        "scope_digest": "UNKNOWN"
+      },
+      "consumer": {
+        "wp": "WP-EVT-002",
+        "owner": "asrin",
+        "scope_digest": "052d908bb24769d74259a455d99c53567dfaa8faafcb8977bf780d154973d499"
+      },
+      "precise_requirement": "A canonically bound backend HTTP request/response adapter and trusted context hook through which WP-EVT-002 can propagate identity, world and causal/trace context. The existing abstract BFF ports do not establish that binding.",
+      "binding_paths": "UNKNOWN",
+      "verified_related_scope": [
+        {
+          "wp": "WP-UI-001",
+          "owner": "asrin",
+          "scope_digest": "d7435f4041cfe89d355ac746915365ad9e38b0b14be94e45aa2f7325bbadf0bf",
+          "canonical_repository_reference": "TBD_BY_IMPLEMENTATION"
+        }
+      ],
+      "evidence": [
+        "services/operations-bff/src/operations_bff/overview.py",
+        "services/manufacturing-core/README.md"
+      ],
+      "missing": "Canonical assignment of the exact backend adapter producer, transport contract and concrete binding output path; BFF shell ownership is not that assignment.",
+      "canonical_provenance": {
+        "docs/01_Master_Project_Specification.md": "fade5b07418cd62d32a291018b66a50f424412d09a094d743d47ba0b43c2e6c8",
+        "docs/02_System_Architecture_Specification.md": "71675f664d3abfad1556a14580e1bca92c967b3da8dd661cc505813cb1fce3e5",
+        "docs/03_Requirements_Traceability_Matrix.md": "4c6adc350dc87e399c0a92aa00c79290c3d260b1304d2ef572e18ecaa4eda7da",
+        "docs/04_Work_Breakdown_Structure.md": "757260814bcc5e6b24b386feb20513187fdd1b716b16c55128d00f136c6548b6",
+        "docs/05_Dependency_Graph.md": "279bff88903092fbe3ce378226785e00da9abf4bae76670fbdc40a8fe7813880"
+      }
+    },
+    {
+      "transport": "NATS",
+      "status": "UNKNOWN",
+      "producer": {
+        "wp": "WP-CORE-005",
+        "owner": "asrin",
+        "scope_digest": "ce85ae2961584ef9b63fdb8f87bea6462db06488bf1f4f2e65056eb7a31c8800",
+        "canonical_repository_reference": "TBD_BY_IMPLEMENTATION"
+      },
+      "consumer": {
+        "wp": "WP-EVT-002",
+        "owner": "asrin",
+        "scope_digest": "052d908bb24769d74259a455d99c53567dfaa8faafcb8977bf780d154973d499"
+      },
+      "precise_requirement": "A real domain-event/outbox publisher and bound application consumer with explicit subject, stream, durable and publisher/context contracts, so WP-EVT-002 envelope metadata can cross the production NATS boundary. Generic JetStream consumer hooks alone do not supply those bindings.",
+      "binding_paths": "UNKNOWN",
+      "application_consumer_wp": "UNKNOWN",
+      "verified_related_scope": [
+        {
+          "wp": "WP-EVT-003",
+          "owner": "asrin",
+          "scope_digest": "ebe16c0c91084f9446e54fc86cd342a7a4a995c06c474c067ca8a97b75395255",
+          "canonical_repository_reference": "`packages/event-consumer/`; `evidence/WP-EVT-003/`"
+        }
+      ],
+      "evidence": [
+        "packages/event-consumer/README.md"
+      ],
+      "missing": "Concrete publisher/relay binding output path and specific application consumer assignment/path. WP-CORE-005 has TBD_BY_IMPLEMENTATION; EVT-003 explicitly makes no adoption claim.",
+      "canonical_provenance": {
+        "docs/01_Master_Project_Specification.md": "fade5b07418cd62d32a291018b66a50f424412d09a094d743d47ba0b43c2e6c8",
+        "docs/02_System_Architecture_Specification.md": "71675f664d3abfad1556a14580e1bca92c967b3da8dd661cc505813cb1fce3e5",
+        "docs/03_Requirements_Traceability_Matrix.md": "4c6adc350dc87e399c0a92aa00c79290c3d260b1304d2ef572e18ecaa4eda7da",
+        "docs/04_Work_Breakdown_Structure.md": "757260814bcc5e6b24b386feb20513187fdd1b716b16c55128d00f136c6548b6",
+        "docs/05_Dependency_Graph.md": "279bff88903092fbe3ce378226785e00da9abf4bae76670fbdc40a8fe7813880"
+      }
+    },
+    {
+      "transport": "Temporal",
+      "status": "UNKNOWN",
+      "producer": {
+        "wp": "WP-AUTO-001",
+        "owner": "batuhan",
+        "scope_digest": "89e2224fe3284c1b83bfac3379cceb4c9eace2adcaa09bb0170d2a342f47d380",
+        "canonical_repository_reference": "TBD_BY_IMPLEMENTATION"
+      },
+      "consumer": {
+        "wp": "WP-EVT-002",
+        "owner": "asrin",
+        "scope_digest": "052d908bb24769d74259a455d99c53567dfaa8faafcb8977bf780d154973d499"
+      },
+      "precise_requirement": "Real workflow/activity contracts and context hooks for WP-EVT-002 envelope metadata propagation through the durable WorkflowBundle boundary; generic runtime availability is insufficient.",
+      "binding_paths": "UNKNOWN",
+      "verified_related_scope": [],
+      "evidence": [
+        "docs/04_Work_Breakdown_Structure.md#wp-auto-001"
+      ],
+      "missing": "Concrete workflow/activity/context-hook artifact path and bound interface; WP-AUTO-001 specifies WorkflowBundles and typed activities but its repository reference is TBD_BY_IMPLEMENTATION.",
+      "canonical_provenance": {
+        "docs/01_Master_Project_Specification.md": "fade5b07418cd62d32a291018b66a50f424412d09a094d743d47ba0b43c2e6c8",
+        "docs/02_System_Architecture_Specification.md": "71675f664d3abfad1556a14580e1bca92c967b3da8dd661cc505813cb1fce3e5",
+        "docs/03_Requirements_Traceability_Matrix.md": "4c6adc350dc87e399c0a92aa00c79290c3d260b1304d2ef572e18ecaa4eda7da",
+        "docs/04_Work_Breakdown_Structure.md": "757260814bcc5e6b24b386feb20513187fdd1b716b16c55128d00f136c6548b6",
+        "docs/05_Dependency_Graph.md": "279bff88903092fbe3ce378226785e00da9abf4bae76670fbdc40a8fe7813880"
+      }
+    }
+  ],
+  "registry_entries_added": 0,
+  "registry_validation": "PASS_EMPTY_FAIL_CLOSED",
+  "provenance_completeness": "FAIL",
+  "lifecycle_mutation": false,
+  "readonly_validation": {
+    "active_audit_id": "76d43026b7d9401c55ba81a570a457b84144767d3dc9b49b4e333f632ec90fb9",
+    "assessment_complete": false,
+    "blocked": true,
+    "blocker_exact_match": true,
+    "field_format": "PASS_EXCEPT_UNKNOWN_BINDINGS",
+    "fresh_comment": 6401360609,
+    "lifecycle_mutation_executed": false,
+    "new_comment_linked_to_active_audit": false,
+    "provenance_complete": false,
+    "registry_entries": 0,
+    "slot_release_eligible": false,
+    "state": "VALIDATING"
+  }
+}
