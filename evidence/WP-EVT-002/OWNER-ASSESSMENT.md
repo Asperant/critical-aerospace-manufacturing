@@ -4,7 +4,8 @@ Accountable owner: Asrın Dündar (Asperant), authorized development session.
 Assessment date: 2026-10-25. Branch: wp/WP-EVT-002-typed-envelope.
 Assessed implementation/trace head: `354671b7e04f831a03139f50176a7fa1604a87d0`.
 Current main incorporated without conflict:
-`13477c59ccf2936421095ee06dbe053f2de1b9b4`.
+`13477c59ccf2936421095ee06dbe053f2de1b9b4`, followed by
+`328052282fb3e5b660fb9be2009d24feb6a74dc5` (observability coverage metadata).
 Assessment revision is this file's containing commit, not a fabricated self-hash.
 
 Owner-executable implementation work: NONE
