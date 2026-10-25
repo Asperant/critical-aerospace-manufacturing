@@ -4155,38 +4155,41 @@ FR-EVT-002:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-EVT-002 L169911"}
   DERIVED_FROM: [ITEM-12, EVTINF-INV-04]
   ALLOCATED_TO: [ARCH-EVT-SCHEMA]
-  REALIZED_BY: {surface: "event envelope EventID generation", deployable: "contracts package", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "event envelope EventID generation", deployable: "contracts package", ref: "packages/contracts/src/cap_contracts/envelope.py:new_event_id/EventEnvelope (fb552ba17acf62a009046794b5a87f7f9b2f8139); packages/contracts/schemas/event-envelope.v1.schema.json and packages/contracts/fixtures/event-envelope.utc.json, packages/contracts/fixtures/event-envelope.simulation.json (82d108ce844dc501c7ee876def836b6dcd624abf); ci/tests/test_event_envelope.py:TEST-EVT-002-001; evidence/WP-EVT-002/TRACE-RECONCILIATION.md"}
   EXPOSED_BY: ["event envelope"]
   VERIFIED_BY: [TEST-EVT-ENVELOPE]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-EVT-002-SLICE1-LOCAL-001, RUN-EVT-002-SCHEMA-LOCAL-001, RUN-EVT-002-WORLD-SCOPE-LOCAL-001]  # scoped local unit/fixture runs only; final boundary acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "EventID generation, preservation and strict envelope validation have scoped fixture/unit evidence; implementation-head CI passed at ea8f6043b23588b496eda593e8c306b0b5c3c357. Final requirement acceptance remains pending; no accepted EvidenceID or complete durable-producer adoption is claimed."
 FR-EVT-003:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-EVT-003 L169912"}
   DERIVED_FROM: [ITEM-12, ITEM-47, BE-INV-09, OBS-INV-05]
   ALLOCATED_TO: [ARCH-EVT-SCHEMA, ARCH-OBS-TRACE]
-  REALIZED_BY: {surface: "CorrelationID/CausationID propagation middleware", deployable: "contracts package + observability SDK wrapper", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "CorrelationID/CausationID propagation middleware", deployable: "contracts package + observability SDK wrapper", ref: "packages/contracts/src/cap_contracts/envelope.py (CorrelationID/CausationID/TraceID metadata only, fb552ba17acf62a009046794b5a87f7f9b2f8139); ci/tests/test_event_envelope.py:TEST-EVT-002-001; evidence/WP-EVT-002/TRACE-RECONCILIATION.md; HTTP/NATS/Temporal propagation middleware remains TBD_BY_IMPLEMENTATION"}
   EXPOSED_BY: ["event envelope", "IC-SHARED-003 ActorContext"]
   VERIFIED_BY: [TEST-EVT-ENVELOPE, TEST-OBS-TRACEPROP]
   EXERCISED_IN: [AV-SCEN-01]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-EVT-002-SLICE1-LOCAL-001, RUN-EVT-002-SCHEMA-LOCAL-001]  # scoped local unit/fixture runs only; final boundary acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Only metadata preservation/round-trip cases have run. TEST-OBS-TRACEPROP, real HTTP/NATS/Temporal propagation, downstream adoption and AV-SCEN-01 remain NOT_YET_EXECUTED. No propagation middleware or REAL acceptance is claimed."
 FR-EVT-004:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-EVT-004 L169913"}
   DERIVED_FROM: [ITEM-12, ITEM-84, SEC-INV-20, DX-INV-59]
   ALLOCATED_TO: [ARCH-WORLD-SCOPE, ARCH-EVT-SCHEMA]
-  REALIZED_BY: {surface: "WorldID scope-tagging middleware", deployable: "contracts package", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "WorldID scope-tagging middleware", deployable: "contracts package", ref: "packages/contracts/src/cap_contracts/envelope.py:EventEnvelope/validate_world_scope (ea8f6043b23588b496eda593e8c306b0b5c3c357); ci/tests/test_event_envelope.py:TEST-EVT-002-001; evidence/WP-EVT-002/TRACE-RECONCILIATION.md; runtime scope-tagging middleware/consumer adoption remains TBD_BY_IMPLEMENTATION"}
   EXPOSED_BY: ["event envelope (WorldID)"]
   VERIFIED_BY: [TEST-EVT-ENVELOPE]
   EXERCISED_IN: [AV-SCEN-10, AV-SCEN-09]
   MITIGATES: [ARCH-R09]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-EVT-002-SLICE1-LOCAL-001, RUN-EVT-002-SCHEMA-LOCAL-001, RUN-EVT-002-WORLD-SCOPE-LOCAL-001]  # scoped local unit/fixture runs only; final boundary acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Explicit WorldID and pure exact expected-world validation exist with scoped unit negatives. Runtime tagging/admission, actual downstream consumer enforcement and REAL AV-SCEN-09/10 remain pending / NOT_YET_EXECUTED; static guard success is not integrated isolation acceptance."
 FR-EVT-005:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-EVT-005 L169914"}
   DERIVED_FROM: [ITEM-36, EV-INV-03, EVTINF-INV-05, TEST-INV-09]
@@ -7102,12 +7105,14 @@ NFR-DATA-008:
   meta: {class: H0, owner: Yavuz, anchor: "01 Item82 NFR-DATA-008 L172527"}
   DERIVED_FROM: [ITEM-46, ITEM-84, DB-INV-15, DATA-INV-06]
   ALLOCATED_TO: [ARCH-DATA-LINEAGE, ARCH-EVT-SCHEMA]
+  REALIZED_BY: {surface: "explicit UTC vs simulation-time envelope metadata (static portion only)", deployable: "contracts package", ref: "packages/contracts/src/cap_contracts/envelope.py:SimulationTime/EventEnvelope (fb552ba17acf62a009046794b5a87f7f9b2f8139); packages/contracts/schemas/event-envelope.v1.schema.json and packages/contracts/fixtures/event-envelope.utc.json, packages/contracts/fixtures/event-envelope.simulation.json (82d108ce844dc501c7ee876def836b6dcd624abf); ci/tests/test_event_envelope.py:TEST-EVT-002-001; evidence/WP-EVT-002/TRACE-RECONCILIATION.md; REAL persisted-evidence verification pending"}
   MEASUREMENT: {metric: "persisted formal evidence fields with ambiguous UTC-vs-simulation time", threshold: "= 0", workload: "formal persisted evidence", hardware: "N/A (not hardware-bound)", observed: null}
   VERIFIED_BY: [TEST-DATA-TIME]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-EVT-002-SLICE1-LOCAL-001, RUN-EVT-002-SCHEMA-LOCAL-001]  # scoped local unit/fixture runs only; final boundary acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Only UTC/simulation-time metadata, schema and fixture distinctions have scoped execution evidence. Formal persisted real-time evidence and the zero-ambiguity measurement at the REAL boundary remain pending; observed stays null and NFR acceptance is not claimed."
 ```
 
 ### 17.NM NFR-UX

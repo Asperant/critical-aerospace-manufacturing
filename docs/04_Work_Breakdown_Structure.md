@@ -801,7 +801,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-EVT-CONTRACTS |
 | Size band (indicative, no hour estimates) | M (≈4–7 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `packages/contracts/src/cap_contracts/envelope.py`; `packages/contracts/schemas/event-envelope.v1.schema.json`; `packages/contracts/fixtures/event-envelope.utc.json`; `packages/contracts/fixtures/event-envelope.simulation.json`; `ci/tests/test_event_envelope.py`; `evidence/WP-EVT-002/TRACE-RECONCILIATION.md` (static/library slices only; HTTP/NATS/Temporal propagation pending) |
 
 **Purpose.** Guarantee that every asynchronous message carries identity, causality, world scope and trace context so the closed loop is reconstructible.
 
@@ -824,7 +824,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 
 **Verification work (03 planned families).** AV-SCEN-01, AV-SCEN-09, AV-SCEN-10, TEST-DATA-TIME, TEST-EVT-ENVELOPE, TEST-OBS-TRACEPROP
 
-**Expected evidence artifact.** CI/integration test evidence; for F0 also integrated scenario evidence — `NOT_YET_EXECUTED`.
+**Expected evidence artifact.** Scoped local envelope/schema/world-guard executions and implementation-head CI are recorded in `evidence/WP-EVT-002/TRACE-RECONCILIATION.md`, with exact files, source commits and historical run records. Required propagation, persisted real-time evidence, downstream adoption and AV-SCEN-01/09/10 acceptance remain pending / `NOT_YET_EXECUTED`; no full WP acceptance is asserted.
 
 **Risk hooks (Item 69).** ARCH-R09
 
