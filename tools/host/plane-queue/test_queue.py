@@ -1,11 +1,14 @@
 """Host helper security/queue regression checks; no network or credentials."""
 import ast
 import contextlib
+from email.message import Message
 import importlib.util
 import io
 import json
 from pathlib import Path
 import subprocess
+import time
+import urllib.error
 import unittest
 from unittest.mock import patch
 
@@ -73,6 +76,45 @@ class QueueTests(unittest.TestCase):
         self.assertIsNone(request.data)
         self.assertTrue(request.full_url.startswith(q.ORIGIN + q.PREFIX + 'issues/?cursor='))
         self.assertFalse(hasattr(reader, 'post'))
+
+    def test_429_retries_are_bounded_and_backed_off(self):
+        class Response:
+            status = 200
+            def __enter__(self): return self
+            def __exit__(self, *args): pass
+            def read(self, limit): return b'[]'
+        headers = Message()
+        headers['Retry-After'] = '0'
+        errors = [urllib.error.HTTPError('http://plane', 429, 'busy', headers, None),
+                  urllib.error.HTTPError('http://plane', 429, 'busy', headers, None)]
+        reader = q.Reader('sentinel-secret', q.RateLimiter())
+        with patch.object(reader.opener, 'open', side_effect=errors + [Response()]) as opened, \
+             patch.object(q.time, 'sleep') as sleep:
+            self.assertEqual(reader.get('issues/'), [])
+        self.assertEqual(opened.call_count, 3)
+        self.assertEqual(sleep.call_count, 2)
+        self.assertEqual(reader.metrics['get_count'], 3)
+
+    def test_expired_snapshot_is_never_reused(self):
+        rows = {'a': task()}
+        with patch.object(q, 'SNAPSHOT_CACHE_PATH', Path('/tmp/cap-plane-test-snapshot.json')):
+            q.SNAPSHOT_CACHE_PATH.unlink(missing_ok=True)
+            q._write_snapshot_cache(rows)
+            value = json.loads(q.SNAPSHOT_CACHE_PATH.read_text())
+            value['captured_at'] = time.time() - q.SNAPSHOT_CACHE_TTL_SECONDS - 1
+            q.SNAPSHOT_CACHE_PATH.write_text(json.dumps(value))
+            self.assertIsNone(q._read_snapshot_cache())
+            q.SNAPSHOT_CACHE_PATH.unlink(missing_ok=True)
+
+    def test_fresh_snapshot_is_shared_without_a_second_plane_read(self):
+        rows = {'a': task()}
+        reader = q.Reader('sentinel-secret')
+        with patch.object(q, '_read_snapshot_cache', return_value=rows), \
+             patch.object(q, 'snapshot') as read:
+            actual, cached = q.load_snapshot(reader, {'owners': {}})
+        self.assertTrue(cached)
+        self.assertEqual(actual, rows)
+        read.assert_not_called()
 
     def test_snapshot_pacing_fits_operator_budget(self):
         # The normal snapshot has 18 bounded GETs; the pacing budget must not

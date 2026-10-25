@@ -15,6 +15,7 @@ import sys
 import threading
 import time
 import unicodedata
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -48,6 +49,12 @@ REQUEST_INTERVAL = 0.9
 HEALTH_BUDGET_SECONDS = 4
 MAX_READ_WORKERS = 4
 PARALLEL_REQUEST_INTERVAL = REQUEST_INTERVAL / MAX_READ_WORKERS
+SNAPSHOT_CACHE_PATH = Path('/run/cap-plane-snapshot.json')
+SNAPSHOT_CACHE_SCHEMA = 'cap-plane-snapshot-v1'
+SNAPSHOT_CACHE_TTL_SECONDS = 3.0
+SNAPSHOT_CACHE_MAX_BYTES = 8_000_000
+MAX_429_RETRIES = 2
+MAX_429_DELAY_SECONDS = 2.0
 CACHE_PATH = Path('/run/cap-plane-slot-release-v2.json')
 CACHE_SCHEMA = 'cap-slot-release-cache-v1'
 CACHE_MAX_BYTES = 2_000_000
@@ -129,6 +136,12 @@ class RateLimiter:
         if delay:
             time.sleep(delay)
 
+    def defer(self, delay):
+        """Pause aggregate reads after a server-side rate-limit response."""
+        require(delay >= 0)
+        with self.lock:
+            self.next_at = max(self.next_at, time.monotonic() + delay)
+
 
 class Reader:
     def __init__(self, key, limiter=None):
@@ -137,24 +150,41 @@ class Reader:
         self.last = 0
         self.calls = []
         self.limiter = limiter
+        self.metrics = {'get_count': 0}
 
     def get(self, route, cursor=None):
         require(route in ROUTES)
         require(cursor is None or isinstance(cursor, str) and re.fullmatch(r'[A-Za-z0-9:_=.-]{1,128}', cursor))
         query = '' if cursor is None else '?' + urllib.parse.urlencode({'cursor': cursor})
-        if self.limiter is None:
-            time.sleep(max(0, REQUEST_INTERVAL - (time.monotonic() - self.last)))
-            self.last = time.monotonic()
-        else:
-            self.limiter.wait()
         request = urllib.request.Request(ORIGIN + PREFIX + route + query,
                                         headers={'X-API-Key': self.key}, method='GET')
-        self.calls.append(('GET', route))
-        with self.opener.open(request, timeout=10) as response:
-            require(response.status == 200)
-            raw = response.read(8_000_001)
-            require(len(raw) <= 8_000_000)
-            return json.loads(raw, object_pairs_hook=unique)
+        for attempt in range(MAX_429_RETRIES + 1):
+            if self.limiter is None:
+                time.sleep(max(0, REQUEST_INTERVAL - (time.monotonic() - self.last)))
+                self.last = time.monotonic()
+            else:
+                self.limiter.wait()
+            self.calls.append(('GET', route))
+            self.metrics['get_count'] += 1
+            try:
+                with self.opener.open(request, timeout=10) as response:
+                    require(response.status == 200)
+                    raw = response.read(8_000_001)
+                    require(len(raw) <= 8_000_000)
+                    return json.loads(raw, object_pairs_hook=unique)
+            except urllib.error.HTTPError as exc:
+                if exc.code != 429 or attempt >= MAX_429_RETRIES:
+                    raise
+                retry_after = 0.0
+                if exc.headers is not None:
+                    with contextlib.suppress(ValueError, TypeError):
+                        retry_after = float(exc.headers.get('Retry-After', 0))
+                delay = min(MAX_429_DELAY_SECONDS,
+                            max(0.25 * (2 ** attempt), retry_after))
+                if self.limiter is not None:
+                    self.limiter.defer(delay)
+                else:
+                    self.last = time.monotonic() + delay
 
     def rows(self, route):
         result, seen = [], set()
@@ -164,7 +194,8 @@ class Reader:
             if isinstance(data, list):
                 page, more = data, False
             else:
-                require(isinstance(data, dict) and isinstance(data.get('results'), list))
+                if not isinstance(data, dict) or not isinstance(data.get('results'), list):
+                    raise Unsafe()
                 page, more = data['results'], data.get('next_page_results', False)
                 require(type(more) is bool)
             require(all(isinstance(row, dict) and isinstance(row.get('id'), str) for row in page))
@@ -174,6 +205,7 @@ class Reader:
                 if isinstance(data, dict) and 'total_count' in data:
                     require(data['total_count'] == len(result))
                 return result
+            require(isinstance(data, dict))
             cursor = data.get('next_cursor')
             require(isinstance(cursor, str) and cursor and cursor not in seen)
             seen.add(cursor)
@@ -198,7 +230,9 @@ def _read_routes(reader, routes, limiter=None):
                 route = routes[next_route]
                 next_route += 1
             try:
-                result[route] = Reader(reader.key, limiter).rows(route)
+                child = Reader(reader.key, limiter)
+                child.metrics = reader.metrics
+                result[route] = child.rows(route)
             except BaseException as exc:
                 with state_lock:
                     errors.append(exc)
@@ -260,6 +294,54 @@ def snapshot(reader, catalog):
             require(row['cycle'] is None)
             row['cycle'] = 'S' + str(n)
     return rows
+
+
+def _read_snapshot_cache():
+    """Return only a fresh complete snapshot; expiry is fail-closed."""
+    try:
+        if not SNAPSHOT_CACHE_PATH.is_file() or SNAPSHOT_CACHE_PATH.stat().st_size > SNAPSHOT_CACHE_MAX_BYTES:
+            return None
+        value = json.loads(SNAPSHOT_CACHE_PATH.read_text())
+        if not isinstance(value, dict):
+            return None
+        captured = value.get('captured_at')
+        rows = value.get('rows')
+        if (value.get('schema') != SNAPSHOT_CACHE_SCHEMA or
+                not isinstance(captured, int | float) or
+                time.time() - captured < 0 or
+                time.time() - captured > SNAPSHOT_CACHE_TTL_SECONDS or
+                not isinstance(rows, dict)):
+            return None
+        return rows
+    except (OSError, ValueError, TypeError, AttributeError):
+        return None
+
+
+def _write_snapshot_cache(rows):
+    payload = json.dumps({'schema': SNAPSHOT_CACHE_SCHEMA,
+                          'captured_at': time.time(), 'rows': rows}, sort_keys=True)
+    if len(payload.encode()) > SNAPSHOT_CACHE_MAX_BYTES:
+        return
+    temporary = SNAPSHOT_CACHE_PATH.with_name(SNAPSHOT_CACHE_PATH.name + '.tmp')
+    try:
+        temporary.write_text(payload)
+        os.chmod(temporary, 0o600)
+        os.replace(temporary, SNAPSHOT_CACHE_PATH)
+    except OSError:
+        with contextlib.suppress(OSError):
+            temporary.unlink()
+
+
+def load_snapshot(reader, catalog):
+    """Share one fresh Plane state snapshot across the complete queue run."""
+    if isinstance(reader, Reader):
+        cached = _read_snapshot_cache()
+        if cached is not None:
+            return cached, True
+    rows = snapshot(reader, catalog)
+    if isinstance(reader, Reader):
+        _write_snapshot_cache(rows)
+    return rows, False
 
 
 def clean(text):
@@ -493,8 +575,11 @@ def main():
         with os.fdopen(fd, 'r+') as lock:
             require(os.fstat(lock.fileno()).st_uid == 0)
             fcntl.flock(lock, fcntl.LOCK_EX)
-            rows = snapshot(Reader(key, RateLimiter()), catalog)
+            reader = Reader(key, RateLimiter())
+            rows, snapshot_cached = load_snapshot(reader, catalog)
             result = combine(profile, rows, bounded_preflight(profile, key, rows))
+            result['plane_gets'] = 0 if snapshot_cached else reader.metrics['get_count']
+            result['plane_snapshot_cached'] = snapshot_cached
             if result['status']=='BLOCKED':
                 result['reason']='ACTIVE_BLOCKER; accountable reason unavailable from live label alone'
                 task=result['current_task'] or result['next_task']
