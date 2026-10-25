@@ -13,6 +13,7 @@
   "reportMissingModuleSource": "none",
   "executionEnvironments": [
     {"root": "ci", "extraPaths": ["ci", "ci/scripts", "ci/tests", "packages/contracts/src"]},
+    {"root": "tools/trace", "extraPaths": ["tools/trace/src"]},
     {
       "root": "services/manufacturing-simulator",
       "extraPaths": [

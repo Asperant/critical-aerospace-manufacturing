@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Asperant/critical-aerospace-manufacturing/traceability/trace_schema.json",
+  "title": "cap.trace-registry/v1 — machine-readable trace registry (01 Item 83, 03 §18, WP-GOV-002)",
+  "description": "Requirement nodes carry identity-level attributes only (never SHALL text); TraceEdges carry the relations. Logical edge identity is from + relation + to. The relation vocabulary is checked by TL-04, uniqueness by TL-05.",
+  "type": "object",
+  "required": ["schema", "seeded_from", "requirements", "edges"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "cap.trace-registry/v1"},
+    "seeded_from": {
+      "type": "object",
+      "required": ["document", "section", "sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "document": {"const": "docs/03_Requirements_Traceability_Matrix.md"},
+        "section": {"const": "17"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "requirements": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {"pattern": "^(?:FR|NFR)-[A-Z]+-[0-9]{3}$"},
+      "additionalProperties": {"$ref": "#/$defs/requirement"}
+    },
+    "edges": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/edge"}
+    }
+  },
+  "$defs": {
+    "text": {"type": "string", "minLength": 1, "maxLength": 2000},
+    "requirement": {
+      "type": "object",
+      "required": ["meta", "acceptance", "state"],
+      "additionalProperties": false,
+      "properties": {
+        "meta": {
+          "type": "object",
+          "required": ["class", "owner", "anchor"],
+          "additionalProperties": false,
+          "properties": {
+            "class": {"enum": ["F0", "F1", "R1", "H0", "A1", "S2", "C3"]},
+            "owner": {"enum": ["Asrın", "Selman", "Batu", "Yavuz"]},
+            "anchor": {"$ref": "#/$defs/text"}
+          }
+        },
+        "realization": {
+          "type": "object",
+          "required": ["surface", "deployable", "ref"],
+          "additionalProperties": false,
+          "properties": {
+            "surface": {"$ref": "#/$defs/text"},
+            "deployable": {"$ref": "#/$defs/text"},
+            "ref": {"$ref": "#/$defs/text"}
+          }
+        },
+        "acceptance": {"type": "object"},
+        "state": {
+          "type": "object",
+          "required": ["coverage", "planning", "evidence"],
+          "properties": {
+            "coverage": {"type": "string"},
+            "planning": {"type": "string"},
+            "evidence": {"type": "string"}
+          }
+        },
+        "measurement": {"type": "object"},
+        "note": {"$ref": "#/$defs/text"}
+      }
+    },
+    "edge": {
+      "type": "object",
+      "required": ["from", "relation", "to", "applicability"],
+      "additionalProperties": false,
+      "properties": {
+        "from": {"type": "string", "pattern": "^(?:FR|NFR)-[A-Z]+-[0-9]{3}$"},
+        "relation": {"type": "string", "minLength": 1},
+        "to": {"type": "string", "pattern": "^\\S(?:[^\\n]{0,298}\\S)?$"},
+        "applicability": {"enum": ["PLANNED", "RECORDED"]}
+      }
+    }
+  }
+}
