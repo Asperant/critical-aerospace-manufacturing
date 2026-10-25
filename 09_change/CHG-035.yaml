@@ -1,0 +1,102 @@
+CHG-035:
+  title: Canonical EVT-002 external context binding ownership and future artifacts
+  class: C3
+  review_risk_class: CR-3
+  owner: Asrın
+  decision: APPROVED
+  status: APPROVED
+  application_control_item: CTRL-HOST-016
+  required_human_approvals: 0
+  human_decision_basis: Explicit project-owner request on 25 October 2026 to define and apply missing ownership/dependency
+    records and future artifact obligations; no runtime implementation or lifecycle application.
+  scope: Three consumer-specific transport binding chains for WP-EVT-002; no slot-policy code or lifecycle/readiness
+    predicate change
+  canonical_bindings:
+  - HTTP backend context producer WP-CORE-001/asrin and BFF client adapter WP-UI-001/asrin; BFF consumes Core query
+    APIs and Core receives the HTTP request context
+  - NATS publisher WP-CORE-005/asrin to application projection consumer WP-TWIN-001/asrin; broker runtime remains
+    Yavuz and generic consumer primitives remain WP-EVT-003
+  - Temporal workflow/activity context hooks WP-AUTO-001/batuhan; server runtime remains Yavuz
+  rules:
+  - These are newly authorized future artifact allocations, not retrospective claims that the interfaces were already
+    bound
+  - All five producing WP obligations feed WP-EVT-002/asrin context integration; runtime receiver ownership and
+    the waiting WP are distinguished
+  - Existing Core query contracts and BFF abstract ports are semantic inputs, not proofs that a backend HTTP adapter
+    or operation is implemented
+  - Transport contracts must bind exact operations, trusted context and versions before integration; this change
+    adds no headers, routes, payload schemas or protected-action authorization
+  - Concrete paths in the producing WBS cards are FUTURE_NOT_IMPLEMENTED; absence never proves producer readiness
+    or completed propagation
+  - Preserve identity/causality/trace roles, exact WorldID and UTC versus simulation meanings; Core authority, Twin
+    rebuildability, workflow determinism and HITL remain unchanged
+  - Registry digests and canonical provenance are recomputed from the resulting documents; existing CHG-034 validation
+    remains mandatory
+  - No new HARD START edge, producer DONE, global readiness, acceptance, slot release or lifecycle transition is
+    asserted
+  rollout: Review and merge the change record, producing WP cards and registry; pass required CI and refresh installed
+    canonical references separately. Fresh accountable assessment/audit linkage needs separate authorization. Revoke
+    via the record plus pinned WBS/registry together.
+  rollback: Revert this source allocation and registry together; never invent historical implementation or rewrite
+    blocker audits
+  consumer_specific_dependency_records:
+  - binding: BIND-EVT002-HTTP-CORE
+    producer_wp: WP-CORE-001
+    consumer_wp: WP-EVT-002
+    consumer_owner: asrin
+    stage: INTEGRATION
+    readiness_certified: false
+    producer_owner: asrin
+    introduces_readiness_edge: false
+    artifact_status: FUTURE_NOT_IMPLEMENTED
+  - binding: BIND-EVT002-HTTP-BFF
+    producer_wp: WP-UI-001
+    consumer_wp: WP-EVT-002
+    consumer_owner: asrin
+    stage: INTEGRATION
+    readiness_certified: false
+    producer_owner: asrin
+    introduces_readiness_edge: false
+    artifact_status: FUTURE_NOT_IMPLEMENTED
+  - binding: BIND-EVT002-NATS-PUBLISHER
+    producer_wp: WP-CORE-005
+    consumer_wp: WP-EVT-002
+    consumer_owner: asrin
+    stage: INTEGRATION
+    readiness_certified: false
+    producer_owner: asrin
+    introduces_readiness_edge: false
+    artifact_status: FUTURE_NOT_IMPLEMENTED
+  - binding: BIND-EVT002-NATS-CONSUMER
+    producer_wp: WP-TWIN-001
+    consumer_wp: WP-EVT-002
+    consumer_owner: asrin
+    stage: INTEGRATION
+    readiness_certified: false
+    producer_owner: asrin
+    introduces_readiness_edge: false
+    artifact_status: FUTURE_NOT_IMPLEMENTED
+  - binding: BIND-EVT002-TEMPORAL
+    producer_wp: WP-AUTO-001
+    consumer_wp: WP-EVT-002
+    consumer_owner: asrin
+    stage: INTEGRATION
+    readiness_certified: false
+    producer_owner: batuhan
+    introduces_readiness_edge: false
+    artifact_status: FUTURE_NOT_IMPLEMENTED
+  protocol_obligations:
+    HTTP: Future backend Core query HTTP ingress and BFF client context mapping must bind actual operations and
+      versions for existing query contracts/abstract ports; preserve exact WorldID, causal/trace identifiers and
+      explicit UTC versus simulation meanings. No header, endpoint or payload schema is declared delivered. Browser
+      identity/payload cannot confer authority.
+    NATS: Future Core publisher and Twin application consumer must bind domain-event versions, subjects, stream,
+      publisher and durable/handler identities; preserve EventID, causal/trace/world and time-kind fields, enforce
+      exact consumer world admission and existing duplicate/ordering/replay rules. Generic EVT-003 hooks or broker
+      health are not this delivery.
+    Temporal: Future workflow/activity/worker identities and context carrier/restoration must preserve exact world/causal/trace
+      and UTC versus simulation semantics with deterministic replay. Authentication, approvals, authorization and
+      effect verification are unchanged.
+  scope_preservation: Only delivering WP cards gain future artifact obligations. WP-EVT-002 own scope projection,
+    RTM, architecture specification, dependency readiness graph and general governance sources remain byte/semantically
+    unchanged. These are reviewed consumer-specific input allocations, not new HARD START edges.

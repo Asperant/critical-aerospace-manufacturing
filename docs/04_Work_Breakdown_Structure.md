@@ -407,6 +407,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 **Inputs / required contracts.** no inbound dependency edges in 05 — this package is an early unlocker
 
 **Deliverables.**
+- CHG-035 / BIND-EVT002-HTTP-CORE future binding obligation: Core backend HTTP context boundary for the versioned query contract at `services/manufacturing-core/src/manufacturing_core/http_context.py`. Consumer API adapter: WP-UI-001; waiting envelope-integration consumer: WP-EVT-002. FUTURE_NOT_IMPLEMENTED; exact operations/trusted context/version mapping remain required before integration.
 - domain model modules in manufacturing-core
 - `core` schema migrations
 - versioned Core query contract (v1) + fixtures
@@ -583,6 +584,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 **Inputs / required contracts.** gated by DEP-022 (DN-CORE-LIFECYCLE → DN-CORE-OUTBOX, HARD/INTEGRATION@COMPONENT_READY, need-by M1 (S2))
 
 **Deliverables.**
+- CHG-035 / BIND-EVT002-NATS-PUBLISHER future binding obligation: Core outbox publisher context and transport binding at `services/manufacturing-core/src/manufacturing_core/outbox_publisher.py`; first explicitly bound application consumer is WP-TWIN-001, with WP-EVT-002 owning shared context integration. FUTURE_NOT_IMPLEMENTED; subject/stream/version contracts and real publication remain required.
 - outbox table + relay worker
 - domain event schemas per namespace
 - crash-consistency test suite on real PostgreSQL
@@ -1034,6 +1036,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 **Inputs / required contracts.** gated by DEP-031 (DN-EVT-CONTRACTS → DN-TWIN-SKELETON, HARD/START@CONTRACT_READY, need-by S2), DEP-032 (DN-EVT-SPINE → DN-TWIN-SKELETON, HARD/INTEGRATION@INTEGRATION_READY, need-by M1 (S2)), DEP-033 (DN-RT-PG → DN-TWIN-SKELETON, HARD/INTEGRATION@INTEGRATION_READY, need-by M1 (S2))
 
 **Deliverables.**
+- CHG-035 / BIND-EVT002-NATS-CONSUMER future binding obligation: application NATS projection consumer at `services/operational-twin/src/operational_twin/nats_consumer.py`, receiving WP-CORE-005 domain events using EVT-003 primitives and the EVT-002 shared envelope. FUTURE_NOT_IMPLEMENTED; durable/handler binding, world validation and real projection evidence remain required.
 - twin-projector worker
 - `twin` schema + read models
 - source-revision ledger
@@ -3797,6 +3800,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 **Inputs / required contracts.** gated by DEP-094 (DN-AUTO-DESIGN → DN-AUTO-DURABLE, HARD/START@COMPONENT_READY, need-by S3), DEP-095 (DN-RT-TEMPORAL → DN-AUTO-DURABLE, HARD/INTEGRATION@INTEGRATION_READY, need-by E2E-01 formal run (end S5))
 
 **Deliverables.**
+- CHG-035 / BIND-EVT002-TEMPORAL future binding obligation: workflow context at `services/automation/src/automation/workflow_context.py` and activity restoration at `services/automation/src/automation/activity_context.py`, supplying the boundary for WP-EVT-002 shared-context integration. FUTURE_NOT_IMPLEMENTED; actual workflow/activity/worker contracts, replay-safe context and real propagation remain required.
 - WorkflowBundle definitions
 - Temporal worker deployment
 - durable approval-wait signal handling
@@ -4422,6 +4426,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 **Inputs / required contracts.** no inbound dependency edges in 05 — this package is an early unlocker
 
 **Deliverables.**
+- CHG-035 / BIND-EVT002-HTTP-BFF future binding obligation: backend client context adapter at `services/operations-bff/src/operations_bff/backend_context.py`, consuming WP-CORE-001 backend query APIs and supplying hooks for WP-EVT-002 integration. FUTURE_NOT_IMPLEMENTED; this does not claim the existing abstract overview ports are already bound.
 - React/Vite shell
 - BFF OpenAPI contract + fixtures
 - auth session integration
