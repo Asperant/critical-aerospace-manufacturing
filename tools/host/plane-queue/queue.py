@@ -330,23 +330,23 @@ def _slot_waits(profile, key, rows):
         })
     if not candidates:
         return []
-    plane = SimpleNamespace(
-        items=candidates,
-        names={state: state for state in STATES},
-        blocked='BLOCKED',
-    )
     gh = t.GitHub(profile)
-    live = auto.live_view(t, plane, policy, profile, gh)
     waits = []
-    for wp, item in live['items'].items():
+    for candidate in candidates:
+        plane = SimpleNamespace(
+            items=[candidate],
+            names={state: state for state in STATES},
+            blocked='BLOCKED',
+        )
+        try:
+            live = auto.live_view(t, plane, policy, profile, gh)
+        except Exception:
+            continue  # This WP remains visible; UNKNOWN never releases it.
+        wp, item = next(iter(live['items'].items()))
         reason = auto.resolver.released_wait(wp, item)
         if reason:
-            waits.append({
-                'wp_id': wp,
-                'state': item['state'],
-                'blocked': True,
-                'reason': reason,
-            })
+            waits.append({'wp_id': wp, 'state': item['state'],
+                          'blocked': True, 'reason': reason})
     return waits
 
 
