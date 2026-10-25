@@ -83,6 +83,38 @@ class QueueTests(unittest.TestCase):
         with patch.object(q, 'preflight', side_effect=TimeoutError('sentinel')):
             self.assertIsNone(q.bounded_preflight('asrin', 'sentinel-secret'))
 
+    def test_unavailable_health_keeps_verified_slot_releases(self):
+        rows = {
+            'a': task('WP-CORE-004', 'VALIDATING', blocked=True),
+            'b': task('WP-CORE-005', 'IN_PROGRESS', blocked=True),
+            'c': task('WP-UI-001', 'READY'),
+        }
+        health = {
+            'health': 'UNAVAILABLE',
+            'prepared_next': None,
+            'first_blocker': {'reason': 'PREFLIGHT_SOURCE_UNAVAILABLE'},
+            'deferred_waits': [
+                {'wp_id': 'WP-CORE-004', 'reason': 'WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE'},
+                {'wp_id': 'WP-CORE-005', 'reason': 'WAITING_EXTERNAL_INTEGRATION_BINDINGS'},
+            ],
+        }
+        result = q.combine('asrin', rows, health)
+        self.assertEqual(result['status'], 'OK')
+        self.assertEqual(result['next_task']['wp_id'], 'WP-UI-001')
+        self.assertEqual(result['health'], 'UNAVAILABLE')
+
+    def test_unknown_slot_proof_does_not_hide_wp(self):
+        rows = {
+            'a': task('WP-CORE-004', 'IN_PROGRESS', blocked=True),
+            'b': task('WP-CORE-005', 'IN_PROGRESS', blocked=True),
+        }
+        health = {'health': 'UNAVAILABLE', 'prepared_next': None,
+                  'first_blocker': {'reason': 'PREFLIGHT_SOURCE_UNAVAILABLE'},
+                  'deferred_waits': []}
+        result = q.combine('asrin', rows, health)
+        self.assertEqual(result['status'], 'AMBIGUOUS')
+        self.assertEqual(result['candidate_wp_ids'], ['WP-CORE-004', 'WP-CORE-005'])
+
     def test_response_bounds_and_redirects_fail_closed(self):
         class Response:
             status = 200

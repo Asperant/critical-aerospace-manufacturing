@@ -7,16 +7,17 @@ import html.parser
 import json
 import os
 import pwd
-import threading
-from pathlib import Path
-import re
 import resource
 import signal
 import sys
+import threading
 import time
 import unicodedata
 import urllib.parse
 import urllib.request
+from pathlib import Path
+import re
+from types import SimpleNamespace
 
 ROOT = Path('/etc/cap-plane-queue')
 ORIGIN = 'http://127.0.0.1:8080'
@@ -298,8 +299,59 @@ def select(profile, rows, deferred=None):
     return result
 
 
-def preflight(profile, key):
-    """Derived health (including deferred waits) from the installed resolver; None if unavailable."""
+def _slot_waits(profile, key, rows):
+    """Read only verified slot releases; no preparation/evidence health work."""
+    loader = __import__('importlib.machinery', fromlist=['SourceFileLoader']).SourceFileLoader(
+        'cap_auto_slots', '/usr/local/libexec/cap-auto-next.py')
+    spec = __import__('importlib.util', fromlist=['spec_from_loader']).spec_from_loader(loader.name, loader)
+    auto = __import__('importlib.util', fromlist=['module_from_spec']).module_from_spec(spec)
+    loader.exec_module(auto)
+    t = auto.load_transition()
+    policy = json.loads((ROOT / 'transition-policy.json').read_text())
+    t.verify_policy_sources(policy)
+    candidates = []
+    for row in rows.values():
+        if row.get('_profile') != profile or not row.get('blocked'):
+            continue
+        if row.get('plane_state') not in {'IN_PROGRESS', 'VALIDATING'}:
+            continue
+        wp = row['wp_id']
+        candidates.append({
+            'external_id': wp,
+            'external_source': 'projectctl',
+            'name': '[' + wp + '] ' + str(row.get('title', '')),
+            'description_html': json.dumps({
+                'canonical_wp_id': wp,
+                'canonical_owner': PEOPLE[profile][0],
+            }),
+            'assignees': [PEOPLE[profile][1]],
+            'state': row['plane_state'],
+            'labels': ['BLOCKED'],
+        })
+    if not candidates:
+        return []
+    plane = SimpleNamespace(
+        items=candidates,
+        names={state: state for state in STATES},
+        blocked='BLOCKED',
+    )
+    gh = t.GitHub(profile)
+    live = auto.live_view(t, plane, policy, profile, gh)
+    waits = []
+    for wp, item in live['items'].items():
+        reason = auto.resolver.released_wait(wp, item)
+        if reason:
+            waits.append({
+                'wp_id': wp,
+                'state': item['state'],
+                'blocked': True,
+                'reason': reason,
+            })
+    return waits
+
+
+def preflight(profile, key, rows=None):
+    """Return verified slot releases even when derived health is unavailable."""
     try:
         loader=__import__('importlib.machinery',fromlist=['SourceFileLoader']).SourceFileLoader('cap_auto_health','/usr/local/libexec/cap-auto-next.py')
         spec=__import__('importlib.util',fromlist=['spec_from_loader']).spec_from_loader(loader.name,loader)
@@ -308,7 +360,12 @@ def preflight(profile, key):
         t=auto.load_transition()
         policy=json.loads((ROOT/'transition-policy.json').read_text())
         t.verify_policy_sources(policy)
-        return auto.owner_health(t,profile,policy,t.Plane(key),t.GitHub)
+        waits = _slot_waits(profile, key, rows or {})
+        # Selection consumes only these verified proofs. Full preparation health
+        # is advisory and may be too slow for the queue's bounded read budget.
+        return {'health': 'UNAVAILABLE', 'prepared_next': None,
+                'first_blocker': {'reason': 'PREFLIGHT_SOURCE_UNAVAILABLE'},
+                'deferred_waits': waits}
     except Exception:
         return None
 
@@ -342,7 +399,7 @@ class HealthTimeout(Exception):
     pass
 
 
-def bounded_preflight(profile, key):
+def bounded_preflight(profile, key, rows=None):
     """Health is advisory; it must not turn a live queue read into a hang."""
     def alarm_handler(signum, frame):
         raise HealthTimeout()
@@ -350,7 +407,7 @@ def bounded_preflight(profile, key):
     previous = signal.signal(signal.SIGALRM, alarm_handler)
     signal.setitimer(signal.ITIMER_REAL, HEALTH_BUDGET_SECONDS)
     try:
-        return preflight(profile, key)
+        return preflight(profile, key) if rows is None else preflight(profile, key, rows)
     except (HealthTimeout, TimeoutError, OSError):
         return None
     finally:
@@ -378,7 +435,7 @@ def main():
             require(os.fstat(lock.fileno()).st_uid == 0)
             fcntl.flock(lock, fcntl.LOCK_EX)
             rows = snapshot(Reader(key, RateLimiter()), catalog)
-            result = combine(profile, rows, bounded_preflight(profile, key))
+            result = combine(profile, rows, bounded_preflight(profile, key, rows))
             if result['status']=='BLOCKED':
                 result['reason']='ACTIVE_BLOCKER; accountable reason unavailable from live label alone'
                 task=result['current_task'] or result['next_task']
