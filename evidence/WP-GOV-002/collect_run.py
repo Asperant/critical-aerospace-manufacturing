@@ -99,10 +99,10 @@ def main() -> int:
     code.write_text("tools/trace/src/cap_trace/lint.py\n", encoding="utf-8")
     docs = probes / "files-docs.txt"
     docs.write_text("docs/03_Requirements_Traceability_Matrix.md\n", encoding="utf-8")
-    field = "Requirements (stable IDs, or NONE — reason / control-only scope): "
-    bodies = {
-        "declared": field + "FR-GOV-004, FR-GOV-005, FR-GOV-009, NFR-GOV-009\n",
-        "unknown-id": field + "FR-GOV-999\n",
+    field = "Requirements (stable IDs, or NONE — reason / control-only scope):"
+    bodies = {  # no trailing whitespace: the PR hygiene check runs git diff --check
+        "declared": field + " FR-GOV-004, FR-GOV-005, FR-GOV-009, NFR-GOV-009\n",
+        "unknown-id": field + " FR-GOV-999\n",
         "empty": field + "\n",
     }
     for name, text in bodies.items():
