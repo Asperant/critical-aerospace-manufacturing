@@ -41,6 +41,8 @@ spec.loader.exec_module(reconcile)
 reconcile.t=types.SimpleNamespace(Denied=ValueError)
 lifecycle=yaml.safe_load((ROOT/'project_control/lifecycle_reconciliation.yaml').read_text())
 reconcile.validate_policy(lifecycle,contexts,{profile:(name,) for name,profile in people.items()})
+recovery=yaml.safe_load((ROOT/'project_control/deferred_recovery.yaml').read_text())
+reconcile.validate_recovery_policy(recovery,lifecycle,contexts,{profile:(name,) for name,profile in people.items()})
 node_producers={n.id:sorted(w.id for w in p.catalog.work_packages
                            if n.id in (w.readiness_refs or [])) for n in nodes.values()}
 manifest=dict(p.source_manifest)
@@ -78,6 +80,8 @@ policy['execution_project']['source_manifest']=manifest
 for kind,name in [('auto_next','tools/host/plane-transition/auto_next.py'),('execution_queue','tools/projectctl/src/projectctl/execution_queue.py'),('reconcile','tools/host/plane-transition/reconcile.py')]:
     policy['implementation_sha256'][kind]=sha256((ROOT/name).read_bytes()).hexdigest()
 policy['lifecycle_reconciliation']=lifecycle
+policy['deferred_recovery']=recovery
+policy['deferred_recovery_schema']=reconcile.RECOVERY_SCHEMA
 policy['preparation_schema']='cap-preparation-v1'
 policy['deferred_acceptance_schema']='cap-deferred-acceptance-v1'
 policy['scope_projection_schema']='cap-scope-projection-v1'

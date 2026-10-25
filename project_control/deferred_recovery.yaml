@@ -1,0 +1,28 @@
+# Allow-list for the CHG-033 deferred-acceptance recovery proof (auto_next.recovery_proof).
+# One case authorizes ONE profile and WP whose kernel PR landed as a two-parent merge, so the
+# squash-only legacy deferred proof cannot read it. The case reuses a reconciliation case for the
+# PR, head, merge, parents, file inventory and runs, and every value here is re-proved live.
+# It frees the implementation slot only; it never certifies DoD, acceptance or readiness, never
+# sets DONE, and the legacy deferred proof is unchanged.
+schema_version: cap-deferred-recovery-v1
+cases:
+- case_id: DEFER-WP-SIM-001-PR52
+  profile: batuhan
+  wp_id: WP-SIM-001
+  reconciliation_case: RECON-WP-SIM-001-PR52
+  blocker_audit_id: dc303a34c7280c8c6393d76a13d87b7662f7dea24e1219263df075a34b8a55e3
+  classification: WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE
+  platform_disposition:
+    pr: 75
+    merge_sha: 328052282fb3e5b660fb9be2009d24feb6a74dc5
+    owner: yavuz
+    path: infra/observability/coverage.json
+    deployable: manufacturing-simulator
+    expires_on: '2026-11-20'
+  pending_producers:
+  - WP-PLAT-005
+  - WP-SIM-003
+  - WP-SIM-009
+  - WP-TEST-003
+  - WP-TEST-006
+  change_record: CHG-033

@@ -1,0 +1,25 @@
+CAUGHT   expiry
+CAUGHT   unedited
+CAUGHT   author
+CAUGHT   none-field
+CAUGHT   case-field
+CAUGHT   audit-field
+CAUGHT   class-field
+CAUGHT   resolves
+CAUGHT   producers-field
+CAUGHT   blocker-eq
+CAUGHT   evidence
+CAUGHT   artifact-exists
+CAUGHT   assessed-on-main
+CAUGHT   scope
+CAUGHT   delivered
+CAUGHT   disp-merged
+CAUGHT   disp-author
+CAUGHT   disp-anc
+CAUGHT   disp-owner
+CAUGHT   disp-expiry-eq
+CAUGHT   audit-mismatch
+CAUGHT   audit-verified
+CAUGHT   gather
+CAUGHT   reassertion
+mutants: 24, survivors or skipped: 0

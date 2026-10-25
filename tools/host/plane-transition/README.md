@@ -364,3 +364,7 @@ edges, open-PR predicates and DONE validator are unchanged.
 
 Reconciliation is not DoR, DoD, trace or integrated-acceptance evidence and does not make
 Merged equal Done.
+
+## Deferred-acceptance recovery — CHG-033 (proposed, UNDER_REVIEW)
+
+For a merged WP whose pull request landed as a two-parent merge, `auto_next.recovery_proof` is tried only after the legacy `deferred_proof` returns nothing and only for a case in `project_control/deferred_recovery.yaml` (policy key `deferred_recovery`, schema `cap-deferred-recovery-v1`). It reuses `reconcile.gather` for the PR, head, merge, parents, main ancestry, file inventory and runs, and requires the original VERIFIED BLOCKED audit, an UNCHANGED re-assertion (same `cap-plane-transition <WP> BLOCKED` reason, `comment:<id>` evidence) whose unedited owner comment states the exact fields listed in docs/09, the pinned canonical scope at the assessed main revision, the platform owner's merged disposition with an unexpired registry exemption, and no deliverable yet from the named pending producers. It yields the same `cap-deferred-acceptance-v1` proof (plus `recovery_case`), frees the implementation slot only, and writes nothing. A failed predicate sets `deferred_recovery_denial` to a bare reason code, which `advance_owner` and `preview` return as `deferred_recovery_denials`. The installed `cap-plane-reconcile.py` is hash-pinned and loaded by `cap-auto-next.py`, so installation uses the existing installer after the reviewed source is merged; offline tests never write to root or call Plane or GitHub.

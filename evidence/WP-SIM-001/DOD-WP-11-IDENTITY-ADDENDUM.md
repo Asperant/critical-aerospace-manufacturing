@@ -36,3 +36,7 @@ These timestamps/statuses were re-read from the GitHub API for this addendum. up
 - `replay-comparison.json`: SHA-256 `3ca5175e82c393503017d1a0f237c4a38e6d3297fb8e3b329e68a70e8087950d`.
 
 Disposition: addendum finalized as a factual provenance record; DOD-WP-11 remains UNKNOWN/incomplete for unavailable required identities pending accountable disposition or separately identified evidence. No DoD waiver, acceptance or deferred status claimed.
+
+## Update 2026-10-25: new run and producer allocation
+
+`runs/run-7-identity-2026-10-25/` is NEW local evidence from a clean committed source (commit, lock, CPU, memory, package and seed identity, 202 tests, replay equal across seeds). It does not fill the historical gaps above and is not a governed Release, Environment or Hardware identity, so DOD-WP-11 stays incomplete. The canonical producer of EnvironmentManifest, ReleaseManifest and HardwareProfile records is WP-PLAT-005 (docs/06D, readiness DN-ART-RELEASE, owner Yavuz, NOT_STARTED); no SIM-001-local action can create them. Whether to classify this as waiting for that named producer is the accountable owner's decision, recorded in the owner assessment, not an agent waiver.

@@ -1,0 +1,19 @@
+{
+  "wp_id": "WP-SIM-001",
+  "change_record": "CHG-033",
+  "base_head": "814e953a2c9ebb1acf5df03fec1678dcf5df7dfb",
+  "plan_sha256": "3b75589690b3da0384fc37efaf1685dba6f4506c51c0bf316f7f5ae5d860f9d2",
+  "sources": {
+    "09_change/CHG-033.yaml": "ca9894632d9372d94f73a27087d4f626a541bbbdffa66c1b7d6e6fd3a913cf0d",
+    "09_change/change_requests.csv": "c214f3380866a8912629ab213eb3d5b608e4fd7d6d0aaf7a59df0791dd6d7cfa",
+    "docs/08_Definition_of_Ready_and_Done.md": "07dd8d9895d76f301545c429ab94919462cf55b35db64325f384c0c30f47ee79",
+    "docs/09_Change_Control_Process.md": "a7cf42b964d8140c1012afd4b2c1f201f7d7cc50d5b85eea85fd073bdb1ef8f8",
+    "project_control/deferred_recovery.yaml": "8f0568014f7d979149d98de8af5fbe95d2f5202939651c690ed3240cbc200437",
+    "tools/host/plane-transition/README.md": "eff5f85a413e120eae798447e0fd6a91fe22940d388453ebd20d0600c8c5bfa6",
+    "tools/host/plane-transition/auto_next.py": "5362fd1d8910d417b10299903117d2038bad4b4d9e785f157fb6e5a61913f3ca",
+    "tools/host/plane-transition/build_policy.py": "d9a95120f59fcd17116009aa1a8173ff75f1b05f9518cc843ee0597b6dbe2fc0",
+    "tools/host/plane-transition/reconcile.py": "a702de0e7ec43fac0334e78b9867e922d99aa5ec7071efdb255aa213edd452ec",
+    "tools/host/plane-transition/test_recovery.py": "8bfdab412554278816a373adf30212ab4d46314bc52791227d40defdc14ca089",
+    "evidence/WP-SIM-001/recovery-proof/mutation_check.py": "38da37c06488a0c73b3a87569e6ca6c3bc0344f82932e0438f1d884d2499cdfa"
+  }
+}
