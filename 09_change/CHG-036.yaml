@@ -11,7 +11,7 @@ CHG-036:
   scope: Merged external integration wait reassertion matching only
   rules:
   - Keep the original VERIFIED BLOCKED audit as the sole active blocker authority and never rewrite historical audit rows
-  - Permit a later UNCHANGED VALIDATING BLOCKED reassertion to enrich its reason only when it retains WAITING_EXTERNAL_INTEGRATION_BINDINGS and links the exact active blocker audit
+  - Permit a later UNCHANGED VALIDATING BLOCKED reassertion to change explanatory reason text when it links the exact active blocker audit; the current unedited assessment must retain WAITING_EXTERNAL_INTEGRATION_BINDINGS
   - Require the current unedited owner assessment to match the audited blocker, exact CHG-035 binding ID set, current main revision and pinned registry provenance
   - UNKNOWN, a different blocker class or identity, local actionable work, missing binding IDs, stale or mismatched provenance, delivered future paths or any other semantic change remains fail-closed
   - Preserve CHG-022, CHG-024, lifecycle, readiness, DONE and queue ordering semantics
