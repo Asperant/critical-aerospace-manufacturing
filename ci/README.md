@@ -9,14 +9,17 @@ Owner: Yavuz (Platform Engineering, Delivery & Reliability). Sources: 01 Item 41
 |---|---|---|---|
 | T0 developer feedback | your workspace | the same commands as below | no — local success is not merge authority (Item 41 §2) |
 | T1 `t1-static` | GitHub Actions | `static_ratchet.py check` (Ruff lint + format, Pyright), frontend lint, format, type-check and build | via `ci-gate` |
-| T1 `t1-unit` | GitHub Actions | flake policy, CI tooling tests, projectctl + host tests, frontend component tests | via `ci-gate` |
+| T1 `t1-unit` | GitHub Actions | flake policy, CI tooling tests, relevant host tests and frontend component tests; full projectctl is outside the PR gate | via `ci-gate` |
 | T1 `t1-contract` | GitHub Actions | `check_contracts.py` (JSON Schema contracts), Operations BFF v1 contract tests + Pyright | via `ci-gate` |
 | T1 `t1-integration` | GitHub Actions | REAL PostgreSQL 16 + NATS JetStream smoke, Playwright browser acceptance (Chromium and Firefox) against a real BFF process with scripted identity-provider and backend ports | via `ci-gate` |
 | T1 `ci-gate` | GitHub Actions | fails unless all four jobs ran and succeeded | **yes** (required check) |
-| T1 `projectctl` | GitHub Actions (`projectctl.yml`) | validate, catalog lint, hygiene | **yes** (required check) |
+| T1 `projectctl` | GitHub Actions (`projectctl.yml`) | bounded canonical validation, changed-scope tests, relevant regressions and hygiene | **yes** (required check) |
+| Full `projectctl-full` | GitHub Actions (`projectctl-full.yml`) | full projectctl + host regression, canonical validation and catalog lint | no — main/nightly/manual lane |
 
-`projectctl.yml` is intentionally unchanged: the Plane transition helper
-(`tools/host/plane-transition`) binds to its job and step names.
+The PR `projectctl` context is intentionally bounded to keep Plane transition
+work responsive. `projectctl-full-regression` runs the complete suite on main,
+nightly and manual full-regression requests. Acceptance plans may require that
+lane explicitly; this does not turn UNKNOWN into PASS or weaken DoD.
 
 ## Running the same checks locally (T0)
 
@@ -26,7 +29,7 @@ export PYTHONPATH=ci:ci/scripts
 uv run --project ci python ci/scripts/static_ratchet.py check
 uv run --project ci python ci/scripts/check_flake_policy.py
 uv run --project ci python -m pytest ci/tests -p pytest_quarantine
-uv run --project ci python -m pytest tools/projectctl/tests -q -p pytest_quarantine
+python ci/scripts/fast_scope_tests.py  # FAST_GATE_BASE=<PR base SHA>
 uv run --project ci python ci/scripts/check_contracts.py
 ci/scripts/integration_services.sh up && eval "$(ci/scripts/integration_services.sh env | sed 's/^/export /')"
 uv run --project ci python -m pytest ci/integration -m integration -p pytest_quarantine
@@ -67,7 +70,7 @@ host tests are not covered by the pytest plugin (known limitation).
 
 ## Required checks and branch protection
 
-`ci/required_checks.json` defines the required checks (`ci-gate`, `projectctl`)
+`ci/required_checks.json` defines the required checks (`ci-gate`, bounded `projectctl`)
 with 0 required approvals (CHG-018). Status: **NOT_APPLIED** — GitHub returns
 HTTP 403 for branch protection on this private repository under the current
 plan (CTRL-PM-012). After the repository owner enables a supporting plan:

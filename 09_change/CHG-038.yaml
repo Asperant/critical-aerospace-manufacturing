@@ -1,0 +1,21 @@
+CHG-038:
+  title: Bounded pull-request CI gate with nonblocking full regression lane
+  trigger: Explicit project-owner request, 25 October 2026
+  reason: Duplicate full projectctl suites can hold required PR checks indefinitely without improving changed-scope confidence.
+  class: C2
+  review_risk_class: CR-2
+  owner: Asrın
+  application_control_item: CTRL-HOST-019
+  required_human_approvals: 0
+  decision: APPROVED_WITH_CONDITIONS
+  status: APPROVED
+  scope:
+    - PR required projectctl context runs canonical validation, changed-scope focused tests and relevant regressions with bounded command and job timeouts.
+    - Full projectctl regression runs on main, nightly and manual full-regression lanes and remains available for WP acceptance when explicitly required.
+    - ci-gate continues to require every applicable fast T1 job; exact merge and UNKNOWN/PASS semantics remain unchanged.
+    - cancel-in-progress and explicit diagnostics expose superseded or hung runs without converting UNKNOWN into PASS.
+  invariants_preserved:
+    - Definition of Ready/Done, acceptance evidence and exact merge correctness are unchanged.
+    - Required status context names remain ci-gate and projectctl; projectctl means the bounded PR lane.
+  rollout: Merge workflow and policy source, verify fast PR CI, then deploy merged control-plane source only if the supported installer requires refreshed workflow policy.
+  rollback: Revert the merged workflow/policy commit; no Plane state or acceptance evidence is replayed.

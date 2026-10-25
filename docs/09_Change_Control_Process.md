@@ -825,6 +825,17 @@ current work, then READY, then preparable BACKLOG; advisory health UNAVAILABLE a
 does not suppress a real CURRENT, NO_TASK or AMBIGUOUS result. This control does not
 authorize lifecycle writes or implementation of a newly selected work package.
 
+## CHG-038 — bounded pull-request CI and nonblocking full regression
+
+CHG-038 / CTRL-HOST-019 keeps `ci-gate` and the required `projectctl` context while
+making the PR lane bounded and scope-aware. Pull requests run static/canonical
+validation, changed-scope focused tests and relevant regressions with explicit job,
+step and command timeouts; superseded runs are canceled and failures include
+diagnostics. The full `projectctl` suite moves to main, nightly and manual
+full-regression execution, and remains available when a WP acceptance plan explicitly
+requires it. This is a test scheduling change only: exact merge binding, UNKNOWN !=
+PASS, real acceptance/DoD evidence and all protected transition rules remain intact.
+
 ## Merged external integration binding slot exception — CHG-034
 
 CHG-034 / CTRL-HOST-015 (C3 / CR-3) is authorized by the project-owner request of
