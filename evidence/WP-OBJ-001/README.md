@@ -19,11 +19,11 @@ DoR assessment on issue #62.
 |---|---|
 | 1 | contract and example, conventions, checksum helpers, unit tests TEST-OBJ-001-001 (FIXTURE_ALLOWED, t1-unit), CI step, CODEOWNERS; t1-static restored after #73 (Pyright `ci/tests` path) |
 | 2 | signed S3 store client (SigV4), write-once finalization with read-back verification, version in the object key; stubbed-S3 tests TEST-OBJ-001-002 (t1-unit) and REAL SeaweedFS tests TEST-OBJ-001-003 (t1-integration); the first REAL run showed that the infra profile's `-volume.max=8` leaves no volumes for a third bucket (HTTP 500 on the first RC-C write), so the profile now allows 64 sparse volumes |
+| 3 | PostgreSQL registry (`artifact` schema, Core migration pattern): atomic write-once by primary key, immutable identity/content and 02 lifecycle enforced by trigger, registry status governs reads, read-only consistency sweep; tests TEST-OBJ-001-004 (in-memory registry, t1-unit) and TEST-OBJ-001-005 (REAL PostgreSQL and SeaweedFS: replay ledger, no runtime DELETE/DDL, four concurrent writers → one success, missing bytes and orphans reported) |
 
 ## What this evidence does not claim yet
 
-Write-once is checked by prefix before upload, not yet by an atomic reservation
-(slice 3). The local S3 gateway has no identities yet (slice 4). NFR-DATA-001's 100% measurement is an EVALUATION gate; FR-VIS-001 is
+The local S3 gateway has no identities yet (slice 4). NFR-DATA-001's 100% measurement is an EVALUATION gate; FR-VIS-001 is
 accepted on the integrated Vision path (E2E-01, AV-SCEN-01). DEP-009 (shared
 Integration host) is assessed at its gate. The SHA-256 choice awaits its
 confirming ADR (see `packages/artifacts/README.md`).

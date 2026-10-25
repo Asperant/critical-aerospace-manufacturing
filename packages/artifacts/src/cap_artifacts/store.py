@@ -16,10 +16,10 @@ from __future__ import annotations
 
 import os
 import xml.etree.ElementTree as ET
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Iterator, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from typing import Any, cast
+from typing import Any, Protocol, cast
 from urllib.parse import urlsplit
 
 import httpx
@@ -31,24 +31,13 @@ from cap_artifacts.conventions import (
     object_key,
     version_prefix,
 )
+from cap_artifacts.errors import MissingObjectError, OverwriteError, StoreError
 from cap_artifacts.integrity import IntegrityError, digest_bytes
 from cap_artifacts.reference import SCHEMA_ID, ArtifactReference
 from cap_artifacts.sigv4 import EMPTY_SHA256, Credentials, sign
 
 S3_NS = "{http://s3.amazonaws.com/doc/2006-03-01/}"
 CHECKSUM_META = "x-amz-meta-cap-sha256"
-
-
-class StoreError(RuntimeError):
-    """The object store answered unexpectedly or is unreachable."""
-
-
-class MissingObjectError(StoreError):
-    """A reference points at bytes that do not exist."""
-
-
-class OverwriteError(StoreError):
-    """The artifact version already has bytes; new bytes need a new version."""
 
 
 @dataclass(frozen=True)
@@ -74,6 +63,13 @@ class StoreConfig:
             ),
             region=values.get("CAP_S3_REGION", "us-east-1"),
         )
+
+
+def _texts(root: ET.Element, path: str) -> list[str]:
+    """Text of `path` under an S3 XML response, with or without the S3 namespace."""
+    namespaced = S3_NS + path.replace("/", "/" + S3_NS)
+    nodes = root.findall(namespaced) or root.findall(path)
+    return [node.text or "" for node in nodes]
 
 
 class S3Client:
@@ -183,21 +179,38 @@ class S3Client:
         if response.status_code not in (200, 204, 404):
             raise self._fail(response, f"delete {bucket}/{key}")
 
-    def list_keys(self, bucket: str, prefix: str, limit: int = 1000) -> list[str]:
-        response = self.request(
-            "GET",
-            bucket,
-            query={"list-type": "2", "prefix": prefix, "max-keys": str(limit)},
-        )
-        if response.status_code == 404:
-            return []
-        if response.status_code != 200:
-            raise self._fail(response, f"list {bucket}/{prefix}")
-        root = ET.fromstring(response.content)
-        found = root.findall(f"{S3_NS}Contents/{S3_NS}Key") or root.findall(
-            "Contents/Key"
-        )
-        return [node.text or "" for node in found]
+    def iter_keys(self, bucket: str, prefix: str, page: int = 1000) -> Iterator[str]:
+        """Every key under `prefix` (ListObjectsV2, following continuation tokens)."""
+        token = ""
+        while True:
+            query = {"list-type": "2", "prefix": prefix, "max-keys": str(page)}
+            if token:
+                query["continuation-token"] = token
+            response = self.request("GET", bucket, query=query)
+            if response.status_code == 404:
+                return
+            if response.status_code != 200:
+                raise self._fail(response, f"list {bucket}/{prefix}")
+            root = ET.fromstring(response.content)
+
+            yield from _texts(root, "Contents/Key")
+            truncated = _texts(root, "IsTruncated")
+            token = (_texts(root, "NextContinuationToken") or [""])[0]
+            if not truncated or truncated[0] != "true" or not token:
+                return
+
+    def list_keys(self, bucket: str, prefix: str) -> list[str]:
+        return list(self.iter_keys(bucket, prefix))
+
+
+class VersionRegistry(Protocol):
+    """What the store needs from the relational registry (cap_artifacts.registry)."""
+
+    def reserve(self, ref: ArtifactReference) -> None: ...
+
+    def transition(self, ref: ArtifactReference, status: str) -> ArtifactReference: ...
+
+    def get(self, artifact_id: str, version: int) -> ArtifactReference | None: ...
 
 
 class ArtifactStore:
@@ -207,9 +220,11 @@ class ArtifactStore:
         self,
         client: S3Client,
         clock: Callable[[], datetime] = lambda: datetime.now(UTC),
+        registry: VersionRegistry | None = None,
     ) -> None:
         self.client = client
         self.clock = clock
+        self.registry = registry
 
     def ensure_buckets(self) -> list[str]:
         for bucket in BUCKETS.values():
@@ -268,25 +283,55 @@ class ArtifactStore:
             },
         }
         ref = ArtifactReference.from_dict(draft)  # validates before any byte moves
-        existing = self.client.list_keys(
+        if self.registry is not None:
+            self.registry.reserve(ref)  # atomic: a version is registered once
+        if self.client.list_keys(
             bucket, version_prefix(artifact_type, artifact_id, version)
-        )
-        if existing:
+        ):
+            self._move(ref, "ABORTED")
             raise OverwriteError(
                 f"artifact {artifact_id} v{version} already has bytes; new bytes need a new version"
             )
-        ref = ref.with_status("UPLOADING")
-        self.client.put_object(bucket, key, data, content_type, digest.value)
-        ref = ref.with_status("VALIDATING")
+        ref = self._move(ref, "UPLOADING")
+        try:
+            self.client.put_object(bucket, key, data, content_type, digest.value)
+        except StoreError:
+            self._move(ref, "FAILED")
+            raise
+        ref = self._move(ref, "VALIDATING")
         try:
             ref.verify_bytes(self.client.get_object(bucket, key))
         except (IntegrityError, MissingObjectError):
             self.client.delete_object(bucket, key)
+            self._move(ref, "FAILED")
             raise
-        return ref.with_status("AVAILABLE")
+        return self._move(ref, "AVAILABLE")
+
+    def _move(self, ref: ArtifactReference, status: str) -> ArtifactReference:
+        if self.registry is not None:
+            return self.registry.transition(ref, status)
+        return ref.with_status(status)
+
+    def current(self, ref: ArtifactReference) -> ArtifactReference:
+        """The registry's view of `ref` (its lifecycle may have moved on)."""
+        if self.registry is None:
+            return ref
+        found = self.registry.get(ref.artifact_id, cast(int, ref.data["version"]))
+        if found is None:
+            raise MissingObjectError(f"artifact {ref.artifact_id} is not registered")
+        if (
+            found.data["storage"] != ref.data["storage"]
+            or found.data["checksum"] != ref.data["checksum"]
+        ):
+            raise IntegrityError(
+                f"reference for {ref.artifact_id} differs from the registry"
+            )
+        return found
 
     def read(self, ref: ArtifactReference) -> bytes:
-        """The artifact's bytes, only if AVAILABLE and only after verification."""
+        """The artifact's bytes, only if AVAILABLE (per the registry when there is
+        one) and only after verification."""
+        ref = self.current(ref)
         ref.require_consumable()
         storage = cast(dict[str, str], ref.data["storage"])
         data = self.client.get_object(storage["bucket"], storage["key"])

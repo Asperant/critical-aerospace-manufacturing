@@ -70,19 +70,38 @@ data = store.read(ref)  # only AVAILABLE references, only verified bytes
 | Object metadata | `x-amz-meta-cap-sha256` carries the digest, so bytes can be checked without the reference (orphan sweep, slice 3) |
 | Signing | AWS Signature V4 (`sigv4.py`), checked against the three published AWS S3 examples |
 
-Known limits of this slice: the version-prefix check and the upload are not one
-atomic step (two writers racing on the same artifact_id and version are not
-excluded yet; slice 3 reserves the version in PostgreSQL first). Uploads are
+Without a registry the version-prefix check and the upload are not one atomic
+step; with the registry (slice 3, below) the version is reserved first. Uploads are
 single-request; multipart upload for large datasets and snapshots comes with
 the access path. The local `infra` profile runs the S3 gateway without
 identities; storage identities and least privilege are slice 4.
+
+## Registry (slice 3)
+
+`cap_artifacts.registry` keeps one row per artifact version in PostgreSQL
+(`migrations/0001_registry.sql`, schema `artifact`), the metadata half of
+"Object ≠ Artifact". Pass it to the store: `ArtifactStore(client, registry=Registry.connect(dsn))`.
+
+| Rule | Where it is enforced |
+|---|---|
+| A version is written once, even when writers race | primary key `(artifact_id, version)`; the losing writer gets `DuplicateVersionError` before any upload |
+| Identity and content never change | trigger: artifact, storage and checksum columns and the reference (except its status) are immutable |
+| Only 02 lifecycle transitions | trigger against `artifact.lifecycle_transition`; the store also updates compare-and-set on the old status |
+| The registry decides what can be read | `read()` takes the status from the registry, so a QUARANTINED version is refused even if the caller holds an AVAILABLE copy |
+| No deletes by the runtime | runtime role gets SELECT/INSERT/UPDATE only; DELETED is a tombstone status |
+| Migration | Core pattern: separate migration owner and runtime role, advisory lock, checksummed ledger, verified replay (`migrate(dsn, runtime_role)`) |
+
+`check_consistency(registry, client.iter_keys)` is a read-only sweep (02
+"bidirectional integrity checks"): versions that should have bytes but do not,
+objects in the artifact buckets that no version claims, and reservations stuck
+in flight for more than an hour. It reports; it never deletes.
 
 ## Slices
 
 | Slice | Content | State |
 |---|---|---|
 | 1 | contract, conventions, checksum helpers, unit tests (TEST-OBJ-001-001) | done |
-| 2 | signed S3 store client: write once, verify on write and read, REAL SeaweedFS tests (TEST-OBJ-001-002/003) | this change |
-| 3 | relational metadata and cross-store consistency | planned |
+| 2 | signed S3 store client: write once, verify on write and read, REAL SeaweedFS tests (TEST-OBJ-001-002/003) | done |
+| 3 | PostgreSQL registry: atomic write-once, lifecycle in the database, consistency sweep (TEST-OBJ-001-004/005) | this change |
 | 4 | scoped short-lived access and least-privilege storage identities | planned |
 | 5 | trace, evidence, Integration host smoke (DEP-009) | planned |
