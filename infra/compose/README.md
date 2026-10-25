@@ -46,7 +46,7 @@ infra/compose/stack.sh down            # keeps data and credentials; `reset` rem
 Credentials (PostgreSQL user `cap`, Keycloak admin `cap-admin`) are generated
 once per machine by `stack.sh` in `~/.local/state/cap-platform/` (mode 0600,
 never committed; override with `CAP_PLATFORM_STATE_DIR`): `credentials.env` for
-the script, `postgres.env` and `keycloak.env` read by Compose. Because Compose
+the script, `postgres.env`, `keycloak.env` and `s3.json` read by Compose. Because Compose
 reads them itself, plain `docker compose` and `mfgctl` work after the first
 `stack.sh up`; only `stack.sh env` prints them.
 
@@ -69,9 +69,16 @@ uv run --project ci --locked mfgctl down infra
   profile, so any profile starts on top of the same `infra` layer (02).
 - **Pinned releases.** Exact tags, upgraded only by deliberate PRs.
 - **Development modes, stated.** Keycloak runs `start-dev` (file-backed realm
-  data) and SeaweedFS's S3 gateway has no identities yet; both are localhost-only.
-  Production-like identity storage in PostgreSQL and S3 identities belong to the
-  identity and artifact-store work packages.
+  data); it is localhost-only. Production-like identity storage in PostgreSQL
+  belongs to the identity work package.
+- **S3 identities (WP-OBJ-001).** `s3.json` defines three SeaweedFS identities with
+  generated secrets: `cap-artifacts-admin` (creates buckets), `cap-artifacts-writer`
+  (read, list, write the artifact buckets) and `cap-artifacts-reader` (read only;
+  signs short-lived read capabilities). With identities defined, anonymous S3
+  access is denied. `stack.sh env` prints them as `CAP_S3_ACCESS_KEY`/`CAP_S3_SECRET_KEY`
+  (writer), `CAP_S3_ADMIN_*` and `CAP_S3_READER_*`; buckets are created with
+  `python -m cap_artifacts ensure-buckets`. Existing credential files are completed,
+  never regenerated.
 - **Health is the contract.** `stack.sh up` returns only when every service's
   health check passes (`docker compose up --wait`).
 

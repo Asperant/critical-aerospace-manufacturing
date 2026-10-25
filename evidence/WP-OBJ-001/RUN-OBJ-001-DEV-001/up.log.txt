@@ -1,0 +1,51 @@
+profiles infra healthy in 96 s (images pre-pulled)
+CONTAINER                  REPOSITORY                  TAG                 PLATFORM            IMAGE ID            SIZE                CREATED
+cap-platform-keycloak-1    quay.io/keycloak/keycloak   26.0.5              linux/amd64         089b5898cb0b        689MB               24 months ago
+cap-platform-nats-1        nats                        2.10.22-alpine      linux/amd64         73b0ba5fec55        36.2MB              2 years ago
+cap-platform-postgres-1    postgres                    18.6-alpine         linux/amd64         898c60cb390d        433MB               3 days ago
+cap-platform-seaweedfs-1   chrislusf/seaweedfs         3.80                linux/amd64         1055999e08ee        181MB               23 months ago
+cap-platform-valkey-1      valkey/valkey               8.0.1-alpine        linux/amd64         75010b6854cb        57.3MB              2 years ago
+ Image quay.io/keycloak/keycloak:26.0.5 Pulling
+ Image postgres:18.6-alpine Pulling
+ Image chrislusf/seaweedfs:3.80 Pulling
+ Image nats:2.10.22-alpine Pulling
+ Image valkey/valkey:8.0.1-alpine Pulling
+ Image quay.io/keycloak/keycloak:26.0.5 Pulled
+ Image nats:2.10.22-alpine Pulled
+ Image valkey/valkey:8.0.1-alpine Pulled
+ Image chrislusf/seaweedfs:3.80 Pulled
+ Image postgres:18.6-alpine Pulled
+ Network cap-platform_default Creating
+ Network cap-platform_default Creating
+ Network cap-platform_default Created
+ Network cap-platform_default Created
+ Container cap-platform-valkey-1 Creating
+ Container cap-platform-nats-1 Creating
+ Container cap-platform-seaweedfs-1 Creating
+ Container cap-platform-postgres-1 Creating
+ Container cap-platform-keycloak-1 Creating
+ Container cap-platform-valkey-1 Created
+ Container cap-platform-postgres-1 Created
+ Container cap-platform-nats-1 Created
+ Container cap-platform-keycloak-1 Created
+ Container cap-platform-seaweedfs-1 Created
+ Container cap-platform-seaweedfs-1 Starting
+ Container cap-platform-keycloak-1 Starting
+ Container cap-platform-nats-1 Starting
+ Container cap-platform-valkey-1 Starting
+ Container cap-platform-postgres-1 Starting
+ Container cap-platform-seaweedfs-1 Started
+ Container cap-platform-keycloak-1 Started
+ Container cap-platform-nats-1 Started
+ Container cap-platform-valkey-1 Started
+ Container cap-platform-postgres-1 Started
+ Container cap-platform-seaweedfs-1 Waiting
+ Container cap-platform-keycloak-1 Waiting
+ Container cap-platform-postgres-1 Waiting
+ Container cap-platform-nats-1 Waiting
+ Container cap-platform-valkey-1 Waiting
+ Container cap-platform-nats-1 Healthy
+ Container cap-platform-valkey-1 Healthy
+ Container cap-platform-postgres-1 Healthy
+ Container cap-platform-seaweedfs-1 Healthy
+ Container cap-platform-keycloak-1 Healthy

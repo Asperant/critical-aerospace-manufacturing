@@ -1,0 +1,31 @@
+# WP-OBJ-001 — ArtifactReference contract and object-storage conventions
+# (02: packages/; sanctioned shared surface under ARCH-INV-025). Slice 1 publishes
+# `cap.artifact-ref/v1` (IC-SHARED-001), the bucket/key convention and checksum
+# helpers; slice 2 adds the signed S3 store client (write, verify, read).
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cap-artifacts"
+version = "0.1.0"
+description = "ArtifactReference contract, storage conventions and content identity (WP-OBJ-001)"
+requires-python = ">=3.11"
+dependencies = ["httpx>=0.27,<1"]
+
+[project.optional-dependencies]
+# Relational registry (slice 3).
+registry = ["psycopg[binary]>=3.2,<4"]
+dev = ["jsonschema>=4.21,<5", "pytest>=8,<10", "psycopg[binary]>=3.2,<4"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+cap_artifacts = ["schemas/*.json", "migrations/*.sql"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-p no:cacheprovider"
+markers = ["integration: needs a real SeaweedFS S3 gateway"]
