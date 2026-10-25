@@ -385,16 +385,18 @@ def select(profile, rows, deferred=None):
     return result
 
 
-def _slot_waits(profile, key, rows):
+def _slot_waits(profile, key, rows, auto=None, transition=None, policy=None):
     """Read only verified slot releases; no preparation/evidence health work."""
-    loader = __import__('importlib.machinery', fromlist=['SourceFileLoader']).SourceFileLoader(
-        'cap_auto_slots', '/usr/local/libexec/cap-auto-next.py')
-    spec = __import__('importlib.util', fromlist=['spec_from_loader']).spec_from_loader(loader.name, loader)
-    auto = __import__('importlib.util', fromlist=['module_from_spec']).module_from_spec(spec)
-    loader.exec_module(auto)
-    t = auto.load_transition()
-    policy = json.loads((ROOT / 'transition-policy.json').read_text())
-    t.verify_policy_sources(policy)
+    if auto is None:
+        loader = __import__('importlib.machinery', fromlist=['SourceFileLoader']).SourceFileLoader(
+            'cap_auto_slots', '/usr/local/libexec/cap-auto-next.py')
+        spec = __import__('importlib.util', fromlist=['spec_from_loader']).spec_from_loader(loader.name, loader)
+        auto = __import__('importlib.util', fromlist=['module_from_spec']).module_from_spec(spec)
+        loader.exec_module(auto)
+    t = transition or auto.load_transition()
+    if policy is None:
+        policy = json.loads((ROOT / 'transition-policy.json').read_text())
+        t.verify_policy_sources(policy)
     candidates = []
     for row in rows.values():
         if row.get('_profile') != profile or not row.get('blocked'):
@@ -408,10 +410,11 @@ def _slot_waits(profile, key, rows):
     cache = _read_slot_cache()
     cache_lock = threading.Lock()
 
+    gh = t.GitHub(profile)
+
     def evaluate(candidate):
         wp, state = candidate
         try:
-            gh = t.GitHub(profile)
             source = auto.semantic_slot_release_source(t, wp, profile, policy, gh)
             if source is None:
                 return None
@@ -421,7 +424,9 @@ def _slot_waits(profile, key, rows):
             if _cache_entry_matches(cached, source) and isinstance(cached_proof, dict):
                 proof = cached_proof
             else:
-                proof = auto.semantic_slot_release_proof(t, wp, profile, policy, gh)
+                proof = auto.semantic_slot_release_proof(
+                    t, wp, profile, policy, gh, source=source
+                )
                 if proof and proof.get('proof_fingerprint') == source['proof_fingerprint']:
                     with cache_lock:
                         cache[entry_key] = {
@@ -501,7 +506,7 @@ def preflight(profile, key, rows=None):
         t=auto.load_transition()
         policy=json.loads((ROOT/'transition-policy.json').read_text())
         t.verify_policy_sources(policy)
-        waits = _slot_waits(profile, key, rows or {})
+        waits = _slot_waits(profile, key, rows if rows is not None else {}, auto, t, policy)
         # Selection consumes only these verified proofs. Full preparation health
         # is advisory and may be too slow for the queue's bounded read budget.
         return {'health': 'UNAVAILABLE', 'prepared_next': None,
