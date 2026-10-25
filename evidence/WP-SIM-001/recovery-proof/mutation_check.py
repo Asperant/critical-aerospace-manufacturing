@@ -61,9 +61,29 @@ M = [
         "pass",
     ),
     (
-        "scope",
-        "    check_canonical_scope(t, gh, wp, sha, policy)\n    tree = gh._get",
-        "    tree = gh._get",
+        "scope-assessed",
+        "    check_canonical_scope(t, gh, wp, sha, policy)\n    check_canonical_scope(t, gh, wp, main, policy)",
+        "    check_canonical_scope(t, gh, wp, main, policy)",
+    ),
+    (
+        "scope-main",
+        "    check_canonical_scope(t, gh, wp, sha, policy)\n    check_canonical_scope(t, gh, wp, main, policy)",
+        "    check_canonical_scope(t, gh, wp, sha, policy)",
+    ),
+    (
+        "producers-at-main",
+        'gh._get(f"{t.REPO}/git/trees/{main}?recursive=1")',
+        'gh._get(f"{t.REPO}/git/trees/{sha}?recursive=1")',
+    ),
+    (
+        "registry-at-main",
+        'gh.repository_file(disposition["path"], main)',
+        'gh.repository_file(disposition["path"], sha)',
+    ),
+    (
+        "disposition-cited",
+        "        and exact_field(text, \"Platform disposition\")\n        == f\"PR {disposition['pr']} {disposition['merge_sha']}\"\n",
+        "",
     ),
     (
         "delivered",

@@ -2,7 +2,12 @@
 
 import base64
 import datetime as dt
+import hashlib
 import json
+import re
+import subprocess
+import sys
+import tempfile
 import unittest
 from copy import deepcopy
 from pathlib import Path
@@ -40,6 +45,7 @@ def assessment(audit_id, producers, **overrides):
         "Deferred acceptance class": CLASS,
         "Owner-executable implementation work": "NONE",
         "Pending producers": ", ".join(producers),
+        "Platform disposition": f"PR 75 {DISPOSITION_MERGE}",
         "Blocker owner": "asrin",
         "External dependency": "Real acceptance",
         "Reason": "Current owner decision",
@@ -103,6 +109,8 @@ class GH(FakeGH):
     comment_obj: Any
     ancestry_fail: Any
     invalidations: Any
+    files_at: Any
+    trees: Any
     _get: Any
 
     def ancestor(self, base, head):
@@ -126,8 +134,35 @@ class GH(FakeGH):
     def files(self, pr):
         return deepcopy(self.rows)
 
+    def repository_file(self, path, sha, limit=65536):
+        at = getattr(self, "files_at", {})
+        return (
+            at[(path, sha)] if (path, sha) in at else super().repository_file(path, sha)
+        )
+
     def fresh_pr(self, number):
         return deepcopy(self.disposition if number == 75 else self.pr_data)
+
+
+def registry(raw=None):
+    raw = coverage() if raw is None else raw
+    return {
+        "type": "file",
+        "encoding": "base64",
+        "size": len(raw),
+        "sha": "a" * 40,
+        "content": base64.b64encode(raw).decode(),
+    }
+
+
+def with_rows(gh, extra=None):
+    """The shared fixture tree as seen from the current main, plus or changing one row."""
+    rows = [dict(r) for r in gh.tree["tree"]]
+    if isinstance(extra, str):
+        next(r for r in rows if r["path"] == extra)["sha"] = "changed-on-main"
+    elif extra:
+        rows.append(dict(extra, sha="e"))
+    return {"truncated": False, "tree": rows}
 
 
 class RecoveryBase(unittest.TestCase):
@@ -170,12 +205,20 @@ class RecoveryBase(unittest.TestCase):
             "updated_at": "2026-10-25T15:00:00Z",
             "body": assessment(self.verified["audit_id"], self.producers),
         }
+        gh.trees, gh.files_at = {}, {}
         old = gh._get
-        gh._get = Mock(
-            side_effect=lambda path: gh.comment_obj
-            if "/issues/comments/" in path
-            else old(path)
-        )
+
+        def route(path):
+            if "/issues/comments/" in path:
+                return gh.comment_obj
+            sha = path.split("/git/trees/")[-1].split("?")[0]
+            return (
+                gh.trees[sha]
+                if "/git/trees/" in path and sha in gh.trees
+                else old(path)
+            )
+
+        gh._get = Mock(side_effect=route)
         recon = {
             "case_id": "RECON-TEST",
             "profile": "asrin",
@@ -264,6 +307,7 @@ class RecoveryProofTests(RecoveryBase):
             "Pending producers": "WP-TEST-002",
             "Resolves blocker": "x",
             "Canonical main revision": "short",
+            "Platform disposition": "PR 75 " + "e" * 40,
         }
         cases = {
             "RECOVERY_ASSESSMENT_NOT_OWNER_UNEDITED": [
@@ -272,12 +316,22 @@ class RecoveryProofTests(RecoveryBase):
             ],
             "RECOVERY_ASSESSMENT_INCOMPLETE": [
                 comment(**{k: v}) for k, v in incomplete.items()
-            ],
+            ]
+            + [comment(**{"Platform disposition": None})],
             "RECOVERY_BLOCKER_CHANGED": [comment(**{"External dependency": "Else"})],
             "RECOVERY_EVIDENCE_MISSING": [comment(Evidence=None)],
             "RECOVERY_PRODUCER_ALREADY_DELIVERED": [
                 lambda gh, policy: gh.tree["tree"].append(
                     {"path": f"evidence/{self.producers[0]}/x", "sha": "e"}
+                ),
+                # Delivered after the assessment: only the CURRENT main has it.
+                lambda gh, policy: gh.trees.update(
+                    {HEAD: with_rows(gh, {"path": f"evidence/{self.producers[1]}/x"})}
+                ),
+            ],
+            "DEFERRED_SOURCE_TREE_INCOMPLETE": [
+                lambda gh, policy: gh.trees.update(
+                    {HEAD: dict(with_rows(gh), truncated=True)}
                 )
             ],
             "RECOVERY_DISPOSITION_UNVERIFIED": [
@@ -287,6 +341,13 @@ class RecoveryProofTests(RecoveryBase):
                 exemption(owner="Other"),
                 exemption(expires_on="2026-12-31"),
                 put("repo_files", {COVERAGE_PATH: (b"{}", "b")}),
+                # Revoked or changed after the assessment: only the CURRENT main shows it.
+                lambda gh, policy: gh.files_at.update(
+                    {(COVERAGE_PATH, HEAD): (b"{}", "b")}
+                ),
+                lambda gh, policy: gh.files_at.update(
+                    {(COVERAGE_PATH, HEAD): (coverage(expires_on="2026-12-31"), "b")}
+                ),
             ],
             "RECONCILIATION_PR_BINDING_MISMATCH": [
                 upd("pr_data", merged=False),
@@ -307,7 +368,13 @@ class RecoveryProofTests(RecoveryBase):
             "DEFERRED_CANONICAL_SCOPE_CHANGED": [
                 lambda gh, policy: policy["source_git_blobs"].update(
                     {"docs/08": "changed"}
-                )
+                ),
+                # Pinned source changed on the current main after the assessment.
+                lambda gh, policy: gh.trees.update({HEAD: with_rows(gh, "docs/08")}),
+                # Changed at the assessed revision but not on the current main.
+                lambda gh, policy: gh.trees.update(
+                    {REVISION: with_rows(gh, "docs/08")}
+                ),
             ],
         }
         for expected, mutations in cases.items():
@@ -421,6 +488,7 @@ class RecoveryThroughRealAdapterTests(unittest.TestCase):
         self.policy = base.make_policy(case)
         contexts = self.policy["contexts"]
         producers = ["WP-TEST-001", "WP-TEST-002"]
+        self.producer_row = {"path": f"evidence/{producers[0]}/x", "sha": "e" * 40}
         for other in producers:
             contexts[other] = deepcopy(contexts[self.wp])
         work = contexts[self.wp]
@@ -461,17 +529,15 @@ class RecoveryThroughRealAdapterTests(unittest.TestCase):
                     "truncated": False,
                     "tree": tree,
                 },
+                f"{repo}/git/trees/{base.MAIN}?recursive=1": {
+                    "truncated": False,
+                    "tree": tree,
+                },
                 f"{repo}/contents/evidence/test.json?ref={REVISION}": {
                     "type": "file",
                     "size": 3,
                 },
-                f"{repo}/contents/{COVERAGE_PATH}?ref={REVISION}": {
-                    "type": "file",
-                    "encoding": "base64",
-                    "size": len(coverage()),
-                    "sha": "a" * 40,
-                    "content": base64.b64encode(coverage()).decode(),
-                },
+                f"{repo}/contents/{COVERAGE_PATH}?ref={base.MAIN}": registry(),
                 f"{repo}/pulls/75": adapter.pr_payload(
                     number=75,
                     user={"login": self.t.GITHUB["yavuz"]},
@@ -529,6 +595,59 @@ class RecoveryThroughRealAdapterTests(unittest.TestCase):
         moved = adapter.pr_payload(head={"ref": adapter.BRANCH, "sha": "7" * 40})
         denied, _ = self.prove({adapter.PR_ROUTE: moved})
         self.assertEqual(denied.code, "RECONCILIATION_PR_BINDING_MISMATCH")
+
+    def test_changes_on_the_current_main_after_the_assessment_deny(self):
+        repo, main = adapter.REPO, base.MAIN
+        trees = f"{repo}/git/trees/{main}?recursive=1"
+        rows = self.routes[trees]["tree"]
+        delivered = {"truncated": False, "tree": rows + [self.producer_row]}
+        revoked = registry(coverage(expires_on="2026-12-31"))
+        for code, route, answer in (
+            ("RECOVERY_PRODUCER_ALREADY_DELIVERED", trees, delivered),
+            (
+                "RECOVERY_DISPOSITION_UNVERIFIED",
+                f"{repo}/contents/{COVERAGE_PATH}?ref={main}",
+                revoked,
+            ),
+        ):
+            with self.subTest(code=code):
+                denied, _ = self.prove({route: answer})
+                self.assertEqual(denied.code, code)
+
+
+class PolicyPinningTests(unittest.TestCase):
+    def test_generated_policy_pins_the_recovery_sources(self):
+        """Runs the real builder on this checkout; a changed or revoked case needs a refresh."""
+        root = HERE.parents[2]
+        script = (HERE / "build_policy.py").read_text()
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "policy.json"
+            patched = script.replace(
+                "ROOT=Path('/srv/ailab/project')", f"ROOT=Path({str(root)!r})"
+            )
+            patched = re.sub(
+                r"(?m)^output=Path\(.*\)$", f"output=Path({str(out)!r})", patched
+            )
+            self.assertNotEqual(patched, script)
+            done = subprocess.run(
+                [sys.executable, "-I", "-c", patched], capture_output=True, text=True
+            )
+            self.assertEqual(done.returncode, 0, done.stderr[-500:])
+            policy = json.loads(out.read_text())
+        self.assertEqual(policy["deferred_recovery_schema"], rec.RECOVERY_SCHEMA)
+        for name in (
+            "project_control/deferred_recovery.yaml",
+            "09_change/CHG-033.yaml",
+        ):
+            raw = (root / name).read_bytes()
+            blob = hashlib.sha1(b"blob %d\0" % len(raw) + raw, usedforsecurity=False)
+            with self.subTest(name=name):
+                digest = hashlib.sha256(raw).hexdigest()
+                self.assertEqual(policy["source_manifest"][name], digest)
+                self.assertEqual(
+                    policy["execution_project"]["source_manifest"][name], digest
+                )
+                self.assertEqual(policy["source_git_blobs"][name], blob.hexdigest())
 
 
 if __name__ == "__main__":

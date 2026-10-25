@@ -574,9 +574,12 @@ def recovery_proof(t, wp, profile, policy, gh, today=None):
     )
     sha = exact_field(text, "Canonical main revision")
     pending = exact_field(text, "Pending producers")
+    disposition = case["platform_disposition"]
     t.need(
         sha is not None
         and re.fullmatch(r"[0-9a-f]{40}", sha)
+        and exact_field(text, "Platform disposition")
+        == f"PR {disposition['pr']} {disposition['merge_sha']}"
         and exact_field(text, "Recovery case") == case["case_id"]
         and exact_field(text, "Original blocker audit") == case["blocker_audit_id"]
         and exact_field(text, "Deferred acceptance class") == case["classification"]
@@ -598,8 +601,11 @@ def recovery_proof(t, wp, profile, policy, gh, today=None):
         gh.artifact(ref, sha)
     main = gh.main_sha()
     gh.ancestor(sha, main)  # the assessed revision is on main
+    # The scope held when the owner assessed AND holds on the current main; producer
+    # deliveries and the registry entry are read at the current main, never the older sha.
     check_canonical_scope(t, gh, wp, sha, policy)
-    tree = gh._get(f"{t.REPO}/git/trees/{sha}?recursive=1")  # complete: checked above
+    check_canonical_scope(t, gh, wp, main, policy)
+    tree = gh._get(f"{t.REPO}/git/trees/{main}?recursive=1")  # complete: checked above
     t.need(
         not any(
             row["path"].startswith(f"evidence/{producer}/")
@@ -608,7 +614,6 @@ def recovery_proof(t, wp, profile, policy, gh, today=None):
         ),
         "RECOVERY_PRODUCER_ALREADY_DELIVERED",
     )
-    disposition = case["platform_disposition"]
     pr = gh.fresh_pr(disposition["pr"])
     t.need(
         pr.get("merged") is True
@@ -619,7 +624,7 @@ def recovery_proof(t, wp, profile, policy, gh, today=None):
         "RECOVERY_DISPOSITION_UNVERIFIED",
     )
     gh.ancestor(disposition["merge_sha"], main)
-    raw, _ = gh.repository_file(disposition["path"], sha)
+    raw, _ = gh.repository_file(disposition["path"], main)
     try:
         deployables = json.loads(raw)["deployables"]
     except (ValueError, KeyError, TypeError):

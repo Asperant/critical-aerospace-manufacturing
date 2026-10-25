@@ -59,3 +59,7 @@ Historical identity recovery re-inspected the actual root run-manifest, pre-revi
 Platform search again returned PR52/72 with no attributable Yavuz disposition; owner comment 6395801486 still explicitly says owner work remains. Required external decision is unchanged: accept scoped observability exemption with actual terms, or specify required work. No decision is inferred. Deferred proof was not retried because owner-work NONE is not established. Its known two-parent/original-assessment constraints are unresolved tooling/governance issues, not permission to rewrite historical assessments.
 
 One Batuhan queue read was attempted with a 45-second timeout and returned no result. Health is unverified in this pass; no controller/preparation/AUTO_NEXT calls were made, and no next task was selected or started. Stop at the genuine external/platform and missing-evidence boundary; do not start another implementation to conceal it.
+
+## Status update 2026-10-25 (after PR 75): superseded rows, for the owner to adopt
+
+DOD-WP-06: the platform decision now exists (`OBSERVABILITY-DISPOSITION-2026-10-25.md`; Yavuz's merged PR 75 confirms the in-memory kernel exemption until 2026-11-20), so the "no decision found" text above is superseded. DOD-WP-02's remedial trace update is merged (PR 72). DOD-WP-11 is unchanged: run-7 is new local evidence and does not fill the historical gaps; the canonical producer is WP-PLAT-005. All other rows are unchanged. This update is a factual note, not an owner adoption or a PASS.

@@ -11,7 +11,11 @@ CAUGHT   blocker-eq
 CAUGHT   evidence
 CAUGHT   artifact-exists
 CAUGHT   assessed-on-main
-CAUGHT   scope
+CAUGHT   scope-assessed
+CAUGHT   scope-main
+CAUGHT   producers-at-main
+CAUGHT   registry-at-main
+CAUGHT   disposition-cited
 CAUGHT   delivered
 CAUGHT   disp-merged
 CAUGHT   disp-author
@@ -22,4 +26,4 @@ CAUGHT   audit-mismatch
 CAUGHT   audit-verified
 CAUGHT   gather
 CAUGHT   reassertion
-mutants: 24, survivors or skipped: 0
+mutants: 28, survivors or skipped: 0
