@@ -805,6 +805,26 @@ The recovery proof binds the original VERIFIED BLOCKED audit; the reconciliation
 
 Allocation: CHG-033 is the next free identifier (CHG-032 belongs to WP-EVT-001). The record stays DRAFT/UNDER_REVIEW until the ordinary development gates complete; IMPLEMENTED and VERIFIED are not asserted and would apply to this change only, never to a parent work package.
 
+## CHG-037 — consolidated semantic slot release and bounded queue selection
+
+CHG-037 / CTRL-HOST-018 supersedes and consolidates the runtime slot-accounting
+behavior introduced by CHG-034, CHG-035 and CHG-036 without changing those records
+or their audit history. `EXECUTION_SLOT_RELEASED` is a calculated scheduler property,
+not a lifecycle state. A blocked work package releases its implementation slot when
+the latest attributable owner assessment says `Local actionable work: NONE`, the
+implementation is safely persisted, and the blocker has a semantic external
+integration or downstream acceptance identity. Exact blocker prose, historical
+reassertion continuity, unrelated later governance edits, complete binding registries
+and not-yet-existing runtime paths are not hard prerequisites. Relevant scope,
+acceptance or dependency changes still force reevaluation and UNKNOWN never passes.
+
+The existing binding registry and audit history remain intact and continue to support
+DONE and integration acceptance. Readiness and HARD dependency guards, exact merge CI,
+Merged != DONE and all real DoD rules are unchanged. Queue selection is actionable
+current work, then READY, then preparable BACKLOG; advisory health UNAVAILABLE alone
+does not suppress a real CURRENT, NO_TASK or AMBIGUOUS result. This control does not
+authorize lifecycle writes or implementation of a newly selected work package.
+
 ## Merged external integration binding slot exception — CHG-034
 
 CHG-034 / CTRL-HOST-015 (C3 / CR-3) is authorized by the project-owner request of

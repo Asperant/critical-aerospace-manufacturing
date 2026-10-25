@@ -304,6 +304,86 @@ def merged_external_wait_proof(t, wp, profile, policy, gh):
         return None  # Missing/UNKNOWN proof never frees a slot.
 
 
+def semantic_slot_release_proof(t, wp, profile, policy, gh):
+    """CHG-037: semantic scheduler accounting; legacy proofs remain auditable."""
+    global resolver
+    if resolver is None:
+        resolver = load_resolver()
+    verified = t.last_blocker(wp)
+    if not (
+        isinstance(verified, dict)
+        and verified.get("result") == "VERIFIED"
+        and verified.get("operation") == "BLOCKED"
+        and verified.get("profile") == profile
+    ):
+        return None
+    blocker = verified.get("blocker")
+    if not isinstance(blocker, dict):
+        return None
+    classification = blocker.get("semantic_class") or blocker.get("class")
+    if classification not in resolver.SLOT_RELEASE_CLASSES:
+        classification = next(
+            (
+                c
+                for c in resolver.SLOT_RELEASE_CLASSES
+                if isinstance(verified.get("reason"), str)
+                and verified["reason"].startswith(c)
+            ),
+            None,
+        )
+    semantic_id = blocker.get("semantic_id") or blocker.get("id")
+    if not isinstance(semantic_id, str) or not semantic_id or classification is None:
+        return None
+    refs = verified.get("evidence_refs", [])
+    comment_ids = [
+        ref[8:]
+        for ref in refs
+        if isinstance(ref, str) and re.fullmatch(r"comment:[1-9][0-9]{0,15}", ref)
+    ]
+    pr_refs = [ref for ref in refs if isinstance(ref, str) and ref.startswith("pr:")]
+    if len(comment_ids) != 1 and len(pr_refs) != 1:
+        return None
+    comment = (
+        gh._get(f"{t.REPO}/issues/comments/{comment_ids[0]}")
+        if comment_ids
+        else t.pr_fact(gh, refs, wp, profile)
+    )
+    text = comment.get("body") if isinstance(comment, dict) else None
+    if not (
+        isinstance(text, str)
+        and (comment.get("user") or {}).get("login", "").casefold()
+        == t.GITHUB[profile].casefold()
+        and (pr_refs or comment.get("created_at") == comment.get("updated_at"))
+        and exact_field(text, "Local actionable work") == "NONE"
+        and exact_field(text, "Implementation persisted") == "YES"
+    ):
+        return None
+    scope = exact_field(text, "Relevant scope digest")
+    current_scope = policy.get("scope_projections", {}).get(wp)
+    scope = current_scope if scope is None else scope
+    if not isinstance(scope, str) or not re.fullmatch(r"[a-f0-9]{64}", scope):
+        return None
+    sha = exact_field(text, "Canonical main revision")
+    if not isinstance(sha, str) or not re.fullmatch(r"[0-9a-f]{40}", sha):
+        return None
+    if classification == resolver.DEFERRED_CLASS:
+        pr = comment if pr_refs else t.pr_fact(gh, refs, wp, profile)
+        if pr.get("merged") is not True or pr.get("merge_commit_sha") != sha:
+            return None
+        t.ci(gh, sha, policy)
+    return {
+        "schema": resolver.SLOT_RELEASE_SCHEMA,
+        "wp_id": wp,
+        "owner": t.q.PEOPLE[profile][0],
+        "local_actionable_work": "NONE",
+        "implementation_persisted": True,
+        "semantic_blocker_id": semantic_id,
+        "semantic_blocker_class": classification,
+        "relevant_scope_digest": scope,
+        "assessment_digest": hashlib.sha256(text.encode()).hexdigest(),
+    }
+
+
 def require_caller(profile, caller=None):
     """Only the matching Unix account, or an actual root administrator."""
     caller = (
@@ -344,10 +424,17 @@ def live_view(t, plane, policy, profile=None, gh=None):
             and items[wp]["blocked"]
         ):
             gh = gh or t.GitHub(profile)
-            proof = deferred_proof(t, wp, profile, policy, gh)
+            proof = semantic_slot_release_proof(t, wp, profile, policy, gh)
             if proof:
-                items[wp]["deferred_acceptance"] = proof
-            elif policy.get("deferred_recovery_schema") == "cap-deferred-recovery-v1":
+                items[wp]["slot_release_v2"] = proof
+            else:
+                proof = deferred_proof(t, wp, profile, policy, gh)
+                if proof:
+                    items[wp]["deferred_acceptance"] = proof
+            if (
+                not proof
+                and policy.get("deferred_recovery_schema") == "cap-deferred-recovery-v1"
+            ):
                 try:
                     proof = recovery_proof(t, wp, profile, policy, gh)
                 except t.Denied as exc:
@@ -361,9 +448,17 @@ def live_view(t, plane, policy, profile=None, gh=None):
             and items[wp]["state"] == "IN_PROGRESS"
             and items[wp]["blocked"]
         ):
-            proof = external_wait_proof(t, wp, profile, policy, gh or t.GitHub(profile))
+            proof = semantic_slot_release_proof(
+                t, wp, profile, policy, gh or t.GitHub(profile)
+            )
             if proof:
-                items[wp]["external_integration_wait"] = proof
+                items[wp]["slot_release_v2"] = proof
+            else:
+                proof = external_wait_proof(
+                    t, wp, profile, policy, gh or t.GitHub(profile)
+                )
+                if proof:
+                    items[wp]["external_integration_wait"] = proof
         if (
             requested_profile == profile
             and items[wp]["state"] == "VALIDATING"
