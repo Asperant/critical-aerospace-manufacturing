@@ -52,6 +52,7 @@ PARALLEL_REQUEST_INTERVAL = REQUEST_INTERVAL / MAX_READ_WORKERS
 SNAPSHOT_CACHE_PATH = Path('/run/cap-plane-snapshot.json')
 SNAPSHOT_CACHE_SCHEMA = 'cap-plane-snapshot-v1'
 SNAPSHOT_CACHE_TTL_SECONDS = 3.0
+SOURCE_CACHE_TTL_SECONDS = 60.0
 SNAPSHOT_CACHE_MAX_BYTES = 8_000_000
 MAX_429_RETRIES = 2
 MAX_429_DELAY_SECONDS = 2.0
@@ -515,7 +516,7 @@ def _cached_slot_source(entry, policy):
     if not isinstance(captured, int | float):
         return None
     age = time.time() - captured
-    if age < 0 or age > SNAPSHOT_CACHE_TTL_SECONDS:
+    if age < 0 or age > SOURCE_CACHE_TTL_SECONDS:
         return None
     source = entry['source']
     if source.get('policy_digest') != policy.get('policy_digest'):

@@ -156,7 +156,11 @@ class QueueTests(unittest.TestCase):
                  'source_captured_at': time.time()}
         self.assertEqual(q._cached_slot_source(entry, {'policy_digest': 'p'}), source)
         self.assertIsNone(q._cached_slot_source(entry, {'policy_digest': 'changed'}))
-        expired = dict(entry, source_captured_at=time.time() - q.SNAPSHOT_CACHE_TTL_SECONDS - 1)
+        self.assertIsNone(q._cached_slot_source(
+            dict(entry, fingerprint='changed'), {'policy_digest': 'p'}
+        ))
+        self.assertEqual(q.SOURCE_CACHE_TTL_SECONDS, 60.0)
+        expired = dict(entry, source_captured_at=time.time() - q.SOURCE_CACHE_TTL_SECONDS - 1)
         self.assertIsNone(q._cached_slot_source(expired, {'policy_digest': 'p'}))
 
     def test_unavailable_health_keeps_verified_slot_releases(self):
