@@ -22,3 +22,4 @@ CHG-020,Derived proactive preparation and read-only stall detection,C2,CR-3,Asr�
 CHG-021,Bounded canonical preparation and autonomous prepared buffer replenishment,C2,CR-4,Asrın,APPROVED,APPROVED,CTRL-HOST-006
 CHG-031,Audited lifecycle reconciliation of already merged work,C3,CR-3,Batuhan,DRAFT,UNDER_REVIEW,WP-SIM-001
 CHG-032,Contract CI compatibility and version gate wiring,C1,CR-2,Asrın,APPROVED_WITH_CONDITIONS,APPROVED,WP-EVT-001
+CHG-033,Deferred-acceptance recovery proof for an allow-listed two-parent merge,C3,CR-3,Batuhan,DRAFT,UNDER_REVIEW,WP-SIM-001

@@ -1,0 +1,7 @@
+........................................................................ [ 35%]
+........................................................................ [ 71%]
+..........................................................               [100%]
+- generated xml file: /srv/ailab/workspaces/batuhan/project/evidence/WP-SIM-001/runs/run-7-identity-2026-10-25/test-results.xml -
+----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------
+0 registry entr(y/ies); 0 applied in this run
+202 passed in 2.02s

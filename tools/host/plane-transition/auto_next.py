@@ -1,6 +1,7 @@
 """CTRL-HOST-004: root-owned AUTO_NEXT orchestration; existing transition guards."""
 
 import base64
+import datetime as dt
 import hashlib
 import importlib.machinery
 import importlib.util
@@ -14,11 +15,22 @@ from pathlib import Path
 from typing import Any
 
 resolver: Any = None
+reconcile: Any = None
 
 
 def load_resolver():
     spec = importlib.util.spec_from_file_location(
         "execution_queue", "/usr/local/libexec/execution_queue.py"
+    )
+    assert spec is not None and spec.loader is not None
+    module: Any = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_reconcile():
+    spec = importlib.util.spec_from_file_location(
+        "cap_reconcile", "/usr/local/libexec/cap-plane-reconcile.py"
     )
     assert spec is not None and spec.loader is not None
     module: Any = importlib.util.module_from_spec(spec)
@@ -78,9 +90,18 @@ def live_view(t, plane, policy, profile=None, gh=None):
             and items[wp]["state"] == "VALIDATING"
             and items[wp]["blocked"]
         ):
-            proof = deferred_proof(t, wp, profile, policy, gh or t.GitHub(profile))
+            gh = gh or t.GitHub(profile)
+            proof = deferred_proof(t, wp, profile, policy, gh)
             if proof:
                 items[wp]["deferred_acceptance"] = proof
+            elif policy.get("deferred_recovery_schema") == "cap-deferred-recovery-v1":
+                try:
+                    proof = recovery_proof(t, wp, profile, policy, gh)
+                except t.Denied as exc:
+                    items[wp]["deferred_recovery_denial"] = exc.code  # code only
+                else:
+                    if proof:
+                        items[wp]["deferred_acceptance"] = proof
         if (
             requested_profile == profile
             and policy.get("external_wait_schema") == "cap-external-integration-wait-v1"
@@ -492,6 +513,169 @@ def deferred_proof(t, wp, profile, policy, gh):
         return None  # UNKNOWN never frees the slot.
 
 
+def registry_entry(t, gh, disposition, revision):
+    """The one registry entry for the deployable at `revision`; absent or ambiguous denies."""
+    raw, _ = gh.repository_file(disposition["path"], revision)
+    try:
+        rows = json.loads(raw)["deployables"]
+        found = [
+            d
+            for d in rows
+            if isinstance(d, dict) and d.get("name") == disposition["deployable"]
+        ]
+    except (ValueError, KeyError, TypeError):
+        raise t.Denied("RECOVERY_DISPOSITION_UNVERIFIED") from None
+    t.need(len(found) == 1, "RECOVERY_DISPOSITION_UNVERIFIED")
+    return found[0]
+
+
+def recovery_proof(t, wp, profile, policy, gh, today=None):
+    """CHG-033: deferred-acceptance proof for an allow-listed two-parent merge.
+
+    The legacy proof stays untouched and still decides every other case. This one binds
+    the ORIGINAL VERIFIED blocker audit, the exact PR/head/merge/parents/inventory/runs of
+    the allow-listed reconciliation case, a later UNCHANGED re-assertion that carries a
+    current unedited owner assessment, the pinned canonical scope at the assessed
+    revision, the platform disposition and its expiry, and the still-pending producers.
+    It yields the implementation-slot exemption only. Returns None when the WP has no
+    case; any failed predicate raises a Denied whose code is the redacted diagnosis.
+    """
+    global resolver, reconcile
+    if resolver is None:
+        resolver = load_resolver()
+    if reconcile is None:
+        reconcile = load_reconcile()
+    reconcile.t = t
+    case = reconcile.find_recovery_case(policy["deferred_recovery"], profile, wp)
+    if case is None:
+        return None
+    previous = t.last_blocker(wp)
+    t.need(
+        previous
+        and previous.get("result") == "VERIFIED"
+        and previous.get("operation") == "BLOCKED"
+        and previous.get("from_state") == "VALIDATING"
+        and previous.get("to_state") == "VALIDATING"
+        and previous.get("profile") == profile,
+        "RECOVERY_BLOCKER_AUDIT_MISSING",
+    )
+    t.need(
+        previous.get("audit_id") == case["blocker_audit_id"],
+        "RECOVERY_BLOCKER_AUDIT_MISMATCH",
+    )
+    base = next(
+        c
+        for c in policy["lifecycle_reconciliation"]["cases"]
+        if c["case_id"] == case["reconciliation_case"]
+    )
+    reconcile.gather(gh, base, profile, wp, "VALIDATING")  # PR, merge, scope, runs
+    again = reassertion(t, wp, profile, previous, "VALIDATING")
+    if not isinstance(again, dict):  # None (no re-assertion) or AMBIGUOUS chain
+        raise t.Denied("RECOVERY_ASSESSMENT_REQUIRED")
+    ids = [
+        r[8:]
+        for r in again.get("evidence_refs", [])
+        if re.fullmatch(r"comment:[1-9][0-9]{0,15}", r)
+    ]
+    t.need(len(ids) == 1, "RECOVERY_ASSESSMENT_REQUIRED")
+    comment = gh._get(f"{t.REPO}/issues/comments/{ids[0]}")
+    text = comment.get("body")
+    t.need(
+        isinstance(text, str)
+        and str((comment.get("user") or {}).get("login", "")).casefold()
+        == t.GITHUB[profile].casefold()
+        and comment.get("created_at")
+        and comment.get("created_at") == comment.get("updated_at"),
+        "RECOVERY_ASSESSMENT_NOT_OWNER_UNEDITED",
+    )
+    sha = exact_field(text, "Canonical main revision")
+    pending = exact_field(text, "Pending producers")
+    disposition = case["platform_disposition"]
+    t.need(
+        sha is not None
+        and re.fullmatch(r"[0-9a-f]{40}", sha)
+        and exact_field(text, "Platform disposition")
+        == f"PR {disposition['pr']} {disposition['merge_sha']}"
+        and exact_field(text, "Recovery case") == case["case_id"]
+        and exact_field(text, "Original blocker audit") == case["blocker_audit_id"]
+        and exact_field(text, "Deferred acceptance class") == case["classification"]
+        and exact_field(text, "Owner-executable implementation work") == "NONE"
+        and exact_field(text, "Resolves blocker") is None
+        and pending is not None
+        and sorted(p.strip() for p in pending.split(","))
+        == sorted(case["pending_producers"]),
+        "RECOVERY_ASSESSMENT_INCOMPLETE",
+    )
+    record = t.native_record(text, wp, sha)
+    t.need(
+        record.get("blocker") == previous.get("blocker")
+        and not record.get("resolves_audit_id"),
+        "RECOVERY_BLOCKER_CHANGED",
+    )
+    t.need(record["_artifact_refs"], "RECOVERY_EVIDENCE_MISSING")
+    for ref in record["_artifact_refs"]:
+        gh.artifact(ref, sha)
+    main = gh.main_sha()
+    gh.ancestor(sha, main)  # the assessed revision is on main
+    # The scope held when the owner assessed AND holds on the current main; producer
+    # deliveries and the registry entry are read at the current main, never the older sha.
+    check_canonical_scope(t, gh, wp, sha, policy)
+    check_canonical_scope(t, gh, wp, main, policy)
+    tree = gh._get(f"{t.REPO}/git/trees/{main}?recursive=1")  # complete: checked above
+    t.need(
+        not any(
+            row["path"].startswith(f"evidence/{producer}/")
+            for row in tree["tree"]
+            for producer in case["pending_producers"]
+        ),
+        "RECOVERY_PRODUCER_ALREADY_DELIVERED",
+    )
+    pr = gh.fresh_pr(disposition["pr"])
+    t.need(
+        pr.get("merged") is True
+        and pr.get("merge_commit_sha") == disposition["merge_sha"]
+        and (pr.get("base") or {}).get("ref") == "main"
+        and str((pr.get("user") or {}).get("login", "")).casefold()
+        == t.GITHUB[disposition["owner"]].casefold(),
+        "RECOVERY_DISPOSITION_UNVERIFIED",
+    )
+    gh.ancestor(disposition["merge_sha"], main)
+    # The terms the platform owner confirmed are the registry entry at the pinned PR merge;
+    # the current main must carry that exact entry (a changed reason or status is a new decision).
+    approved = registry_entry(t, gh, disposition, disposition["merge_sha"])
+    exemption = approved.get("exemption")
+    t.need(
+        isinstance(exemption, dict)
+        and exemption.get("owner") == t.q.PEOPLE[disposition["owner"]][0].split()[0]
+        and exemption.get("expires_on") == disposition["expires_on"],
+        "RECOVERY_DISPOSITION_UNVERIFIED",
+    )
+    t.need(
+        registry_entry(t, gh, disposition, main) == approved,
+        "RECOVERY_DISPOSITION_CHANGED",
+    )
+    today = today or dt.datetime.now(dt.UTC).date()
+    t.need(
+        today.isoformat() <= disposition["expires_on"], "RECOVERY_DISPOSITION_EXPIRED"
+    )
+    digest = hashlib.sha256(text.encode()).hexdigest()
+    return {
+        "schema": "cap-deferred-acceptance-v1",
+        "wp_id": wp,
+        "owner": t.q.PEOPLE[profile][0],
+        "classification": case["classification"],
+        "implementation_complete": True,
+        "owner_work_remaining": False,
+        "merge_sha": base["merge_sha"],
+        "audit_id": previous["audit_id"],
+        "assessment_digest": digest,
+        "reassertion_audit_id": again["audit_id"],
+        "reassertion_comment_id": ids[0],
+        "reassertion_digest": digest,
+        "recovery_case": case["case_id"],
+    }
+
+
 def discover(gh, t):
     """Bounded fresh repository comments; immutable-revision/author checks follow.
 
@@ -790,6 +974,11 @@ def advance_owner(
         profile,
         gh_factory(profile) if policy.get("deferred_acceptance_schema") else None,
     )
+    denials = {
+        w: i["deferred_recovery_denial"]
+        for w, i in live.get("items", {}).items()
+        if "deferred_recovery_denial" in i
+    }
     project = policy["execution_project"]
     empty = {
         "complete": True,
@@ -802,7 +991,7 @@ def advance_owner(
     if first["status"] != "NO_TASK" or first.get("reasons") == [
         "NO_REMAINING_SCHEDULED_WORK"
     ]:
-        return first
+        return {**first, **({"deferred_recovery_denials": denials} if denials else {})}
     try:
         gh = gh_factory(profile)
         observed_sha = gh.main_sha()
@@ -826,6 +1015,8 @@ def advance_owner(
         },
         key,
     )
+    if denials:
+        result = {**result, "deferred_recovery_denials": denials}
     if preview or result["status"] != "PROPOSED_NEXT":
         return result
     wp = result["wp_id"]
@@ -939,6 +1130,7 @@ def main():
         for name, path in {
             "auto_next": "/usr/local/libexec/cap-auto-next.py",
             "execution_queue": "/usr/local/libexec/execution_queue.py",
+            "reconcile": "/usr/local/libexec/cap-plane-reconcile.py",
         }.items():
             t.need(
                 hashlib.sha256(Path(path).read_bytes()).hexdigest()
