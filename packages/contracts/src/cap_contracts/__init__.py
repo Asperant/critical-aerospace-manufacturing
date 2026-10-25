@@ -9,6 +9,19 @@ from .compatibility import (
     compare_schemas,
     enforce_version_policy,
 )
+from .envelope import (
+    CausationID,
+    CorrelationID,
+    EntityID,
+    EntityReference,
+    EntityRevision,
+    EnvelopeError,
+    EventEnvelope,
+    EventID,
+    SimulationTime,
+    TraceID,
+    new_event_id,
+)
 from .errors import ContractError
 from .permissions import PublisherPermission, PublisherPermissions
 from .registry import (
@@ -21,6 +34,17 @@ from .streams import StreamDefinition, StreamDefinitions, SubjectBinding
 from .versioning import ContractVersion, is_successor, parse_contract_id
 
 __all__ = [
+    "CausationID",
+    "CorrelationID",
+    "EntityID",
+    "EntityReference",
+    "EntityRevision",
+    "EnvelopeError",
+    "EventEnvelope",
+    "EventID",
+    "SimulationTime",
+    "TraceID",
+    "new_event_id",
     "BoundaryRole",
     "BoundaryValidator",
     "CompatibilityResult",

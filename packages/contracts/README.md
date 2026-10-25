@@ -56,6 +56,47 @@ declaration: it does not make DN-CORE-CONTRACTS CONTRACT_READY.
 Verification: `Registry.load(...).verify(repo_root)` checks hashes, schema validity
 and that every fixture validates. The tests run in the `CI tooling tests` CI step.
 
+## Typed event envelope foundation (WP-EVT-002, Slice 1)
+
+`EventEnvelope` is immutable operational metadata, independent of payload schemas
+and transport. Construction and strict `from_mapping`/`from_json` decoding require
+every field: `event_id`, `event_type`, positive integer `schema_version`, `producer`,
+`world_id`, `correlation_id`, `causation_id`, `trace_id`, `occurred_at`,
+`observed_at` and `entity_refs`. Unknown/missing fields, duplicate JSON fields and
+malformed identities fail closed with `EnvelopeError` without payload values.
+
+`new_event_id()` creates a UUID4 for a new fact. Keep that EventID on retries and
+replay; CorrelationID identifies the business chain, CausationID its immediate
+predecessor, and TraceID the software execution (which may change on replay).
+These distinct typed IDs preserve caller-supplied opaque strings without deriving
+one from another. Root events explicitly use `causation_id=None`; omission fails.
+WorldID is always an explicit nonblank string; nothing infers a primary world.
+Metadata validation does not authenticate a producer or authorize a world.
+
+`EntityReference(entity_type, id, revision)` preserves Core's opaque nonblank
+identity/revision strings, including nonnumeric revisions. It does not invent an
+aggregate sequence counter or prove freshness. Supply an explicit tuple of these
+references, empty only for events without entity context. The library does not
+infer which business events are mutation-sensitive; payload owners retain those
+requirements and their event-specific constraints.
+
+`observed_at` is an aware UTC datetime. `occurred_at` is either an aware UTC
+datetime or `SimulationTime(seconds, simulation_run_id)` supplied by the
+domain/simulator authority. The metadata wire representation tags occurrence as
+`{"clock":"UTC","value":"...Z"}` or
+`{"clock":"SIMULATION","seconds":42.5,"simulation_run_id":"run-1"}`;
+simulation seconds are finite and have no implicit UTC epoch. They are not a
+substitute for platform observation time. Non-UTC/naive datetimes and unknown or
+ambiguous clock representations are rejected. The library never reads the local
+clock or substitutes observation time for occurrence time.
+
+This is an initial shared-library representation, not a registered production event
+payload or publication binding. Existing Core schemas/fixtures and registry entries
+are unchanged. HTTP/NATS/Temporal propagation, production payload/subject bindings,
+outbox, runtime ACLs and REAL integrated acceptance remain subsequent work. Focused
+tests: `uv run --project ci --locked pytest -c ci/pyproject.toml
+ci/tests/test_event_envelope.py -q`.
+
 ## Pure compatibility comparison
 
 `compare_schemas(old, new)` returns an immutable `CompatibilityResult` with
