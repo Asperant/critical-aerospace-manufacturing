@@ -1,0 +1,23 @@
+{
+  "event_id": "00000000-0000-4000-8000-000000000002",
+  "event_type": "production.example",
+  "schema_version": 1,
+  "producer": "synthetic-envelope-fixture",
+  "world_id": "SYNTHETIC-WORLD",
+  "correlation_id": "synthetic-business-chain",
+  "causation_id": "00000000-0000-4000-8000-000000000001",
+  "trace_id": "synthetic-processing-trace-simulation",
+  "occurred_at": {
+    "clock": "SIMULATION",
+    "seconds": 42.5,
+    "simulation_run_id": "SYNTHETIC-RUN-1"
+  },
+  "observed_at": "2026-10-25T12:00:02.123456Z",
+  "entity_refs": [
+    {
+      "entity_type": "Lot",
+      "id": "SYNTHETIC-LOT-1",
+      "revision": "lot-rA"
+    }
+  ]
+}
