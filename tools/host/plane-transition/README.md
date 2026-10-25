@@ -67,6 +67,15 @@ not guessed into PASS. An existing linked assessment may live under `evidence/`,
 Relative repository links and `repo:path` / `artifact:N` evidence are dereferenced.
 File existence alone never certifies semantic correctness.
 
+Bare `repo:path` references in prose exclude sentence-ending full stops before
+whitespace or the end of the text. Internal dots remain part of the path. Code
+spans (including multi-backtick spans) and Markdown link destinations are literal;
+use those forms for a filename that itself ends in a dot. There is no filesystem
+fallback or fuzzy matching: the resulting exact path must exist at the assessed
+SHA, and traversal, missing/empty artifacts and unreadable evidence still fail
+closed. A punctuation-induced HTTP 404 previously surfaced as
+`GITHUB_READ_UNAVAILABLE`; see the CTRL-HOST-003 GitHub-read regression evidence.
+
 Comments must identify the WP and exact revision (and the actual PR when present).
 PR evidence inherits GitHub attribution and actual revision. Ordinary
 unrelated comments are ignored. Native blocker notes can use `Blocker owner:`,

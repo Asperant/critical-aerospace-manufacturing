@@ -1,0 +1,105 @@
+{
+  "schema": "control-reader-diagnostic-v1",
+  "transition_invoked": false,
+  "identity": {
+    "uid": 1001,
+    "gid": 1001,
+    "supplementary_groups_retained": true
+  },
+  "context": {
+    "gh": "/usr/bin/gh",
+    "GH_CONFIG_DIR": "/srv/ailab/user-profiles/asrin/gh",
+    "cwd": "/",
+    "clean_environment": true
+  },
+  "reads": [
+    {
+      "read": "user",
+      "returncode": 0,
+      "response_bytes": 1216
+    },
+    {
+      "read": "repos/Asperant/critical-aerospace-manufacturing/pulls/76",
+      "returncode": 0,
+      "response_bytes": 25235
+    },
+    {
+      "read": "repos/Asperant/critical-aerospace-manufacturing/commits/b46bf2e7a2acb40bf67b5f55ac2bb54053c6b560/check-runs?per_page=100",
+      "returncode": 0,
+      "response_bytes": 44669
+    },
+    {
+      "read": "repos/Asperant/critical-aerospace-manufacturing/commits/b46bf2e7a2acb40bf67b5f55ac2bb54053c6b560/status?per_page=100",
+      "returncode": 0,
+      "response_bytes": 5387
+    },
+    {
+      "read": "repos/Asperant/critical-aerospace-manufacturing/actions/runs/40201263508",
+      "returncode": 0,
+      "response_bytes": 14551
+    },
+    {
+      "read": "repos/Asperant/critical-aerospace-manufacturing/actions/runs/40201263508/jobs?filter=latest&per_page=100",
+      "returncode": 0,
+      "response_bytes": 3737
+    },
+    {
+      "read": "repos/Asperant/critical-aerospace-manufacturing/actions/runs/40201269767",
+      "returncode": 0,
+      "response_bytes": 14576
+    },
+    {
+      "read": "repos/Asperant/critical-aerospace-manufacturing/actions/runs/40201269767/jobs?filter=latest&per_page=100",
+      "returncode": 0,
+      "response_bytes": 3557
+    },
+    {
+      "read": "repos/Asperant/critical-aerospace-manufacturing/contents/evidence/WP-EVT-002/OWNER-ASSESSMENT.md?ref=b46bf2e7a2acb40bf67b5f55ac2bb54053c6b560",
+      "returncode": 0,
+      "response_bytes": 12551
+    },
+    {
+      "read": "repos/Asperant/critical-aerospace-manufacturing/contents/evidence/WP-EVT-002/SCHEMA-SLICE.md?ref=b46bf2e7a2acb40bf67b5f55ac2bb54053c6b560",
+      "returncode": 0,
+      "response_bytes": 7605
+    },
+    {
+      "read": "repos/Asperant/critical-aerospace-manufacturing/contents/evidence/WP-EVT-002/SLICE1.md?ref=b46bf2e7a2acb40bf67b5f55ac2bb54053c6b560",
+      "returncode": 0,
+      "response_bytes": 7199
+    },
+    {
+      "read": "repos/Asperant/critical-aerospace-manufacturing/contents/evidence/WP-EVT-002/TRACE-RECONCILIATION.md?ref=b46bf2e7a2acb40bf67b5f55ac2bb54053c6b560",
+      "returncode": 0,
+      "response_bytes": 15754
+    },
+    {
+      "read": "repos/Asperant/critical-aerospace-manufacturing/contents/evidence/WP-EVT-002/WORLD-SCOPE-SLICE.md.?ref=b46bf2e7a2acb40bf67b5f55ac2bb54053c6b560",
+      "returncode": 1,
+      "response_bytes": 127,
+      "http_status": 404,
+      "api_status": "404",
+      "error_class": "Not Found"
+    }
+  ],
+  "pr_head": "b46bf2e7a2acb40bf67b5f55ac2bb54053c6b560",
+  "evidence_refs": [
+    "repo:evidence/WP-EVT-002/OWNER-ASSESSMENT.md",
+    "repo:evidence/WP-EVT-002/SCHEMA-SLICE.md",
+    "repo:evidence/WP-EVT-002/SLICE1.md",
+    "repo:evidence/WP-EVT-002/TRACE-RECONCILIATION.md",
+    "repo:evidence/WP-EVT-002/WORLD-SCOPE-SLICE.md."
+  ],
+  "result": "DENIED",
+  "reason_code": "GITHUB_READ_UNAVAILABLE",
+  "control_item": "CTRL-HOST-003",
+  "installed_reader_sha256": "637aca56325d4ce53cbe0c35fc9e965dc74c329d0612ccc243e0724a1e6ab7e8",
+  "comparison": {
+    "correct_literal_path": "evidence/WP-EVT-002/WORLD-SCOPE-SLICE.md",
+    "direct_read_result": "file",
+    "direct_read_size": 2336,
+    "core_rate_limit": 5000,
+    "core_rate_remaining_at_comparison": 4674,
+    "no_lifecycle_operation": true
+  }
+}

@@ -376,7 +376,17 @@ def find(plane, profile, wp, policy):
 
 
 def artifact_refs(text):
-    refs=re.findall(r'(?:repo:[A-Za-z0-9_./-]+|artifact:[1-9][0-9]{0,9})',text)
+    # A sentence-ending full stop is prose, not part of a bare repo:path token.
+    # Explicit code spans and Markdown destinations keep their literal paths.
+    literals=[m.span() for m in re.finditer(r'(?P<ticks>`+).*?(?P=ticks)',text,re.S)]
+    refs=[]
+    for match in re.finditer(r'(?:repo:[A-Za-z0-9_./-]+|artifact:[1-9][0-9]{0,9})',text):
+        ref=match.group()
+        prose_end=match.end()==len(text) or text[match.end()].isspace()
+        literal=any(start<=match.start()<end for start,end in literals)
+        if ref.startswith('repo:') and prose_end and not literal:
+            ref=ref.rstrip('.')
+        refs.append(ref)
     for path in re.findall(r'\]\(([A-Za-z0-9_./-]+)(?:#[A-Za-z0-9_.-]+)?\)',text):
         if '/' in path and not path.startswith('/') and not any(p in {'','.','..'} for p in path.split('/')):
             refs.append('repo:'+path)
