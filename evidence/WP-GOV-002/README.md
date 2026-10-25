@@ -23,7 +23,7 @@ dependency edge (early unlocker).
 | 3 | TL-06 runs/evidence/claims, TL-08 completeness (FR-GOV-004/005) and regression against `origin/main`, TL-09, TL-11 class sufficiency and verify codes, TL-12 (NFR-GOV-009) |
 | 4 | generated views, TL-07 freshness, `mfgctl trace` |
 | 5 | TL-13 PR Requirement-Impact with owner routing; decision of 25 October 2026 (option A): 03 §17 stays the source, `mfgctl trace seed` in the same PR, CI runs `drift --strict` |
-| 6 | TL-13 calibration (host control plane and CODEOWNERS are not product behavior), trace (03 delta, §17, §19.10), 04 repository reference, RUN-GOV-002-DEV-001 |
+| 6 | TL-13 calibration (host control plane and CODEOWNERS are not product behavior), trace (03 delta, §17, §19.10), RUN-GOV-002-DEV-001; the 04 card is left unchanged (below) |
 
 ## Verification
 
@@ -62,6 +62,17 @@ tests, four TL-13 probes, a negative probe (one ALLOCATED_TO edge rewritten to
 an unknown component must fail TL-02; the registry is restored) and the orphan
 summary. Results are in `RUN-GOV-002-DEV-001/record.json` with the raw outputs
 next to it; host paths and the host name are redacted.
+
+## Repository reference and the 04 card
+
+The 04 card's `Repository reference` stays `TBD_BY_IMPLEMENTATION` in this
+change. `project_control/merged_external_bindings.yaml` (CHG-035) pins the
+SHA-256 of `docs/04_Work_Breakdown_Structure.md` as reviewed provenance, and the
+policy builder rejects any other digest, so editing 04 here failed the host
+policy test in t1-unit (`MERGED_BINDING_PROVENANCE_INVALID`, branch CI run
+40228851058). The provenance belongs to its owner; the reference is recorded
+here and in 03 §19.10 until the pin is refreshed: `traceability/`,
+`tools/trace/`, `tools/mfgctl/src/mfgctl/trace.py`, `evidence/WP-GOV-002/`.
 
 ## What this evidence does not claim
 
