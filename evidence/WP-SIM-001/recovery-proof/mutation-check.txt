@@ -14,16 +14,18 @@ CAUGHT   assessed-on-main
 CAUGHT   scope-assessed
 CAUGHT   scope-main
 CAUGHT   producers-at-main
-CAUGHT   registry-at-main
 CAUGHT   disposition-cited
 CAUGHT   delivered
 CAUGHT   disp-merged
 CAUGHT   disp-author
 CAUGHT   disp-anc
-CAUGHT   disp-owner
-CAUGHT   disp-expiry-eq
+CAUGHT   registry-compare-current
+CAUGHT   approved-at-merge
+CAUGHT   unique-entry
+CAUGHT   approved-owner
+CAUGHT   approved-expiry
 CAUGHT   audit-mismatch
 CAUGHT   audit-verified
 CAUGHT   gather
 CAUGHT   reassertion
-mutants: 28, survivors or skipped: 0
+mutants: 30, survivors or skipped: 0

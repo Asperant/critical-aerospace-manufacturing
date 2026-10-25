@@ -513,6 +513,22 @@ def deferred_proof(t, wp, profile, policy, gh):
         return None  # UNKNOWN never frees the slot.
 
 
+def registry_entry(t, gh, disposition, revision):
+    """The one registry entry for the deployable at `revision`; absent or ambiguous denies."""
+    raw, _ = gh.repository_file(disposition["path"], revision)
+    try:
+        rows = json.loads(raw)["deployables"]
+        found = [
+            d
+            for d in rows
+            if isinstance(d, dict) and d.get("name") == disposition["deployable"]
+        ]
+    except (ValueError, KeyError, TypeError):
+        raise t.Denied("RECOVERY_DISPOSITION_UNVERIFIED") from None
+    t.need(len(found) == 1, "RECOVERY_DISPOSITION_UNVERIFIED")
+    return found[0]
+
+
 def recovery_proof(t, wp, profile, policy, gh, today=None):
     """CHG-033: deferred-acceptance proof for an allow-listed two-parent merge.
 
@@ -624,24 +640,19 @@ def recovery_proof(t, wp, profile, policy, gh, today=None):
         "RECOVERY_DISPOSITION_UNVERIFIED",
     )
     gh.ancestor(disposition["merge_sha"], main)
-    raw, _ = gh.repository_file(disposition["path"], main)
-    try:
-        deployables = json.loads(raw)["deployables"]
-    except (ValueError, KeyError, TypeError):
-        raise t.Denied("RECOVERY_DISPOSITION_UNVERIFIED") from None
-    exemption = next(
-        (
-            d.get("exemption")
-            for d in deployables
-            if isinstance(d, dict) and d.get("name") == disposition["deployable"]
-        ),
-        None,
+    # The terms the platform owner confirmed are the registry entry at the pinned PR merge;
+    # the current main must carry that exact entry (a changed reason or status is a new decision).
+    approved = registry_entry(t, gh, disposition, disposition["merge_sha"])
+    t.need(
+        approved.get("exemption", {}).get("owner")
+        == t.q.PEOPLE[disposition["owner"]][0].split()[0]
+        and approved.get("exemption", {}).get("expires_on")
+        == disposition["expires_on"],
+        "RECOVERY_DISPOSITION_UNVERIFIED",
     )
     t.need(
-        isinstance(exemption, dict)
-        and exemption.get("owner") == t.q.PEOPLE[disposition["owner"]][0].split()[0]
-        and exemption.get("expires_on") == disposition["expires_on"],
-        "RECOVERY_DISPOSITION_UNVERIFIED",
+        registry_entry(t, gh, disposition, main) == approved,
+        "RECOVERY_DISPOSITION_CHANGED",
     )
     today = today or dt.datetime.now(dt.UTC).date()
     t.need(

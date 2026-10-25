@@ -20,7 +20,7 @@ CHG-033:
   - PR, head, merge, parents, main ancestry, complete file inventory and runs are re-proved live from the reconciliation case
   - A later UNCHANGED re-assertion carries a current unedited owner assessment with exact fields; the historical audit and PR text are never rewritten
   - Canonical inputs must equal the pinned policy at the assessed revision (on main) and on the current main
-  - The platform disposition must be a merged PR by its owner with an unexpired exemption in the registry on the current main, cited in the assessment
+  - The platform disposition must be a merged PR by its owner, cited in the assessment; the registry entry on the current main must equal the entry at that merge and be unexpired
   - Named producer WPs must have delivered nothing on the current main; a delivered producer denies the proof
   - The policy source and this record are pinned in the source manifest, so a changed or revoked case needs a refresh
   - Every failed predicate yields a redacted reason code and the slot stays occupied

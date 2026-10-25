@@ -144,6 +144,11 @@ class GH(FakeGH):
         return deepcopy(self.disposition if number == 75 else self.pr_data)
 
 
+def duplicated():
+    one = json.loads(coverage())["deployables"][0]
+    return json.dumps({"deployables": [one, dict(one)]}).encode()
+
+
 def registry(raw=None):
     raw = coverage() if raw is None else raw
     return {
@@ -293,6 +298,11 @@ class RecoveryProofTests(RecoveryBase):
                 {COVERAGE_PATH: (coverage(**kw), "b")}
             )
 
+        def at_main(raw):
+            return lambda gh, policy: gh.files_at.update(
+                {(COVERAGE_PATH, HEAD): (raw, "b")}
+            )
+
         def put(attr, value):
             return lambda gh, policy: setattr(gh, attr, value)
 
@@ -329,6 +339,12 @@ class RecoveryProofTests(RecoveryBase):
                     {HEAD: with_rows(gh, {"path": f"evidence/{self.producers[1]}/x"})}
                 ),
             ],
+            "RECOVERY_DISPOSITION_CHANGED": [
+                # Same owner and expiry, different terms, only on the current main.
+                at_main(coverage(reason="Revoked; implement observability now.")),
+                at_main(coverage(expires_on="2026-12-31")),
+                at_main(coverage(status="PENDING")),
+            ],
             "DEFERRED_SOURCE_TREE_INCOMPLETE": [
                 lambda gh, policy: gh.trees.update(
                     {HEAD: dict(with_rows(gh), truncated=True)}
@@ -345,9 +361,8 @@ class RecoveryProofTests(RecoveryBase):
                 lambda gh, policy: gh.files_at.update(
                     {(COVERAGE_PATH, HEAD): (b"{}", "b")}
                 ),
-                lambda gh, policy: gh.files_at.update(
-                    {(COVERAGE_PATH, HEAD): (coverage(expires_on="2026-12-31"), "b")}
-                ),
+                put("files_at", {(COVERAGE_PATH, DISPOSITION_MERGE): (b"{}", "b")}),
+                put("repo_files", {COVERAGE_PATH: (duplicated(), "b")}),
             ],
             "RECONCILIATION_PR_BINDING_MISMATCH": [
                 upd("pr_data", merged=False),
@@ -538,6 +553,7 @@ class RecoveryThroughRealAdapterTests(unittest.TestCase):
                     "size": 3,
                 },
                 f"{repo}/contents/{COVERAGE_PATH}?ref={base.MAIN}": registry(),
+                f"{repo}/contents/{COVERAGE_PATH}?ref={DISPOSITION_MERGE}": registry(),
                 f"{repo}/pulls/75": adapter.pr_payload(
                     number=75,
                     user={"login": self.t.GITHUB["yavuz"]},
@@ -601,11 +617,11 @@ class RecoveryThroughRealAdapterTests(unittest.TestCase):
         trees = f"{repo}/git/trees/{main}?recursive=1"
         rows = self.routes[trees]["tree"]
         delivered = {"truncated": False, "tree": rows + [self.producer_row]}
-        revoked = registry(coverage(expires_on="2026-12-31"))
+        revoked = registry(coverage(reason="Revoked; implement observability now."))
         for code, route, answer in (
             ("RECOVERY_PRODUCER_ALREADY_DELIVERED", trees, delivered),
             (
-                "RECOVERY_DISPOSITION_UNVERIFIED",
+                "RECOVERY_DISPOSITION_CHANGED",
                 f"{repo}/contents/{COVERAGE_PATH}?ref={main}",
                 revoked,
             ),

@@ -76,11 +76,6 @@ M = [
         'gh._get(f"{t.REPO}/git/trees/{sha}?recursive=1")',
     ),
     (
-        "registry-at-main",
-        'gh.repository_file(disposition["path"], main)',
-        'gh.repository_file(disposition["path"], sha)',
-    ),
-    (
         "disposition-cited",
         "        and exact_field(text, \"Platform disposition\")\n        == f\"PR {disposition['pr']} {disposition['merge_sha']}\"\n",
         "",
@@ -102,13 +97,24 @@ M = [
     ),
     ("disp-anc", 'gh.ancestor(disposition["merge_sha"], main)', "pass"),
     (
-        "disp-owner",
-        'exemption.get("owner") == t.q.PEOPLE[disposition["owner"]][0].split()[0]',
+        "registry-compare-current",
+        "registry_entry(t, gh, disposition, main) == approved",
         "True",
     ),
     (
-        "disp-expiry-eq",
-        'and exemption.get("expires_on") == disposition["expires_on"]',
+        "approved-at-merge",
+        'registry_entry(t, gh, disposition, disposition["merge_sha"])',
+        "registry_entry(t, gh, disposition, main)",
+    ),
+    ("unique-entry", "t.need(len(found) == 1,", "t.need(len(found) >= 1,"),
+    (
+        "approved-owner",
+        'approved.get("exemption", {}).get("owner")\n        == t.q.PEOPLE[disposition["owner"]][0].split()[0]\n        and ',
+        "",
+    ),
+    (
+        "approved-expiry",
+        '\n        and approved.get("exemption", {}).get("expires_on")\n        == disposition["expires_on"]',
         "",
     ),
     ("audit-mismatch", 'previous.get("audit_id") == case["blocker_audit_id"]', "True"),
@@ -137,7 +143,7 @@ with tempfile.TemporaryDirectory() as tmp:
     shutil.copytree(REPO / "09_change", work / "09_change")
     target = work / "tools/host/plane-transition/auto_next.py"
     original = target.read_text()
-    start = original.index("def recovery_proof")
+    start = original.index("def registry_entry")
     end = original.index("def discover(gh, t):")
     survivors = 0
     for name, old, new in M:

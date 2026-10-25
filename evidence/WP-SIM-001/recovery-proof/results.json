@@ -2,84 +2,84 @@
   {
     "id": "transition-tests",
     "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m unittest discover -s . -p 'test_*.py'",
-    "started_utc": "2026-10-25T15:52:42+00:00",
+    "started_utc": "2026-10-25T16:12:32+00:00",
     "exit_code": 0,
     "result_line": "OK"
   },
   {
     "id": "queue-tests",
     "command": "<scratch>/uvtool/bin/uv run --project ci --locked python -m unittest discover -s . -p 'test_*.py'",
-    "started_utc": "2026-10-25T15:52:53+00:00",
+    "started_utc": "2026-10-25T16:12:43+00:00",
     "exit_code": 0,
     "result_line": "OK"
   },
   {
     "id": "ruff-check",
     "command": "<scratch>/uvtool/bin/uv run --project ci --locked ruff check tools/host/plane-transition/auto_next.py tools/host/plane-transition/reconcile.py tools/host/plane-transition/test_recovery.py",
-    "started_utc": "2026-10-25T15:52:54+00:00",
+    "started_utc": "2026-10-25T16:12:44+00:00",
     "exit_code": 0,
     "result_line": "All checks passed!"
   },
   {
     "id": "ruff-format",
     "command": "<scratch>/uvtool/bin/uv run --project ci --locked ruff format --check tools/host/plane-transition/auto_next.py tools/host/plane-transition/reconcile.py tools/host/plane-transition/test_recovery.py",
-    "started_utc": "2026-10-25T15:52:54+00:00",
+    "started_utc": "2026-10-25T16:12:44+00:00",
     "exit_code": 0,
     "result_line": "3 files already formatted"
   },
   {
     "id": "pyright",
     "command": "<scratch>/uvtool/bin/uv run --project ci --locked pyright tools/host/plane-transition/auto_next.py tools/host/plane-transition/reconcile.py tools/host/plane-transition/test_recovery.py",
-    "started_utc": "2026-10-25T15:52:54+00:00",
+    "started_utc": "2026-10-25T16:12:44+00:00",
     "exit_code": 0,
     "result_line": "Please install the new version or set PYRIGHT_PYTHON_FORCE_VERSION to `latest`"
   },
   {
     "id": "static-ratchet",
     "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/static_ratchet.py check",
-    "started_utc": "2026-10-25T15:52:56+00:00",
+    "started_utc": "2026-10-25T16:12:46+00:00",
     "exit_code": 0,
     "result_line": "PASS: no new static findings; baseline is tight."
   },
   {
     "id": "test-strategy",
     "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/check_test_strategy.py",
-    "started_utc": "2026-10-25T15:53:02+00:00",
+    "started_utc": "2026-10-25T16:12:51+00:00",
     "exit_code": 0,
     "result_line": "PASS: test strategy covers 107 test files in 18 suites; 0 violation(s)"
   },
   {
     "id": "flake-policy",
     "command": "<scratch>/uvtool/bin/uv run --project ci --locked python ci/scripts/check_flake_policy.py",
-    "started_utc": "2026-10-25T15:53:02+00:00",
+    "started_utc": "2026-10-25T16:12:52+00:00",
     "exit_code": 0,
     "result_line": "PASS: 0 active quarantine(s); no retry-until-green."
   },
   {
     "id": "projectctl-validate",
     "command": "<scratch>/uvtool/bin/uv run --project ci --locked projectctl validate",
-    "started_utc": "2026-10-25T15:53:02+00:00",
+    "started_utc": "2026-10-25T16:12:52+00:00",
     "exit_code": 0,
     "result_line": "no defaults assigned"
   },
   {
     "id": "catalog-lint-base",
     "command": "<scratch>/uvtool/bin/uv run --project ci --locked projectctl catalog-lint --base origin/main",
-    "started_utc": "2026-10-25T15:53:05+00:00",
+    "started_utc": "2026-10-25T16:12:55+00:00",
     "exit_code": 0,
     "result_line": "Readiness/evidence: NOT_CERTIFIED"
   },
   {
     "id": "policy-dry-run",
     "command": "<scratch>/uvtool/bin/uv run --project ci --locked python <scratch>/build_policy_dryrun.py",
-    "started_utc": "2026-10-25T15:53:06+00:00",
+    "started_utc": "2026-10-25T16:12:55+00:00",
     "exit_code": 0,
     "result_line": "Canonical transition policy generated (no execution data, no secrets)."
   },
   {
     "id": "diff-check",
     "command": "git diff --check",
-    "started_utc": "2026-10-25T15:53:16+00:00",
+    "started_utc": "2026-10-25T16:13:05+00:00",
     "exit_code": 0,
     "result_line": ""
   }
