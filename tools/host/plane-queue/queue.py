@@ -434,7 +434,7 @@ def main():
         with os.fdopen(fd, 'r+') as lock:
             require(os.fstat(lock.fileno()).st_uid == 0)
             fcntl.flock(lock, fcntl.LOCK_EX)
-            rows = snapshot(Reader(key, RateLimiter()), catalog)
+            rows = snapshot(Reader(key, RateLimiter()), catalog)  # type: ignore[call-arg]
             result = combine(profile, rows, bounded_preflight(profile, key, rows))
             if result['status']=='BLOCKED':
                 result['reason']='ACTIVE_BLOCKER; accountable reason unavailable from live label alone'
