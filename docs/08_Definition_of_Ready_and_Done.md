@@ -916,3 +916,7 @@ Explicit owner decision, 22 October 2026: `project_control/execution_preferences
 ## CHG-031 — reconciliation is not readiness or completion evidence
 
 A lifecycle reconciliation records observed GitHub facts in Plane only. It is not DoR, DoD, accountable-owner assessment, trace, evidence or integrated-acceptance evidence, and it does not satisfy any criterion in this document. A work package reconciled to MERGED or VALIDATING still needs completed actual post-merge validation, every applicable DoD criterion and attributable owner assessment before DONE. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted. Reconciliation does not alter the transition predicates for ordinary work.
+
+## CHG-033 — the recovery proof is not completion evidence
+
+The deferred-acceptance recovery proof releases the owner's implementation slot only. It is not DoR, DoD, accountable-owner assessment, trace, evidence or integrated-acceptance evidence, it does not satisfy a missing Release, Environment or Hardware identity (DOD-WP-11), and it does not make Merged equal Done. DONE still requires every applicable DoD criterion.

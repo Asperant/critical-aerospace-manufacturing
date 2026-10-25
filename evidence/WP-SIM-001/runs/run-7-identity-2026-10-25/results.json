@@ -1,0 +1,24 @@
+[
+  {
+    "id": "suite",
+    "command": "-m pytest -c services/manufacturing-simulator/pyproject.toml services/manufacturing-simulator/tests -q -p pytest_quarantine --junitxml=/srv/ailab/workspaces/batuhan/project/evidence/WP-SIM-001/runs/run-7-identity-2026-10-25/test-results.xml",
+    "started_utc": "2026-10-25T14:44:40+00:00",
+    "finished_utc": "2026-10-25T14:44:42+00:00",
+    "exit_code": 0,
+    "result_line": "202 passed in 2.02s",
+    "output_file": "suite-output.txt",
+    "output_sha256": "ed587fdf838985eef43453117a761750094a334dfcdbacd0ec89c8aa06e6bd12",
+    "stderr_tail": []
+  },
+  {
+    "id": "replay-comparison",
+    "command": "evidence/WP-SIM-001/replay_comparison.py",
+    "started_utc": "2026-10-25T14:44:42+00:00",
+    "finished_utc": "2026-10-25T14:44:45+00:00",
+    "exit_code": 0,
+    "result_line": "",
+    "output_file": "replay-comparison.json",
+    "output_sha256": "e3291575273fb9ff3e4649c79ba74a88e32af07f1aa87d2e05888e8c9b2baaec",
+    "stderr_tail": []
+  }
+]

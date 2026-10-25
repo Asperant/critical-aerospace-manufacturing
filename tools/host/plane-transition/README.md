@@ -67,6 +67,15 @@ not guessed into PASS. An existing linked assessment may live under `evidence/`,
 Relative repository links and `repo:path` / `artifact:N` evidence are dereferenced.
 File existence alone never certifies semantic correctness.
 
+Bare `repo:path` references in prose exclude sentence-ending full stops before
+whitespace or the end of the text. Internal dots remain part of the path. Code
+spans (including multi-backtick spans) and Markdown link destinations are literal;
+use those forms for a filename that itself ends in a dot. There is no filesystem
+fallback or fuzzy matching: the resulting exact path must exist at the assessed
+SHA, and traversal, missing/empty artifacts and unreadable evidence still fail
+closed. A punctuation-induced HTTP 404 previously surfaced as
+`GITHUB_READ_UNAVAILABLE`; see the CTRL-HOST-003 GitHub-read regression evidence.
+
 Comments must identify the WP and exact revision (and the actual PR when present).
 PR evidence inherits GitHub attribution and actual revision. Ordinary
 unrelated comments are ignored. Native blocker notes can use `Blocker owner:`,
@@ -364,3 +373,7 @@ edges, open-PR predicates and DONE validator are unchanged.
 
 Reconciliation is not DoR, DoD, trace or integrated-acceptance evidence and does not make
 Merged equal Done.
+
+## Deferred-acceptance recovery — CHG-033 (proposed, UNDER_REVIEW)
+
+For a merged WP whose pull request landed as a two-parent merge, `auto_next.recovery_proof` is tried only after the legacy `deferred_proof` returns nothing and only for a case in `project_control/deferred_recovery.yaml` (policy key `deferred_recovery`, schema `cap-deferred-recovery-v1`). It reuses `reconcile.gather` for the PR, head, merge, parents, main ancestry, file inventory and runs, and requires the original VERIFIED BLOCKED audit, an UNCHANGED re-assertion (same `cap-plane-transition <WP> BLOCKED` reason, `comment:<id>` evidence) whose unedited owner comment states the exact fields listed in docs/09, the pinned canonical scope at the assessed revision and on the current main, an owner line `Platform disposition: PR <n> <merge sha>` (which supersedes the resolved decision in the historical reason), the platform owner's merged disposition (the registry entry on the current main must equal the entry at that merge, and be unexpired), and no deliverable yet from the named pending producers on the current main. `build_policy.py` pins `deferred_recovery.yaml` and `CHG-033.yaml` in the source manifest, so changing or revoking a case needs a policy refresh. It yields the same `cap-deferred-acceptance-v1` proof (plus `recovery_case`), frees the implementation slot only, and writes nothing. A failed predicate sets `deferred_recovery_denial` to a bare reason code, which `advance_owner` and `preview` return as `deferred_recovery_denials`. The installed `cap-plane-reconcile.py` is hash-pinned and loaded by `cap-auto-next.py`, so installation uses the existing installer after the reviewed source is merged; offline tests never write to root or call Plane or GitHub.
