@@ -23,7 +23,7 @@
   "retention_class": "RC-B",
   "storage": {
     "bucket": "cap-artifacts-rc-b",
-    "key": "v1/inspection_image/3f/3f2b6c1e-8d4a-4e7b-9a21-5c0d7e9f1a42/9c1d2e3f-4a5b-4c6d-8e7f-0a1b2c3d4e5f",
+    "key": "v1/inspection_image/3f/3f2b6c1e-8d4a-4e7b-9a21-5c0d7e9f1a42/v1/9c1d2e3f-4a5b-4c6d-8e7f-0a1b2c3d4e5f",
     "object_id": "9c1d2e3f-4a5b-4c6d-8e7f-0a1b2c3d4e5f"
   },
   "lifecycle_status": "AVAILABLE",

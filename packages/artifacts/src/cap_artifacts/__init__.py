@@ -8,6 +8,7 @@ from cap_artifacts.conventions import (
     new_id,
     object_key,
     require_transition,
+    version_prefix,
 )
 from cap_artifacts.integrity import (
     Digest,
@@ -24,8 +25,25 @@ from cap_artifacts.reference import (
     schema,
     validate,
 )
+from cap_artifacts.sigv4 import Credentials
+from cap_artifacts.store import (
+    ArtifactStore,
+    MissingObjectError,
+    OverwriteError,
+    S3Client,
+    StoreConfig,
+    StoreError,
+)
 
 __all__ = [
+    "ArtifactStore",
+    "Credentials",
+    "MissingObjectError",
+    "OverwriteError",
+    "S3Client",
+    "StoreConfig",
+    "StoreError",
+    "version_prefix",
     "BUCKETS",
     "SCHEMA_ID",
     "ArtifactReference",

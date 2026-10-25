@@ -201,6 +201,8 @@ jobs:
           infra/compose/stack.sh env >> "$GITHUB_ENV"
       - name: Platform runtime tests (boundary mode REAL)
         run: uv run --project ci --locked python -m pytest infra/compose/tests -m integration -q -p pytest_quarantine
+      - name: Artifact store tests (REAL SeaweedFS, WP-OBJ-001)
+        run: uv run --project ci --locked python -m pytest -c packages/artifacts/pyproject.toml packages/artifacts/tests -m integration -q -p pytest_quarantine
       - name: Set up Node (version pinned in .node-version)
         uses: actions/setup-node@v4
         with:

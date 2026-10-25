@@ -189,10 +189,15 @@ def _validate_storage(errors: list[str], ref: dict[str, Any]) -> None:
         and TYPE_RE.match(ref["artifact_type"])
         and isinstance(ref.get("artifact_id"), str)
         and UUID_RE.match(ref["artifact_id"])
+        and _int(ref.get("version"))
+        and ref["version"] >= 1
     )
     if ids_ok:
         expected = object_key(
-            ref["artifact_type"], ref["artifact_id"], storage["object_id"]
+            ref["artifact_type"],
+            ref["artifact_id"],
+            ref["version"],
+            storage["object_id"],
         )
         if storage.get("key") != expected:
             errors.append(

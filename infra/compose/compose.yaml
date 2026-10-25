@@ -90,7 +90,10 @@ services:
   seaweedfs:
     image: chrislusf/seaweedfs:3.80
     profiles: *infra-profiles
-    command: ["server", "-dir=/data", "-s3", "-s3.port=8333", "-master.volumeSizeLimitMB=128", "-volume.max=8"]
+    # Every bucket is a SeaweedFS collection that grows 7 volumes on its first
+    # write; -volume.max must leave room for all artifact buckets (WP-OBJ-001: three
+    # recovery-class buckets) plus headroom. Volumes are sparse files of at most 128 MB.
+    command: ["server", "-dir=/data", "-s3", "-s3.port=8333", "-master.volumeSizeLimitMB=128", "-volume.max=64"]
     volumes:
       - seaweedfs-data:/data
     ports:

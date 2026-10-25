@@ -102,7 +102,7 @@ STRUCTURAL = [
 # Rules the schema cannot express; only the package validator enforces them.
 SEMANTIC = [
     ("storage.bucket", "cap-artifacts-rc-c", "RC-B artifacts live in cap-artifacts-rc-b"),
-    ("storage.key", "v1/inspection_image/3f/3f2b6c1e-8d4a-4e7b-9a21-5c0d7e9f1a42/"
+    ("storage.key", "v1/inspection_image/3f/3f2b6c1e-8d4a-4e7b-9a21-5c0d7e9f1a42/v1/"
      "00000000-0000-4000-8000-000000000000", "derived from identities only"),
     ("provenance.source_artifacts", ["3f2b6c1e-8d4a-4e7b-9a21-5c0d7e9f1a42"], "derive from itself"),
     ("artifact_class", "TEMPORARY_STAGING", "TEMPORARY_STAGING artifacts must be RC-D"),
@@ -136,14 +136,22 @@ def test_non_object_is_rejected() -> None:
 def test_object_key_uses_identities_only_and_is_unique_per_upload() -> None:
     artifact_id = new_id()
     first, second = (
-        object_key("inspection_image", artifact_id, new_id()) for _ in range(2)
+        object_key("inspection_image", artifact_id, 1, new_id()) for _ in range(2)
     )
     assert first != second
-    assert first.startswith(f"v1/inspection_image/{artifact_id[:2]}/{artifact_id}/")
+    assert first.startswith(f"v1/inspection_image/{artifact_id[:2]}/{artifact_id}/v1/")
     with pytest.raises(ConventionError):
-        object_key("inspection_image", "LOT-42", new_id())
+        object_key("inspection_image", "LOT-42", 1, new_id())
     with pytest.raises(ConventionError):
-        object_key("../etc", artifact_id, new_id())
+        object_key("../etc", artifact_id, 1, new_id())
+    with pytest.raises(ConventionError):
+        object_key("inspection_image", artifact_id, 0, new_id())
+    assert (
+        object_key(
+            "inspection_image", artifact_id, 2, "0" * 8 + "-0000-4000-8000-" + "0" * 12
+        )
+        != first
+    )
 
 
 def test_bucket_follows_retention_class() -> None:

@@ -95,9 +95,9 @@
       "properties": {
         "bucket": {"enum": ["cap-artifacts-rc-b", "cap-artifacts-rc-c", "cap-artifacts-rc-d"]},
         "key": {
-          "description": "v1/<artifact_type>/<first two hex of artifact_id>/<artifact_id>/<object_id>",
+          "description": "v1/<artifact_type>/<first two hex of artifact_id>/<artifact_id>/v<version>/<object_id>",
           "type": "string",
-          "pattern": "^v1/[a-z][a-z0-9_]{1,63}/[0-9a-f]{2}/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          "pattern": "^v1/[a-z][a-z0-9_]{1,63}/[0-9a-f]{2}/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/v[1-9][0-9]{0,8}/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
         },
         "object_id": {
           "description": "Unique identity of one physical upload; every upload gets a new one.",

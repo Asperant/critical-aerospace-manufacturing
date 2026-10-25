@@ -31,7 +31,7 @@ Fields follow the 02 minimum metadata: `artifact_id` and `version`,
 | Rule | Value |
 |---|---|
 | Bucket by recovery class | RC-B → `cap-artifacts-rc-b` (critical, backup mandatory) · RC-C → `cap-artifacts-rc-c` (rebuildable) · RC-D → `cap-artifacts-rc-d` (ephemeral). RC-A is canonical mutable state, never an artifact. |
-| Object key | `v1/<artifact_type>/<first two hex of artifact_id>/<artifact_id>/<object_id>` — identities only, never a lot, component or other business identity |
+| Object key | `v1/<artifact_type>/<first two hex of artifact_id>/<artifact_id>/v<version>/<object_id>` — identities only, never a lot, component or other business identity |
 | One upload, one object | every upload gets a new `object_id`; a finalized object is never overwritten |
 | Class/retention | `TEMPORARY_STAGING` is always RC-D; `VERSIONED_RELEASE` is always RC-B |
 | Lifecycle | `RESERVED → UPLOADING → VALIDATING → AVAILABLE`, failures `FAILED`, `QUARANTINED`, `ABORTED`; disposal `RETIRED/DELETE_ELIGIBLE → PENDING_DELETE → DELETED`. Consumers use only `AVAILABLE`. |
@@ -48,12 +48,41 @@ change is an additive schema version.
 > confirming ADR is proposed within this work package and coordinated with the
 > ADR index owner (WP-DOC-002) before the package closes.
 
+## Store (slice 2)
+
+```python
+from cap_artifacts import ArtifactStore, S3Client, StoreConfig
+
+store = ArtifactStore(S3Client(StoreConfig.from_env()))  # CAP_S3_ENDPOINT from stack.sh env
+store.ensure_buckets()
+ref = store.store(png_bytes, artifact_type="inspection_image", artifact_class="OPERATIONAL_EVIDENCE",
+                  retention_class="RC-B", content_type="image/png", format_version="png/1",
+                  logical_owner="vision-service", producer={"service": "manufacturing-simulator",
+                  "version": "0.1.0"}, classification="INTERNAL")
+data = store.read(ref)  # only AVAILABLE references, only verified bytes
+```
+
+| Behaviour | How |
+|---|---|
+| Finalization protocol | RESERVED → UPLOADING (PUT to a fresh object) → VALIDATING (read back, verify size and SHA-256) → AVAILABLE; a mismatch deletes the object and raises |
+| Write once | a version whose prefix already holds an object is refused (`OverwriteError`); new bytes need a new version |
+| Read | `require_consumable()` then GET then verify; tampered bytes raise `IntegrityError`, missing bytes `MissingObjectError` — never silent |
+| Object metadata | `x-amz-meta-cap-sha256` carries the digest, so bytes can be checked without the reference (orphan sweep, slice 3) |
+| Signing | AWS Signature V4 (`sigv4.py`), checked against the three published AWS S3 examples |
+
+Known limits of this slice: the version-prefix check and the upload are not one
+atomic step (two writers racing on the same artifact_id and version are not
+excluded yet; slice 3 reserves the version in PostgreSQL first). Uploads are
+single-request; multipart upload for large datasets and snapshots comes with
+the access path. The local `infra` profile runs the S3 gateway without
+identities; storage identities and least privilege are slice 4.
+
 ## Slices
 
 | Slice | Content | State |
 |---|---|---|
-| 1 | contract, conventions, checksum helpers, unit tests (TEST-OBJ-001-001) | this change |
-| 2 | S3 store client: put/get/head with verification and no-overwrite, REAL SeaweedFS tests | next |
+| 1 | contract, conventions, checksum helpers, unit tests (TEST-OBJ-001-001) | done |
+| 2 | signed S3 store client: write once, verify on write and read, REAL SeaweedFS tests (TEST-OBJ-001-002/003) | this change |
 | 3 | relational metadata and cross-store consistency | planned |
 | 4 | scoped short-lived access and least-privilege storage identities | planned |
 | 5 | trace, evidence, Integration host smoke (DEP-009) | planned |

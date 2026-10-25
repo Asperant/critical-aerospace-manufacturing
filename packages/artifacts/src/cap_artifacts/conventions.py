@@ -76,14 +76,26 @@ def bucket_for(retention_class: str) -> str:
         ) from None
 
 
-def object_key(artifact_type: str, artifact_id: str, object_id: str) -> str:
-    """v1/<artifact_type>/<shard>/<artifact_id>/<object_id>; identities only."""
+def version_prefix(artifact_type: str, artifact_id: str, version: int) -> str:
+    """v1/<artifact_type>/<shard>/<artifact_id>/v<version>/ — all uploads of one version."""
     if not TYPE_RE.match(artifact_type):
         raise ConventionError(f"invalid artifact_type {artifact_type!r}")
-    for name, value in (("artifact_id", artifact_id), ("object_id", object_id)):
-        if not UUID_RE.match(value):
-            raise ConventionError(f"{name} must be a lowercase UUID, got {value!r}")
-    return f"{KEY_LAYOUT}/{artifact_type}/{artifact_id[:2]}/{artifact_id}/{object_id}"
+    if not UUID_RE.match(artifact_id):
+        raise ConventionError(
+            f"artifact_id must be a lowercase UUID, got {artifact_id!r}"
+        )
+    if isinstance(version, bool) or version < 1:
+        raise ConventionError(f"version must be an integer >= 1, got {version!r}")
+    return f"{KEY_LAYOUT}/{artifact_type}/{artifact_id[:2]}/{artifact_id}/v{version}/"
+
+
+def object_key(
+    artifact_type: str, artifact_id: str, version: int, object_id: str
+) -> str:
+    """v1/<artifact_type>/<shard>/<artifact_id>/v<version>/<object_id>; identities only."""
+    if not UUID_RE.match(object_id):
+        raise ConventionError(f"object_id must be a lowercase UUID, got {object_id!r}")
+    return version_prefix(artifact_type, artifact_id, version) + object_id
 
 
 def can_transition(source: str, target: str) -> bool:
