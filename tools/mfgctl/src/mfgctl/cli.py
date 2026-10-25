@@ -3,6 +3,7 @@
 Slice A: ``doctor``. Slice B: ``bootstrap``, ``check`` and ``timings``.
 Slice C: ``profile list``, ``up``, ``down``, ``status``, ``smoke``, ``scenario``
 and ``diagnose bundle`` over the capability registry (mfgctl.capabilities/v1).
+WP-GOV-002: ``trace validate|generate|seed|drift|requirement|orphans``.
 
 Exit codes: 0 success (warnings allowed), 1 a check or step failed, 2 mfgctl
 could not run (outside the repository, ci.yml unusable, registry missing or
@@ -28,6 +29,7 @@ from mfgctl import bootstrap as bootstrap_module
 from mfgctl import check as check_module
 from mfgctl import diagnose as diagnose_module
 from mfgctl import doctor as doctor_module
+from mfgctl import trace as trace_module
 from mfgctl.repo import RepoNotFoundError, find_repo_root
 
 app = typer.Typer(
@@ -40,7 +42,11 @@ scenario_app = typer.Typer(help="Declared scenarios.", no_args_is_help=True)
 diagnose_app = typer.Typer(help="Diagnostics for support.", no_args_is_help=True)
 app.add_typer(profile_app, name="profile")
 app.add_typer(scenario_app, name="scenario")
+trace_app = typer.Typer(
+    help="Trace registry and linter (WP-GOV-002, 03 §18).", no_args_is_help=True
+)
 app.add_typer(diagnose_app, name="diagnose")
+app.add_typer(trace_app, name="trace")
 
 
 class Tier(StrEnum):
@@ -264,3 +270,59 @@ def diagnose_bundle(
         typer.echo(f"Diagnostics bundle: {path}")
         typer.echo("Contents: " + ", ".join(sorted(files)))
         typer.echo("Secrets are redacted, but review the archive before sharing it.")
+
+
+def _trace(command: str, args: list[str]) -> None:
+    with _timed(f"trace {command}"):
+        try:
+            code = trace_module.run(_repo_root(), [command, *args])
+        except trace_module.TraceUnavailableError as exc:
+            typer.echo(f"ERROR: {exc}", err=True)
+            raise typer.Exit(2) from exc
+        raise typer.Exit(code)
+
+
+@trace_app.command("validate")
+def trace_validate(
+    base: str | None = typer.Option(
+        None, "--base", help="Git revision for the TL-08 regression comparison."
+    ),
+    json_output: bool = typer.Option(False, "--json", help="Machine-readable result."),
+) -> None:
+    """Lint the trace registry (TL-01…TL-12)."""
+    _trace(
+        "validate",
+        [*(["--base", base] if base else []), *(["--json"] if json_output else [])],
+    )
+
+
+@trace_app.command("generate")
+def trace_generate() -> None:
+    """Regenerate traceability/generated/ from the registry (TL-07)."""
+    _trace("generate", [])
+
+
+@trace_app.command("seed")
+def trace_seed() -> None:
+    """Regenerate the registry from 03 §17, then the views."""
+    _trace("seed", [])
+
+
+@trace_app.command("drift")
+def trace_drift(
+    strict: bool = typer.Option(False, "--strict", help="Exit 1 on any drift."),
+) -> None:
+    """Compare the registry with 03 §17."""
+    _trace("drift", ["--strict"] if strict else [])
+
+
+@trace_app.command("requirement")
+def trace_requirement(identity: str = typer.Argument(..., help="FR-/NFR- ID.")) -> None:
+    """Show one requirement's node and edges."""
+    _trace("requirement", [identity])
+
+
+@trace_app.command("orphans")
+def trace_orphans() -> None:
+    """Summarize the orphan report."""
+    _trace("orphans", [])

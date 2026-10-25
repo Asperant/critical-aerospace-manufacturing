@@ -1,4 +1,5 @@
-"""python -m cap_trace {validate|seed|drift} — run from the repository root.
+"""python -m cap_trace {validate|seed|generate|drift|requirement|orphans} — run
+from the repository root (mfgctl trace … wraps the same commands).
 
 Exit codes: 0 clean; 1 findings (validate) or drift with --strict; 2 the inputs
 cannot be read (missing file, invalid YAML, a §17 record that cannot be seeded).
@@ -17,6 +18,7 @@ from .drift import compare
 from .lint import IMPLEMENTED_CHECKS, REGISTRY, RegistryError, lint_files, load_yaml
 from .references import coverage
 from .seed import RTM, SeedError, dump, seed
+from .views import write
 
 
 def find_root(start: Path) -> Path:
@@ -66,6 +68,43 @@ def cmd_seed(root: Path) -> int:
     registry = seed(root)
     (root / REGISTRY).write_text(dump(registry), encoding="utf-8")
     print(f"seeded {REGISTRY} from {RTM} §17: {summary(registry)}")
+    return cmd_generate(root)
+
+
+def cmd_generate(root: Path) -> int:
+    for path in write(root, load_yaml(root / REGISTRY)):
+        print(f"generated {path}")
+    return 0
+
+
+def cmd_requirement(root: Path, requirement: str) -> int:
+    registry = load_yaml(root / REGISTRY)
+    nodes = cast(dict[str, Any], registry.get("requirements", {}))
+    if requirement not in nodes:
+        print(f"{requirement}: not in {REGISTRY}", file=sys.stderr)
+        return 2
+    print(json.dumps({requirement: nodes[requirement]}, ensure_ascii=False, indent=2))
+    for edge in cast(list[dict[str, str]], registry.get("edges", [])):
+        if edge["from"] == requirement:
+            print(f"  {edge['relation']:<13} {edge['to']}  [{edge['applicability']}]")
+    return 0
+
+
+def cmd_orphans(root: Path) -> int:
+    report = json.loads(
+        (root / "traceability/generated/orphan_report.json").read_text("utf-8")
+    )
+    for relation, items in report["orphan_requirements"].items():
+        print(
+            f"without {relation}: {len(items)}"
+            + (f" ({', '.join(items)})" if items else "")
+        )
+    print(f"without a recorded realization: {report['without_recorded_realization']}")
+    print(f"without a run: {report['without_run']}")
+    print(
+        "coverage states: "
+        + ", ".join(f"{k} {v}" for k, v in report["coverage_states"].items())
+    )
     return 0
 
 
@@ -93,7 +132,11 @@ def main(argv: list[str] | None = None) -> int:
     validate.add_argument(
         "--base", help="Git revision for the TL-08 coverage-regression comparison"
     )
-    sub.add_parser("seed", help="regenerate the registry from 03 §17")
+    sub.add_parser("seed", help="regenerate the registry from 03 §17, then the views")
+    sub.add_parser("generate", help="regenerate traceability/generated/ (TL-07)")
+    requirement = sub.add_parser("requirement", help="one requirement's node and edges")
+    requirement.add_argument("id")
+    sub.add_parser("orphans", help="summary of the orphan report")
     drift = sub.add_parser("drift", help="compare the registry with 03 §17")
     drift.add_argument("--strict", action="store_true", help="exit 1 on any drift")
     args = parser.parse_args(argv)
@@ -103,8 +146,14 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_validate(root, bool(args.json), args.base)
         if args.command == "seed":
             return cmd_seed(root)
+        if args.command == "generate":
+            return cmd_generate(root)
+        if args.command == "requirement":
+            return cmd_requirement(root, str(args.id))
+        if args.command == "orphans":
+            return cmd_orphans(root)
         return cmd_drift(root, bool(args.strict))
-    except (RegistryError, SeedError) as exc:
+    except (RegistryError, SeedError, OSError, KeyError) as exc:
         print(f"{args.command} failed: {exc}", file=sys.stderr)
         return 2
 

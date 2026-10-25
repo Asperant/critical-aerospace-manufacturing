@@ -1,6 +1,7 @@
 """Trace linter (03 §18.1): TL-01 schema, TL-02 referenced IDs, TL-03 superseded
 misuse, TL-04 vocabulary, TL-05 duplicates, TL-10 prefix-boundary-safe matching,
-and the coverage/evidence rules TL-06, TL-08, TL-09, TL-11, TL-12 (rules.py).
+the coverage/evidence rules TL-06, TL-08, TL-09, TL-11, TL-12 (rules.py) and
+TL-07 generated-view freshness (views.py).
 
 Every finding names its check, the subject it is about and what is wrong, so a
 failing CI run is readable without opening the registry. The linter never fixes
@@ -23,6 +24,7 @@ from .references import reference_findings
 from .rules import regression, rule_findings
 from .sources import Index
 from .sources import load as load_index
+from .views import freshness
 
 REGISTRY = "traceability/trace_edges.yaml"
 SCHEMA = "traceability/trace_schema.json"
@@ -33,6 +35,7 @@ IMPLEMENTED_CHECKS = (
     "TL-04",
     "TL-05",
     "TL-06",
+    "TL-07",
     "TL-08",
     "TL-09",
     "TL-10",
@@ -179,4 +182,5 @@ def lint_files(
     except (OSError, ValueError, KeyError) as exc:
         raise RegistryError(f"identity sources unreadable: {exc}") from None
     base = load_base(root, base_revision) if base_revision else None
-    return registry, lint(registry, load_schema(root / SCHEMA), index, base)
+    findings = lint(registry, load_schema(root / SCHEMA), index, base)
+    return registry, sorted(findings + freshness(root, registry))

@@ -1,0 +1,15 @@
+{
+  "schema": "cap.trace-orphans/v1",
+  "requirements": 306,
+  "orphan_requirements": {
+    "DERIVED_FROM": [],
+    "ALLOCATED_TO": [],
+    "VERIFIED_BY": []
+  },
+  "without_recorded_realization": 277,
+  "without_run": 276,
+  "coverage_states": {
+    "ALLOCATED": 276,
+    "EVIDENCE_PENDING": 30
+  }
+}

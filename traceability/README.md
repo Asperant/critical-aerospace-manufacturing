@@ -9,6 +9,7 @@ NFR-GOV-009. Tooling: `tools/trace` (`cap_trace`).
 |---|---|
 | `trace_schema.json` | `cap.trace-registry/v1`: requirement nodes (class, owner, anchor, realization, acceptance, state, measurement, note) and edges `{from, relation, to, applicability}` |
 | `trace_edges.yaml` | the registry: 306 requirement nodes and their edges, seeded from the 03 §17 records |
+| `generated/` | views generated from the registry only (Item 83 layout): `requirements.csv` (one wide row per requirement), `verification_coverage.csv` (backward trace asset → requirements), `evidence_coverage.csv`, `claim_coverage.csv` (empty until claims exist), `orphan_report.json`; never edited by hand |
 
 ## Model
 
@@ -21,6 +22,17 @@ NFR-GOV-009. Tooling: `tools/trace` (`cap_trace`).
 | Requirement text | never copied (Item 83 #3); the node carries identity-level attributes only |
 
 ## Commands (repository root)
+
+```bash
+mfgctl trace validate --base origin/main   # what CI runs
+mfgctl trace generate                      # refresh traceability/generated/
+mfgctl trace seed                          # registry from 03 §17, then the views
+mfgctl trace drift                         # registry vs 03 §17
+mfgctl trace requirement FR-GOV-009        # one requirement's node and edges
+mfgctl trace orphans                       # orphan report summary
+```
+
+`mfgctl trace` runs the same `cap_trace` commands in the repository root; without mfgctl:
 
 ```bash
 export PYTHONPATH=tools/trace/src
@@ -49,7 +61,7 @@ Exit codes: 0 clean; 1 findings (or drift with `--strict`); 2 inputs unreadable
 | TL-09 stale claims | slice 3 | no SUPPORTS_CLAIM from a requirement whose evidence state is STALE |
 | TL-11 class sufficiency | slice 3 | F0 ⇒ integrated scenario/demo path; H0 ⇒ TEST/DRILL/SCENARIO asset, not inspection- or benchmark-only; FR verify codes (03 View D) E → integrated asset (scenario, demo, or a family whose minimum environment is INTEGRATION or later), B → BENCH, R → DRILL or restart test, N → executable TEST/DRILL, D → DEMO, I → inspection or lint; T is not an audited code (03 §22 C-08…C-13) |
 | TL-12 evidence | slice 3 | coverage VERIFIED or evidence CURRENT ⇒ ≥1 EVIDENCED_BY; a final NFR also needs an observed measurement (NFR-GOV-009) |
-| TL-07 | slice 4 | generated views fresh (`mfgctl trace`) |
+| TL-07 freshness | slice 4 | every file in `generated/` equals what the registry produces now; missing, stale or foreign files fail |
 | TL-13 | slice 5 | PR Requirement-Impact declared |
 
 ## Where TL-02 resolves each relation
