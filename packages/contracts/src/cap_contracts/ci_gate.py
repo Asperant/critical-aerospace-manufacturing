@@ -13,6 +13,7 @@ from .authority import ProducerAuthorities
 from .compatibility import compare_contracts, enforce_version_policy
 from .errors import ContractError
 from .registry import ContractDeclaration, FileRef, Registry, load_schema
+from .streams import STREAM_CATALOG_PATH, StreamDefinitions
 
 _PACKAGE = "packages/contracts/"
 _REGISTRY = _PACKAGE + "registry/"
@@ -43,10 +44,11 @@ def _documents(
 ) -> dict[str, tuple[ContractDeclaration, dict[str, Any], dict[str, Any] | None]]:
     directory = root / _REGISTRY
     if not directory.exists():
-        if baseline:
-            return {}
-        raise ContractError("REGISTRY_MISSING")
-    registry = Registry.load(directory)
+        if not baseline:
+            raise ContractError("REGISTRY_MISSING")
+        registry = Registry({})
+    else:
+        registry = Registry.load(directory)
     if not registry.contract_ids() and not baseline:
         raise ContractError("REGISTRY_EMPTY")
     registry.verify_authorities(authorities, repo_root=root)
@@ -54,6 +56,13 @@ def _documents(
     for pin in pins:
         load_schema(pin, root, schema_refs=pins)
     registry.verify(root, schema_refs=pins)
+    try:
+        StreamDefinitions.load(root, registry, authorities)
+    except ContractError as error:
+        # Pre-catalog history and packages with no bindings remain supported.
+        # A present catalog is always validated in full, even if unchanged.
+        if error.code != "STREAM_CATALOG_MISSING":
+            raise
     result = {}
     for contract_id in registry.contract_ids():
         declaration = registry.get(contract_id)
@@ -115,6 +124,12 @@ def check_versions(old_root: Path, new_root: Path) -> dict[str, Any]:
     if report["failures"]:
         return report
     old, new = snapshots
+    if (old_root / STREAM_CATALOG_PATH).is_file() and not (
+        new_root / STREAM_CATALOG_PATH
+    ).is_file():
+        report["failures"].append(
+            {"stage": "candidate", "code": "STREAM_CATALOG_REMOVED"}
+        )
     report["validated"] = len(new)
     for contract_id in sorted(old.keys() - new.keys()):
         report["failures"].append(
@@ -209,7 +224,12 @@ def _snapshot(repo: Path, revision: str, destination: Path) -> None:
             _REGISTRY.rstrip("/"),
             _APPROVALS,
             _AUTHORITIES,
+            STREAM_CATALOG_PATH,
         }:
+            materialize(path)
+        elif path.startswith(STREAM_CATALOG_PATH + "/"):
+            # Preserve an invalid directory at the approved file location so it
+            # cannot disappear from the snapshot and masquerade as absent.
             materialize(path)
     if (destination / _REGISTRY).exists():
         registry = Registry.load(destination / _REGISTRY)

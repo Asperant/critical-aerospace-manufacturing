@@ -267,7 +267,8 @@ catalog constructor for the global ownership check; `StreamDefinition.from_mappi
 and `SubjectBinding.from_mapping` validate individual records against the same
 registry and producer-ownership model. Typed records are immutable after validation.
 `to_json()` emits sorted, compact JSON; input order has no semantic significance.
-These APIs perform no broker operations or filesystem loading.
+These mapping APIs perform no broker operations or filesystem loading; the strict
+local file loader is described below.
 
 Each stream requires the specification's complete minimum metadata: `stream_id`,
 `stream_class`, `semantic_owner`, `allowed_publishers`, `known_consumers`,
@@ -310,6 +311,39 @@ synthetic async contracts; no production stream or subject is registered here.
 Registry hash/schema/reference verification remains a separate prerequisite via
 `Registry.verify` and the existing gate. This model does not replace that verification
 or certify artifact validity, authenticated publishers, NATS/JetStream readiness,
-consumer integration, ACL enforcement or freeze readiness. Catalog file loading,
-gate integration and approved production bindings remain subsequent slices; final
-ACL derivation requires those explicit validated bindings.
+consumer integration, ACL enforcement or freeze readiness. Approved production
+bindings remain subsequent work; final ACL derivation requires those explicit
+validated bindings.
+
+## Local StreamDefinition catalog loading and gate validation
+
+`StreamDefinitions.load(repo_root, registry, authorities)` reads only
+`packages/contracts/stream-definitions.json` beneath the trusted repository root.
+This fixed package location is the approved catalog source; arbitrary filenames,
+includes, URL fetching and directory discovery are unsupported. Every path component
+below the root must be a regular directory, ending in a regular UTF-8 JSON file.
+Symlinks (including dangling links and parent-directory links), directories in place
+of the file, malformed JSON, duplicate JSON keys at any depth and nonfinite JSON
+constants are rejected. The standalone loader rejects a missing file with
+`STREAM_CATALOG_MISSING`.
+
+The entire document passes through the existing `StreamDefinitions` model. No
+partial catalog is returned on failure: every binding must resolve its exact
+contract family/version and registered producer, and global identity/subject
+ownership checks apply across all streams. `to_json()` retains deterministic
+sorting of streams, bindings, publisher/consumer lists and object keys.
+
+The existing contract CI entrypoint includes the catalog's committed Git blob in
+each snapshot and validates it after the registry's authority, schema, reference,
+fixture and hash checks. Present catalogs are always checked, including unchanged
+ones. A malformed catalog cannot be hidden behind the unchanged-contract shortcut
+or repaired with an uncommitted worktree copy. The existing deterministic report
+uses stable failure codes and stages without catalog contents or payload values;
+its existing counts still describe contract declarations.
+
+Pre-catalog history and packages without registered subject bindings may omit the
+file; absence registers no bindings and certifies no subject readiness. Once the
+baseline contains a catalog, candidate removal fails with `STREAM_CATALOG_REMOVED`.
+Empty, incomplete or invalid present catalogs fail closed. No production catalog is
+introduced by this slice because the real Core exemplar is a synchronous query.
+No workflow, runtime configuration, broker stream or final ACL is changed.

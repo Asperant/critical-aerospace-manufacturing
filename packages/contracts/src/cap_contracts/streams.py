@@ -2,13 +2,31 @@
 
 import json
 import re
+import stat
 from dataclasses import asdict, dataclass
+from pathlib import Path
 from typing import Any
 
 from .authority import ProducerAuthorities
 from .errors import ContractError
 from .registry import Registry
 from .versioning import parse_contract_id, validate_producer_name
+
+STREAM_CATALOG_PATH = "packages/contracts/stream-definitions.json"
+
+
+def _catalog_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ContractError("STREAM_CATALOG_INVALID")
+        result[key] = value
+    return result
+
+
+def _nonfinite(value: str) -> None:
+    raise ContractError("STREAM_CATALOG_INVALID")
+
 
 _TOKEN = r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*"
 _SUBJECT = re.compile(rf"{_TOKEN}(?:\.{_TOKEN})+")
@@ -247,6 +265,38 @@ class StreamDefinitions:
     @property
     def definitions(self) -> tuple[StreamDefinition, ...]:
         return self._definitions
+
+    @classmethod
+    def load(
+        cls, repo_root: Path, registry: Registry, authorities: ProducerAuthorities
+    ) -> "StreamDefinitions":
+        """Load the single approved package catalog; no includes or symlinks.
+
+        The repository root is the caller's trusted anchor. Every component below
+        it must be a regular directory, ending in a regular UTF-8 JSON file.
+        Missing catalogs are errors here; historical absence is handled by CI.
+        """
+        try:
+            path = repo_root.resolve()
+            parts = Path(STREAM_CATALOG_PATH).parts
+            for index, part in enumerate(parts):
+                path = path / part
+                mode = path.lstat().st_mode
+                expected = stat.S_ISREG if index == len(parts) - 1 else stat.S_ISDIR
+                if not expected(mode):
+                    raise ContractError("STREAM_CATALOG_SOURCE_INVALID")
+            value = json.loads(
+                path.read_text(encoding="utf-8"),
+                object_pairs_hook=_catalog_object,
+                parse_constant=_nonfinite,
+            )
+        except FileNotFoundError:
+            raise ContractError("STREAM_CATALOG_MISSING") from None
+        except (OSError, ValueError, UnicodeError) as error:
+            if isinstance(error, ContractError):
+                raise
+            raise ContractError("STREAM_CATALOG_INVALID") from None
+        return cls(value, registry, authorities)
 
     def to_json(self) -> str:
         return json.dumps(
