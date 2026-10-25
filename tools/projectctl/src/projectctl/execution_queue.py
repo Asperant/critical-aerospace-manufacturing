@@ -32,6 +32,10 @@ WBS_PATH = "docs/04_Work_Breakdown_Structure.md"
 RTM_PATH = "docs/03_Requirements_Traceability_Matrix.md"
 PROJECTED_SOURCES = frozenset({WBS_PATH, RTM_PATH})
 EXTERNAL_WAIT_CLASSES = frozenset({"WAITING_EXTERNAL_INTEGRATION_BINDINGS"})
+SLOT_RELEASE_SCHEMA = "cap-slot-release-v2"
+SLOT_RELEASE_CLASSES = frozenset(
+    {DEFERRED_CLASS, "WAITING_EXTERNAL_INTEGRATION_BINDINGS"}
+)
 
 
 def _lines(text: str) -> list[str]:
@@ -162,6 +166,9 @@ def external_integration_wait(wp: str, item: dict[str, Any]) -> bool:
 
 def released_wait(wp: str, item: dict[str, Any]) -> str | None:
     """Verified blocked wait that does not occupy the implementation slot."""
+    semantic = semantic_slot_release(wp, item)
+    if semantic:
+        return semantic
     if deferred_acceptance(wp, item):
         return DEFERRED_CLASS
     if external_integration_wait(wp, item):
@@ -191,6 +198,39 @@ def released_wait(wp: str, item: dict[str, Any]) -> str | None:
 
 def occupies_implementation_slot(wp: str, item: dict[str, Any]) -> bool:
     return item.get("state") in ACTIVE and released_wait(wp, item) is None
+
+
+def semantic_slot_release(wp: str, item: dict[str, Any]) -> str | None:
+    """CHG-034: derive slot release from semantic, current owner evidence.
+
+    This is scheduler accounting only.  It never changes lifecycle, readiness,
+    acceptance, dependency satisfaction or DONE semantics.  The current scoped
+    digest is compared when the live adapter supplies one; unrelated source
+    changes and historical reassertion/provenance fields are intentionally not
+    part of this predicate.
+    """
+    proof = item.get("slot_release_v2")
+    if not (
+        item.get("state") in {"IN_PROGRESS", "VALIDATING"}
+        and item.get("blocked") is True
+        and isinstance(proof, dict)
+        and proof.get("schema") == SLOT_RELEASE_SCHEMA
+        and proof.get("wp_id") == wp
+        and proof.get("owner") == item.get("owner")
+        and proof.get("local_actionable_work") == "NONE"
+        and proof.get("implementation_persisted") is True
+        and proof.get("semantic_blocker_id")
+        and proof.get("semantic_blocker_class") in SLOT_RELEASE_CLASSES
+    ):
+        return None
+    current_scope = item.get("current_scope_digest")
+    assessed_scope = proof.get("relevant_scope_digest")
+    if current_scope is not None and current_scope != assessed_scope:
+        return None
+    if proof["semantic_blocker_class"] == DEFERRED_CLASS:
+        if item.get("state") != "VALIDATING":
+            return None
+    return proof["semantic_blocker_class"]
 
 
 def project_view(project: Any) -> dict[str, Any]:

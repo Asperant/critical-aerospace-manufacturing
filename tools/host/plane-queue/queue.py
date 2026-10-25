@@ -10,6 +10,7 @@ import pwd
 from pathlib import Path
 import re
 import resource
+import signal
 import sys
 import time
 import unicodedata
@@ -37,6 +38,11 @@ ROUTES = frozenset(['', 'members/', 'states/', 'labels/', 'issues/', 'cycles/'] 
                    [f'cycles/{identity}/cycle-issues/' for identity in CYCLES.values()])
 STATES = {'BACKLOG', 'READY', 'IN_PROGRESS', 'IN_REVIEW', 'MERGE_READY', 'MERGED', 'VALIDATING', 'DONE', 'CANCELED'}
 WP = re.compile(r'WP-[A-Z0-9]+-[0-9]{3}')
+# The fixed project snapshot uses 18 bounded GETs in the normal case.  The old
+# 1.25s interval made the pacing sleep alone exceed the 20s operator timeout,
+# before health evaluation even started.
+REQUEST_INTERVAL = 0.9
+HEALTH_BUDGET_SECONDS = 4
 
 
 class Unsafe(Exception):
@@ -112,7 +118,7 @@ class Reader:
         require(route in ROUTES)
         require(cursor is None or isinstance(cursor, str) and re.fullmatch(r'[A-Za-z0-9:_=.-]{1,128}', cursor))
         query = '' if cursor is None else '?' + urllib.parse.urlencode({'cursor': cursor})
-        time.sleep(max(0, 1.25 - (time.monotonic() - self.last)))
+        time.sleep(max(0, REQUEST_INTERVAL - (time.monotonic() - self.last)))
         self.last = time.monotonic()
         request = urllib.request.Request(ORIGIN + PREFIX + route + query,
                                         headers={'X-API-Key': self.key}, method='GET')
@@ -271,6 +277,26 @@ def exit_status(result):
     return 2 if result['status']=='UNAVAILABLE' else 1
 
 
+class HealthTimeout(Exception):
+    pass
+
+
+def bounded_preflight(profile, key):
+    """Health is advisory; it must not turn a live queue read into a hang."""
+    def alarm_handler(signum, frame):
+        raise HealthTimeout()
+
+    previous = signal.signal(signal.SIGALRM, alarm_handler)
+    signal.setitimer(signal.ITIMER_REAL, HEALTH_BUDGET_SECONDS)
+    try:
+        return preflight(profile, key)
+    except (HealthTimeout, TimeoutError, OSError):
+        return None
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous)
+
+
 def main():
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     profile = sys.argv[1] if len(sys.argv) == 2 and sys.argv[1] in PEOPLE else None
@@ -291,7 +317,8 @@ def main():
             require(os.fstat(lock.fileno()).st_uid == 0)
             fcntl.flock(lock, fcntl.LOCK_EX)
             time.sleep(1.25)
-            result = combine(profile, snapshot(Reader(key), catalog), preflight(profile, key))
+            rows = snapshot(Reader(key), catalog)
+            result = combine(profile, rows, bounded_preflight(profile, key))
             if result['status']=='BLOCKED':
                 result['reason']='ACTIVE_BLOCKER; accountable reason unavailable from live label alone'
                 task=result['current_task'] or result['next_task']

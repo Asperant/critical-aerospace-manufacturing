@@ -805,22 +805,18 @@ The recovery proof binds the original VERIFIED BLOCKED audit; the reconciliation
 
 Allocation: CHG-033 is the next free identifier (CHG-032 belongs to WP-EVT-001). The record stays DRAFT/UNDER_REVIEW until the ordinary development gates complete; IMPLEMENTED and VERIFIED are not asserted and would apply to this change only, never to a parent work package.
 
-## Merged external integration binding slot exception — CHG-034
+## CHG-034 — Slot Release v2 and non-blocking live queue selection
 
-CHG-034 / CTRL-HOST-015 (C3 / CR-3) is authorized by the project-owner request of
-25 October 2026 for this bounded implementation. It extends implementation-slot
-accounting to `VALIDATING + BLOCKED + WAITING_EXTERNAL_INTEGRATION_BINDINGS`,
-using a separate proof rather than reclassifying incomplete propagation as
-acceptance-only. The merged PR, deleted branch, exact-merge required CI and main
-run, verified blocker chain, current-main unedited owner assessment (owner work
-NONE and local actionable work NONE), and identical audited/assessed blocker are
-mandatory. Each missing binding requires a reviewed mapping in
-`project_control/merged_external_bindings.yaml`, including canonical producer and
-consumer owners/WPs, scope projection digests, a precise consumer requirement,
-pinned canonical provenance and concrete producer output paths still absent on
-main. An unrelated WP cannot be substituted; mappings are not readiness evidence.
-The initial registry is empty and certifies no actual binding wait. A producer
-output appearing, local work, stale assessment or incomplete/UNKNOWN proof retains
-the slot. VALIDATING/BLOCKED visibility, DoD, DONE, dependency satisfaction,
-CHG-022/024 and canonical selection rules are unchanged. No live state application
-or deployment is authorized by this implementation record alone.
+The project-owner request of 25 October 2026 authorizes one control-plane change for
+semantic implementation-slot accounting and bounded live queue selection. The change
+record is `09_change/CHG-034.yaml`; it preserves lifecycle states, audit/binding history,
+readiness and HARD dependency guards, exact merge CI, Merged != DONE and real DoD.
+`EXECUTION_SLOT_RELEASED` is derived scheduler state only. A BLOCKED work package may
+stop consuming the implementation slot only when its latest attributable owner
+assessment says `Local actionable work: NONE`, persisted implementation work is safely
+merged, and the blocker has a semantic external-integration or downstream-acceptance
+class. Prose identity, historical reassertion continuity, unrelated governance edits,
+complete registries and absent runtime paths are not hard release prerequisites; relevant
+scope, acceptance or dependency changes still force reevaluation and UNKNOWN never passes.
+The queue returns real actionable/current/READY/NO_TASK/AMBIGUOUS selection independently
+of advisory health; health UNAVAILABLE alone does not suppress that selection.
