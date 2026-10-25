@@ -1,6 +1,7 @@
 #!/usr/bin/python3 -I
 """CTRL-HOST-002: fixed-project GET-only queue. No repository imports or writes."""
 import datetime
+import concurrent.futures
 import fcntl
 import hashlib
 import html.parser
@@ -17,7 +18,6 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 import re
-from types import SimpleNamespace
 
 ROOT = Path('/etc/cap-plane-queue')
 ORIGIN = 'http://127.0.0.1:8080'
@@ -316,37 +316,31 @@ def _slot_waits(profile, key, rows):
         if row.get('plane_state') not in {'IN_PROGRESS', 'VALIDATING'}:
             continue
         wp = row['wp_id']
-        candidates.append({
-            'external_id': wp,
-            'external_source': 'projectctl',
-            'name': '[' + wp + '] ' + str(row.get('title', '')),
-            'description_html': json.dumps({
-                'canonical_wp_id': wp,
-                'canonical_owner': PEOPLE[profile][0],
-            }),
-            'assignees': [PEOPLE[profile][1]],
-            'state': row['plane_state'],
-            'labels': ['BLOCKED'],
-        })
+        candidates.append((wp, row['plane_state']))
     if not candidates:
         return []
-    gh = t.GitHub(profile)
-    waits = []
-    for candidate in candidates:
-        plane = SimpleNamespace(
-            items=[candidate],
-            names={state: state for state in STATES},
-            blocked='BLOCKED',
-        )
+    def evaluate(candidate):
+        wp, state = candidate
         try:
-            live = auto.live_view(t, plane, policy, profile, gh)
+            proof = auto.semantic_slot_release_proof(
+                t, wp, profile, policy, t.GitHub(profile)
+            )
         except Exception:
-            continue  # This WP remains visible; UNKNOWN never releases it.
-        wp, item = next(iter(live['items'].items()))
-        reason = auto.resolver.released_wait(wp, item)
-        if reason:
-            waits.append({'wp_id': wp, 'state': item['state'],
-                          'blocked': True, 'reason': reason})
+            return None  # This WP remains visible; UNKNOWN never releases it.
+        if proof:
+            return {'wp_id': wp, 'state': state, 'blocked': True,
+                    'reason': proof['semantic_blocker_class']}
+        return None
+
+    waits = []
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=min(MAX_READ_WORKERS, len(candidates))
+    ) as pool:
+        futures = [pool.submit(evaluate, candidate) for candidate in candidates]
+        for future in concurrent.futures.as_completed(futures):
+            result = future.result()
+            if result:
+                waits.append(result)
     return waits
 
 
