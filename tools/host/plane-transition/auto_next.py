@@ -156,9 +156,10 @@ def merged_external_wait_proof(t, wp, profile, policy, gh):
             "MERGED_WAIT_CLASS_INVALID",
         )
         # CHG-036: the active blocker audit remains the semantic anchor. A
-        # reviewed binding-provenance reassertion may enrich its explanation
-        # while retaining the exact wait class; blocker identity, owner-work
-        # fields, binding IDs and provenance are checked below.
+        # A reviewed binding-provenance reassertion may replace its explanatory
+        # text: the active blocker audit anchor is the semantic identity. The
+        # current assessment below still enforces the exact wait class,
+        # blocker, owner-work fields, binding IDs and registry provenance.
         again = reassertion(
             t,
             wp,
@@ -464,7 +465,7 @@ def reassertion(t, wp, profile, verified, state="IN_PROGRESS", reason_prefix=Non
     The VERIFIED record stays the only authority that the blocker is active; a
     re-assertion may merely carry fresh assessment evidence for that same blocker.
     ``reason_prefix`` is reserved for reviewed semantic wait classes whose
-    explanation may gain provenance detail; the default remains byte-identical.
+    explanation is non-semantic; the default remains byte-identical.
     Returns None when there is none, AMBIGUOUS for any broken, edited or
     contradictory chain, otherwise the re-assertion row.
     """
@@ -496,8 +497,7 @@ def reassertion(t, wp, profile, verified, state="IN_PROGRESS", reason_prefix=Non
             and (
                 row.get("reason") == verified.get("reason")
                 if reason_prefix is None
-                else isinstance(row.get("reason"), str)
-                and row["reason"].startswith(reason_prefix)
+                else isinstance(row.get("reason"), str) and bool(row["reason"].strip())
             )
             and "blocker" not in row
             and t.audit_identity(row) == row.get("audit_id")

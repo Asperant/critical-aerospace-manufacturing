@@ -273,6 +273,10 @@ class MergedBindingWaitTests(unittest.TestCase):
         with patch.object(t, "blocker_rows", return_value=[self.audit, again]):
             self.assertIsNotNone(self.proof())
             again["reason"] = "different reason"
+            again["audit_id"] = t.audit_identity(again)
+            self.assertIsNotNone(self.proof())
+            again["active_blocker_audit_id"] = "different-audit"
+            again["audit_id"] = t.audit_identity(again)
             self.assertIsNone(self.proof())
 
     def test_binding_reassertion_allows_provenance_detail_only(self):
@@ -291,6 +295,13 @@ class MergedBindingWaitTests(unittest.TestCase):
             self.assertIsNotNone(self.proof())
             again["reason"] = (
                 "WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE: changed class"
+            )
+            again["audit_id"] = t.audit_identity(again)
+            self.assertIsNotNone(self.proof())
+            self.gh.comment.return_value["body"] = self.body(
+                **{
+                    "External integration wait class": "WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE"
+                }
             )
             self.assertIsNone(self.proof())
 
