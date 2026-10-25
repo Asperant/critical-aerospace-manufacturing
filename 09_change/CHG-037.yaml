@@ -1,0 +1,31 @@
+CHG-037:
+  title: Consolidate semantic implementation-slot release and bounded queue selection
+  trigger: Explicit project-owner request, 25 October 2026
+  reason: Runtime slot accounting remained blocked by historical prose, binding provenance and reassertion machinery after local work was safely persisted.
+  class: C3
+  review_risk_class: CR-3
+  raised_in: S2
+  owner: Asrın
+  application_control_item: CTRL-HOST-018
+  required_human_approvals: 0
+  decision: APPROVED_WITH_CONDITIONS
+  status: APPROVED
+  supersedes_runtime_slot_accounting: [CHG-034, CHG-035, CHG-036]
+  audit_history: Retained unchanged; legacy binding and audit proofs remain available for DONE and integration acceptance.
+  scope:
+    - EXECUTION_SLOT_RELEASED is a derived scheduler property, never a lifecycle state.
+    - BLOCKED work releases the implementation slot only with latest attributable owner evidence of Local actionable work: NONE, safely persisted implementation, and a semantic external-integration or downstream-acceptance blocker.
+    - Blocker prose byte identity, historical reassertion chains, unrelated governance changes, complete binding registries and absent runtime artifact paths are not hard slot prerequisites.
+    - Relevant product scope, acceptance or dependency changes trigger reevaluation; UNKNOWN, readiness/HARD dependency guards, exact merge CI, Merged != DONE and real DoD remain unchanged.
+    - Queue selection is actionable current WP, then READY, then preparable BACKLOG; advisory health UNAVAILABLE alone does not suppress a real result.
+  invariants_preserved:
+    - Binding registry and audit history are retained.
+    - Lifecycle, readiness, dependency satisfaction, DONE and canonical ownership semantics are unchanged.
+  affected_work_packages: [WP-EVT-002, WP-CORE-004, WP-CORE-005]
+  affected_control_surfaces: [CTRL-HOST-004, CTRL-HOST-012, CTRL-HOST-015, CTRL-HOST-016, CTRL-HOST-017]
+  affected_evidence:
+    - tools/host/plane-queue/test_queue.py
+    - tools/host/plane-transition/test_auto_next.py
+    - evidence/CTRL-HOST-018/
+  rollout: Merge reviewed source, deploy only merged reference source through the supported root installer, refresh and verify live queue and slot accounting.
+  rollback: Restore deployed helpers and policy from the root backup; never replay Plane state or erase audit history.
