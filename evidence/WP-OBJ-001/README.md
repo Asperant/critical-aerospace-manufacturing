@@ -22,6 +22,19 @@ DoR assessment on issue #62.
 | 3 | PostgreSQL registry (`artifact` schema, Core migration pattern): atomic write-once by primary key, immutable identity/content and 02 lifecycle enforced by trigger, registry status governs reads, read-only consistency sweep; tests TEST-OBJ-001-004 (in-memory registry, t1-unit) and TEST-OBJ-001-005 (REAL PostgreSQL and SeaweedFS: replay ledger, no runtime DELETE/DDL, four concurrent writers → one success, missing bytes and orphans reported) |
 | 4 | least-privilege S3 identities in the infra profile (admin/writer/reader, anonymous denied; existing credentials completed, never regenerated), read capabilities pre-signed by the reader, `python -m cap_artifacts ensure-buckets` and `consistency`; tests TEST-OBJ-001-006 (t1-unit) and TEST-OBJ-001-007 (REAL SeaweedFS: anonymous and wrong-identity requests refused, capability reads only its object, cannot write, tampered or expired capability refused) |
 
+| 5 | trace (03 delta and §19.9, NFR-DATA-001 edges), 04 repository reference, RUN-OBJ-001-DEV-001 |
+
+## RUN-OBJ-001-DEV-001
+
+`collect_run.py` records a run on the shared host against the infra profile with
+its S3 identities (boundary mode REAL): profile start, bucket creation with the
+admin identity, the REAL store, registry and access tests (TEST-OBJ-001-003, -005,
+-007; disposable database and roles), an anonymous listing probe (expects 403),
+the consistency command without a registry DSN (expects a configuration error,
+never a guessed DSN) and profile stop. Results are in
+`RUN-OBJ-001-DEV-001/record.json` with the raw outputs next to it; credentials,
+host paths and the host name are redacted.
+
 ## What this evidence does not claim yet
 
 Upload capabilities and multipart upload are not implemented; the BFF does not

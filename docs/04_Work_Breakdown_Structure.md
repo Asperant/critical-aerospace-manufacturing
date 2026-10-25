@@ -1691,7 +1691,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-RT-OBJ |
 | Size band (indicative, no hour estimates) | M (≈4–7 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `packages/artifacts/`; `infra/compose/stack.sh` (S3 identities); `evidence/WP-OBJ-001/` |
 
 **Purpose.** Make every large artifact (inspection images, snapshots, models, evidence) addressable by immutable reference with verified integrity.
 
