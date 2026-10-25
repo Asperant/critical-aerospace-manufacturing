@@ -305,11 +305,23 @@ def merged_external_wait_proof(t, wp, profile, policy, gh):
 
 
 def semantic_slot_release_proof(t, wp, profile, policy, gh):
-    """CHG-037: semantic scheduler accounting; legacy proofs remain auditable."""
+    """CHG-037: semantic scheduler accounting; legacy proofs remain auditable.
+
+    A v2 assessment is the current semantic authority.  The historical VERIFIED
+    audit remains the blocker anchor, but an owner-authored UNCHANGED reassertion
+    may refresh the assessment without making its explanatory prose part of the
+    slot identity.  Legacy wait paths retain their stricter chain rules below.
+    """
     global resolver
     if resolver is None:
         resolver = load_resolver()
-    verified = t.last_blocker(wp)
+    try:
+        verified = t.last_blocker(wp)
+    except (OSError, PermissionError):
+        # Offline/read-only callers may not have the root audit file.  This is
+        # UNKNOWN for v2, never a reason to infer a release or raise into queue
+        # selection; the legacy path will apply its own fail-closed checks.
+        return None
     if not (
         isinstance(verified, dict)
         and verified.get("result") == "VERIFIED"
@@ -317,24 +329,31 @@ def semantic_slot_release_proof(t, wp, profile, policy, gh):
         and verified.get("profile") == profile
     ):
         return None
-    blocker = verified.get("blocker")
-    if not isinstance(blocker, dict):
+
+    # CHG-037 deliberately does not call reassertion(): its byte-identical
+    # reason rule belongs to the legacy proof families.  We still require a
+    # valid audit row linked to the historical VERIFIED blocker and use the
+    # latest owner assessment it references.
+    source = verified
+    try:
+        rows = t.blocker_rows(wp)
+    except Exception:
         return None
-    classification = blocker.get("semantic_class") or blocker.get("class")
-    if classification not in resolver.SLOT_RELEASE_CLASSES:
-        classification = next(
-            (
-                c
-                for c in resolver.SLOT_RELEASE_CLASSES
-                if isinstance(verified.get("reason"), str)
-                and verified["reason"].startswith(c)
-            ),
-            None,
-        )
-    semantic_id = blocker.get("semantic_id") or blocker.get("id")
-    if not isinstance(semantic_id, str) or not semantic_id or classification is None:
-        return None
-    refs = verified.get("evidence_refs", [])
+    for row in rows:
+        if not (
+            row.get("result") == "UNCHANGED"
+            and row.get("operation") == "BLOCKED"
+            and row.get("wp_id") == wp
+            and row.get("profile") == profile
+            and row.get("from_state") == verified.get("from_state")
+            and row.get("to_state") == verified.get("to_state")
+            and row.get("active_blocker_audit_id") == verified.get("audit_id")
+            and t.audit_identity(row) == row.get("audit_id")
+        ):
+            continue
+        source = row
+
+    refs = source.get("evidence_refs", [])
     comment_ids = [
         ref[8:]
         for ref in refs
@@ -356,6 +375,28 @@ def semantic_slot_release_proof(t, wp, profile, policy, gh):
         and (pr_refs or comment.get("created_at") == comment.get("updated_at"))
         and exact_field(text, "Local actionable work") == "NONE"
         and exact_field(text, "Implementation persisted") == "YES"
+    ):
+        return None
+
+    blocker = verified.get("blocker")
+    if not isinstance(blocker, dict):
+        blocker = {}
+    classification = (
+        blocker.get("semantic_class")
+        or blocker.get("class")
+        or exact_field(text, "Semantic blocker class")
+        or exact_field(text, "External integration wait class")
+        or exact_field(text, "Deferred acceptance class")
+    )
+    semantic_id = (
+        blocker.get("semantic_id")
+        or blocker.get("id")
+        or exact_field(text, "Semantic blocker ID")
+    )
+    if (
+        not isinstance(semantic_id, str)
+        or not semantic_id
+        or classification not in resolver.SLOT_RELEASE_CLASSES
     ):
         return None
     scope = exact_field(text, "Relevant scope digest")
