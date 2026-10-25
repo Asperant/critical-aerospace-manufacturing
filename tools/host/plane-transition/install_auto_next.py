@@ -111,14 +111,19 @@ def main():
     if os.fstat(fd).st_uid != 0:
         raise PermissionError("Unsafe lock owner")
     fcntl.flock(deployment_lock, fcntl.LOCK_EX)
+    # Git is a read-only source-integrity check here. Disable optional locks
+    # explicitly so a privileged deployment cannot create an index lock,
+    # refreshed index, or other Git temporary file in the source repository.
+    git_env = {**os.environ, "GIT_OPTIONAL_LOCKS": "0"}
+    git_command = ["git", "--no-optional-locks", "-C", str(SOURCE)]
     status = subprocess.check_output(
-        ["git", "-C", str(SOURCE), "status", "--porcelain"], text=True
+        [*git_command, "status", "--porcelain"], text=True, env=git_env
     )
     head = subprocess.check_output(
-        ["git", "-C", str(SOURCE), "rev-parse", "HEAD"], text=True
+        [*git_command, "rev-parse", "HEAD"], text=True, env=git_env
     ).strip()
     remote = subprocess.check_output(
-        ["git", "-C", str(SOURCE), "rev-parse", "origin/main"], text=True
+        [*git_command, "rev-parse", "origin/main"], text=True, env=git_env
     ).strip()
     if status or head != remote:
         raise ValueError("Clean merged reference source required")
