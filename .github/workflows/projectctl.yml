@@ -24,6 +24,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Install pinned uv and CI toolchain
+        run: |
+          pipx install "uv==0.12.13"
+          uv sync --project ci --locked
       - name: Install focused-gate dependencies
         run: python -m pip install -e './tools/projectctl[dev]'
       - name: Canonical validation

@@ -260,7 +260,11 @@ jobs:
           if event_name != "pull_request":
               expected.add("integration")
           missing = sorted(expected - needs.keys())
-          failed = {k: v["result"] for k, v in sorted(needs.items()) if v["result"] != "success"}
+          failed = {
+              k: needs[k]["result"]
+              for k in sorted(expected)
+              if needs[k]["result"] != "success"
+          }
           for name in missing:
               print(f"MISSING     {name}")
           for name, result in failed.items():

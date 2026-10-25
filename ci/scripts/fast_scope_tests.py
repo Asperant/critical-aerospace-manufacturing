@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 TIMEOUT = 90
+PYTEST = ["uv", "run", "--project", "ci", "--locked", "python", "-m", "pytest"]
 
 
 def changed_paths() -> list[str]:
@@ -76,9 +77,7 @@ def main() -> int:
             (
                 "projectctl-execution-queue",
                 [
-                    "python",
-                    "-m",
-                    "pytest",
+                    *PYTEST,
                     "tools/projectctl/tests/test_execution_queue.py",
                     "tools/projectctl/tests/test_health.py",
                     "-q",
@@ -90,9 +89,7 @@ def main() -> int:
             (
                 "projectctl-focused",
                 [
-                    "python",
-                    "-m",
-                    "pytest",
+                    *PYTEST,
                     "tools/projectctl/tests/test_cli.py",
                     "tools/projectctl/tests/test_project.py",
                     "-q",
@@ -107,9 +104,7 @@ def main() -> int:
             (
                 "ci-policy",
                 [
-                    "python",
-                    "-m",
-                    "pytest",
+                    *PYTEST,
                     "ci/tests/test_test_strategy.py",
                     "ci/tests/test_contract_ci_gate.py",
                     "-q",
