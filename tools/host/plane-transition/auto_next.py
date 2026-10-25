@@ -315,12 +315,46 @@ def semantic_slot_release_proof(t, wp, profile, policy, gh):
     global resolver
     if resolver is None:
         resolver = load_resolver()
+    source = semantic_slot_release_source(t, wp, profile, policy, gh)
+    if source is None:
+        return None
+    if source["semantic_blocker_class"] == resolver.DEFERRED_CLASS:
+        try:
+            pr = (
+                t.pr_fact(gh, source["refs"], wp, profile)
+                if source["pr_refs"]
+                else source["comment"]
+            )
+            if (
+                pr.get("merged") is not True
+                or pr.get("merge_commit_sha") != source["canonical_revision"]
+            ):
+                return None
+            t.ci(gh, source["canonical_revision"], policy)
+        except t.Denied:
+            return None
+    return {
+        "schema": resolver.SLOT_RELEASE_SCHEMA,
+        "wp_id": wp,
+        "owner": t.q.PEOPLE[profile][0],
+        "local_actionable_work": "NONE",
+        "implementation_persisted": True,
+        "semantic_blocker_id": source["semantic_blocker_id"],
+        "semantic_blocker_class": source["semantic_blocker_class"],
+        "relevant_scope_digest": source["scope"],
+        "assessment_digest": source["assessment_digest"],
+        "proof_fingerprint": source["proof_fingerprint"],
+    }
+
+
+def semantic_slot_release_source(t, wp, profile, policy, gh):
+    """Read the current assessment inputs without merge/CI verification."""
+    global resolver
+    if resolver is None:
+        resolver = load_resolver()
     try:
         verified = t.last_blocker(wp)
     except (OSError, PermissionError):
-        # Offline/read-only callers may not have the root audit file.  This is
-        # UNKNOWN for v2, never a reason to infer a release or raise into queue
-        # selection; the legacy path will apply its own fail-closed checks.
         return None
     if not (
         isinstance(verified, dict)
@@ -329,18 +363,13 @@ def semantic_slot_release_proof(t, wp, profile, policy, gh):
         and verified.get("profile") == profile
     ):
         return None
-
-    # CHG-037 deliberately does not call reassertion(): its byte-identical
-    # reason rule belongs to the legacy proof families.  We still require a
-    # valid audit row linked to the historical VERIFIED blocker and use the
-    # latest owner assessment it references.
     source = verified
     try:
         rows = t.blocker_rows(wp)
     except Exception:
         return None
     for row in rows:
-        if not (
+        if (
             row.get("result") == "UNCHANGED"
             and row.get("operation") == "BLOCKED"
             and row.get("wp_id") == wp
@@ -350,9 +379,7 @@ def semantic_slot_release_proof(t, wp, profile, policy, gh):
             and row.get("active_blocker_audit_id") == verified.get("audit_id")
             and t.audit_identity(row) == row.get("audit_id")
         ):
-            continue
-        source = row
-
+            source = row
     refs = source.get("evidence_refs", [])
     comment_ids = [
         ref[8:]
@@ -377,7 +404,6 @@ def semantic_slot_release_proof(t, wp, profile, policy, gh):
         and exact_field(text, "Implementation persisted") == "YES"
     ):
         return None
-
     blocker = verified.get("blocker")
     if not isinstance(blocker, dict):
         blocker = {}
@@ -407,21 +433,35 @@ def semantic_slot_release_proof(t, wp, profile, policy, gh):
     sha = exact_field(text, "Canonical main revision")
     if not isinstance(sha, str) or not re.fullmatch(r"[0-9a-f]{40}", sha):
         return None
-    if classification == resolver.DEFERRED_CLASS:
-        pr = comment if pr_refs else t.pr_fact(gh, refs, wp, profile)
-        if pr.get("merged") is not True or pr.get("merge_commit_sha") != sha:
-            return None
-        t.ci(gh, sha, policy)
+    assessment_digest = hashlib.sha256(text.encode()).hexdigest()
+    fingerprint = hashlib.sha256(
+        json.dumps(
+            {
+                "wp_id": wp,
+                "owner": t.q.PEOPLE[profile][0],
+                "audit_id": source.get("audit_id"),
+                "assessment_digest": assessment_digest,
+                "semantic_blocker_id": semantic_id,
+                "semantic_blocker_class": classification,
+                "relevant_scope_digest": scope,
+                "canonical_revision": sha,
+                "policy_digest": policy.get("policy_digest"),
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+    ).hexdigest()
     return {
-        "schema": resolver.SLOT_RELEASE_SCHEMA,
         "wp_id": wp,
-        "owner": t.q.PEOPLE[profile][0],
-        "local_actionable_work": "NONE",
-        "implementation_persisted": True,
+        "refs": refs,
+        "comment": comment,
+        "pr_refs": pr_refs,
         "semantic_blocker_id": semantic_id,
         "semantic_blocker_class": classification,
-        "relevant_scope_digest": scope,
-        "assessment_digest": hashlib.sha256(text.encode()).hexdigest(),
+        "scope": scope,
+        "canonical_revision": sha,
+        "assessment_digest": assessment_digest,
+        "proof_fingerprint": fingerprint,
     }
 
 
