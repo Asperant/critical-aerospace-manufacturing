@@ -1,0 +1,3 @@
+impacted requirements: FR-GOV-999
+TL-13 FR-GOV-999: declared requirement is not an active catalog ID
+requirement impact (TL-13): FAIL

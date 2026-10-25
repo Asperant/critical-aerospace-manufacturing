@@ -1,0 +1,6 @@
+seeded traceability/trace_edges.yaml from docs/03_Requirements_Traceability_Matrix.md §17: 306 requirements, 2951 edges (ALLOCATED_TO 582, DECIDED_BY 5, DERIVED_FROM 1006, EXECUTED_AS 41, EXERCISED_IN 148, EXPOSED_BY 102, GOVERNED_BY 57, MITIGATES 150, REALIZED_BY 255, USES_DATA 53, USES_MODEL 13, VERIFIED_BY 539)
+generated traceability/generated/requirements.csv
+generated traceability/generated/verification_coverage.csv
+generated traceability/generated/evidence_coverage.csv
+generated traceability/generated/claim_coverage.csv
+generated traceability/generated/orphan_report.json
