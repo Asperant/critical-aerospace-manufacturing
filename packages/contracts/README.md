@@ -73,6 +73,15 @@ one from another. Root events explicitly use `causation_id=None`; omission fails
 WorldID is always an explicit nonblank string; nothing infers a primary world.
 Metadata validation does not authenticate a producer or authorize a world.
 
+`validate_world_scope(envelope, expected_world_id)` checks the consumer's explicit
+expected scope and returns the **same envelope object** on an exact match. Missing
+(`None`), non-string or blank expected IDs and mismatches raise `EnvelopeError`
+with field-only messages. IDs are compared unchanged: no trimming, case folding,
+Unicode normalization, coercion or implicit primary-world fallback. Existing
+construction/decoding still rejects malformed or missing envelope WorldID; the
+guard also rechecks its nonblank shape. It performs no transport, state mutation,
+producer authentication or authorization.
+
 `EntityReference(entity_type, id, revision)` preserves Core's opaque nonblank
 identity/revision strings, including nonnumeric revisions. It does not invent an
 aggregate sequence counter or prove freshness. Supply an explicit tuple of these

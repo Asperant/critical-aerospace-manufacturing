@@ -228,3 +228,18 @@ class EventEnvelope:
         except (ValueError, TypeError):
             raise EnvelopeError("record: invalid envelope JSON") from None
         return cls.from_mapping(decoded)
+
+
+def validate_world_scope(
+    envelope: EventEnvelope, expected_world_id: str | None
+) -> EventEnvelope:
+    """Require the consumer's explicit world and return the same envelope.
+
+    Compare opaque IDs exactly, without normalization, inference or mutation.
+    This checks scope equality only; it does not authenticate or authorize callers.
+    """
+    _text(expected_world_id, "expected_world_id")
+    _text(envelope.world_id, "world_id")
+    if envelope.world_id != expected_world_id:
+        raise EnvelopeError("world_id: scope mismatch")
+    return envelope

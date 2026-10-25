@@ -21,6 +21,7 @@ from .envelope import (
     SimulationTime,
     TraceID,
     new_event_id,
+    validate_world_scope,
 )
 from .errors import ContractError
 from .permissions import PublisherPermission, PublisherPermissions
@@ -45,6 +46,7 @@ __all__ = [
     "SimulationTime",
     "TraceID",
     "new_event_id",
+    "validate_world_scope",
     "BoundaryRole",
     "BoundaryValidator",
     "CompatibilityResult",

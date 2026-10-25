@@ -22,6 +22,7 @@ from cap_contracts import (
     SimulationTime,
     TraceID,
     new_event_id,
+    validate_world_scope,
 )
 from jsonschema import Draft202012Validator
 
@@ -414,3 +415,72 @@ def test_simulation_numbers_remain_seconds_without_utc_conversion(
     restored = EventEnvelope.from_mapping(model.to_mapping())
     assert restored.occurred_at == SimulationTime(seconds, "run-1")
     assert restored.observed_at == WALL_TIME
+
+
+@pytest.mark.parametrize("world", ["PRIMARY", "what-if-world", "World-Å", " World-1 "])
+def test_world_scope_match_preserves_exact_envelope(world: str) -> None:
+    original = replace(envelope(), world_id=world)
+    before = original.to_json()
+    for _ in range(2):
+        accepted = validate_world_scope(original, world)
+        assert accepted is original
+        assert accepted.to_json() == before
+        assert accepted.world_id == world
+
+
+@pytest.mark.parametrize(
+    ("actual", "expected"),
+    [
+        ("SECRET-WHAT-IF", "SECRET-PRIMARY"),
+        ("world-1", "WORLD-1"),
+        ("world-1", " world-1"),
+        ("world-1", "world-1 "),
+        ("world-é", "world-e\u0301"),
+    ],
+)
+def test_world_scope_mismatch_is_exact_deterministic_and_redacted(
+    actual: str, expected: str
+) -> None:
+    original = replace(envelope(), world_id=actual)
+    before = original.to_json()
+    for _ in range(2):
+        with pytest.raises(EnvelopeError) as caught:
+            validate_world_scope(original, expected)
+        assert str(caught.value) == "world_id: scope mismatch"
+        assert actual not in str(caught.value)
+        assert expected not in str(caught.value)
+        assert original.to_json() == before
+
+
+def test_world_scope_missing_expected_world_rejected() -> None:
+    with pytest.raises(
+        EnvelopeError, match="^expected_world_id: nonblank string required$"
+    ):
+        validate_world_scope(envelope(), None)
+
+
+@pytest.mark.parametrize("expected", ["", " \t\n", 1, True, [], {}, b"world-1"])
+def test_world_scope_malformed_expected_world_rejected(expected: Any) -> None:
+    original = envelope()
+    before = original.to_json()
+    with pytest.raises(EnvelopeError) as caught:
+        validate_world_scope(original, expected)
+    assert str(caught.value) == "expected_world_id: nonblank string required"
+    assert original.to_json() == before
+
+
+@pytest.mark.parametrize("world", [None, "", " \t\n", 1, True, [], {}])
+def test_world_scope_malformed_envelope_world_rejected_before_guard(
+    world: object,
+) -> None:
+    record = envelope().to_mapping()
+    record["world_id"] = world
+    with pytest.raises(EnvelopeError):
+        validate_world_scope(EventEnvelope.from_mapping(record), "SECRET-EXPECTED")
+
+
+def test_world_scope_missing_envelope_world_rejected_before_guard() -> None:
+    record = envelope().to_mapping()
+    del record["world_id"]
+    with pytest.raises(EnvelopeError):
+        validate_world_scope(EventEnvelope.from_mapping(record), "SECRET-EXPECTED")
