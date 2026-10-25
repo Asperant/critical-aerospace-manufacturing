@@ -63,7 +63,7 @@ Exit codes: 0 clean; 1 findings (or drift with `--strict`); 2 inputs unreadable
 | TL-11 class sufficiency | slice 3 | F0 ⇒ integrated scenario/demo path; H0 ⇒ TEST/DRILL/SCENARIO asset, not inspection- or benchmark-only; FR verify codes (03 View D) E → integrated asset (scenario, demo, or a family whose minimum environment is INTEGRATION or later), B → BENCH, R → DRILL or restart test, N → executable TEST/DRILL, D → DEMO, I → inspection or lint; T is not an audited code (03 §22 C-08…C-13) |
 | TL-12 evidence | slice 3 | coverage VERIFIED or evidence CURRENT ⇒ ≥1 EVIDENCED_BY; a final NFR also needs an observed measurement (NFR-GOV-009) |
 | TL-07 freshness | slice 4 | every file in `generated/` equals what the registry produces now; missing, stale or foreign files fail |
-| TL-13 impact | slice 5 | a PR that changes anything outside `docs/`, `evidence/`, `09_change/`, `project_control/` or Markdown names its impacted requirements in the template field `Requirements (...)`: active catalog IDs, or `NONE — reason` / a control-only explanation; the check also lists each declared requirement's owner for advisory review (CHG-018) |
+| TL-13 impact | slice 5 | a PR that changes anything outside `docs/`, `evidence/`, `09_change/`, `project_control/`, the host control plane `tools/host/`, `.github/CODEOWNERS` or Markdown names its impacted requirements in the template field `Requirements (...)`: active catalog IDs, or `NONE — reason` / a control-only explanation; the check also lists each declared requirement's owner for advisory review (CHG-018) |
 
 ## Where TL-02 resolves each relation
 

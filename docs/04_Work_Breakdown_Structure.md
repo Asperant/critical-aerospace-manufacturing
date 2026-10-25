@@ -253,7 +253,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-PLAT-REPO |
 | Size band (indicative, no hour estimates) | L (≈7–12 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `traceability/`; `tools/trace/`; `tools/mfgctl/src/mfgctl/trace.py`; `evidence/WP-GOV-002/` |
 
 **Purpose.** Implement the Item 83 trace graph (nodes, controlled relations, applicability) and the CI validation that keeps 03 honest as code lands.
 

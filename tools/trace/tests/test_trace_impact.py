@@ -36,6 +36,12 @@ def test_only_behavior_changing_files_need_a_declaration() -> None:
         == []
     )
     assert behavior_changing(["09_change/CHG-040.yaml", "project_control/x.yaml"]) == []
+    # host control plane and review routing (calibration: PRs #82, #77, #66, #59)
+    assert behavior_changing(["tools/host/plane-transition/auto_next.py"]) == []
+    assert behavior_changing([".github/CODEOWNERS", "evidence/WP-X-001/A.md"]) == []
+    assert behavior_changing([".github/workflows/ci.yml"]) == [
+        ".github/workflows/ci.yml"
+    ]
     assert behavior_changing(["tools/a.py", "docs/b.md"]) == ["tools/a.py"]
     assert lines("", ["docs/04_Work_Breakdown_Structure.md"]) == []
 
@@ -67,6 +73,11 @@ def test_declared_ids_pass_and_name_their_owners() -> None:
             "TL-13 PR body: Requirements names no requirement ID",
         ),
         ("XFR-GOV-004 only", "TL-13 PR body: Requirements names no requirement ID"),
+        # calibration: PR #52 left the template field empty
+        (
+            "\nReviewers / independence (advisory only): x",
+            "TL-13 PR body: behavior-changing PR without a Requirements field",
+        ),
     ],
 )
 def test_invalid_declarations_fail(value: str, expected: str) -> None:

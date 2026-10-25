@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: 4c6adc350dc87e399c0a92aa00c79290c3d260b1304d2ef572e18ecaa4eda7da
+  sha256: d0a9379a24c6ef4d04b8f3b2f5fa31af693439402413f019c705432c4495d5a2
 requirements:
   FR-GOV-001:
     meta:
@@ -71,16 +71,16 @@ requirements:
       env: CI
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
       flags:
       - ALLOC-COARSE
     note: This RTM supplies the initial DERIVED_FROM set; owner semantic confirmation pending (see GAP-RTM-006).
     realization:
-      surface: DERIVED_FROM edge completeness rule in trace linter
+      surface: DERIVED_FROM edge completeness rule in trace linter (TL-08)
       deployable: trace registry
-      ref: TBD_BY_IMPLEMENTATION
+      ref: traceability/trace_edges.yaml; tools/trace/src/cap_trace/rules.py
   FR-GOV-005:
     meta:
       class: F1
@@ -92,13 +92,13 @@ requirements:
       env: CI
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
     realization:
-      surface: VERIFIED_BY edge completeness rule (M5 gate)
+      surface: VERIFIED_BY edge completeness rule in trace linter (TL-08, M5 gate)
       deployable: trace registry
-      ref: TBD_BY_IMPLEMENTATION
+      ref: traceability/trace_edges.yaml; tools/trace/src/cap_trace/rules.py
   FR-GOV-006:
     meta:
       class: F1
@@ -164,13 +164,13 @@ requirements:
       env: CI + EVALUATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
     realization:
-      surface: trace_edges registry + `mfgctl trace` generated views
+      surface: trace_edges registry + `mfgctl trace` generated views + trace linter TL-01…TL-13
       deployable: trace registry tooling
-      ref: TBD_BY_IMPLEMENTATION
+      ref: traceability/trace_edges.yaml; traceability/trace_schema.json; traceability/generated/; tools/trace/src/cap_trace/; tools/mfgctl/src/mfgctl/trace.py; .github/workflows/ci.yml
   FR-GOV-010:
     meta:
       class: F1
@@ -3600,15 +3600,19 @@ requirements:
       env: CI + EVALUATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
     measurement:
       metric: VERIFIED NFRs without durable measurement evidence
       threshold: '0'
       workload: —
       hardware: N/A (not hardware-bound)
       observed: null
+    realization:
+      surface: 'TL-12: no VERIFIED or CURRENT without EVIDENCED_BY; a final NFR also needs an observed measurement'
+      deployable: trace linter
+      ref: tools/trace/src/cap_trace/rules.py
   NFR-GOV-010:
     meta:
       class: H0
@@ -5908,17 +5912,23 @@ edges:
 - {"from": "FR-GOV-004", "relation": "DERIVED_FROM", "to": "FRC-INV-06", "applicability": "PLANNED"}
 - {"from": "FR-GOV-004", "relation": "DERIVED_FROM", "to": "RTM-INV-05", "applicability": "PLANNED"}
 - {"from": "FR-GOV-004", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-CICD", "applicability": "PLANNED"}
-- {"from": "FR-GOV-004", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-GOV-004", "relation": "REALIZED_BY", "to": "repo:traceability/trace_edges.yaml", "applicability": "RECORDED"}
+- {"from": "FR-GOV-004", "relation": "REALIZED_BY", "to": "repo:tools/trace/src/cap_trace/rules.py", "applicability": "RECORDED"}
 - {"from": "FR-GOV-004", "relation": "USES_DATA", "to": "trace_edges", "applicability": "PLANNED"}
 - {"from": "FR-GOV-004", "relation": "VERIFIED_BY", "to": "TEST-GOV-TRACELINT", "applicability": "PLANNED"}
+- {"from": "FR-GOV-004", "relation": "VERIFIED_BY", "to": "TEST-GOV-002-003", "applicability": "PLANNED"}
+- {"from": "FR-GOV-004", "relation": "EXECUTED_AS", "to": "RUN-GOV-002-DEV-001", "applicability": "RECORDED"}
 - {"from": "FR-GOV-005", "relation": "DERIVED_FROM", "to": "ITEM-81", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "DERIVED_FROM", "to": "ITEM-83", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "DERIVED_FROM", "to": "FRC-INV-07", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "DERIVED_FROM", "to": "RTM-INV-08", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-CICD", "applicability": "PLANNED"}
-- {"from": "FR-GOV-005", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-GOV-005", "relation": "REALIZED_BY", "to": "repo:traceability/trace_edges.yaml", "applicability": "RECORDED"}
+- {"from": "FR-GOV-005", "relation": "REALIZED_BY", "to": "repo:tools/trace/src/cap_trace/rules.py", "applicability": "RECORDED"}
 - {"from": "FR-GOV-005", "relation": "USES_DATA", "to": "trace_edges", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "VERIFIED_BY", "to": "TEST-GOV-TRACELINT", "applicability": "PLANNED"}
+- {"from": "FR-GOV-005", "relation": "VERIFIED_BY", "to": "TEST-GOV-002-003", "applicability": "PLANNED"}
+- {"from": "FR-GOV-005", "relation": "EXECUTED_AS", "to": "RUN-GOV-002-DEV-001", "applicability": "RECORDED"}
 - {"from": "FR-GOV-006", "relation": "DERIVED_FROM", "to": "ITEM-81", "applicability": "PLANNED"}
 - {"from": "FR-GOV-006", "relation": "DERIVED_FROM", "to": "ITEM-83", "applicability": "PLANNED"}
 - {"from": "FR-GOV-006", "relation": "DERIVED_FROM", "to": "FRC-INV-08", "applicability": "PLANNED"}
@@ -5952,11 +5962,21 @@ edges:
 - {"from": "FR-GOV-009", "relation": "DERIVED_FROM", "to": "RTM-INV-45", "applicability": "PLANNED"}
 - {"from": "FR-GOV-009", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-CICD", "applicability": "PLANNED"}
 - {"from": "FR-GOV-009", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-CLI", "applicability": "PLANNED"}
-- {"from": "FR-GOV-009", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-GOV-009", "relation": "REALIZED_BY", "to": "repo:traceability/trace_edges.yaml", "applicability": "RECORDED"}
+- {"from": "FR-GOV-009", "relation": "REALIZED_BY", "to": "repo:traceability/trace_schema.json", "applicability": "RECORDED"}
+- {"from": "FR-GOV-009", "relation": "REALIZED_BY", "to": "repo:traceability/generated/", "applicability": "RECORDED"}
+- {"from": "FR-GOV-009", "relation": "REALIZED_BY", "to": "repo:tools/trace/src/cap_trace/", "applicability": "RECORDED"}
+- {"from": "FR-GOV-009", "relation": "REALIZED_BY", "to": "repo:tools/mfgctl/src/mfgctl/trace.py", "applicability": "RECORDED"}
+- {"from": "FR-GOV-009", "relation": "REALIZED_BY", "to": "repo:.github/workflows/ci.yml", "applicability": "RECORDED"}
 - {"from": "FR-GOV-009", "relation": "USES_DATA", "to": "trace_edges", "applicability": "PLANNED"}
 - {"from": "FR-GOV-009", "relation": "USES_DATA", "to": "trace_schema", "applicability": "PLANNED"}
 - {"from": "FR-GOV-009", "relation": "VERIFIED_BY", "to": "TEST-GOV-TRACELINT", "applicability": "PLANNED"}
 - {"from": "FR-GOV-009", "relation": "VERIFIED_BY", "to": "INSP-GOV-ACCEPT", "applicability": "PLANNED"}
+- {"from": "FR-GOV-009", "relation": "VERIFIED_BY", "to": "TEST-GOV-002-001", "applicability": "PLANNED"}
+- {"from": "FR-GOV-009", "relation": "VERIFIED_BY", "to": "TEST-GOV-002-002", "applicability": "PLANNED"}
+- {"from": "FR-GOV-009", "relation": "VERIFIED_BY", "to": "TEST-GOV-002-004", "applicability": "PLANNED"}
+- {"from": "FR-GOV-009", "relation": "VERIFIED_BY", "to": "TEST-GOV-002-005", "applicability": "PLANNED"}
+- {"from": "FR-GOV-009", "relation": "EXECUTED_AS", "to": "RUN-GOV-002-DEV-001", "applicability": "RECORDED"}
 - {"from": "FR-GOV-010", "relation": "DERIVED_FROM", "to": "ITEM-81", "applicability": "PLANNED"}
 - {"from": "FR-GOV-010", "relation": "DERIVED_FROM", "to": "ITEM-83", "applicability": "PLANNED"}
 - {"from": "FR-GOV-010", "relation": "DERIVED_FROM", "to": "FRC-INV-09", "applicability": "PLANNED"}
@@ -8026,8 +8046,11 @@ edges:
 - {"from": "NFR-GOV-009", "relation": "DERIVED_FROM", "to": "RTM-INV-46", "applicability": "PLANNED"}
 - {"from": "NFR-GOV-009", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-CICD", "applicability": "PLANNED"}
 - {"from": "NFR-GOV-009", "relation": "ALLOCATED_TO", "to": "ARCH-DATA-OBJ", "applicability": "PLANNED"}
+- {"from": "NFR-GOV-009", "relation": "REALIZED_BY", "to": "repo:tools/trace/src/cap_trace/rules.py", "applicability": "RECORDED"}
 - {"from": "NFR-GOV-009", "relation": "VERIFIED_BY", "to": "TEST-GOV-TRACELINT", "applicability": "PLANNED"}
 - {"from": "NFR-GOV-009", "relation": "VERIFIED_BY", "to": "INSP-GOV-ACCEPT", "applicability": "PLANNED"}
+- {"from": "NFR-GOV-009", "relation": "VERIFIED_BY", "to": "TEST-GOV-002-003", "applicability": "PLANNED"}
+- {"from": "NFR-GOV-009", "relation": "EXECUTED_AS", "to": "RUN-GOV-002-DEV-001", "applicability": "RECORDED"}
 - {"from": "NFR-GOV-010", "relation": "DERIVED_FROM", "to": "ITEM-82", "applicability": "PLANNED"}
 - {"from": "NFR-GOV-010", "relation": "DERIVED_FROM", "to": "NFR-INV-06", "applicability": "PLANNED"}
 - {"from": "NFR-GOV-010", "relation": "DERIVED_FROM", "to": "KPI-INV-02", "applicability": "PLANNED"}

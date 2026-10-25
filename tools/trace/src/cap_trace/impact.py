@@ -7,8 +7,11 @@ shape changes. The value either names catalog requirement IDs, all of them
 active, or says ``NONE — <reason>`` (or explains a control-only scope); the
 reason is for the reviewer to accept (advisory, CHG-018).
 
-A change that only touches documentation, evidence, change records or project
-control files is not behavior-changing and needs no declaration.
+A change that only touches documentation, evidence, change records, project
+control files, the host control plane (`tools/host/`) or CODEOWNERS is not
+behavior-changing and needs no declaration. Calibrated on the last 25 merged
+PRs (25 October 2026): host-control and automatic START-preparation PRs pass on
+these paths; a work-package PR with an empty Requirements field fails.
 
 For declared requirements the check names their owners, so the author can ask
 the right people to look (review stays advisory; CHG-018).
@@ -33,7 +36,11 @@ NO_IMPACT = re.compile(
     re.I,
 )
 MIN_REASON = 15
-NON_BEHAVIOR = ("docs/", "evidence/", "09_change/", "project_control/")
+# Not product behavior: documentation, evidence, change records, project control
+# and the host control plane (tools/host/, CTRL-HOST work: Plane/host automation,
+# no product requirement), plus review routing (.github/CODEOWNERS).
+NON_BEHAVIOR = ("docs/", "evidence/", "09_change/", "project_control/", "tools/host/")
+NON_BEHAVIOR_FILES = frozenset({".github/CODEOWNERS"})
 TEAM = "project_control/TEAM_WORKFLOW.md"
 TEAM_ROW = re.compile(r"^\| ([^|]+?) \| ([A-Za-z0-9-]+) \|", re.M)
 
@@ -41,7 +48,11 @@ TEAM_ROW = re.compile(r"^\| ([^|]+?) \| ([A-Za-z0-9-]+) \|", re.M)
 def behavior_changing(files: Iterable[str]) -> list[str]:
     """Changed files that can change behavior (not docs/evidence/control only)."""
     return [
-        f for f in files if not f.startswith(NON_BEHAVIOR) and not f.endswith(".md")
+        f
+        for f in files
+        if not f.startswith(NON_BEHAVIOR)
+        and f not in NON_BEHAVIOR_FILES
+        and not f.endswith(".md")
     ]
 
 

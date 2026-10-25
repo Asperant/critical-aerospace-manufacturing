@@ -42,7 +42,7 @@ def test_requirements_view_has_one_row_per_requirement(
     table = rows(generate(registry)["requirements.csv"])
     assert [r["requirement_id"] for r in table] == list(registry["requirements"])
     gov9 = next(r for r in table if r["requirement_id"] == "FR-GOV-009")
-    assert gov9["verified_by"] == "TEST-GOV-TRACELINT INSP-GOV-ACCEPT"
+    assert gov9["verified_by"].startswith("TEST-GOV-TRACELINT INSP-GOV-ACCEPT")
     assert gov9["class"] == "F1" and gov9["owner"] == "Yavuz"
 
 

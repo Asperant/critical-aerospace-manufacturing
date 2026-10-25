@@ -56,3 +56,4 @@
 # WP-GOV-002: trace registry and trace linter; canonical owner Yavuz (advisory, CHG-018).
 /traceability/ @Yavuzgmus
 /tools/trace/ @Yavuzgmus
+/evidence/WP-GOV-002/ @Yavuzgmus @Asperant
