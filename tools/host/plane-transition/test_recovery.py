@@ -144,6 +144,11 @@ class GH(FakeGH):
         return deepcopy(self.disposition if number == 75 else self.pr_data)
 
 
+def malformed():
+    row = {"name": "manufacturing-simulator", "exemption": "Yavuz until 2026-11-20"}
+    return json.dumps({"deployables": [row]}).encode()
+
+
 def duplicated():
     one = json.loads(coverage())["deployables"][0]
     return json.dumps({"deployables": [one, dict(one)]}).encode()
@@ -363,6 +368,7 @@ class RecoveryProofTests(RecoveryBase):
                 ),
                 put("files_at", {(COVERAGE_PATH, DISPOSITION_MERGE): (b"{}", "b")}),
                 put("repo_files", {COVERAGE_PATH: (duplicated(), "b")}),
+                put("repo_files", {COVERAGE_PATH: (malformed(), "b")}),
             ],
             "RECONCILIATION_PR_BINDING_MISMATCH": [
                 upd("pr_data", merged=False),

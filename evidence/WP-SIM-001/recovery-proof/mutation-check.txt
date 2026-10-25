@@ -24,8 +24,9 @@ CAUGHT   approved-at-merge
 CAUGHT   unique-entry
 CAUGHT   approved-owner
 CAUGHT   approved-expiry
+CAUGHT   exemption-is-dict
 CAUGHT   audit-mismatch
 CAUGHT   audit-verified
 CAUGHT   gather
 CAUGHT   reassertion
-mutants: 30, survivors or skipped: 0
+mutants: 31, survivors or skipped: 0

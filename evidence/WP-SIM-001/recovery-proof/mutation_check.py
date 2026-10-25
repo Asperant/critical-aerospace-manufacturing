@@ -109,14 +109,15 @@ M = [
     ("unique-entry", "t.need(len(found) == 1,", "t.need(len(found) >= 1,"),
     (
         "approved-owner",
-        'approved.get("exemption", {}).get("owner")\n        == t.q.PEOPLE[disposition["owner"]][0].split()[0]\n        and ',
+        'and exemption.get("owner") == t.q.PEOPLE[disposition["owner"]][0].split()[0]\n        ',
         "",
     ),
     (
         "approved-expiry",
-        '\n        and approved.get("exemption", {}).get("expires_on")\n        == disposition["expires_on"]',
+        '\n        and exemption.get("expires_on") == disposition["expires_on"]',
         "",
     ),
+    ("exemption-is-dict", "isinstance(exemption, dict)\n        and ", ""),
     ("audit-mismatch", 'previous.get("audit_id") == case["blocker_audit_id"]', "True"),
     (
         "audit-verified",

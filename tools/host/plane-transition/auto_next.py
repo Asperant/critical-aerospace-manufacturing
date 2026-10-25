@@ -643,11 +643,11 @@ def recovery_proof(t, wp, profile, policy, gh, today=None):
     # The terms the platform owner confirmed are the registry entry at the pinned PR merge;
     # the current main must carry that exact entry (a changed reason or status is a new decision).
     approved = registry_entry(t, gh, disposition, disposition["merge_sha"])
+    exemption = approved.get("exemption")
     t.need(
-        approved.get("exemption", {}).get("owner")
-        == t.q.PEOPLE[disposition["owner"]][0].split()[0]
-        and approved.get("exemption", {}).get("expires_on")
-        == disposition["expires_on"],
+        isinstance(exemption, dict)
+        and exemption.get("owner") == t.q.PEOPLE[disposition["owner"]][0].split()[0]
+        and exemption.get("expires_on") == disposition["expires_on"],
         "RECOVERY_DISPOSITION_UNVERIFIED",
     )
     t.need(
