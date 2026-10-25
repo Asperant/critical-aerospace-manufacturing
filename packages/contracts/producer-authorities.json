@@ -1,0 +1,17 @@
+{
+  "schema_version": "cap-producer-authorities-v1",
+  "producers": [
+    {
+      "producer": "manufacturing-core",
+      "semantic_owner": "Asrın Dündar",
+      "source_roots": ["services/manufacturing-core/contracts/"],
+      "contracts": [
+        {
+          "family": "core.order-query",
+          "contract_type": "QUERY",
+          "authority_level": "Core domain read; no command, approval or execution authority"
+        }
+      ]
+    }
+  ]
+}

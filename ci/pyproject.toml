@@ -39,6 +39,6 @@ manufacturing-simulator = { path = "../services/manufacturing-simulator", editab
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = [".", "scripts"]
+pythonpath = [".", "scripts", "../packages/contracts/src"]
 addopts = "-p no:cacheprovider"
 markers = ["integration: needs real PostgreSQL and NATS JetStream services"]
