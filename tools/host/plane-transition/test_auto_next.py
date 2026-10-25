@@ -1267,10 +1267,22 @@ class SlotReleaseV2Tests(unittest.TestCase):
 
     def test_deferred_core_items_do_not_create_actionable_ambiguity(self):
         rows = {
-            "a": dict(self.item("VALIDATING", slot_release_v2=self.proof("WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE")), wp_id="WP-CORE-004"),
+            "a": dict(
+                self.item(
+                    "VALIDATING",
+                    slot_release_v2=self.proof(
+                        "WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE"
+                    ),
+                ),
+                wp_id="WP-CORE-004",
+            ),
             "b": dict(self.item("IN_PROGRESS"), wp_id="WP-CORE-005"),
-            "c": {"owner": "Asrın Dündar", "state": "READY", "blocked": False,
-                  "wp_id": "WP-CORE-006"},
+            "c": {
+                "owner": "Asrın Dündar",
+                "state": "READY",
+                "blocked": False,
+                "wp_id": "WP-CORE-006",
+            },
         }
         rows["a"]["slot_release_v2"]["wp_id"] = "WP-CORE-004"
         rows["b"]["slot_release_v2"]["wp_id"] = "WP-CORE-005"

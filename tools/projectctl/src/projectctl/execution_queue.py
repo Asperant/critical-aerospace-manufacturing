@@ -227,9 +227,11 @@ def semantic_slot_release(wp: str, item: dict[str, Any]) -> str | None:
     assessed_scope = proof.get("relevant_scope_digest")
     if current_scope is not None and current_scope != assessed_scope:
         return None
-    if proof["semantic_blocker_class"] == DEFERRED_CLASS:
-        if item.get("state") != "VALIDATING":
-            return None
+    if (
+        proof["semantic_blocker_class"] == DEFERRED_CLASS
+        and item.get("state") != "VALIDATING"
+    ):
+        return None
     return proof["semantic_blocker_class"]
 
 

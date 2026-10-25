@@ -98,7 +98,10 @@ def live_view(t, plane, policy, profile=None, gh=None):
                 proof = deferred_proof(t, wp, profile, policy, gh)
                 if proof:
                     items[wp]["deferred_acceptance"] = proof
-            if not proof and policy.get("deferred_recovery_schema") == "cap-deferred-recovery-v1":
+            if (
+                not proof
+                and policy.get("deferred_recovery_schema") == "cap-deferred-recovery-v1"
+            ):
                 try:
                     proof = recovery_proof(t, wp, profile, policy, gh)
                 except t.Denied as exc:
@@ -112,9 +115,13 @@ def live_view(t, plane, policy, profile=None, gh=None):
             and items[wp]["state"] == "IN_PROGRESS"
             and items[wp]["blocked"]
         ):
-            proof = semantic_slot_release_proof(t, wp, profile, policy, gh or t.GitHub(profile))
+            proof = semantic_slot_release_proof(
+                t, wp, profile, policy, gh or t.GitHub(profile)
+            )
             if not proof:
-                proof = external_wait_proof(t, wp, profile, policy, gh or t.GitHub(profile))
+                proof = external_wait_proof(
+                    t, wp, profile, policy, gh or t.GitHub(profile)
+                )
             if proof:
                 if proof.get("schema") == "cap-slot-release-v2":
                     items[wp]["slot_release_v2"] = proof
