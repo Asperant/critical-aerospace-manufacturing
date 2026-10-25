@@ -250,12 +250,36 @@ def _read_routes(reader, routes, limiter=None):
     return result
 
 
-def snapshot(reader, catalog):
+def populate_cycles(reader, rows, cycle_targets):
+    """Populate only the cycle membership needed by the selected work."""
+    cycle_targets = set(cycle_targets)
+    if not cycle_targets:
+        return
+    cycles = reader.rows('cycles/')
+    require({c['id']: c['name'] for c in cycles} ==
+            {identity: 'S' + str(n) for n, identity in CYCLES.items()})
+    by_id = {r['_id']: r for r in rows.values()}
+    found = set()
+    for n, identity in CYCLES.items():
+        memberships = reader.rows(f'cycles/{identity}/cycle-issues/')
+        for item in memberships:
+            require(item['id'] in by_id)
+            row = by_id[item['id']]
+            require(row['cycle'] is None)
+            row['cycle'] = 'S' + str(n)
+            if row['wp_id'] in cycle_targets:
+                found.add(row['wp_id'])
+        if found == cycle_targets:
+            break
+    require(found == cycle_targets)
+
+
+def snapshot(reader, catalog, cycle_targets=None):
     project = reader.get('')
     require(project.get('id') == PREFIX.split('/')[-2] and project.get('name') == 'Graduation Project'
             and project.get('identifier') == 'CAP')
     limiter = reader.limiter if isinstance(reader, Reader) else None
-    route_rows = _read_routes(reader, ('members/', 'states/', 'labels/', 'issues/', 'cycles/'), limiter)
+    route_rows = _read_routes(reader, ('members/', 'states/', 'labels/', 'issues/'), limiter)
     members = route_rows['members/']
     for owner, identity, email in PEOPLE.values():
         require(len([m for m in members if m['id'] == identity and m.get('email', '').casefold() == email]) == 1)
@@ -283,17 +307,9 @@ def snapshot(reader, catalog):
         rows[wp] = {'wp_id': wp, 'title': item['name'].split('] ', 1)[1], 'plane_state': state_map[item['state']],
                     'blocked': blocked_id in item['labels'], 'cycle': None, '_id': item['id'], '_profile': owner}
     require(set(rows) == set(catalog['owners']))
-    cycles = route_rows['cycles/']
-    require({c['id']: c['name'] for c in cycles} == {identity: 'S' + str(n) for n, identity in CYCLES.items()})
-    by_id = {r['_id']: r for r in rows.values()}
-    membership_routes = [f'cycles/{identity}/cycle-issues/' for identity in CYCLES.values()]
-    memberships = _read_routes(reader, membership_routes, limiter)
-    for n, identity in CYCLES.items():
-        for item in memberships[f'cycles/{identity}/cycle-issues/']:
-            require(item['id'] in by_id)
-            row = by_id[item['id']]
-            require(row['cycle'] is None)
-            row['cycle'] = 'S' + str(n)
+    if cycle_targets is None:
+        cycle_targets = set(rows)
+    populate_cycles(reader, rows, cycle_targets)
     return rows
 
 
@@ -333,13 +349,13 @@ def _write_snapshot_cache(rows):
             temporary.unlink()
 
 
-def load_snapshot(reader, catalog):
+def load_snapshot(reader, catalog, cycle_targets=None):
     """Share one fresh Plane state snapshot across the complete queue run."""
     if isinstance(reader, Reader):
         cached = _read_snapshot_cache()
         if cached is not None:
             return cached, True
-    rows = snapshot(reader, catalog)
+    rows = snapshot(reader, catalog, cycle_targets)
     if isinstance(reader, Reader):
         _write_snapshot_cache(rows)
     return rows, False
@@ -611,9 +627,20 @@ def main():
             require(os.fstat(lock.fileno()).st_uid == 0)
             fcntl.flock(lock, fcntl.LOCK_EX)
             reader = Reader(key, RateLimiter())
-            rows, snapshot_cached = load_snapshot(reader, catalog)
-            result = combine(profile, rows, bounded_preflight(profile, key, rows))
-            result['plane_gets'] = 0 if snapshot_cached else reader.metrics['get_count']
+            # Cycle membership is presentation data. Read the authoritative
+            # issue/state snapshot once, then resolve a cycle only for the
+            # single task selected by the local queue decision.
+            rows, snapshot_cached = load_snapshot(reader, catalog, set())
+            health = bounded_preflight(profile, key, rows)
+            result = combine(profile, rows, health)
+            task = result.get('current_task') or result.get('next_task')
+            if isinstance(task, dict) and isinstance(task.get('wp_id'), str):
+                selected = rows.get(task['wp_id'])
+                if selected is not None and selected.get('cycle') is None:
+                    populate_cycles(reader, rows, {task['wp_id']})
+                    _write_snapshot_cache(rows)
+                    result = combine(profile, rows, health)
+            result['plane_gets'] = reader.metrics['get_count']
             result['plane_snapshot_cached'] = snapshot_cached
             if result['status']=='BLOCKED':
                 result['reason']='ACTIVE_BLOCKER; accountable reason unavailable from live label alone'
