@@ -1,1 +1,1 @@
-Requirements (stable IDs, or NONE — reason / control-only scope): 
+Requirements (stable IDs, or NONE — reason / control-only scope):

@@ -2,4 +2,4 @@
 .....................................................                    [100%]
 ----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------
 0 registry entr(y/ies); 0 applied in this run
-125 passed in 17.47s
+125 passed in 17.58s

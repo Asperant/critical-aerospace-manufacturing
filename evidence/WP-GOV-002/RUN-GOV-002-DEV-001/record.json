@@ -10,9 +10,9 @@
     "TEST-GOV-002-004",
     "TEST-GOV-002-005"
   ],
-  "code_revision": "7ea711a24b6c03d5625210448a451b544fbc74cc",
+  "code_revision": "4323099508d2194a873321552d6c8df13605e0b0",
   "branch": "wp/WP-GOV-002-trace-registry",
-  "recorded_at": "2026-10-25T20:02:06+00:00",
+  "recorded_at": "2026-10-25T20:34:44+00:00",
   "host": {
     "machine": "x86_64",
     "system": "Linux",
@@ -71,7 +71,7 @@
       "step": "tests",
       "exit_code": 0,
       "expected_exit_code": 0,
-      "wall_s": 17.7,
+      "wall_s": 17.8,
       "output": "tests.log.txt"
     },
     {
