@@ -657,9 +657,15 @@ class PolicyPinningTests(unittest.TestCase):
             self.assertEqual(done.returncode, 0, done.stderr[-500:])
             policy = json.loads(out.read_text())
         self.assertEqual(policy["deferred_recovery_schema"], rec.RECOVERY_SCHEMA)
+        self.assertEqual(policy["merged_external_wait_schema"], auto.MERGED_WAIT_SCHEMA)
+        self.assertEqual(
+            policy["merged_external_bindings"]["schema"], auto.MERGED_BINDINGS_SCHEMA
+        )
         for name in (
             "project_control/deferred_recovery.yaml",
             "09_change/CHG-033.yaml",
+            "project_control/merged_external_bindings.yaml",
+            "09_change/CHG-034.yaml",
         ):
             raw = (root / name).read_bytes()
             blob = hashlib.sha1(b"blob %d\0" % len(raw) + raw, usedforsecurity=False)

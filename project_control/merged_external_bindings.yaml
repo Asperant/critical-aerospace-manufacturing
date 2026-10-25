@@ -1,0 +1,4 @@
+schema: cap-merged-external-bindings-v1
+# Only merged, explicitly reviewed producer/consumer mappings belong here.
+# No mapping is inferred from an owner-work-NONE declaration or a WP title.
+bindings: []

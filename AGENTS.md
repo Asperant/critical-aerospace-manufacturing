@@ -937,3 +937,21 @@ CHG-027 / CTRL-HOST-012: `cap-plane-queue` reports `current_task` as the owner's
 work (READY work is also kept in `next_task`). Work the shared resolver classifies as a verified
 deferred wait (CHG-022/CHG-024) is excluded from that selection and listed in `deferred_waits`;
 if the classification is unavailable nothing is excluded. Multiple actionable work stays AMBIGUOUS.
+
+## Merged external integration binding wait — CHG-034 / CTRL-HOST-015
+
+CHG-034 adds a slot-accounting exception only for `VALIDATING + BLOCKED +
+WAITING_EXTERNAL_INTEGRATION_BINDINGS`. A distinct root proof requires an actual
+merged WP PR, deleted branch, successful required CI and a main run at the exact
+merge SHA, an intact VERIFIED blocker audit (or valid UNCHANGED re-assertion),
+one unedited owner comment bound to current main stating owner work NONE and
+local actionable work NONE, and exact assessed/audited blocker equality.
+Every missing binding must have an explicitly reviewed mapping in
+`project_control/merged_external_bindings.yaml`: canonical producer/consumer WPs
+and owners, their scope digests, a precise requirement, pinned canonical provenance
+and concrete still-absent producer binding paths. Delivered paths, missing mappings,
+stale/UNKNOWN evidence or actionable work keep the slot. The initial mapping list
+is empty; no EVT-002 binding or readiness is invented. The WP stays VALIDATING and
+BLOCKED, never DONE; acceptance, readiness, CHG-022/024, ordering and transitions
+remain unchanged. Deploy merged source with the existing backup/refresh procedure;
+live blocker application needs separate authorization.

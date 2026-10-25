@@ -166,6 +166,26 @@ def released_wait(wp: str, item: dict[str, Any]) -> str | None:
         return DEFERRED_CLASS
     if external_integration_wait(wp, item):
         return item["external_integration_wait"]["classification"]
+    proof = item.get("merged_external_integration_wait")
+    if (
+        item.get("state") == "VALIDATING"
+        and item.get("blocked") is True
+        and isinstance(proof, dict)
+        and proof.get("schema") == "cap-merged-external-wait-v1"
+        and proof.get("classification") == "WAITING_EXTERNAL_INTEGRATION_BINDINGS"
+        and proof.get("wp_id") == wp
+        and proof.get("owner") == item.get("owner")
+        and proof.get("owner_work_remaining") is False
+        and proof.get("local_actionable_work") is False
+        and all(
+            isinstance(proof.get(k), str) and proof[k]
+            for k in ("merge_sha", "audit_id", "assessment_digest", "provenance_digest")
+        )
+        and isinstance(proof.get("binding_ids"), list)
+        and bool(proof["binding_ids"])
+        and all(isinstance(v, str) and v for v in proof["binding_ids"])
+    ):
+        return proof["classification"]
     return None
 
 
