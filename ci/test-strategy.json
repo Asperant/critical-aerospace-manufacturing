@@ -33,7 +33,7 @@
     {"path": "tools/mfgctl/tests", "owner": "Yavuz", "work_package": "WP-PLAT-002", "families": ["TEST-PLAT-FABCTL"], "test_ids": ["TEST-PLAT-002-001", "TEST-PLAT-002-002", "TEST-PLAT-002-003", "TEST-PLAT-002-004"],
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "mfgctl tests (quarantine-aware)"}]},
     {"path": "tools/projectctl/tests", "owner": "Asrın", "work_package": "WP-GOV-001", "families": [], "family_note": "family allocation by the owning work package", "test_ids": [],
-     "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "projectctl tests (quarantine-aware)"}]},
+     "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Projectctl changed-scope regressions (PR)"}]},
     {"path": "tools/host/plane-queue", "owner": "Asrın", "work_package": null, "families": [], "family_note": "host control items (CTRL-HOST), no product requirement", "test_ids": [],
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Host Plane queue tests (offline)"}]},
     {"path": "tools/host/plane-transition", "owner": "Asrın", "work_package": null, "families": [], "family_note": "host control items (CTRL-HOST), no product requirement", "test_ids": [],

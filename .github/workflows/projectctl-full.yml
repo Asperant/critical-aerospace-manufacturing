@@ -1,0 +1,55 @@
+name: projectctl-full-regression
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '30 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: projectctl-full-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  projectctl-full:
+    name: projectctl-full
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install full-regression dependencies
+        run: python -m pip install -e './tools/projectctl[dev]'
+      - name: Syntax sanity
+        run: timeout --signal=TERM 90s python -m compileall -q tools/projectctl/src tools/projectctl/tests
+      - name: Full projectctl tests
+        run: timeout --signal=TERM 600s python -m pytest tools/projectctl/tests -q
+      - name: Host Plane queue security tests (offline)
+        run: timeout --signal=TERM 180s python -m unittest discover -s tools/host/plane-queue -p 'test_*.py' -v
+      - name: Plane transition policy tests (offline fixtures only)
+        run: timeout --signal=TERM 300s python -m unittest discover -s tools/host/plane-transition -p 'test_*.py' -v
+      - name: Canonical validation
+        run: timeout --signal=TERM 90s projectctl validate
+      - name: Requirement catalog lint
+        env:
+          CATALOG_BASE: ${{ github.event.before }}
+        run: timeout --signal=TERM 90s projectctl catalog-lint --base "$CATALOG_BASE"
+      - name: Whitespace and repository hygiene
+        run: timeout --signal=TERM 90s git diff --check
+      - name: Full-regression diagnostics
+        if: failure() || cancelled()
+        shell: bash
+        run: |
+          echo "FULL_REGRESSION_DIAGNOSTIC status=${{ job.status }} ref=${GITHUB_SHA}"
+          date -u
+          ps -eo pid,etime,stat,cmd --sort=-etime | head -60
+          git status --short --branch
