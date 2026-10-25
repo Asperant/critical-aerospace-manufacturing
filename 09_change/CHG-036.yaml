@@ -1,0 +1,19 @@
+CHG-036:
+  title: Preserve semantic identity across enriched merged binding wait reassertions
+  class: C3
+  review_risk_class: CR-3
+  owner: Asrın
+  decision: APPROVED
+  status: APPROVED
+  application_control_item: CTRL-HOST-017
+  required_human_approvals: 0
+  human_decision_basis: Explicit project-owner request on 25 October 2026 to reconcile a reviewed CHG-035 binding assessment without rewriting the original blocker audit.
+  scope: Merged external integration wait reassertion matching only
+  rules:
+  - Keep the original VERIFIED BLOCKED audit as the sole active blocker authority and never rewrite historical audit rows
+  - Permit a later UNCHANGED VALIDATING BLOCKED reassertion to change explanatory reason text when it links the exact active blocker audit; the current unedited assessment must retain WAITING_EXTERNAL_INTEGRATION_BINDINGS
+  - Require the current unedited owner assessment to match the audited blocker, exact CHG-035 binding ID set, current main revision and pinned registry provenance
+  - UNKNOWN, a different blocker class or identity, local actionable work, missing binding IDs, stale or mismatched provenance, delivered future paths or any other semantic change remains fail-closed
+  - Preserve CHG-022, CHG-024, lifecycle, readiness, DONE and queue ordering semantics
+  rollout: Merge reviewed source and focused regression, pass required CI, then refresh the installed policy/helper through the normal root installer
+  rollback: Restore deployment only from the root backup; never rewrite historical audits or replay Plane state

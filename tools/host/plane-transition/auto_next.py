@@ -155,7 +155,19 @@ def merged_external_wait_proof(t, wp, profile, policy, gh):
             re.match(classification + r"(?::|\s|$)", verified.get("reason", "")),
             "MERGED_WAIT_CLASS_INVALID",
         )
-        again = reassertion(t, wp, profile, verified, state="VALIDATING")
+        # CHG-036: the active blocker audit remains the semantic anchor. A
+        # A reviewed binding-provenance reassertion may replace its explanatory
+        # text: the active blocker audit anchor is the semantic identity. The
+        # current assessment below still enforces the exact wait class,
+        # blocker, owner-work fields, binding IDs and registry provenance.
+        again = reassertion(
+            t,
+            wp,
+            profile,
+            verified,
+            state="VALIDATING",
+            reason_prefix=classification,
+        )
         t.need(again is not AMBIGUOUS, "MERGED_WAIT_REASSERTION_INVALID")
         source: Any = again or verified
         ids = [
@@ -447,11 +459,13 @@ def exact_field(text, label):
 AMBIGUOUS = object()
 
 
-def reassertion(t, wp, profile, verified, state="IN_PROGRESS"):
+def reassertion(t, wp, profile, verified, state="IN_PROGRESS", reason_prefix=None):
     """Latest UNCHANGED BLOCKED re-assertion of the same verified active blocker.
 
     The VERIFIED record stays the only authority that the blocker is active; a
     re-assertion may merely carry fresh assessment evidence for that same blocker.
+    ``reason_prefix`` is reserved for reviewed semantic wait classes whose
+    explanation is non-semantic; the default remains byte-identical.
     Returns None when there is none, AMBIGUOUS for any broken, edited or
     contradictory chain, otherwise the re-assertion row.
     """
@@ -480,7 +494,11 @@ def reassertion(t, wp, profile, verified, state="IN_PROGRESS"):
             and row.get("from_state") == state
             and row.get("to_state") == state
             and row.get("active_blocker_audit_id") == verified["audit_id"]
-            and row.get("reason") == verified.get("reason")
+            and (
+                row.get("reason") == verified.get("reason")
+                if reason_prefix is None
+                else isinstance(row.get("reason"), str) and bool(row["reason"].strip())
+            )
             and "blocker" not in row
             and t.audit_identity(row) == row.get("audit_id")
         ):

@@ -1,4 +1,69 @@
+# CHG-035: future artifact obligations only; no runtime path is implemented.
 schema: cap-merged-external-bindings-v1
-# Only merged, explicitly reviewed producer/consumer mappings belong here.
-# No mapping is inferred from an owner-work-NONE declaration or a WP title.
-bindings: []
+bindings:
+- id: BIND-EVT002-HTTP-CORE
+  producer_wp: WP-CORE-001
+  producer_owner: asrin
+  producer_scope: ae63b4b4c35f1a964af05f0cda871999b9a1fc1e2e737f4f19deedab4ea98e6b
+  consumer_wp: WP-EVT-002
+  consumer_owner: asrin
+  consumer_scope: 052d908bb24769d74259a455d99c53567dfaa8faafcb8977bf780d154973d499
+  requirement: Provide the Core backend query HTTP context boundary with operation/version-bound trusted ingress
+    and exact world, causal/trace and UTC/simulation semantics for BFF and shared envelope integration.
+  provenance:
+    docs/04_Work_Breakdown_Structure.md: c348d9b00dd0edba42e79ba9701e09343167079514e3131523f9bdf2b0294ae8
+  binding_paths:
+  - services/manufacturing-core/src/manufacturing_core/http_context.py
+- id: BIND-EVT002-HTTP-BFF
+  producer_wp: WP-UI-001
+  producer_owner: asrin
+  producer_scope: 7a094c05891133311faaee660daceacd072af0e4e9cbdaa94d55ca536e5d8208
+  consumer_wp: WP-EVT-002
+  consumer_owner: asrin
+  consumer_scope: 052d908bb24769d74259a455d99c53567dfaa8faafcb8977bf780d154973d499
+  requirement: Provide the BFF backend client context adapter consuming the Core query API contract, preserving
+    exact world and causal/trace context and explicitly typed time metadata across the HTTP boundary.
+  provenance:
+    docs/04_Work_Breakdown_Structure.md: c348d9b00dd0edba42e79ba9701e09343167079514e3131523f9bdf2b0294ae8
+  binding_paths:
+  - services/operations-bff/src/operations_bff/backend_context.py
+- id: BIND-EVT002-NATS-PUBLISHER
+  producer_wp: WP-CORE-005
+  producer_owner: asrin
+  producer_scope: 16d4e1726097030b0f5011dda76a9ac63a2efcf0512c21e9ec51872cd09ae93d
+  consumer_wp: WP-EVT-002
+  consumer_owner: asrin
+  consumer_scope: 052d908bb24769d74259a455d99c53567dfaa8faafcb8977bf780d154973d499
+  requirement: Bind Core outbox domain events to real NATS publication with explicit subject, stream, publisher
+    and version contracts while preserving the original envelope identifiers, world and time-kind metadata.
+  provenance:
+    docs/04_Work_Breakdown_Structure.md: c348d9b00dd0edba42e79ba9701e09343167079514e3131523f9bdf2b0294ae8
+  binding_paths:
+  - services/manufacturing-core/src/manufacturing_core/outbox_publisher.py
+- id: BIND-EVT002-NATS-CONSUMER
+  producer_wp: WP-TWIN-001
+  producer_owner: asrin
+  producer_scope: a26f152f56d206b291669071236e28fb7370906d5c5df13d06aeb3f69f722f95
+  consumer_wp: WP-EVT-002
+  consumer_owner: asrin
+  consumer_scope: 052d908bb24769d74259a455d99c53567dfaa8faafcb8977bf780d154973d499
+  requirement: Provide the Twin application NATS projection consumer with explicit durable/handler and version contracts,
+    original EventID preservation, exact world admission and causal/trace context using the shared envelope.
+  provenance:
+    docs/04_Work_Breakdown_Structure.md: c348d9b00dd0edba42e79ba9701e09343167079514e3131523f9bdf2b0294ae8
+  binding_paths:
+  - services/operational-twin/src/operational_twin/nats_consumer.py
+- id: BIND-EVT002-TEMPORAL
+  producer_wp: WP-AUTO-001
+  producer_owner: batuhan
+  producer_scope: d989e5e426e7ce8e592b5ea5e7dca2d0090c28ced6719e81807563bb52a2da0c
+  consumer_wp: WP-EVT-002
+  consumer_owner: asrin
+  consumer_scope: 052d908bb24769d74259a455d99c53567dfaa8faafcb8977bf780d154973d499
+  requirement: Provide replay-deterministic workflow context carriage and activity-side restoration with exact workflow/activity/worker
+    binding and preserved world, causal/trace and UTC versus simulation-time semantics.
+  provenance:
+    docs/04_Work_Breakdown_Structure.md: c348d9b00dd0edba42e79ba9701e09343167079514e3131523f9bdf2b0294ae8
+  binding_paths:
+  - services/automation/src/automation/workflow_context.py
+  - services/automation/src/automation/activity_context.py

@@ -273,6 +273,36 @@ class MergedBindingWaitTests(unittest.TestCase):
         with patch.object(t, "blocker_rows", return_value=[self.audit, again]):
             self.assertIsNotNone(self.proof())
             again["reason"] = "different reason"
+            again["audit_id"] = t.audit_identity(again)
+            self.assertIsNotNone(self.proof())
+            again["active_blocker_audit_id"] = "different-audit"
+            again["audit_id"] = t.audit_identity(again)
+            self.assertIsNone(self.proof())
+
+    def test_binding_reassertion_allows_provenance_detail_only(self):
+        again = dict(
+            self.audit,
+            result="UNCHANGED",
+            active_blocker_audit_id=self.audit["audit_id"],
+            reason=(
+                "WAITING_EXTERNAL_INTEGRATION_BINDINGS: CHG-035 binding IDs "
+                "and future provenance paths are now canonical; runtime remains pending"
+            ),
+        )
+        again.pop("blocker")
+        again["audit_id"] = t.audit_identity(again)
+        with patch.object(t, "blocker_rows", return_value=[self.audit, again]):
+            self.assertIsNotNone(self.proof())
+            again["reason"] = (
+                "WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE: changed class"
+            )
+            again["audit_id"] = t.audit_identity(again)
+            self.assertIsNotNone(self.proof())
+            self.gh.comment.return_value["body"] = self.body(
+                **{
+                    "External integration wait class": "WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE"
+                }
+            )
             self.assertIsNone(self.proof())
 
     def test_published_producer_binding_or_stale_owner_assessment_keeps_slot(self):
