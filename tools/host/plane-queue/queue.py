@@ -7,7 +7,6 @@ import html.parser
 import json
 import os
 import pwd
-import re
 import resource
 import signal
 import sys
@@ -17,6 +16,7 @@ import unicodedata
 import urllib.parse
 import urllib.request
 from pathlib import Path
+import re
 from types import SimpleNamespace
 
 ROOT = Path('/etc/cap-plane-queue')
@@ -399,7 +399,7 @@ class HealthTimeout(Exception):
     pass
 
 
-def bounded_preflight(profile, key):
+def bounded_preflight(profile, key, rows=None):
     """Health is advisory; it must not turn a live queue read into a hang."""
     def alarm_handler(signum, frame):
         raise HealthTimeout()
@@ -407,7 +407,7 @@ def bounded_preflight(profile, key):
     previous = signal.signal(signal.SIGALRM, alarm_handler)
     signal.setitimer(signal.ITIMER_REAL, HEALTH_BUDGET_SECONDS)
     try:
-        return preflight(profile, key)
+        return preflight(profile, key) if rows is None else preflight(profile, key, rows)
     except (HealthTimeout, TimeoutError, OSError):
         return None
     finally:
@@ -434,7 +434,7 @@ def main():
         with os.fdopen(fd, 'r+') as lock:
             require(os.fstat(lock.fileno()).st_uid == 0)
             fcntl.flock(lock, fcntl.LOCK_EX)
-            rows = snapshot(Reader(key, RateLimiter()), catalog)  # type: ignore[call-arg]
+            rows = snapshot(Reader(key, RateLimiter()), catalog)
             result = combine(profile, rows, bounded_preflight(profile, key, rows))
             if result['status']=='BLOCKED':
                 result['reason']='ACTIVE_BLOCKER; accountable reason unavailable from live label alone'

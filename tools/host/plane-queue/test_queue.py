@@ -4,9 +4,9 @@ import contextlib
 import importlib.util
 import io
 import json
+from pathlib import Path
 import subprocess
 import unittest
-from pathlib import Path
 from unittest.mock import patch
 
 HERE = Path(__file__).resolve().parent
