@@ -30,6 +30,7 @@ RTM = "docs/03_Requirements_Traceability_Matrix.md"
 CATALOG = "requirements/catalog.json"
 STRATEGY = "ci/test-strategy.json"
 ADR_DIR = "docs/adr"
+CHANGE_DIR = "09_change"
 
 # A whole identity token: not preceded by an identifier or hyphen character and
 # not continued by one. Hyphenated suffixes stay part of the token.
@@ -41,6 +42,11 @@ HEADING = re.compile(r"^(#{1,6}) ", re.M)
 TABLE_ID = re.compile(r"^\| *([A-Z][A-Z0-9-]+)\b", re.M)
 ARCH_SECTIONS = re.compile(r"Component ID Registry|component allocations", re.I)
 INACTIVE = frozenset({"RETIRED", "SUPERSEDED"})
+RUN_ID = re.compile(r"^RUN-([A-Z]+)-(\d{3})-[A-Z0-9-]+$")
+EVIDENCE_ID = re.compile(r"^EVID-[A-Z0-9-]+$")
+TEXT_SUFFIXES = frozenset({".md", ".json", ".txt", ".yaml", ".yml"})
+VIEW_D_ROW = re.compile(r"^\| ((?:FR|NFR)-[A-Z]+-\d{3}) \| \w+ \| ([^|]+) \|", re.M)
+KIND_HEADING = re.compile(r"^#### ([A-Z]+) \(\d+\)", re.M)
 
 
 def tokens(text: str) -> set[str]:
@@ -81,12 +87,45 @@ class Index:
     contracts: set[str] = field(default_factory=set[str])
     verification: set[str] = field(default_factory=set[str])
     decisions: set[str] = field(default_factory=set[str])
+    asset_kinds: dict[str, str] = field(default_factory=dict[str, str])
+    asset_envs: dict[str, str] = field(default_factory=dict[str, str])
+    verify_codes: dict[str, set[str]] = field(default_factory=dict[str, set[str]])
+    changes: set[str] = field(default_factory=set[str])
     root: Path | None = None
 
     def path_exists(self, path: str) -> bool:
         if self.root is None or path.startswith("/") or ".." in path.split("/"):
             return False
         return (self.root / path).exists()
+
+    def run_exists(self, run: str) -> bool:
+        """A run record of the producing work package: a path under evidence/
+        (`evidence/...` targets), or `RUN-<AREA>-<NNN>-...` named by a file or
+        directory in, or written as a whole token inside, `evidence/WP-<AREA>-<NNN>/`."""
+        if run.startswith("evidence/"):
+            return self.path_exists(run)
+        match = RUN_ID.match(run)
+        if match is None or self.root is None:
+            return False
+        folder = self.root / "evidence" / f"WP-{match.group(1)}-{match.group(2)}"
+        if not folder.is_dir():
+            return False
+        for path in sorted(folder.rglob("*")):
+            if path.name == run or path.name.startswith(run + "."):
+                return True
+            if (
+                path.is_file()
+                and path.suffix in TEXT_SUFFIXES
+                and run in tokens(path.read_text("utf-8", errors="replace"))
+            ):
+                return True
+        return False
+
+    def bundle_exists(self, evidence: str) -> bool:
+        """A sealed EvidenceBundle directory named by its EvidenceID."""
+        if self.root is None or not EVIDENCE_ID.match(evidence):
+            return False
+        return any(p.is_dir() for p in (self.root / "evidence").rglob(evidence))
 
 
 def catalog_ids(data: dict[str, Any]) -> tuple[set[str], set[str]]:
@@ -115,6 +154,34 @@ def verification_ids(rtm: str, strategy: dict[str, Any]) -> set[str]:
     return found
 
 
+def asset_table(rtm: str) -> tuple[dict[str, str], dict[str, str]]:
+    """Kind (the #### heading) and minimum environment of each 03 §9.X family."""
+    kinds: dict[str, str] = {}
+    envs: dict[str, str] = {}
+    for body in sections(rtm, re.compile(r"Verification Asset Registry")):
+        current = ""
+        for line in body.splitlines():
+            heading = KIND_HEADING.match(line)
+            if heading:
+                current = heading.group(1)
+                continue
+            cells = [c.strip() for c in line.split("|")]
+            if current and len(cells) > 6 and TABLE_ID.match(line):
+                kinds[cells[1]] = current
+                envs[cells[1]] = cells[5]
+    return kinds, envs
+
+
+def verify_codes(rtm: str) -> dict[str, set[str]]:
+    """Declared verification codes per requirement from 03 View D (§9)."""
+    start, end = rtm.find("## 9. View D"), rtm.find("### 9.X")
+    codes: dict[str, set[str]] = {}
+    for requirement, cell in VIEW_D_ROW.findall(rtm[start:end] if start >= 0 else ""):
+        letters = cell.replace("(derived)", "").replace(" ", "").split("/")
+        codes[requirement] = {c for c in letters if c}
+    return codes
+
+
 def load(root: Path) -> Index:
     def read(name: str) -> str:
         return (root / name).read_text("utf-8")
@@ -125,6 +192,7 @@ def load(root: Path) -> Index:
     for body in sections(architecture, ARCH_SECTIONS):
         arch |= table_ids(body, "ARCH-")
     master_tokens = tokens(master)
+    kinds, envs = asset_table(rtm)
     return Index(
         requirements=active,
         inactive=inactive,
@@ -141,5 +209,9 @@ def load(root: Path) -> Index:
             "ADR-" + p.name[:4]
             for p in (root / ADR_DIR).glob("[0-9][0-9][0-9][0-9]-*.md")
         },
+        asset_kinds=kinds,
+        asset_envs=envs,
+        verify_codes=verify_codes(rtm),
+        changes={p.stem for p in (root / CHANGE_DIR).glob("CHG-[0-9][0-9][0-9].yaml")},
         root=root,
     )

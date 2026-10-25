@@ -34,8 +34,8 @@ def summary(registry: dict[str, Any]) -> str:
     return f"{len(nodes)} requirements, {len(edges)} edges ({parts})"
 
 
-def cmd_validate(root: Path, as_json: bool) -> int:
-    registry, findings = lint_files(root)
+def cmd_validate(root: Path, as_json: bool, base: str | None) -> int:
+    registry, findings = lint_files(root, base)
     if as_json:
         print(
             json.dumps(
@@ -90,6 +90,9 @@ def main(argv: list[str] | None = None) -> int:
         "validate", help="lint the registry (" + ", ".join(IMPLEMENTED_CHECKS) + ")"
     )
     validate.add_argument("--json", action="store_true", help="machine-readable result")
+    validate.add_argument(
+        "--base", help="Git revision for the TL-08 coverage-regression comparison"
+    )
     sub.add_parser("seed", help="regenerate the registry from 03 §17")
     drift = sub.add_parser("drift", help="compare the registry with 03 §17")
     drift.add_argument("--strict", action="store_true", help="exit 1 on any drift")
@@ -97,7 +100,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         root = find_root(Path.cwd())
         if args.command == "validate":
-            return cmd_validate(root, bool(args.json))
+            return cmd_validate(root, bool(args.json), args.base)
         if args.command == "seed":
             return cmd_seed(root)
         return cmd_drift(root, bool(args.strict))

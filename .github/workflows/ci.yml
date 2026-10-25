@@ -122,7 +122,7 @@ jobs:
         run: |
           uv run --project ci --locked python -m pytest -c tools/trace/pyproject.toml tools/trace/tests -q -p pytest_quarantine
           uv run --project ci --locked pyright --project tools/trace/pyrightconfig.json
-          uv run --project ci --locked python -m cap_trace validate
+          uv run --project ci --locked python -m cap_trace validate --base origin/main
           uv run --project ci --locked python -m cap_trace drift
       - name: Platform composition definition tests (WP-PLAT-001)
         run: uv run --project ci --locked python -m pytest infra/compose/tests -m 'not integration' -q -p pytest_quarantine

@@ -25,6 +25,7 @@ NFR-GOV-009. Tooling: `tools/trace` (`cap_trace`).
 ```bash
 export PYTHONPATH=tools/trace/src
 uv run --project ci --locked python -m cap_trace validate        # lint; exit 1 on findings
+uv run --project ci --locked python -m cap_trace validate --base origin/main  # plus TL-08 regression
 uv run --project ci --locked python -m cap_trace validate --json # machine-readable result
 uv run --project ci --locked python -m cap_trace seed            # regenerate from 03 §17
 uv run --project ci --locked python -m cap_trace drift           # registry vs 03 §17
@@ -43,7 +44,11 @@ Exit codes: 0 clean; 1 findings (or drift with `--strict`); 2 inputs unreadable
 | TL-02 referenced IDs | slice 2 | registry nodes = active catalog requirements; each target resolves in the registry its relation names (table below) |
 | TL-03 superseded misuse | slice 2 | a retired or superseded requirement carries no node and no edges |
 | TL-10 prefix boundaries | slice 2 | identities are matched as whole tokens: `REAL-INV-01` is not found in `SIM-REAL-INV-01`, `ARCH-INV-04` is not `ARCH-INV-004` (03 GAP-RTM-016) |
-| TL-06, TL-08, TL-09, TL-11, TL-12 | slice 3 | dangling run/evidence, coverage regression, stale evidence, class sufficiency, no VERIFIED without evidence |
+| TL-06 dangling | slice 3 | EXECUTED_AS → a run record of the producing work package (`evidence/WP-<AREA>-<NNN>/`: a file or directory named by the run ID, or the ID written in its records); EVIDENCED_BY → a sealed bundle directory `EVID-*`; SUPPORTS_CLAIM → a claim register (none exists yet, so any claim fails) |
+| TL-08 coverage | slice 3 | every active F0/F1 has ≥1 DERIVED_FROM (FR-GOV-004), ALLOCATED_TO and VERIFIED_BY (FR-GOV-005); with `--base REV`, none of those edges disappears unless the requirement note cites an existing `CHG-NNN` |
+| TL-09 stale claims | slice 3 | no SUPPORTS_CLAIM from a requirement whose evidence state is STALE |
+| TL-11 class sufficiency | slice 3 | F0 ⇒ integrated scenario/demo path; H0 ⇒ TEST/DRILL/SCENARIO asset, not inspection- or benchmark-only; FR verify codes (03 View D) E → integrated asset (scenario, demo, or a family whose minimum environment is INTEGRATION or later), B → BENCH, R → DRILL or restart test, N → executable TEST/DRILL, D → DEMO, I → inspection or lint; T is not an audited code (03 §22 C-08…C-13) |
+| TL-12 evidence | slice 3 | coverage VERIFIED or evidence CURRENT ⇒ ≥1 EVIDENCED_BY; a final NFR also needs an observed measurement (NFR-GOV-009) |
 | TL-07 | slice 4 | generated views fresh (`mfgctl trace`) |
 | TL-13 | slice 5 | PR Requirement-Impact declared |
 
@@ -59,7 +64,7 @@ Exit codes: 0 clean; 1 findings (or drift with `--strict`); 2 inputs unreadable
 | EXPOSED_BY | `IC-<NS>-nnn` and `IC-<NS>-*` → identity tokens of 01 and 02; descriptive surfaces are not resolvable yet (exact schema versions TBD, 03 §4.2) |
 | REALIZED_BY | `repo:<path>` must exist in the repository; `TBD_BY_IMPLEMENTATION` is planned |
 | USES_DATA, USES_MODEL, GOVERNED_BY | artifact *types*, no identity registry exists (03 §4.2: no DatasetVersion/ModelPackage IDs invented) — counted, not resolved |
-| EXECUTED_AS, EVIDENCED_BY, SUPPORTS_CLAIM | run and evidence identities, TL-06 (slice 3) |
+| EXECUTED_AS, EVIDENCED_BY, SUPPORTS_CLAIM | run and evidence identities, resolved by TL-06 |
 
 `validate` prints how many edges fall into each mode, so nothing is silently
 treated as checked.

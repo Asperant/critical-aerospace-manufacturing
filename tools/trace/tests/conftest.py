@@ -64,8 +64,11 @@ VERIFICATION = """\
 
 
 def write_sources(repo: Path, requirements: list[str]) -> None:
-    for folder in ("docs/adr", "requirements", "ci", "traceability"):
+    for folder in ("docs/adr", "requirements", "ci", "traceability", "09_change"):
         (repo / folder).mkdir(parents=True, exist_ok=True)
+    runs = repo / "evidence/WP-GOV-001"
+    runs.mkdir(parents=True, exist_ok=True)
+    (runs / "RUN-GOV-001-LOCAL-002.test-result.json").write_text("{}", "utf-8")
     (repo / "docs/01_Master_Project_Specification.md").write_text(MASTER, "utf-8")
     (repo / "docs/02_System_Architecture_Specification.md").write_text(
         ARCHITECTURE, "utf-8"
