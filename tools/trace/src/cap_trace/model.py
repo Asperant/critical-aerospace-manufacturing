@@ -65,3 +65,15 @@ class Edge:
 
     def label(self) -> str:
         return f"{self.source} {self.relation} {self.target}"
+
+
+@dataclass(frozen=True, order=True)
+class Finding:
+    """One linter finding: which check, about what, and what is wrong."""
+
+    check: str
+    subject: str
+    message: str
+
+    def line(self) -> str:
+        return f"{self.check} {self.subject}: {self.message}"

@@ -1,4 +1,5 @@
-"""Trace linter (03 §18.1). Slice 1: TL-01 schema, TL-04 vocabulary, TL-05 duplicates.
+"""Trace linter (03 §18.1): TL-01 schema, TL-02 referenced IDs, TL-03 superseded
+misuse, TL-04 vocabulary, TL-05 duplicates, TL-10 prefix-boundary-safe matching.
 
 Every finding names its check, the subject it is about and what is wrong, so a
 failing CI run is readable without opening the registry. The linter never fixes
@@ -9,32 +10,24 @@ from __future__ import annotations
 
 import json
 from collections import Counter
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
 
 import yaml
 from jsonschema import exceptions, validators
 
-from .model import PROHIBITED, RELATIONS
+from .model import PROHIBITED, RELATIONS, Finding
+from .references import reference_findings
+from .sources import Index
+from .sources import load as load_index
 
 REGISTRY = "traceability/trace_edges.yaml"
 SCHEMA = "traceability/trace_schema.json"
-IMPLEMENTED_CHECKS = ("TL-01", "TL-04", "TL-05")
+IMPLEMENTED_CHECKS = ("TL-01", "TL-02", "TL-03", "TL-04", "TL-05", "TL-10")
 
 
 class RegistryError(ValueError):
     """The registry or its schema cannot be read at all."""
-
-
-@dataclass(frozen=True, order=True)
-class Finding:
-    check: str
-    subject: str
-    message: str
-
-    def line(self) -> str:
-        return f"{self.check} {self.subject}: {self.message}"
 
 
 def load_yaml(path: Path) -> dict[str, Any]:
@@ -120,10 +113,20 @@ def edge_findings(registry: dict[str, Any]) -> list[Finding]:
     return findings
 
 
-def lint(registry: dict[str, Any], schema: dict[str, Any]) -> list[Finding]:
-    return sorted(schema_findings(registry, schema) + edge_findings(registry))
+def lint(
+    registry: dict[str, Any], schema: dict[str, Any], index: Index | None = None
+) -> list[Finding]:
+    """All implemented checks; the referential ones (TL-02/03/10) need an index."""
+    findings = schema_findings(registry, schema) + edge_findings(registry)
+    if index is not None:
+        findings += reference_findings(registry, index)
+    return sorted(findings)
 
 
 def lint_files(root: Path) -> tuple[dict[str, Any], list[Finding]]:
     registry = load_yaml(root / REGISTRY)
-    return registry, lint(registry, load_schema(root / SCHEMA))
+    try:
+        index = load_index(root)
+    except (OSError, ValueError, KeyError) as exc:
+        raise RegistryError(f"identity sources unreadable: {exc}") from None
+    return registry, lint(registry, load_schema(root / SCHEMA), index)

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import copy
 import json
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -235,31 +236,27 @@ def test_committed_registry_passes_and_matches_the_real_03() -> None:
 
 
 def test_cli_exit_codes(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    mini_repo: Path,
+    write_rtm: Callable[..., None],
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
 ) -> None:
     monkeypatch.chdir(ROOT)
     assert main(["validate"]) == 0
     assert "PASS" in capsys.readouterr().out
     assert main(["validate", "--json"]) == 0
     assert json.loads(capsys.readouterr().out)["result"] == "PASS"
-    repo = tmp_path / "repo"
-    (repo / "docs").mkdir(parents=True)
-    (repo / "traceability").mkdir()
-    (repo / "docs/03_Requirements_Traceability_Matrix.md").write_text(
-        rtm(RECORD), "utf-8"
-    )
-    (repo / "traceability/trace_schema.json").write_text(json.dumps(SCHEMA), "utf-8")
-    monkeypatch.chdir(repo)
+    write_rtm(RECORD, SECOND)
+    monkeypatch.chdir(mini_repo)
     assert main(["validate"]) == 2  # no registry yet: unreadable, not "clean"
     assert main(["seed"]) == 0
-    assert main(["validate"]) == 0
+    capsys.readouterr()
+    assert main(["validate"]) == 0, capsys.readouterr().out
     assert main(["drift", "--strict"]) == 0
-    (repo / "docs/03_Requirements_Traceability_Matrix.md").write_text(
-        rtm(RECORD, SECOND), "utf-8"
-    )
+    write_rtm(RECORD)
     capsys.readouterr()
     assert main(["drift"]) == 0  # reported, not failed
     assert "NFR-GOV-009" in capsys.readouterr().out
     assert main(["drift", "--strict"]) == 1
-    (repo / "traceability/trace_edges.yaml").write_text("edges: [\n", "utf-8")
+    (mini_repo / "traceability/trace_edges.yaml").write_text("edges: [\n", "utf-8")
     assert main(["validate"]) == 2

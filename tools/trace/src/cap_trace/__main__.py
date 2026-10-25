@@ -15,6 +15,7 @@ from typing import Any, cast
 
 from .drift import compare
 from .lint import IMPLEMENTED_CHECKS, REGISTRY, RegistryError, lint_files, load_yaml
+from .references import coverage
 from .seed import RTM, SeedError, dump, seed
 
 
@@ -42,6 +43,7 @@ def cmd_validate(root: Path, as_json: bool) -> int:
                     "registry": REGISTRY,
                     "checks": list(IMPLEMENTED_CHECKS),
                     "findings": [f.__dict__ for f in findings],
+                    "coverage": dict(sorted(coverage(registry).items())),
                     "result": "FAIL" if findings else "PASS",
                 },
                 ensure_ascii=False,
@@ -51,6 +53,8 @@ def cmd_validate(root: Path, as_json: bool) -> int:
     else:
         for finding in findings:
             print(finding.line())
+        for mode, count in sorted(coverage(registry).items()):
+            print(f"  {count:5d} edges: {mode}")
         verdict = f"{len(findings)} finding(s)" if findings else "PASS"
         print(
             f"trace lint ({', '.join(IMPLEMENTED_CHECKS)}): {verdict}; {summary(registry)}"
@@ -83,7 +87,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m cap_trace")
     sub = parser.add_subparsers(dest="command", required=True)
     validate = sub.add_parser(
-        "validate", help="lint the registry (TL-01, TL-04, TL-05)"
+        "validate", help="lint the registry (" + ", ".join(IMPLEMENTED_CHECKS) + ")"
     )
     validate.add_argument("--json", action="store_true", help="machine-readable result")
     sub.add_parser("seed", help="regenerate the registry from 03 §17")
