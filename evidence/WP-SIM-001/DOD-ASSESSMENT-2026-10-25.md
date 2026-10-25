@@ -28,8 +28,8 @@ Inspected coverage.json, PR52 and PR72 bodies/comments, GitHub search for manufa
 ### Batuhan-owned and still actionable
 
 - DOD-WP-11: this addendum finalizes all recoverable historical identity information, but Release/Environment/Hardware identity gaps remain unavailable. Recover genuinely contemporaneous records if any exist; otherwise plan a separately identified, properly bound evidence run. Do not fill earlier records with current hardware or turn this limitation into PASS. A new run is outside this evidence-only pass.
-- BENCH-SIMVAL-001: accountable owner is Batu/Batuhan, explicitly in docs/03 verification registry. Integrated suite covers later simulator capabilities; identify the applicable acceptance slice and prerequisites under the existing WP allocation before execution. This is not exclusively another owner's blocker and no new ownership decision is required.
-- Publish this evidence commit through the separately authorized normal process. This pass commits locally only; no push/PR or state mutation is authorized here.
+- BENCH-SIMVAL-001: accountable owner is Batu/Batuhan, explicitly in docs/03 verification registry. Integrated suite covers later simulator capabilities; Prerequisite review completed: see BENCH-SIMVAL-001-PREREQUISITES.md. The canonical suite is allocated to SIM009, with operational-world producer SIM003 / DN-SIM-OPSEM and DEP-049 HARD/FREEZE. No executable suite found in the inspected implementation surface; execution is pending those later-WP deliverables, not a small kernel closeout edit. This is not exclusively another owner's blocker and no new ownership decision is required.
+- Initial evidence commit 7e676e63edc33067848327db735b702d0a6f3a45 was pushed to wp/WP-SIM-001-owner-evidence-closeout at the operator’s subsequent explicit instruction. Follow-up findings are committed on the same branch; publication is not a merge or acceptance claim. No Plane state mutation.
 
 ### Yavuz/platform-owner decision required
 
@@ -50,3 +50,12 @@ PR52 implemented the kernel; PR72 merged the delayed trace correction at a45f7f6
 3. No other external decision established by this evidence-only pass. Missing historical identities require real evidence or a separately governed rerun, not another owner's invented approval.
 
 Outcome: evidence bookkeeping and delayed trace accounting completed for this pass, but Batuhan-owned verification/identity follow-up remains YES. Deferred classification retry NO. Lifecycle VALIDATING + BLOCKED preserved; no DONE, no deferred proof attempt, no product change. No historical record bytes changed.
+
+
+## Follow-up completion boundary
+
+Historical identity recovery re-inspected the actual root run-manifest, pre-review manifest, run5 command timestamps and JUnit host metadata. No additional recorded governed Release/Hardware/Environment identity was recovered; no current host measurement or new run was substituted. The unavailable facts cannot be repaired by a prose edit. DOD-WP-11 remains incomplete; separately governed new evidence or genuine historical provenance is needed before PASS.
+
+Platform search again returned PR52/72 with no attributable Yavuz disposition; owner comment 6395801486 still explicitly says owner work remains. Required external decision is unchanged: accept scoped observability exemption with actual terms, or specify required work. No decision is inferred. Deferred proof was not retried because owner-work NONE is not established. Its known two-parent/original-assessment constraints are unresolved tooling/governance issues, not permission to rewrite historical assessments.
+
+One Batuhan queue read was attempted with a 45-second timeout and returned no result. Health is unverified in this pass; no controller/preparation/AUTO_NEXT calls were made, and no next task was selected or started. Stop at the genuine external/platform and missing-evidence boundary; do not start another implementation to conceal it.
