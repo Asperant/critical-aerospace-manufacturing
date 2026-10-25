@@ -48,7 +48,7 @@
       "logging": "PENDING",
       "health": "PENDING",
       "exemption": {
-        "reason": "In-memory kernel library (WP-SIM-001) with no process, endpoint or log sink; adoption waits for a simulator service runtime. Owner and expiry are PROPOSED, NOT confirmed by an attributable platform-owner decision.",
+        "reason": "In-memory kernel library (WP-SIM-001) with no process, endpoint or log sink; DOD-WP-06 adoption follows with the simulator service runtime. Exemption confirmed by the platform owner (Yavuz, WP-OBS-001) on 2026-10-25; renewed or closed by 2026-11-20.",
         "owner": "Yavuz",
         "expires_on": "2026-11-20"
       }

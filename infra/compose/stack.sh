@@ -16,7 +16,7 @@
 #
 # Credentials are generated per machine and kept outside the repository in
 # ${CAP_PLATFORM_STATE_DIR:-~/.local/state/cap-platform} with mode 0600:
-# credentials.env for this script, postgres.env and keycloak.env read by Compose.
+# credentials.env for this script, postgres.env, keycloak.env and s3.json read by Compose.
 # They are never committed and printed only by `env`.
 set -euo pipefail
 
@@ -38,32 +38,57 @@ PROFILES_ALL=(infra core vision ai planning platform full e2e)
 
 secret() { od -An -N16 -tx1 /dev/urandom | tr -d ' \n'; }
 
+SECRET_VARS=(CAP_POSTGRES_PASSWORD CAP_KEYCLOAK_ADMIN_PASSWORD CAP_S3_ADMIN_SECRET CAP_S3_WRITER_SECRET CAP_S3_READER_SECRET)
+# WP-OBJ-001: least-privilege S3 identities. Access keys are names, not secrets.
+S3_ADMIN_KEY=cap-artifacts-admin
+S3_WRITER_KEY=cap-artifacts-writer
+S3_READER_KEY=cap-artifacts-reader
+ARTIFACT_BUCKETS=(cap-artifacts-rc-b cap-artifacts-rc-c cap-artifacts-rc-d)
+
+s3_actions() {  # s3_actions Read List Write -> "Read:b1","List:b1",... for every artifact bucket
+  local out="" b a
+  for b in "${ARTIFACT_BUCKETS[@]}"; do for a in "$@"; do out+="${out:+,}\"${a}:${b}\""; done; done
+  printf '%s' "$out"
+}
+
 load_credentials() {
   if [[ -z "${CAP_POSTGRES_PASSWORD:-}" && -f "${CREDENTIALS}" ]]; then
     # shellcheck disable=SC1090
     source "${CREDENTIALS}"
   fi
-  if [[ -z "${CAP_POSTGRES_PASSWORD:-}" || -z "${CAP_KEYCLOAK_ADMIN_PASSWORD:-}" ]]; then
+  local var changed=0
+  for var in "${SECRET_VARS[@]}"; do
+    if [[ -z "${!var:-}" ]]; then
+      printf -v "$var" '%s' "$(secret)"
+      changed=1
+    fi
+  done
+  if [[ $changed -eq 1 ]]; then
     mkdir -p "${STATE_DIR}"
     chmod 700 "${STATE_DIR}"
-    CAP_POSTGRES_PASSWORD="${CAP_POSTGRES_PASSWORD:-$(secret)}"
-    CAP_KEYCLOAK_ADMIN_PASSWORD="${CAP_KEYCLOAK_ADMIN_PASSWORD:-$(secret)}"
-    umask 077
-    printf 'CAP_POSTGRES_PASSWORD=%s\nCAP_KEYCLOAK_ADMIN_PASSWORD=%s\n' \
-      "${CAP_POSTGRES_PASSWORD}" "${CAP_KEYCLOAK_ADMIN_PASSWORD}" > "${CREDENTIALS}"
-    echo "credentials created in ${CREDENTIALS}" >&2
+    ( umask 077
+      for var in "${SECRET_VARS[@]}"; do printf '%s=%s\n' "$var" "${!var}"; done > "${CREDENTIALS}" )
+    echo "credentials created or completed in ${CREDENTIALS}" >&2
   fi
-  export CAP_POSTGRES_PASSWORD CAP_KEYCLOAK_ADMIN_PASSWORD
-  # Service env files read by Compose (also by `mfgctl up`), regenerated each time.
+  export "${SECRET_VARS[@]}"
+  # Service files read by Compose (also by `mfgctl up`), regenerated each time.
   ( umask 077
     printf 'POSTGRES_PASSWORD=%s\n' "${CAP_POSTGRES_PASSWORD}" > "${STATE_DIR}/postgres.env"
-    printf 'KC_BOOTSTRAP_ADMIN_PASSWORD=%s\n' "${CAP_KEYCLOAK_ADMIN_PASSWORD}" > "${STATE_DIR}/keycloak.env" )
+    printf 'KC_BOOTSTRAP_ADMIN_PASSWORD=%s\n' "${CAP_KEYCLOAK_ADMIN_PASSWORD}" > "${STATE_DIR}/keycloak.env"
+    # SeaweedFS S3 identities: with any identity defined, anonymous access is denied.
+    # admin creates buckets; writer reads, lists and writes artifacts; reader only reads
+    # (it signs the short-lived read capabilities). Mounted read-only into the container.
+    printf '{"identities": [%s, %s, %s]}\n' \
+      "{\"name\": \"${S3_ADMIN_KEY}\", \"credentials\": [{\"accessKey\": \"${S3_ADMIN_KEY}\", \"secretKey\": \"${CAP_S3_ADMIN_SECRET}\"}], \"actions\": [\"Admin\", \"Read\", \"List\", \"Write\"]}" \
+      "{\"name\": \"${S3_WRITER_KEY}\", \"credentials\": [{\"accessKey\": \"${S3_WRITER_KEY}\", \"secretKey\": \"${CAP_S3_WRITER_SECRET}\"}], \"actions\": [$(s3_actions Read List Write)]}" \
+      "{\"name\": \"${S3_READER_KEY}\", \"credentials\": [{\"accessKey\": \"${S3_READER_KEY}\", \"secretKey\": \"${CAP_S3_READER_SECRET}\"}], \"actions\": [$(s3_actions Read)]}" \
+      > "${STATE_DIR}/s3.json" )
 }
 
 mask_in_ci() {
   if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then
-    echo "::add-mask::${CAP_POSTGRES_PASSWORD}"
-    echo "::add-mask::${CAP_KEYCLOAK_ADMIN_PASSWORD}"
+    local var
+    for var in "${SECRET_VARS[@]}"; do echo "::add-mask::${!var}"; done
   fi
 }
 
@@ -123,6 +148,12 @@ case "${1:-}" in
     echo "CAP_NATS_MONITOR_URL=http://127.0.0.1:${CAP_NATS_MON_PORT}"
     echo "CAP_VALKEY_URL=redis://127.0.0.1:${CAP_VALKEY_PORT}/0"
     echo "CAP_S3_ENDPOINT=http://127.0.0.1:${CAP_S3_PORT}"
+    echo "CAP_S3_ACCESS_KEY=${S3_WRITER_KEY}"
+    echo "CAP_S3_SECRET_KEY=${CAP_S3_WRITER_SECRET}"
+    echo "CAP_S3_ADMIN_ACCESS_KEY=${S3_ADMIN_KEY}"
+    echo "CAP_S3_ADMIN_SECRET_KEY=${CAP_S3_ADMIN_SECRET}"
+    echo "CAP_S3_READER_ACCESS_KEY=${S3_READER_KEY}"
+    echo "CAP_S3_READER_SECRET_KEY=${CAP_S3_READER_SECRET}"
     echo "CAP_SEAWEED_MASTER_URL=http://127.0.0.1:${CAP_SEAWEED_MASTER_PORT}"
     echo "CAP_KEYCLOAK_URL=http://127.0.0.1:${CAP_KEYCLOAK_PORT}"
     echo "CAP_KEYCLOAK_ADMIN_USER=cap-admin"

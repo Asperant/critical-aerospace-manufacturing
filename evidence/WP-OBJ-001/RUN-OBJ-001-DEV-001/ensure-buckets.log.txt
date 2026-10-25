@@ -1,0 +1,3 @@
+bucket ready: cap-artifacts-rc-b
+bucket ready: cap-artifacts-rc-c
+bucket ready: cap-artifacts-rc-d

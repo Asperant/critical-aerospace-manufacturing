@@ -1,0 +1,88 @@
+{
+  "run_id": "RUN-OBJ-001-DEV-001",
+  "work_package": "WP-OBJ-001",
+  "kind": "DEV run on the shared host; infra profile with S3 identities (not the Integration host)",
+  "boundary_mode": "REAL",
+  "test_ids": [
+    "TEST-OBJ-001-003",
+    "TEST-OBJ-001-005",
+    "TEST-OBJ-001-007"
+  ],
+  "code_revision": "e04cacda721e02e78ff328d9bb057316e4435114",
+  "branch": "wp/WP-OBJ-001-artifact-reference",
+  "recorded_at": "2026-10-25T13:10:58+00:00",
+  "host": {
+    "machine": "x86_64",
+    "system": "Linux",
+    "cpus": 8
+  },
+  "outcome": {
+    "real_tests_passed": 19,
+    "real_tests_not_passed": [],
+    "test_files": [
+      "test_access_integration.py",
+      "test_registry_integration.py",
+      "test_store_integration.py"
+    ],
+    "anonymous_bucket_listing_status": 403
+  },
+  "per_test": {
+    "test_anonymous_access_is_denied": "PASSED",
+    "test_reader_cannot_write_and_writer_cannot_create_buckets": "PASSED",
+    "test_read_capability_reads_exactly_that_object": "PASSED",
+    "test_read_capability_cannot_be_reused_for_anything_else": "PASSED",
+    "test_read_capability_expires": "PASSED",
+    "test_migration_replay_is_verified": "PASSED",
+    "test_runtime_cannot_delete_or_change_the_schema": "PASSED",
+    "test_store_records_the_lifecycle": "PASSED",
+    "test_database_refuses_illegal_transitions_and_content_changes": "PASSED",
+    "test_quarantine_in_the_registry_stops_reads": "PASSED",
+    "test_concurrent_writers_of_one_version_get_exactly_one_success": "PASSED",
+    "test_duplicate_reservation_is_a_registry_error": "PASSED",
+    "test_consistency_sweep_reports_missing_bytes_and_orphans": "PASSED",
+    "test_buckets_exist_and_creation_is_idempotent": "PASSED",
+    "test_round_trip_of_one_mebibyte": "PASSED",
+    "test_tampered_bytes_are_refused": "PASSED",
+    "test_missing_bytes_are_detected_not_silent": "PASSED",
+    "test_a_version_is_written_once": "PASSED",
+    "test_each_retention_class_has_its_bucket": "PASSED"
+  },
+  "steps": [
+    {
+      "step": "up",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "wall_s": 104.2,
+      "output": "up.log.txt"
+    },
+    {
+      "step": "ensure-buckets",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "wall_s": 0.1,
+      "output": "ensure-buckets.log.txt"
+    },
+    {
+      "step": "real-tests",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "wall_s": 5.4,
+      "output": "real-tests.log.txt"
+    },
+    {
+      "step": "consistency-unconfigured",
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "wall_s": 0.2,
+      "output": "consistency-unconfigured.log.txt"
+    },
+    {
+      "step": "down",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "wall_s": 33.7,
+      "output": "down.log.txt"
+    }
+  ],
+  "unexpected": {}
+}
