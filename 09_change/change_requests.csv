@@ -24,3 +24,4 @@ CHG-031,Audited lifecycle reconciliation of already merged work,C3,CR-3,Batuhan,
 CHG-032,Contract CI compatibility and version gate wiring,C1,CR-2,Asrın,APPROVED_WITH_CONDITIONS,APPROVED,WP-EVT-001
 CHG-033,Deferred-acceptance recovery proof for an allow-listed two-parent merge,C3,CR-3,Batuhan,DRAFT,UNDER_REVIEW,WP-SIM-001
 CHG-034,Release slot for verified merged external integration binding waits,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-015
+CHG-035,Canonical EVT-002 external context binding ownership and future artifacts,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-016
