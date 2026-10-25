@@ -10,6 +10,7 @@ from .compatibility import (
     enforce_version_policy,
 )
 from .errors import ContractError
+from .permissions import PublisherPermission, PublisherPermissions
 from .registry import (
     ContractDeclaration,
     Deprecation,
@@ -29,6 +30,8 @@ __all__ = [
     "enforce_version_policy",
     "ContractDeclaration",
     "ContractError",
+    "PublisherPermission",
+    "PublisherPermissions",
     "ContractVersion",
     "ContractViolation",
     "Deprecation",

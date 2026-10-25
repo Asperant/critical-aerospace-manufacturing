@@ -347,3 +347,20 @@ baseline contains a catalog, candidate removal fails with `STREAM_CATALOG_REMOVE
 Empty, incomplete or invalid present catalogs fail closed. No production catalog is
 introduced by this slice because the real Core exemplar is a synchronous query.
 No workflow, runtime configuration, broker stream or final ACL is changed.
+
+## Pure publisher permissions
+
+`PublisherPermissions(validated_catalog, registry, authorities)` revalidates the
+catalog against the supplied canonical registry/ownership snapshot and derives
+`cap-publisher-permissions-v1`: sorted producer records with sorted exact subject
+lists. Only each binding's canonical producer receives its subject. Consumer labels,
+stream consumer lists, wildcard patterns and implicit aliases confer no publishing
+permission. `allows_publish(producer, subject)` denies unknown names/subjects,
+patterns and malformed inputs; `to_json()` is deterministic.
+
+This is a semantic policy projection for later runtime application, not a NATS
+user/account configuration, authenticated service-identity binding, subscribe ACL,
+stream provisioner or live installation. Callers retain the existing registry
+artifact/hash/reference verification prerequisites. Real production bindings and
+broker enforcement remain external integration work; synthetic unit fixtures are
+not runtime acceptance evidence.
