@@ -415,11 +415,13 @@ def _slot_waits(profile, key, rows, auto=None, transition=None, policy=None):
     def evaluate(candidate):
         wp, state = candidate
         try:
-            source = auto.semantic_slot_release_source(t, wp, profile, policy, gh)
-            if source is None:
-                return None
             entry_key = f'{profile}:{wp}'
             cached = cache.get(entry_key)
+            source = _cached_slot_source(cached, policy)
+            if source is None:
+                source = auto.semantic_slot_release_source(t, wp, profile, policy, gh)
+            if source is None:
+                return None
             cached_proof = cached.get('proof') if isinstance(cached, dict) else None
             if _cache_entry_matches(cached, source) and isinstance(cached_proof, dict):
                 proof = cached_proof
@@ -432,8 +434,17 @@ def _slot_waits(profile, key, rows, auto=None, transition=None, policy=None):
                         cache[entry_key] = {
                             'fingerprint': source['proof_fingerprint'],
                             'proof': proof,
+                            'source': source,
+                            'source_captured_at': time.time(),
                         }
                         _write_slot_cache(cache)
+            if _cached_slot_source(cached, policy) is None:
+                with cache_lock:
+                    cache[entry_key] = dict(cache.get(entry_key) or {},
+                                           fingerprint=source['proof_fingerprint'],
+                                           source=source,
+                                           source_captured_at=time.time())
+                    _write_slot_cache(cache)
         except Exception:
             return None  # This WP remains visible; UNKNOWN never releases it.
         if proof:
@@ -494,6 +505,24 @@ def _cache_entry_matches(entry, source):
         and proof.get('semantic_blocker_class') == source.get('semantic_blocker_class')
         and proof.get('relevant_scope_digest') == source.get('scope')
     )
+
+
+def _cached_slot_source(entry, policy):
+    """Reuse only a recent, policy-bound source context; expiry is UNKNOWN."""
+    if not isinstance(entry, dict) or not isinstance(entry.get('source'), dict):
+        return None
+    captured = entry.get('source_captured_at')
+    if not isinstance(captured, int | float):
+        return None
+    age = time.time() - captured
+    if age < 0 or age > SNAPSHOT_CACHE_TTL_SECONDS:
+        return None
+    source = entry['source']
+    if source.get('policy_digest') != policy.get('policy_digest'):
+        return None
+    if source.get('proof_fingerprint') != entry.get('fingerprint'):
+        return None
+    return source
 
 
 def preflight(profile, key, rows=None):
