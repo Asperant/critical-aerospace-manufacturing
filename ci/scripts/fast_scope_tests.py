@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 TIMEOUT = 90
 PYTEST = ["uv", "run", "--project", "ci", "--locked", "python", "-m", "pytest"]
+PYTHON = ["uv", "run", "--project", "ci", "--locked", "python"]
 
 
 def changed_paths() -> list[str]:
@@ -42,7 +43,7 @@ def main() -> int:
             (
                 "plane-queue",
                 [
-                    sys.executable,
+                    *PYTHON,
                     "-m",
                     "unittest",
                     "discover",
@@ -58,7 +59,7 @@ def main() -> int:
             (
                 "plane-transition",
                 [
-                    sys.executable,
+                    *PYTHON,
                     "-m",
                     "unittest",
                     "discover",
