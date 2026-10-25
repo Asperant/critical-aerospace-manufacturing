@@ -215,6 +215,99 @@ def find_case(block: dict, profile: str, wp: str, target: str) -> dict:
     return cases[0]
 
 
+RECOVERY_SCHEMA = "cap-deferred-recovery-v1"
+RECOVERY_CASE_ID = re.compile(r"DEFER-[A-Z0-9][A-Z0-9-]{2,60}")
+RECOVERY_KEYS = {
+    "case_id",
+    "profile",
+    "wp_id",
+    "reconciliation_case",
+    "blocker_audit_id",
+    "classification",
+    "platform_disposition",
+    "pending_producers",
+    "change_record",
+}
+DISPOSITION_KEYS = {"pr", "merge_sha", "owner", "path", "deployable", "expires_on"}
+
+
+def validate_recovery_policy(
+    block: Any, lifecycle: dict, contexts: dict[str, Any], people: dict[str, Any]
+) -> dict:
+    """CHG-033: the allow-list of deferred-acceptance recoveries for a two-parent merge.
+
+    Each case names one reconciliation case (the PR, head, merge, parents and runs it
+    re-proves), the original VERIFIED blocker audit, the platform disposition and the
+    producer WPs whose deliverables are still pending. It authorizes nothing by itself.
+    """
+    ok = (
+        isinstance(block, dict)
+        and set(block) == {"schema_version", "cases"}
+        and block["schema_version"] == RECOVERY_SCHEMA
+        and isinstance(block["cases"], list)
+        and 1 <= len(block["cases"]) <= 4
+    )
+    need(ok, "RECOVERY_POLICY_INVALID")
+    seen: set[Any] = set()
+    for case in block["cases"]:
+        need(
+            isinstance(case, dict) and set(case) == RECOVERY_KEYS,
+            "RECOVERY_CASE_INVALID",
+        )
+        wp, profile = case["wp_id"], case["profile"]
+        need(
+            RECOVERY_CASE_ID.fullmatch(str(case["case_id"]))
+            and profile in people
+            and wp in contexts
+            and CHANGE_ID.fullmatch(str(case["change_record"]))
+            and re.fullmatch(r"[0-9a-f]{64}", str(case["blocker_audit_id"]))
+            and case["classification"]
+            == "WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE",
+            "RECOVERY_CASE_INVALID",
+        )
+        owner = contexts[wp]["work_package"]["primary_owner"]["canonical_name"]
+        need(owner == people[profile][0], "RECOVERY_OWNER_MISMATCH")
+        base = [
+            c
+            for c in lifecycle["cases"]
+            if c["case_id"] == case["reconciliation_case"]
+            and c["profile"] == profile
+            and c["wp_id"] == wp
+            and "VALIDATING" in c["targets"]
+        ]
+        need(len(base) == 1, "RECOVERY_RECONCILIATION_CASE_UNKNOWN")
+        disposition = case["platform_disposition"]
+        need(
+            isinstance(disposition, dict)
+            and set(disposition) == DISPOSITION_KEYS
+            and type(disposition["pr"]) is int
+            and 0 < disposition["pr"] < 10**10
+            and SHA.fullmatch(str(disposition["merge_sha"]))
+            and disposition["owner"] in people
+            and re.fullmatch(r"[A-Za-z0-9_./-]+", str(disposition["path"]))
+            and re.fullmatch(r"[a-z0-9-]+", str(disposition["deployable"]))
+            and re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(disposition["expires_on"])),
+            "RECOVERY_DISPOSITION_INVALID",
+        )
+        producers = case["pending_producers"]
+        need(
+            isinstance(producers, list)
+            and 1 <= len(producers) <= 8
+            and len(set(producers)) == len(producers)
+            and all(p in contexts and p != wp for p in producers),
+            "RECOVERY_PRODUCER_UNKNOWN",
+        )
+        key = (profile, wp)
+        need(key not in seen, "RECOVERY_CASE_DUPLICATE")
+        seen.add(key)
+    return block
+
+
+def find_recovery_case(block: dict, profile: str, wp: str) -> dict | None:
+    cases = [c for c in block["cases"] if c["profile"] == profile and c["wp_id"] == wp]
+    return cases[0] if len(cases) == 1 else None
+
+
 def expected_refs(case: dict, target: str) -> set[str]:
     refs = {f"pr:{case['pr']}"}
     if target == "VALIDATING":

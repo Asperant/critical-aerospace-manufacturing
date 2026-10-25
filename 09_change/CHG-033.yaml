@@ -1,0 +1,32 @@
+CHG-033:
+  title: Deferred-acceptance recovery proof for an allow-listed two-parent merge
+  class: C3
+  review_risk_class: CR-3
+  owner: Batuhan
+  decision: DRAFT
+  status: UNDER_REVIEW
+  application_control_item: WP-SIM-001
+  required_human_approvals: 0
+  human_decision_basis: Operator approval of the exact plan with SHA-256 3b75589690b3da0384fc37efaf1685dba6f4506c51c0bf316f7f5ae5d860f9d2
+    (supervisor task folder for WP-SIM-001). This record is not yet approved or implemented;
+    its decision follows the ordinary development gates, not the plan approval.
+  scope: Implementation-slot exemption only, for the allow-listed case in
+    project_control/deferred_recovery.yaml. The legacy deferred proof, the ordinary squash,
+    DONE and HITL guards, product requirements and DoD semantics are unchanged
+  policy_source: project_control/deferred_recovery.yaml
+  rules:
+  - A separately versioned schema (cap-deferred-recovery-v1) names one profile, WP and reconciliation case
+  - The original VERIFIED BLOCKED audit stays the only authority that the blocker is active
+  - PR, head, merge, parents, main ancestry, complete file inventory and runs are re-proved live from the reconciliation case
+  - A later UNCHANGED re-assertion carries a current unedited owner assessment with exact fields; the historical audit and PR text are never rewritten
+  - Canonical inputs must equal the pinned policy at the assessed revision (on main) and on the current main
+  - The platform disposition must be a merged PR by its owner, cited in the assessment; the registry entry on the current main must equal the entry at that merge and be unexpired
+  - Named producer WPs must have delivered nothing on the current main; a delivered producer denies the proof
+  - The policy source and this record are pinned in the source manifest, so a changed or revoked case needs a refresh
+  - Every failed predicate yields a redacted reason code and the slot stays occupied
+  - The proof never certifies DoD, acceptance, readiness, benchmark success or DONE, and never changes dependency satisfaction
+  - Missing release-bound identities are owner-classified as waiting for a named producer; an agent cannot waive DOD-WP-11
+  rollout: Merge reviewed source only; separate root installation of the reviewed helper and
+    policy, then a distinct live authorization before any own-profile re-assertion
+  rollback: Restore deployed helper and policy files from the root-only backup; never delete
+    audit or silently revert Plane state
