@@ -2,6 +2,7 @@
 """CTRL-HOST-002: fixed-project GET-only queue. No repository imports or writes."""
 import datetime
 import concurrent.futures
+import contextlib
 import fcntl
 import hashlib
 import html.parser
@@ -47,6 +48,9 @@ REQUEST_INTERVAL = 0.9
 HEALTH_BUDGET_SECONDS = 4
 MAX_READ_WORKERS = 4
 PARALLEL_REQUEST_INTERVAL = REQUEST_INTERVAL / MAX_READ_WORKERS
+CACHE_PATH = Path('/run/cap-plane-slot-release-v2.json')
+CACHE_SCHEMA = 'cap-slot-release-cache-v1'
+CACHE_MAX_BYTES = 2_000_000
 
 
 class Unsafe(Exception):
@@ -319,12 +323,30 @@ def _slot_waits(profile, key, rows):
         candidates.append((wp, row['plane_state']))
     if not candidates:
         return []
+    cache = _read_slot_cache()
+    cache_lock = threading.Lock()
+
     def evaluate(candidate):
         wp, state = candidate
         try:
-            proof = auto.semantic_slot_release_proof(
-                t, wp, profile, policy, t.GitHub(profile)
-            )
+            gh = t.GitHub(profile)
+            source = auto.semantic_slot_release_source(t, wp, profile, policy, gh)
+            if source is None:
+                return None
+            entry_key = f'{profile}:{wp}'
+            cached = cache.get(entry_key)
+            cached_proof = cached.get('proof') if isinstance(cached, dict) else None
+            if _cache_entry_matches(cached, source) and isinstance(cached_proof, dict):
+                proof = cached_proof
+            else:
+                proof = auto.semantic_slot_release_proof(t, wp, profile, policy, gh)
+                if proof and proof.get('proof_fingerprint') == source['proof_fingerprint']:
+                    with cache_lock:
+                        cache[entry_key] = {
+                            'fingerprint': source['proof_fingerprint'],
+                            'proof': proof,
+                        }
+                        _write_slot_cache(cache)
         except Exception:
             return None  # This WP remains visible; UNKNOWN never releases it.
         if proof:
@@ -342,6 +364,49 @@ def _slot_waits(profile, key, rows):
             if result:
                 waits.append(result)
     return waits
+
+
+def _read_slot_cache():
+    try:
+        if not CACHE_PATH.is_file() or CACHE_PATH.stat().st_size > CACHE_MAX_BYTES:
+            return {}
+        value = json.loads(CACHE_PATH.read_text())
+        if value.get('schema') != CACHE_SCHEMA or not isinstance(value.get('entries'), dict):
+            return {}
+        return value['entries']
+    except (OSError, ValueError, TypeError, AttributeError):
+        return {}
+
+
+def _write_slot_cache(entries):
+    payload = json.dumps({'schema': CACHE_SCHEMA, 'entries': entries}, sort_keys=True)
+    if len(payload.encode()) > CACHE_MAX_BYTES:
+        return
+    temporary = CACHE_PATH.with_name(CACHE_PATH.name + '.tmp')
+    try:
+        temporary.write_text(payload)
+        os.chmod(temporary, 0o600)
+        os.replace(temporary, CACHE_PATH)
+    except OSError:
+        with contextlib.suppress(OSError):
+            temporary.unlink()
+
+
+def _cache_entry_matches(entry, source):
+    if not isinstance(entry, dict) or not isinstance(entry.get('proof'), dict):
+        return False
+    proof = entry['proof']
+    return (
+        entry.get('fingerprint') == source.get('proof_fingerprint')
+        and proof.get('proof_fingerprint') == source.get('proof_fingerprint')
+        and proof.get('schema') == 'cap-slot-release-v2'
+        and proof.get('wp_id') == source.get('wp_id', proof.get('wp_id'))
+        and proof.get('local_actionable_work') == 'NONE'
+        and proof.get('implementation_persisted') is True
+        and proof.get('semantic_blocker_id') == source.get('semantic_blocker_id')
+        and proof.get('semantic_blocker_class') == source.get('semantic_blocker_class')
+        and proof.get('relevant_scope_digest') == source.get('scope')
+    )
 
 
 def preflight(profile, key, rows=None):

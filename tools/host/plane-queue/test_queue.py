@@ -83,6 +83,31 @@ class QueueTests(unittest.TestCase):
         with patch.object(q, 'preflight', side_effect=TimeoutError('sentinel')):
             self.assertIsNone(q.bounded_preflight('asrin', 'sentinel-secret'))
 
+    def test_slot_release_cache_reuses_only_matching_fingerprint(self):
+        source = {
+            'wp_id': 'WP-CORE-004',
+            'proof_fingerprint': 'f' * 64,
+            'semantic_blocker_id': 'CORE-004-EXT',
+            'semantic_blocker_class': 'WAITING_EXTERNAL_INTEGRATION_BINDINGS',
+            'scope': 's' * 64,
+        }
+        proof = {
+            'schema': 'cap-slot-release-v2',
+            'wp_id': 'WP-CORE-004',
+            'local_actionable_work': 'NONE',
+            'implementation_persisted': True,
+            'semantic_blocker_id': source['semantic_blocker_id'],
+            'semantic_blocker_class': source['semantic_blocker_class'],
+            'relevant_scope_digest': source['scope'],
+            'proof_fingerprint': source['proof_fingerprint'],
+        }
+        entry = {'fingerprint': source['proof_fingerprint'], 'proof': proof}
+        self.assertTrue(q._cache_entry_matches(entry, source))
+        changed = dict(source, proof_fingerprint='0' * 64)
+        self.assertFalse(q._cache_entry_matches(entry, changed))
+        changed_scope = dict(source, scope='0' * 64)
+        self.assertFalse(q._cache_entry_matches(entry, changed_scope))
+
     def test_unavailable_health_keeps_verified_slot_releases(self):
         rows = {
             'a': task('WP-CORE-004', 'VALIDATING', blocked=True),
