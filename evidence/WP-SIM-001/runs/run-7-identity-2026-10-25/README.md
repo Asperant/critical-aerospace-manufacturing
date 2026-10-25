@@ -4,7 +4,9 @@ NEW local evidence from `capture_run.py` on the committed source in `identity.js
 
 | Command | Result | Output SHA-256 |
 |---|---|---|
-| simulator suite (`-p pytest_quarantine`, locked toolchain) | exit 0, `202 passed in 2.02s`, JUnit `test-results.xml` | `suite-output.txt` `ed587fdf…bd12` |
-| `replay_comparison.py` | exit 0; fresh-process traces equal the in-process trace for all 6 seeds and 4 hash seeds | `replay-comparison.json` `e3291575…baec` |
+| simulator suite (`-p pytest_quarantine`, locked toolchain) | exit 0, `202 passed in 2.02s` | `suite-output.txt` `ed587fdf…bd12` |
+| `replay_comparison.py` | exit 0; fresh-process traces equal the in-process trace for all 6 seeds and 4 hash seeds | `replay-comparison.json` `e3291575…baec` (file not retained) |
 
 Limits: toy-kernel scenario on the shared development host, not CI, INTEGRATION or EVALUATION. `identity.json` holds local labels (CPU model, memory, versions, source hashes), not a governed ReleaseManifest, EnvironmentManifest or Hardware ID, and a Git commit is not a release. DOD-WP-11 stays incomplete until those governed identities exist. No benchmark, container or REAL acceptance was run.
+
+To keep the PR small the JUnit file (`test-results.xml`) and the 167-line `replay-comparison.json` were not committed; `results.json` keeps the SHA-256 of the replay output, and `capture_run.py` regenerates both.
