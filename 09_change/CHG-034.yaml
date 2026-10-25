@@ -1,0 +1,23 @@
+CHG-034:
+  title: Release slot for verified merged external integration binding waits
+  class: C3
+  review_risk_class: CR-3
+  owner: Asrın
+  decision: APPROVED
+  status: APPROVED
+  application_control_item: CTRL-HOST-015
+  required_human_approvals: 0
+  human_decision_basis: Explicit project-owner request on 25 October 2026 for this narrow slot-accounting extension and focused regressions; live lifecycle application is not authorized.
+  scope: Slot accounting only for VALIDATING plus BLOCKED plus WAITING_EXTERNAL_INTEGRATION_BINDINGS
+  policy_source: project_control/merged_external_bindings.yaml
+  rules:
+  - Require actual owner-authored merged WP PR, deleted branch, canonical merge ancestry and successful required CI and main run at the exact merge SHA
+  - Require root VERIFIED BLOCKED audit and one unedited attributable owner assessment; assessed and audited blockers must match exactly
+  - Require exact owner-work NONE and local-actionable-work NONE fields; missing, ambiguous, UNKNOWN or local work keeps the slot
+  - Bind every missing interface to a merged policy mapping with canonical producer and consumer WP ownership, their scope projection digests, a precise requirement and pinned canonical provenance paths
+  - Empty or absent mappings never release a slot; this change declares no EVT-002 binding, producer readiness or global readiness node
+  - Preserve blocker-chain integrity, current canonical scope and artifact checks; fresh UNCHANGED evidence may reassert the identical active blocker without inventing a new VERIFIED operation
+  - Keep the WP VALIDATING and BLOCKED and visible; do not claim implementation complete, acceptance, DONE, dependency satisfaction or change any lifecycle transition
+  - Existing CHG-022 acceptance-only and CHG-024 IN_PROGRESS proofs, canonical ordering and guarded AUTO_NEXT remain unchanged
+  rollout: Merge reviewed source and pass required CI before supported root installer and policy refresh; separate authorization for live blocker evidence/application
+  rollback: Restore deployment only from root backup; never replay Plane state or erase audit

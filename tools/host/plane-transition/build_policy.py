@@ -97,6 +97,19 @@ for w in p.catalog.work_packages:
 for kind,name in [('health','health.py'),('health_snapshot','health_snapshot.py'),('preparation','preparation.py'),('prepare','prepare.py')]:
     policy['implementation_sha256'][kind]=sha256((ROOT/'tools/host/plane-transition'/name).read_bytes()).hexdigest()
 policy['source_git_blobs']={name:sha1(b'blob '+str(len((ROOT/name).read_bytes())).encode()+b'\0'+(ROOT/name).read_bytes(),usedforsecurity=False).hexdigest() for name in manifest}
+spec=importlib.util.spec_from_file_location('cap_merged_binding_policy',ROOT/'tools/host/plane-transition/auto_next.py')
+assert spec is not None and spec.loader is not None
+merged_bindings_module: Any=importlib.util.module_from_spec(spec)
+spec.loader.exec_module(merged_bindings_module)
+merged_bindings_module.resolver=types.SimpleNamespace(OWNERS={profile:name for name,profile in people.items()})
+binding_path=merged_bindings_module.MERGED_BINDINGS_PATH
+binding_policy=yaml.safe_load((ROOT/binding_path).read_text())
+merged_bindings_module.validate_merged_bindings(binding_policy,policy)
+policy['merged_external_bindings']=binding_policy
+policy['merged_external_wait_schema']=merged_bindings_module.MERGED_WAIT_SCHEMA
+for name in [binding_path,'09_change/CHG-034.yaml']:
+    manifest[name]=sha256((ROOT/name).read_bytes()).hexdigest()
+    policy['source_git_blobs'][name]=sha1(b'blob '+str(len((ROOT/name).read_bytes())).encode()+b'\0'+(ROOT/name).read_bytes(),usedforsecurity=False).hexdigest()
 policy['policy_digest']=sha256(json.dumps(policy,ensure_ascii=False,sort_keys=True).encode()).hexdigest()
 output=Path('/srv/ailab/remote-ssh/staging/plane-transition-policy.json')
 output.write_text(json.dumps(policy,ensure_ascii=False,sort_keys=True))

@@ -12,7 +12,7 @@ import re
 import sys
 from copy import copy
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 resolver: Any = None
 reconcile: Any = None
@@ -49,6 +49,247 @@ def load_preparation():
 
 
 ROOT = Path("/etc/cap-plane-queue")
+MERGED_BINDINGS_PATH = "project_control/merged_external_bindings.yaml"
+MERGED_BINDINGS_SCHEMA = "cap-merged-external-bindings-v1"
+MERGED_WAIT_SCHEMA = "cap-merged-external-wait-v1"
+
+
+def validate_merged_bindings(config, policy):
+    """Validate reviewed provenance mappings; never infer producer readiness."""
+
+    def require(value):
+        if not value:
+            raise ValueError("MERGED_BINDING_PROVENANCE_INVALID")
+
+    require(isinstance(config, dict) and set(config) == {"schema", "bindings"})
+    require(config["schema"] == MERGED_BINDINGS_SCHEMA)
+    require(isinstance(config["bindings"], list))
+    seen = set()
+    for row in config["bindings"]:
+        require(
+            isinstance(row, dict)
+            and set(row)
+            == {
+                "id",
+                "producer_wp",
+                "producer_owner",
+                "producer_scope",
+                "consumer_wp",
+                "consumer_owner",
+                "consumer_scope",
+                "requirement",
+                "provenance",
+                "binding_paths",
+            }
+        )
+        identity = row["id"]
+        require(
+            isinstance(identity, str)
+            and re.fullmatch(r"BIND-[A-Z0-9-]{1,80}", identity)
+        )
+        require(identity not in seen)
+        seen.add(identity)
+        require(row["producer_wp"] != row["consumer_wp"])
+        sources = set()
+        for role in ("producer", "consumer"):
+            wp, owner = row[role + "_wp"], row[role + "_owner"]
+            require(isinstance(wp, str) and isinstance(owner, str))
+            context = policy.get("contexts", {}).get(wp)
+            require(isinstance(context, dict) and owner in resolver.OWNERS)
+            require(
+                context["work_package"]["primary_owner"]["canonical_name"]
+                == resolver.OWNERS[owner]
+            )
+            scope = row[role + "_scope"]
+            require(isinstance(scope, str) and re.fullmatch(r"[a-f0-9]{64}", scope))
+            require(policy.get("scope_projections", {}).get(wp) == scope)
+            sources.update(context["source_manifest"])
+        requirement = row["requirement"]
+        require(isinstance(requirement, str) and 20 <= len(requirement) <= 1000)
+        require(not re.search(r"\b(?:UNKNOWN|TBD|TODO|PENDING)\b", requirement, re.I))
+        paths = row["binding_paths"]
+        require(isinstance(paths, list) and bool(paths))
+        require(
+            all(
+                isinstance(path, str)
+                and re.fullmatch(
+                    r"(?:services|packages|infra|workflows)/[A-Za-z0-9_./-]+", path
+                )
+                and all(part not in {"", ".", ".."} for part in path.split("/"))
+                for path in paths
+            )
+        )
+        require(len(paths) == len(set(paths)))
+        provenance = row["provenance"]
+        require(isinstance(provenance, dict) and bool(provenance))
+        for path, digest in provenance.items():
+            require(
+                isinstance(path, str) and path.startswith("docs/") and path in sources
+            )
+            require(isinstance(digest, str) and re.fullmatch(r"[a-f0-9]{64}", digest))
+            require(policy.get("source_manifest", {}).get(path) == digest)
+
+
+def merged_external_wait_proof(t, wp, profile, policy, gh):
+    """CHG-034: external-only waiting after merge, with separately reviewed bindings."""
+    global resolver
+    if resolver is None:
+        resolver = load_resolver()
+    try:
+        config = policy.get("merged_external_bindings")
+        validate_merged_bindings(config, policy)
+        verified = t.last_blocker(wp)
+        t.need(
+            isinstance(verified, dict)
+            and verified.get("result") == "VERIFIED"
+            and verified.get("operation") == "BLOCKED"
+            and verified.get("wp_id") == wp
+            and verified.get("profile") == profile
+            and verified.get("from_state") == "VALIDATING"
+            and verified.get("to_state") == "VALIDATING"
+            and t.audit_identity(verified) == verified.get("audit_id"),
+            "MERGED_WAIT_AUDIT_INVALID",
+        )
+        classification = "WAITING_EXTERNAL_INTEGRATION_BINDINGS"
+        t.need(
+            re.match(classification + r"(?::|\s|$)", verified.get("reason", "")),
+            "MERGED_WAIT_CLASS_INVALID",
+        )
+        again = reassertion(t, wp, profile, verified, state="VALIDATING")
+        t.need(again is not AMBIGUOUS, "MERGED_WAIT_REASSERTION_INVALID")
+        source: Any = again or verified
+        ids = [
+            r[8:]
+            for r in source.get("evidence_refs", [])
+            if re.fullmatch(r"comment:[1-9][0-9]{0,15}", r)
+        ]
+        t.need(len(ids) == 1, "MERGED_WAIT_ASSESSMENT_REQUIRED")
+        comment = gh.comment(int(ids[0]))
+        text = comment.get("body")
+        t.need(
+            isinstance(text, str)
+            and len(text) <= 65536
+            and (comment.get("user") or {}).get("login", "").casefold()
+            == t.GITHUB[profile].casefold()
+            and comment.get("created_at")
+            and comment["created_at"] == comment.get("updated_at"),
+            "MERGED_WAIT_ASSESSMENT_NOT_OWNER_UNEDITED",
+        )
+        sha = exact_field(text, "Canonical main revision")
+        pr_id = exact_field(text, "Implementation PR")
+        binding_ids = exact_field(text, "External bindings")
+        t.need(
+            exact_field(text, "External integration wait class") == classification
+            and exact_field(text, "Owner-executable implementation work") == "NONE"
+            and exact_field(text, "Local actionable work") == "NONE"
+            and isinstance(sha, str)
+            and t.SHA.fullmatch(sha)
+            and isinstance(pr_id, str)
+            and re.fullmatch(r"[1-9][0-9]{0,9}", pr_id)
+            and isinstance(binding_ids, str),
+            "MERGED_WAIT_ASSESSMENT_INCOMPLETE",
+        )
+        sha, pr_id, binding_ids = (
+            cast(str, sha),
+            cast(str, pr_id),
+            cast(str, binding_ids),
+        )
+        selected = binding_ids.split(", ")
+        bindings = [r for r in config["bindings"] if r["consumer_wp"] == wp]
+        t.need(
+            bindings
+            and len(selected) == len(set(selected))
+            and set(selected) == {r["id"] for r in bindings}
+            and all(r["consumer_owner"] == profile for r in bindings),
+            "MERGED_WAIT_BINDINGS_UNPROVEN",
+        )
+        record = t.native_record(text, wp, sha)
+        t.need(
+            record.get("blocker") == verified.get("blocker")
+            and not record.get("resolves_audit_id"),
+            "MERGED_WAIT_BLOCKER_CHANGED",
+        )
+        pr = t.pr_fact(gh, ["pr:" + pr_id], wp, profile)
+        t.need(
+            pr.get("merged") is True
+            and comment.get("issue_url", "").endswith("/issues/" + pr_id),
+            "MERGED_WAIT_PR_NOT_MERGED",
+        )
+        merge = pr.get("merge_commit_sha")
+        t.need(
+            isinstance(merge, str) and t.SHA.fullmatch(merge),
+            "MERGED_WAIT_INVALID_MERGE",
+        )
+        merge = cast(str, merge)
+        gh.merged_shape(pr)
+        main = gh.main_sha()
+        t.need(sha == main, "MERGED_WAIT_ASSESSMENT_STALE")
+        gh.ancestor(merge, sha)
+        gh.ancestor(sha, main)
+        for revision in sorted({merge, sha, main}):
+            check_canonical_scope(t, gh, wp, revision, policy)
+        for binding in bindings:
+            for revision in sorted({sha, main}):
+                check_canonical_scope(t, gh, binding["producer_wp"], revision, policy)
+        tree = gh._get(f"{t.REPO}/git/trees/{main}?recursive=1")
+        t.need(
+            tree.get("truncated") is False and isinstance(tree.get("tree"), list),
+            "MERGED_WAIT_PRODUCER_INVENTORY_UNKNOWN",
+        )
+        paths = [row["path"] for row in tree["tree"]]
+        t.need(
+            all(
+                not any(
+                    path == expected or path.startswith(expected + "/")
+                    for path in paths
+                )
+                for binding in bindings
+                for expected in binding["binding_paths"]
+            ),
+            "MERGED_WAIT_PRODUCER_DELIVERED",
+        )
+        for revision in sorted({sha, main}):
+            raw, _ = gh.repository_file(MERGED_BINDINGS_PATH, revision)
+            t.need(
+                hashlib.sha256(raw).hexdigest()
+                == policy["source_manifest"].get(MERGED_BINDINGS_PATH),
+                "MERGED_WAIT_PROVENANCE_CHANGED",
+            )
+        t.blocker_evidence(gh, record, "BLOCKER-OBSERVED", main)
+        runs = [
+            gh.run(int(r[4:]))
+            for r in source.get("evidence_refs", [])
+            if re.fullmatch(r"run:[1-9][0-9]*", r)
+        ]
+        t.need(
+            any(
+                r.get("head_sha") == merge
+                and r.get("head_branch") == "main"
+                and r.get("event") != "pull_request"
+                and r.get("status") == "completed"
+                and r.get("conclusion") == "success"
+                for r in runs
+            ),
+            "MERGED_WAIT_MAIN_CI_NOT_GREEN",
+        )
+        t.ci(gh, merge, policy)
+        return {
+            "schema": MERGED_WAIT_SCHEMA,
+            "wp_id": wp,
+            "owner": t.q.PEOPLE[profile][0],
+            "classification": classification,
+            "owner_work_remaining": False,
+            "local_actionable_work": False,
+            "merge_sha": merge,
+            "audit_id": verified["audit_id"],
+            "assessment_digest": hashlib.sha256(text.encode()).hexdigest(),
+            "provenance_digest": hashlib.sha256(
+                json.dumps(bindings, sort_keys=True).encode()
+            ).hexdigest(),
+            "binding_ids": sorted(selected),
+        }
+    except (t.Denied, ValueError, TypeError, KeyError):
+        return None  # Missing/UNKNOWN proof never frees a slot.
 
 
 def require_caller(profile, caller=None):
@@ -111,6 +352,17 @@ def live_view(t, plane, policy, profile=None, gh=None):
             proof = external_wait_proof(t, wp, profile, policy, gh or t.GitHub(profile))
             if proof:
                 items[wp]["external_integration_wait"] = proof
+        if (
+            requested_profile == profile
+            and items[wp]["state"] == "VALIDATING"
+            and items[wp]["blocked"]
+            and policy.get("merged_external_wait_schema") == MERGED_WAIT_SCHEMA
+        ):
+            proof = merged_external_wait_proof(
+                t, wp, profile, policy, gh or t.GitHub(profile)
+            )
+            if proof:
+                items[wp]["merged_external_integration_wait"] = proof
     return {"complete": True, "items": items}
 
 

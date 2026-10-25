@@ -804,3 +804,23 @@ Proposed under the operator's approval of the exact plan for WP-SIM-001; the cha
 The recovery proof binds the original VERIFIED BLOCKED audit; the reconciliation case's PR, head, merge, parents, main ancestry, complete file inventory and validating runs; a later UNCHANGED re-assertion that carries a current, unedited owner assessment with the exact fields `Recovery case`, `Original blocker audit`, `Canonical main revision`, `Deferred acceptance class`, `Owner-executable implementation work: NONE`, `Pending producers` and `Platform disposition` (which cites the merged disposition and so states that the observability decision named in the historical blocker reason is resolved); the pinned canonical inputs both at the assessed revision and on the current main; the platform owner's merged disposition, whose registry entry on the current main must equal the entry at that merge (a changed reason or status is a new decision) and be unexpired; and the absence of any deliverable from the named pending producers on the current main. The assessment records a current decision; it never asserts that the historical audit or PR text contained these fields. Release-bound identities that do not yet exist may be classified by the owner as waiting for a named producer work package; an agent cannot waive DOD-WP-11. Any failed predicate keeps the slot occupied and returns a redacted reason code.
 
 Allocation: CHG-033 is the next free identifier (CHG-032 belongs to WP-EVT-001). The record stays DRAFT/UNDER_REVIEW until the ordinary development gates complete; IMPLEMENTED and VERIFIED are not asserted and would apply to this change only, never to a parent work package.
+
+## Merged external integration binding slot exception — CHG-034
+
+CHG-034 / CTRL-HOST-015 (C3 / CR-3) is authorized by the project-owner request of
+25 October 2026 for this bounded implementation. It extends implementation-slot
+accounting to `VALIDATING + BLOCKED + WAITING_EXTERNAL_INTEGRATION_BINDINGS`,
+using a separate proof rather than reclassifying incomplete propagation as
+acceptance-only. The merged PR, deleted branch, exact-merge required CI and main
+run, verified blocker chain, current-main unedited owner assessment (owner work
+NONE and local actionable work NONE), and identical audited/assessed blocker are
+mandatory. Each missing binding requires a reviewed mapping in
+`project_control/merged_external_bindings.yaml`, including canonical producer and
+consumer owners/WPs, scope projection digests, a precise consumer requirement,
+pinned canonical provenance and concrete producer output paths still absent on
+main. An unrelated WP cannot be substituted; mappings are not readiness evidence.
+The initial registry is empty and certifies no actual binding wait. A producer
+output appearing, local work, stale assessment or incomplete/UNKNOWN proof retains
+the slot. VALIDATING/BLOCKED visibility, DoD, DONE, dependency satisfaction,
+CHG-022/024 and canonical selection rules are unchanged. No live state application
+or deployment is authorized by this implementation record alone.
