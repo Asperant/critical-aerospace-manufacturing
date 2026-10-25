@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cap:event-envelope:v1",
+  "title": "WP-EVT-002 event envelope metadata v1",
+  "description": "Shared metadata only; no production payload, publisher, subject, authorization or runtime readiness is defined.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id",
+    "event_type",
+    "schema_version",
+    "producer",
+    "world_id",
+    "correlation_id",
+    "causation_id",
+    "trace_id",
+    "occurred_at",
+    "observed_at",
+    "entity_refs"
+  ],
+  "properties": {
+    "event_id": {
+      "$ref": "#/$defs/Identity",
+      "description": "Immutable fact identity, retained across retries and replay; UUID4 generation does not constrain supplied opaque IDs."
+    },
+    "event_type": {
+      "$ref": "#/$defs/Identity"
+    },
+    "schema_version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Positive event schema version; not an entity revision."
+    },
+    "producer": {
+      "$ref": "#/$defs/Identity"
+    },
+    "world_id": {
+      "$ref": "#/$defs/Identity",
+      "description": "Explicit operational world; never inferred or authenticated by this schema."
+    },
+    "correlation_id": {
+      "$ref": "#/$defs/Identity",
+      "description": "Business-chain identity, distinct from software trace identity."
+    },
+    "causation_id": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Direct causal predecessor; explicit null for a root event. Omission is invalid."
+    },
+    "trace_id": {
+      "$ref": "#/$defs/Identity",
+      "description": "Software execution identity; may change on replay without changing EventID."
+    },
+    "occurred_at": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/UtcOccurrence"
+        },
+        {
+          "$ref": "#/$defs/SimulationOccurrence"
+        }
+      ]
+    },
+    "observed_at": {
+      "$ref": "#/$defs/UtcInstant",
+      "description": "UTC platform observation time; never a substitute for simulation occurrence."
+    },
+    "entity_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/EntityReference"
+      },
+      "description": "Explicit typed opaque references; empty only when no entity context applies. Event-specific cardinality remains the payload owner responsibility."
+    }
+  },
+  "$defs": {
+    "Identity": {
+      "type": "string",
+      "pattern": "\\S",
+      "description": "Opaque nonblank string, preserved unchanged; not coerced or interpreted as a counter."
+    },
+    "UtcInstant": {
+      "type": "string",
+      "pattern": "^(?:(?!0000)[0-9]{4}-(?:(?:01|03|05|07|08|10|12)-(?:0[1-9]|[12][0-9]|3[01])|(?:04|06|09|11)-(?:0[1-9]|[12][0-9]|30)|02-(?:0[1-9]|1[0-9]|2[0-8]))|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)-02-29)T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.[0-9]{1,6})?(?:Z|\\+00:00)(?![\\s\\S])",
+      "description": "Gregorian UTC instant, year 0001-9999, seconds 00-59, optional 1-6 fractional digits; Z or +00:00. Matches canonical Python datetime output without optional format-checker dependencies."
+    },
+    "EntityReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity_type",
+        "id",
+        "revision"
+      ],
+      "properties": {
+        "entity_type": {
+          "$ref": "#/$defs/Identity"
+        },
+        "id": {
+          "$ref": "#/$defs/Identity"
+        },
+        "revision": {
+          "$ref": "#/$defs/Identity"
+        }
+      }
+    },
+    "UtcOccurrence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clock",
+        "value"
+      ],
+      "properties": {
+        "clock": {
+          "const": "UTC"
+        },
+        "value": {
+          "$ref": "#/$defs/UtcInstant"
+        }
+      }
+    },
+    "SimulationOccurrence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clock",
+        "seconds",
+        "simulation_run_id"
+      ],
+      "properties": {
+        "clock": {
+          "const": "SIMULATION"
+        },
+        "seconds": {
+          "type": "number",
+          "minimum": -1.7976931348623157e+308,
+          "maximum": 1.7976931348623157e+308,
+          "description": "Finite seconds on the named simulation clock, with no implicit UTC epoch. Supplied by the domain/simulator authority, never derived from observation time."
+        },
+        "simulation_run_id": {
+          "$ref": "#/$defs/Identity"
+        }
+      }
+    }
+  }
+}
