@@ -138,11 +138,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           persist-credentials: false
       - name: Install pinned uv
         run: pipx install "uv==${UV_VERSION}"
       - name: Sync locked CI toolchain
         run: uv sync --project ci --locked
+      - name: Contract registry compatibility (WP-EVT-001)
+        env:
+          PYTHONPATH: packages/contracts/src
+          CONTRACT_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: uv run --project ci --locked python -m cap_contracts.ci_gate
       - name: JSON Schema contracts
         run: uv run --project ci --locked python ci/scripts/check_contracts.py
       - name: Operations BFF v1 contract tests and typing (WP-UI-001)

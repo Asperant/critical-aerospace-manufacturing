@@ -757,7 +757,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-EVT-CONTRACTS |
 | Size band (indicative, no hour estimates) | M (≈4–7 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `packages/contracts/`; `evidence/WP-EVT-001/CLOSEOUT.md` (registry/policy primitives; integrated acceptance pending) |
 
 **Purpose.** Create the single registry of cross-service contracts (commands, events, queries, artifacts) with canonical producer and compatibility rules.
 

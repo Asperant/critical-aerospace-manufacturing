@@ -2,6 +2,7 @@
   "include": [
     "tools",
     "ci",
+    "packages/contracts/src",
     "services/manufacturing-simulator/src",
     "services/manufacturing-simulator/tests"
   ],
@@ -11,7 +12,7 @@
   "strict": ["ci"],
   "reportMissingModuleSource": "none",
   "executionEnvironments": [
-    {"root": "ci", "extraPaths": ["ci", "ci/scripts"]},
+    {"root": "ci", "extraPaths": ["ci", "ci/scripts", "packages/contracts/src"]},
     {
       "root": "services/manufacturing-simulator",
       "extraPaths": [

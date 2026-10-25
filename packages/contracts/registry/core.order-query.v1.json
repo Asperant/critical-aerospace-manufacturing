@@ -1,0 +1,41 @@
+{
+  "contract_id": "core.order-query.v1",
+  "name": "Core order-domain query",
+  "contract_type": "QUERY",
+  "version": 1,
+  "semantic_owner": "Asrın Dündar",
+  "canonical_producer": "manufacturing-core",
+  "declared_consumers": ["Simulator", "Digital Twin", "Scheduler"],
+  "purpose": "Read one production order with its route and visits, lots, serialized components and the equipment references the route needs.",
+  "input_schema": {
+    "path": "services/manufacturing-core/contracts/v1/order-query-request.schema.json",
+    "sha256": "274c8d621f4f35ab525eb79aea52d59c65ebff2c1ad17ab89d7ab2a8f19de593"
+  },
+  "output_schema": {
+    "path": "services/manufacturing-core/contracts/v1/order-query.schema.json",
+    "sha256": "bb2e576c48196cadc3aecae84ba9cbab51e4d127e7bb0c1fe4767044b03723f0"
+  },
+  "fixtures": [
+    {
+      "path": "services/manufacturing-core/contracts/v1/order-query.normal.json",
+      "sha256": "c88a764ce64880cf3fef18675b48dc83f36cf1c7de5f46ff088242eb1ddedbc9"
+    },
+    {
+      "path": "services/manufacturing-core/contracts/v1/order-query.reentrant.json",
+      "sha256": "08a4c868b9b4e17ce5b7564402316e31a91da55188dd745e00c2cf59e1b5d01c"
+    }
+  ],
+  "authority_level": "Core domain read; no command, approval or execution authority",
+  "sync_semantics": "SYNC",
+  "security_classification": "Internal manufacturing-domain metadata; no credentials or Oracle labels",
+  "semantics": {
+    "revision": "Opaque nonblank per-entity revisions are preserved; there is no numeric comparison, aggregate revision, freshness guarantee or global snapshot.",
+    "ordering": "Lots, components and equipment are ordered by identity in Unicode code-point order; route visits keep their semantic traversal order.",
+    "errors": "ORDER_NOT_FOUND, MISSING_ROUTE and MISSING_EQUIPMENT; invalid structure raises a validation error.",
+    "world": "No world or counterfactual binding."
+  },
+  "deprecation": {
+    "status": "ACTIVE",
+    "replacement": null
+  }
+}

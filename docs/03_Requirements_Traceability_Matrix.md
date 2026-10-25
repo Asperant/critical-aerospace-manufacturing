@@ -422,14 +422,14 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 
 | ID | Class | PrimaryOwner | Catalog anchor | Source decisions (DERIVED_FROM) | Planning state | Flags |
 |---|---|---|---|---|---|---|
-| FR-EVT-001 | F0 | Asrın | 01 Item81 FR-EVT-001 L169910 | ITEM-22, ITEM-68, INT-INV-02, INT-INV-15 | VERIFY_PLANNED | — |
+| FR-EVT-001 | F0 | Asrın | 01 Item81 FR-EVT-001 L169910 | ITEM-22, ITEM-68, INT-INV-02, INT-INV-15 | EVIDENCE_PENDING | — |
 | FR-EVT-002 | F1 | Asrın | 01 Item81 FR-EVT-002 L169911 | ITEM-12, EVTINF-INV-04 | VERIFY_PLANNED | — |
 | FR-EVT-003 | F1 | Asrın | 01 Item81 FR-EVT-003 L169912 | ITEM-12, ITEM-47, BE-INV-09, OBS-INV-05 | VERIFY_PLANNED | — |
 | FR-EVT-004 | F1 | Asrın | 01 Item81 FR-EVT-004 L169913 | ITEM-12, ITEM-84, SEC-INV-20, DX-INV-59 | VERIFY_PLANNED | — |
 | FR-EVT-005 | F1 | Asrın | 01 Item81 FR-EVT-005 L169914 | ITEM-36, EV-INV-03, EVTINF-INV-05, TEST-INV-09 | EVIDENCE_PENDING | — |
-| FR-EVT-006 | F1 | Asrın | 01 Item81 FR-EVT-006 L169915 | ITEM-22, ITEM-36, EV-INV-06 | VERIFY_PLANNED | — |
+| FR-EVT-006 | F1 | Asrın | 01 Item81 FR-EVT-006 L169915 | ITEM-22, ITEM-36, EV-INV-06 | EVIDENCE_PENDING | — |
 | FR-EVT-007 | F1 | Asrın | 01 Item81 FR-EVT-007 L169916 | ITEM-13, ITEM-22, DA-INV-03, INT-INV-01, GIT-INV-02 | VERIFY_PLANNED | — |
-| FR-EVT-008 | F1 | Asrın | 01 Item81 FR-EVT-008 L169917 | ITEM-22, INT-INV-03, EV-INV-08 | VERIFY_PLANNED | — |
+| FR-EVT-008 | F1 | Asrın | 01 Item81 FR-EVT-008 L169917 | ITEM-22, INT-INV-03, EV-INV-08 | EVIDENCE_PENDING | — |
 | FR-EVT-009 | F1 | Yavuz | 01 Item81 FR-EVT-009 L169918 | ITEM-36, EV-INV-07, EVTINF-INV-11, AUTO-INV-07 | VERIFY_PLANNED | — |
 | FR-EVT-010 | F1 | Yavuz | 01 Item81 FR-EVT-010 L169919 | ITEM-36, ITEM-52, EVTINF-INV-10, SRE-INV-06, RES-INV-05 | VERIFY_PLANNED | — |
 
@@ -783,7 +783,7 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 | NFR-DATA-002 | H0 | Asrın | 01 Item82 NFR-DATA-002 L172455 | ITEM-45, ITEM-60, NFR-INV-49, VMLOPS-INV-04 | VERIFY_PLANNED | OWNER-WORDING |
 | NFR-DATA-003 | H0 | Yavuz | 01 Item82 NFR-DATA-003 L172468 | ITEM-79, BENCH-INV-50 | VERIFY_PLANNED | — |
 | NFR-DATA-004 | H0 | Yavuz | 01 Item82 NFR-DATA-004 L172479 | ITEM-79, BENCH-INV-65, ART-INV-10 | VERIFY_PLANNED | — |
-| NFR-DATA-005 | H0 | Asrın | 01 Item82 NFR-DATA-005 L172490 | ITEM-22, TEST-INV-28 | VERIFY_PLANNED | — |
+| NFR-DATA-005 | H0 | Asrın | 01 Item82 NFR-DATA-005 L172490 | ITEM-22, TEST-INV-28 | EVIDENCE_PENDING | — |
 | NFR-DATA-006 | H0 | Asrın | 01 Item82 NFR-DATA-006 L172499 | ITEM-55, ITEM-46, NFR-INV-48, SC-INV-17 | VERIFY_PLANNED | — |
 | NFR-DATA-007 | H0 | Yavuz | 01 Item82 NFR-DATA-007 L172514 | ITEM-79, NFR-INV-50, BENCH-INV-70 | VERIFY_PLANNED | — |
 | NFR-DATA-008 | H0 | Yavuz | 01 Item82 NFR-DATA-008 L172527 | ITEM-46, ITEM-84, DB-INV-15, DATA-INV-06 | VERIFY_PLANNED | — |
@@ -1355,14 +1355,14 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 
 | ID | Planned implementation surface (REALIZED_BY) | Contract / policy / data / model identities (EXPOSED_BY · GOVERNED_BY · USES_*) | Repo reference | Target |
 |---|---|---|---|---|
-| FR-EVT-001 | Integration Contract Registry (Git-backed) | CONTRACT:IC-VIS-* · IC-AI-* · IC-SCH-* · IC-AUTO-* · IC-SHARED-* | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
+| FR-EVT-001 | Integration Contract Registry (Git-backed) | CONTRACT:IC-VIS-* · IC-AI-* · IC-SCH-* · IC-AUTO-* · IC-SHARED-* | packages/contracts/; evidence/WP-EVT-001/CLOSEOUT.md (registry primitives; cross-service adoption pending) | M4 (F0/F1) |
 | FR-EVT-002 | event envelope EventID generation | CONTRACT:event envelope | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-EVT-003 | CorrelationID/CausationID propagation middleware | CONTRACT:event envelope · CONTRACT:IC-SHARED-003 ActorContext | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-EVT-004 | WorldID scope-tagging middleware | CONTRACT:event envelope (WorldID) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-EVT-005 | idempotent consumer framework (processed-message ledger) | CONTRACT:consumer idempotency policy | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-EVT-006 | boundary schema validators (producer + consumer) | CONTRACT:event schemas | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
+| FR-EVT-006 | boundary schema validators (producer + consumer) | CONTRACT:event schemas | packages/contracts/src/cap_contracts/boundary.py; ci/tests/test_contract_registry.py; evidence/WP-EVT-001/CLOSEOUT.md (event consumer adoption pending) | M4 (F0/F1) |
 | FR-EVT-007 | architecture boundary rules + DB role separation | POLICY:ArchitectureRule set | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-EVT-008 | canonical-producer field + producer ACL on broker subjects | CONTRACT:Integration Contract Registry | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
+| FR-EVT-008 | canonical-producer field + producer ACL on broker subjects | CONTRACT:Integration Contract Registry | packages/contracts/src/cap_contracts/authority.py; packages/contracts/src/cap_contracts/permissions.py; evidence/WP-EVT-001/CLOSEOUT.md (runtime enforcement pending) | M4 (F0/F1) |
 | FR-EVT-009 | replay procedure with World/revision/idempotency guards | POLICY:replay runbook | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-EVT-010 | poison-message quarantine/DLQ path + alert (policy choice OD-FAIL-01) | POLICY:poison-message disposition (OD-FAIL-01) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 
@@ -1716,7 +1716,7 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 | NFR-DATA-002 | ARCH-DATA-LINEAGE | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
 | NFR-DATA-003 | ARCH-DATA-LINEAGE | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
 | NFR-DATA-004 | ARCH-DATA-LINEAGE, ARCH-DATA-OBJ | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
-| NFR-DATA-005 | ARCH-CTR-EVTSCHEMA, ARCH-CTR-CMDSCHEMA | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
+| NFR-DATA-005 | ARCH-CTR-EVTSCHEMA, ARCH-CTR-CMDSCHEMA | packages/contracts/src/cap_contracts/; evidence/WP-EVT-001/CLOSEOUT.md (final-evidence validation pending) | M4 strategy / M5 suite |
 | NFR-DATA-006 | ARCH-DATA-LINEAGE | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
 | NFR-DATA-007 | ARCH-DATA-LINEAGE | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
 | NFR-DATA-008 | ARCH-DATA-LINEAGE, ARCH-EVT-SCHEMA | TBD_BY_IMPLEMENTATION (IMPLEMENTED ⇒ capability required for measurement exists) | M4 strategy / M5 suite |
@@ -2471,14 +2471,14 @@ No evidence exists. The table fixes, per requirement, **what kind of evidence wi
 
 | ID | Class | Acceptable evidence codes | Required env class(es) | Min evidence maturity at final disposition | EvidenceID | Applicability | EvidenceState |
 |---|---|---|---|---|---|---|---|
-| FR-EVT-001 | F0 | TE/PE | CI + INTEGRATION + EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
+| FR-EVT-001 | F0 | TE/PE | CI + INTEGRATION + EVALUATION | EV-L5 | — | — | EVIDENCE_PENDING |
 | FR-EVT-002 | F1 | TE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
 | FR-EVT-003 | F1 | TE/EE | CI + INTEGRATION | EV-L3 | — | — | NOT_YET_EXECUTED |
 | FR-EVT-004 | F1 | TE/EE | CI + INTEGRATION | EV-L3 | — | — | NOT_YET_EXECUTED |
 | FR-EVT-005 | F1 | TE/RE | CI + INTEGRATION + EVALUATION | EV-L4 | — | — | NOT_YET_EXECUTED |
-| FR-EVT-006 | F1 | TE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
+| FR-EVT-006 | F1 | TE | CI | EV-L2 | — | — | EVIDENCE_PENDING |
 | FR-EVT-007 | F1 | TE/PE | CI + INTEGRATION | EV-L3 | — | — | NOT_YET_EXECUTED |
-| FR-EVT-008 | F1 | PE/TE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
+| FR-EVT-008 | F1 | PE/TE | CI | EV-L2 | — | — | EVIDENCE_PENDING |
 | FR-EVT-009 | F1 | TE/RE | CI + INTEGRATION | EV-L3 | — | — | NOT_YET_EXECUTED |
 | FR-EVT-010 | F1 | TE/RE | CI + INTEGRATION | EV-L3 | — | — | NOT_YET_EXECUTED |
 
@@ -2832,7 +2832,7 @@ No evidence exists. The table fixes, per requirement, **what kind of evidence wi
 | NFR-DATA-002 | H0 | TE/PE | EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
 | NFR-DATA-003 | H0 | TE | EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
 | NFR-DATA-004 | H0 | TE/PE | EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
-| NFR-DATA-005 | H0 | TE | CI + EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
+| NFR-DATA-005 | H0 | TE | CI + EVALUATION | EV-L5 | — | — | EVIDENCE_PENDING |
 | NFR-DATA-006 | H0 | PE/TE | EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
 | NFR-DATA-007 | H0 | TE | EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
 | NFR-DATA-008 | H0 | TE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
@@ -4141,15 +4141,16 @@ FR-EVT-001:
   meta: {class: F0, owner: Asrın, anchor: "01 Item81 FR-EVT-001 L169910"}
   DERIVED_FROM: [ITEM-22, ITEM-68, INT-INV-02, INT-INV-15]
   ALLOCATED_TO: [ARCH-CTR-CMDSCHEMA, ARCH-CTR-EVTSCHEMA, ARCH-CTR-API, ARCH-CTR-VERSIONING]
-  REALIZED_BY: {surface: "Integration Contract Registry (Git-backed)", deployable: "contracts package + all bounded services", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "Integration Contract Registry (Git-backed)", deployable: "contracts package + all bounded services", ref: "packages/contracts/; evidence/WP-EVT-001/CLOSEOUT.md (registry primitives; cross-service adoption pending)"}
   EXPOSED_BY: ["IC-VIS-*", "IC-AI-*", "IC-SCH-*", "IC-AUTO-*", "IC-SHARED-*"]
   VERIFIED_BY: [TEST-EVT-SCHEMA, TEST-ARCH-BOUNDARY, BENCH-E2E-001]
   EXERCISED_IN: [AV-SCEN-01]
   MITIGATES: [ARCH-R04, ARCH-R01]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-EVT-001-LOCAL-001]  # scoped unit/contract runs; final acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "CI + INTEGRATION + EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Scoped WP-EVT-001 primitives and unit evidence only; see evidence/WP-EVT-001/CLOSEOUT.md. No complete cross-service, broker, final-evidence or freeze acceptance is claimed."
 FR-EVT-002:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-EVT-002 L169911"}
   DERIVED_FROM: [ITEM-12, EVTINF-INV-04]
@@ -4203,14 +4204,15 @@ FR-EVT-006:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-EVT-006 L169915"}
   DERIVED_FROM: [ITEM-22, ITEM-36, EV-INV-06]
   ALLOCATED_TO: [ARCH-EVT-SCHEMA, ARCH-CTR-EVTSCHEMA]
-  REALIZED_BY: {surface: "boundary schema validators (producer + consumer)", deployable: "contracts package", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "boundary schema validators (producer + consumer)", deployable: "contracts package", ref: "packages/contracts/src/cap_contracts/boundary.py; ci/tests/test_contract_registry.py; evidence/WP-EVT-001/CLOSEOUT.md (event consumer adoption pending)"}
   EXPOSED_BY: ["event schemas"]
   VERIFIED_BY: [TEST-EVT-SCHEMA]
   MITIGATES: [ARCH-R03, ARCH-R10]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-EVT-001-LOCAL-001]  # scoped unit/contract runs; final acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Scoped WP-EVT-001 primitives and unit evidence only; see evidence/WP-EVT-001/CLOSEOUT.md. No complete cross-service, broker, final-evidence or freeze acceptance is claimed."
 FR-EVT-007:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-EVT-007 L169916"}
   DERIVED_FROM: [ITEM-13, ITEM-22, DA-INV-03, INT-INV-01, GIT-INV-02]
@@ -4227,14 +4229,15 @@ FR-EVT-008:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-EVT-008 L169917"}
   DERIVED_FROM: [ITEM-22, INT-INV-03, EV-INV-08]
   ALLOCATED_TO: [ARCH-CTR-VERSIONING, ARCH-EVT-SCHEMA]
-  REALIZED_BY: {surface: "canonical-producer field + producer ACL on broker subjects", deployable: "Integration Contract Registry", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "canonical-producer field + producer ACL on broker subjects", deployable: "Integration Contract Registry", ref: "packages/contracts/src/cap_contracts/authority.py; packages/contracts/src/cap_contracts/permissions.py; evidence/WP-EVT-001/CLOSEOUT.md (runtime enforcement pending)"}
   EXPOSED_BY: ["Integration Contract Registry"]
   VERIFIED_BY: [TEST-ARCH-BOUNDARY, TEST-EVT-SCHEMA]
   MITIGATES: [ARCH-R05]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-EVT-001-LOCAL-001]  # scoped unit/contract runs; final acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Scoped WP-EVT-001 primitives and unit evidence only; see evidence/WP-EVT-001/CLOSEOUT.md. No complete cross-service, broker, final-evidence or freeze acceptance is claimed."
 FR-EVT-009:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-EVT-009 L169918"}
   DERIVED_FROM: [ITEM-36, EV-INV-07, EVTINF-INV-11, AUTO-INV-07]
@@ -7068,10 +7071,11 @@ NFR-DATA-005:
   ALLOCATED_TO: [ARCH-CTR-EVTSCHEMA, ARCH-CTR-CMDSCHEMA]
   MEASUREMENT: {metric: "formal messages/artifacts in final evidence failing declared schema/version validation", threshold: "= 0", workload: "final evidence", hardware: "N/A (not hardware-bound)", observed: null}
   VERIFIED_BY: [TEST-DATA-CONTRACTVALID, TEST-EVT-SCHEMA]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-EVT-001-LOCAL-001]  # scoped unit/contract runs; final acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "CI + EVALUATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Scoped WP-EVT-001 primitives and unit evidence only; see evidence/WP-EVT-001/CLOSEOUT.md. No complete cross-service, broker, final-evidence or freeze acceptance is claimed."
 NFR-DATA-006:
   meta: {class: H0, owner: Asrın, anchor: "01 Item82 NFR-DATA-006 L172499"}
   DERIVED_FROM: [ITEM-55, ITEM-46, NFR-INV-48, SC-INV-17]
@@ -7333,6 +7337,21 @@ implemented. TEST-SEC-AUTHZ-NEG at INTEGRATION, AV-SCEN-04 and BENCH-RQ3-001 are
 not executed: the REAL boundary awaits the identity runtime (DEP-016), the Core
 command pipeline and the Automation authorization gate. EvidenceState is
 EVIDENCE_PENDING.
+
+
+### 19.8 WP-EVT-001 concrete registry and policy assets
+
+FR-EVT-001, FR-EVT-006, FR-EVT-008 and NFR-DATA-005 now reference
+`packages/contracts/` and the focused `ci/tests/test_contract_*.py` assets.
+`RUN-EVT-001-LOCAL-001` is the local development run recorded in
+`evidence/WP-EVT-001/CLOSEOUT.md` and its slice records. The run supports the
+registry, boundary, compatibility, producer and pure permission primitives only.
+Coverage/evidence remains EVIDENCE_PENDING: cross-service adoption, production
+event/subject bindings, real broker enforcement and final-evidence validation are
+unproven. No new sealed EvidenceID or accepted measurement is asserted.
+DN-EVT-CONTRACTS includes envelope/domain events as well as this registry; this
+partial output does not establish that node's full CONTRACT_READY predicate.
+
 
 ## 20. Rejected Alternatives
 
