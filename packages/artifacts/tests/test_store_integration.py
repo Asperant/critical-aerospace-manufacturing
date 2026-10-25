@@ -31,9 +31,11 @@ def store() -> Iterator[ArtifactStore]:
         pytest.fail(
             "CAP_S3_ENDPOINT not set: start the infra profile (infra/compose/stack.sh up infra)"
         )
+    admin = S3Client(StoreConfig.from_env(role="admin"))
+    ArtifactStore(admin).ensure_buckets()  # bucket creation needs the admin identity
+    admin.close()
     client = S3Client(StoreConfig.from_env())
     result = ArtifactStore(client)
-    result.ensure_buckets()
     yield result
     client.close()
 
@@ -54,7 +56,9 @@ def put(store: ArtifactStore, data: bytes, **extra: object) -> ArtifactReference
 
 
 def test_buckets_exist_and_creation_is_idempotent(store: ArtifactStore) -> None:
-    assert store.ensure_buckets() == store.ensure_buckets()
+    admin = ArtifactStore(S3Client(StoreConfig.from_env(role="admin")))
+    assert admin.ensure_buckets() == admin.ensure_buckets()
+    admin.client.close()
 
 
 def test_round_trip_of_one_mebibyte(store: ArtifactStore) -> None:

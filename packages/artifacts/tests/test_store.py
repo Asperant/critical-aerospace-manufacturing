@@ -231,14 +231,34 @@ def test_unreachable_store_is_a_store_error() -> None:
         client.create_bucket("cap-artifacts-rc-b")
 
 
-def test_config_from_env_and_secret_never_printed() -> None:
-    config = StoreConfig.from_env(
-        {"CAP_S3_ENDPOINT": "http://127.0.0.1:28333/", "CAP_S3_SECRET_KEY": "s3cr3t"}
+def test_config_from_env_per_role_and_secret_never_printed() -> None:
+    env = {
+        "CAP_S3_ENDPOINT": "http://127.0.0.1:28333/",
+        "CAP_S3_ACCESS_KEY": "cap-artifacts-writer",
+        "CAP_S3_SECRET_KEY": "s3cr3t-writer",
+        "CAP_S3_ADMIN_ACCESS_KEY": "cap-artifacts-admin",
+        "CAP_S3_ADMIN_SECRET_KEY": "s3cr3t-admin",
+        "CAP_S3_READER_ACCESS_KEY": "cap-artifacts-reader",
+        "CAP_S3_READER_SECRET_KEY": "s3cr3t-reader",
+    }
+    writer = StoreConfig.from_env(env)
+    assert writer.endpoint == "http://127.0.0.1:28333"
+    assert writer.credentials.access_key == "cap-artifacts-writer"
+    assert (
+        StoreConfig.from_env(env, role="admin").credentials.access_key
+        == "cap-artifacts-admin"
     )
-    assert config.endpoint == "http://127.0.0.1:28333"
-    assert "s3cr3t" not in repr(config)
+    assert (
+        StoreConfig.from_env(env, role="reader").credentials.secret_key
+        == "s3cr3t-reader"
+    )
+    assert "s3cr3t" not in repr(writer)
     with pytest.raises(StoreError, match="CAP_S3_ENDPOINT"):
         StoreConfig.from_env({})
+    with pytest.raises(StoreError, match="CAP_S3_READER_ACCESS_KEY"):
+        StoreConfig.from_env({"CAP_S3_ENDPOINT": "http://x"}, role="reader")
+    with pytest.raises(StoreError, match="unknown storage role"):
+        StoreConfig.from_env(env, role="root")
 
 
 AWS = Credentials("AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY")

@@ -73,8 +73,7 @@ data = store.read(ref)  # only AVAILABLE references, only verified bytes
 Without a registry the version-prefix check and the upload are not one atomic
 step; with the registry (slice 3, below) the version is reserved first. Uploads are
 single-request; multipart upload for large datasets and snapshots comes with
-the access path. The local `infra` profile runs the S3 gateway without
-identities; storage identities and least privilege are slice 4.
+the access path. Storage identities and least privilege are described below (slice 4).
 
 ## Registry (slice 3)
 
@@ -96,12 +95,40 @@ identities; storage identities and least privilege are slice 4.
 objects in the artifact buckets that no version claims, and reservations stuck
 in flight for more than an hour. It reports; it never deletes.
 
+## Identities and scoped access (slice 4)
+
+| Identity | Can | Used by |
+|---|---|---|
+| `cap-artifacts-admin` | create buckets (Admin) | `python -m cap_artifacts ensure-buckets`, provisioning only |
+| `cap-artifacts-writer` | read, list, write the three artifact buckets | `ArtifactStore` (`StoreConfig.from_env()`) |
+| `cap-artifacts-reader` | read the three artifact buckets | `AccessIssuer`, which signs read capabilities |
+| anonymous | nothing | — |
+
+`AccessIssuer(store, StoreConfig.from_env(role="reader"), authorize).issue(ref, actor)`
+returns a `ReadCapability`: a pre-signed URL (SigV4 query authentication,
+checked against the published AWS example) for exactly one GET of exactly one
+object, valid 5 minutes by default and at most 15. It is issued only if the
+version is AVAILABLE (per the registry when configured) and the caller's
+`authorize(actor, ref)` policy allows it — the policy belongs to the BFF /
+Artifact Access API (02 access model), not to this package. Capabilities are
+never stored; the issuance log carries artifact, version, actor and expiry,
+never the URL. A capability cannot read another object, cannot write or delete,
+and stops working when it expires.
+
+Operator commands: `python -m cap_artifacts ensure-buckets` (admin identity) and
+`python -m cap_artifacts consistency` (writer identity + `CAP_ARTIFACT_REGISTRY_DSN`;
+exit 1 on findings).
+
+Not in this slice: upload capabilities and multipart upload for large datasets
+and snapshots (02 upload flow), and wiring `authorize` into the Operations BFF,
+which is agreed with its owner.
+
 ## Slices
 
 | Slice | Content | State |
 |---|---|---|
 | 1 | contract, conventions, checksum helpers, unit tests (TEST-OBJ-001-001) | done |
 | 2 | signed S3 store client: write once, verify on write and read, REAL SeaweedFS tests (TEST-OBJ-001-002/003) | done |
-| 3 | PostgreSQL registry: atomic write-once, lifecycle in the database, consistency sweep (TEST-OBJ-001-004/005) | this change |
-| 4 | scoped short-lived access and least-privilege storage identities | planned |
+| 3 | PostgreSQL registry: atomic write-once, lifecycle in the database, consistency sweep (TEST-OBJ-001-004/005) | done |
+| 4 | least-privilege storage identities, scoped short-lived read capabilities, operator commands (TEST-OBJ-001-006/007) | this change |
 | 5 | trace, evidence, Integration host smoke (DEP-009) | planned |

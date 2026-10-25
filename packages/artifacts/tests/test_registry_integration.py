@@ -114,9 +114,11 @@ def registry(database: Database) -> Iterator[Registry]:
 def store(registry: Registry) -> Iterator[ArtifactStore]:
     if not os.environ.get("CAP_S3_ENDPOINT"):
         pytest.fail("CAP_S3_ENDPOINT not set: start the infra profile")
+    admin = S3Client(StoreConfig.from_env(role="admin"))
+    ArtifactStore(admin).ensure_buckets()  # bucket creation needs the admin identity
+    admin.close()
     client = S3Client(StoreConfig.from_env())
     result = ArtifactStore(client, registry=registry)
-    result.ensure_buckets()
     yield result
     client.close()
 

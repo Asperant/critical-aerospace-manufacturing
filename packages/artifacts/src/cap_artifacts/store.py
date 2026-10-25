@@ -48,19 +48,35 @@ class StoreConfig:
     timeout_s: float = 30.0
 
     @classmethod
-    def from_env(cls, env: Mapping[str, str] | None = None) -> StoreConfig:
-        """CAP_S3_ENDPOINT (required), CAP_S3_ACCESS_KEY / CAP_S3_SECRET_KEY,
-        CAP_S3_REGION. `infra/compose/stack.sh env` prints the endpoint."""
+    def from_env(
+        cls, env: Mapping[str, str] | None = None, role: str = "writer"
+    ) -> StoreConfig:
+        """Endpoint and credentials of one storage identity, as printed by
+        `infra/compose/stack.sh env`: CAP_S3_ENDPOINT, and CAP_S3_ACCESS_KEY /
+        CAP_S3_SECRET_KEY (writer), CAP_S3_ADMIN_* (admin: creates buckets) or
+        CAP_S3_READER_* (reader: signs read capabilities). No default secret."""
         values = os.environ if env is None else env
         endpoint = values.get("CAP_S3_ENDPOINT", "")
         if not endpoint:
             raise StoreError("CAP_S3_ENDPOINT is not set (infra/compose/stack.sh env)")
+        prefix = {
+            "writer": "CAP_S3_",
+            "admin": "CAP_S3_ADMIN_",
+            "reader": "CAP_S3_READER_",
+        }.get(role)
+        if prefix is None:
+            raise StoreError(f"unknown storage role {role!r}")
+        access, secret = (
+            values.get(prefix + "ACCESS_KEY", ""),
+            values.get(prefix + "SECRET_KEY", ""),
+        )
+        if not access or not secret:
+            raise StoreError(
+                f"{prefix}ACCESS_KEY and {prefix}SECRET_KEY are not set (stack.sh env)"
+            )
         return cls(
             endpoint=endpoint.rstrip("/"),
-            credentials=Credentials(
-                values.get("CAP_S3_ACCESS_KEY", "cap-local"),
-                values.get("CAP_S3_SECRET_KEY", ""),
-            ),
+            credentials=Credentials(access, secret),
             region=values.get("CAP_S3_REGION", "us-east-1"),
         )
 

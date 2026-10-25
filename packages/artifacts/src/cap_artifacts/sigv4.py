@@ -101,3 +101,58 @@ def sign(
         f"SignedHeaders={signed_headers}, Signature={signature}"
     )
     return result
+
+
+UNSIGNED_PAYLOAD = "UNSIGNED-PAYLOAD"
+
+
+def presign(
+    *,
+    method: str,
+    host: str,
+    path: str,
+    credentials: Credentials,
+    region: str,
+    now: datetime,
+    expires_s: int,
+    service: str = "s3",
+) -> dict[str, str]:
+    """Query parameters of a pre-signed request (SigV4 query authentication).
+
+    Only `host` is signed; the URL authorises exactly `method` on exactly `path`
+    until now + expires_s. The result is a bearer capability: never log it."""
+    amz_date = now.strftime("%Y%m%dT%H%M%SZ")
+    day = now.strftime("%Y%m%d")
+    scope = f"{day}/{region}/{service}/aws4_request"
+    query = {
+        "X-Amz-Algorithm": ALGORITHM,
+        "X-Amz-Credential": f"{credentials.access_key}/{scope}",
+        "X-Amz-Date": amz_date,
+        "X-Amz-Expires": str(expires_s),
+        "X-Amz-SignedHeaders": "host",
+    }
+    canonical_request = "\n".join(
+        [
+            method.upper(),
+            canonical_uri(path),
+            canonical_query(query),
+            f"host:{host}\n",
+            "host",
+            UNSIGNED_PAYLOAD,
+        ]
+    )
+    string_to_sign = "\n".join(
+        [
+            ALGORITHM,
+            amz_date,
+            scope,
+            hashlib.sha256(canonical_request.encode()).hexdigest(),
+        ]
+    )
+    key = _hmac(("AWS4" + credentials.secret_key).encode("utf-8"), day)
+    for part in (region, service, "aws4_request"):
+        key = _hmac(key, part)
+    query["X-Amz-Signature"] = hmac.new(
+        key, string_to_sign.encode("utf-8"), hashlib.sha256
+    ).hexdigest()
+    return query
