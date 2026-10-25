@@ -48,3 +48,7 @@
 /evidence/WP-HITL-002/ @Asperant @Ejlonn
 /evidence/WP-EVT-001/ @Asperant @selorito
 /packages/contracts/ @Asperant @selorito
+
+# WP-OBJ-001: ArtifactReference contract and object storage; canonical owner Yavuz (advisory, CHG-018).
+/packages/artifacts/ @Yavuzgmus
+/evidence/WP-OBJ-001/ @Yavuzgmus @Asperant

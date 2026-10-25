@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Asperant/critical-aerospace-manufacturing/packages/artifacts/schemas/artifact-reference.schema.json",
+  "title": "cap.artifact-ref/v1 — ArtifactReference (IC-SHARED-001)",
+  "description": "Immutable reference to one artifact version whose bytes live in object storage (WP-OBJ-001; FR-VIS-001, NFR-DATA-001; 02 Large Artifact Policy, Object != Artifact, ARCH-INV-028). Contracts carry this reference, never bytes, a bucket/key as identity, or a signed URL.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "artifact_id", "version", "artifact_type", "artifact_class", "format_version",
+    "content_type", "size_bytes", "checksum", "logical_owner", "producer", "created_at",
+    "context", "classification", "retention_class", "storage", "lifecycle_status", "provenance"
+  ],
+  "properties": {
+    "schema": {"const": "cap.artifact-ref/v1"},
+    "artifact_id": {
+      "description": "Artifact identity: a lowercase RFC 4122 UUID. Never derived from a business identity.",
+      "$ref": "#/$defs/uuid"
+    },
+    "version": {
+      "description": "ArtifactVersion. New bytes for the same artifact are a new version, never an overwrite.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "artifact_type": {
+      "description": "Domain kind of content, for example inspection_image, inspection_mask, model_weights, simulation_snapshot, evidence_bundle. Distinct from artifact_class.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{1,63}$"
+    },
+    "artifact_class": {
+      "description": "02 artifact classes.",
+      "enum": [
+        "SOURCE_CANONICAL", "VERSIONED_RELEASE", "DERIVED_REBUILDABLE", "OPERATIONAL_EVIDENCE",
+        "SNAPSHOT_CHECKPOINT", "EXPERIMENT_ARTIFACT", "TEMPORARY_STAGING"
+      ]
+    },
+    "format_version": {
+      "description": "Version of the content format, for example png/1 or ckpt/3.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._/+-]{0,63}$"
+    },
+    "content_type": {
+      "description": "IANA media type of the bytes.",
+      "type": "string",
+      "pattern": "^[a-z]+/[a-z0-9][a-z0-9.+-]{0,126}$"
+    },
+    "size_bytes": {"type": "integer", "minimum": 0},
+    "checksum": {
+      "description": "Content identity verified at finalize and on every read. The algorithm is explicit so a later change is an additive schema version.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "value"],
+      "properties": {
+        "algorithm": {"enum": ["sha256"]},
+        "value": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "logical_owner": {
+      "description": "ServiceName of the deployable that owns the artifact's meaning.",
+      "$ref": "#/$defs/service"
+    },
+    "producer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["service", "version"],
+      "properties": {
+        "service": {"$ref": "#/$defs/service"},
+        "version": {"type": "string", "minLength": 1, "maxLength": 64}
+      }
+    },
+    "created_at": {"$ref": "#/$defs/instant"},
+    "context": {
+      "description": "World and run context; null where the artifact is not tied to one.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["world_id", "simulation_run_id", "branch_id"],
+      "properties": {
+        "world_id": {"$ref": "#/$defs/optional_id"},
+        "simulation_run_id": {"$ref": "#/$defs/optional_id"},
+        "branch_id": {"$ref": "#/$defs/optional_id"}
+      }
+    },
+    "classification": {
+      "description": "02 security classification levels.",
+      "enum": ["PUBLIC_INTERNAL", "INTERNAL", "SENSITIVE", "RESTRICTED_ORACLE"]
+    },
+    "retention_class": {
+      "description": "02 recovery classes that apply to immutable artifacts: RC-B critical (backup mandatory), RC-C rebuildable, RC-D ephemeral. RC-A is canonical mutable state and never an artifact.",
+      "enum": ["RC-B", "RC-C", "RC-D"]
+    },
+    "storage": {
+      "description": "Physical location of this version's bytes. Transport detail only: never a business identity or a cross-service key.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bucket", "key", "object_id"],
+      "properties": {
+        "bucket": {"enum": ["cap-artifacts-rc-b", "cap-artifacts-rc-c", "cap-artifacts-rc-d"]},
+        "key": {
+          "description": "v1/<artifact_type>/<first two hex of artifact_id>/<artifact_id>/v<version>/<object_id>",
+          "type": "string",
+          "pattern": "^v1/[a-z][a-z0-9_]{1,63}/[0-9a-f]{2}/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/v[1-9][0-9]{0,8}/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "object_id": {
+          "description": "Unique identity of one physical upload; every upload gets a new one.",
+          "$ref": "#/$defs/uuid"
+        }
+      }
+    },
+    "lifecycle_status": {
+      "description": "02 artifact lifecycle. Normal consumers use only AVAILABLE.",
+      "enum": [
+        "RESERVED", "UPLOADING", "VALIDATING", "AVAILABLE", "FAILED", "QUARANTINED", "ABORTED",
+        "RETIRED", "DELETE_ELIGIBLE", "PENDING_DELETE", "DELETED"
+      ]
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_artifacts", "source_refs"],
+      "properties": {
+        "source_artifacts": {
+          "description": "artifact_id of upstream artifacts this one was derived from.",
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/uuid"}
+        },
+        "source_refs": {
+          "description": "Other upstream identities, as kind:id (for example inspection_request:..., evaluation_run:...).",
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]{1,40}:[A-Za-z0-9._:-]{1,128}$"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "service": {"type": "string", "pattern": "^[a-z][a-z0-9-]{1,62}$"},
+    "instant": {
+      "description": "UTC RFC 3339 instant.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?Z$"
+    },
+    "optional_id": {
+      "type": ["string", "null"],
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    }
+  }
+}

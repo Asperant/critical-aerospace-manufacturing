@@ -1,0 +1,31 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.16, pytest-8.3.3, pluggy-1.7.0 -- <repo>/ci/.venv/bin/python3
+hypothesis profile 'default'
+rootdir: <repo>/packages/artifacts
+configfile: pyproject.toml
+plugins: hypothesis-6.168.1, anyio-4.15.1
+collecting ... collected 96 items / 77 deselected / 19 selected
+
+packages/artifacts/tests/test_access_integration.py::test_anonymous_access_is_denied PASSED [  5%]
+packages/artifacts/tests/test_access_integration.py::test_reader_cannot_write_and_writer_cannot_create_buckets PASSED [ 10%]
+packages/artifacts/tests/test_access_integration.py::test_read_capability_reads_exactly_that_object PASSED [ 15%]
+packages/artifacts/tests/test_access_integration.py::test_read_capability_cannot_be_reused_for_anything_else PASSED [ 21%]
+packages/artifacts/tests/test_access_integration.py::test_read_capability_expires PASSED [ 26%]
+packages/artifacts/tests/test_registry_integration.py::test_migration_replay_is_verified PASSED [ 31%]
+packages/artifacts/tests/test_registry_integration.py::test_runtime_cannot_delete_or_change_the_schema PASSED [ 36%]
+packages/artifacts/tests/test_registry_integration.py::test_store_records_the_lifecycle PASSED [ 42%]
+packages/artifacts/tests/test_registry_integration.py::test_database_refuses_illegal_transitions_and_content_changes PASSED [ 47%]
+packages/artifacts/tests/test_registry_integration.py::test_quarantine_in_the_registry_stops_reads PASSED [ 52%]
+packages/artifacts/tests/test_registry_integration.py::test_concurrent_writers_of_one_version_get_exactly_one_success PASSED [ 57%]
+packages/artifacts/tests/test_registry_integration.py::test_duplicate_reservation_is_a_registry_error PASSED [ 63%]
+packages/artifacts/tests/test_registry_integration.py::test_consistency_sweep_reports_missing_bytes_and_orphans PASSED [ 68%]
+packages/artifacts/tests/test_store_integration.py::test_buckets_exist_and_creation_is_idempotent PASSED [ 73%]
+packages/artifacts/tests/test_store_integration.py::test_round_trip_of_one_mebibyte PASSED [ 78%]
+packages/artifacts/tests/test_store_integration.py::test_tampered_bytes_are_refused PASSED [ 84%]
+packages/artifacts/tests/test_store_integration.py::test_missing_bytes_are_detected_not_silent PASSED [ 89%]
+packages/artifacts/tests/test_store_integration.py::test_a_version_is_written_once PASSED [ 94%]
+packages/artifacts/tests/test_store_integration.py::test_each_retention_class_has_its_bucket PASSED [100%]
+
+----------------- flaky-test quarantine (ci/flaky_tests.yaml) ------------------
+0 registry entr(y/ies); 0 applied in this run
+====================== 19 passed, 77 deselected in 5.18s =======================

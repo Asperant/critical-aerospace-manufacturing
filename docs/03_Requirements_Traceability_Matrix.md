@@ -76,6 +76,16 @@
 > The release-gate zero count of NFR-DX-006 is measured at the final gates
 > (WP-TEST-008); evidence stays EVIDENCE_PENDING and `observed` stays null.
 
+> **WP-OBJ-001 implementation delta (2026-10-25).** NFR-DATA-001 now references
+> the artifact store in `packages/artifacts/` (§19.9): the `cap.artifact-ref/v1`
+> ArtifactReference contract (IC-SHARED-001), SHA-256 content identity verified
+> when an artifact version is finalized and on every read, write-once versions
+> held in a PostgreSQL registry, a bidirectional consistency sweep, least-privilege
+> S3 identities and short-lived read capabilities. The shared-host run is recorded
+> under `evidence/WP-OBJ-001/`. The 100% measurement over final critical artifacts
+> is an EVALUATION gate and FR-VIS-001 is accepted on the integrated Vision path
+> (E2E-01, AV-SCEN-01), so evidence stays EVIDENCE_PENDING and `observed` stays null.
+
 ---
 
 ## Table of Contents
@@ -779,7 +789,7 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 
 | ID | Class | PrimaryOwner | Catalog anchor | Source decisions (DERIVED_FROM) | Planning state | Flags |
 |---|---|---|---|---|---|---|
-| NFR-DATA-001 | H0 | Yavuz | 01 Item82 NFR-DATA-001 L172444 | ITEM-37, ITEM-49, SEC-INV-28, ART-INV-03 | VERIFY_PLANNED | — |
+| NFR-DATA-001 | H0 | Yavuz | 01 Item82 NFR-DATA-001 L172444 | ITEM-37, ITEM-49, SEC-INV-28, ART-INV-03 | EVIDENCE_PENDING | — |
 | NFR-DATA-002 | H0 | Asrın | 01 Item82 NFR-DATA-002 L172455 | ITEM-45, ITEM-60, NFR-INV-49, VMLOPS-INV-04 | VERIFY_PLANNED | OWNER-WORDING |
 | NFR-DATA-003 | H0 | Yavuz | 01 Item82 NFR-DATA-003 L172468 | ITEM-79, BENCH-INV-50 | VERIFY_PLANNED | — |
 | NFR-DATA-004 | H0 | Yavuz | 01 Item82 NFR-DATA-004 L172479 | ITEM-79, BENCH-INV-65, ART-INV-10 | VERIFY_PLANNED | — |
@@ -7027,12 +7037,13 @@ NFR-DATA-001:
   meta: {class: H0, owner: Yavuz, anchor: "01 Item82 NFR-DATA-001 L172444"}
   DERIVED_FROM: [ITEM-37, ITEM-49, SEC-INV-28, ART-INV-03]
   ALLOCATED_TO: [ARCH-DATA-OBJ, ARCH-DATA-LINEAGE]
+  REALIZED_BY: {surface: "ArtifactReference contract, SHA-256 content identity verified at finalize and on read, write-once registry, consistency sweep", deployable: "shared artifact package used by producing services", ref: "packages/artifacts/src/cap_artifacts/; packages/artifacts/src/cap_artifacts/migrations/0001_registry.sql"}
   MEASUREMENT: {metric: "final critical immutable artifacts with verified checksum/content identity", threshold: "100%", workload: "final critical artifacts", hardware: "N/A (not hardware-bound)", observed: null}
   VERIFIED_BY: [TEST-DATA-CHECKSUM]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-OBJ-001-DEV-001]  # DEV run on the shared host; final critical artifacts are measured at EVALUATION
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "EVALUATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 NFR-DATA-002:
   meta: {class: H0, owner: Asrın, anchor: "01 Item82 NFR-DATA-002 L172455"}
   DERIVED_FROM: [ITEM-45, ITEM-60, NFR-INV-49, VMLOPS-INV-04]
@@ -7352,6 +7363,28 @@ unproven. No new sealed EvidenceID or accepted measurement is asserted.
 DN-EVT-CONTRACTS includes envelope/domain events as well as this registry; this
 partial output does not establish that node's full CONTRACT_READY predicate.
 
+
+### 19.9 WP-OBJ-001 concrete implementation and verification assets
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-OBJ-001-001 (`packages/artifacts/tests/test_reference.py`) | TEST-DATA-CHECKSUM | NFR-DATA-001 (contract, identity-only keys, lifecycle, corrupted bytes fail closed); FR-VIS-001 (artifact half: IC-SHARED-001) |
+| TEST-OBJ-001-002 (`packages/artifacts/tests/test_store.py`, stubbed S3) | TEST-DATA-CHECKSUM | NFR-DATA-001 (read-back verification at finalize, write once, missing and tampered bytes) |
+| TEST-OBJ-001-003 (`packages/artifacts/tests/test_store_integration.py`, REAL SeaweedFS) | TEST-DATA-CHECKSUM | NFR-DATA-001, FR-VIS-001 (artifact half) |
+| TEST-OBJ-001-004 (`packages/artifacts/tests/test_registry.py`) | TEST-DATA-CHECKSUM | NFR-DATA-001 (registry-governed lifecycle, consistency comparison) |
+| TEST-OBJ-001-005 (`packages/artifacts/tests/test_registry_integration.py`, REAL PostgreSQL and SeaweedFS) | TEST-DATA-CHECKSUM | NFR-DATA-001 (write-once under concurrent writers, immutable content, missing bytes and orphans reported) |
+| TEST-OBJ-001-006 (`packages/artifacts/tests/test_access.py`) | — (scoped access; 02 access model) | FR-VIS-001 (artifact access for consumers) |
+| TEST-OBJ-001-007 (`packages/artifacts/tests/test_access_integration.py`, REAL SeaweedFS identities) | — (scoped access; 02 access model) | FR-VIS-001 (artifact access for consumers) |
+
+Contract: `cap.artifact-ref/v1` (`packages/artifacts/src/cap_artifacts/schemas/`,
+validated with its example by the contract tier). Registry schema:
+`migrations/0001_registry.sql` (schema `artifact`). Storage identities: generated
+by `infra/compose/stack.sh` for the infra profile. CI: the "Artifact reference
+contract tests and typing (WP-OBJ-001)" step of t1-unit and the "Artifact store
+tests (REAL SeaweedFS, WP-OBJ-001)" step of t1-integration. TEST-DATA-CHECKSUM at
+EVALUATION over final critical artifacts, TEST-VIS-PIPELINE, E2E-01, AV-SCEN-01,
+BENCH-E2E-001 and the Integration-host smoke (DEP-009) are not executed. The
+SHA-256 choice awaits its confirming ADR. EvidenceState is EVIDENCE_PENDING.
 
 ## 20. Rejected Alternatives
 

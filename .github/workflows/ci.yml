@@ -112,6 +112,10 @@ jobs:
           uv run --project ci --locked python -m pytest packages/observability/tests infra/observability/tests -m 'not integration' -q -p pytest_quarantine
           uv run --project ci --locked pyright --project packages/observability/pyrightconfig.json
           uv run --project ci --locked python -m cap_observability check-coverage infra/observability/coverage.json
+      - name: Artifact reference contract tests and typing (WP-OBJ-001)
+        run: |
+          uv run --project ci --locked python -m pytest -c packages/artifacts/pyproject.toml packages/artifacts/tests -m 'not integration' -q -p pytest_quarantine
+          uv run --project ci --locked pyright --project packages/artifacts/pyrightconfig.json
       - name: Platform composition definition tests (WP-PLAT-001)
         run: uv run --project ci --locked python -m pytest infra/compose/tests -m 'not integration' -q -p pytest_quarantine
       - name: Host Plane queue tests (offline)
@@ -197,6 +201,10 @@ jobs:
           infra/compose/stack.sh env >> "$GITHUB_ENV"
       - name: Platform runtime tests (boundary mode REAL)
         run: uv run --project ci --locked python -m pytest infra/compose/tests -m integration -q -p pytest_quarantine
+      - name: Artifact store tests (REAL SeaweedFS, WP-OBJ-001)
+        env:
+          CAP_ARTIFACT_TEST_DISPOSABLE: "1"
+        run: uv run --project ci --locked python -m pytest -c packages/artifacts/pyproject.toml packages/artifacts/tests -m integration -q -p pytest_quarantine
       - name: Set up Node (version pinned in .node-version)
         uses: actions/setup-node@v4
         with:

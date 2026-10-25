@@ -12,7 +12,7 @@
   "strict": ["ci"],
   "reportMissingModuleSource": "none",
   "executionEnvironments": [
-    {"root": "ci", "extraPaths": ["ci", "ci/scripts", "packages/contracts/src"]},
+    {"root": "ci", "extraPaths": ["ci", "ci/scripts", "ci/tests", "packages/contracts/src"]},
     {
       "root": "services/manufacturing-simulator",
       "extraPaths": [
