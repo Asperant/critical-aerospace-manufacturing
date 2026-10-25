@@ -304,7 +304,7 @@ def merged_external_wait_proof(t, wp, profile, policy, gh):
         return None  # Missing/UNKNOWN proof never frees a slot.
 
 
-def semantic_slot_release_proof(t, wp, profile, policy, gh):
+def semantic_slot_release_proof(t, wp, profile, policy, gh, source=None):
     """CHG-037: semantic scheduler accounting; legacy proofs remain auditable.
 
     A v2 assessment is the current semantic authority.  The historical VERIFIED
@@ -315,7 +315,7 @@ def semantic_slot_release_proof(t, wp, profile, policy, gh):
     global resolver
     if resolver is None:
         resolver = load_resolver()
-    source = semantic_slot_release_source(t, wp, profile, policy, gh)
+    source = source or semantic_slot_release_source(t, wp, profile, policy, gh)
     if source is None:
         return None
     if source["semantic_blocker_class"] == resolver.DEFERRED_CLASS:
