@@ -112,6 +112,10 @@ jobs:
           uv run --project ci --locked python -m pytest packages/observability/tests infra/observability/tests -m 'not integration' -q -p pytest_quarantine
           uv run --project ci --locked pyright --project packages/observability/pyrightconfig.json
           uv run --project ci --locked python -m cap_observability check-coverage infra/observability/coverage.json
+      - name: Artifact reference contract tests and typing (WP-OBJ-001)
+        run: |
+          uv run --project ci --locked python -m pytest -c packages/artifacts/pyproject.toml packages/artifacts/tests -m 'not integration' -q -p pytest_quarantine
+          uv run --project ci --locked pyright --project packages/artifacts/pyrightconfig.json
       - name: Platform composition definition tests (WP-PLAT-001)
         run: uv run --project ci --locked python -m pytest infra/compose/tests -m 'not integration' -q -p pytest_quarantine
       - name: Host Plane queue tests (offline)

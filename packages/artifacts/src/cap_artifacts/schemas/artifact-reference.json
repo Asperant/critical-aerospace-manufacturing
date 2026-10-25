@@ -1,0 +1,34 @@
+{
+  "schema": "cap.artifact-ref/v1",
+  "artifact_id": "3f2b6c1e-8d4a-4e7b-9a21-5c0d7e9f1a42",
+  "version": 1,
+  "artifact_type": "inspection_image",
+  "artifact_class": "OPERATIONAL_EVIDENCE",
+  "format_version": "png/1",
+  "content_type": "image/png",
+  "size_bytes": 11,
+  "checksum": {
+    "algorithm": "sha256",
+    "value": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
+  },
+  "logical_owner": "vision-service",
+  "producer": {"service": "manufacturing-simulator", "version": "0.1.0"},
+  "created_at": "2026-10-25T09:00:00Z",
+  "context": {
+    "world_id": "world-dev-001",
+    "simulation_run_id": "run-0007",
+    "branch_id": null
+  },
+  "classification": "INTERNAL",
+  "retention_class": "RC-B",
+  "storage": {
+    "bucket": "cap-artifacts-rc-b",
+    "key": "v1/inspection_image/3f/3f2b6c1e-8d4a-4e7b-9a21-5c0d7e9f1a42/9c1d2e3f-4a5b-4c6d-8e7f-0a1b2c3d4e5f",
+    "object_id": "9c1d2e3f-4a5b-4c6d-8e7f-0a1b2c3d4e5f"
+  },
+  "lifecycle_status": "AVAILABLE",
+  "provenance": {
+    "source_artifacts": [],
+    "source_refs": ["inspection_request:IR-2026-0001"]
+  }
+}

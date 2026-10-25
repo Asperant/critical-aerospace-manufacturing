@@ -21,6 +21,8 @@
      "runs": [{"tier": "integration", "boundary_mode": "REAL", "ci_step": "Integration smoke (boundary mode REAL)"}]},
     {"path": "packages/observability/tests", "owner": "Yavuz", "work_package": "WP-OBS-001", "families": ["TEST-OBS-LOGS", "TEST-OBS-HEALTH"], "test_ids": ["TEST-OBS-001-001", "TEST-OBS-001-003", "TEST-OBS-001-004"],
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Observability standard tests and typing (WP-OBS-001)"}]},
+    {"path": "packages/artifacts/tests", "owner": "Yavuz", "work_package": "WP-OBJ-001", "families": ["TEST-DATA-CHECKSUM"], "test_ids": ["TEST-OBJ-001-001"],
+     "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Artifact reference contract tests and typing (WP-OBJ-001)"}]},
     {"path": "infra/observability/tests", "owner": "Yavuz", "work_package": "WP-OBS-001", "families": ["TEST-OBS-TELEMETRY"], "test_ids": ["TEST-OBS-001-002"],
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Observability standard tests and typing (WP-OBS-001)"},
               {"tier": "integration", "boundary_mode": "REAL", "ci_step": "Telemetry pipeline smoke (boundary mode REAL)"}]},
