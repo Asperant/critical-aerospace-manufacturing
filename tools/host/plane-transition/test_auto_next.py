@@ -1207,6 +1207,95 @@ class ExternalIntegrationWaitTests(unittest.TestCase):
         self.assertEqual(resolver.released_wait(wp, released), resolver.DEFERRED_CLASS)
 
 
+class SlotReleaseV2Tests(unittest.TestCase):
+    def proof(self, classification="WAITING_EXTERNAL_INTEGRATION_BINDINGS"):
+        return {
+            "schema": "cap-slot-release-v2",
+            "wp_id": "WP-TEST-002",
+            "owner": "Asrın Dündar",
+            "local_actionable_work": "NONE",
+            "implementation_persisted": True,
+            "semantic_blocker_id": "BLOCKER-EXT-001",
+            "semantic_blocker_class": classification,
+            "relevant_scope_digest": "a" * 64,
+        }
+
+    def item(self, state="IN_PROGRESS", **changes):
+        item = {
+            "owner": "Asrın Dündar",
+            "state": state,
+            "blocked": True,
+            "current_scope_digest": "a" * 64,
+            "slot_release_v2": self.proof(),
+        }
+        item.update(changes)
+        return item
+
+    def test_external_wait_with_none_releases_slot(self):
+        item = self.item()
+        self.assertFalse(resolver.occupies_implementation_slot("WP-TEST-002", item))
+
+    def test_validating_downstream_wait_with_none_releases_slot(self):
+        item = self.item(
+            "VALIDATING",
+            slot_release_v2=self.proof(
+                "WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE"
+            ),
+        )
+        self.assertFalse(resolver.occupies_implementation_slot("WP-TEST-002", item))
+
+    def test_actionable_yes_or_unknown_keeps_slot(self):
+        for value in ("YES", "UNKNOWN"):
+            item = self.item(
+                slot_release_v2=dict(self.proof(), local_actionable_work=value)
+            )
+            self.assertTrue(resolver.occupies_implementation_slot("WP-TEST-002", item))
+
+    def test_unrelated_governance_change_does_not_break_release(self):
+        item = self.item()
+        item["unrelated_governance_digest"] = "b" * 64
+        self.assertFalse(resolver.occupies_implementation_slot("WP-TEST-002", item))
+
+    def test_relevant_scope_change_re_evaluates(self):
+        item = self.item(current_scope_digest="b" * 64)
+        self.assertTrue(resolver.occupies_implementation_slot("WP-TEST-002", item))
+
+    def test_blocker_prose_is_not_a_release_identity(self):
+        item = self.item()
+        item["blocker_reason"] = "new explanatory prose"
+        self.assertFalse(resolver.occupies_implementation_slot("WP-TEST-002", item))
+
+    def test_deferred_core_items_do_not_create_actionable_ambiguity(self):
+        rows = {
+            "a": dict(
+                self.item(
+                    "VALIDATING",
+                    slot_release_v2=self.proof(
+                        "WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE"
+                    ),
+                ),
+                wp_id="WP-CORE-004",
+            ),
+            "b": dict(self.item("IN_PROGRESS"), wp_id="WP-CORE-005"),
+            "c": {
+                "owner": "Asrın Dündar",
+                "state": "READY",
+                "blocked": False,
+                "wp_id": "WP-CORE-006",
+            },
+        }
+        rows["a"]["slot_release_v2"]["wp_id"] = "WP-CORE-004"
+        rows["b"]["slot_release_v2"]["wp_id"] = "WP-CORE-005"
+        self.assertEqual(
+            resolver.released_wait("WP-CORE-004", rows["a"]),
+            resolver.DEFERRED_CLASS,
+        )
+        self.assertEqual(
+            resolver.released_wait("WP-CORE-005", rows["b"]),
+            "WAITING_EXTERNAL_INTEGRATION_BINDINGS",
+        )
+
+
 class DeferredReassertionTests(unittest.TestCase):
     """CHG-030: UNCHANGED re-assertion of a VERIFIED deferred wait (generic)."""
 

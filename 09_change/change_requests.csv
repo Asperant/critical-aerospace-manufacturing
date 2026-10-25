@@ -26,3 +26,4 @@ CHG-033,Deferred-acceptance recovery proof for an allow-listed two-parent merge,
 CHG-034,Release slot for verified merged external integration binding waits,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-015
 CHG-035,Canonical EVT-002 external context binding ownership and future artifacts,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-016
 CHG-036,Preserve semantic identity across enriched merged binding wait reassertions,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-017
+CHG-037,Consolidate semantic implementation-slot release and bounded queue selection,C3,CR-3,Asrın,APPROVED_WITH_CONDITIONS,APPROVED,CTRL-HOST-018

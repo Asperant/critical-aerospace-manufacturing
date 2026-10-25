@@ -74,6 +74,15 @@ class QueueTests(unittest.TestCase):
         self.assertTrue(request.full_url.startswith(q.ORIGIN + q.PREFIX + 'issues/?cursor='))
         self.assertFalse(hasattr(reader, 'post'))
 
+    def test_snapshot_pacing_fits_operator_budget(self):
+        # The normal snapshot has 18 bounded GETs; the pacing budget must not
+        # exceed the documented 20-second operator timeout by itself.
+        self.assertLessEqual(18 * q.REQUEST_INTERVAL, 16.2)
+
+    def test_health_timeout_is_advisory(self):
+        with patch.object(q, 'preflight', side_effect=TimeoutError('sentinel')):
+            self.assertIsNone(q.bounded_preflight('asrin', 'sentinel-secret'))
+
     def test_response_bounds_and_redirects_fail_closed(self):
         class Response:
             status = 200
