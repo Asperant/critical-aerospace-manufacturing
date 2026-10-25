@@ -461,6 +461,7 @@ def semantic_slot_release_source(t, wp, profile, policy, gh):
         "scope": scope,
         "canonical_revision": sha,
         "assessment_digest": assessment_digest,
+        "policy_digest": policy.get("policy_digest"),
         "proof_fingerprint": fingerprint,
     }
 

@@ -150,6 +150,15 @@ class QueueTests(unittest.TestCase):
         changed_scope = dict(source, scope='0' * 64)
         self.assertFalse(q._cache_entry_matches(entry, changed_scope))
 
+    def test_slot_source_cache_is_ttl_and_policy_bound(self):
+        source = {'proof_fingerprint': 'f' * 64, 'policy_digest': 'p'}
+        entry = {'source': source, 'fingerprint': source['proof_fingerprint'],
+                 'source_captured_at': time.time()}
+        self.assertEqual(q._cached_slot_source(entry, {'policy_digest': 'p'}), source)
+        self.assertIsNone(q._cached_slot_source(entry, {'policy_digest': 'changed'}))
+        expired = dict(entry, source_captured_at=time.time() - q.SNAPSHOT_CACHE_TTL_SECONDS - 1)
+        self.assertIsNone(q._cached_slot_source(expired, {'policy_digest': 'p'}))
+
     def test_unavailable_health_keeps_verified_slot_releases(self):
         rows = {
             'a': task('WP-CORE-004', 'VALIDATING', blocked=True),
