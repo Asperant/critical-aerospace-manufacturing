@@ -859,7 +859,7 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 | FR-CORE-013 | ARCH-CORE-DB, ARCH-CORE-CMD | manufacturing-core + PostgreSQL runtime | EXACT |
 | FR-CORE-014 | ARCH-CORE-OUTBOX, ARCH-EVT-OUTBOX | manufacturing-core | EXACT |
 | FR-CORE-015 | ARCH-CORE-OUTBOX, ARCH-CORE-DB, ARCH-EVT-OUTBOX | manufacturing-core | EXACT |
-| FR-CORE-016 | ARCH-CORE-CMD, ARCH-CTR-API, ARCH-CTR-VERSIONING | manufacturing-core | EXACT |
+| FR-CORE-016 | ARCH-CORE-CMD, ARCH-CTR-API, ARCH-CTR-CMDSCHEMA, ARCH-CTR-VERSIONING | manufacturing-core | EXACT |
 
 ### 7.FC FR-SIM — Operational Simulator
 

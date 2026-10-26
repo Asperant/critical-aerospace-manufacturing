@@ -1033,7 +1033,7 @@ Each package below is owned by this role. Deliverables and tasks are the 04 defi
 | Supporting reviewer | Batu |
 | Source requirements | FR-CORE-004, FR-CORE-005, FR-CORE-006, FR-CORE-016 |
 | Architecture | ARCH-AUTO-IDEMPOTENCY, ARCH-CORE-CMD, ARCH-CORE-DB, ARCH-CTR-API, ARCH-CTR-VERSIONING |
-| Gating edges | DEP-027 (DN-CORE-CMDCON, S2–S3), DEP-028 (DN-CORE-TRANSITIONS, E2E-01 readiness (end S4)) |
+| Gating edges | DEP-027 (DN-CORE-CMDCON, INTEGRATION/S2–S3 after the contract-first producer slice), DEP-028 (DN-CORE-TRANSITIONS, E2E-01 readiness (end S4)) |
 | Verification families | AV-SCEN-01, AV-SCEN-05, RES-DUP-001, TEST-AUTO-OUTCOME, TEST-CORE-CONTRACT, TEST-CORE-IDEMP, TEST-CORE-REVISION, TEST-EVT-SCHEMA, TEST-HITL-REPLAY-NEG |
 | Size band / status | L (≈7–12 focused days) · NOT_STARTED |
 
@@ -2451,7 +2451,7 @@ Each package below is owned by this role. Deliverables and tasks are the 04 defi
 | Supporting reviewer | Yavuz |
 | Source requirements | NFR-PERF-001, NFR-PERF-002, NFR-CAP-005 |
 | Architecture | ARCH-CORE-CMD, ARCH-CORE-DOMAIN, ARCH-EDGE-BFF, ARCH-TWIN-API |
-| Gating edges | DEP-027 (DN-CORE-CMDCON, S2–S3), DEP-028 (DN-CORE-TRANSITIONS, E2E-01 readiness (end S4)) |
+| Gating edges | DEP-027 (DN-CORE-CMDCON, INTEGRATION/S2–S3 after the contract-first producer slice), DEP-028 (DN-CORE-TRANSITIONS, E2E-01 readiness (end S4)) |
 | Verification families | BENCH-PERF-CORE |
 | Size band / status | S (≈1–3 focused days) · NOT_STARTED |
 
