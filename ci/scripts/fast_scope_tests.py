@@ -88,7 +88,14 @@ def main() -> int:
         projectctl_test_paths = {
             path for path in paths if path.startswith("tools/projectctl/tests/")
         }
-        if projectctl_test_paths == {"tools/projectctl/tests/test_dependencies.py"}:
+        if "tools/projectctl/src/projectctl/gates.py" in paths:
+            selected.append(
+                (
+                    "projectctl-gates",
+                    [*PYTEST, "tools/projectctl/tests/test_gates.py", "-q"],
+                )
+            )
+        elif projectctl_test_paths == {"tools/projectctl/tests/test_dependencies.py"}:
             selected.append(
                 (
                     "projectctl-dependencies",
