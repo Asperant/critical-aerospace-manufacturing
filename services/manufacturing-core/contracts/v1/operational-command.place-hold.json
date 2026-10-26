@@ -1,0 +1,1 @@
+{"command_type":"PlaceLotOnHold","command_version":1,"command_id":"11111111-1111-4111-8111-111111111111","idempotency_key":"auto-action-001","world_id":"primary","correlation_id":"corr-001","causation_id":null,"target":{"entity_type":"Lot","entity_id":"LOT-001"},"expected":{"expected_revision":"lot-r1"},"hold_reason":"NDT anomaly","material_hold_id":"HOLD-001"}
