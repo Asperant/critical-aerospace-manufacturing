@@ -24,39 +24,25 @@ GRANT = re.compile(
 )
 
 
-def policy_block(cases):
-    return {"lifecycle_reconciliation": {"schema_version": "v1", "cases": cases}}
-
-
-def case(profile="batuhan", wp="WP-TEST-003", targets=("MERGED", "VALIDATING")):
-    return {"profile": profile, "wp_id": wp, "targets": list(targets)}
+def policy_block(targets=("MERGED", "VALIDATING")):
+    return {"lifecycle_reconciliation": {
+        "schema_version": "cap-lifecycle-reconciliation-v2",
+        "targets": list(targets),
+    }}
 
 
 class GrantTests(unittest.TestCase):
-    def test_grants_are_exact_argv_lines_for_each_allow_listed_target(self):
-        lines = ins.reconcile_grants(policy_block([case()]))
+    def test_grants_are_profile_scoped_generic_lines_for_each_target(self):
+        lines = ins.reconcile_grants(policy_block())
         self.assertEqual(lines[0].startswith("#"), True)
-        self.assertEqual(
-            lines[1:],
-            [
-                "batuhan ALL=(root) NOPASSWD: NOSETENV: /usr/bin/python3 -I "
-                "/usr/local/libexec/cap-plane-reconcile.py batuhan WP-TEST-003 MERGED",
-                "batuhan ALL=(root) NOPASSWD: NOSETENV: /usr/bin/python3 -I "
-                "/usr/local/libexec/cap-plane-reconcile.py batuhan WP-TEST-003 VALIDATING",
-            ],
-        )
+        self.assertEqual(len(lines[1:]), 8)
+        self.assertTrue(all("WP-*" in line for line in lines[1:]))
+        self.assertTrue(all("WP-TWIN-001" not in line for line in lines[1:]))
 
     def test_invalid_identities_or_targets_never_become_privileged_text(self):
-        for bad in (
-            case(profile="root"),
-            case(profile="batuhan ALL"),
-            case(wp="WP-X"),
-            case(wp="WP-TEST-003; rm"),
-            case(targets=["DONE"]),
-            case(targets=["MERGED", "VALIDATING\n"]),
-        ):
+        for bad in (("DONE",), ("MERGED", "VALIDATING\n"), ("MERGED",)):
             with self.subTest(bad=bad), self.assertRaises(ValueError):
-                ins.reconcile_grants(policy_block([bad]))
+                ins.reconcile_grants(policy_block(bad))
 
     def test_the_launcher_command_line_matches_the_granted_argv(self):
         text = LAUNCHER.read_text()
@@ -67,7 +53,7 @@ class GrantTests(unittest.TestCase):
             match[1],
             '/usr/bin/python3 -I /usr/local/libexec/cap-plane-reconcile.py "$CAP_PROFILE" "$1" "$2"',
         )
-        granted = ins.reconcile_grants(policy_block([case()]))[1].split("NOSETENV: ")[1]
+        granted = ins.reconcile_grants(policy_block())[1].split("NOSETENV: ")[1]
         self.assertTrue(
             granted.startswith(
                 "/usr/bin/python3 -I /usr/local/libexec/cap-plane-reconcile.py "

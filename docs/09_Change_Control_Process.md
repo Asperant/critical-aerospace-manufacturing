@@ -857,6 +857,26 @@ Allocation: CHG-039 is the next free identifier. The record remains bound to thi
 evaluator change only; it does not certify any WP or authorize implementation by
 itself.
 
+## CHG-041 — evidence-based generic lifecycle reconciliation
+
+CHG-041 / CTRL-HOST-022 replaces the WP-specific lifecycle reconciliation
+authorization with a generic, fail-closed evidence evaluator. A reconciliation to
+MERGED or VALIDATING requires a merged pull request, the exact merge revision
+reachable from current main, required CI success, and an attributable accountable
+owner assessment bound to that revision. VALIDATING additionally requires successful
+main validation runs at the exact merge revision. Unknown, stale, unmerged, failed,
+ambiguous or scope-mismatched evidence denies the operation.
+
+Historical reconciliation cases remain available only as inputs to the separate
+CHG-033 deferred-recovery proof; they are not an authorization allow-list. The
+change does not assert skipped history, waive DoR/DoD, clear blockers, write DONE,
+or alter slot-release semantics. It is a C3 / CR-3 control change with zero human
+development approvals under CHG-018; deployment uses the existing root-only backup,
+hash-refresh and rollback procedure after merged required CI.
+
+Allocation: CHG-041 is the canonical control record for this generic evaluator and
+is approved only for the control surface described above.
+
 ## Merged external integration binding slot exception — CHG-034
 
 CHG-034 / CTRL-HOST-015 (C3 / CR-3) is authorized by the project-owner request of

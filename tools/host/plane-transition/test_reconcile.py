@@ -359,7 +359,7 @@ class PolicyTests(unittest.TestCase):
             },
         }
         r.validate_policy(block, contexts, dict(t.q.PEOPLE))
-        case = next(case for case in block["cases"] if case["wp_id"] == "WP-SIM-001")
+        case = next(case for case in block["legacy_recovery_cases"] if case["wp_id"] == "WP-SIM-001")
         self.assertEqual(
             (case["profile"], case["wp_id"], case["pr"], case["changed_files"]),
             ("batuhan", "WP-SIM-001", 52, 131),
@@ -376,7 +376,7 @@ class PolicyTests(unittest.TestCase):
             [x["run_id"] for x in case["validating_runs"]], [40099331443, 40099331483]
         )
         self.assertTrue(case["require_successful_runs"])
-        core = next(case for case in block["cases"] if case["wp_id"] == "WP-CORE-007")
+        core = next(case for case in block["legacy_recovery_cases"] if case["wp_id"] == "WP-CORE-007")
         self.assertEqual(
             (core["profile"], core["pr"], core["merge_sha"]),
             ("asrin", 104, "4058f3268725359d4a8dcfbabb7fca78f5c9ae7f"),
