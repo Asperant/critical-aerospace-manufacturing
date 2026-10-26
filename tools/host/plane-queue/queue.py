@@ -47,6 +47,10 @@ WP = re.compile(r'WP-[A-Z0-9]+-[0-9]{3}')
 # before health evaluation even started.
 REQUEST_INTERVAL = 0.9
 HEALTH_BUDGET_SECONDS = 4
+# Health is advisory and must never inherit the 30s control-operation timeout.
+# A short subprocess budget lets bounded_preflight fail closed before worker
+# shutdown can extend the queue read beyond its operator budget.
+HEALTH_GITHUB_TIMEOUT_SECONDS = 1
 MAX_READ_WORKERS = 4
 PARALLEL_REQUEST_INTERVAL = REQUEST_INTERVAL / MAX_READ_WORKERS
 SNAPSHOT_CACHE_PATH = Path('/run/cap-plane-snapshot.json')
@@ -427,7 +431,7 @@ def _slot_waits(profile, key, rows, auto=None, transition=None, policy=None):
     cache = _read_slot_cache()
     cache_lock = threading.Lock()
 
-    gh = t.GitHub(profile)
+    gh = t.GitHub(profile, request_timeout=HEALTH_GITHUB_TIMEOUT_SECONDS)
 
     def evaluate(candidate):
         wp, state = candidate
