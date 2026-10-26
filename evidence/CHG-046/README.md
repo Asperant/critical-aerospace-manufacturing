@@ -16,4 +16,6 @@ Legal transition semantics, hold/release handlers, rework and split/merge remain
 outside this slice and belong to their existing producer packages.
 
 Current status: `NOT_YET_EXECUTED`; no readiness artifact or test result is
-claimed by CHG-046.
+claimed by CHG-046. The existing merged-binding provenance pins were refreshed
+to the current canonical WBS revision; their scope digests and binding meaning
+are unchanged.
