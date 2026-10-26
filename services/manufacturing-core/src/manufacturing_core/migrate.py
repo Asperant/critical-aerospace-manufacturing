@@ -10,6 +10,8 @@ from pathlib import Path
 
 from alembic import command
 from alembic.config import Config
+from psycopg.conninfo import conninfo_to_dict
+from sqlalchemy.engine import URL
 
 from manufacturing_core.database import connect, require_restricted_role
 
@@ -22,6 +24,25 @@ TABLES = (
     "lot",
     "serialized_component",
 )
+
+
+def sqlalchemy_url(dsn: str) -> str:
+    """Convert either libpq keyword DSNs or URLs without string interpolation."""
+    if dsn.startswith("postgresql://"):
+        return dsn.replace("postgresql://", "postgresql+psycopg://", 1)
+    if dsn.startswith("postgres://"):
+        return dsn.replace("postgres://", "postgresql+psycopg://", 1)
+    fields = conninfo_to_dict(dsn)
+    return str(
+        URL.create(
+            "postgresql+psycopg",
+            username=fields.get("user"),
+            password=fields.get("password"),
+            host=fields.get("host"),
+            port=int(fields["port"]) if fields.get("port") else None,
+            database=fields.get("dbname"),
+        )
+    )
 
 
 @dataclass(frozen=True)
@@ -87,9 +108,7 @@ def migrate(dsn: str, runtime_role: str) -> bool:
                 raise ValueError("migration ledger/version/checksum mismatch")
             return False
     config = Config(str(Path(__file__).resolve().parents[2] / "alembic.ini"))
-    config.set_main_option(
-        "sqlalchemy.url", dsn.replace("postgresql://", "postgresql+psycopg://", 1)
-    )
+    config.set_main_option("sqlalchemy.url", sqlalchemy_url(dsn))
     config.attributes["runtime_role"] = runtime_role
     command.upgrade(config, "head")
     return True

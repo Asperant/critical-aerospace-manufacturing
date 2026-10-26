@@ -197,7 +197,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: core-migration-status
-          path: ${{ runner.temp }}/core-migration-status.json
+          path: ${{ github.workspace }}/.ci-artifacts/core-migration-status.json
           if-no-files-found: error
       - name: Consumer idempotency acceptance (REAL PostgreSQL and JetStream, WP-EVT-003)
         env:
