@@ -24,3 +24,6 @@ claim was added.
 
 The change-control branch was rebased onto the current `main` before merge
 validation; no implementation branch or lifecycle state was changed.
+
+PR impact declaration uses the canonical `Requirements:` field for
+`FR-CORE-016` and `DEP-027`.
