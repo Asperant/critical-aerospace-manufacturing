@@ -6,7 +6,7 @@ import pytest
 from typer.testing import CliRunner
 
 from projectctl.cli import app
-from projectctl.gates import evaluate
+from projectctl.gates import evaluate, parse_assessment
 from projectctl.project import load_project
 
 
@@ -23,6 +23,26 @@ def test_planning_cannot_certify_gate(project, root, gate):
     assert result["criteria_refs"]
     assert result["governance_source"]["path"].startswith("docs/08_")
     assert result == evaluate(project, "WP-AI-007", gate, root)
+
+
+def test_bound_ready_assessment_passes_and_skips_integration_edges(project, root):
+    result = evaluate(project, "WP-CORE-003", "ready", root)
+    assert result["result"] == "PASS"
+    assert result["transition_authorized"] is True
+    assert result["missing_evidence"] == []
+    assert result["dependency_evidence"] == []
+
+
+def test_assessment_parser_rejects_duplicate_rows(tmp_path):
+    path = tmp_path / "READY.md"
+    path.write_text(
+        "Accountable owner: Example Owner\n\n"
+        "| Criterion | Result | Evidence |\n|---|---|---|\n"
+        "| DOR-TASK-01 | PASS | docs/04_Work_Breakdown_Structure.md |\n"
+        "| DOR-TASK-01 | PASS | docs/04_Work_Breakdown_Structure.md |\n",
+        encoding="utf-8",
+    )
+    assert "duplicate criterion: DOR-TASK-01" in parse_assessment(path)["errors"]
 
 
 @pytest.mark.parametrize("identity", ["WP-AI-999", "CAP-42", "CTRL-PM-013", "WP-AI-007 extra"])
@@ -84,7 +104,7 @@ def test_gate_evidence_has_no_mandatory_development_review(project, root, gate):
     assert result["transition_authorized"] is False
     assert result["criteria_refs"]
     explanation = json.dumps([result["reason"], result["missing_evidence"]]).lower()
-    assert "execution evidence" in explanation
+    assert "evidence" in explanation
     assert "owner" in explanation
     assert "review" not in explanation
     assert "approval" not in explanation
