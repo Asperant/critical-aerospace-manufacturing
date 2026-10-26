@@ -77,6 +77,39 @@ class GenericPolicyTests(unittest.TestCase):
                 "MERGED",
             )
 
+    def test_exact_main_aggregate_is_the_merge_revision_ci_proof(self):
+        class GitHub:
+            def checks(self, sha):
+                self.sha = sha
+                return (
+                    [
+                        {
+                            "name": "ci-gate",
+                            "status": "completed",
+                            "conclusion": "success",
+                            "details_url": "https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/40336487460/job/1",
+                        }
+                    ],
+                    [],
+                )
+
+            def fresh_run(self, run_id):
+                return {
+                    "head_sha": "a" * 40,
+                    "head_branch": "main",
+                    "status": "completed",
+                    "conclusion": "success",
+                }
+
+        self.assertEqual(
+            r.generic_required_ci(
+                GitHub(),
+                "a" * 40,
+                {"required_aggregate_ci": ["ci-gate"]},
+            )["status"],
+            "success",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
