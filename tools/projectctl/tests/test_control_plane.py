@@ -43,17 +43,17 @@ def inventory(project):
     return {"audit": audit, "memberships": memberships}, projection
 
 
-def test_control_is_exactly_separate_from_179_and_import_noop(project, inventory):
+def test_control_is_exactly_separate_from_180_and_import_noop(project, inventory):
     data, projection = deepcopy(inventory)
     report = classify_inventory(project, data["audit"], memberships=data["memberships"], require_controls=True)
-    assert (report["canonical_wp_count"], report["control_item_count"], report["total_work_item_count"]) == (179, 1, 180)
-    assert report["canonical_assigned"] == 73 and report["canonical_unassigned"] == 106
-    assert report["canonical_owner_distribution"] == {"Asrın Dündar": 73, "Selman Özdemir": 17, "Batuhan Kaya": 32, "Yavuz Gümüş": 57}
+    assert (report["canonical_wp_count"], report["control_item_count"], report["total_work_item_count"]) == (180, 1, 181)
+    assert report["canonical_assigned"] == 74 and report["canonical_unassigned"] == 106
+    assert report["canonical_owner_distribution"] == {"Asrın Dündar": 74, "Selman Özdemir": 17, "Batuhan Kaya": 32, "Yavuz Gümüş": 57}
     plan = import_plan(projection, data)
-    assert not plan["conflicts"] and plan["unchanged"] == 179 and plan["http_mutation_requests"] == 0
+    assert not plan["conflicts"] and plan["unchanged"] == 180 and plan["http_mutation_requests"] == 0
     bootstrap = bootstrap_plan(project, data["audit"])
     assert bootstrap["control_item_count"] == 1 and bootstrap["unmanaged_work_items"] == []
-    assert bootstrap["summary"]["work_packages"] == 179
+    assert bootstrap["summary"]["work_packages"] == 180
     assert len(data["audit"]["labels"]) == 10
     assert len(project.catalog.requirements.requirements) == 306
 
@@ -132,9 +132,9 @@ def test_control_metadata_reuses_pre_code_parser_and_never_mutates_input(project
     row = data["audit"]["work_items"][-1]
     row["description_html"] = row["description_html"].replace('<pre>', '<pre><code>').replace('</pre>', '</code></pre>')
     filtered, controls = canonical_audit(data["audit"], project.control_items)
-    assert len(filtered["work_items"]) == 179 and len(controls) == 1
+    assert len(filtered["work_items"]) == 180 and len(controls) == 1
     assert data["audit"]["work_items"][:-1] == original["audit"]["work_items"][:-1]
-    assert len(data["audit"]["work_items"]) == 180
+    assert len(data["audit"]["work_items"]) == 181
 
 
 @pytest.mark.parametrize("change", [{"external_id": []}, {"name": None}])

@@ -116,7 +116,7 @@ def test_scanner_table_escaping():
 
 def test_full_corpus(corpus):
     catalog = parse_wbs(corpus)
-    assert len(catalog.work_packages) == len({wp.id for wp in catalog.work_packages}) == 179
+    assert len(catalog.work_packages) == len({wp.id for wp in catalog.work_packages}) == 180
     assert len(catalog.capability_areas) == 29
     assert validate(catalog) == []
     assert all(re.fullmatch(r"WP-[A-Z0-9]+-[0-9]{3}", wp.id) for wp in catalog.work_packages)
@@ -127,7 +127,7 @@ def test_full_corpus(corpus):
 def test_owner_distribution(corpus):
     from collections import Counter
     assert Counter(wp.primary_owner.canonical_name for wp in parse_wbs(corpus).work_packages) == {
-        "Asrın Dündar": 73, "Selman Özdemir": 17, "Batuhan Kaya": 32, "Yavuz Gümüş": 57,
+        "Asrın Dündar": 74, "Selman Özdemir": 17, "Batuhan Kaya": 32, "Yavuz Gümüş": 57,
     }
 
 

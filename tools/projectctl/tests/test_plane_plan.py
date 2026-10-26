@@ -32,8 +32,8 @@ def test_full_dry_run_counts_mappings_and_determinism(project, audit):
     plan = bootstrap_plan(project, audit)
     assert audit == before and plan == bootstrap_plan(project, audit)
     assert plan["mutation_enabled"] is False and plan["dry_run"] is True
-    assert plan["summary"] == {"actions": {"create": 230, "unchanged": 1}, "modules": 29, "cycles": 13,
-                              "milestone_labels": 9, "work_packages": 179, "scheduled": 174,
+    assert plan["summary"] == {"actions": {"create": 231, "unchanged": 1}, "modules": 29, "cycles": 13,
+                              "milestone_labels": 9, "work_packages": 180, "scheduled": 175,
                               "unscheduled_ids": ["WP-R2-001", "WP-R2-002", "WP-R2-003", "WP-S-001", "WP-X-001"]}
     assert plan["owner_mapping"]["Asrın Dündar"] == "asrin"
     assert len(plan["missing_owners"]) == 3
@@ -41,7 +41,7 @@ def test_full_dry_run_counts_mappings_and_determinism(project, audit):
     assert not plan["ready_for_live_mutation"]
     items = [o for o in plan["operations"] if o["kind"] == "work_items"]
     assert all(o["request"]["body"]["state"] == "BACKLOG" for o in items)
-    assert sum("assignees" in o["request"]["body"] for o in items) == 73
+    assert sum("assignees" in o["request"]["body"] for o in items) == 74
     assert all(o["relations"]["cycle"] is None for o in items if o["identity"] in plan["summary"]["unscheduled_ids"])
     assert all(o["relations"]["cycle"] is None and o["blockers"] for o in items
                if len(o["canonical_metadata"]["cycle_ids"]) == 2)
@@ -56,7 +56,7 @@ def test_projection_idempotency_after_simulated_apply_and_state_preservation(pro
             audit[op["kind"]].append({"id": "fake-" + op["identity"], **deepcopy(op["desired"])})
     audit["work_items"][0]["state"] = "IN_PROGRESS"
     second = bootstrap_plan(project, audit)
-    assert second["summary"]["actions"] == {"unchanged": 231}
+    assert second["summary"]["actions"] == {"unchanged": 232}
     assert all(o["request"] is None for o in second["operations"])
     assert audit["work_items"][0]["state"] == "IN_PROGRESS"
     # This proves static projection identity; unknown live relations remain explicit blockers.

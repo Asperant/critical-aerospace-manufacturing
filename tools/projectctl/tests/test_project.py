@@ -16,7 +16,7 @@ def project(root):
 
 def test_unified_snapshot_and_provenance(project):
     snapshot = project.snapshot()
-    assert len(snapshot["work_packages"]) == 179
+    assert len(snapshot["work_packages"]) == 180
     assert len(snapshot["requirements"]) == 306
     assert len(snapshot["dependency_nodes"]) == 100
     assert len(snapshot["dependency_edges"]) == 217

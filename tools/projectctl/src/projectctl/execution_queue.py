@@ -24,7 +24,7 @@ ASSIGNEES = {
 ACTIVE = {"READY", "IN_PROGRESS", "IN_REVIEW", "MERGE_READY", "MERGED", "VALIDATING"}
 STATES = ACTIVE | {"BACKLOG", "DONE", "CANCELED"}
 EXCLUDED = {"WP-R2-001", "WP-R2-002", "WP-R2-003", "WP-S-001", "WP-X-001"}
-EXPECTED = dict(zip(OWNERS.values(), (69, 17, 32, 56), strict=True))
+EXPECTED = dict(zip(OWNERS.values(), (70, 17, 32, 56), strict=True))
 
 
 DEFERRED_CLASS = "WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE"
@@ -291,11 +291,11 @@ def validate_preferences(project: Any, policy: dict[str, Any]) -> list[str]:
     if len(seen) != len(set(seen)):
         errors.append("DUPLICATE_PREFERENCE")
     if (
-        len(cards) != 179
-        or len(scheduled) != 174
+        len(cards) != 180
+        or len(scheduled) != 175
         or set(cards) - scheduled != EXCLUDED
         or Counter(card["owner"] for card in cards.values())
-        != Counter(dict(zip(OWNERS.values(), (73, 17, 32, 57), strict=True)))
+        != Counter(dict(zip(OWNERS.values(), (74, 17, 32, 57), strict=True)))
         or {owner: len(sequences.get(owner, [])) for owner in EXPECTED} != EXPECTED
     ):
         errors.append("CANONICAL_COUNTS_MISMATCH")

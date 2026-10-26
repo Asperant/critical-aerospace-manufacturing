@@ -77,10 +77,10 @@ def qualify(data, wp):
 
 def test_full_counts_and_ownership(baseline):
     project, policy, _, _ = baseline
-    assert len(project["cards"]) == 179
-    assert sum(c["scheduled"] for c in project["cards"].values()) == 174
+    assert len(project["cards"]) == 180
+    assert sum(c["scheduled"] for c in project["cards"].values()) == 175
     assert {w for w, c in project["cards"].items() if not c["scheduled"]} == EXCLUDED
-    assert [len(policy["sequences"][o]) for o in OWNERS.values()] == [69, 17, 32, 56]
+    assert [len(policy["sequences"][o]) for o in OWNERS.values()] == [70, 17, 32, 56]
     assert validate_preferences(project, policy) == []
 
 

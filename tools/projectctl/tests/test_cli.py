@@ -47,7 +47,7 @@ def test_default_commands_no_network_or_file_mutation(command, root, monkeypatch
         assert "PASS (306 records)" in result.output
         assert "NOT_CERTIFIED" in result.output
     elif command == "parse":
-        assert len(json.loads(result.output)["work_packages"]) == 179
+        assert len(json.loads(result.output)["work_packages"]) == 180
     else:
         assert "UNAVAILABLE (documentation only)" in result.output
         assert "PASS" in result.output
@@ -67,7 +67,7 @@ def test_summary_json(command, root):
     result = runner.invoke(app, [command, "--root", str(root), "--json"])
     assert result.exit_code == 0
     payload = json.loads(result.output)
-    assert payload["wp_count"] == 179
+    assert payload["wp_count"] == 180
     assert payload["capability_count"] == 29
     assert payload["validation"] == "PASS"
     assert payload["execution_status"].startswith("UNAVAILABLE")
