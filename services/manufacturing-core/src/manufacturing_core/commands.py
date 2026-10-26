@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from collections.abc import Callable, Mapping
+from collections.abc import Callable
 from datetime import datetime
 from enum import StrEnum
 from threading import RLock

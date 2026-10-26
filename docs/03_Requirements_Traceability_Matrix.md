@@ -1325,9 +1325,9 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 | FR-CORE-001 | production/material/route/equipment domain model + `core` schema migrations | CONTRACT:Core Query API (versioned) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-002 | reentrant route/visit model (visit index, operation-class revisit) | CONTRACT:Core Query API (versioned) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-003 | manufacturing state machine / transition guard module | CONTRACT:Core Command Acceptance API | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-CORE-004 | command precondition/revision validator (STALE/CONFLICT outcomes) | CONTRACT:Core Command Acceptance API | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-CORE-005 | command idempotency-key store (Item 83 example: core app + idempotency package) | CONTRACT:IC-AUTO-003 Typed Operational Command | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-CORE-006 | durable CommandOutcome record (completed/rejected/unresolved) | CONTRACT:Core Command Acceptance API | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
+| FR-CORE-004 | command precondition/revision validator (STALE/CONFLICT outcomes) | CONTRACT:Core Command Acceptance API | `services/manufacturing-core/src/manufacturing_core/commands.py` | M4 (F0/F1) |
+| FR-CORE-005 | command idempotency-key store (Item 83 example: core app + idempotency package) | CONTRACT:IC-AUTO-003 Typed Operational Command | `services/manufacturing-core/src/manufacturing_core/command_persistence.py` | M4 (F0/F1) |
+| FR-CORE-006 | durable CommandOutcome record (completed/rejected/unresolved) | CONTRACT:Core Command Acceptance API | `services/manufacturing-core/src/manufacturing_core/command_persistence.py` | M4 (F0/F1) |
 | FR-CORE-007 | PlaceLotOnHold command handler (CMD-PlaceLotOnHold-v1) | CONTRACT:PlaceLotOnHold / CMD-PlaceLotOnHold-v1 | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-008 | ReleaseMaterialHold eligibility handler | CONTRACT:ReleaseMaterialHold command | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-009 | ReworkDirective + append-only route-visit history | CONTRACT:ExecuteApprovedReworkDirective command | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
@@ -1337,7 +1337,7 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 | FR-CORE-013 | schema-level grants; per-service DB roles; `core` schema privacy | POLICY:DB role/grant configuration | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-014 | domain-event emission per accepted transition | CONTRACT:Core domain event schemas (Production/Equipment/Quality/Schedule namespaces) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-015 | transactional outbox table + relay | CONTRACT:Outbox record schema | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-CORE-016 | versioned OpenAPI query/command surface | CONTRACT:Core Query API · CONTRACT:Core Command Acceptance API | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
+| FR-CORE-016 | versioned OpenAPI query/command surface | CONTRACT:Core Query API · CONTRACT:Core Command Acceptance API | `packages/contracts/registry/core.operational-command.v1.json` | M4 (F0/F1) |
 
 ### 8.FC FR-SIM — Operational Simulator
 
@@ -3702,7 +3702,7 @@ FR-CORE-004:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-004 L169852"}
   DERIVED_FROM: [ITEM-15, ITEM-22, BE-INV-07, INT-INV-07]
   ALLOCATED_TO: [ARCH-CORE-CMD]
-  REALIZED_BY: {surface: "command precondition/revision validator (STALE/CONFLICT outcomes)", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "command precondition/revision validator (STALE/CONFLICT outcomes)", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/commands.py"}
   EXPOSED_BY: ["Core Command Acceptance API"]
   VERIFIED_BY: [TEST-CORE-REVISION, TEST-HITL-REPLAY-NEG]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
@@ -3713,7 +3713,7 @@ FR-CORE-005:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-005 L169853"}
   DERIVED_FROM: [ITEM-15, ITEM-36, BE-INV-04, EVTINF-INV-05]
   ALLOCATED_TO: [ARCH-CORE-CMD, ARCH-AUTO-IDEMPOTENCY]
-  REALIZED_BY: {surface: "command idempotency-key store (Item 83 example: core app + idempotency package)", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "command idempotency-key store (Item 83 example: core app + idempotency package)", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/command_persistence.py"}
   EXPOSED_BY: ["IC-AUTO-003 Typed Operational Command"]
   VERIFIED_BY: [TEST-CORE-IDEMP, RES-DUP-001]
   EXERCISED_IN: [AV-SCEN-05]
@@ -3726,7 +3726,7 @@ FR-CORE-006:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-006 L169854"}
   DERIVED_FROM: [ITEM-15, ITEM-18, INT-INV-08, AUTO-INV-03]
   ALLOCATED_TO: [ARCH-CORE-CMD, ARCH-CORE-DB]
-  REALIZED_BY: {surface: "durable CommandOutcome record (completed/rejected/unresolved)", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "durable CommandOutcome record (completed/rejected/unresolved)", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/command_persistence.py"}
   EXPOSED_BY: ["Core Command Acceptance API"]
   VERIFIED_BY: [TEST-CORE-IDEMP, TEST-AUTO-OUTCOME]
   EXERCISED_IN: [AV-SCEN-01]
@@ -3843,7 +3843,7 @@ FR-CORE-016:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-016 L169864"}
   DERIVED_FROM: [ITEM-22, ITEM-34, INT-INV-15, EV-INV-06]
   ALLOCATED_TO: [ARCH-CORE-CMD, ARCH-CTR-API, ARCH-CTR-VERSIONING]
-  REALIZED_BY: {surface: "versioned OpenAPI query/command surface", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "versioned typed command contract surface", deployable: "manufacturing-core", ref: "packages/contracts/registry/core.operational-command.v1.json"}
   EXPOSED_BY: ["Core Query API", "Core Command Acceptance API"]
   VERIFIED_BY: [TEST-CORE-CONTRACT, TEST-EVT-SCHEMA]
   EXECUTED_AS: []  # NOT_YET_EXECUTED

@@ -14,7 +14,7 @@
     {"path": "services/manufacturing-core/contracts/v1/operational-command.dispatch.json", "sha256": "ef0dea6d5522d87153a47a4c8d50591026494656814c25acab1706191b0d71cb"},
     {"path": "services/manufacturing-core/contracts/v1/operational-command.maintenance.json", "sha256": "c869334e00563d46fed82b1fa8048357935b4e7659acf0fbcd4b0be53128be8c"}
   ],
-  "authority_level": "Core accepts intent and owns canonical state mutation; Automation owns workflow orchestration and effect verification.",
+  "authority_level": "Core accepts intent and owns canonical state mutation; Automation owns workflow orchestration and effect verification",
   "sync_semantics": "SYNC",
   "security_classification": "Protected manufacturing command metadata; no credentials or Oracle labels",
   "semantics": {

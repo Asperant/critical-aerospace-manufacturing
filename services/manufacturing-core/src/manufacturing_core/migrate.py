@@ -16,7 +16,7 @@ from sqlalchemy.engine import URL
 
 from manufacturing_core.database import connect, require_restricted_role
 
-VERSION = "0001_domain"
+VERSION = "0002_command_acceptance"
 TABLES = (
     "equipment",
     "manufacturing_route",
@@ -24,6 +24,8 @@ TABLES = (
     "production_order",
     "lot",
     "serialized_component",
+    "command_idempotency",
+    "command_outcome",
 )
 
 
@@ -75,10 +77,21 @@ def migrate(dsn: str, runtime_role: str) -> bool:
     needs bootstrap CREATE on this database or ownership of a precreated empty
     core schema. Database-wide bootstrap CREATE should be revoked afterwards.
     """
-    source = (
-        files("manufacturing_core").joinpath("migrations/0001_domain.sql").read_text()
+    migration_sources = tuple(
+        (version, files("manufacturing_core").joinpath(filename).read_text())
+        for version, filename in (
+            ("0001_domain", "migrations/0001_domain.sql"),
+            ("0002_command_acceptance", "migrations/0002_command_acceptance.sql"),
+        )
     )
-    digest = hashlib.sha256(source.encode()).hexdigest()
+    expected = [
+        {
+            "version": version,
+            "sha256": hashlib.sha256(source.encode()).hexdigest(),
+            "runtime_role": runtime_role,
+        }
+        for version, source in migration_sources
+    ]
     with connect(dsn) as preflight, preflight.transaction():
         preflight.execute("SELECT pg_catalog.pg_advisory_xact_lock(731001)")
         require_restricted_role(preflight, runtime_role)
@@ -108,9 +121,7 @@ def migrate(dsn: str, runtime_role: str) -> bool:
             else []
         )
         if ledger:
-            if ledger != [
-                {"version": VERSION, "sha256": digest, "runtime_role": runtime_role}
-            ]:
+            if ledger != expected:
                 raise ValueError("migration ledger/version/checksum mismatch")
             return False
     config = Config(str(Path(__file__).resolve().parents[2] / "alembic.ini"))

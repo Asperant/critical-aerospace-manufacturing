@@ -1,20 +1,19 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
 import pytest
-from pydantic import ValidationError
-
 from manufacturing_core.commands import (
     DispatchLot,
     EffectVerificationStatus,
     InMemoryCommandLedger,
     OutcomeStatus,
     PlaceLotOnHold,
-    validate_preconditions,
     UnresolvedEffect,
     reconciliation_action,
     validate_command_context,
+    validate_preconditions,
 )
+from pydantic import ValidationError
 
 
 def command(**changes: object) -> PlaceLotOnHold:
@@ -66,10 +65,10 @@ def test_malformed_commands_fail_closed(changes: dict[str, object]) -> None:
 def test_revision_and_freshness_rejections_are_typed() -> None:
     with pytest.raises(Exception, match="STALE"):
         validate_preconditions(command(), current_revision="r2")
-    old = datetime.now(timezone.utc) - timedelta(minutes=10)
+    old = datetime.now(UTC) - timedelta(minutes=10)
     fresh = command(expected={"observed_at": old, "max_age_seconds": 30})
     with pytest.raises(Exception, match="STALE"):
-        validate_preconditions(fresh, current_revision="r1", now=datetime.now(timezone.utc))
+        validate_preconditions(fresh, current_revision="r1", now=datetime.now(UTC))
     unavailable = command(expected={"expected_revision": "r1"})
     with pytest.raises(Exception, match="UNRESOLVED"):
         validate_preconditions(unavailable, current_revision=None)

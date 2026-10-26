@@ -3,7 +3,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from cap_contracts.boundary import BoundaryValidator, ContractViolation
 from cap_contracts.compatibility import compare_schemas
 from cap_contracts.registry import Registry

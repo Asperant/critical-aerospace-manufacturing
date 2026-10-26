@@ -88,7 +88,8 @@ The catalog lists the candidate Action Catalog members from the architecture
 specification, each with an action identifier, a required permission and a
 reserved `core_entrypoint` reference. The permission names are provisional,
 because the exact RBAC matrix is still an open question, and the entrypoints
-are not bound to code: no Core command handler exists yet. The module reads no
+are not bound to code: action-specific Core transition handlers remain separate
+from this acceptance surface. The module reads no
 identity, token, configuration or secret and is not wired to HTTP, an identity
 provider or Automation. It is unit-level evidence only; it does not claim
 AV-SCEN-04, BENCH-RQ3-001 or the integrated TEST-SEC-AUTHZ-NEG suite.
@@ -104,8 +105,30 @@ while evaluating also denies. `EnforcementRegistry.bind(action)` decorates a han
 `unbound_actions()` / `assert_fully_bound()` report catalogued protected actions that
 have no binding.
 
-No Core command handler exists yet, so the registry starts empty and no action is
-bound; handlers bind themselves when they are written. There is no role-to-permission
+No action-specific transition handler is bound here; those handlers bind themselves
+when written. There is no role-to-permission
 mapping, no Automation binding and no HTTP or IdP wiring, and nothing here claims
 API or integration acceptance (TEST-SEC-AUTHZ-NEG at INTEGRATION, AV-SCEN-04 and
 BENCH-RQ3-001 remain unexecuted).
+
+## Typed command acceptance — WP-CORE-003
+
+`manufacturing_core.commands` publishes the v1 typed operational command
+contract for `PlaceLotOnHold`, `ReleaseMaterialHold`, `DispatchLot` and
+`CreateMaintenanceWorkOrder`. Every command carries immutable command/version
+identity, idempotency key, explicit World/Correlation/Causation IDs, target and
+revision/freshness preconditions. The published registry declaration and
+fixtures live in `packages/contracts/registry/` and
+`services/manufacturing-core/contracts/v1/`.
+
+`PostgresCommandLedger` is separate from the event-consumer ledger. It reserves
+an idempotency key and writes a durable `CommandOutcome` in the same transaction
+as the optional caller-supplied Core mutation. A retry with the same immutable
+command returns the original outcome; a different fingerprint returns
+`CONFLICT`. Precondition failures are `REJECTED` (`STALE`, `WORLD_MISMATCH`,
+etc.); unclassifiable effects are `UNRESOLVED`. `ACCEPTED` is only a durable
+acceptance and always has `NOT_VERIFIED` effect status. Operators query the
+outcome before retrying unresolved work, and must verify the canonical event or
+effect separately. This slice emits no event, so Core outbox relay integration
+remains a separate capability; an event-emitting mutation must keep its outbox
+write inside this transaction boundary.
