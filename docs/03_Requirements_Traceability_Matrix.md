@@ -4036,7 +4036,7 @@ FR-TWIN-001:
   meta: {class: F0, owner: Asrın, anchor: "01 Item81 FR-TWIN-001 L169893"}
   DERIVED_FROM: [ITEM-11, ITEM-68, DT-INV-09]
   ALLOCATED_TO: [ARCH-TWIN-PROJECTOR, ARCH-TWIN-STATE, ARCH-TWIN-API]
-  REALIZED_BY: {surface: "twin-projector-worker + twin-query-api + `twin` schema", deployable: "digital-twin-service", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "twin-projector-worker + twin-query-api + `twin` schema", deployable: "digital-twin-service", ref: "services/operational-twin/; evidence/WP-TWIN-001/SLICE1_LOCAL_PROJECTION.md"}
   EXPOSED_BY: ["Twin Query API"]
   VERIFIED_BY: [TEST-TWIN-PROJECTION, BENCH-E2E-001]
   EXERCISED_IN: [E2E-01, AV-SCEN-01]
@@ -4044,19 +4044,21 @@ FR-TWIN-001:
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "CI + INTEGRATION + EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: IMPLEMENTED, planning: VERIFY_PLANNED, evidence: EVIDENCE_PENDING}
+  note: "Local projection slice implemented; DEP-032/DEP-033 real integration and F0 acceptance remain pending."
 FR-TWIN-002:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-TWIN-002 L169894"}
   DERIVED_FROM: [ITEM-11, DT-INV-01, DA-INV-02, ARCH-INV-04]
   ALLOCATED_TO: [ARCH-TWIN-PROJECTOR]
-  REALIZED_BY: {surface: "event-consumer projection handlers (no mutation endpoint)", deployable: "digital-twin-service", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "event-consumer projection handlers (no mutation endpoint)", deployable: "digital-twin-service", ref: "services/operational-twin/src/operational_twin/projector.py"}
   EXPOSED_BY: ["consumed domain event schemas"]
   VERIFIED_BY: [TEST-TWIN-PROJECTION, TEST-TWIN-READONLY]
   MITIGATES: [ARCH-R06]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: IMPLEMENTED, planning: VERIFY_PLANNED, evidence: EVIDENCE_PENDING}
+  note: "Read-only boundary and event-derived handlers are locally verified; runtime integration remains pending."
 FR-TWIN-003:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-TWIN-003 L169895"}
   DERIVED_FROM: [ITEM-11, DT-INV-03, INT-INV-04, UI-INV-04]
@@ -4135,13 +4137,14 @@ FR-TWIN-009:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-TWIN-009 L169901"}
   DERIVED_FROM: [ITEM-11, INT-INV-07]
   ALLOCATED_TO: [ARCH-TWIN-PROJECTOR, ARCH-TWIN-FRESHNESS]
-  REALIZED_BY: {surface: "projection revision ↔ source EventID/revision ledger", deployable: "digital-twin-service", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "projection revision ↔ source EventID/revision ledger", deployable: "digital-twin-service", ref: "services/operational-twin/src/operational_twin/projector.py; services/operational-twin/migrations/0001_twin.sql"}
   EXPOSED_BY: ["Twin Query API (source revision)"]
   VERIFIED_BY: [TEST-TWIN-PROJECTION]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: IMPLEMENTED, planning: VERIFY_PLANNED, evidence: EVIDENCE_PENDING}
+  note: "Source EventID/revision ledger model and local tests exist; real PostgreSQL migration evidence is DEP-033 pending."
 FR-TWIN-010:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-TWIN-010 L169902"}
   DERIVED_FROM: [ITEM-07, ITEM-18, ITEM-84, RES-INV-15]

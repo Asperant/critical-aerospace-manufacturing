@@ -1659,7 +1659,7 @@ DEP-031:
   need_by: "S2"   # sprint 2
   fallback: F1
   unblock_evidence: "contract merged + contract tests green + example fixture published"
-  precise_requirement: null
+  precise_requirement: "versioned domain-event payload contract; canonical producer/event declaration; TWIN-relevant example fixture; green producer/consumer contract tests"
   risk_class: DR-1
   source: "Item 66 #44"
   status: NOT_READY
@@ -1670,7 +1670,7 @@ DEP-032:
   need_by: "M1 (S2)"   # sprint 2
   fallback: null
   unblock_evidence: "Twin revision advances from real events"
-  precise_requirement: null
+  precise_requirement: "At INTEGRATION, consume canonical EVT-002 events through the approved EVT-003 consumer boundary and prove that a real event advances the Twin projection revision with matching source EventID, WorldID, and branch admission; fixture-only evidence is insufficient."
   risk_class: DR-1
   source: "Item 66 #96, #188"
   status: NOT_READY
@@ -1681,7 +1681,7 @@ DEP-033:
   need_by: "M1 (S2)"   # sprint 2
   fallback: null
   unblock_evidence: "`twin` schema migrated"
-  precise_requirement: null
+  precise_requirement: "At INTEGRATION, apply the canonical PostgreSQL runtime migration for the twin schema and verify projection revision and source-event ledger persistence across restart and catch-up against real PostgreSQL; an in-memory substitute is insufficient."
   risk_class: DR-3
   source: "Item 66 #31"
   status: NOT_READY

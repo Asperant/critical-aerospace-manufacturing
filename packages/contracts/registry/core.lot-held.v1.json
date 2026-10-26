@@ -1,0 +1,34 @@
+{
+  "contract_id": "core.lot-held.v1",
+  "name": "Core LotHeld domain event",
+  "contract_type": "EVENT",
+  "version": 1,
+  "semantic_owner": "Asrın Dündar",
+  "canonical_producer": "manufacturing-core",
+  "declared_consumers": ["Digital Twin", "Simulator", "Automation verification"],
+  "purpose": "Publish the accepted Core material-hold fact for projection, simulation and effect verification.",
+  "output_schema": {
+    "path": "services/manufacturing-core/contracts/v1/lot-held.v1.schema.json",
+    "sha256": "532dfaa6f2c5a7fea4fbc538c141d2e5a4e9cebef7443ddbe463bc5388285acf"
+  },
+  "fixtures": [
+    {
+      "path": "services/manufacturing-core/contracts/v1/lot-held.twin.json",
+      "sha256": "799b5ad29d1ceb029a3f1bdc1b15cd08c69f175f474e50a678d18304664f72ac"
+    }
+  ],
+  "authority_level": "Core canonical manufacturing fact; consumers are read-only or verification-only",
+  "sync_semantics": "ASYNC",
+  "security_classification": "Internal manufacturing-domain metadata; no credentials or Oracle labels",
+  "semantics": {
+    "event_name": "LotHeld.v1",
+    "namespace": "production",
+    "envelope": "cap event-envelope.v1 from WP-EVT-002",
+    "partition_key": "lot_id",
+    "replay": "Projection and verification consumers may replay; replay never executes a live action"
+  },
+  "deprecation": {
+    "status": "ACTIVE",
+    "replacement": null
+  }
+}

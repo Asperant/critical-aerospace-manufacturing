@@ -45,6 +45,8 @@
               {"tier": "integration", "boundary_mode": "REAL", "ci_step": "Consumer idempotency acceptance (REAL PostgreSQL and JetStream, WP-EVT-003)"}]},
     {"path": "services/manufacturing-core/tests", "owner": "Asrın", "work_package": "WP-CORE-001", "families": [], "family_note": "family allocation by the owning work package", "test_ids": [],
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Core pure domain tests and typing (WP-CORE-001)"}]},
+    {"path": "services/operational-twin/tests", "owner": "Asrın", "work_package": "WP-TWIN-001", "families": ["TEST-TWIN-PROJECTION", "TEST-TWIN-READONLY"], "test_ids": [],
+     "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Twin local projection tests and typing (WP-TWIN-001)"}]},
     {"path": "services/manufacturing-core/tests/persistence", "owner": "Asrın", "work_package": "WP-CORE-001", "families": [], "family_note": "family allocation by the owning work package", "test_ids": [],
      "runs": [{"tier": "integration", "boundary_mode": "REAL", "ci_step": "Core initial migration and persistence (real PostgreSQL 18)"}]},
     {"path": "services/manufacturing-simulator/tests", "owner": "Batu", "work_package": "WP-SIM-001", "families": [], "family_note": "family allocation by the owning work package", "test_ids": [],

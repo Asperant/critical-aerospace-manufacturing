@@ -1,0 +1,10 @@
+{
+  "event_type": "production.lot-dispatch-authorized",
+  "schema_version": 1,
+  "aggregate_type": "Lot",
+  "aggregate_id": "LOT-417",
+  "aggregate_version": 8,
+  "lot_id": "LOT-417",
+  "lot_revision": "lot-rev-8",
+  "dispatch_id": "DISPATCH-204"
+}
