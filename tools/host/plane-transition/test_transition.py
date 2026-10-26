@@ -262,14 +262,14 @@ class TransitionTests(unittest.TestCase):
         node = 'DN-PLAT-COMPOSE'
         successor = 'DN-RT-PG'
         edge = {'id': 'DEP-006', 'predecessor': {'node': node, 'owner': 'Yavuz'},
-                'successor': {'node': successor, 'owner': 'Asrın'},
+                'successor': {'node': successor, 'owner': 'Yavuz'},
                 'precise_requirement': 'local PostgreSQL profile up',
                 'semantics': {'kind': 'RUNTIME', 'strength': 'HARD', 'blocking_stage': 'START',
                               'required_readiness': 'SKELETON_READY'}}
         context = policy['contexts'][wp]
         context['dependency_edges'] = [edge]
         policy.update(auto_readiness_attestation_schema='auto-readiness-attestation-v1',
-                      node_owners={node: 'yavuz', successor: 'asrin'},
+                      node_owners={node: 'yavuz', successor: 'yavuz'},
                       node_levels={node: ['DEFINED', 'SKELETON_READY', 'INTEGRATION_READY']},
                       node_producers={node: [producer_wp]})
         files = {

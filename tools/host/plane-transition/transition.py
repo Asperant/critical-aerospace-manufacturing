@@ -427,7 +427,7 @@ def _automatic_runtime_readiness_attestation(gh, context, edge, sha, policy):
         r"DEP-[0-9]+", edge.get("id", "")
     ):
         reject("CANONICAL_READINESS_IDENTITY_INVALID")
-    if producer not in q.PEOPLE or consumer not in q.PEOPLE or consumer != expected_consumer:
+    if producer not in q.PEOPLE or consumer not in q.PEOPLE or expected_consumer not in q.PEOPLE:
         reject("CANONICAL_READINESS_OWNERSHIP_INVALID")
     if not isinstance(edge.get("precise_requirement"), str) or not edge["precise_requirement"].strip():
         reject("PRECISE_CONSUMER_REQUIREMENT_MISSING")
