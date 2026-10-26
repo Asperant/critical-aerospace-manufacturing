@@ -41,16 +41,14 @@ def sqlalchemy_url(dsn: str) -> str:
 
     port_value = field("port")
     url_create = cast(Any, URL).create
-    return str(
-        url_create(
-            "postgresql+psycopg",
-            username=field("user"),
-            password=field("password"),
-            host=field("host"),
-            port=int(port_value) if port_value is not None else None,
-            database=field("dbname"),
-        )
-    )
+    return url_create(
+        "postgresql+psycopg",
+        username=field("user"),
+        password=field("password"),
+        host=field("host"),
+        port=int(port_value) if port_value is not None else None,
+        database=field("dbname"),
+    ).render_as_string(hide_password=False)
 
 
 @dataclass(frozen=True)
