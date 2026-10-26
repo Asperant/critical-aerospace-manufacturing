@@ -11,11 +11,18 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from cap_contracts import BoundaryValidator, ContractViolation, ProducerAuthorities, Registry
+from cap_contracts import (
+    BoundaryValidator,
+    ContractViolation,
+    ProducerAuthorities,
+    Registry,
+)
 
 REPO = Path(__file__).resolve().parents[2]
 REGISTRY = Registry.load(REPO / "packages/contracts/registry")
-AUTHORITIES = ProducerAuthorities.load(REPO / "packages/contracts/producer-authorities.json")
+AUTHORITIES = ProducerAuthorities.load(
+    REPO / "packages/contracts/producer-authorities.json"
+)
 
 EVENTS = (
     "core.lot-held.v1",
@@ -32,8 +39,12 @@ def payload(contract_id: str) -> dict[str, Any]:
 def test_core_event_declarations_are_registered_and_owned() -> None:
     REGISTRY.verify_authorities(AUTHORITIES, repo_root=REPO)
     REGISTRY.verify(REPO)
-    assert all(REGISTRY.get(contract_id).contract_type == "EVENT" for contract_id in EVENTS)
-    assert all(REGISTRY.get(contract_id).sync_semantics == "ASYNC" for contract_id in EVENTS)
+    assert all(
+        REGISTRY.get(contract_id).contract_type == "EVENT" for contract_id in EVENTS
+    )
+    assert all(
+        REGISTRY.get(contract_id).sync_semantics == "ASYNC" for contract_id in EVENTS
+    )
     assert REGISTRY.get("core.lot-held.v1").declared_consumers == (
         "Digital Twin",
         "Simulator",
@@ -51,7 +62,9 @@ def test_producer_and_consumer_validate_the_same_twin_fixture(contract_id: str) 
 
 
 @pytest.mark.parametrize("contract_id", EVENTS)
-def test_event_payload_rejects_unknown_fields_at_both_boundaries(contract_id: str) -> None:
+def test_event_payload_rejects_unknown_fields_at_both_boundaries(
+    contract_id: str,
+) -> None:
     declaration = REGISTRY.get(contract_id)
     validator = BoundaryValidator(declaration, REPO)
     invalid = copy.deepcopy(payload(contract_id))

@@ -84,7 +84,7 @@ def test_another_registered_producer_cannot_claim_core_family() -> None:
     other.update(producer="test-other", source_roots=["services/test-other/contracts/"])
     other["contracts"][0]["family"] = "test.other"
     value["producers"].append(other)
-    with pytest.raises(ContractError, match="PRODUCER_AUTHORITY_MISMATCH"):
+    with pytest.raises(ContractError, match="PRODUCER_AUTHORITY_CONFLICT"):
         ProducerAuthorities(value).validate(
             replace(declaration(), canonical_producer="test-other")
         )
