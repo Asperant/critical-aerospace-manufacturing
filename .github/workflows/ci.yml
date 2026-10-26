@@ -9,8 +9,8 @@
 # `ci-gate` is the single required check: it fails unless every T1 job ran and
 # succeeded, so a skipped or missing job can never count as a pass (§181–184).
 #
-# The existing `projectctl` workflow stays unchanged: Plane transition policy
-# (tools/host/plane-transition) binds to its job and step names.
+# The required `projectctl` PR context is the bounded fast lane. Full projectctl
+# regression runs in projectctl-full-regression on main/nightly/manual lanes.
 name: ci
 
 on:
@@ -36,7 +36,7 @@ jobs:
   static:
     name: t1-static
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
         with:
@@ -93,10 +93,15 @@ jobs:
         run: uv run --project ci --locked python -m pytest ci/tests -p pytest_quarantine
       - name: Test strategy conformance (WP-TEST-001)
         run: uv run --project ci --locked python ci/scripts/check_test_strategy.py
+      - name: Projectctl changed-scope regressions (PR)
+        if: github.event_name == 'pull_request'
+        env:
+          FAST_GATE_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          # Scope selector maps changed sources to tools/projectctl/tests and related suites.
+          timeout --signal=TERM 180s python ci/scripts/fast_scope_tests.py
       - name: Consumer framework pure checks (WP-EVT-003)
         run: uv run --project ci --locked python -m pytest -c packages/event-consumer/pyproject.toml packages/event-consumer/tests -m 'not integration' -q -p pytest_quarantine
-      - name: projectctl tests (quarantine-aware)
-        run: uv run --project ci --locked python -m pytest tools/projectctl/tests -q -p pytest_quarantine
       - name: Core pure domain tests and typing (WP-CORE-001)
         run: |
           uv run --project ci --locked python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests -m 'not integration' -q -p pytest_quarantine
@@ -178,12 +183,14 @@ jobs:
 
   integration:
     name: t1-integration
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
       PYTHONPATH: ci:ci/scripts
       CI_POSTGRES_IMAGE: postgres:18-alpine
       CORE_TEST_DISPOSABLE: "1"
+      CORE_STATUS_ARTIFACT: ${{ github.workspace }}/.ci-artifacts/core-migration-status.json
     steps:
       - uses: actions/checkout@v4
         with:
@@ -194,12 +201,20 @@ jobs:
         run: uv sync --project ci --locked
       - name: Start REAL PostgreSQL + NATS JetStream
         run: |
+          mkdir -p .ci-artifacts
           ci/scripts/integration_services.sh up
           ci/scripts/integration_services.sh env >> "$GITHUB_ENV"
       - name: Integration smoke (boundary mode REAL)
         run: uv run --project ci --locked python -m pytest ci/integration -m integration -p pytest_quarantine
       - name: Core initial migration and persistence (real PostgreSQL 18)
         run: uv run --project ci --locked python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests/persistence -m integration -q -p pytest_quarantine
+      - name: Upload Core migration status artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: core-migration-status
+          path: ${{ github.workspace }}/.ci-artifacts/core-migration-status.json
+          if-no-files-found: error
       - name: Consumer idempotency acceptance (REAL PostgreSQL and JetStream, WP-EVT-003)
         env:
           EVT_TEST_DISPOSABLE: "1"
@@ -260,18 +275,26 @@ jobs:
       - name: Require every T1 job to have run and succeeded
         env:
           NEEDS: ${{ toJSON(needs) }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           python3 - <<'PY'
           import json, os, sys
           needs = json.loads(os.environ["NEEDS"])
-          expected = {"static", "unit", "contract", "integration"}
+          event_name = os.environ["EVENT_NAME"]
+          expected = {"static", "unit", "contract"}
+          if event_name != "pull_request":
+              expected.add("integration")
           missing = sorted(expected - needs.keys())
-          failed = {k: v["result"] for k, v in sorted(needs.items()) if v["result"] != "success"}
+          failed = {
+              k: needs[k]["result"]
+              for k in sorted(expected)
+              if needs[k]["result"] != "success"
+          }
           for name in missing:
               print(f"MISSING     {name}")
           for name, result in failed.items():
               print(f"NOT SUCCESS {name}: {result}")
           if missing or failed:
               sys.exit(1)
-          print("PASS: all T1 jobs succeeded:", ", ".join(sorted(needs)))
+          print("PASS: all applicable T1 jobs succeeded:", ", ".join(sorted(expected)))
           PY

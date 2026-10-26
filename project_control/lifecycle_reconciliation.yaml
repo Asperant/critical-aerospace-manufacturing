@@ -33,3 +33,28 @@ cases:
     plan_sha256: bb3747e3404469ab886ee9d48c37761cc5c050df4fd6bd2fa41f62bcc8042061
     plan_approval_turn: 52958818-f252-43db-9d51-541cae2df24b
   change_record: CHG-031
+- case_id: RECON-WP-CORE-007-PR104
+  profile: asrin
+  wp_id: WP-CORE-007
+  pr: 104
+  pr_head_sha: 501b4408cd7e7f2f4ba24834edfc060a30649d6a
+  merge_sha: 4058f3268725359d4a8dcfbabb7fca78f5c9ae7f
+  parents:
+  - 31136f15da7e8847afc2eb74a19c95995a1383d4
+  changed_files: 17
+  scope_prefixes:
+  - services/manufacturing-core/
+  - evidence/WP-CORE-007/
+  targets:
+  - MERGED
+  - VALIDATING
+  validating_runs:
+  - run_id: 40252026266
+    workflow_path: .github/workflows/ci.yml
+  require_successful_runs: true
+  approvals:
+    scope_answer: fcacd0c9-120d-43d1-b1c3-47745195b4d1
+    control_id_exception: 288a928f-67a1-4acd-8ca7-29350bbc2a12
+    plan_sha256: bb3747e3404469ab886ee9d48c37761cc5c050df4fd6bd2fa41f62bcc8042061
+    plan_approval_turn: 52958818-f252-43db-9d51-541cae2df24b
+  change_record: CHG-031

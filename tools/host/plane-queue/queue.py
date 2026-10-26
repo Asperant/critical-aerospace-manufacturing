@@ -1,21 +1,25 @@
 #!/usr/bin/python3 -I
 """CTRL-HOST-002: fixed-project GET-only queue. No repository imports or writes."""
 import datetime
+import concurrent.futures
+import contextlib
 import fcntl
 import hashlib
 import html.parser
 import json
 import os
 import pwd
-from pathlib import Path
-import re
 import resource
 import signal
 import sys
+import threading
 import time
 import unicodedata
+import urllib.error
 import urllib.parse
 import urllib.request
+from pathlib import Path
+import re
 
 ROOT = Path('/etc/cap-plane-queue')
 ORIGIN = 'http://127.0.0.1:8080'
@@ -43,6 +47,18 @@ WP = re.compile(r'WP-[A-Z0-9]+-[0-9]{3}')
 # before health evaluation even started.
 REQUEST_INTERVAL = 0.9
 HEALTH_BUDGET_SECONDS = 4
+MAX_READ_WORKERS = 4
+PARALLEL_REQUEST_INTERVAL = REQUEST_INTERVAL / MAX_READ_WORKERS
+SNAPSHOT_CACHE_PATH = Path('/run/cap-plane-snapshot.json')
+SNAPSHOT_CACHE_SCHEMA = 'cap-plane-snapshot-v1'
+SNAPSHOT_CACHE_TTL_SECONDS = 60.0
+SOURCE_CACHE_TTL_SECONDS = 60.0
+SNAPSHOT_CACHE_MAX_BYTES = 8_000_000
+MAX_429_RETRIES = 2
+MAX_429_DELAY_SECONDS = 2.0
+CACHE_PATH = Path('/run/cap-plane-slot-release-v2.json')
+CACHE_SCHEMA = 'cap-slot-release-cache-v1'
+CACHE_MAX_BYTES = 2_000_000
 
 
 class Unsafe(Exception):
@@ -107,27 +123,69 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
         raise Unsafe()
 
 
+class RateLimiter:
+    """Bound aggregate read rate while allowing independent GETs to overlap."""
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.next_at = 0.0
+
+    def wait(self):
+        with self.lock:
+            now = time.monotonic()
+            delay = max(0.0, self.next_at - now)
+            self.next_at = max(now, self.next_at) + PARALLEL_REQUEST_INTERVAL
+        if delay:
+            time.sleep(delay)
+
+    def defer(self, delay):
+        """Pause aggregate reads after a server-side rate-limit response."""
+        require(delay >= 0)
+        with self.lock:
+            self.next_at = max(self.next_at, time.monotonic() + delay)
+
+
 class Reader:
-    def __init__(self, key):
+    def __init__(self, key, limiter=None):
         self.key = key
         self.opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
         self.last = 0
         self.calls = []
+        self.limiter = limiter
+        self.metrics = {'get_count': 0}
 
     def get(self, route, cursor=None):
         require(route in ROUTES)
         require(cursor is None or isinstance(cursor, str) and re.fullmatch(r'[A-Za-z0-9:_=.-]{1,128}', cursor))
         query = '' if cursor is None else '?' + urllib.parse.urlencode({'cursor': cursor})
-        time.sleep(max(0, REQUEST_INTERVAL - (time.monotonic() - self.last)))
-        self.last = time.monotonic()
         request = urllib.request.Request(ORIGIN + PREFIX + route + query,
                                         headers={'X-API-Key': self.key}, method='GET')
-        self.calls.append(('GET', route))
-        with self.opener.open(request, timeout=10) as response:
-            require(response.status == 200)
-            raw = response.read(8_000_001)
-            require(len(raw) <= 8_000_000)
-            return json.loads(raw, object_pairs_hook=unique)
+        for attempt in range(MAX_429_RETRIES + 1):
+            if self.limiter is None:
+                time.sleep(max(0, REQUEST_INTERVAL - (time.monotonic() - self.last)))
+                self.last = time.monotonic()
+            else:
+                self.limiter.wait()
+            self.calls.append(('GET', route))
+            self.metrics['get_count'] += 1
+            try:
+                with self.opener.open(request, timeout=10) as response:
+                    require(response.status == 200)
+                    raw = response.read(8_000_001)
+                    require(len(raw) <= 8_000_000)
+                    return json.loads(raw, object_pairs_hook=unique)
+            except urllib.error.HTTPError as exc:
+                if exc.code != 429 or attempt >= MAX_429_RETRIES:
+                    raise
+                retry_after = 0.0
+                if exc.headers is not None:
+                    with contextlib.suppress(ValueError, TypeError):
+                        retry_after = float(exc.headers.get('Retry-After', 0))
+                delay = min(MAX_429_DELAY_SECONDS,
+                            max(0.25 * (2 ** attempt), retry_after))
+                if self.limiter is not None:
+                    self.limiter.defer(delay)
+                else:
+                    self.last = time.monotonic() + delay
 
     def rows(self, route):
         result, seen = [], set()
@@ -137,7 +195,8 @@ class Reader:
             if isinstance(data, list):
                 page, more = data, False
             else:
-                require(isinstance(data, dict) and isinstance(data.get('results'), list))
+                if not isinstance(data, dict) or not isinstance(data.get('results'), list):
+                    raise Unsafe()
                 page, more = data['results'], data.get('next_page_results', False)
                 require(type(more) is bool)
             require(all(isinstance(row, dict) and isinstance(row.get('id'), str) for row in page))
@@ -147,27 +206,91 @@ class Reader:
                 if isinstance(data, dict) and 'total_count' in data:
                     require(data['total_count'] == len(result))
                 return result
+            require(isinstance(data, dict))
             cursor = data.get('next_cursor')
             require(isinstance(cursor, str) and cursor and cursor not in seen)
             seen.add(cursor)
         raise Unsafe()
 
 
-def snapshot(reader, catalog):
+def _read_routes(reader, routes, limiter=None):
+    """Read independent routes with bounded concurrency; preserve fake readers."""
+    routes = list(routes)
+    if not isinstance(reader, Reader):
+        return {route: reader.rows(route) for route in routes}
+    result, errors = {}, []
+    next_route = 0
+    state_lock = threading.Lock()
+
+    def worker():
+        nonlocal next_route
+        while True:
+            with state_lock:
+                if next_route >= len(routes):
+                    return
+                route = routes[next_route]
+                next_route += 1
+            try:
+                child = Reader(reader.key, limiter)
+                child.metrics = reader.metrics
+                result[route] = child.rows(route)
+            except BaseException as exc:
+                with state_lock:
+                    errors.append(exc)
+                return
+
+    workers = [threading.Thread(target=worker)
+               for _ in range(min(MAX_READ_WORKERS, len(routes)))]
+    for thread in workers:
+        thread.start()
+    for thread in workers:
+        thread.join()
+    if errors:
+        raise errors[0]
+    return result
+
+
+def populate_cycles(reader, rows, cycle_targets):
+    """Populate only the cycle membership needed by the selected work."""
+    cycle_targets = set(cycle_targets)
+    if not cycle_targets:
+        return
+    cycles = reader.rows('cycles/')
+    require({c['id']: c['name'] for c in cycles} ==
+            {identity: 'S' + str(n) for n, identity in CYCLES.items()})
+    by_id = {r['_id']: r for r in rows.values()}
+    found = set()
+    for n, identity in CYCLES.items():
+        memberships = reader.rows(f'cycles/{identity}/cycle-issues/')
+        for item in memberships:
+            require(item['id'] in by_id)
+            row = by_id[item['id']]
+            require(row['cycle'] is None)
+            row['cycle'] = 'S' + str(n)
+            if row['wp_id'] in cycle_targets:
+                found.add(row['wp_id'])
+        if found == cycle_targets:
+            break
+    require(found == cycle_targets)
+
+
+def snapshot(reader, catalog, cycle_targets=None):
     project = reader.get('')
     require(project.get('id') == PREFIX.split('/')[-2] and project.get('name') == 'Graduation Project'
             and project.get('identifier') == 'CAP')
-    members = reader.rows('members/')
+    limiter = reader.limiter if isinstance(reader, Reader) else None
+    route_rows = _read_routes(reader, ('members/', 'states/', 'labels/', 'issues/'), limiter)
+    members = route_rows['members/']
     for owner, identity, email in PEOPLE.values():
         require(len([m for m in members if m['id'] == identity and m.get('email', '').casefold() == email]) == 1)
         require(len([m for m in members if m.get('email', '').casefold() == email]) == 1)
-    states = reader.rows('states/')
+    states = route_rows['states/']
     require(len({s['name'] for s in states}) == len(states) and {s['name'] for s in states} == STATES)
     state_map = {s['id']: s['name'] for s in states}
-    labels = reader.rows('labels/')
+    labels = route_rows['labels/']
     require(len([x for x in labels if x['name'] == 'BLOCKED']) == 1)
     blocked_id = next(x['id'] for x in labels if x['name'] == 'BLOCKED')
-    issues = reader.rows('issues/')
+    issues = route_rows['issues/']
     rows = {}
     for item in issues:
         wp = item.get('external_id', '')
@@ -184,16 +307,58 @@ def snapshot(reader, catalog):
         rows[wp] = {'wp_id': wp, 'title': item['name'].split('] ', 1)[1], 'plane_state': state_map[item['state']],
                     'blocked': blocked_id in item['labels'], 'cycle': None, '_id': item['id'], '_profile': owner}
     require(set(rows) == set(catalog['owners']))
-    cycles = reader.rows('cycles/')
-    require({c['id']: c['name'] for c in cycles} == {identity: 'S' + str(n) for n, identity in CYCLES.items()})
-    by_id = {r['_id']: r for r in rows.values()}
-    for n, identity in CYCLES.items():
-        for item in reader.rows(f'cycles/{identity}/cycle-issues/'):
-            require(item['id'] in by_id)
-            row = by_id[item['id']]
-            require(row['cycle'] is None)
-            row['cycle'] = 'S' + str(n)
+    if cycle_targets is None:
+        cycle_targets = set(rows)
+    populate_cycles(reader, rows, cycle_targets)
     return rows
+
+
+def _read_snapshot_cache():
+    """Return only a fresh complete snapshot; expiry is fail-closed."""
+    try:
+        if not SNAPSHOT_CACHE_PATH.is_file() or SNAPSHOT_CACHE_PATH.stat().st_size > SNAPSHOT_CACHE_MAX_BYTES:
+            return None
+        value = json.loads(SNAPSHOT_CACHE_PATH.read_text())
+        if not isinstance(value, dict):
+            return None
+        captured = value.get('captured_at')
+        rows = value.get('rows')
+        if (value.get('schema') != SNAPSHOT_CACHE_SCHEMA or
+                not isinstance(captured, int | float) or
+                time.time() - captured < 0 or
+                time.time() - captured > SNAPSHOT_CACHE_TTL_SECONDS or
+                not isinstance(rows, dict)):
+            return None
+        return rows
+    except (OSError, ValueError, TypeError, AttributeError):
+        return None
+
+
+def _write_snapshot_cache(rows):
+    payload = json.dumps({'schema': SNAPSHOT_CACHE_SCHEMA,
+                          'captured_at': time.time(), 'rows': rows}, sort_keys=True)
+    if len(payload.encode()) > SNAPSHOT_CACHE_MAX_BYTES:
+        return
+    temporary = SNAPSHOT_CACHE_PATH.with_name(SNAPSHOT_CACHE_PATH.name + '.tmp')
+    try:
+        temporary.write_text(payload)
+        os.chmod(temporary, 0o600)
+        os.replace(temporary, SNAPSHOT_CACHE_PATH)
+    except OSError:
+        with contextlib.suppress(OSError):
+            temporary.unlink()
+
+
+def load_snapshot(reader, catalog, cycle_targets=None):
+    """Share one fresh Plane state snapshot across the complete queue run."""
+    if isinstance(reader, Reader):
+        cached = _read_snapshot_cache()
+        if cached is not None:
+            return cached, True
+    rows = snapshot(reader, catalog, cycle_targets)
+    if isinstance(reader, Reader):
+        _write_snapshot_cache(rows)
+    return rows, False
 
 
 def clean(text):
@@ -237,8 +402,148 @@ def select(profile, rows, deferred=None):
     return result
 
 
-def preflight(profile, key):
-    """Derived health (including deferred waits) from the installed resolver; None if unavailable."""
+def _slot_waits(profile, key, rows, auto=None, transition=None, policy=None):
+    """Read only verified slot releases; no preparation/evidence health work."""
+    if auto is None:
+        loader = __import__('importlib.machinery', fromlist=['SourceFileLoader']).SourceFileLoader(
+            'cap_auto_slots', '/usr/local/libexec/cap-auto-next.py')
+        spec = __import__('importlib.util', fromlist=['spec_from_loader']).spec_from_loader(loader.name, loader)
+        auto = __import__('importlib.util', fromlist=['module_from_spec']).module_from_spec(spec)
+        loader.exec_module(auto)
+    t = transition or auto.load_transition()
+    if policy is None:
+        policy = json.loads((ROOT / 'transition-policy.json').read_text())
+        t.verify_policy_sources(policy)
+    candidates = []
+    for row in rows.values():
+        if row.get('_profile') != profile or not row.get('blocked'):
+            continue
+        if row.get('plane_state') not in {'IN_PROGRESS', 'VALIDATING'}:
+            continue
+        wp = row['wp_id']
+        candidates.append((wp, row['plane_state']))
+    if not candidates:
+        return []
+    cache = _read_slot_cache()
+    cache_lock = threading.Lock()
+
+    gh = t.GitHub(profile)
+
+    def evaluate(candidate):
+        wp, state = candidate
+        try:
+            entry_key = f'{profile}:{wp}'
+            cached = cache.get(entry_key)
+            source = _cached_slot_source(cached, policy)
+            if source is None:
+                source = auto.semantic_slot_release_source(t, wp, profile, policy, gh)
+            if source is None:
+                return None
+            cached_proof = cached.get('proof') if isinstance(cached, dict) else None
+            if _cache_entry_matches(cached, source) and isinstance(cached_proof, dict):
+                proof = cached_proof
+            else:
+                proof = auto.semantic_slot_release_proof(
+                    t, wp, profile, policy, gh, source=source
+                )
+                if proof and proof.get('proof_fingerprint') == source['proof_fingerprint']:
+                    with cache_lock:
+                        cache[entry_key] = {
+                            'fingerprint': source['proof_fingerprint'],
+                            'proof': proof,
+                            'source': source,
+                            'source_captured_at': time.time(),
+                        }
+                        _write_slot_cache(cache)
+            if _cached_slot_source(cached, policy) is None:
+                with cache_lock:
+                    cache[entry_key] = dict(cache.get(entry_key) or {},
+                                           fingerprint=source['proof_fingerprint'],
+                                           source=source,
+                                           source_captured_at=time.time())
+                    _write_slot_cache(cache)
+        except Exception:
+            return None  # This WP remains visible; UNKNOWN never releases it.
+        if proof:
+            return {'wp_id': wp, 'state': state, 'blocked': True,
+                    'reason': proof['semantic_blocker_class']}
+        return None
+
+    waits = []
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=min(MAX_READ_WORKERS, len(candidates))
+    ) as pool:
+        futures = [pool.submit(evaluate, candidate) for candidate in candidates]
+        for future in concurrent.futures.as_completed(futures):
+            result = future.result()
+            if result:
+                waits.append(result)
+    return waits
+
+
+def _read_slot_cache():
+    try:
+        if not CACHE_PATH.is_file() or CACHE_PATH.stat().st_size > CACHE_MAX_BYTES:
+            return {}
+        value = json.loads(CACHE_PATH.read_text())
+        if value.get('schema') != CACHE_SCHEMA or not isinstance(value.get('entries'), dict):
+            return {}
+        return value['entries']
+    except (OSError, ValueError, TypeError, AttributeError):
+        return {}
+
+
+def _write_slot_cache(entries):
+    payload = json.dumps({'schema': CACHE_SCHEMA, 'entries': entries}, sort_keys=True)
+    if len(payload.encode()) > CACHE_MAX_BYTES:
+        return
+    temporary = CACHE_PATH.with_name(CACHE_PATH.name + '.tmp')
+    try:
+        temporary.write_text(payload)
+        os.chmod(temporary, 0o600)
+        os.replace(temporary, CACHE_PATH)
+    except OSError:
+        with contextlib.suppress(OSError):
+            temporary.unlink()
+
+
+def _cache_entry_matches(entry, source):
+    if not isinstance(entry, dict) or not isinstance(entry.get('proof'), dict):
+        return False
+    proof = entry['proof']
+    return (
+        entry.get('fingerprint') == source.get('proof_fingerprint')
+        and proof.get('proof_fingerprint') == source.get('proof_fingerprint')
+        and proof.get('schema') == 'cap-slot-release-v2'
+        and proof.get('wp_id') == source.get('wp_id', proof.get('wp_id'))
+        and proof.get('local_actionable_work') == 'NONE'
+        and proof.get('implementation_persisted') is True
+        and proof.get('semantic_blocker_id') == source.get('semantic_blocker_id')
+        and proof.get('semantic_blocker_class') == source.get('semantic_blocker_class')
+        and proof.get('relevant_scope_digest') == source.get('scope')
+    )
+
+
+def _cached_slot_source(entry, policy):
+    """Reuse only a recent, policy-bound source context; expiry is UNKNOWN."""
+    if not isinstance(entry, dict) or not isinstance(entry.get('source'), dict):
+        return None
+    captured = entry.get('source_captured_at')
+    if not isinstance(captured, int | float):
+        return None
+    age = time.time() - captured
+    if age < 0 or age > SOURCE_CACHE_TTL_SECONDS:
+        return None
+    source = entry['source']
+    if source.get('policy_digest') != policy.get('policy_digest'):
+        return None
+    if source.get('proof_fingerprint') != entry.get('fingerprint'):
+        return None
+    return source
+
+
+def preflight(profile, key, rows=None):
+    """Return verified slot releases even when derived health is unavailable."""
     try:
         loader=__import__('importlib.machinery',fromlist=['SourceFileLoader']).SourceFileLoader('cap_auto_health','/usr/local/libexec/cap-auto-next.py')
         spec=__import__('importlib.util',fromlist=['spec_from_loader']).spec_from_loader(loader.name,loader)
@@ -247,7 +552,12 @@ def preflight(profile, key):
         t=auto.load_transition()
         policy=json.loads((ROOT/'transition-policy.json').read_text())
         t.verify_policy_sources(policy)
-        return auto.owner_health(t,profile,policy,t.Plane(key),t.GitHub)
+        waits = _slot_waits(profile, key, rows if rows is not None else {}, auto, t, policy)
+        # Selection consumes only these verified proofs. Full preparation health
+        # is advisory and may be too slow for the queue's bounded read budget.
+        return {'health': 'UNAVAILABLE', 'prepared_next': None,
+                'first_blocker': {'reason': 'PREFLIGHT_SOURCE_UNAVAILABLE'},
+                'deferred_waits': waits}
     except Exception:
         return None
 
@@ -281,7 +591,7 @@ class HealthTimeout(Exception):
     pass
 
 
-def bounded_preflight(profile, key):
+def bounded_preflight(profile, key, rows=None):
     """Health is advisory; it must not turn a live queue read into a hang."""
     def alarm_handler(signum, frame):
         raise HealthTimeout()
@@ -289,7 +599,7 @@ def bounded_preflight(profile, key):
     previous = signal.signal(signal.SIGALRM, alarm_handler)
     signal.setitimer(signal.ITIMER_REAL, HEALTH_BUDGET_SECONDS)
     try:
-        return preflight(profile, key)
+        return preflight(profile, key) if rows is None else preflight(profile, key, rows)
     except (HealthTimeout, TimeoutError, OSError):
         return None
     finally:
@@ -316,9 +626,22 @@ def main():
         with os.fdopen(fd, 'r+') as lock:
             require(os.fstat(lock.fileno()).st_uid == 0)
             fcntl.flock(lock, fcntl.LOCK_EX)
-            time.sleep(1.25)
-            rows = snapshot(Reader(key), catalog)
-            result = combine(profile, rows, bounded_preflight(profile, key))
+            reader = Reader(key, RateLimiter())
+            # Cycle membership is presentation data. Read the authoritative
+            # issue/state snapshot once, then resolve a cycle only for the
+            # single task selected by the local queue decision.
+            rows, snapshot_cached = load_snapshot(reader, catalog, set())
+            health = bounded_preflight(profile, key, rows)
+            result = combine(profile, rows, health)
+            task = result.get('current_task') or result.get('next_task')
+            if isinstance(task, dict) and isinstance(task.get('wp_id'), str):
+                selected = rows.get(task['wp_id'])
+                if selected is not None and selected.get('cycle') is None:
+                    populate_cycles(reader, rows, {task['wp_id']})
+                    _write_snapshot_cache(rows)
+                    result = combine(profile, rows, health)
+            result['plane_gets'] = reader.metrics['get_count']
+            result['plane_snapshot_cached'] = snapshot_cached
             if result['status']=='BLOCKED':
                 result['reason']='ACTIVE_BLOCKER; accountable reason unavailable from live label alone'
                 task=result['current_task'] or result['next_task']

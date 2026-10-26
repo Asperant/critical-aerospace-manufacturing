@@ -843,6 +843,84 @@ class ExternalIntegrationWaitTests(unittest.TestCase):
         )
         self.assertTrue(gh.artifacts)
 
+    def test_slot_release_v2_uses_latest_semantics_not_legacy_reason_chain(self):
+        wp, policy, plane, gh, previous = self.fixture()
+        scope = policy["scope_projections"][wp]
+        gh.comment["body"] = self.body(
+            **{
+                "Canonical main revision": self.REVISION,
+                "Local actionable work": "NONE",
+                "Implementation persisted": "YES",
+                "Relevant scope digest": scope,
+                "Semantic blocker ID": "CORE-LEGACY-EXT-001",
+                "Semantic blocker class": "WAITING_EXTERNAL_INTEGRATION_BINDINGS",
+            }
+        )
+        again = dict(
+            previous,
+            result="UNCHANGED",
+            reason="Current semantic assessment: external binding details refreshed.",
+            evidence_refs=["comment:6367332807"],
+            active_blocker_audit_id=previous["audit_id"],
+        )
+        again["audit_id"] = t.audit_identity(again)
+        with (
+            patch.object(t, "last_blocker", return_value=previous),
+            patch.object(t, "blocker_rows", return_value=[previous, again]),
+        ):
+            proof = auto.semantic_slot_release_proof(t, wp, "asrin", policy, gh)
+        self.assertIsNotNone(proof)
+        assert proof is not None
+        self.assertEqual(proof["semantic_blocker_id"], "CORE-LEGACY-EXT-001")
+        self.assertFalse(
+            resolver.occupies_implementation_slot(
+                wp,
+                {
+                    "owner": "Asrın Dündar",
+                    "state": "IN_PROGRESS",
+                    "blocked": True,
+                    "slot_release_v2": proof,
+                },
+            )
+        )
+
+    def test_slot_release_v2_proof_reuses_verified_source_context(self):
+        wp, policy, plane, gh, previous = self.fixture()
+        scope = policy["scope_projections"][wp]
+        gh.comment["body"] = self.body(
+            **{
+                "Canonical main revision": self.REVISION,
+                "Local actionable work": "NONE",
+                "Implementation persisted": "YES",
+                "Relevant scope digest": scope,
+                "Semantic blocker ID": "CORE-LEGACY-EXT-001",
+                "Semantic blocker class": "WAITING_EXTERNAL_INTEGRATION_BINDINGS",
+            }
+        )
+        again = dict(
+            previous,
+            result="UNCHANGED",
+            reason="refreshed semantic assessment",
+            evidence_refs=["comment:6367332807"],
+            active_blocker_audit_id=previous["audit_id"],
+        )
+        again["audit_id"] = t.audit_identity(again)
+        with (
+            patch.object(t, "last_blocker", return_value=previous),
+            patch.object(t, "blocker_rows", return_value=[previous, again]),
+        ):
+            source = auto.semantic_slot_release_source(t, wp, "asrin", policy, gh)
+            self.assertIsNotNone(source)
+            with patch.object(
+                auto,
+                "semantic_slot_release_source",
+                side_effect=AssertionError("refetched"),
+            ):
+                proof = auto.semantic_slot_release_proof(
+                    t, wp, "asrin", policy, gh, source=source
+                )
+        self.assertIsNotNone(proof)
+
     def test_owner_executable_or_incomplete_assessment_keeps_slot(self):
         for name, value in (
             ("Owner-executable implementation work", "REMAINING"),
@@ -1293,6 +1371,12 @@ class SlotReleaseV2Tests(unittest.TestCase):
         self.assertEqual(
             resolver.released_wait("WP-CORE-005", rows["b"]),
             "WAITING_EXTERNAL_INTEGRATION_BINDINGS",
+        )
+        self.assertFalse(
+            resolver.occupies_implementation_slot("WP-CORE-004", rows["a"])
+        )
+        self.assertFalse(
+            resolver.occupies_implementation_slot("WP-CORE-005", rows["b"])
         )
 
 

@@ -353,10 +353,13 @@ class PolicyTests(unittest.TestCase):
         contexts = {
             "WP-SIM-001": {
                 "work_package": {"primary_owner": {"canonical_name": "Batuhan Kaya"}}
-            }
+            },
+            "WP-CORE-007": {
+                "work_package": {"primary_owner": {"canonical_name": "Asrın Dündar"}}
+            },
         }
         r.validate_policy(block, contexts, dict(t.q.PEOPLE))
-        (case,) = block["cases"]
+        case = next(case for case in block["cases"] if case["wp_id"] == "WP-SIM-001")
         self.assertEqual(
             (case["profile"], case["wp_id"], case["pr"], case["changed_files"]),
             ("batuhan", "WP-SIM-001", 52, 131),
@@ -373,6 +376,11 @@ class PolicyTests(unittest.TestCase):
             [x["run_id"] for x in case["validating_runs"]], [40099331443, 40099331483]
         )
         self.assertTrue(case["require_successful_runs"])
+        core = next(case for case in block["cases"] if case["wp_id"] == "WP-CORE-007")
+        self.assertEqual(
+            (core["profile"], core["pr"], core["merge_sha"]),
+            ("asrin", 104, "4058f3268725359d4a8dcfbabb7fca78f5c9ae7f"),
+        )
 
 
 class ReconcileFlowTests(unittest.TestCase):
@@ -435,6 +443,24 @@ class ReconcileFlowTests(unittest.TestCase):
 
         denied(self, "ACTIVE_BLOCKER_UNRESOLVED", mutate=block)
         denied(self, "ACTIVE_BLOCKER_UNRESOLVED", source="VALIDATING", mutate=block)
+
+    def test_blocked_in_progress_reconciles_to_validating_without_clearing_blocker(
+        self,
+    ):
+        result, plane, logs, _ = run_case(
+            source="IN_PROGRESS",
+            mutate=lambda policy, item, gh, env: item.item["labels"].append(
+                item.blocked
+            ),
+        )
+        self.assertEqual(result["result"], "VERIFIED")
+        self.assertEqual(plane.patches, [{"state": "VALIDATING"}])
+        self.assertIn(plane.blocked, plane.item["labels"])
+        self.assertTrue(logs[-1]["blocked_preserved"])
+        self.assertEqual(
+            (logs[-1]["from_state"], logs[-1]["to_state"]),
+            ("IN_PROGRESS", "VALIDATING"),
+        )
 
     def test_unsupported_targets_and_arguments_are_rejected(self):
         policy, plane, gh = make_policy(), FakePlane("READY"), FakeGH()
@@ -865,6 +891,19 @@ class OwnerQueueTests(unittest.TestCase):
         )
         self.assertEqual(result["result"], "UNCHANGED")
         self.assertEqual((plane.patches, plane.refreshes), ([], 0))
+
+    def test_only_verified_slot_release_can_remove_a_blocked_queue_conflict(self):
+        plane = FakePlane("READY")
+        blocked = other_row("WP-OTHER-001", "IN_PROGRESS")
+        blocked["labels"] = [plane.blocked]
+        plane.items.append(blocked)
+        self.assertEqual(
+            r.owner_queue_conflicts(plane, PROFILE, plane.item), ["WP-OTHER-001"]
+        )
+        self.assertEqual(
+            r.owner_queue_conflicts(plane, PROFILE, plane.item, {"WP-OTHER-001"}),
+            [],
+        )
 
     def test_a_conflict_appearing_before_the_write_blocks_it(self):
         def appears(policy, plane, gh, env):

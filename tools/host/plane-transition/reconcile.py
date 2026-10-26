@@ -10,7 +10,9 @@ AUTO_NEXT. CAP_PROFILE is an operational guard, not a security boundary.
 
 Only MERGED or VALIDATING can be requested. The only mutation is the constructed
 state PATCH of the existing Plane adapter, preceded by a durable INTENT audit row
-and followed by a fresh exact readback. The ordinary cap-plane-transition rules
+and followed by a fresh exact readback. A merged PR may reconcile an already
+blocked IN_PROGRESS item directly to VALIDATING; the BLOCKED label is preserved
+and the blocker is never cleared. The ordinary cap-plane-transition rules
 (adjacent edges, open-PR predicates) are unchanged.
 """
 
@@ -462,7 +464,9 @@ def stable(facts: dict) -> dict:
     return {**facts, "merge": merge}
 
 
-def owner_queue_conflicts(plane: Any, profile: str, item: dict) -> list[str]:
+def owner_queue_conflicts(
+    plane: Any, profile: str, item: dict, released: set[str] | None = None
+) -> list[str]:
     """Other READY or IN_PROGRESS items of the same owner; read-only, selects nothing.
 
     More than one current or next candidate is the ambiguous queue that needs a
@@ -470,13 +474,59 @@ def owner_queue_conflicts(plane: Any, profile: str, item: dict) -> list[str]:
     """
     member = t.q.PEOPLE[profile][1]
     active = {plane.states[name] for name in OWNER_QUEUE_STATES}
+    released = released or set()
     return sorted(
         str(row.get("external_id") or row.get("id"))
         for row in plane.items
         if row.get("id") != item["id"]
         and member in (row.get("assignees") or [])
         and row.get("state") in active
+        and str(row.get("external_id") or row.get("id")) not in released
     )
+
+
+def verified_slot_releases(
+    plane: Any, profile: str, item: dict, policy: dict, gh: Any
+) -> set[str]:
+    """Return only live-proven blocked waits that no longer occupy the slot.
+
+    Slot Release v2 is a derived scheduler property, not a Plane state. Reconciliation
+    may use it only for other blocked queue entries and only after the same semantic
+    proof used by AUTO_NEXT has been freshly evaluated. Any unavailable proof leaves
+    the entry as a conflict.
+    """
+    member = t.q.PEOPLE[profile][1]
+    candidates = [
+        row
+        for row in plane.items
+        if row.get("id") != item["id"]
+        and member in (row.get("assignees") or [])
+        and row.get("state") == plane.states["IN_PROGRESS"]
+        and plane.blocked in (row.get("labels") or [])
+        and isinstance(row.get("external_id"), str)
+    ]
+    if not candidates:
+        return set()
+    try:
+        loader = importlib.machinery.SourceFileLoader(
+            "cap_auto_slots", "/usr/local/libexec/cap-auto-next.py"
+        )
+        spec = importlib.util.spec_from_loader(loader.name, loader)
+        assert spec is not None
+        auto: Any = importlib.util.module_from_spec(spec)
+        loader.exec_module(auto)
+        auto.t = t
+        auto.resolver = auto.load_resolver()
+        released = set()
+        for row in candidates:
+            proof = auto.semantic_slot_release_proof(
+                t, row["external_id"], profile, policy, gh
+            )
+            if proof:
+                released.add(row["external_id"])
+        return released
+    except Exception:
+        return set()
 
 
 def reconcile(
@@ -500,11 +550,22 @@ def reconcile(
         plane, profile, wp, policy
     )  # unique canonical mapping, owner, assignee
     source = plane.names[item["state"]]
-    need(plane.blocked not in item["labels"], "ACTIVE_BLOCKER_UNRESOLVED")
+    blocked = plane.blocked in item["labels"]
+    blocked_post_merge = source == "IN_PROGRESS" and target == "VALIDATING" and blocked
+    # CHG-018 keeps ordinary transition guards intact. This narrowly scoped recovery
+    # path only repairs a missed post-merge lifecycle edge and deliberately retains
+    # the active blocker for downstream validation.
+    need(not blocked or blocked_post_merge, "ACTIVE_BLOCKER_UNRESOLVED")
     need(source == target or source in SOURCES, "SOURCE_STATE_NOT_RECONCILABLE")
     if source != target:
         # A no-op is exempt: after a reconcile the owner normally has a next READY item.
-        need(not owner_queue_conflicts(plane, profile, item), "OWNER_QUEUE_CONFLICT")
+        conflicts = owner_queue_conflicts(plane, profile, item)
+        if conflicts:
+            released = verified_slot_releases(plane, profile, item, policy, gh)
+            need(
+                not owner_queue_conflicts(plane, profile, item, released),
+                "OWNER_QUEUE_CONFLICT",
+            )
     facts = gather(gh, case, profile, wp, target)
     stamp = (now or t.now)()
     record = {
@@ -529,6 +590,8 @@ def reconcile(
         outstanding=list(OUTSTANDING),
         skipped_state_history_not_asserted=True,
     )
+    if blocked_post_merge:
+        record["blocked_preserved"] = True
     if source == target:
         # Verified idempotence: facts are re-proved, nothing is written, no PATCH replay.
         need(plane.issue(item["id"]) == item, "CONCURRENT_PLANE_CHANGE")
@@ -540,8 +603,9 @@ def reconcile(
     )  # recheck GitHub immediately before writing
     need(stable(again) == stable(facts), "CONCURRENT_GITHUB_CHANGE")
     plane.refresh_items()  # fresh queue snapshot immediately before writing
+    released = verified_slot_releases(plane, profile, item, policy, gh)
     need(
-        not owner_queue_conflicts(plane, profile, item),
+        not owner_queue_conflicts(plane, profile, item, released),
         "CONCURRENT_OWNER_QUEUE_CHANGE",
     )
     # The final Plane read comes last, after every slower GitHub read, so a change made

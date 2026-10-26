@@ -1,0 +1,11 @@
+{
+  "schema_version": "cap.db-role-matrix/v1",
+  "schemas": {
+    "core": {"owner_role_env": "CORE_MIGRATION_ROLE", "runtime_role_env": "CORE_RUNTIME_ROLE"},
+    "twin": {"owner_role_env": "TWIN_MIGRATION_ROLE", "runtime_role_env": "TWIN_RUNTIME_ROLE"},
+    "automation": {"owner_role_env": "AUTOMATION_MIGRATION_ROLE", "runtime_role_env": "AUTOMATION_RUNTIME_ROLE"},
+    "ai": {"owner_role_env": "AI_MIGRATION_ROLE", "runtime_role_env": "AI_RUNTIME_ROLE"}
+  },
+  "cross_schema_access": "DENY_BY_DEFAULT",
+  "role_creation": "EXTERNAL_PLATFORM_BOUNDARY"
+}

@@ -1,11 +1,18 @@
-"""Single initial SQL migration; does not choose shared platform/CD tooling."""
+"""Versioned Core migration runner with inspectable status and checksums."""
 
 import hashlib
+import json
 import os
 import sys
+from dataclasses import asdict, dataclass
 from importlib.resources import files
+from pathlib import Path
+from typing import Any, cast
 
-from psycopg import sql
+from alembic import command
+from alembic.config import Config
+from psycopg.conninfo import conninfo_to_dict
+from sqlalchemy.engine import URL
 
 from manufacturing_core.database import connect, require_restricted_role
 
@@ -20,6 +27,47 @@ TABLES = (
 )
 
 
+def sqlalchemy_url(dsn: str) -> str:
+    """Convert either libpq keyword DSNs or URLs without string interpolation."""
+    if dsn.startswith("postgresql://"):
+        return dsn.replace("postgresql://", "postgresql+psycopg://", 1)
+    if dsn.startswith("postgres://"):
+        return dsn.replace("postgres://", "postgresql+psycopg://", 1)
+    fields = conninfo_to_dict(dsn)
+
+    def field(name: str) -> str | None:
+        value = fields.get(name)
+        return value if isinstance(value, str) else None
+
+    port_value = field("port")
+    url_create = cast(Any, URL).create
+    return url_create(
+        "postgresql+psycopg",
+        username=field("user"),
+        password=field("password"),
+        host=field("host"),
+        port=int(port_value) if port_value is not None else None,
+        database=field("dbname"),
+    ).render_as_string(hide_password=False)
+
+
+@dataclass(frozen=True)
+class MigrationStatus:
+    version: str
+    sha256: str
+    runtime_role: str
+
+
+def status(dsn: str) -> list[MigrationStatus]:
+    """Read the migration ledger without changing database state."""
+    with connect(dsn) as conn:
+        ledger = conn.execute(
+            "SELECT version, sha256, runtime_role FROM core.schema_migration "
+            "ORDER BY version"
+        ).fetchall()
+    return [MigrationStatus(**row) for row in ledger]
+
+
 def migrate(dsn: str, runtime_role: str) -> bool:
     """Return True on application, False on checksum-verified replay.
 
@@ -31,59 +79,56 @@ def migrate(dsn: str, runtime_role: str) -> bool:
         files("manufacturing_core").joinpath("migrations/0001_domain.sql").read_text()
     )
     digest = hashlib.sha256(source.encode()).hexdigest()
-    with connect(dsn) as conn, conn.transaction():
-        conn.execute("SELECT pg_catalog.pg_advisory_xact_lock(731001)")
-        require_restricted_role(conn, runtime_role)
-        if runtime_role == conn.info.user:
+    with connect(dsn) as preflight, preflight.transaction():
+        preflight.execute("SELECT pg_catalog.pg_advisory_xact_lock(731001)")
+        require_restricted_role(preflight, runtime_role)
+        if runtime_role == preflight.info.user:
             raise ValueError("migration and runtime roles must differ")
-        member = conn.execute(
+        member = preflight.execute(
             "SELECT pg_catalog.pg_has_role(%s, current_user, 'MEMBER') AS member",
             (runtime_role,),
         ).fetchone()
         if member is None or member["member"]:
             raise ValueError("runtime must not inherit the migration identity")
-        schema = conn.execute(
+        schema = preflight.execute(
             "SELECT pg_catalog.pg_get_userbyid(nspowner) AS owner "
             "FROM pg_catalog.pg_namespace WHERE nspname = 'core'"
         ).fetchone()
-        if schema is not None and schema["owner"] != conn.info.user:
+        if schema is not None and schema["owner"] != preflight.info.user:
             raise ValueError("Core schema has an unexpected owner")
-        ledger = conn.execute(
+        ledger_ref = preflight.execute(
             "SELECT to_regclass('core.schema_migration') AS ledger"
         ).fetchone()
-        if ledger is None:
-            raise ValueError("migration catalog unavailable")
-        if ledger["ledger"]:
-            applied = conn.execute(
-                "SELECT version, sha256, runtime_role FROM core.schema_migration"
+        ledger = (
+            preflight.execute(
+                "SELECT version, sha256, runtime_role FROM core.schema_migration "
+                "ORDER BY version"
             ).fetchall()
-            if applied != [
+            if ledger_ref is not None and ledger_ref["ledger"]
+            else []
+        )
+        if ledger:
+            if ledger != [
                 {"version": VERSION, "sha256": digest, "runtime_role": runtime_role}
             ]:
                 raise ValueError("migration ledger/version/checksum mismatch")
             return False
-        conn.execute(source.encode())
-        conn.execute(
-            "INSERT INTO core.schema_migration VALUES (%s, %s, %s)",
-            (VERSION, digest, runtime_role),
-        )
-        conn.execute(
-            sql.SQL("GRANT USAGE ON SCHEMA core TO {}").format(
-                sql.Identifier(runtime_role)
-            )
-        )
-        for table in TABLES:
-            conn.execute(
-                sql.SQL("GRANT SELECT, INSERT ON TABLE core.{} TO {}").format(
-                    sql.Identifier(table), sql.Identifier(runtime_role)
-                )
-            )
-        return True
+    config = Config(str(Path(__file__).resolve().parents[2] / "alembic.ini"))
+    config.set_main_option("sqlalchemy.url", sqlalchemy_url(dsn))
+    config.attributes["runtime_role"] = runtime_role
+    command.upgrade(config, "head")
+    return True
 
 
 def main() -> int:
     try:
-        migrate(os.environ["CORE_MIGRATION_DSN"], os.environ["CORE_RUNTIME_ROLE"])
+        dsn = os.environ["CORE_MIGRATION_DSN"]
+        if "--status" in sys.argv[1:]:
+            print(
+                json.dumps([asdict(record) for record in status(dsn)], sort_keys=True)
+            )
+            return 0
+        migrate(dsn, os.environ["CORE_RUNTIME_ROLE"])
     except Exception:
         # Connection exceptions may contain DSNs. Never print credentials.
         print(
@@ -91,7 +136,7 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
-    print("Core initial migration verified")
+    print("Core migration verified")
     return 0
 
 

@@ -1,11 +1,14 @@
 """Host helper security/queue regression checks; no network or credentials."""
 import ast
 import contextlib
+from email.message import Message
 import importlib.util
 import io
 import json
 from pathlib import Path
 import subprocess
+import time
+import urllib.error
 import unittest
 from unittest.mock import patch
 
@@ -74,6 +77,45 @@ class QueueTests(unittest.TestCase):
         self.assertTrue(request.full_url.startswith(q.ORIGIN + q.PREFIX + 'issues/?cursor='))
         self.assertFalse(hasattr(reader, 'post'))
 
+    def test_429_retries_are_bounded_and_backed_off(self):
+        class Response:
+            status = 200
+            def __enter__(self): return self
+            def __exit__(self, *args): pass
+            def read(self, limit): return b'[]'
+        headers = Message()
+        headers['Retry-After'] = '0'
+        errors = [urllib.error.HTTPError('http://plane', 429, 'busy', headers, None),
+                  urllib.error.HTTPError('http://plane', 429, 'busy', headers, None)]
+        reader = q.Reader('sentinel-secret', q.RateLimiter())
+        with patch.object(reader.opener, 'open', side_effect=errors + [Response()]) as opened, \
+             patch.object(q.time, 'sleep') as sleep:
+            self.assertEqual(reader.get('issues/'), [])
+        self.assertEqual(opened.call_count, 3)
+        self.assertEqual(sleep.call_count, 2)
+        self.assertEqual(reader.metrics['get_count'], 3)
+
+    def test_expired_snapshot_is_never_reused(self):
+        rows = {'a': task()}
+        with patch.object(q, 'SNAPSHOT_CACHE_PATH', Path('/tmp/cap-plane-test-snapshot.json')):
+            q.SNAPSHOT_CACHE_PATH.unlink(missing_ok=True)
+            q._write_snapshot_cache(rows)
+            value = json.loads(q.SNAPSHOT_CACHE_PATH.read_text())
+            value['captured_at'] = time.time() - q.SNAPSHOT_CACHE_TTL_SECONDS - 1
+            q.SNAPSHOT_CACHE_PATH.write_text(json.dumps(value))
+            self.assertIsNone(q._read_snapshot_cache())
+            q.SNAPSHOT_CACHE_PATH.unlink(missing_ok=True)
+
+    def test_fresh_snapshot_is_shared_without_a_second_plane_read(self):
+        rows = {'a': task()}
+        reader = q.Reader('sentinel-secret')
+        with patch.object(q, '_read_snapshot_cache', return_value=rows), \
+             patch.object(q, 'snapshot') as read:
+            actual, cached = q.load_snapshot(reader, {'owners': {}})
+        self.assertTrue(cached)
+        self.assertEqual(actual, rows)
+        read.assert_not_called()
+
     def test_snapshot_pacing_fits_operator_budget(self):
         # The normal snapshot has 18 bounded GETs; the pacing budget must not
         # exceed the documented 20-second operator timeout by itself.
@@ -82,6 +124,77 @@ class QueueTests(unittest.TestCase):
     def test_health_timeout_is_advisory(self):
         with patch.object(q, 'preflight', side_effect=TimeoutError('sentinel')):
             self.assertIsNone(q.bounded_preflight('asrin', 'sentinel-secret'))
+
+    def test_slot_release_cache_reuses_only_matching_fingerprint(self):
+        source = {
+            'wp_id': 'WP-CORE-004',
+            'proof_fingerprint': 'f' * 64,
+            'semantic_blocker_id': 'CORE-004-EXT',
+            'semantic_blocker_class': 'WAITING_EXTERNAL_INTEGRATION_BINDINGS',
+            'scope': 's' * 64,
+        }
+        proof = {
+            'schema': 'cap-slot-release-v2',
+            'wp_id': 'WP-CORE-004',
+            'local_actionable_work': 'NONE',
+            'implementation_persisted': True,
+            'semantic_blocker_id': source['semantic_blocker_id'],
+            'semantic_blocker_class': source['semantic_blocker_class'],
+            'relevant_scope_digest': source['scope'],
+            'proof_fingerprint': source['proof_fingerprint'],
+        }
+        entry = {'fingerprint': source['proof_fingerprint'], 'proof': proof}
+        self.assertTrue(q._cache_entry_matches(entry, source))
+        changed = dict(source, proof_fingerprint='0' * 64)
+        self.assertFalse(q._cache_entry_matches(entry, changed))
+        changed_scope = dict(source, scope='0' * 64)
+        self.assertFalse(q._cache_entry_matches(entry, changed_scope))
+
+    def test_slot_source_cache_is_ttl_and_policy_bound(self):
+        source = {'proof_fingerprint': 'f' * 64, 'policy_digest': 'p'}
+        entry = {'source': source, 'fingerprint': source['proof_fingerprint'],
+                 'source_captured_at': time.time()}
+        self.assertEqual(q._cached_slot_source(entry, {'policy_digest': 'p'}), source)
+        self.assertIsNone(q._cached_slot_source(entry, {'policy_digest': 'changed'}))
+        self.assertIsNone(q._cached_slot_source(
+            dict(entry, fingerprint='changed'), {'policy_digest': 'p'}
+        ))
+        self.assertEqual(q.SNAPSHOT_CACHE_TTL_SECONDS, 60.0)
+        self.assertEqual(q.SOURCE_CACHE_TTL_SECONDS, 60.0)
+        expired = dict(entry, source_captured_at=time.time() - q.SOURCE_CACHE_TTL_SECONDS - 1)
+        self.assertIsNone(q._cached_slot_source(expired, {'policy_digest': 'p'}))
+
+    def test_unavailable_health_keeps_verified_slot_releases(self):
+        rows = {
+            'a': task('WP-CORE-004', 'VALIDATING', blocked=True),
+            'b': task('WP-CORE-005', 'IN_PROGRESS', blocked=True),
+            'c': task('WP-UI-001', 'READY'),
+        }
+        health = {
+            'health': 'UNAVAILABLE',
+            'prepared_next': None,
+            'first_blocker': {'reason': 'PREFLIGHT_SOURCE_UNAVAILABLE'},
+            'deferred_waits': [
+                {'wp_id': 'WP-CORE-004', 'reason': 'WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE'},
+                {'wp_id': 'WP-CORE-005', 'reason': 'WAITING_EXTERNAL_INTEGRATION_BINDINGS'},
+            ],
+        }
+        result = q.combine('asrin', rows, health)
+        self.assertEqual(result['status'], 'OK')
+        self.assertEqual(result['next_task']['wp_id'], 'WP-UI-001')
+        self.assertEqual(result['health'], 'UNAVAILABLE')
+
+    def test_unknown_slot_proof_does_not_hide_wp(self):
+        rows = {
+            'a': task('WP-CORE-004', 'IN_PROGRESS', blocked=True),
+            'b': task('WP-CORE-005', 'IN_PROGRESS', blocked=True),
+        }
+        health = {'health': 'UNAVAILABLE', 'prepared_next': None,
+                  'first_blocker': {'reason': 'PREFLIGHT_SOURCE_UNAVAILABLE'},
+                  'deferred_waits': []}
+        result = q.combine('asrin', rows, health)
+        self.assertEqual(result['status'], 'AMBIGUOUS')
+        self.assertEqual(result['candidate_wp_ids'], ['WP-CORE-004', 'WP-CORE-005'])
 
     def test_response_bounds_and_redirects_fail_closed(self):
         class Response:
@@ -154,6 +267,34 @@ class QueueTests(unittest.TestCase):
         issue['assignees'] = [people[0][1]]
         data['issues/'].append(issue)
         with self.assertRaises(q.Unsafe): q.snapshot(Fake(), catalog)
+
+    def test_snapshot_can_defer_cycle_reads_until_selection(self):
+        people = list(q.PEOPLE.values())
+        catalog = {'owners': {'WP-GOV-001': 'Asrın Dündar'}}
+        issue = {'id': 'issue', 'external_id': 'WP-GOV-001', 'external_source': 'projectctl',
+                 'name': '[WP-GOV-001] Title',
+                 'description_html': json.dumps({'canonical_wp_id': 'WP-GOV-001',
+                                                 'canonical_owner': 'Asrın Dündar'}),
+                 'assignees': [people[0][1]], 'state': 'READY', 'labels': []}
+        data = {'members/': [{'id': p[1], 'email': p[2]} for p in people],
+                'states/': [{'id': s, 'name': s} for s in q.STATES],
+                'labels/': [{'id': 'blocked', 'name': 'BLOCKED'}], 'issues/': [issue]}
+
+        class Fake:
+            def __init__(self):
+                self.calls = []
+            def get(self, route):
+                self.calls.append(route)
+                return {'id': q.PREFIX.split('/')[-2], 'name': 'Graduation Project',
+                        'identifier': 'CAP'}
+            def rows(self, route):
+                self.calls.append(route)
+                return data[route]
+
+        reader = Fake()
+        rows = q.snapshot(reader, catalog, set())
+        self.assertIsNone(rows['WP-GOV-001']['cycle'])
+        self.assertNotIn('cycles/', reader.calls)
 
 
 class DeferredWaitVisibilityTests(unittest.TestCase):

@@ -825,6 +825,38 @@ current work, then READY, then preparable BACKLOG; advisory health UNAVAILABLE a
 does not suppress a real CURRENT, NO_TASK or AMBIGUOUS result. This control does not
 authorize lifecycle writes or implementation of a newly selected work package.
 
+## CHG-038 — bounded pull-request CI and nonblocking full regression
+
+CHG-038 / CTRL-HOST-019 keeps `ci-gate` and the required `projectctl` context while
+making the PR lane bounded and scope-aware. Pull requests run static/canonical
+validation, changed-scope focused tests and relevant regressions with explicit job,
+step and command timeouts; superseded runs are canceled and failures include
+diagnostics. The full `projectctl` suite moves to main, nightly and manual
+full-regression execution, and remains available when a WP acceptance plan explicitly
+requires it. This is a test scheduling change only: exact merge binding, UNKNOWN !=
+PASS, real acceptance/DoD evidence and all protected transition rules remain intact.
+
+## CHG-039 — mechanical runtime skeleton readiness attestation
+
+CHG-039 / CTRL-HOST-021 extends AUTO_READINESS only for canonical `RUNTIME` dependency
+edges whose required readiness is `SKELETON_READY`. The attestation is system-derived
+from an immutable current-main readiness basis and producer evidence already authored
+in the verified producer PR. It requires the policy-resolved producer WP and owner,
+the merged producer PR and ancestor binding, an explicit consumer WP and dependency
+edge, exact current blob bindings, and allow-listed mechanical runtime health/smoke
+checks. Missing, stale, mismatched or UNKNOWN evidence returns UNKNOWN and never
+produces an assessment.
+
+The path does not cover CONTRACT readiness, human semantic judgment, INTEGRATION_READY,
+EVALUATION_READY, milestone/freeze gates or later runtime acceptance. DEP-006 is the
+bounded use case: local PostgreSQL evidence can attest `SKELETON_READY`; DEP-007 remains
+an INTEGRATION-stage dependency and is not waived. No lifecycle, DoR/DoD, producer
+ownership, Merged != Done or Plane transition rule is relaxed.
+
+Allocation: CHG-039 is the next free identifier. The record remains bound to this
+evaluator change only; it does not certify any WP or authorize implementation by
+itself.
+
 ## Merged external integration binding slot exception — CHG-034
 
 CHG-034 / CTRL-HOST-015 (C3 / CR-3) is authorized by the project-owner request of

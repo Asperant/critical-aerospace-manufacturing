@@ -1,0 +1,22 @@
+CHG-039:
+  title: Mechanical runtime readiness attestation for local skeleton gates
+  trigger: Explicit project-owner request, 26 October 2026
+  reason: Existing immutable producer runtime evidence can satisfy a local START readiness gate, but AUTO_READINESS currently accepts only CONTRACT/CONTRACT_READY edges.
+  class: C2
+  review_risk_class: CR-2
+  owner: Asrın
+  application_control_item: CTRL-HOST-021
+  required_human_approvals: 0
+  decision: APPROVED_WITH_CONDITIONS
+  status: APPROVED
+  scope:
+    - Extend automatic readiness attestation only to RUNTIME edges whose required readiness is SKELETON_READY.
+    - Require current-main immutable evidence, producer WP/owner and merged producer PR attribution, explicit consumer WP/edge binding, and allow-listed mechanical health/smoke checks.
+    - Keep UNKNOWN and missing, stale, mismatched or semantically unclassified evidence fail-closed.
+    - Do not extend automatic attestation to INTEGRATION_READY, EVALUATION_READY, CONTRACT judgment, milestone gates or human semantic readiness.
+  invariants_preserved:
+    - HARD dependency stages, readiness levels, DoR/DoD, producer ownership and Merged != Done remain authoritative.
+    - No producer identity is inferred from consumer evidence; system attribution is derived from canonical policy and verified producer PR facts.
+    - No Plane lifecycle write or implementation is authorized by this change alone.
+  rollout: Focused evaluator tests, merge current control-plane source, deploy through the supported installer, then re-evaluate DEP-006 and WP-CORE-007.
+  rollback: Revert the merged evaluator/basis change; no Plane state or acceptance evidence is replayed.

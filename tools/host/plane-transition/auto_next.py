@@ -304,12 +304,58 @@ def merged_external_wait_proof(t, wp, profile, policy, gh):
         return None  # Missing/UNKNOWN proof never frees a slot.
 
 
-def semantic_slot_release_proof(t, wp, profile, policy, gh):
-    """CHG-037: semantic scheduler accounting; legacy proofs remain auditable."""
+def semantic_slot_release_proof(t, wp, profile, policy, gh, source=None):
+    """CHG-037: semantic scheduler accounting; legacy proofs remain auditable.
+
+    A v2 assessment is the current semantic authority.  The historical VERIFIED
+    audit remains the blocker anchor, but an owner-authored UNCHANGED reassertion
+    may refresh the assessment without making its explanatory prose part of the
+    slot identity.  Legacy wait paths retain their stricter chain rules below.
+    """
     global resolver
     if resolver is None:
         resolver = load_resolver()
-    verified = t.last_blocker(wp)
+    source = source or semantic_slot_release_source(t, wp, profile, policy, gh)
+    if source is None:
+        return None
+    if source["semantic_blocker_class"] == resolver.DEFERRED_CLASS:
+        try:
+            pr = (
+                t.pr_fact(gh, source["refs"], wp, profile)
+                if source["pr_refs"]
+                else source["comment"]
+            )
+            if (
+                pr.get("merged") is not True
+                or pr.get("merge_commit_sha") != source["canonical_revision"]
+            ):
+                return None
+            t.ci(gh, source["canonical_revision"], policy)
+        except t.Denied:
+            return None
+    return {
+        "schema": resolver.SLOT_RELEASE_SCHEMA,
+        "wp_id": wp,
+        "owner": t.q.PEOPLE[profile][0],
+        "local_actionable_work": "NONE",
+        "implementation_persisted": True,
+        "semantic_blocker_id": source["semantic_blocker_id"],
+        "semantic_blocker_class": source["semantic_blocker_class"],
+        "relevant_scope_digest": source["scope"],
+        "assessment_digest": source["assessment_digest"],
+        "proof_fingerprint": source["proof_fingerprint"],
+    }
+
+
+def semantic_slot_release_source(t, wp, profile, policy, gh):
+    """Read the current assessment inputs without merge/CI verification."""
+    global resolver
+    if resolver is None:
+        resolver = load_resolver()
+    try:
+        verified = t.last_blocker(wp)
+    except (OSError, PermissionError):
+        return None
     if not (
         isinstance(verified, dict)
         and verified.get("result") == "VERIFIED"
@@ -317,24 +363,38 @@ def semantic_slot_release_proof(t, wp, profile, policy, gh):
         and verified.get("profile") == profile
     ):
         return None
-    blocker = verified.get("blocker")
-    if not isinstance(blocker, dict):
+    source = verified
+    try:
+        rows = t.blocker_rows(wp)
+    except Exception:
         return None
-    classification = blocker.get("semantic_class") or blocker.get("class")
-    if classification not in resolver.SLOT_RELEASE_CLASSES:
-        classification = next(
-            (
-                c
-                for c in resolver.SLOT_RELEASE_CLASSES
-                if isinstance(verified.get("reason"), str)
-                and verified["reason"].startswith(c)
-            ),
-            None,
-        )
-    semantic_id = blocker.get("semantic_id") or blocker.get("id")
-    if not isinstance(semantic_id, str) or not semantic_id or classification is None:
-        return None
-    refs = verified.get("evidence_refs", [])
+    for row in rows:
+        if (
+            row.get("result") == "UNCHANGED"
+            and row.get("operation") == "BLOCKED"
+            and row.get("wp_id") == wp
+            and row.get("profile") == profile
+            and (
+                (
+                    row.get("from_state") == verified.get("from_state")
+                    and row.get("to_state") == verified.get("to_state")
+                )
+                # A lifecycle reconciliation may move the item to VALIDATING
+                # before the owner can reassert the unchanged external wait.
+                # Preserve the original VERIFIED blocker as the authority and
+                # accept only that exact IN_PROGRESS -> VALIDATING shape.
+                or (
+                    verified.get("from_state") == "IN_PROGRESS"
+                    and verified.get("to_state") == "IN_PROGRESS"
+                    and row.get("from_state") == "VALIDATING"
+                    and row.get("to_state") == "VALIDATING"
+                )
+            )
+            and row.get("active_blocker_audit_id") == verified.get("audit_id")
+            and t.audit_identity(row) == row.get("audit_id")
+        ):
+            source = row
+    refs = source.get("evidence_refs", [])
     comment_ids = [
         ref[8:]
         for ref in refs
@@ -358,6 +418,27 @@ def semantic_slot_release_proof(t, wp, profile, policy, gh):
         and exact_field(text, "Implementation persisted") == "YES"
     ):
         return None
+    blocker = verified.get("blocker")
+    if not isinstance(blocker, dict):
+        blocker = {}
+    classification = (
+        blocker.get("semantic_class")
+        or blocker.get("class")
+        or exact_field(text, "Semantic blocker class")
+        or exact_field(text, "External integration wait class")
+        or exact_field(text, "Deferred acceptance class")
+    )
+    semantic_id = (
+        blocker.get("semantic_id")
+        or blocker.get("id")
+        or exact_field(text, "Semantic blocker ID")
+    )
+    if (
+        not isinstance(semantic_id, str)
+        or not semantic_id
+        or classification not in resolver.SLOT_RELEASE_CLASSES
+    ):
+        return None
     scope = exact_field(text, "Relevant scope digest")
     current_scope = policy.get("scope_projections", {}).get(wp)
     scope = current_scope if scope is None else scope
@@ -366,21 +447,36 @@ def semantic_slot_release_proof(t, wp, profile, policy, gh):
     sha = exact_field(text, "Canonical main revision")
     if not isinstance(sha, str) or not re.fullmatch(r"[0-9a-f]{40}", sha):
         return None
-    if classification == resolver.DEFERRED_CLASS:
-        pr = comment if pr_refs else t.pr_fact(gh, refs, wp, profile)
-        if pr.get("merged") is not True or pr.get("merge_commit_sha") != sha:
-            return None
-        t.ci(gh, sha, policy)
+    assessment_digest = hashlib.sha256(text.encode()).hexdigest()
+    fingerprint = hashlib.sha256(
+        json.dumps(
+            {
+                "wp_id": wp,
+                "owner": t.q.PEOPLE[profile][0],
+                "audit_id": source.get("audit_id"),
+                "assessment_digest": assessment_digest,
+                "semantic_blocker_id": semantic_id,
+                "semantic_blocker_class": classification,
+                "relevant_scope_digest": scope,
+                "canonical_revision": sha,
+                "policy_digest": policy.get("policy_digest"),
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+    ).hexdigest()
     return {
-        "schema": resolver.SLOT_RELEASE_SCHEMA,
         "wp_id": wp,
-        "owner": t.q.PEOPLE[profile][0],
-        "local_actionable_work": "NONE",
-        "implementation_persisted": True,
+        "refs": refs,
+        "comment": comment,
+        "pr_refs": pr_refs,
         "semantic_blocker_id": semantic_id,
         "semantic_blocker_class": classification,
-        "relevant_scope_digest": scope,
-        "assessment_digest": hashlib.sha256(text.encode()).hexdigest(),
+        "scope": scope,
+        "canonical_revision": sha,
+        "assessment_digest": assessment_digest,
+        "policy_digest": policy.get("policy_digest"),
+        "proof_fingerprint": fingerprint,
     }
 
 
@@ -586,8 +682,16 @@ def reassertion(t, wp, profile, verified, state="IN_PROGRESS", reason_prefix=Non
             and row.get("operation") == "BLOCKED"
             and row.get("wp_id") == wp
             and row.get("profile") == profile
-            and row.get("from_state") == state
-            and row.get("to_state") == state
+            and (
+                (row.get("from_state") == state and row.get("to_state") == state)
+                or (
+                    verified.get("from_state") == "IN_PROGRESS"
+                    and verified.get("to_state") == "IN_PROGRESS"
+                    and state == "IN_PROGRESS"
+                    and row.get("from_state") == "VALIDATING"
+                    and row.get("to_state") == "VALIDATING"
+                )
+            )
             and row.get("active_blocker_audit_id") == verified["audit_id"]
             and (
                 row.get("reason") == verified.get("reason")

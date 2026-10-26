@@ -13,7 +13,7 @@
   "blocker": null,
   "notes": [
     "ci-gate aggregates t1-static, t1-unit, t1-contract and t1-integration.",
-    "projectctl stays required because Plane transition policy binds to it.",
+    "projectctl stays required as the bounded PR fast lane; projectctl-full-regression is nonblocking on main/nightly/manual lanes.",
     "0 required approvals follows DEV-REVIEW-2026-10-15-FINAL / CHG-018.",
     "enforce_admins: required gates cannot be bypassed manually (01 Item 41 §184).",
     "Applied by the repository owner through the GitHub UI after the repository was made public; independently read back in evidence/WP-CICD-001/branch-protection-readback.json."
