@@ -4,10 +4,10 @@ from .projector import (
     AdmissionError,
     ApplyResult,
     ProjectionEvent,
-    ProjectionState,
-    Projector,
     ProjectionGap,
     ProjectionOrderError,
+    ProjectionState,
+    Projector,
 )
 
 __all__ = [
@@ -19,4 +19,3 @@ __all__ = [
     "ProjectionState",
     "Projector",
 ]
-

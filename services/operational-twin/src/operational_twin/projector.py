@@ -7,9 +7,10 @@ separately so retries, stale deliveries and gaps cannot silently advance state.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Mapping
 from copy import deepcopy
 from dataclasses import dataclass, field
-from typing import Any, Callable, Mapping
+from typing import Any
 
 
 class AdmissionError(ValueError):
@@ -36,15 +37,29 @@ class ProjectionEvent:
     branch_id: str = "PRIMARY"
 
     @classmethod
-    def from_mapping(cls, value: Mapping[str, Any]) -> "ProjectionEvent":
+    def from_mapping(cls, value: Mapping[str, Any]) -> ProjectionEvent:
         required = {
-            "event_id", "event_type", "world_id", "aggregate_type",
-            "aggregate_id", "aggregate_version", "payload",
+            "event_id",
+            "event_type",
+            "world_id",
+            "aggregate_type",
+            "aggregate_id",
+            "aggregate_version",
+            "payload",
         }
         if set(value) - required - {"branch_id"} or not required <= set(value):
             raise AdmissionError("event: required projection fields missing")
-        text_fields = ("event_id", "event_type", "world_id", "aggregate_type", "aggregate_id")
-        if any(not isinstance(value[name], str) or not value[name].strip() for name in text_fields):
+        text_fields = (
+            "event_id",
+            "event_type",
+            "world_id",
+            "aggregate_type",
+            "aggregate_id",
+        )
+        if any(
+            not isinstance(value[name], str) or not value[name].strip()
+            for name in text_fields
+        ):
             raise AdmissionError("event: nonblank identity required")
         version = value["aggregate_version"]
         if type(version) is not int or version < 1:
@@ -111,22 +126,44 @@ def _set_entity(state: ProjectionState, event: ProjectionEvent, **fields: Any) -
 
 def _production(state: ProjectionState, event: ProjectionEvent) -> None:
     if event.event_type == "production.lot-held":
-        _set_entity(state, event, lifecycle="HELD", hold_id=event.payload.get("material_hold_id"),
-                    hold_reason=event.payload.get("reason"))
+        _set_entity(
+            state,
+            event,
+            lifecycle="HELD",
+            hold_id=event.payload.get("material_hold_id"),
+            hold_reason=event.payload.get("reason"),
+        )
     elif event.event_type == "production.lot-dispatch-authorized":
-        _set_entity(state, event, dispatch_id=event.payload.get("dispatch_id"), dispatchable=True)
+        _set_entity(
+            state,
+            event,
+            dispatch_id=event.payload.get("dispatch_id"),
+            dispatchable=True,
+        )
     else:
-        _set_entity(state, event, observation="PRODUCTION_EVENT", payload=dict(event.payload))
+        _set_entity(
+            state, event, observation="PRODUCTION_EVENT", payload=dict(event.payload)
+        )
 
 
 def _equipment(state: ProjectionState, event: ProjectionEvent) -> None:
-    _set_entity(state, event, equipment_state=event.payload.get("state", event.payload.get("status", "OBSERVED")),
-                payload=dict(event.payload))
+    _set_entity(
+        state,
+        event,
+        equipment_state=event.payload.get(
+            "state", event.payload.get("status", "OBSERVED")
+        ),
+        payload=dict(event.payload),
+    )
 
 
 def _quality(state: ProjectionState, event: ProjectionEvent) -> None:
-    _set_entity(state, event, quality_state=event.payload.get("state", "OBSERVED"),
-                payload=dict(event.payload))
+    _set_entity(
+        state,
+        event,
+        quality_state=event.payload.get("state", "OBSERVED"),
+        payload=dict(event.payload),
+    )
 
 
 HANDLERS: dict[str, Handler] = {
@@ -145,10 +182,18 @@ class Projector:
         self.state = state
 
     def apply(self, event: ProjectionEvent) -> ApplyResult:
-        if event.world_id != self.state.world_id or event.branch_id != self.state.branch_id:
+        if (
+            event.world_id != self.state.world_id
+            or event.branch_id != self.state.branch_id
+        ):
             raise AdmissionError("event scope does not match projection")
         if event.event_id in self.state.applied_events:
-            return ApplyResult("DUPLICATE", event.event_id, self.state.source_revision or event.event_id, self.state.status)
+            return ApplyResult(
+                "DUPLICATE",
+                event.event_id,
+                self.state.source_revision or event.event_id,
+                self.state.status,
+            )
         key = _entity_key(event)
         previous = self.state.aggregate_revisions.get(key, 0)
         if event.aggregate_version <= previous:
@@ -165,7 +210,9 @@ class Projector:
         self.state.aggregate_revisions[key] = event.aggregate_version
         self.state.source_revision = event.event_id
         self.state.status = "FRESH"
-        return ApplyResult("PROCESSED", event.event_id, event.event_id, self.state.status)
+        return ApplyResult(
+            "PROCESSED", event.event_id, event.event_id, self.state.status
+        )
 
     def catch_up(self, events: list[ProjectionEvent]) -> list[ApplyResult]:
         """Apply a deterministic ordered batch; gaps fail closed."""
@@ -183,4 +230,3 @@ class Projector:
             "source_revision": self.state.source_revision,
             "applied_event_count": len(self.state.applied_events),
         }
-
