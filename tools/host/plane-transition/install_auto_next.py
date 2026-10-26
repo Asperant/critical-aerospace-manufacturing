@@ -47,6 +47,10 @@ def deployment_mapping():
         {
             RECONCILE_LIBEXEC: "tools/host/plane-transition/reconcile.py",
             "/usr/local/bin/cap-plane-reconcile": "tools/host/plane-transition/cap-plane-reconcile",
+            "/usr/local/libexec/cap-plane-reconcile-asrin": "tools/host/plane-transition/cap-plane-reconcile-profile",
+            "/usr/local/libexec/cap-plane-reconcile-selman": "tools/host/plane-transition/cap-plane-reconcile-profile",
+            "/usr/local/libexec/cap-plane-reconcile-batuhan": "tools/host/plane-transition/cap-plane-reconcile-profile",
+            "/usr/local/libexec/cap-plane-reconcile-yavuz": "tools/host/plane-transition/cap-plane-reconcile-profile",
         }
     )
     return mapping
@@ -77,8 +81,8 @@ def reconcile_grants(policy):
     lines = ["# Lifecycle reconciliation: profile-scoped generic evidence invocations"]
     for profile in PROFILES:
         lines.append(
-            f"{profile} ALL=(root) NOPASSWD: NOSETENV: /usr/bin/python3 -I "
-            f"{RECONCILE_LIBEXEC} {profile}"
+            f"{profile} ALL=(root) NOPASSWD: NOSETENV: "
+            f"/usr/local/libexec/cap-plane-reconcile-{profile}"
         )
     return lines
 
