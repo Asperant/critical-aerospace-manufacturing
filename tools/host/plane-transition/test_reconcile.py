@@ -892,6 +892,19 @@ class OwnerQueueTests(unittest.TestCase):
         self.assertEqual(result["result"], "UNCHANGED")
         self.assertEqual((plane.patches, plane.refreshes), ([], 0))
 
+    def test_only_verified_slot_release_can_remove_a_blocked_queue_conflict(self):
+        plane = FakePlane("READY")
+        blocked = other_row("WP-OTHER-001", "IN_PROGRESS")
+        blocked["labels"] = [plane.blocked]
+        plane.items.append(blocked)
+        self.assertEqual(
+            r.owner_queue_conflicts(plane, PROFILE, plane.item), ["WP-OTHER-001"]
+        )
+        self.assertEqual(
+            r.owner_queue_conflicts(plane, PROFILE, plane.item, {"WP-OTHER-001"}),
+            [],
+        )
+
     def test_a_conflict_appearing_before_the_write_blocks_it(self):
         def appears(policy, plane, gh, env):
             plane.queue_change = other_row("WP-OTHER-001", "READY")

@@ -464,7 +464,9 @@ def stable(facts: dict) -> dict:
     return {**facts, "merge": merge}
 
 
-def owner_queue_conflicts(plane: Any, profile: str, item: dict) -> list[str]:
+def owner_queue_conflicts(
+    plane: Any, profile: str, item: dict, released: set[str] | None = None
+) -> list[str]:
     """Other READY or IN_PROGRESS items of the same owner; read-only, selects nothing.
 
     More than one current or next candidate is the ambiguous queue that needs a
@@ -472,13 +474,59 @@ def owner_queue_conflicts(plane: Any, profile: str, item: dict) -> list[str]:
     """
     member = t.q.PEOPLE[profile][1]
     active = {plane.states[name] for name in OWNER_QUEUE_STATES}
+    released = released or set()
     return sorted(
         str(row.get("external_id") or row.get("id"))
         for row in plane.items
         if row.get("id") != item["id"]
         and member in (row.get("assignees") or [])
         and row.get("state") in active
+        and str(row.get("external_id") or row.get("id")) not in released
     )
+
+
+def verified_slot_releases(
+    plane: Any, profile: str, item: dict, policy: dict, gh: Any
+) -> set[str]:
+    """Return only live-proven blocked waits that no longer occupy the slot.
+
+    Slot Release v2 is a derived scheduler property, not a Plane state. Reconciliation
+    may use it only for other blocked queue entries and only after the same semantic
+    proof used by AUTO_NEXT has been freshly evaluated. Any unavailable proof leaves
+    the entry as a conflict.
+    """
+    member = t.q.PEOPLE[profile][1]
+    candidates = [
+        row
+        for row in plane.items
+        if row.get("id") != item["id"]
+        and member in (row.get("assignees") or [])
+        and row.get("state") == plane.states["IN_PROGRESS"]
+        and plane.blocked in (row.get("labels") or [])
+        and isinstance(row.get("external_id"), str)
+    ]
+    if not candidates:
+        return set()
+    try:
+        loader = importlib.machinery.SourceFileLoader(
+            "cap_auto_slots", "/usr/local/libexec/cap-auto-next.py"
+        )
+        spec = importlib.util.spec_from_loader(loader.name, loader)
+        assert spec is not None
+        auto: Any = importlib.util.module_from_spec(spec)
+        loader.exec_module(auto)
+        auto.t = t
+        auto.resolver = auto.load_resolver()
+        released = set()
+        for row in candidates:
+            proof = auto.semantic_slot_release_proof(
+                t, row["external_id"], profile, policy, gh
+            )
+            if proof:
+                released.add(row["external_id"])
+        return released
+    except Exception:
+        return set()
 
 
 def reconcile(
@@ -511,7 +559,13 @@ def reconcile(
     need(source == target or source in SOURCES, "SOURCE_STATE_NOT_RECONCILABLE")
     if source != target:
         # A no-op is exempt: after a reconcile the owner normally has a next READY item.
-        need(not owner_queue_conflicts(plane, profile, item), "OWNER_QUEUE_CONFLICT")
+        conflicts = owner_queue_conflicts(plane, profile, item)
+        if conflicts:
+            released = verified_slot_releases(plane, profile, item, policy, gh)
+            need(
+                not owner_queue_conflicts(plane, profile, item, released),
+                "OWNER_QUEUE_CONFLICT",
+            )
     facts = gather(gh, case, profile, wp, target)
     stamp = (now or t.now)()
     record = {
