@@ -196,7 +196,9 @@ def validate_command_context(
 ) -> None:
     """Require the caller's explicit world scope; no primary-world fallback."""
     if expected_world_id is not None and command.world_id != expected_world_id:
-        raise CommandRejected("WORLD_MISMATCH", "command world is outside the caller scope")
+        raise CommandRejected(
+            "WORLD_MISMATCH", "command world is outside the caller scope"
+        )
 
 
 def reconciliation_action(outcome: CommandOutcome) -> str:
@@ -249,25 +251,36 @@ class InMemoryCommandLedger:
             if existing is not None:
                 prior_fingerprint, prior = existing
                 if prior_fingerprint != fingerprint:
-                    return self._conflict(command, "idempotency key already binds another command")
+                    return self._conflict(
+                        command, "idempotency key already binds another command"
+                    )
                 return prior
             try:
                 validate_command_context(command, expected_world_id=expected_world_id)
-                validate_preconditions(command, current_revision=current_revision, now=now)
+                validate_preconditions(
+                    command, current_revision=current_revision, now=now
+                )
                 if mutate is not None:
                     mutate()
                     self.effect_count += 1
                 outcome = self._outcome(command, OutcomeStatus.ACCEPTED)
             except CommandRejected as error:
-                outcome = self._outcome(command, OutcomeStatus.REJECTED, error.code, error.detail)
+                outcome = self._outcome(
+                    command, OutcomeStatus.REJECTED, error.code, error.detail
+                )
             except UnresolvedEffect as error:
-                outcome = self._outcome(command, OutcomeStatus.UNRESOLVED, "UNRESOLVED", error.detail)
+                outcome = self._outcome(
+                    command, OutcomeStatus.UNRESOLVED, "UNRESOLVED", error.detail
+                )
             self._entries[command.idempotency_key] = (fingerprint, outcome)
             return outcome
 
     def get_outcome(self, outcome_id: UUID) -> CommandOutcome | None:
         with self._lock:
-            return next((v[1] for v in self._entries.values() if v[1].outcome_id == outcome_id), None)
+            return next(
+                (v[1] for v in self._entries.values() if v[1].outcome_id == outcome_id),
+                None,
+            )
 
     def get_by_idempotency(self, key: str) -> CommandOutcome | None:
         with self._lock:

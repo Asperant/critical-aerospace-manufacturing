@@ -78,7 +78,9 @@ class PostgresCommandLedger:
 
             try:
                 validate_command_context(command, expected_world_id=expected_world_id)
-                validate_preconditions(command, current_revision=current_revision, now=now)
+                validate_preconditions(
+                    command, current_revision=current_revision, now=now
+                )
                 if mutate is not None:
                     mutate()
                 outcome = self._persist_outcome(command, OutcomeStatus.ACCEPTED)

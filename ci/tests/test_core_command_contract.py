@@ -1,6 +1,7 @@
 import copy
 import json
 from pathlib import Path
+from typing import cast
 
 import pytest
 from cap_contracts.boundary import BoundaryValidator, ContractViolation
@@ -46,7 +47,7 @@ def test_core_command_boundary_rejects_unknown_version_and_missing_world() -> No
 def test_core_command_breaking_schema_change_requires_new_major() -> None:
     old = {"type": "object", "properties": {"command_id": {"type": "string"}}}
     new = copy.deepcopy(old)
-    new["required"] = ["command_id"]
+    cast(dict[str, object], new)["required"] = ["command_id"]
     result = compare_schemas(old, new)
     assert result.breaking
     assert not result.compatible

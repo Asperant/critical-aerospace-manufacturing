@@ -43,7 +43,9 @@ def test_command_acceptance_is_durable_idempotent_and_queryable(
         retry = ledger.accept(
             original, current_revision="r1", mutate=lambda: effects.append("bad")
         )
-        conflict = ledger.accept(make_command(reason="different"), current_revision="r1")
+        conflict = ledger.accept(
+            make_command(reason="different"), current_revision="r1"
+        )
 
         assert first.status == OutcomeStatus.ACCEPTED
         assert first.effect_verification.value == "NOT_VERIFIED"
@@ -74,7 +76,9 @@ def test_stale_and_unresolved_outcomes_survive_in_postgres(
     unresolved = ledger.accept(
         make_command("unknown"),
         current_revision="r1",
-        mutate=lambda: (_ for _ in ()).throw(UnresolvedEffect("effect could not be classified")),
+        mutate=lambda: (_ for _ in ()).throw(
+            UnresolvedEffect("effect could not be classified")
+        ),
     )
     assert stale.status == OutcomeStatus.REJECTED
     assert stale.error_code == "STALE"

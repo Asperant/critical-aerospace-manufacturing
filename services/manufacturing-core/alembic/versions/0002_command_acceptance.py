@@ -34,9 +34,15 @@ def upgrade() -> None:
         {"version": revision, "sha256": digest, "runtime_role": runtime_role},
     )
     quoted = connection.dialect.identifier_preparer.quote(runtime_role)
-    connection.exec_driver_sql(f"GRANT SELECT, INSERT ON TABLE core.command_idempotency TO {quoted}")
-    connection.exec_driver_sql(f"GRANT SELECT, INSERT ON TABLE core.command_outcome TO {quoted}")
+    connection.exec_driver_sql(
+        f"GRANT SELECT, INSERT ON TABLE core.command_idempotency TO {quoted}"
+    )
+    connection.exec_driver_sql(
+        f"GRANT SELECT, INSERT ON TABLE core.command_outcome TO {quoted}"
+    )
 
 
 def downgrade() -> None:
-    raise RuntimeError("Core migrations are forward-only; restore from a controlled backup")
+    raise RuntimeError(
+        "Core migrations are forward-only; restore from a controlled backup"
+    )

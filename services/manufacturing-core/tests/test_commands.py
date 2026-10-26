@@ -80,8 +80,12 @@ def test_duplicate_delivery_returns_original_and_effect_runs_once() -> None:
     ledger = InMemoryCommandLedger()
     effects: list[str] = []
     original = command()
-    first = ledger.accept(original, current_revision="r1", mutate=lambda: effects.append("effect"))
-    retry = ledger.accept(original, current_revision="r1", mutate=lambda: effects.append("bad"))
+    first = ledger.accept(
+        original, current_revision="r1", mutate=lambda: effects.append("effect")
+    )
+    retry = ledger.accept(
+        original, current_revision="r1", mutate=lambda: effects.append("bad")
+    )
     assert first == retry
     assert first.status == OutcomeStatus.ACCEPTED
     assert first.effect_verification == EffectVerificationStatus.NOT_VERIFIED
@@ -92,7 +96,9 @@ def test_same_key_different_command_is_conflict_without_effect() -> None:
     ledger = InMemoryCommandLedger()
     first = ledger.accept(command(), current_revision="r1")
     conflict = ledger.accept(
-        command(hold_reason="different"), current_revision="r1", mutate=lambda: pytest.fail()
+        command(hold_reason="different"),
+        current_revision="r1",
+        mutate=lambda: pytest.fail(),
     )
     assert first.status == OutcomeStatus.ACCEPTED
     assert conflict.status == OutcomeStatus.CONFLICT
