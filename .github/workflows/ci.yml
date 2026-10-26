@@ -174,7 +174,7 @@ jobs:
       PYTHONPATH: ci:ci/scripts
       CI_POSTGRES_IMAGE: postgres:18-alpine
       CORE_TEST_DISPOSABLE: "1"
-      CORE_STATUS_ARTIFACT: ${{ runner.temp }}/core-migration-status.json
+      CORE_STATUS_ARTIFACT: ${{ github.workspace }}/.ci-artifacts/core-migration-status.json
     steps:
       - uses: actions/checkout@v4
         with:
@@ -185,6 +185,7 @@ jobs:
         run: uv sync --project ci --locked
       - name: Start REAL PostgreSQL + NATS JetStream
         run: |
+          mkdir -p .ci-artifacts
           ci/scripts/integration_services.sh up
           ci/scripts/integration_services.sh env >> "$GITHUB_ENV"
       - name: Integration smoke (boundary mode REAL)
