@@ -70,4 +70,3 @@ def test_event_payload_requires_its_versioned_identity(contract_id: str) -> None
     del invalid["schema_version"]
     with pytest.raises(ContractViolation):
         validator.validate(invalid, role="producer")
-

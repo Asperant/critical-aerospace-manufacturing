@@ -1,7 +1,7 @@
 # WP-CORE-005 — Core domain-event contract slice
 
-Accountable owner: Asrın Dündar  
-Branch: `wp/WP-CORE-005-domain-event-contracts`  
+Accountable owner: Asrın Dündar
+Branch: `wp/WP-CORE-005-domain-event-contracts`
 Source commit: `c8a0d3b` (`[WP-CORE-005] Register Core domain event payload contracts`)
 
 ## Owner-executable artifacts
