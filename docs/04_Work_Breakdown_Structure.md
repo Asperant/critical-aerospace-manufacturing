@@ -485,7 +485,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-CORE-CMDEXEC |
 | Size band (indicative, no hour estimates) | L (≈7–12 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `services/manufacturing-core/`, `packages/contracts/registry/core.operational-command.v1.json` |
 
 **Purpose.** Guarantee that repeated or stale command submissions can never produce duplicate or unsafe manufacturing effects, and that every command has a durable, inspectable outcome.
 
