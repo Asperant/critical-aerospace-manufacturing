@@ -1,0 +1,48 @@
+CHG-044:
+  title: Isolate queue health-probe GitHub timeout
+  trigger: Measured queue invocation timeout during the CORE-003 implementation gate
+  reason: Advisory queue health probing inherited the 30-second GitHub subprocess timeout; worker shutdown could extend a fail-closed queue read to the operator timeout without changing the actionable queue result.
+  class: C1
+  review_risk_class: CR-2
+  raised_in: S4
+  owner: Asrın
+  application_control_item: CTRL-HOST-025
+  required_human_approvals: 0
+  decision: APPROVED
+  status: APPROVED
+  affected_requirements:
+    - NONE — host/control latency correction; product requirements and lifecycle semantics are unchanged
+  affected_architecture:
+    - NONE — existing root-owned queue and transition helper boundary is preserved
+  affected_contracts:
+    - id: CTRL-QUEUE-READ-v1
+      compatibility: NON_BREAKING
+      consumers_reviewed: [Remote SSH developer queue gate]
+  affected_work_packages:
+    - NONE — no product WP implementation or readiness semantics are changed
+  affected_dependencies:
+    - NONE — no product dependency edge or readiness stage changes
+  affected_evidence:
+    - tools/host/plane-queue/test_queue.py
+    - focused queue helper suite (37 tests)
+    - post-deploy fresh cap-plane-queue readback
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - Existing product requirements, lifecycle, Plane state and CORE-003 readiness evidence remain current.
+      - Existing fail-closed and UNKNOWN handling tests remain applicable.
+    rerun_required:
+      - Focused queue helper regression suite
+      - Root helper hash/policy refresh and fresh queue readback after merged deployment
+  security_authority_impact: NONE — no credential, identity, authorization, authority boundary, or audit semantics change
+  rollout: Merge the control-only change with required CI, then use the supported root-only installer to refresh the queue and transition helper hashes. Perform a fresh read-only cap-plane-queue readback; do not transition Plane state.
+  rollback: Restore the previous root-owned helper and policy from the installer backup/rollback record; preserve Plane state, audit history and product evidence.
+  required_rerun:
+    - Focused host queue regression tests
+    - Fresh cap-plane-queue read-only verification
+  documentation_updates:
+    - 09_change/CHG-044.yaml
+    - 09_change/change_requests.csv
+    - docs/09_Change_Control_Process.md
+  freeze_context: POST_M6_PERMITTED
