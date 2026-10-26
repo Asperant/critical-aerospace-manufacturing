@@ -17,3 +17,7 @@ preconditions and durable `CommandOutcome` persistence/query behavior.
 
 No prior DEP-027 PASS evidence is invalidated: the canonical status remains
 `NOT_READY` until the producer artifacts and accountable evidence exist.
+
+The existing merged-binding provenance was refreshed to the current
+`docs/04_Work_Breakdown_Structure.md` digest; no binding row or readiness
+claim was added.
