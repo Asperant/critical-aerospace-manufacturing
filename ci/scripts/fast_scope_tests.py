@@ -86,9 +86,7 @@ def main() -> int:
         )
     elif any(path.startswith("tools/projectctl/") for path in paths):
         projectctl_test_paths = {
-            path
-            for path in paths
-            if path.startswith("tools/projectctl/tests/")
+            path for path in paths if path.startswith("tools/projectctl/tests/")
         }
         if projectctl_test_paths == {"tools/projectctl/tests/test_dependencies.py"}:
             selected.append(
