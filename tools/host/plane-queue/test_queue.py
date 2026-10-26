@@ -125,6 +125,33 @@ class QueueTests(unittest.TestCase):
         with patch.object(q, 'preflight', side_effect=TimeoutError('sentinel')):
             self.assertIsNone(q.bounded_preflight('asrin', 'sentinel-secret'))
 
+    def test_health_probe_uses_short_github_budget(self):
+        transition = type('Transition', (), {})()
+        observed = {}
+
+        class GitHub:
+            def __init__(self, profile, request_timeout=30):
+                observed.update(profile=profile, request_timeout=request_timeout)
+
+        transition.GitHub = GitHub  # pyright: ignore[reportAttributeAccessIssue]
+        auto = type('Auto', (), {
+            'semantic_slot_release_source': staticmethod(lambda *args: None),
+            'semantic_slot_release_proof': staticmethod(lambda *args, **kwargs: None),
+        })
+        rows = {'candidate': task('WP-CORE-004', 'IN_PROGRESS', blocked=True)}
+        executor = type('Executor', (), {
+            '__init__': lambda self, **kwargs: None,
+            '__enter__': lambda self: self,
+            '__exit__': lambda self, *args: None,
+            'submit': lambda self, *args: object(),
+        })
+        with patch.object(q, '_read_slot_cache', return_value={}), \
+             patch.object(q.concurrent.futures, 'ThreadPoolExecutor', executor), \
+             patch.object(q.concurrent.futures, 'as_completed', return_value=[]):
+            q._slot_waits('asrin', 'sentinel-secret', rows, auto, transition,
+                          {'policy_digest': 'p'})
+        self.assertEqual(observed, {'profile': 'asrin', 'request_timeout': 1})
+
     def test_slot_release_cache_reuses_only_matching_fingerprint(self):
         source = {
             'wp_id': 'WP-CORE-004',

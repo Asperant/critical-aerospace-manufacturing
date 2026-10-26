@@ -88,9 +88,12 @@ class GitHub:
     No GitHub credential is copied/exported by the root helper. No repo code runs.
     User-controlled GH configuration is consumed only after dropping root.
     """
-    def __init__(self, profile):
+    def __init__(self, profile, request_timeout=30):
         self.profile = profile
         self.cache = {}
+        need(type(request_timeout) is int and 1 <= request_timeout <= 30,
+             'INVALID_GITHUB_REQUEST_TIMEOUT')
+        self.request_timeout = request_timeout
         account = pwd.getpwnam(profile)
         self.uid, self.gid = account.pw_uid, account.pw_gid
         self.env = {'PATH':'/usr/bin:/bin', 'HOME':account.pw_dir, 'USER':profile,
@@ -105,7 +108,8 @@ class GitHub:
         if route not in self.cache:
             result = subprocess.run(['/usr/bin/gh','api','--hostname','github.com','--method','GET',route],
                                     env=self.env, cwd='/', user=self.uid, group=self.gid, extra_groups=(),
-                                    umask=0o077, capture_output=True, timeout=30)
+                                    umask=0o077, capture_output=True,
+                                    timeout=getattr(self, 'request_timeout', 30))
             need(result.returncode == 0 or b'HTTP 401' not in result.stderr, 'GITHUB_AUTH_HTTP_401')
             need(result.returncode == 0 and len(result.stdout) <= 8_000_000, 'GITHUB_READ_UNAVAILABLE')
             self.cache[route] = json.loads(result.stdout, object_pairs_hook=q.unique)

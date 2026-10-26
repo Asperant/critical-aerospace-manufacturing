@@ -889,6 +889,17 @@ Missing, failed, stale, ambiguous or wrong-SHA history fails closed. No step-nam
 alias, WP-specific exception, lifecycle mutation, DONE waiver or acceptance claim
 is introduced.
 
+## CHG-044 — isolated queue health-probe timeout
+
+CHG-044 / CTRL-HOST-025 isolates the advisory queue health probe from the normal
+30-second GitHub control-operation timeout. The queue passes a short, explicit
+probe budget to the existing root transition helper; an unavailable or timed-out
+probe remains `UNAVAILABLE` and never hides actionable work, releases a slot, or
+changes a Plane lifecycle state. The existing queue JSON/read-only contract,
+fail-closed UNKNOWN handling, credentials, authority boundaries and all product
+semantics remain unchanged. This control does not authorize CORE-003 or any other
+product WP implementation.
+
 ## Merged external integration binding slot exception — CHG-034
 
 CHG-034 / CTRL-HOST-015 (C3 / CR-3) is authorized by the project-owner request of
