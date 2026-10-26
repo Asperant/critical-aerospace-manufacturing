@@ -255,6 +255,78 @@ class TransitionTests(unittest.TestCase):
                 self.assertEqual(result['status'],'UNKNOWN')
                 self.assertIn(expected[name],result['reasons'])
 
+    def runtime_fixture(self):
+        wp, policy, plane, gh, envelope = fixture()
+        producer_wp = next(k for k, v in policy['contexts'].items()
+                           if v['work_package']['primary_owner']['canonical_name'] == 'Yavuz Gümüş')
+        node = 'DN-RT-PG'
+        successor = 'DN-CORE-DB'
+        edge = {'id': 'DEP-006', 'predecessor': {'node': node, 'owner': 'Yavuz'},
+                'successor': {'node': successor, 'owner': 'Asrın'},
+                'precise_requirement': 'local PostgreSQL profile up',
+                'semantics': {'kind': 'RUNTIME', 'strength': 'HARD', 'blocking_stage': 'START',
+                              'required_readiness': 'SKELETON_READY'}}
+        context = policy['contexts'][wp]
+        context['dependency_edges'] = [edge]
+        policy.update(auto_readiness_attestation_schema='auto-readiness-attestation-v1',
+                      node_owners={node: 'yavuz', successor: 'asrin'},
+                      node_levels={node: ['DEFINED', 'SKELETON_READY', 'INTEGRATION_READY']},
+                      node_producers={node: [producer_wp]})
+        files = {
+            'evidence/WP-PLAT-001/README.md': ('Owner: Yavuz Gümüş\n', '1' * 40),
+            'evidence/WP-PLAT-001/RUN-PLAT-001-DEV-001/record.json':
+                (json.dumps({'work_package': 'WP-PLAT-001', 'boundary_mode': 'REAL',
+                             'steps': [{'step': 'smoke', 'exit_code': 0}]}), '2' * 40),
+            'evidence/WP-PLAT-001/RUN-PLAT-001-DEV-001/status.log.txt':
+                ('cap-platform-postgres-1 postgres:18.6-alpine healthy\n', '3' * 40),
+            'evidence/WP-PLAT-001/RUN-PLAT-001-DEV-001/smoke.log.txt':
+                ('smoke platform-infra: PASS in 1.1 s\n', '4' * 40),
+        }
+        for path, (content, blob) in files.items():
+            gh.repo_files[path] = (content.encode(), blob)
+        basis = {'schema': 'auto-runtime-readiness-basis-v1', 'node': node,
+                 'level': 'SKELETON_READY', 'producer_wp': producer_wp,
+                 'producer_pr': 53, 'producer_merge_sha': MERGE,
+                 'consumer_edges': ['DEP-006'], 'consumer_wps': {'DEP-006': wp},
+                 'checks': [
+                     {'path': 'evidence/WP-PLAT-001/README.md', 'blob': '1' * 40,
+                      'kind': 'text_contains', 'value': 'Owner: Yavuz Gümüş'},
+                     {'path': 'evidence/WP-PLAT-001/RUN-PLAT-001-DEV-001/record.json', 'blob': '2' * 40,
+                      'kind': 'json_equals', 'field': 'work_package', 'value': 'WP-PLAT-001'},
+                     {'path': 'evidence/WP-PLAT-001/RUN-PLAT-001-DEV-001/record.json', 'blob': '2' * 40,
+                      'kind': 'json_equals', 'field': 'steps[0].exit_code', 'value': 0},
+                     {'path': 'evidence/WP-PLAT-001/RUN-PLAT-001-DEV-001/status.log.txt', 'blob': '3' * 40,
+                      'kind': 'text_contains', 'value': 'healthy'},
+                     {'path': 'evidence/WP-PLAT-001/RUN-PLAT-001-DEV-001/smoke.log.txt', 'blob': '4' * 40,
+                      'kind': 'text_contains', 'value': 'smoke platform-infra: PASS'},
+                 ]}
+        basis_path = f'evidence/readiness/{node}.json'
+        gh.repo_files[basis_path] = (json.dumps(basis).encode(), '5' * 40)
+        gh.pr_data.update(number=53, user={'login': 'Yavuzgmus'}, merged=True,
+                          merge_commit_sha=MERGE, state='closed')
+        gh.file_rows = [{'filename': path, 'status': 'added'} for path in files]
+        return context, edge, policy, gh, basis
+
+    def test_automatic_runtime_skeleton_readiness_is_accepted(self):
+        context, edge, policy, gh, basis = self.runtime_fixture()
+        proof = t.automatic_readiness_attestation(gh, context, edge, HEAD, policy)
+        self.assertEqual(proof['status'], 'PASS')
+        self.assertEqual(proof['level'], 'SKELETON_READY')
+        t.dependencies(gh, [], context, {}, HEAD, policy)
+
+    def test_automatic_runtime_readiness_fails_closed_on_stale_or_missing_health(self):
+        context, edge, policy, gh, basis = self.runtime_fixture()
+        basis['checks'][-1]['blob'] = 'f' * 40
+        gh.repo_files['evidence/readiness/DN-RT-PG.json'] = (json.dumps(basis).encode(), '5' * 40)
+        result = t.automatic_readiness_attestation(gh, context, edge, HEAD, policy)
+        self.assertEqual(result['status'], 'UNKNOWN')
+        self.assertIn('STALE_RUNTIME_EVIDENCE_BLOB', result['reasons'])
+        context, edge, policy, gh, basis = self.runtime_fixture()
+        gh.repo_files['evidence/WP-PLAT-001/RUN-PLAT-001-DEV-001/smoke.log.txt'] = (b'not available', '4' * 40)
+        result = t.automatic_readiness_attestation(gh, context, edge, HEAD, policy)
+        self.assertEqual(result['status'], 'UNKNOWN')
+        self.assertIn('RUNTIME_HEALTH_OR_SMOKE_NOT_PASS', result['reasons'])
+
     def test_all_profiles_can_transition_only_their_wp(self):
         for profile in t.q.PEOPLE:
             with self.subTest(profile=profile):

@@ -400,9 +400,182 @@ def evidence_digest(value):
     return hashlib.sha256(raw).hexdigest()
 
 
-def automatic_readiness_attestation(gh, context, edge, sha, policy):
-    """Package existing CONTRACT_READY evidence; never manufacture semantic judgment."""
+def _automatic_runtime_readiness_attestation(gh, context, edge, sha, policy):
+    """Package only immutable, allow-listed runtime SKELETON_READY evidence."""
     assert q is not None
+    reasons = []
+
+    def reject(code):
+        if code not in reasons:
+            reasons.append(code)
+
+    semantics = edge.get("semantics", {})
+    node = edge.get("predecessor", {}).get("node")
+    successor = edge.get("successor", {}).get("node")
+    wp = context.get("work_package", {}).get("id")
+    producer = policy.get("node_owners", {}).get(node)
+    consumer = policy.get("node_owners", {}).get(successor)
+    profiles = {value[0]: profile for profile, value in q.PEOPLE.items()}
+    expected_consumer = profiles.get(
+        context.get("work_package", {}).get("primary_owner", {}).get("canonical_name")
+    )
+    if policy.get("auto_readiness_attestation_schema") != "auto-readiness-attestation-v1":
+        reject("AUTO_READINESS_FEATURE_UNAVAILABLE")
+    if semantics.get("kind") != "RUNTIME" or semantics.get("required_readiness") != "SKELETON_READY":
+        reject("AUTO_READINESS_NOT_APPLICABLE")
+    if not re.fullmatch(r"DN-[A-Z0-9-]+", node or "") or not re.fullmatch(
+        r"DEP-[0-9]+", edge.get("id", "")
+    ):
+        reject("CANONICAL_READINESS_IDENTITY_INVALID")
+    if producer not in q.PEOPLE or consumer not in q.PEOPLE or consumer != expected_consumer:
+        reject("CANONICAL_READINESS_OWNERSHIP_INVALID")
+    if not isinstance(edge.get("precise_requirement"), str) or not edge["precise_requirement"].strip():
+        reject("PRECISE_CONSUMER_REQUIREMENT_MISSING")
+    levels = policy.get("node_levels", {}).get(node, [])
+    if "SKELETON_READY" not in levels:
+        reject("REQUIRED_READINESS_LEVEL_INVALID")
+    try:
+        if gh.main_sha() != sha:
+            reject("SOURCE_SHA_NOT_CURRENT_MAIN")
+    except Denied as exc:
+        reject(exc.code)
+
+    basis_path = f"evidence/readiness/{node}.json"
+    basis = None
+    basis_blob = None
+    raw = b""
+    try:
+        raw, basis_blob = gh.repository_file(basis_path, sha)
+        basis = json.loads(raw.decode("utf-8"), object_pairs_hook=q.unique)
+    except Denied as exc:
+        reject("RUNTIME_READINESS_BASIS_MISSING" if exc.code in {
+            "ARTIFACT_NOT_A_FILE", "ARTIFACT_CONTENT_UNAVAILABLE"
+        } else exc.code)
+    except (ValueError, UnicodeDecodeError, TypeError):
+        reject("RUNTIME_READINESS_BASIS_INVALID")
+
+    expected_keys = {
+        "schema", "node", "level", "producer_wp", "producer_pr", "producer_merge_sha",
+        "consumer_edges", "consumer_wps", "checks"
+    }
+    if not isinstance(basis, dict) or set(basis) != expected_keys or basis.get("schema") != "auto-runtime-readiness-basis-v1":
+        reject("RUNTIME_READINESS_BASIS_INVALID")
+    if isinstance(basis, dict):
+        if basis.get("node") != node or basis.get("level") != "SKELETON_READY":
+            reject("RUNTIME_READINESS_LEVEL_MISMATCH")
+        if basis.get("producer_wp") not in policy.get("node_producers", {}).get(node, []):
+            reject("PRODUCER_SCOPE_UNKNOWN")
+        if basis.get("consumer_edges") != [edge.get("id")]:
+            reject("CONSUMER_EDGE_BINDING_MISSING")
+        if basis.get("consumer_wps", {}).get(edge.get("id")) != wp:
+            reject("CONSUMER_WP_BINDING_MISSING")
+        merge = basis.get("producer_merge_sha")
+        producer_pr = basis.get("producer_pr")
+        login = GITHUB.get(producer)
+        owner = q.PEOPLE.get(producer, (None,))[0] if producer in q.PEOPLE else None
+        producer_files = set()
+        if not isinstance(merge, str) or not SHA.fullmatch(merge) or type(producer_pr) is not int:
+            reject("PRODUCER_MERGE_BINDING_INVALID")
+        else:
+            try:
+                pr = gh.pr(producer_pr)
+                if not pr.get("merged") or pr.get("merge_commit_sha") != merge or \
+                        pr.get("user", {}).get("login", "").casefold() != (login or "").casefold():
+                    reject("PRODUCER_MERGE_ATTRIBUTION_INVALID")
+                gh.ancestor(merge, sha)
+                producer_files = {item.get("filename") for item in gh.files(pr)
+                                  if item.get("status") != "removed"}
+            except Denied as exc:
+                reject(exc.code)
+                producer_files = set()
+        checks = basis.get("checks")
+        if not isinstance(checks, list) or not checks:
+            reject("RUNTIME_EVIDENCE_UNDECLARED")
+            checks = []
+        seen = {}
+        observed_pass = False
+        observed_health = False
+        normalized = []
+        for check in checks:
+            if not isinstance(check, dict) or not {"path", "blob", "kind", "value"}.issubset(check):
+                reject("RUNTIME_EVIDENCE_INVALID")
+                continue
+            path, blob, kind, value = (check.get("path"), check.get("blob"), check.get("kind"), check.get("value"))
+            if kind == "json_equals" and set(check) != {"path", "blob", "kind", "field", "value"}:
+                reject("RUNTIME_EVIDENCE_INVALID")
+                continue
+            if kind == "text_contains" and set(check) != {"path", "blob", "kind", "value"}:
+                reject("RUNTIME_EVIDENCE_INVALID")
+                continue
+            if not isinstance(path, str) or (path in seen and seen[path] != blob) or not re.fullmatch(r"[a-f0-9]{40}", str(blob)):
+                reject("RUNTIME_EVIDENCE_INVALID")
+                continue
+            if kind not in {"text_contains", "json_equals"}:
+                reject("RUNTIME_EVIDENCE_KIND_UNSUPPORTED")
+                continue
+            if path not in producer_files:
+                reject("RUNTIME_EVIDENCE_NOT_PRODUCER_AUTHORED")
+            try:
+                content, actual_blob = gh.repository_file(path, sha)
+                if actual_blob != blob:
+                    reject("STALE_RUNTIME_EVIDENCE_BLOB")
+                if kind == "text_contains":
+                    text = content.decode("utf-8")
+                    if not isinstance(value, str) or not value or value not in text:
+                        reject("RUNTIME_HEALTH_OR_SMOKE_NOT_PASS")
+                    observed_pass |= isinstance(value, str) and "pass" in value.casefold()
+                    observed_health |= isinstance(value, str) and "healthy" in value.casefold()
+                else:
+                    data = json.loads(content.decode("utf-8"), object_pairs_hook=q.unique)
+                    field = check.get("field")
+                    # The basis schema intentionally supports only bounded dotted object paths.
+                    if not isinstance(field, str) or not re.fullmatch(r"[A-Za-z0-9_]+(?:\[[0-9]+\])?(?:\.[A-Za-z0-9_]+(?:\[[0-9]+\])?)*", field):
+                        reject("RUNTIME_EVIDENCE_FIELD_INVALID")
+                    else:
+                        actual = data
+                        for part in field.split("."):
+                            match = re.fullmatch(r"([A-Za-z0-9_]+)(?:\[([0-9]+)\])?", part)
+                            if not match or not isinstance(actual, dict) or match[1] not in actual:
+                                raise KeyError(part)
+                            actual = actual[match[1]]
+                            if match[2] is not None:
+                                if not isinstance(actual, list):
+                                    raise KeyError(part)
+                                actual = actual[int(match[2])]
+                        if actual != value:
+                            reject("RUNTIME_HEALTH_OR_SMOKE_NOT_PASS")
+            except (Denied, UnicodeDecodeError, ValueError, TypeError, KeyError):
+                reject("RUNTIME_EVIDENCE_UNREADABLE")
+            seen[path] = blob
+            normalized.append(dict(check))
+        if not observed_pass or not observed_health:
+            reject("RUNTIME_HEALTH_OR_SMOKE_NOT_PASS")
+    else:
+        merge = None
+        owner = None
+        login = None
+        normalized = []
+
+    if reasons:
+        return {"schema": "auto-readiness-attestation-v1", "status": "UNKNOWN",
+                "node": node, "level": "SKELETON_READY", "producer": producer,
+                "consumer": {"edge_id": edge.get("id"), "wp_id": wp, "node": successor},
+                "source_sha": sha, "reasons": reasons}
+    proof = {"schema": "auto-readiness-attestation-v1", "status": "PASS", "node": node,
+             "level": "SKELETON_READY", "producer": {"profile": producer, "owner": owner, "login": login},
+             "consumer": {"edge_id": edge["id"], "wp_id": wp, "required_level": "SKELETON_READY"},
+             "source_sha": sha, "producer_merge_sha": merge, "artifacts": normalized,
+             "tests": [], "trace": [], "semantic_basis": {"path": basis_path, "blob": basis_blob}}
+    proof["proof_digest"] = evidence_digest(proof)
+    return proof
+
+
+def automatic_readiness_attestation(gh, context, edge, sha, policy):
+    """Package immutable CONTRACT or mechanical runtime readiness evidence only."""
+    assert q is not None
+    semantics = edge.get("semantics", {})
+    if semantics.get("kind") == "RUNTIME" and semantics.get("required_readiness") == "SKELETON_READY":
+        return _automatic_runtime_readiness_attestation(gh, context, edge, sha, policy)
     reasons = []
 
     def reject(code):

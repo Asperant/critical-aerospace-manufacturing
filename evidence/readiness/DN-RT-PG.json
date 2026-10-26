@@ -1,0 +1,20 @@
+{
+  "schema": "auto-runtime-readiness-basis-v1",
+  "node": "DN-RT-PG",
+  "level": "SKELETON_READY",
+  "producer_wp": "WP-PLAT-001",
+  "producer_pr": 53,
+  "producer_merge_sha": "932edbaf87dd0d06b0984c25b4b75497a265e607",
+  "consumer_edges": ["DEP-006"],
+  "consumer_wps": {"DEP-006": "WP-CORE-007"},
+  "checks": [
+    {"path": "evidence/WP-PLAT-001/README.md", "blob": "b7fa3e37d211c6ec79c3a05b3c1c817535bdc661", "kind": "text_contains", "value": "Owner: Yavuz Gümüş"},
+    {"path": "evidence/WP-PLAT-001/RUN-PLAT-001-DEV-001/record.json", "blob": "3885a1fb74e35c0d68e42931c53118657da51a0c", "kind": "json_equals", "field": "work_package", "value": "WP-PLAT-001"},
+    {"path": "evidence/WP-PLAT-001/RUN-PLAT-001-DEV-001/record.json", "blob": "3885a1fb74e35c0d68e42931c53118657da51a0c", "kind": "json_equals", "field": "boundary_mode", "value": "REAL"},
+    {"path": "evidence/WP-PLAT-001/RUN-PLAT-001-DEV-001/record.json", "blob": "3885a1fb74e35c0d68e42931c53118657da51a0c", "kind": "json_equals", "field": "steps[2].exit_code", "value": 0},
+    {"path": "evidence/WP-PLAT-001/RUN-PLAT-001-DEV-001/status.log.txt", "blob": "ebab9066dc71a161776df3e1b9a87cad553a02a9", "kind": "text_contains", "value": "cap-platform-postgres-1"},
+    {"path": "evidence/WP-PLAT-001/RUN-PLAT-001-DEV-001/status.log.txt", "blob": "ebab9066dc71a161776df3e1b9a87cad553a02a9", "kind": "text_contains", "value": "postgres:18.6-alpine"},
+    {"path": "evidence/WP-PLAT-001/RUN-PLAT-001-DEV-001/status.log.txt", "blob": "ebab9066dc71a161776df3e1b9a87cad553a02a9", "kind": "text_contains", "value": "healthy"},
+    {"path": "evidence/WP-PLAT-001/RUN-PLAT-001-DEV-001/smoke.log.txt", "blob": "110de9634041d57011ac54d46166409ad28b2121", "kind": "text_contains", "value": "smoke platform-infra: PASS"}
+  ]
+}
