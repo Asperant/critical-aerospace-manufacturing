@@ -436,6 +436,20 @@ class ReconcileFlowTests(unittest.TestCase):
         denied(self, "ACTIVE_BLOCKER_UNRESOLVED", mutate=block)
         denied(self, "ACTIVE_BLOCKER_UNRESOLVED", source="VALIDATING", mutate=block)
 
+    def test_blocked_in_progress_reconciles_to_validating_without_clearing_blocker(self):
+        result, plane, logs, _ = run_case(
+            source="IN_PROGRESS",
+            mutate=lambda policy, item, gh, env: item.item["labels"].append(
+                item.blocked
+            ),
+        )
+        self.assertEqual(result["result"], "VERIFIED")
+        self.assertEqual(plane.patches, [{"state": "VALIDATING"}])
+        self.assertIn(plane.blocked, plane.item["labels"])
+        self.assertTrue(logs[-1]["blocked_preserved"])
+        self.assertEqual((logs[-1]["from_state"], logs[-1]["to_state"]),
+                         ("IN_PROGRESS", "VALIDATING"))
+
     def test_unsupported_targets_and_arguments_are_rejected(self):
         policy, plane, gh = make_policy(), FakePlane("READY"), FakeGH()
         for profile, wp, target in [
