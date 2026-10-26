@@ -43,7 +43,7 @@ bindings:
 - id: BIND-EVT002-NATS-CONSUMER
   producer_wp: WP-TWIN-001
   producer_owner: asrin
-  producer_scope: a26f152f56d206b291669071236e28fb7370906d5c5df13d06aeb3f69f722f95
+  producer_scope: c6c0ca0abe3b303d6662e86119c294444048ed04988346f5b7d08d76acac4f63
   consumer_wp: WP-EVT-002
   consumer_owner: asrin
   consumer_scope: 052d908bb24769d74259a455d99c53567dfaa8faafcb8977bf780d154973d499
