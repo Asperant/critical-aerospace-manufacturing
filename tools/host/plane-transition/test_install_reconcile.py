@@ -19,8 +19,7 @@ spec.loader.exec_module(ins)
 LAUNCHER = HERE / "cap-plane-reconcile"
 GRANT = re.compile(
     r"(asrin|selman|batuhan|yavuz) ALL=\(root\) NOPASSWD: NOSETENV: "
-    r"/usr/bin/python3 -I /usr/local/libexec/cap-plane-reconcile\.py "
-    r"\1$"
+    r"/usr/local/libexec/cap-plane-reconcile-\1$"
 )
 
 
@@ -53,13 +52,11 @@ class GrantTests(unittest.TestCase):
         assert match is not None
         self.assertEqual(
             match[1],
-            '/usr/bin/python3 -I /usr/local/libexec/cap-plane-reconcile.py "$CAP_PROFILE" "$1" "$2"',
+            '"/usr/local/libexec/cap-plane-reconcile-$CAP_PROFILE" "$1" "$2"',
         )
         granted = ins.reconcile_grants(policy_block())[1].split("NOSETENV: ")[1]
         self.assertTrue(
-            granted.startswith(
-                "/usr/bin/python3 -I /usr/local/libexec/cap-plane-reconcile.py "
-            )
+            granted.endswith("/usr/local/libexec/cap-plane-reconcile-asrin")
         )
         self.assertTrue(GRANT.fullmatch(ins.reconcile_grants(policy_block())[1]))
 
@@ -68,6 +65,7 @@ class MappingTests(unittest.TestCase):
     def test_policy_pinned_implementations_are_all_deployed_files(self):
         deployed = set(ins.deployment_mapping())
         self.assertIn("reconcile", ins.IMPLEMENTATION_TARGETS)
+        self.assertIn("/usr/local/libexec/cap-plane-reconcile-asrin", deployed)
         for kind, dest in ins.IMPLEMENTATION_TARGETS.items():
             with self.subTest(kind=kind):
                 self.assertIn(dest, deployed)
@@ -76,6 +74,7 @@ class MappingTests(unittest.TestCase):
         restore = ins.restore_targets(ins.deployment_mapping())
         self.assertIn("/etc/sudoers.d/cap-plane-reconcile", restore)
         self.assertIn("/usr/local/libexec/cap-plane-reconcile.py", restore)
+        self.assertIn("/usr/local/libexec/cap-plane-reconcile-asrin", restore)
         self.assertIn("/usr/local/bin/cap-plane-reconcile", restore)
 
 
