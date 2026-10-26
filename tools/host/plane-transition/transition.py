@@ -899,7 +899,8 @@ def ready_assessment_record(gh, context, policy, sha):
     checks = {}
     for identity in ids:
         result_detail = rows.get(identity)
-        need(result_detail is not None, 'READY_CRITERION_MISSING')
+        if result_detail is None:
+            raise Denied('READY_CRITERION_MISSING')
         result, detail = result_detail
         if result.startswith('PASS'):
             need(detail, 'READY_CRITERION_UNEXPLAINED')
@@ -914,7 +915,8 @@ def ready_assessment_record(gh, context, policy, sha):
     reference = re.compile(r'(?:`([^`]+)`|((?:docs|evidence|project_control|requirements|tools)/[^\s,;)]+))')
     for edge in start_edges:
         value = dependency_rows.get(edge['id'])
-        need(value is not None, 'START_DEPENDENCY_EVIDENCE_MISSING')
+        if value is None:
+            raise Denied('START_DEPENDENCY_EVIDENCE_MISSING')
         readiness, detail = value
         need(readiness not in {'NOT_APPLICABLE', 'N/A', 'UNKNOWN', ''} and detail
              and reference.search(detail), 'START_DEPENDENCY_EVIDENCE_MISSING')
