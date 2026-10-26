@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: d0a9379a24c6ef4d04b8f3b2f5fa31af693439402413f019c705432c4495d5a2
+  sha256: 849ff19d24a4b53843e0dd18427392bbf6cdd4a97c145326f51b10ec228137c5
 requirements:
   FR-GOV-001:
     meta:
@@ -421,9 +421,9 @@ requirements:
       planning: VERIFY_PLANNED
       evidence: NOT_YET_EXECUTED
     realization:
-      surface: schema-level grants; per-service DB roles; `core` schema privacy
+      surface: versioned migration ledger; explicit per-service role bindings; same-schema grants with cross-schema denial
       deployable: manufacturing-core + PostgreSQL runtime
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-core/src/manufacturing_core/migrate.py; services/manufacturing-core/src/manufacturing_core/role_matrix.py; services/manufacturing-core/src/manufacturing_core/role_matrix.json
   FR-CORE-014:
     meta:
       class: F1
@@ -6119,7 +6119,9 @@ edges:
 - {"from": "FR-CORE-013", "relation": "DERIVED_FROM", "to": "INT-INV-01", "applicability": "PLANNED"}
 - {"from": "FR-CORE-013", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-DB", "applicability": "PLANNED"}
 - {"from": "FR-CORE-013", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-CMD", "applicability": "PLANNED"}
-- {"from": "FR-CORE-013", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-CORE-013", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-core/src/manufacturing_core/migrate.py", "applicability": "RECORDED"}
+- {"from": "FR-CORE-013", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-core/src/manufacturing_core/role_matrix.py", "applicability": "RECORDED"}
+- {"from": "FR-CORE-013", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-core/src/manufacturing_core/role_matrix.json", "applicability": "RECORDED"}
 - {"from": "FR-CORE-013", "relation": "GOVERNED_BY", "to": "DB role/grant configuration", "applicability": "PLANNED"}
 - {"from": "FR-CORE-013", "relation": "VERIFIED_BY", "to": "TEST-ARCH-BOUNDARY", "applicability": "PLANNED"}
 - {"from": "FR-CORE-013", "relation": "VERIFIED_BY", "to": "TEST-SEC-SVCID", "applicability": "PLANNED"}
