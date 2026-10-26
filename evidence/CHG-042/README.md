@@ -21,3 +21,6 @@ No prior DEP-027 PASS evidence is invalidated: the canonical status remains
 The existing merged-binding provenance was refreshed to the current
 `docs/04_Work_Breakdown_Structure.md` digest; no binding row or readiness
 claim was added.
+
+The change-control branch was rebased onto the current `main` before merge
+validation; no implementation branch or lifecycle state was changed.
