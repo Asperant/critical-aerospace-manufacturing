@@ -33,6 +33,48 @@ env:
   PYTHONDONTWRITEBYTECODE: "1"
 
 jobs:
+  scope:
+    name: ci-scope
+    runs-on: ubuntu-latest
+    outputs:
+      integration: ${{ steps.scope.outputs.integration }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: scope
+        env:
+          BASE_SHA: ${{ github.event.before || github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import subprocess
+
+          paths = subprocess.check_output(
+              ["git", "diff", "--name-only", os.environ["BASE_SHA"], os.environ["HEAD_SHA"]],
+              text=True,
+          ).splitlines()
+          integration_prefixes = (
+              "ci/integration/",
+              "ci/scripts/integration_services.sh",
+              "infra/",
+              "packages/artifacts/",
+              "packages/event-consumer/",
+              "packages/observability/",
+              "services/command-center-web/",
+              "services/manufacturing-core/",
+              "services/operations-bff/",
+          )
+          required = any(
+              any(path.startswith(prefix) for prefix in integration_prefixes)
+              for path in paths
+          )
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"integration={'true' if required else 'false'}\n")
+          print("integration=", "true" if required else "false")
+
   static:
     name: t1-static
     runs-on: ubuntu-latest
@@ -171,7 +213,8 @@ jobs:
 
   integration:
     name: t1-integration
-    if: github.event_name != 'pull_request'
+    needs: [scope]
+    if: github.event_name != 'pull_request' && needs.scope.outputs.integration == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -255,7 +298,7 @@ jobs:
 
   gate:
     name: ci-gate
-    needs: [static, unit, contract, integration]
+    needs: [scope, static, unit, contract, integration]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -269,8 +312,9 @@ jobs:
           import json, os, sys
           needs = json.loads(os.environ["NEEDS"])
           event_name = os.environ["EVENT_NAME"]
-          expected = {"static", "unit", "contract"}
-          if event_name != "pull_request":
+          integration_scope = needs["scope"]["outputs"].get("integration") == "true"
+          expected = {"scope", "static", "unit", "contract"}
+          if event_name != "pull_request" and integration_scope:
               expected.add("integration")
           missing = sorted(expected - needs.keys())
           failed = {
