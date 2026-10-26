@@ -269,6 +269,7 @@ def test_repository_registry_loads_and_verifies() -> None:
     assert registry.contract_ids() == (
         "core.lot-dispatch-authorized.v1",
         "core.lot-held.v1",
+        "core.operational-command.v1",
         EXEMPLAR,
     )
     registry.verify(REPO)
