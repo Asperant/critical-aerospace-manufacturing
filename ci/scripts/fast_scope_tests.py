@@ -85,17 +85,34 @@ def main() -> int:
             )
         )
     elif any(path.startswith("tools/projectctl/") for path in paths):
-        selected.append(
-            (
-                "projectctl-focused",
-                [
-                    *PYTEST,
-                    "tools/projectctl/tests/test_cli.py",
-                    "tools/projectctl/tests/test_project.py",
-                    "-q",
-                ],
+        projectctl_test_paths = {
+            path
+            for path in paths
+            if path.startswith("tools/projectctl/tests/")
+        }
+        if projectctl_test_paths == {"tools/projectctl/tests/test_dependencies.py"}:
+            selected.append(
+                (
+                    "projectctl-dependencies",
+                    [
+                        *PYTEST,
+                        "tools/projectctl/tests/test_dependencies.py",
+                        "-q",
+                    ],
+                )
             )
-        )
+        else:
+            selected.append(
+                (
+                    "projectctl-focused",
+                    [
+                        *PYTEST,
+                        "tools/projectctl/tests/test_cli.py",
+                        "tools/projectctl/tests/test_project.py",
+                        "-q",
+                    ],
+                )
+            )
     if any(
         path.startswith("ci/") or path.startswith(".github/workflows/")
         for path in paths
