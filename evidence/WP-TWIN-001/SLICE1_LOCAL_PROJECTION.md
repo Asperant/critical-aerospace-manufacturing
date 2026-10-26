@@ -29,4 +29,3 @@ DEP-032 real NATS event-spine delivery and DEP-033 runtime PostgreSQL schema
 migration were not claimed or executed. CHG-035 `BIND-EVT002-NATS-CONSUMER`
 remains a future runtime binding obligation. Integrated scenario evidence is
 therefore `NOT_YET_EXECUTED`; this artifact is local CI evidence only.
-

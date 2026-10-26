@@ -12,7 +12,6 @@ CREATE TABLE IF NOT EXISTS twin.projection_entity (
     updated_at timestamptz NOT NULL DEFAULT now(),
     PRIMARY KEY (world_id, branch_id, aggregate_type, aggregate_id)
 );
-
 CREATE TABLE IF NOT EXISTS twin.applied_event (
     consumer_scope text NOT NULL,
     event_id text NOT NULL,

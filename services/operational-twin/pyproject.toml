@@ -15,4 +15,3 @@ where = ["src"]
 testpaths = ["tests"]
 pythonpath = ["src", "../../packages/contracts/src", "../../packages/event-consumer/src"]
 addopts = "-p no:cacheprovider"
-

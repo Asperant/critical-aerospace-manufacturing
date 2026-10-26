@@ -30,4 +30,3 @@ rebuild from canonical sources before current-state semantics are restored.
 Startup catch-up is deterministic through `Projector.catch_up`. A process
 restart must retain the applied-event ledger and source revision in the runtime
 database; the migration is intentionally not destructive.
-
