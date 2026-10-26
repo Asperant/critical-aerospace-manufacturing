@@ -374,8 +374,22 @@ def semantic_slot_release_source(t, wp, profile, policy, gh):
             and row.get("operation") == "BLOCKED"
             and row.get("wp_id") == wp
             and row.get("profile") == profile
-            and row.get("from_state") == verified.get("from_state")
-            and row.get("to_state") == verified.get("to_state")
+            and (
+                (
+                    row.get("from_state") == verified.get("from_state")
+                    and row.get("to_state") == verified.get("to_state")
+                )
+                # A lifecycle reconciliation may move the item to VALIDATING
+                # before the owner can reassert the unchanged external wait.
+                # Preserve the original VERIFIED blocker as the authority and
+                # accept only that exact IN_PROGRESS -> VALIDATING shape.
+                or (
+                    verified.get("from_state") == "IN_PROGRESS"
+                    and verified.get("to_state") == "IN_PROGRESS"
+                    and row.get("from_state") == "VALIDATING"
+                    and row.get("to_state") == "VALIDATING"
+                )
+            )
             and row.get("active_blocker_audit_id") == verified.get("audit_id")
             and t.audit_identity(row) == row.get("audit_id")
         ):
@@ -668,8 +682,16 @@ def reassertion(t, wp, profile, verified, state="IN_PROGRESS", reason_prefix=Non
             and row.get("operation") == "BLOCKED"
             and row.get("wp_id") == wp
             and row.get("profile") == profile
-            and row.get("from_state") == state
-            and row.get("to_state") == state
+            and (
+                (row.get("from_state") == state and row.get("to_state") == state)
+                or (
+                    verified.get("from_state") == "IN_PROGRESS"
+                    and verified.get("to_state") == "IN_PROGRESS"
+                    and state == "IN_PROGRESS"
+                    and row.get("from_state") == "VALIDATING"
+                    and row.get("to_state") == "VALIDATING"
+                )
+            )
             and row.get("active_blocker_audit_id") == verified["audit_id"]
             and (
                 row.get("reason") == verified.get("reason")
