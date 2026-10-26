@@ -383,8 +383,7 @@ def recorded_historical_technical_acceptance(t, gh, pr, profile, merge_sha, poli
                 user = comment.get("user") or {}
                 if (
                     isinstance(comment_body, str)
-                    and user.get("login", "").casefold()
-                    == t.GITHUB[profile].casefold()
+                    and user.get("login", "").casefold() == t.GITHUB[profile].casefold()
                     and comment.get("created_at") == comment.get("updated_at")
                     and merge_sha in comment_body
                 ):
