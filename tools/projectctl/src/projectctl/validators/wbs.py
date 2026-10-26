@@ -6,7 +6,7 @@ from ..enums import Severity, ScopeClass
 from ..parsers.wbs import AREA, Catalog, WP_ID
 from .identity import validate_identity
 
-EXPECTED_OWNERS = {"Asrın Dündar": 73, "Selman Özdemir": 17, "Batuhan Kaya": 32, "Yavuz Gümüş": 57}
+EXPECTED_OWNERS = {"Asrın Dündar": 74, "Selman Özdemir": 17, "Batuhan Kaya": 32, "Yavuz Gümüş": 57}
 
 
 def validate(catalog: Catalog) -> list[Diagnostic]:
@@ -17,8 +17,8 @@ def validate(catalog: Catalog) -> list[Diagnostic]:
                                       record_id=record, source=source))
 
     ids = {wp.id for wp in catalog.work_packages}
-    if len(ids) != 179:
-        error("WP_COUNT", f"Expected 179 unique WPs; observed {len(ids)}.")
+    if len(ids) != 180:
+        error("WP_COUNT", f"Expected 180 unique WPs; observed {len(ids)}.")
     owners = Counter(wp.primary_owner.canonical_name for wp in catalog.work_packages if wp.primary_owner)
     if dict(owners) != EXPECTED_OWNERS:
         error("OWNER_DISTRIBUTION", f"Expected {EXPECTED_OWNERS}; observed {dict(sorted(owners.items(), key=lambda x: x[0] or ''))}.")

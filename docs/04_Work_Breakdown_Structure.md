@@ -10,8 +10,8 @@
 | Canonical sources | 01 Master Project Specification (Items 62, 64–69, 79, 81–85); 02 System Architecture Specification |
 | Upstream downstream artifacts | 03 Requirements Traceability Matrix v0.1.0-draft; 05 Dependency Graph v0.1.0-draft |
 | Production doctrine | 00 Production Guide §13 (File 04) |
-| Scale | 179 work packages across 29 capability areas; 306 requirements covered (186 FR + 120 NFR) |
-| Mandatory vs optional | 26 F0 · 125 F1 · 23 R1 · 3 R2 · 2 S (R2/S never on a mandatory or critical path) |
+| Scale | 180 work packages across 29 capability areas; 306 requirements covered (186 FR + 120 NFR) |
+| Mandatory vs optional | 26 F0 · 126 F1 · 23 R1 · 3 R2 · 2 S (R2/S never on a mandatory or critical path) |
 | Status of every WP today | `NOT_STARTED` — no implementation, no repository path, no test result exists |
 | Machine-readable companion | `04_wbs/` (work packages, requirement coverage, deliverables, task register) |
 
@@ -372,11 +372,12 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 **Cut / fallback semantics.** No cut; the gate may be manual (checklist) before automation.
 
 
-### 6.2 Manufacturing Core / Backend (`WP-CORE-*`, 8 work packages)
+### 6.2 Manufacturing Core / Backend (`WP-CORE-*`, 9 work packages)
 
 | WP | Title | Owner | Scope | Milestone | Size band |
 |---|---|---|---|---|---|
 | WP-CORE-001 | Canonical manufacturing domain model and core schema | Asrın | F0 | M1 | L |
+| WP-CORE-009 | Core minimal lifecycle component | Asrın | F1 | M1 | S |
 | WP-CORE-002 | Manufacturing lifecycle state machine | Asrın | F1 | M2 | M |
 | WP-CORE-003 | Command acceptance: idempotency, revision preconditions, durable outcomes | Asrın | F1 | M2 | L |
 | WP-CORE-004 | Rework, split/merge and temporal genealogy | Asrın | F1 | M2 | M |
@@ -429,6 +430,50 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 **DoR / DoD.** DOR-WP-01…08 apply; DoD: DOD-WP-01…03, 05, 06, 12.
 
 **Cut / fallback semantics.** No cut (F0). Early CONTRACT_READY publication is the unlock for Simulator, Twin, Scheduler and Automation (05 CYC-01).
+
+
+#### WP-CORE-009 — Core minimal lifecycle component
+
+| Field | Value |
+|---|---|
+| PrimaryOwner | Asrın |
+| Supporting owner (most frequent reviewer) | Batu |
+| ScopeClass | F1 |
+| Target milestone / sprint window | M1 / S2 |
+| Readiness node (05) | DN-CORE-LIFECYCLE |
+| Size band (indicative, no hour estimates) | S (≈1–3 focused days) |
+| Status | NOT_STARTED |
+| Repository reference | TBD_BY_IMPLEMENTATION |
+
+**Purpose.** Provide the independently executable producer slice for the canonical minimal lifecycle component consumed by WP-CORE-002. This slice is limited to the lifecycle/state model and its component-level proof; legal transition semantics, hold/release handlers, rework and split/merge remain in WP-CORE-002 and downstream packages.
+
+**Source requirements (03).** FR-CORE-003
+
+**Architecture components (02).** ARCH-CORE-DOMAIN, ARCH-CORE-DB
+
+**Inputs / required contracts.** gated by DEP-018 (DN-CORE-CONTRACTS → DN-CORE-LIFECYCLE, HARD/START@CONTRACT_READY, need-by S1–S2) and DEP-019 (DN-RT-PG → DN-CORE-LIFECYCLE, HARD/INTEGRATION@SKELETON_READY, need-by M1 (S2))
+
+**Deliverables.**
+- canonical minimal lifecycle/state model implementation
+- lifecycle component test suite
+- attributable `COMPONENT_READY` readiness artifact bound to current main and DN-CORE-LIFECYCLE
+- explicit producer binding for WP-CORE-002 / DEP-020
+
+**Major tasks.**
+- implement only the minimal lifecycle/state representation required by the canonical Core model
+- publish lifecycle component tests without implementing transition legality
+- produce the current-main readiness artifact with source revision, CI run and test references
+- bind the producer artifact to DN-CORE-LIFECYCLE and DEP-020
+
+**Verification work (03 planned families).** TEST-CORE-LIFECYCLE
+
+**Expected evidence artifact.** `evidence/WP-CORE-009/COMPONENT-READY.md` plus attributable current-main CI/component-test evidence — `NOT_YET_EXECUTED`.
+
+**Risk hooks (Item 69).** —
+
+**DoR / DoD.** DOR-WP-01…08 apply; DoD: DOD-WP-01…03, 05, 06, 12.
+
+**Cut / fallback semantics.** No fallback. This producer slice must not absorb WP-CORE-002 transition semantics.
 
 
 #### WP-CORE-002 — Manufacturing lifecycle state machine
@@ -9102,6 +9147,7 @@ Every work package declares the 05 readiness node it advances. The table lists, 
 | WP | Readiness node | #HARD gates | Gating edges (first 5) |
 |---|---|---|---|
 | WP-GOV-003 | DN-PLAT-RUNNER | 2 | DEP-114 (DN-PLAT-FAILVAL, MILESTONE_EXIT, need-by M5 (S10)), DEP-115 (DN-PLAT-CD, INTEGRATION, need-by M5 (S10)) |
+| WP-CORE-009 | DN-CORE-LIFECYCLE | 2 | DEP-018 (DN-CORE-CONTRACTS, START, need-by S1–S2), DEP-019 (DN-RT-PG, INTEGRATION, need-by M1 (S2)) |
 | WP-CORE-002 | DN-CORE-TRANSITIONS | 1 | DEP-020 (DN-CORE-LIFECYCLE, START, need-by S2–S3) |
 | WP-CORE-003 | DN-CORE-CMDEXEC | 2 | DEP-027 (DN-CORE-CMDCON, INTEGRATION, need-by S2–S3), DEP-028 (DN-CORE-TRANSITIONS, INTEGRATION, need-by E2E-01 readiness (end S4)) |
 | WP-CORE-004 | DN-CORE-GENEALOGY | 1 | DEP-029 (DN-CORE-LIFECYCLE, INTEGRATION, need-by M2 (S4)) |

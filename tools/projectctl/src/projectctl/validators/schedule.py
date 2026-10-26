@@ -34,7 +34,7 @@ def validate_schedule(catalog, schedule):
                 tokens = re.findall(r"S(\d+)", wp.sprint_window)
                 allowed = set(range(int(tokens[0]), int(tokens[-1]) + 1)) if tokens else set()
                 check(int(cycle.id[1:]) in allowed, "WBS_CYCLE_CONFLICT", "Cycle outside WBS planning window", wp.provenance, wp_id)
-    check(len(scheduled) == 174, "SCHEDULED_COUNT", f"Expected 174 scheduled WPs; observed {len(scheduled)}")
+    check(len(scheduled) == 175, "SCHEDULED_COUNT", f"Expected 175 scheduled WPs; observed {len(scheduled)}")
     check(packages.keys() - scheduled == UNSCHEDULED, "UNSCHEDULED_SET", "Unscheduled identities disagree with exact five-item baseline")
     all_milestone_wps = []
     for milestone in schedule.milestones:
@@ -43,7 +43,7 @@ def validate_schedule(catalog, schedule):
         check(milestone.effective_week_end == 2 * int(milestone.target_cycle[1:]), "MILESTONE_WEEK", "Milestone effective-week target disagrees", milestone.provenance, milestone.id)
         check(set(milestone.work_package_ids) == {wp.id for wp in packages.values() if wp.milestone == milestone.id},
               "WBS_MILESTONE_CONFLICT", "07 milestone membership and WBS disagree", milestone.provenance, milestone.id)
-    check(len(all_milestone_wps) == len(set(all_milestone_wps)) == 174, "SCHEDULE_IDENTITY", "Each scheduled WP must belong to one milestone")
+    check(len(all_milestone_wps) == len(set(all_milestone_wps)) == 175, "SCHEDULE_IDENTITY", "Each scheduled WP must belong to one milestone")
     for owner, ids in schedule.roadmap_owner_ids.items():
         check(len(ids) == len(set(ids)) and set(ids) == {wp.id for wp in packages.values() if wp.primary_owner and wp.primary_owner.canonical_name == owner},
               "ROADMAP_OWNER_CONFLICT", f"Roadmap membership disagrees with WBS for {owner}")

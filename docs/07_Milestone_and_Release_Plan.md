@@ -100,7 +100,7 @@ Make the approved schedule operational: what each milestone means, what must be 
 | Milestone | Name | Target | #WP | F0 | R1 | WPs by owner |
 |---|---|---|---|---|---|---|
 | M0 | Engineering Foundation Ready | End S1 / W2 | 2 | 0 | 0 | Asrın:1, Yavuz:1 |
-| M1 | Integrated Spine | End S2 / W4 | 13 | 8 | 0 | Asrın:7, Yavuz:5, Batu:1 |
+| M1 | Integrated Spine | End S2 / W4 | 14 | 8 | 0 | Asrın:8, Yavuz:5, Batu:1 |
 | M2 | Operational Manufacturing Alpha | End S4 / W8 | 21 | 3 | 0 | Asrın:10, Yavuz:5, Batu:4, Selman:2 |
 | M3 | Closed-Loop Alpha | End S6 / W12 | 27 | 14 | 0 | Asrın:13, Batu:9, Yavuz:3, Selman:2 |
 | M4 | Mandatory Core Feature Complete | End S8 / W16 | 39 | 1 | 0 | Asrın:15, Batu:9, Selman:8, Yavuz:7 |
@@ -278,6 +278,7 @@ Each record follows the 00 §15 milestone schema. Work packages, dependency gate
 | WP | Title | Owner | Scope | Size |
 |---|---|---|---|---|
 | WP-CORE-001 | Canonical manufacturing domain model and core schema | Asrın | F0 | L |
+| WP-CORE-009 | Core minimal lifecycle component | Asrın | F1 | S |
 | WP-CORE-005 | Domain events and transactional outbox | Asrın | F0 | M |
 | WP-CORE-007 | Core database migrations and role separation | Asrın | F1 | M |
 | WP-EVT-001 | Integration Contract Registry and versioning discipline | Asrın | F0 | M |
@@ -1356,11 +1357,12 @@ Sprint goals and per-role scope are the Item 65 progression, projected against t
 | Batu | Simulator/Core-world integration, resource/queue mechanics, FIFO dispatch baseline, Scheduler contract v1 |
 | Yavuz | JetStream baseline streams, CI integration dependencies, CD to INTEGRATION, Keycloak skeleton, OTel Collector/OpenObserve skeleton, ReleaseManifest v0 |
 
-**Work packages in flight for M1 (13, by owner: Asrın:7, Yavuz:5, Batu:1).**
+**Work packages in flight for M1 (14, by owner: Asrın:8, Yavuz:5, Batu:1).**
 
 | WP | Title | Owner | Scope |
 |---|---|---|---|
 | WP-CORE-001 | Canonical manufacturing domain model and core schema | Asrın | F0 |
+| WP-CORE-009 | Core minimal lifecycle component | Asrın | F1 |
 | WP-CORE-005 | Domain events and transactional outbox | Asrın | F0 |
 | WP-CORE-007 | Core database migrations and role separation | Asrın | F1 |
 | WP-EVT-001 | Integration Contract Registry and versioning discipline | Asrın | F0 |
@@ -2219,7 +2221,7 @@ Generated from 04/06: every milestone must contain independent work for all four
 | Milestone | Name | Asrın | Selman | Batu | Yavuz | Convergence point | All four roles have independent work |
 |---|---|---|---|---|---|---|---|
 | M0 | Engineering Foundation Ready | 1 | 0 | 0 | 1 | platform foundation only | review — a role has no owned package in this window |
-| M1 | Integrated Spine | 7 | 0 | 1 | 5 | Core ↔ events ↔ Twin ↔ UI ↔ platform | review — a role has no owned package in this window |
+| M1 | Integrated Spine | 8 | 0 | 1 | 5 | Core ↔ events ↔ Twin ↔ UI ↔ platform | review — a role has no owned package in this window |
 | M2 | Operational Manufacturing Alpha | 10 | 2 | 4 | 5 | Simulator ↔ Core ↔ Twin ↔ Vision ↔ Scheduler | yes |
 | M3 | Closed-Loop Alpha | 13 | 2 | 9 | 3 | full closed loop including authority, Automation and identity | yes |
 | M4 | Mandatory Core Feature Complete | 15 | 8 | 9 | 7 | intelligence and control depth integrated into the same running system | yes |

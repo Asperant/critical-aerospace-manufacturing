@@ -140,7 +140,7 @@ Ownership here means PrimaryOwner in the 01 catalogue: this role is accountable 
 |---|---|---|---|
 | FR-CORE-001 | F0 | WP-CORE-001 | TEST-CORE-DOMAIN, E2E-01, AV-SCEN-01, BENCH-E2E-001 |
 | FR-CORE-002 | F0 | WP-CORE-001 | TEST-CORE-DOMAIN, TEST-CORE-GENEALOGY, E2E-01, AV-SCEN-02, BENCH-E2E-001 |
-| FR-CORE-003 | F1 | WP-CORE-002, WP-CORE-008, WP-TEST-003 | TEST-CORE-STATEMACHINE, AV-SCEN-01 |
+| FR-CORE-003 | F1 | WP-CORE-002, WP-CORE-008, WP-CORE-009, WP-TEST-003 | TEST-CORE-LIFECYCLE, TEST-CORE-STATEMACHINE, AV-SCEN-01 |
 | FR-CORE-004 | F1 | WP-CORE-003 | TEST-CORE-REVISION, TEST-HITL-REPLAY-NEG |
 | FR-CORE-005 | F1 | WP-CORE-003 | TEST-CORE-IDEMP, AV-SCEN-05, RES-DUP-001 |
 | FR-CORE-006 | F1 | WP-CORE-003, WP-CORE-008 | TEST-CORE-IDEMP, TEST-AUTO-OUTCOME, AV-SCEN-01 |
@@ -370,6 +370,7 @@ Planned verification families whose semantic correctness belongs to this role (0
 | INSP-GOV-CHANGECTRL | INSP | Change-control / freeze-impact review record audit for requirement semantic changes (post-M6 focus) | ENG-A | CI | WP-GOV-004 |
 | TEST-ARCH-BOUNDARY | TEST | Architecture-rules-as-code: import boundaries, schema ownership, forbidden cross-service credentials, contract producer uniqueness | ENG-B | CI | WP-CORE-001, WP-CORE-007, WP-EVT-001, WP-EVT-005, WP-RAG-005, WP-TEST-007 |
 | TEST-CORE-DOMAIN | TEST | Canonical entity model: order/lot/serialized component/route/step/equipment incl. reentrant route representation | ENG-A | CI | WP-CORE-001 |
+| TEST-CORE-LIFECYCLE | TEST | Minimal canonical lifecycle/state component tests; no legal transition or command-handler semantics | ENG-B | CI | WP-CORE-009 |
 | TEST-CORE-STATEMACHINE | TEST | Legal/illegal manufacturing transitions incl. hold/release/rework/split/merge (negative-path mandatory, TEST-INV-08) | ENG-B | CI | WP-CORE-002, WP-CORE-004, WP-CORE-008, WP-TEST-003 |
 | TEST-CORE-REVISION | TEST | Revision/freshness precondition rejection (STALE/CONFLICT outcomes) | ENG-B | CI | WP-CORE-003 |
 | TEST-CORE-IDEMP | TEST | Command idempotency + durable command-outcome persistence (completed/rejected/unresolved) | ENG-B | CI | WP-CORE-003, WP-CORE-008 |
@@ -1022,6 +1023,24 @@ Each package below is owned by this role. Deliverables and tasks are the 04 defi
 - write negative tests as first-class cases (not afterthoughts)
 
 **Cut/fallback.** No cut. Stability of this WP is a HARD precondition for Simulator validity claims, Scheduler validation and Automation execution.
+
+
+### 9.WP-CORE-009 — Core minimal lifecycle component
+
+| Field | Value |
+|---|---|
+| Scope / milestone / sprint window | F1 · M1 · S2 |
+| Readiness node | DN-CORE-LIFECYCLE |
+| Supporting reviewer | Batu |
+| Source requirements | FR-CORE-003 (producer prerequisite only; transition enforcement remains WP-CORE-002) |
+| Architecture | ARCH-CORE-DOMAIN, ARCH-CORE-DB |
+| Gating edges | DEP-018, DEP-019 |
+| Verification families | TEST-CORE-LIFECYCLE |
+| Size band / status | S (≈1–3 focused days) · NOT_STARTED |
+
+**Deliverables.** Minimal lifecycle/state model, lifecycle component tests, and an attributable current-main `COMPONENT_READY` artifact bound to DN-CORE-LIFECYCLE and WP-CORE-002 / DEP-020.
+
+**Boundary.** Legal transition semantics, hold/release, rework and split/merge remain in WP-CORE-002 and WP-CORE-004.
 
 
 ### 9.WP-CORE-003 — Command acceptance: idempotency, revision preconditions, durable outcomes
@@ -2828,7 +2847,7 @@ Sprint character follows Item 66 §"Sprint-Level Parallelization"; the packages 
 | Sprint | Character (Item 66) | Work packages in flight | Upstream gates due | Commitments owed | Milestone |
 |---|---|---|---|---|---|
 | S1 | maximum independent foundational work | WP-GOV-001 | 0 | 0 | M0 |
-| S2 | first Core/event/Twin/platform convergence | WP-CORE-001, WP-CORE-005, WP-CORE-007, WP-EVT-001, WP-EVT-002, WP-TWIN-001, WP-UI-001 | 3 | 1 | M1 |
+| S2 | first Core/event/Twin/platform convergence | WP-CORE-001, WP-CORE-009, WP-CORE-005, WP-CORE-007, WP-EVT-001, WP-EVT-002, WP-TWIN-001, WP-UI-001 | 3 | 1 | M1 |
 | S3 | independent depth: Simulator, Vision, Scheduler, AI fixtures | WP-CORE-002, WP-CORE-003, WP-CORE-004, WP-EVT-003, WP-EVT-005, WP-TWIN-002, WP-TWIN-003, WP-UI-002, WP-TEST-002, WP-DOC-002 | 0 | 1 | M2 |
 | S4 | depth continues; E2E-01 contract readiness gate closes | WP-CORE-002, WP-CORE-003, WP-CORE-004, WP-EVT-003, WP-EVT-005, WP-TWIN-002, WP-TWIN-003, WP-UI-002, WP-TEST-002, WP-DOC-002 | 5 | 8 | M2 |
 | S5 | highest integration density; E2E-01 dry run and formal run | WP-CORE-008, WP-TWIN-006, WP-AI-001, WP-AI-002, WP-AI-003, WP-AI-004, WP-AI-006, WP-HITL-001, WP-HITL-002, WP-HITL-003, WP-UI-006, WP-SEC-003, WP-TEST-003 | 0 | 3 | M3 |

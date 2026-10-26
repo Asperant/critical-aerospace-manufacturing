@@ -403,7 +403,7 @@ All 217 edges. Columns follow Item 66 "Dependency Registry" fields. *Pred owner*
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | DEP-018 | DN-CORE-CONTRACTS → DN-CORE-LIFECYCLE | CONTRACT | HARD | START | CONTRACT_READY | S1–S2 | Asrın | Asrın | F1 | contract merged + contract tests green + example fixture published | DR-1 |
 | DEP-019 | DN-RT-PG → DN-CORE-LIFECYCLE | RUNTIME | HARD | INTEGRATION | SKELETON_READY | M1 (S2) | Yavuz | Asrın | — | Core migrations apply on PostgreSQL | DR-3 |
-| DEP-020 | DN-CORE-LIFECYCLE → DN-CORE-TRANSITIONS | CAPABILITY | HARD | START | COMPONENT_READY | S2–S3 | Asrın | Asrın | — | lifecycle component tests green | DR-1 |
+| DEP-020 | DN-CORE-LIFECYCLE → DN-CORE-TRANSITIONS | CAPABILITY | HARD | START | COMPONENT_READY | S2–S3 | Asrın | Asrın | — | minimal lifecycle component implemented; lifecycle component tests green on current main; attributable COMPONENT_READY readiness artifact present and bound to WP-CORE-002 | DR-1 |
 | DEP-021 | DN-CORE-CONTRACTS → DN-EVT-CONTRACTS | CONTRACT | HARD | START | CONTRACT_READY | S1–S2 | Asrın | Asrın | F1 | contract merged + contract tests green + example fixture published | DR-1 |
 | DEP-022 | DN-CORE-LIFECYCLE → DN-CORE-OUTBOX | CAPABILITY | HARD | INTEGRATION | COMPONENT_READY | M1 (S2) | Asrın | Asrın | — | atomic mutation+outbox test on real PostgreSQL | DR-1 |
 | DEP-023 | DN-EVT-CONTRACTS → DN-EVT-SPINE | CONTRACT | HARD | INTEGRATION | CONTRACT_READY | M1 (S2) | Asrın | Asrın | F1 | contract merged + contract tests green + example fixture published | DR-2 |
@@ -1537,8 +1537,8 @@ DEP-020:
   semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}
   need_by: "S2–S3"   # sprint 3
   fallback: null
-  unblock_evidence: "lifecycle component tests green"
-  precise_requirement: null
+  unblock_evidence: "minimal lifecycle component implemented; lifecycle component tests green on current main; attributable COMPONENT_READY readiness artifact present and bound to WP-CORE-002"
+  precise_requirement: "Before the WP-CORE-002 transition engine starts, the minimal canonical lifecycle/state component must be implemented, its lifecycle component tests must be green on current main, and an attributable COMPONENT_READY readiness artifact bound to DN-CORE-LIFECYCLE and WP-CORE-002 must exist. This producer slice does not implement legal transition semantics."
   risk_class: DR-1
   source: "Item 66 #41"
   status: NOT_READY
@@ -3798,7 +3798,7 @@ For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §1
 | DEP-017 | DN-SEC-BASE at MILESTONE_EXIT | DN-PLAT-CD: CD to INTEGRATION (immutable GHCR artifacts, DeploymentRecord); INTEGRATION_READY; non-Git secret sourcing in deploy path | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-018 | DN-CORE-LIFECYCLE at START | DN-CORE-CONTRACTS: Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-019 | DN-CORE-LIFECYCLE at INTEGRATION | DN-RT-PG: PostgreSQL runtime; SKELETON_READY; Core migrations apply on PostgreSQL | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
-| DEP-020 | DN-CORE-TRANSITIONS at START | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; lifecycle component tests green | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-020 | DN-CORE-TRANSITIONS at START | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; minimal lifecycle component implemented, lifecycle component tests green on current main, and attributable COMPONENT_READY readiness artifact bound to WP-CORE-002 | Producer is WP-CORE-009; the artifact must bind the current-main revision, CI/component-test evidence and DN-CORE-LIFECYCLE readiness to the WP-CORE-002 consumer. Legal transition semantics remain in WP-CORE-002. |
 | DEP-021 | DN-EVT-CONTRACTS at START | DN-CORE-CONTRACTS: Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-022 | DN-CORE-OUTBOX at INTEGRATION | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; atomic mutation+outbox test on real PostgreSQL | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-023 | DN-EVT-SPINE at INTEGRATION | DN-EVT-CONTRACTS: Event contracts (envelope + domain events, IC registry); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |

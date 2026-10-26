@@ -1,0 +1,62 @@
+CHG-046:
+  title: Independent Core lifecycle producer slice for DEP-020
+  trigger: Canonical planning gap confirmed for DN-CORE-LIFECYCLE producer ownership and DEP-020 consumer precision
+  reason: WP-CORE-001 must not be retroactively broadened and WP-CORE-002 must not produce its own START prerequisite. A bounded independent producer slice is required for the existing DN-CORE-LIFECYCLE node.
+  class: C3
+  review_risk_class: CR-2
+  raised_in: S4
+  owner: Asrın
+  application_control_item: CTRL-DOC-008
+  required_human_approvals: 0
+  reviewers: []
+  decision: APPROVED
+  status: APPROVED
+  decision_basis: Explicit project-owner decision after the DEP-020 planning gap was verified. The correction adds only the minimum producer scope and does not alter lifecycle semantics, protected actions or product implementation.
+  scope:
+    - Add WP-CORE-009 as the independent producer slice for DN-CORE-LIFECYCLE.
+    - Limit WP-CORE-009 to the canonical minimal lifecycle/state model, lifecycle component tests and attributable COMPONENT_READY evidence.
+    - Bind WP-CORE-009 to DN-CORE-LIFECYCLE and bind DEP-020 to the exact current-main implementation, green component tests and attributable readiness artifact predicate.
+    - Keep WP-CORE-002 as the sole producer of legal transition semantics, including transition guards and hold/release handlers.
+    - Update WBS, RTM, Asrın roadmap, milestone plan, dependency graph and evidence applicability records together.
+  invariants_preserved:
+    - WP-CORE-001 historical scope is unchanged.
+    - WP-CORE-002 remains the consumer of DEP-020 and its lifecycle/state is unchanged.
+    - DEP-020 remains HARD, CAPABILITY, START, COMPONENT_READY, Asrın-to-Asrın and need-by S2–S3.
+    - No lifecycle transition, product code, readiness evidence or DONE claim is fabricated by this change.
+    - Component readiness does not certify legal transition semantics or integration readiness.
+  precise_requirement: Before the WP-CORE-002 transition engine starts, the minimal canonical lifecycle/state component must be implemented, its lifecycle component tests must be green on current main, and an attributable COMPONENT_READY readiness artifact bound to DN-CORE-LIFECYCLE and WP-CORE-002 must exist. This producer slice does not implement legal transition semantics.
+  affected_requirements: [FR-CORE-003]
+  affected_architecture: [ARCH-CORE-DOMAIN, ARCH-CORE-DB, ARCH-CORE-CMD]
+  affected_contracts: []
+  affected_work_packages: [WP-CORE-001, WP-CORE-002, WP-CORE-009]
+  affected_dependencies: [DEP-020]
+  affected_evidence:
+    - evidence/WP-CORE-009/COMPONENT-READY.md
+    - current-main CI/component-test run for TEST-CORE-LIFECYCLE
+    - WP-CORE-002 DEP-020 consumer assessment
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - WP-CORE-001 historical scope and evidence obligations remain unchanged.
+      - WP-CORE-002 transition implementation evidence remains unexecuted and separate.
+    rerun_required:
+      - Re-evaluate DEP-020 after WP-CORE-009 producer evidence exists on current main.
+    limitation: This change creates planning bindings only; it does not produce implementation or COMPONENT_READY evidence.
+  security_authority_impact: NONE
+  conditions:
+    - Do not begin WP-CORE-002 until DEP-020 is satisfied by the exact producer artifact and current-main CI evidence.
+    - Do not implement legal transitions, hold/release, rework or split/merge in WP-CORE-009.
+    - Do not mark WP-CORE-009 COMPONENT_READY from this change-control record alone.
+  rollout: Merge the canonical planning change with required projectctl validation and focused trace/dependency checks; refresh the supported source manifest/policy projection. No product implementation or Plane lifecycle transition is performed.
+  rollback: Revert the CHG-046 documentation and planning projection together; do not replay Plane state or erase evidence.
+  required_rerun: [projectctl context WP-CORE-009, projectctl context WP-CORE-002, supported DEP-020 readiness evaluation]
+  documentation_updates:
+    - docs/03_Requirements_Traceability_Matrix.md
+    - docs/04_Work_Breakdown_Structure.md
+    - docs/05_Dependency_Graph.md
+    - docs/06A_Asrin_Engineering_Roadmap.md
+    - docs/07_Milestone_and_Release_Plan.md
+    - project_control/execution_preferences.yaml
+    - project_control/merged_external_bindings.yaml
+  freeze_context: PRE_M6

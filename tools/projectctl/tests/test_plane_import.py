@@ -115,9 +115,9 @@ def test_exact_full_import_pilot_scope_html_and_live_noop(project):
     assert report["projection"]["pilot_wp_id"] == "WP-AI-007"
     assert fake.writes[0][1]["external_id"] == "WP-AI-007"
     assert report["pilot_result"]["result"] == "PASS" and report["result"] == "PASS"
-    assert len(fake.writes) == 532
-    assert CounterWrites(fake) == {"issues": 179, "module-issues": 179, "cycle-issues": 174}
-    assert len(fake.audit["work_items"]) == 179
+    assert len(fake.writes) == 535
+    assert CounterWrites(fake) == {"issues": 180, "module-issues": 180, "cycle-issues": 175}
+    assert len(fake.audit["work_items"]) == 180
     for item in fake.audit["work_items"]:
         metadata = canonical_metadata(item["description_html"])
         assert item["name"].startswith("[" + item["external_id"] + "] ")
@@ -138,7 +138,7 @@ def test_exact_full_import_pilot_scope_html_and_live_noop(project):
     with runner(project, fake) as run:
         second = run.run()
     assert second["result"] == "PASS" and second["mutations"] == []
-    assert second["preview"]["http_mutation_requests"] == 0 and second["preview"]["unchanged"] == 179
+    assert second["preview"]["http_mutation_requests"] == 0 and second["preview"]["unchanged"] == 180
     assert SECRET not in json.dumps(report) and SECRET not in json.dumps(second)
 
 
@@ -167,8 +167,8 @@ def test_ambiguous_writes_reconcile_without_duplicate_replay(project, tail, mode
     fake.failure = (tail, mode)
     with runner(project, fake) as run:
         report = run.run()
-    assert report["result"] == "PASS" and len(fake.audit["work_items"]) == 179
-    assert len(fake.writes) == (533 if mode == "429_absent" else 532)
+    assert report["result"] == "PASS" and len(fake.audit["work_items"]) == 180
+    assert len(fake.writes) == (536 if mode == "429_absent" else 535)
     assert report["reconciliations"] and SECRET not in json.dumps(report)
 
 
@@ -181,7 +181,7 @@ def test_partial_resume_preserves_pilot_and_only_fills_absent_relations(project)
     assert len(fake.writes) == 1
     with runner(project, fake) as run:
         report = run.run()
-    assert report["result"] == "PASS" and len(fake.writes) == 532
+    assert report["result"] == "PASS" and len(fake.writes) == 535
     assert sum(b.get("external_id") == item["external_id"] for _, b in fake.writes) == 1
 
 

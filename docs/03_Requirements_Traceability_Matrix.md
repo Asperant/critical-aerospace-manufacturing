@@ -1324,7 +1324,7 @@ Each requirement retains exactly one PrimaryOwner even when allocated to several
 |---|---|---|---|---|
 | FR-CORE-001 | production/material/route/equipment domain model + `core` schema migrations | CONTRACT:Core Query API (versioned) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-002 | reentrant route/visit model (visit index, operation-class revisit) | CONTRACT:Core Query API (versioned) | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
-| FR-CORE-003 | manufacturing state machine / transition guard module | CONTRACT:Core Command Acceptance API | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
+| FR-CORE-003 | minimal lifecycle/state producer component (WP-CORE-009) plus manufacturing state machine / transition guard module (WP-CORE-002) | CONTRACT:Core Command Acceptance API | TBD_BY_IMPLEMENTATION | M4 (F0/F1) |
 | FR-CORE-004 | command precondition/revision validator (STALE/CONFLICT outcomes) | CONTRACT:Core Command Acceptance API | `services/manufacturing-core/src/manufacturing_core/commands.py` | M4 (F0/F1) |
 | FR-CORE-005 | command idempotency-key store (Item 83 example: core app + idempotency package) | CONTRACT:IC-AUTO-003 Typed Operational Command | `services/manufacturing-core/src/manufacturing_core/command_persistence.py` | M4 (F0/F1) |
 | FR-CORE-006 | durable CommandOutcome record (completed/rejected/unresolved) | CONTRACT:Core Command Acceptance API | `services/manufacturing-core/src/manufacturing_core/command_persistence.py` | M4 (F0/F1) |
@@ -1778,7 +1778,7 @@ For FRs the **declared verification codes** come from the Item 81 catalog (T/E/N
 |---|---|---|---|---|---|---|
 | FR-CORE-001 | F0 | T/E | TEST-CORE-DOMAIN, BENCH-E2E-001 | E2E-01, AV-SCEN-01 | REAL | Y |
 | FR-CORE-002 | F0 | T/E | TEST-CORE-DOMAIN, TEST-CORE-GENEALOGY, BENCH-E2E-001 | E2E-01, AV-SCEN-02 | REAL | Y |
-| FR-CORE-003 | F1 | T/N/E | TEST-CORE-STATEMACHINE | AV-SCEN-01 | REAL | — |
+| FR-CORE-003 | F1 | T/N/E | TEST-CORE-LIFECYCLE, TEST-CORE-STATEMACHINE | AV-SCEN-01 | REAL | — |
 | FR-CORE-004 | F1 | T/N | TEST-CORE-REVISION, TEST-HITL-REPLAY-NEG | — | FIXTURE_ALLOWED | — |
 | FR-CORE-005 | F1 | T/E | TEST-CORE-IDEMP, RES-DUP-001 | AV-SCEN-05 | REAL | — |
 | FR-CORE-006 | F1 | T/E | TEST-CORE-IDEMP, TEST-AUTO-OUTCOME | AV-SCEN-01 | REAL | — |

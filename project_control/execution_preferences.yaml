@@ -8,6 +8,7 @@ sequences:
   - WP-GOV-001
   - WP-CORE-007
   - WP-CORE-001
+  - WP-CORE-009
   - WP-CORE-005
   - WP-TWIN-001
   - WP-EVT-001
@@ -191,10 +192,14 @@ priority_basis:
     class: 2
     reason: canonical cross-owner enabling node
     roadmap_index: 1
+  WP-CORE-009:
+    class: 3
+    reason: canonical lifecycle producer required by DEP-020
+    roadmap_index: 2
   WP-CORE-005:
     class: 3
     reason: canonical milestone dependency producer
-    roadmap_index: 2
+    roadmap_index: 3
   WP-CORE-007:
     class: 1
     reason: security, identity, data-integrity or Oracle-isolation protection

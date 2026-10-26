@@ -912,6 +912,20 @@ no arbitrary file/command interface, and no credential output. Exact profile/WP
 sudoers grants are generated from canonical policy. CORE-003 is a diagnostic
 target only; no product WP scope or readiness is changed.
 
+## CHG-046 — independent Core lifecycle producer slice
+
+CHG-046 / CTRL-DOC-008 (C3 / CR-2) records the verified DEP-020 planning gap
+correction. It adds only `WP-CORE-009` as the independent producer slice for
+`DN-CORE-LIFECYCLE`: the canonical minimal lifecycle/state component, its
+component tests, and the attributable `COMPONENT_READY` readiness artifact.
+`WP-CORE-001` historical scope is not broadened, and `WP-CORE-002` remains the
+consumer and the sole owner of legal transition semantics, including guards and
+hold/release handlers. DEP-020 remains HARD / START / COMPONENT_READY and now
+requires the producer implementation, green lifecycle component tests on current
+main, and an exact readiness artifact binding to `WP-CORE-002`. This change
+creates no implementation or readiness evidence and performs no Plane lifecycle
+transition.
+
 ## Merged external integration binding slot exception — CHG-034
 
 CHG-034 / CTRL-HOST-015 (C3 / CR-3) is authorized by the project-owner request of

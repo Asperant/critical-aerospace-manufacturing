@@ -14,7 +14,7 @@ from .plane_plan import VISIBLE_ID, WP_ID, _description, bootstrap_plan
 POLICY = "human-approved-terminal-target-completion-v1"
 ASRIN = "Asrın Dündar"
 UNSCHEDULED = ["WP-R2-001", "WP-R2-002", "WP-R2-003", "WP-S-001", "WP-X-001"]
-MILESTONES = {"M0": 2, "M1": 13, "M2": 21, "M3": 27, "M4": 39,
+MILESTONES = {"M0": 2, "M1": 14, "M2": 21, "M3": 27, "M4": 39,
               "M5": 30, "M6": 17, "M7": 15, "M8": 10}
 
 
@@ -145,17 +145,17 @@ def expected_projection(project, audit):
     multi = sum(len(o["metadata"]["cycle_ids"]) > 1 for o in projected)
     unscheduled = [o["wp_id"] for o in projected if not o["cycle_id"]]
     distribution = Counter(o["metadata"]["milestone"] for o in projected if o["create_body"]["labels"])
-    if (len(projected) != 179 or single != 57 or multi != 117 or unscheduled != UNSCHEDULED
+    if (len(projected) != 180 or single != 58 or multi != 117 or unscheduled != UNSCHEDULED
             or dict(distribution) != MILESTONES
-            or sum(bool(o["create_body"]["assignees"]) for o in projected) != 73):
+            or sum(bool(o["create_body"]["assignees"]) for o in projected) != 74):
         raise PlaneError("Canonical approved import invariants failed; no count correction permitted")
     pilot = next(o["wp_id"] for o in projected if o["metadata"]["canonical_owner"] == ASRIN
                  and len(o["metadata"]["cycle_ids"]) == 1 and o["create_body"]["labels"])
     return {"schema_version": "plane-wp-projection-v1", "api_version": "v1", "policy": POLICY,
             "source_manifest": project.source_manifest,
             "control_registry": [s.model_dump() for s in project.control_items], "pilot_wp_id": pilot, "projections": projected,
-            "missing_owners": base["missing_owners"], "assignment_policy": "73 exact Asrın assignments; 106 unassigned",
-            "semantic_end_state": {"work_items": 179, "modules": 179, "cycles": 174, "milestones": 174, "assignees": 73},
+            "missing_owners": base["missing_owners"], "assignment_policy": "74 exact Asrın assignments; 106 unassigned",
+            "semantic_end_state": {"work_items": 180, "modules": 180, "cycles": 175, "milestones": 175, "assignees": 74},
             "single_cycle": single, "multi_cycle": multi, "unscheduled_ids": unscheduled,
             "milestone_distribution": dict(sorted(distribution.items()))}
 
@@ -395,7 +395,7 @@ class WPImport:
         if projection != self.projection:
             raise PlaneError("Structures/member/source projection changed during import")
         plan = import_plan(projection, fresh)
-        if plan["conflicts"] or plan["http_mutation_requests"] or plan["unchanged"] != 179:
+        if plan["conflicts"] or plan["http_mutation_requests"] or plan["unchanged"] != 180:
             raise PlaneError("Full WP import audit failed: " + json.dumps(plan, ensure_ascii=False))
         before = self.report["before"]["audit"]
         for resource in ("states", "labels", "modules", "cycles"):
@@ -409,8 +409,8 @@ class WPImport:
                 raise PlaneError("Unexpected noncanonical relationship member")
         summary = {"result": "PASS", "wp_count": len(index), "control_item_count": len(controls),
                    "total_work_item_count": len(fresh["audit"]["work_items"]), "backlog": len(index), "ready_or_later": 0,
-                   "duplicate_canonical_ids": [], "module_relationships": 179, "cycle_relationships": 174,
-                   "milestone_relationships": 174, "asrin_assigned": 73, "unassigned": 106,
+                   "duplicate_canonical_ids": [], "module_relationships": 180, "cycle_relationships": 175,
+                   "milestone_relationships": 175, "asrin_assigned": 74, "unassigned": 106,
                    "module_distribution": dict(sorted(Counter(e["metadata"]["capability_area"] for e in projection["projections"]).items())),
                    "owner_distribution": dict(sorted(Counter(e["metadata"]["canonical_owner"] for e in projection["projections"]).items())),
                    "milestone_distribution": projection["milestone_distribution"], "unscheduled_ids": UNSCHEDULED,
