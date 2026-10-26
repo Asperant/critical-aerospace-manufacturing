@@ -32,4 +32,3 @@ CREATE TABLE IF NOT EXISTS twin.projection_revision (
     updated_at timestamptz NOT NULL DEFAULT now(),
     PRIMARY KEY (world_id, branch_id)
 );
-
