@@ -1,0 +1,4 @@
+impacted requirements: FR-GOV-004, FR-GOV-005, FR-GOV-009, NFR-GOV-009
+owner Asrın (@Asperant): FR-GOV-004
+owner Yavuz (@Yavuzgmus): FR-GOV-005, FR-GOV-009, NFR-GOV-009
+requirement impact (TL-13): PASS

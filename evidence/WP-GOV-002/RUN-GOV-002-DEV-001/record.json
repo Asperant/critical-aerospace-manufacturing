@@ -1,0 +1,121 @@
+{
+  "run_id": "RUN-GOV-002-DEV-001",
+  "work_package": "WP-GOV-002",
+  "kind": "DEV run on the shared host against the actual repository (boundary mode REAL)",
+  "boundary_mode": "REAL",
+  "test_ids": [
+    "TEST-GOV-002-001",
+    "TEST-GOV-002-002",
+    "TEST-GOV-002-003",
+    "TEST-GOV-002-004",
+    "TEST-GOV-002-005"
+  ],
+  "code_revision": "4323099508d2194a873321552d6c8df13605e0b0",
+  "branch": "wp/WP-GOV-002-trace-registry",
+  "recorded_at": "2026-10-25T20:34:44+00:00",
+  "host": {
+    "machine": "x86_64",
+    "system": "Linux",
+    "cpus": 8
+  },
+  "outcome": {
+    "checks": [
+      "TL-01",
+      "TL-02",
+      "TL-03",
+      "TL-04",
+      "TL-05",
+      "TL-06",
+      "TL-07",
+      "TL-08",
+      "TL-09",
+      "TL-10",
+      "TL-11",
+      "TL-12"
+    ],
+    "lint_result": "PASS",
+    "lint_findings": 0,
+    "edge_coverage": {
+      "artifact type (no identity registry)": 123,
+      "descriptive interface surface": 96,
+      "resolved against a registry": 2691,
+      "run/evidence (TL-06)": 41
+    },
+    "seed_and_generate_reproducible": true,
+    "negative_probe_rejected": true,
+    "registry_restored_after_probe": true
+  },
+  "steps": [
+    {
+      "step": "validate",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "wall_s": 1.2,
+      "output": "validate.json"
+    },
+    {
+      "step": "drift-strict",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "wall_s": 1.3,
+      "output": "drift.log.txt"
+    },
+    {
+      "step": "seed",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "wall_s": 1.4,
+      "output": "seed.log.txt"
+    },
+    {
+      "step": "tests",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "wall_s": 17.8,
+      "output": "tests.log.txt"
+    },
+    {
+      "step": "impact-declared-code",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "wall_s": 1.0,
+      "output": "impact-declared-code.log.txt"
+    },
+    {
+      "step": "impact-unknown-id-code",
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "wall_s": 1.0,
+      "output": "impact-unknown-id-code.log.txt"
+    },
+    {
+      "step": "impact-empty-code",
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "wall_s": 1.0,
+      "output": "impact-empty-code.log.txt"
+    },
+    {
+      "step": "impact-empty-docs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "wall_s": 1.0,
+      "output": "impact-empty-docs.log.txt"
+    },
+    {
+      "step": "negative-probe",
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "wall_s": 1.2,
+      "output": "negative-probe.log.txt"
+    },
+    {
+      "step": "orphans",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "wall_s": 0.1,
+      "output": "orphans.log.txt"
+    }
+  ],
+  "unexpected": {}
+}

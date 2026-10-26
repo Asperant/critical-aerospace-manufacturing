@@ -86,6 +86,18 @@
 > is an EVALUATION gate and FR-VIS-001 is accepted on the integrated Vision path
 > (E2E-01, AV-SCEN-01), so evidence stays EVIDENCE_PENDING and `observed` stays null.
 
+> **WP-GOV-002 implementation delta (2026-10-25).** The trace graph of §4 now
+> also exists as data: `traceability/trace_edges.yaml` (`cap.trace-registry/v1`,
+> schema `traceability/trace_schema.json`) holds the 306 requirement nodes and
+> their edges, seeded from the §17 records, which stay the source: a PR that
+> changes §17 runs `mfgctl trace seed`, and CI fails on drift. The trace linter
+> (`tools/trace`, `cap_trace`) runs the §18.1 checks TL-01…TL-13 in t1-unit,
+> including FR-GOV-004/005 completeness, NFR-GOV-009 (no VERIFIED without
+> durable evidence) and the PR Requirement-Impact declaration; views are
+> generated under `traceability/generated/` (§19.10). The shared-host run is
+> recorded under `evidence/WP-GOV-002/`. INSP-GOV-ACCEPT belongs to the
+> EVALUATION gate (WP-GOV-003); evidence stays EVIDENCE_PENDING.
+
 ---
 
 ## Table of Contents
@@ -3571,25 +3583,25 @@ FR-GOV-004:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-GOV-004 L169835"}
   DERIVED_FROM: [ITEM-81, ITEM-83, FRC-INV-06, RTM-INV-05]
   ALLOCATED_TO: [ARCH-PLAT-CICD]
-  REALIZED_BY: {surface: "DERIVED_FROM edge completeness rule in trace linter", deployable: "trace registry", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "DERIVED_FROM edge completeness rule in trace linter (TL-08)", deployable: "trace registry", ref: "traceability/trace_edges.yaml; tools/trace/src/cap_trace/rules.py"}
   USES_DATA: ["trace_edges"]
-  VERIFIED_BY: [TEST-GOV-TRACELINT]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  VERIFIED_BY: [TEST-GOV-TRACELINT, TEST-GOV-002-003]
+  EXECUTED_AS: [RUN-GOV-002-DEV-001]  # shared-host run; acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: [ALLOC-COARSE]}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING, flags: [ALLOC-COARSE]}
   note: "This RTM supplies the initial DERIVED_FROM set; owner semantic confirmation pending (see GAP-RTM-006)."
 FR-GOV-005:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-GOV-005 L169836"}
   DERIVED_FROM: [ITEM-81, ITEM-83, FRC-INV-07, RTM-INV-08]
   ALLOCATED_TO: [ARCH-PLAT-CICD]
-  REALIZED_BY: {surface: "VERIFIED_BY edge completeness rule (M5 gate)", deployable: "trace registry", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "VERIFIED_BY edge completeness rule in trace linter (TL-08, M5 gate)", deployable: "trace registry", ref: "traceability/trace_edges.yaml; tools/trace/src/cap_trace/rules.py"}
   USES_DATA: ["trace_edges"]
-  VERIFIED_BY: [TEST-GOV-TRACELINT]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  VERIFIED_BY: [TEST-GOV-TRACELINT, TEST-GOV-002-003]
+  EXECUTED_AS: [RUN-GOV-002-DEV-001]  # shared-host run; acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 FR-GOV-006:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-GOV-006 L169837"}
   DERIVED_FROM: [ITEM-81, ITEM-83, FRC-INV-08, RTM-INV-68]
@@ -3627,13 +3639,13 @@ FR-GOV-009:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-GOV-009 L169840"}
   DERIVED_FROM: [ITEM-83, RTM-INV-01, RTM-INV-45]
   ALLOCATED_TO: [ARCH-PLAT-CICD, ARCH-PLAT-CLI]
-  REALIZED_BY: {surface: "trace_edges registry + `mfgctl trace` generated views", deployable: "trace registry tooling", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "trace_edges registry + `mfgctl trace` generated views + trace linter TL-01…TL-13", deployable: "trace registry tooling", ref: "traceability/trace_edges.yaml; traceability/trace_schema.json; traceability/generated/; tools/trace/src/cap_trace/; tools/mfgctl/src/mfgctl/trace.py; .github/workflows/ci.yml"}
   USES_DATA: ["trace_edges", "trace_schema"]
-  VERIFIED_BY: [TEST-GOV-TRACELINT, INSP-GOV-ACCEPT]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  VERIFIED_BY: [TEST-GOV-TRACELINT, INSP-GOV-ACCEPT, TEST-GOV-002-001, TEST-GOV-002-002, TEST-GOV-002-004, TEST-GOV-002-005]
+  EXECUTED_AS: [RUN-GOV-002-DEV-001]  # shared-host run; INSP-GOV-ACCEPT at EVALUATION pending (WP-GOV-003)
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "CI + EVALUATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 FR-GOV-010:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-GOV-010 L169841"}
   DERIVED_FROM: [ITEM-81, ITEM-83, FRC-INV-09, RTM-INV-46]
@@ -5951,12 +5963,13 @@ NFR-GOV-009:
   meta: {class: H0, owner: Yavuz, anchor: "01 Item82 NFR-GOV-009 L171095"}
   DERIVED_FROM: [ITEM-82, ITEM-83, RTM-INV-46]
   ALLOCATED_TO: [ARCH-PLAT-CICD, ARCH-DATA-OBJ]
+  REALIZED_BY: {surface: "TL-12: no VERIFIED or CURRENT without EVIDENCED_BY; a final NFR also needs an observed measurement", deployable: "trace linter", ref: "tools/trace/src/cap_trace/rules.py"}
   MEASUREMENT: {metric: "VERIFIED NFRs without durable measurement evidence", threshold: "0", workload: "—", hardware: "N/A (not hardware-bound)", observed: null}
-  VERIFIED_BY: [TEST-GOV-TRACELINT, INSP-GOV-ACCEPT]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  VERIFIED_BY: [TEST-GOV-TRACELINT, INSP-GOV-ACCEPT, TEST-GOV-002-003]
+  EXECUTED_AS: [RUN-GOV-002-DEV-001]  # shared-host run; release-gate measurement at EVALUATION pending (WP-GOV-003)
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "CI + EVALUATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 NFR-GOV-010:
   meta: {class: H0, owner: Asrın, anchor: "01 Item82 NFR-GOV-010 L171104"}
   DERIVED_FROM: [ITEM-82, NFR-INV-06, KPI-INV-02]
@@ -7394,6 +7407,25 @@ EVALUATION over final critical artifacts, TEST-VIS-PIPELINE, E2E-01, AV-SCEN-01,
 BENCH-E2E-001 and the Integration-host smoke (DEP-009) are not executed. The
 SHA-256 choice awaits its confirming ADR. EvidenceState is EVIDENCE_PENDING.
 
+
+### 19.10 WP-GOV-002 concrete implementation and verification assets
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-GOV-002-001 (`tools/trace/tests/test_trace_registry.py`) | TEST-GOV-TRACELINT | FR-GOV-009 (registry seeded from §17, TL-01 schema, TL-04 vocabulary, TL-05 edge identity, drift) |
+| TEST-GOV-002-002 (`tools/trace/tests/test_trace_references.py`, real 01/02/03 and catalog) | TEST-GOV-TRACELINT | FR-GOV-009 (TL-02 referenced IDs, TL-03 superseded misuse, TL-10 prefix-boundary matching, GAP-RTM-016) |
+| TEST-GOV-002-003 (`tools/trace/tests/test_trace_rules.py`) | TEST-GOV-TRACELINT | FR-GOV-004, FR-GOV-005 (TL-08 completeness and regression), NFR-GOV-009 (TL-12), TL-06/09/11 |
+| TEST-GOV-002-004 (`tools/trace/tests/test_trace_views.py`) | TEST-GOV-TRACELINT | FR-GOV-009 (generated views, TL-07 freshness) |
+| TEST-GOV-002-005 (`tools/trace/tests/test_trace_impact.py`) | TEST-GOV-TRACELINT | FR-GOV-009 (TL-13 PR Requirement-Impact) |
+
+Registry: `traceability/trace_edges.yaml` (`cap.trace-registry/v1`, schema
+`traceability/trace_schema.json`), seeded from §17, which stays the source;
+views under `traceability/generated/`. Linter and generator: `tools/trace`
+(`python -m cap_trace`, also `mfgctl trace`). CI: the "Trace registry lint and
+tests (WP-GOV-002)" step of t1-unit (`validate --base origin/main`, `drift
+--strict`) and, on pull requests, "PR Requirement-Impact (TL-13, WP-GOV-002)".
+INSP-GOV-ACCEPT (EVALUATION, WP-GOV-003) is not executed. EvidenceState is
+EVIDENCE_PENDING.
 ## 20. Rejected Alternatives
 
 | Alternative | Rejected because |

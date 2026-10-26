@@ -1,0 +1,7 @@
+TL-02 FR-GOV-001 ALLOCATED_TO ARCH-PLAT-NOPE: not in the 02 component registry
+TL-07 traceability/generated/requirements.csv: stale; run `mfgctl trace generate`
+    123 edges: artifact type (no identity registry)
+     96 edges: descriptive interface surface
+   2691 edges: resolved against a registry
+     41 edges: run/evidence (TL-06)
+trace lint (TL-01, TL-02, TL-03, TL-04, TL-05, TL-06, TL-07, TL-08, TL-09, TL-10, TL-11, TL-12): 2 finding(s); 306 requirements, 2951 edges (ALLOCATED_TO 582, DECIDED_BY 5, DERIVED_FROM 1006, EXECUTED_AS 41, EXERCISED_IN 148, EXPOSED_BY 102, GOVERNED_BY 57, MITIGATES 150, REALIZED_BY 255, USES_DATA 53, USES_MODEL 13, VERIFIED_BY 539)

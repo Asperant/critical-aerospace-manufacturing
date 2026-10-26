@@ -173,6 +173,22 @@ jobs:
         run: |
           uv run --project ci --locked python -m pytest -c packages/artifacts/pyproject.toml packages/artifacts/tests -m 'not integration' -q -p pytest_quarantine
           uv run --project ci --locked pyright --project packages/artifacts/pyrightconfig.json
+      - name: Trace registry lint and tests (WP-GOV-002)
+        env:
+          PYTHONPATH: ci:ci/scripts:tools/trace/src
+        run: |
+          uv run --project ci --locked python -m pytest -c tools/trace/pyproject.toml tools/trace/tests -q -p pytest_quarantine
+          uv run --project ci --locked pyright --project tools/trace/pyrightconfig.json
+          uv run --project ci --locked python -m cap_trace validate --base origin/main
+          uv run --project ci --locked python -m cap_trace drift --strict
+      - name: PR Requirement-Impact (TL-13, WP-GOV-002)
+        if: github.event_name == 'pull_request'
+        env:
+          PYTHONPATH: ci:ci/scripts:tools/trace/src
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          printf '%s\n' "$PR_BODY" > "$RUNNER_TEMP/pr-body.md"
+          uv run --project ci --locked python -m cap_trace impact --body-file "$RUNNER_TEMP/pr-body.md" --base origin/main
       - name: Platform composition definition tests (WP-PLAT-001)
         run: uv run --project ci --locked python -m pytest infra/compose/tests -m 'not integration' -q -p pytest_quarantine
       - name: Host Plane queue tests (offline)
