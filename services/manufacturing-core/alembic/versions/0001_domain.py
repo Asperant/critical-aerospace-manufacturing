@@ -21,7 +21,7 @@ def upgrade() -> None:
     runtime_role = op.get_context().opts.get("runtime_role")
     if not isinstance(runtime_role, str) or not runtime_role.strip():
         raise RuntimeError("explicit runtime role required for Core migration")
-    op.execute(
+    op.get_bind().execute(
         sa.text(
             "INSERT INTO core.schema_migration(version, sha256, runtime_role) "
             "VALUES (:version, :sha256, :runtime_role)"
