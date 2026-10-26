@@ -175,11 +175,14 @@ class PostgresCommandLedger:
 
     @staticmethod
     def _model(row: dict[str, Any]) -> CommandOutcome:
+        def uuid_value(value: Any) -> UUID:
+            return value if isinstance(value, UUID) else UUID(value)
+
         return CommandOutcome.model_validate(
             {
                 **row,
-                "outcome_id": UUID(row["outcome_id"]),
-                "command_id": UUID(row["command_id"]),
+                "outcome_id": uuid_value(row["outcome_id"]),
+                "command_id": uuid_value(row["command_id"]),
             }
         )
 
