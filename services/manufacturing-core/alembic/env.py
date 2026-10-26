@@ -28,7 +28,7 @@ def run_migrations_online() -> None:
     if not url:
         raise RuntimeError("explicit migration DSN required")
     engine = create_engine(url, poolclass=pool.NullPool)
-    with engine.connect() as connection:
+    with engine.begin() as connection:
         connection.exec_driver_sql(
             "CREATE SCHEMA IF NOT EXISTS core AUTHORIZATION CURRENT_USER"
         )
