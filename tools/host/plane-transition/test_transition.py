@@ -259,8 +259,8 @@ class TransitionTests(unittest.TestCase):
         wp, policy, plane, gh, envelope = fixture()
         producer_wp = next(k for k, v in policy['contexts'].items()
                            if v['work_package']['primary_owner']['canonical_name'] == 'Yavuz Gümüş')
-        node = 'DN-RT-PG'
-        successor = 'DN-CORE-DB'
+        node = 'DN-PLAT-COMPOSE'
+        successor = 'DN-RT-PG'
         edge = {'id': 'DEP-006', 'predecessor': {'node': node, 'owner': 'Yavuz'},
                 'successor': {'node': successor, 'owner': 'Asrın'},
                 'precise_requirement': 'local PostgreSQL profile up',
@@ -317,7 +317,7 @@ class TransitionTests(unittest.TestCase):
     def test_automatic_runtime_readiness_fails_closed_on_stale_or_missing_health(self):
         context, edge, policy, gh, basis = self.runtime_fixture()
         basis['checks'][-1]['blob'] = 'f' * 40
-        gh.repo_files['evidence/readiness/DN-RT-PG.json'] = (json.dumps(basis).encode(), '5' * 40)
+        gh.repo_files['evidence/readiness/DN-PLAT-COMPOSE.json'] = (json.dumps(basis).encode(), '5' * 40)
         result = t.automatic_readiness_attestation(gh, context, edge, HEAD, policy)
         self.assertEqual(result['status'], 'UNKNOWN')
         self.assertIn('STALE_RUNTIME_EVIDENCE_BLOB', result['reasons'])
