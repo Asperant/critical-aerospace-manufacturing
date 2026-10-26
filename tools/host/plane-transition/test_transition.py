@@ -148,7 +148,7 @@ def fixture(profile='asrin',source='READY',target='IN_PROGRESS'):
                              'supporting_reviewers':[{'canonical_name':v[0]} for key,v in names.items() if key!=p],
                              'dor_refs':['DOR-WP-01'],'dod_refs':['DOD-WP-01'],'size_band':'M','scope_class':'F1'},
                             'dependency_edges':[], 'scope_criteria':['docs/08#9:F1'],'cycle_ids':['S1']}
-    policy={'contexts':contexts,'source_manifest':{'docs/08':'canonical-sha'},'required_ci':['projectctl'], 'required_technical_steps':['Syntax sanity','Projectctl tests','Canonical validation','Whitespace and repository hygiene'],
+    policy={'contexts':contexts,'source_manifest':{'docs/08':'canonical-sha'},'required_ci':['projectctl'], 'required_technical_steps':['Canonical validation','Changed-scope focused tests and regressions','Requirement catalog lint','Whitespace and repository hygiene'],
             'review_policy':json.loads((HERE.parents[2]/'09_change/development_review_policy.json').read_text()),
             'policy_digest':'fixture-policy-digest','dor_task':['DOR-TASK-01','DOR-WP-01'],'dor_pr':['DOR-PR-01'],'dod_pr':['DOD-PR-01'],
             'dod_wp':['DOD-WP-01'],'dod_research':['DOD-RES-01'],'node_owners':{},'node_levels':{}}

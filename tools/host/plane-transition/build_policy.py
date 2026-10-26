@@ -56,7 +56,7 @@ policy={'schema_version':'cap-transition-policy-v1','evaluation_revision':'chg01
         'node_requirements':{n.id:sorted(set(re.findall(r'(?:FR|NFR)-[A-Z0-9]+-[0-9]{3}',
                                                        n.raw_requirement_refs))) for n in nodes.values()},
         'node_producers':node_producers,
-        'required_ci':['projectctl'], 'review_policy':read_review_policy(ROOT), 'required_technical_steps':['Syntax sanity','Projectctl tests','Canonical validation','Whitespace and repository hygiene']}
+        'required_ci':['projectctl'], 'review_policy':read_review_policy(ROOT), 'required_technical_steps':['Canonical validation','Changed-scope focused tests and regressions','Requirement catalog lint','Whitespace and repository hygiene']}
 for key,prefix,count in [('dor_task','DOR-TASK-',12),('dor_pr','DOR-PR-',8),('dod_pr','DOD-PR-',12),
                          ('dod_wp','DOD-WP-',12),('dod_research','DOD-RES-',11)]:
     ids=sorted(k for k in criteria if k.startswith(prefix))
