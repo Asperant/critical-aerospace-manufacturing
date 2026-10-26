@@ -11,7 +11,7 @@ bindings:
   requirement: Provide the Core backend query HTTP context boundary with operation/version-bound trusted ingress
     and exact world, causal/trace and UTC/simulation semantics for BFF and shared envelope integration.
   provenance:
-    docs/04_Work_Breakdown_Structure.md: c348d9b00dd0edba42e79ba9701e09343167079514e3131523f9bdf2b0294ae8
+    docs/04_Work_Breakdown_Structure.md: 0319a083bdacd05b58a5c8c15bcd1150e00d905614f815b01a01ab7d22445c4f
   binding_paths:
   - services/manufacturing-core/src/manufacturing_core/http_context.py
 - id: BIND-EVT002-HTTP-BFF
@@ -24,7 +24,7 @@ bindings:
   requirement: Provide the BFF backend client context adapter consuming the Core query API contract, preserving
     exact world and causal/trace context and explicitly typed time metadata across the HTTP boundary.
   provenance:
-    docs/04_Work_Breakdown_Structure.md: c348d9b00dd0edba42e79ba9701e09343167079514e3131523f9bdf2b0294ae8
+    docs/04_Work_Breakdown_Structure.md: 0319a083bdacd05b58a5c8c15bcd1150e00d905614f815b01a01ab7d22445c4f
   binding_paths:
   - services/operations-bff/src/operations_bff/backend_context.py
 - id: BIND-EVT002-NATS-PUBLISHER
@@ -37,7 +37,7 @@ bindings:
   requirement: Bind Core outbox domain events to real NATS publication with explicit subject, stream, publisher
     and version contracts while preserving the original envelope identifiers, world and time-kind metadata.
   provenance:
-    docs/04_Work_Breakdown_Structure.md: c348d9b00dd0edba42e79ba9701e09343167079514e3131523f9bdf2b0294ae8
+    docs/04_Work_Breakdown_Structure.md: 0319a083bdacd05b58a5c8c15bcd1150e00d905614f815b01a01ab7d22445c4f
   binding_paths:
   - services/manufacturing-core/src/manufacturing_core/outbox_publisher.py
 - id: BIND-EVT002-NATS-CONSUMER
@@ -50,7 +50,7 @@ bindings:
   requirement: Provide the Twin application NATS projection consumer with explicit durable/handler and version contracts,
     original EventID preservation, exact world admission and causal/trace context using the shared envelope.
   provenance:
-    docs/04_Work_Breakdown_Structure.md: c348d9b00dd0edba42e79ba9701e09343167079514e3131523f9bdf2b0294ae8
+    docs/04_Work_Breakdown_Structure.md: 0319a083bdacd05b58a5c8c15bcd1150e00d905614f815b01a01ab7d22445c4f
   binding_paths:
   - services/operational-twin/src/operational_twin/nats_consumer.py
 - id: BIND-EVT002-TEMPORAL
@@ -63,7 +63,7 @@ bindings:
   requirement: Provide replay-deterministic workflow context carriage and activity-side restoration with exact workflow/activity/worker
     binding and preserved world, causal/trace and UTC versus simulation-time semantics.
   provenance:
-    docs/04_Work_Breakdown_Structure.md: c348d9b00dd0edba42e79ba9701e09343167079514e3131523f9bdf2b0294ae8
+    docs/04_Work_Breakdown_Structure.md: 0319a083bdacd05b58a5c8c15bcd1150e00d905614f815b01a01ab7d22445c4f
   binding_paths:
   - services/automation/src/automation/workflow_context.py
   - services/automation/src/automation/activity_context.py
