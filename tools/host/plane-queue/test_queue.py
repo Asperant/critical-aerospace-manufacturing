@@ -133,7 +133,7 @@ class QueueTests(unittest.TestCase):
             def __init__(self, profile, request_timeout=30):
                 observed.update(profile=profile, request_timeout=request_timeout)
 
-        transition.GitHub = GitHub
+        transition.GitHub = GitHub  # pyright: ignore[reportAttributeAccessIssue]
         auto = type('Auto', (), {
             'semantic_slot_release_source': staticmethod(lambda *args: None),
             'semantic_slot_release_proof': staticmethod(lambda *args, **kwargs: None),

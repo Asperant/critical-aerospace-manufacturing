@@ -109,7 +109,7 @@ class GitHub:
             result = subprocess.run(['/usr/bin/gh','api','--hostname','github.com','--method','GET',route],
                                     env=self.env, cwd='/', user=self.uid, group=self.gid, extra_groups=(),
                                     umask=0o077, capture_output=True,
-                                    timeout=self.request_timeout)
+                                    timeout=getattr(self, 'request_timeout', 30))
             need(result.returncode == 0 or b'HTTP 401' not in result.stderr, 'GITHUB_AUTH_HTTP_401')
             need(result.returncode == 0 and len(result.stdout) <= 8_000_000, 'GITHUB_READ_UNAVAILABLE')
             self.cache[route] = json.loads(result.stdout, object_pairs_hook=q.unique)
