@@ -1,0 +1,54 @@
+CHG-042:
+  title: Remove WP-CORE-003 self-gating on its command-contract producer slice
+  trigger: Canonical modeling finding: DEP-027 requires a contract node produced by the same WP whose execution capability it gates
+  reason: WP-CORE-003 contains the versioned command-contract deliverable, but DEP-027 was modeled as a WP START gate for the same package. The contract-first producer slice must be executable before the later command-execution capability slice; the approved contract semantics are unchanged.
+  class: C3
+  review_risk_class: CR-2
+  raised_in: S3
+  owner: Asrın
+  application_control_item: WP-CORE-003
+  required_human_approvals: 0
+  decision: APPROVED
+  status: APPROVED
+  decision_basis: Explicit project-owner authorization to apply the smallest canonical change-control correction after the WP-level circular modeling gap was verified. Development review remains advisory under CHG-018.
+  scope:
+    - Define the WP-CORE-003 contract-first slice as the first owner-executable producer slice for DN-CORE-CMDCON.
+    - Keep the later WP-CORE-003 execution capability responsible for idempotency, revision preconditions, durable CommandOutcome persistence and query behavior.
+    - Change DEP-027 from START to INTEGRATION so CONTRACT_READY remains required for the subsequent DN-CORE-CMDEXEC capability slice and is not a WP startup gate.
+    - Set DEP-027 precise_requirement to versioned hold/release/dispatch/maintenance-request command schemas, stable command/version identity, compatibility/example fixtures and green producer/consumer contract tests.
+  invariants_preserved:
+    - DEP-027 remains HARD, CONTRACT, Asrın-to-Asrın, F1, S2–S3 and CONTRACT_READY; only its blocking stage and missing consumer-specific precision are corrected.
+    - No readiness bypass, producer self-certification or graph cycle is introduced.
+    - Persistence/idempotency execution behavior remains in the later WP-CORE-003 capability scope.
+    - DEP-026 remains the upstream START gate for DN-CORE-CMDCON from DN-CORE-CONTRACTS.
+    - DEP-097 remains the separate INTEGRATION contract dependency for DN-AUTO-EXEC.
+  affected_requirements: [FR-CORE-004, FR-CORE-005, FR-CORE-006, FR-CORE-016]
+  affected_architecture: [ARCH-CTR-CMDSCHEMA, ARCH-CORE-CMD, ARCH-AUTO-IDEMPOTENCY]
+  affected_contracts:
+    - id: DN-CORE-CMDCON-v1
+      compatibility: NON_BREAKING
+      note: Consumer-specific readiness precision is added; command execution and persistence semantics are unchanged.
+      consumers_reviewed: [DN-CORE-CMDEXEC, DN-AUTO-EXEC]
+  affected_work_packages: [WP-CORE-003, WP-CORE-006]
+  affected_dependencies: [DEP-027]
+  affected_evidence:
+    - evidence/CHG-042/README.md
+    - TEST-CORE-CONTRACT
+    - TEST-EVT-SCHEMA
+    - tools/projectctl/tests/test_dependencies.py baseline diagnostic count
+    - future producer/consumer contract fixture and merge evidence for DN-CORE-CMDCON
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - Existing execution/idempotency test plans and any future capability evidence remain applicable.
+      - No existing DEP-027 PASS evidence existed; NOT_READY remains until the contract-first slice produces the required artifacts.
+  rollout: Merge the canonical documentation/change-control update, run projectctl validation and focused dependency/trace checks, then refresh the supported deployed policy/source projection. No Plane lifecycle transition or product implementation is performed by this change.
+  rollback: Revert the merged CHG-042 documentation change and refresh the deployed canonical source; do not replay Plane state or fabricate readiness evidence.
+  documentation_updates:
+    - docs/03_Requirements_Traceability_Matrix.md
+    - docs/04_Work_Breakdown_Structure.md
+    - docs/05_Dependency_Graph.md
+    - docs/06A_Asrin_Engineering_Roadmap.md
+    - docs/07_Milestone_and_Release_Plan.md
+    - evidence/CHG-042/README.md

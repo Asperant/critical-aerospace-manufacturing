@@ -410,7 +410,7 @@ All 217 edges. Columns follow Item 66 "Dependency Registry" fields. *Pred owner*
 | DEP-024 | DN-CORE-OUTBOX → DN-EVT-SPINE | CAPABILITY | HARD | INTEGRATION | INTEGRATION_READY | M1 (S2) | Asrın | Asrın | — | real cross-boundary integration test green on INTEGRATION (outbox → NATS → consumer) | DR-1 |
 | DEP-025 | DN-RT-NATS → DN-EVT-SPINE | RUNTIME | HARD | INTEGRATION | INTEGRATION_READY | M1 (S2) | Yavuz | Asrın | — | real JetStream in CI + INTEGRATION (no fake bus, CI-INV-07) | DR-3 |
 | DEP-026 | DN-CORE-CONTRACTS → DN-CORE-CMDCON | CONTRACT | HARD | START | CONTRACT_READY | S2 | Asrın | Asrın | F1 | contract merged + contract tests green + example fixture published | DR-1 |
-| DEP-027 | DN-CORE-CMDCON → DN-CORE-CMDEXEC | CONTRACT | HARD | START | CONTRACT_READY | S2–S3 | Asrın | Asrın | F1 | contract merged + contract tests green + example fixture published | DR-2 |
+| DEP-027 | DN-CORE-CMDCON → DN-CORE-CMDEXEC | CONTRACT | HARD | INTEGRATION | CONTRACT_READY | S2–S3 | Asrın | Asrın | F1 | versioned hold/release/dispatch/maintenance-request command schemas + stable command/version identity + compatibility/example fixtures + green producer/consumer contract tests | DR-2 |
 | DEP-028 | DN-CORE-TRANSITIONS → DN-CORE-CMDEXEC | CAPABILITY | HARD | INTEGRATION | INTEGRATION_READY | E2E-01 readiness (end S4) | Asrın | Asrın | — | legal/illegal transition suite green incl. negatives | DR-1 |
 | DEP-029 | DN-CORE-LIFECYCLE → DN-CORE-GENEALOGY | CAPABILITY | HARD | INTEGRATION | COMPONENT_READY | M2 (S4) | Asrın | Asrın | — | genealogy queries over real lineage | DR-1 |
 | DEP-030 | DN-CORE-CONTRACTS → DN-CORE-SNAPCON | CONTRACT | HARD | START | CONTRACT_READY | S3 | Asrın | Asrın | F1 | contract merged + contract tests green + example fixture published | DR-1 |
@@ -1611,11 +1611,11 @@ DEP-026:
 DEP-027:
   predecessor: {node: DN-CORE-CMDCON, owner: "Asrın"}
   successor: {node: DN-CORE-CMDEXEC, owner: "Asrın"}
-  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: START, required_readiness: CONTRACT_READY}
+  semantics: {kind: CONTRACT, strength: HARD, blocking_stage: INTEGRATION, required_readiness: CONTRACT_READY}
   need_by: "S2–S3"   # sprint 3
   fallback: F1
-  unblock_evidence: "contract merged + contract tests green + example fixture published"
-  precise_requirement: null
+  unblock_evidence: "versioned hold/release/dispatch/maintenance-request command schemas + stable command/version identity + compatibility/example fixtures + green producer/consumer contract tests"
+  precise_requirement: "versioned hold/release/dispatch/maintenance-request command schemas + stable command/version identity + compatibility/example fixtures + green producer/consumer contract tests"
   risk_class: DR-2
   source: "Item 66 #42"
   status: NOT_READY
@@ -3758,7 +3758,7 @@ For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §1
 | DEP-018 | S1–S2 | S2 | START; actual consumer cannot pass stage before required producer readiness |
 | DEP-020 | S2–S3 | S3 | START; actual consumer cannot pass stage before required producer readiness |
 | DEP-021 | S1–S2 | S2 | START; actual consumer cannot pass stage before required producer readiness |
-| DEP-027 | S2–S3 | S3 | START; actual consumer cannot pass stage before required producer readiness |
+| DEP-027 | S2–S3 | S3 | INTEGRATION; the later execution/capability consumer cannot pass its integration stage before required producer readiness |
 | DEP-048 | S3–S4 | S4 | START; actual consumer cannot pass stage before required producer readiness |
 | DEP-049 | M5→M6 | S10 | FREEZE; actual consumer cannot pass stage before required producer readiness |
 | DEP-050 | S2–S4 | S4 | START; actual consumer cannot pass stage before required producer readiness |
@@ -3805,7 +3805,7 @@ For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §1
 | DEP-024 | DN-EVT-SPINE at INTEGRATION | DN-CORE-OUTBOX: Transactional outbox + relay; INTEGRATION_READY; real cross-boundary integration test green on INTEGRATION (outbox → NATS → consumer) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-025 | DN-EVT-SPINE at INTEGRATION | DN-RT-NATS: NATS JetStream runtime; INTEGRATION_READY; real JetStream in CI + INTEGRATION (no fake bus, CI-INV-07) | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-026 | DN-CORE-CMDCON at START | DN-CORE-CONTRACTS: Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
-| DEP-027 | DN-CORE-CMDEXEC at START | DN-CORE-CMDCON: Core command contracts (hold / release / dispatch / maintenance request); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-027 | DN-CORE-CMDEXEC at INTEGRATION | DN-CORE-CMDCON: Core command contracts (hold / release / dispatch / maintenance request); CONTRACT_READY; versioned hold/release/dispatch/maintenance-request command schemas + stable command/version identity + compatibility/example fixtures + green producer/consumer contract tests | Existing CONTRACT planning predicate is explicit; the contract-first producer slice is owned by WP-CORE-003; execution persistence/idempotency remains a later capability slice. |
 | DEP-029 | DN-CORE-GENEALOGY at INTEGRATION | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; genealogy queries over real lineage | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-031 | DN-TWIN-SKELETON at START | DN-EVT-CONTRACTS: Event contracts (envelope + domain events, IC registry); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-032 | DN-TWIN-SKELETON at INTEGRATION | DN-EVT-SPINE: Operational event spine (outbox → NATS → idempotent consumers); INTEGRATION_READY; Twin revision advances from real events | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |

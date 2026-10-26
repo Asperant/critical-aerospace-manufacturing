@@ -491,17 +491,19 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 
 **Source requirements (03).** FR-CORE-004, FR-CORE-005, FR-CORE-006, FR-CORE-016
 
-**Architecture components (02).** ARCH-AUTO-IDEMPOTENCY, ARCH-CORE-CMD, ARCH-CORE-DB, ARCH-CTR-API, ARCH-CTR-VERSIONING
+**Architecture components (02).** ARCH-AUTO-IDEMPOTENCY, ARCH-CORE-CMD, ARCH-CORE-DB, ARCH-CTR-API, ARCH-CTR-CMDSCHEMA, ARCH-CTR-VERSIONING
 
-**Inputs / required contracts.** gated by DEP-027 (DN-CORE-CMDCON → DN-CORE-CMDEXEC, HARD/START@CONTRACT_READY, need-by S2–S3), DEP-028 (DN-CORE-TRANSITIONS → DN-CORE-CMDEXEC, HARD/INTEGRATION@INTEGRATION_READY, need-by E2E-01 readiness (end S4))
+**Inputs / required contracts.** The later execution capability is gated by DEP-027 (`DN-CORE-CMDCON → DN-CORE-CMDEXEC`, HARD/INTEGRATION@CONTRACT_READY, need-by S2–S3) and DEP-028 (`DN-CORE-TRANSITIONS → DN-CORE-CMDEXEC`, HARD/INTEGRATION@INTEGRATION_READY, need-by E2E-01 readiness (end S4)).
 
 **Deliverables.**
+- contract-first producer slice for `DN-CORE-CMDCON`: versioned hold/release/dispatch/maintenance-request command schemas, stable command/version identity, compatibility/example fixtures and producer/consumer contract tests
 - idempotency key store
 - revision/freshness precondition validator
 - CommandOutcome persistence + query
-- versioned command contract (v1)
+- versioned command contract (v1), produced by the contract-first slice
 
 **Major tasks.**
+- first owner-executable slice: define and publish the `DN-CORE-CMDCON` contract artifacts; this is not a `CONTRACT_READY` claim until the required evidence exists
 - design idempotency key semantics shared with Automation
 - implement STALE/CONFLICT rejection outcomes
 - persist completed/rejected/unresolved outcomes
@@ -626,7 +628,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 
 **Architecture components (02).** ARCH-CORE-CMD, ARCH-CORE-DOMAIN, ARCH-EDGE-BFF, ARCH-TWIN-API
 
-**Inputs / required contracts.** gated by DEP-027 (DN-CORE-CMDCON → DN-CORE-CMDEXEC, HARD/START@CONTRACT_READY, need-by S2–S3), DEP-028 (DN-CORE-TRANSITIONS → DN-CORE-CMDEXEC, HARD/INTEGRATION@INTEGRATION_READY, need-by E2E-01 readiness (end S4))
+**Inputs / required contracts.** gated by DEP-027 (DN-CORE-CMDCON → DN-CORE-CMDEXEC, HARD/INTEGRATION@CONTRACT_READY, need-by S2–S3), DEP-028 (DN-CORE-TRANSITIONS → DN-CORE-CMDEXEC, HARD/INTEGRATION@INTEGRATION_READY, need-by E2E-01 readiness (end S4))
 
 **Deliverables.**
 - benchmark definitions for read/command paths
@@ -9101,10 +9103,10 @@ Every work package declares the 05 readiness node it advances. The table lists, 
 |---|---|---|---|
 | WP-GOV-003 | DN-PLAT-RUNNER | 2 | DEP-114 (DN-PLAT-FAILVAL, MILESTONE_EXIT, need-by M5 (S10)), DEP-115 (DN-PLAT-CD, INTEGRATION, need-by M5 (S10)) |
 | WP-CORE-002 | DN-CORE-TRANSITIONS | 1 | DEP-020 (DN-CORE-LIFECYCLE, START, need-by S2–S3) |
-| WP-CORE-003 | DN-CORE-CMDEXEC | 2 | DEP-027 (DN-CORE-CMDCON, START, need-by S2–S3), DEP-028 (DN-CORE-TRANSITIONS, INTEGRATION, need-by E2E-01 readiness (end S4)) |
+| WP-CORE-003 | DN-CORE-CMDEXEC | 2 | DEP-027 (DN-CORE-CMDCON, INTEGRATION, need-by S2–S3), DEP-028 (DN-CORE-TRANSITIONS, INTEGRATION, need-by E2E-01 readiness (end S4)) |
 | WP-CORE-004 | DN-CORE-GENEALOGY | 1 | DEP-029 (DN-CORE-LIFECYCLE, INTEGRATION, need-by M2 (S4)) |
 | WP-CORE-005 | DN-CORE-OUTBOX | 1 | DEP-022 (DN-CORE-LIFECYCLE, INTEGRATION, need-by M1 (S2)) |
-| WP-CORE-006 | DN-CORE-CMDEXEC | 2 | DEP-027 (DN-CORE-CMDCON, START, need-by S2–S3), DEP-028 (DN-CORE-TRANSITIONS, INTEGRATION, need-by E2E-01 readiness (end S4)) |
+| WP-CORE-006 | DN-CORE-CMDEXEC | 2 | DEP-027 (DN-CORE-CMDCON, INTEGRATION, need-by S2–S3), DEP-028 (DN-CORE-TRANSITIONS, INTEGRATION, need-by E2E-01 readiness (end S4)) |
 | WP-CORE-007 | DN-RT-PG | 2 | DEP-006 (DN-PLAT-COMPOSE, START, need-by M0), DEP-007 (DN-PLAT-INTEG, INTEGRATION, need-by M1 (S2)) |
 | WP-CORE-008 | DN-SIM-COREINT | 3 | DEP-040 (DN-SIM-OPSEM, INTEGRATION, need-by M2 (S4)), DEP-041 (DN-CORE-CMDEXEC, INTEGRATION, need-by M2 (S4)), DEP-042 (DN-EVT-SPINE, INTEGRATION, need-by M2 (S4)) |
 | WP-EVT-001 | DN-EVT-CONTRACTS | 1 | DEP-021 (DN-CORE-CONTRACTS, START, need-by S1–S2) |
