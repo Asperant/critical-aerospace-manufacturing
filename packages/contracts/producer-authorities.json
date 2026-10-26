@@ -20,6 +20,11 @@
           "family": "core.lot-dispatch-authorized",
           "contract_type": "EVENT",
           "authority_level": "Core canonical dispatch-authorization fact; Simulator remains physical execution authority"
+        },
+        {
+          "family": "core.operational-command",
+          "contract_type": "COMMAND",
+          "authority_level": "Core accepts intent and owns canonical state mutation; Automation owns workflow orchestration and effect verification"
         }
       ]
     }

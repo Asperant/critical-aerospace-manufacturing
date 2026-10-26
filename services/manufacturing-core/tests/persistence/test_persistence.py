@@ -61,6 +61,8 @@ def test_schema_creation_and_replay(database: Database) -> None:
             "production_order",
             "lot",
             "serialized_component",
+            "command_idempotency",
+            "command_outcome",
         }
         assert admin.execute(
             "SELECT pg_catalog.pg_get_userbyid(nspowner) FROM pg_catalog.pg_namespace WHERE nspname = 'core'"

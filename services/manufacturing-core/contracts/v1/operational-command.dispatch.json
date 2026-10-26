@@ -1,0 +1,1 @@
+{"command_type":"DispatchLot","command_version":1,"command_id":"33333333-3333-4333-8333-333333333333","idempotency_key":"dispatch-001","world_id":"primary","correlation_id":"corr-003","causation_id":"plan-003","target":{"entity_type":"Lot","entity_id":"LOT-001"},"expected":{"expected_revision":"lot-r3"},"operation_id":"OP-001","resource_id":"CNC-001"}
