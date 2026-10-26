@@ -114,6 +114,7 @@ class FakeGH:
     def fresh_pr(self,number): return deepcopy(self.pr_data)
     def comment(self,number): return deepcopy(self.comments[number])
     def run(self,number): return deepcopy(self.run_data)
+    def fresh_run(self,number): return deepcopy(self.run_data)
     def checks(self,sha): return deepcopy(self.check_data)
     def reviews(self,number): raise AssertionError('Advisory review API must not be queried')
     def files(self,pr):
@@ -164,6 +165,10 @@ def fixture(profile='asrin',source='READY',target='IN_PROGRESS'):
 
 def run_case(profile='asrin',source='READY',target='IN_PROGRESS',mutate=None):
     wp,policy,plane,gh,envelope=fixture(profile,source,target)
+    if target=='DONE':
+        policy['required_aggregate_ci']=['ci-gate']
+        gh.check_data[0].append({'name':'ci-gate','status':'completed','conclusion':'success',
+                                 'details_url':'https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/12/job/22'})
     if mutate: mutate(policy,plane,gh,envelope)
     logs=[]
     def audit(record,key):
@@ -757,6 +762,34 @@ class TransitionTests(unittest.TestCase):
         for target,source in [('VALIDATING','MERGED'),('DONE','VALIDATING')]:
             def wrong(policy,plane,gh,envelope): gh.run_data['head_sha']=HEAD
             with self.assertRaises(t.Denied): run_case(source=source,target=target,mutate=wrong)
+
+    def test_done_uses_exact_main_ci_gate_without_projectctl(self):
+        def main_only(policy,plane,gh,envelope):
+            gh.check_data=([{'name':'ci-gate','status':'completed','conclusion':'success',
+                             'details_url':'https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/12/job/22'}],[])
+        result,*_=run_case(source='VALIDATING',target='DONE',mutate=main_only)
+        self.assertEqual(result['result'],'VERIFIED')
+
+    def test_done_rejects_missing_failed_or_wrong_revision_main_ci(self):
+        cases={
+            'missing': lambda gh: setattr(gh,'check_data',([],[])),
+            'failed': lambda gh: setattr(gh,'check_data',([{'name':'ci-gate','status':'completed','conclusion':'failure',
+                'details_url':'https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/12/job/22'}],[])),
+            'wrong_revision': lambda gh: gh.run_data.update(head_sha=HEAD),
+        }
+        for name,mutate in cases.items():
+            with self.subTest(name=name):
+                def deny(policy,plane,gh,envelope,mutate=mutate):
+                    mutate(gh)
+                with self.assertRaises(t.Denied):
+                    run_case(source='VALIDATING',target='DONE',mutate=deny)
+
+    def test_merge_ready_fast_gate_still_requires_projectctl(self):
+        def no_projectctl(policy,plane,gh,envelope):
+            gh.check_data=([{'name':'ci-gate','status':'completed','conclusion':'success',
+                             'details_url':'https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/12/job/22'}],[])
+        with self.assertRaises(t.Denied):
+            run_case(source='IN_REVIEW',target='MERGE_READY',mutate=no_projectctl)
 
     def test_merged_and_done_require_deleted_work_branch(self):
         for source,target in [('MERGE_READY','MERGED'),('VALIDATING','DONE')]:

@@ -481,6 +481,19 @@ class DeferredAcceptanceTests(unittest.TestCase):
     def fixture(self):
         wp, policy, plane, fixture_gh, _ = fixture(source="VALIDATING", target="DONE")
         gh: Any = fixture_gh
+        policy["required_aggregate_ci"] = ["ci-gate"]
+        gh.check_data = (
+            [
+                {"name": "projectctl", "status": "completed", "conclusion": "success"},
+                {
+                    "name": "ci-gate",
+                    "status": "completed",
+                    "conclusion": "success",
+                    "details_url": "https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/12/job/22",
+                },
+            ],
+            [],
+        )
         plane.items[0]["labels"].append(plane.blocked)
         policy["deferred_acceptance_schema"] = "cap-deferred-acceptance-v1"
         sources = {
