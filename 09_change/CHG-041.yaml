@@ -1,0 +1,26 @@
+CHG-041:
+  title: Evidence-based generic lifecycle reconciliation for merged work
+  trigger: Explicit project-owner request on 26 October 2026 after WP-TWIN-001 merge
+  reason: A merged work package can remain in a pre-merge Plane state when its lifecycle transition was missed; reconciliation must prove current facts without a WP-specific authorization allow-list.
+  class: C3
+  review_risk_class: CR-3
+  raised_in: S2
+  owner: Asrın
+  application_control_item: CTRL-HOST-022
+  required_human_approvals: 0
+  decision: APPROVED
+  status: APPROVED
+  scope:
+    - Replace WP-specific lifecycle reconciliation authorization with generic evidence evaluation.
+    - Require an accountable owner assessment bound to the canonical WP and exact current main revision.
+    - Require a merged PR, exact merge SHA reachable from main, required CI PASS and, for VALIDATING, successful main runs at that merge SHA.
+    - Preserve fail-closed behavior for UNKNOWN, unmerged PRs, failed or stale CI, wrong revision, ambiguous assessment, blocked queue conflicts and mutation/readback uncertainty.
+    - Retain historical reconciliation records only as CHG-033 deferred-recovery inputs; they do not authorize generic lifecycle reconciliation.
+  invariants_preserved:
+    - Reconciliation never asserts skipped history, DoR/DoD, integrated acceptance or DONE.
+    - Blockers are never cleared; ordinary transition guards and ownership remain authoritative.
+    - Exactly one durable INTENT audit precedes one state PATCH and fresh exact readback.
+    - Generic sudo grants remain profile-scoped; the helper proves canonical WP ownership and live evidence.
+  affected_control_surfaces: [CTRL-HOST-022]
+  rollout: Focused evaluator and negative-path tests, merge required CI, deploy only merged reference source through the supported root installer, then reconcile the observed merged WP.
+  rollback: Restore deployed helper and policy from the root-only backup; never replay Plane state or delete audit history.

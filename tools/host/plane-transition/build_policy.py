@@ -56,7 +56,7 @@ policy={'schema_version':'cap-transition-policy-v1','evaluation_revision':'chg01
         'node_requirements':{n.id:sorted(set(re.findall(r'(?:FR|NFR)-[A-Z0-9]+-[0-9]{3}',
                                                        n.raw_requirement_refs))) for n in nodes.values()},
         'node_producers':node_producers,
-        'required_ci':['projectctl'], 'review_policy':read_review_policy(ROOT), 'required_technical_steps':['Syntax sanity','Projectctl tests','Canonical validation','Whitespace and repository hygiene']}
+        'required_ci':['projectctl'], 'review_policy':read_review_policy(ROOT), 'required_technical_steps':['Canonical validation','Changed-scope focused tests and regressions','Requirement catalog lint','Whitespace and repository hygiene']}
 for key,prefix,count in [('dor_task','DOR-TASK-',12),('dor_pr','DOR-PR-',8),('dod_pr','DOD-PR-',12),
                          ('dod_wp','DOD-WP-',12),('dod_research','DOD-RES-',11)]:
     ids=sorted(k for k in criteria if k.startswith(prefix))
@@ -74,7 +74,7 @@ preferences=yaml.safe_load((ROOT/'project_control/execution_preferences.yaml').r
 assert not validate_preferences(p,preferences), 'Invalid execution preferences'
 policy['execution_preferences']=preferences
 policy['execution_project']=project_view(p)
-for name in ['project_control/execution_preferences.yaml','09_change/CHG-019.yaml','09_change/CHG-020.yaml','09_change/CHG-021.yaml','09_change/CHG-022.yaml','09_change/CHG-023.yaml','09_change/CHG-024.yaml','09_change/CHG-025.yaml','09_change/CHG-026.yaml','09_change/CHG-027.yaml','09_change/CHG-028.yaml','09_change/CHG-030.yaml','09_change/CHG-031.yaml','project_control/lifecycle_reconciliation.yaml','09_change/CHG-033.yaml','project_control/deferred_recovery.yaml','09_change/CHG-036.yaml']:
+for name in ['project_control/execution_preferences.yaml','09_change/CHG-019.yaml','09_change/CHG-020.yaml','09_change/CHG-021.yaml','09_change/CHG-022.yaml','09_change/CHG-023.yaml','09_change/CHG-024.yaml','09_change/CHG-025.yaml','09_change/CHG-026.yaml','09_change/CHG-027.yaml','09_change/CHG-028.yaml','09_change/CHG-030.yaml','09_change/CHG-031.yaml','project_control/lifecycle_reconciliation.yaml','09_change/CHG-033.yaml','project_control/deferred_recovery.yaml','09_change/CHG-036.yaml','09_change/CHG-041.yaml']:
     manifest[name]=sha256((ROOT/name).read_bytes()).hexdigest()
 policy['execution_project']['source_manifest']=manifest
 for kind,name in [('auto_next','tools/host/plane-transition/auto_next.py'),('execution_queue','tools/projectctl/src/projectctl/execution_queue.py'),('reconcile','tools/host/plane-transition/reconcile.py')]:

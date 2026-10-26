@@ -887,6 +887,9 @@ def native_record(text, wp, sha):
     # Ordinary project-owner decisions and blocker notes; no policy/from/to copy.
     data['reason']=field('Reason') or text[:1000]
     data['owner_decision']=field('Owner decision')
+    data['owner_assessment']=field('Owner assessment')
+    data['owner_work']=field('Owner work')
+    data['local_actionable_work']=field('Local actionable work')
     blocker_owner=field('Blocker owner')
     if blocker_owner:
         data['blocker']={'owner':blocker_owner,'wp_id':field('Blocking WP'),

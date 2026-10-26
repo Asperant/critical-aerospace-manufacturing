@@ -28,3 +28,4 @@ CHG-035,Canonical EVT-002 external context binding ownership and future artifact
 CHG-036,Preserve semantic identity across enriched merged binding wait reassertions,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-017
 CHG-038,Bounded pull-request CI gate with nonblocking full regression lane,C2,CR-2,Asrın,APPROVED_WITH_CONDITIONS,APPROVED,CTRL-HOST-019
 CHG-037,Consolidate semantic implementation-slot release and bounded queue selection,C3,CR-3,Asrın,APPROVED_WITH_CONDITIONS,APPROVED,CTRL-HOST-018
+CHG-041,Evidence-based generic lifecycle reconciliation for merged work,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-022

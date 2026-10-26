@@ -52,8 +52,14 @@ jobs:
           import os
           import subprocess
 
+          base_sha = os.environ["BASE_SHA"]
+          if not base_sha or set(base_sha) == {"0"}:
+              base_sha = subprocess.check_output(
+                  ["git", "merge-base", "origin/main", os.environ["HEAD_SHA"]],
+                  text=True,
+              ).strip()
           paths = subprocess.check_output(
-              ["git", "diff", "--name-only", os.environ["BASE_SHA"], os.environ["HEAD_SHA"]],
+              ["git", "diff", "--name-only", base_sha, os.environ["HEAD_SHA"]],
               text=True,
           ).splitlines()
           integration_prefixes = (

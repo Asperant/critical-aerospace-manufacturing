@@ -157,8 +157,9 @@ This changes ONLY development/GitHub/repository governance. Product HITL, protec
 
 
 CI verification follows the real check → Actions run → job → named steps at the
-actual SHA. Syntax sanity, Projectctl tests, Canonical validation and Whitespace /
-repository hygiene must have completed successfully; host changes additionally
+actual SHA. Canonical validation, Changed-scope focused tests and regressions,
+Requirement catalog lint and Whitespace / repository hygiene must have completed
+successfully; host changes additionally
 require the existing queue-security and transition-fixture steps. The complete
 actual PR file list is checked for forbidden secret/runtime paths. A fresh PR read
 before any mutation rejects concurrent head/branch/base/draft/merge changes.
