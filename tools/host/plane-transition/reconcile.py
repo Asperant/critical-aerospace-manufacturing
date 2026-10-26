@@ -10,7 +10,9 @@ AUTO_NEXT. CAP_PROFILE is an operational guard, not a security boundary.
 
 Only MERGED or VALIDATING can be requested. The only mutation is the constructed
 state PATCH of the existing Plane adapter, preceded by a durable INTENT audit row
-and followed by a fresh exact readback. The ordinary cap-plane-transition rules
+and followed by a fresh exact readback. A merged PR may reconcile an already
+blocked IN_PROGRESS item directly to VALIDATING; the BLOCKED label is preserved
+and the blocker is never cleared. The ordinary cap-plane-transition rules
 (adjacent edges, open-PR predicates) are unchanged.
 """
 
@@ -500,7 +502,12 @@ def reconcile(
         plane, profile, wp, policy
     )  # unique canonical mapping, owner, assignee
     source = plane.names[item["state"]]
-    need(plane.blocked not in item["labels"], "ACTIVE_BLOCKER_UNRESOLVED")
+    blocked = plane.blocked in item["labels"]
+    blocked_post_merge = source == "IN_PROGRESS" and target == "VALIDATING" and blocked
+    # CHG-018 keeps ordinary transition guards intact. This narrowly scoped recovery
+    # path only repairs a missed post-merge lifecycle edge and deliberately retains
+    # the active blocker for downstream validation.
+    need(not blocked or blocked_post_merge, "ACTIVE_BLOCKER_UNRESOLVED")
     need(source == target or source in SOURCES, "SOURCE_STATE_NOT_RECONCILABLE")
     if source != target:
         # A no-op is exempt: after a reconcile the owner normally has a next READY item.
@@ -529,6 +536,8 @@ def reconcile(
         outstanding=list(OUTSTANDING),
         skipped_state_history_not_asserted=True,
     )
+    if blocked_post_merge:
+        record["blocked_preserved"] = True
     if source == target:
         # Verified idempotence: facts are re-proved, nothing is written, no PATCH replay.
         need(plane.issue(item["id"]) == item, "CONCURRENT_PLANE_CHANGE")
