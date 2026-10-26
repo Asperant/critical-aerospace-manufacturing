@@ -859,6 +859,77 @@ def existing_assessment(gh,text,wp,sha):
     return record
 
 
+def ready_assessment_record(gh, context, policy, sha):
+    """Consume the same bound READY.md model as projectctl check-ready."""
+    wp = context['work_package']
+    path = f"evidence/{wp['id']}/READY.md"
+    raw, _blob = gh.repository_file(path, sha)
+    try:
+        text = raw.decode('utf-8')
+    except UnicodeDecodeError:
+        raise Denied('READY_ASSESSMENT_UNREADABLE') from None
+    need(len(text) <= 65536, 'EVIDENCE_TOO_LARGE')
+    owner_match = re.search(r"(?im)^\s*Accountable owner\s*:\s*(.+?)\s*$", text)
+    canonical_owner = wp.get('primary_owner', {}).get('canonical_name')
+    need(owner_match and owner_match.group(1).split('(', 1)[0].strip() == canonical_owner,
+         'ACCOUNTABLE_OWNER_EVIDENCE_MISSING')
+    rows = {}
+    dependency_rows = {}
+    for line in text.splitlines():
+        if not line.strip().startswith('|'):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip('|').split('|')]
+        if len(cells) < 3 or all(set(cell) <= {'-', ':', ' '} for cell in cells):
+            continue
+        identity = cells[0].strip(' `')
+        result = cells[1].upper().strip()
+        detail = ' | '.join(cells[2:]).strip()
+        if re.fullmatch(r'DOR-(?:TASK|WP)-[0-9]{2}', identity):
+            need(identity not in rows, 'AMBIGUOUS_READY_CRITERION')
+            need(result.startswith('PASS') or result.startswith('N/A'),
+                 'UNSUPPORTED_READY_CRITERION_RESULT')
+            rows[identity] = (result, detail)
+        elif re.fullmatch(r'DEP-[0-9]+', identity):
+            need(identity not in dependency_rows, 'AMBIGUOUS_READY_DEPENDENCY')
+            dependency_rows[identity] = (result, detail)
+    task_ids = [f'DOR-TASK-{number:02d}' for number in range(1, 13)
+                if wp.get('scope_class') == 'R1' or number != 12]
+    ids = task_ids + list(wp.get('dor_refs') or [])
+    allow_na = {'DOR-TASK-04', 'DOR-TASK-12', 'DOR-WP-04', 'DOR-WP-08'}
+    checks = {}
+    for identity in ids:
+        result_detail = rows.get(identity)
+        if result_detail is None:
+            raise Denied('READY_CRITERION_MISSING')
+        result, detail = result_detail
+        if result.startswith('PASS'):
+            need(detail, 'READY_CRITERION_UNEXPLAINED')
+        else:
+            need(identity in allow_na and detail, 'READY_CRITERION_NA_INVALID')
+        checks[identity] = {'result': 'PASS' if result.startswith('PASS') else 'N/A',
+                            'reason': detail, 'evidence_refs': [f'repo:{path}']}
+    start_edges = [edge for edge in context.get('dependency_edges', [])
+                   if edge.get('semantics', {}).get('strength') == 'HARD'
+                   and edge.get('semantics', {}).get('blocking_stage') == 'START']
+    dependency_readiness = {}
+    reference = re.compile(r'(?:`([^`]+)`|((?:docs|evidence|project_control|requirements|tools)/[^\s,;)]+))')
+    for edge in start_edges:
+        value = dependency_rows.get(edge['id'])
+        if value is None:
+            raise Denied('START_DEPENDENCY_EVIDENCE_MISSING')
+        readiness, detail = value
+        need(readiness not in {'NOT_APPLICABLE', 'N/A', 'UNKNOWN', ''} and detail
+             and reference.search(detail), 'START_DEPENDENCY_EVIDENCE_MISSING')
+        dependency_readiness[edge['id']] = {'readiness': readiness,
+                                            'precise_consumer_requirement': detail,
+                                            'evidence_refs': [f'repo:{path}']}
+    gh.artifact(f'repo:{path}', sha)
+    return {'wp_id': wp['id'], 'head_sha': sha, 'reason': 'Canonical READY.md assessment',
+            '_native': True, '_ready_canonical': True, '_artifact_refs': [f'repo:{path}'],
+            'checks': checks, 'dependency_readiness': dependency_readiness,
+            'dependency_stage_dispositions': {}}
+
+
 def native_record(text, wp, sha):
     """Read existing Markdown evidence, without a transition-specific JSON schema.
 
@@ -1164,6 +1235,8 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
     pr=pr_fact(gh,refs,wp,profile) if not prework and not starting_commit or any(r.startswith('pr:') for r in refs) else None
     post=source in {'MERGED','VALIDATING','DONE'} or target=='MERGED'
     sha=(pr.get('merge_commit_sha') if post else pr['head']['sha']) if pr else (commits[0] if starting_commit else gh.main_sha())
+    if target == 'READY' and not post:
+        sha=gh.main_sha()
     need(isinstance(sha,str) and SHA.fullmatch(sha), 'REVISION_UNAVAILABLE')
     if post and pr: need(pr.get('merged') is True, 'PR_NOT_ACTUALLY_MERGED')
     owner=GITHUB[profile]
@@ -1221,9 +1294,14 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
             spec.loader.exec_module(prep)
             record=prep.verified_record(sys.modules[__name__],gh,wp,sha,policy)
         else:
-            record=confirmation(rows,[owner],wp,source,target,sha,policy)
-        criteria(gh,record,policy['dor_task']+card['dor_refs'],sha)
-        dependencies(gh,rows,context,record,sha,policy)
+            try:
+                record=ready_assessment_record(gh,context,policy,sha)
+            except Denied as exc:
+                if exc.code != 'ARTIFACT_NOT_A_FILE' or not rows:
+                    raise
+                record=confirmation(rows,[owner],wp,source,target,sha,policy)
+        criteria(gh,record,sorted(record['checks']) if record.get('_ready_canonical')
+                 else policy['dor_task']+card['dor_refs'],sha)
     elif target=='IN_PROGRESS':
         if starting_commit: gh.started_commit(wp,sha,profile)
         else: need(not pr.get('merged') and pr.get('state')=='open', 'NO_LIVE_IMPLEMENTATION_PR')

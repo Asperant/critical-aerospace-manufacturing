@@ -183,6 +183,21 @@ def run_case(profile='asrin',source='READY',target='IN_PROGRESS',mutate=None):
 
 
 class TransitionTests(unittest.TestCase):
+    def test_ready_transition_consumes_check_ready_canonical_assessment(self):
+        def canonical_ready(policy, plane, gh, envelope):
+            wp=plane.item['external_id']
+            rows='\n'.join(f'| DOR-TASK-{number:02d} | PASS | Canonical scope evidence. |'
+                           for number in range(1,12))
+            rows+='\n| DOR-WP-01 | PASS | Canonical scope evidence. |'
+            gh.repo_files[f'evidence/{wp}/READY.md']=(
+                f'Accountable owner: Asrın Dündar (Asperant)\n\n{rows}\n'.encode(),
+                'c'*40)
+            envelope['evidence_refs']=['pr:1']
+        result,plane,_,gh=run_case(source='BACKLOG',target='READY',mutate=canonical_ready)
+        self.assertEqual(result['result'],'VERIFIED')
+        self.assertEqual(plane.item['state'],'READY')
+        self.assertIn(('repo:evidence/'+plane.item['external_id']+'/READY.md',HEAD),gh.artifacts)
+
     def automatic_fixture(self):
         wp,policy,plane,gh,envelope=fixture()
         producer_wp=next(k for k,v in policy['contexts'].items()
