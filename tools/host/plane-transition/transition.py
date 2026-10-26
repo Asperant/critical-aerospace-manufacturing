@@ -986,6 +986,7 @@ def post_merge_ci(gh,merge_sha,policy):
             r'https://github\.com/Asperant/critical-aerospace-manufacturing/actions/runs/([1-9][0-9]*)/job/[1-9][0-9]*',
             str(check.get('details_url','')),re.I)
         need(match, 'REQUIRED_MAIN_CI_RUN_BINDING_UNKNOWN')
+        assert match is not None
         run=gh.fresh_run(int(match[1]))
         need(run.get('head_sha')==merge_sha and run.get('head_branch')=='main'
              and run.get('event')!='pull_request' and run.get('status')=='completed'
