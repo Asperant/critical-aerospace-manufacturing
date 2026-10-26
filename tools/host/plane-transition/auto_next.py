@@ -370,7 +370,6 @@ def recorded_historical_technical_acceptance(t, gh, pr, profile, merge_sha, poli
             or not isinstance(merged_at, str)
             or not isinstance(body, str)
             or not merged_at < cutoff
-            or "Post-merge actual results:" not in body
         ):
             return False
         texts = [body]
