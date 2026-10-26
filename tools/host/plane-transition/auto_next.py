@@ -389,8 +389,6 @@ def recorded_historical_technical_acceptance(t, gh, pr, profile, merge_sha, poli
                     texts.append(comment_body)
         run_ids = set()
         for text in texts:
-            if "CI evidence" not in text and "Main CI run" not in text:
-                continue
             run_ids.update(
                 int(value)
                 for value in re.findall(
