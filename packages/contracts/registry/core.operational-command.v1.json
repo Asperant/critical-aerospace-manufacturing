@@ -1,0 +1,29 @@
+{
+  "contract_id": "core.operational-command.v1",
+  "name": "Core typed operational command",
+  "contract_type": "COMMAND",
+  "version": 1,
+  "semantic_owner": "Asrın Dündar",
+  "canonical_producer": "manufacturing-core",
+  "declared_consumers": ["Automation"],
+  "purpose": "Request an authorized Core manufacturing transition with exact identity, world, target and revision/freshness binding.",
+  "output_schema": {"path": "services/manufacturing-core/contracts/v1/operational-command.v1.schema.json", "sha256": "9858e3f87fac5149fa500fc7bdcf4572734ad5f8c178b9fbdf7f2c9247c5e365"},
+  "fixtures": [
+    {"path": "services/manufacturing-core/contracts/v1/operational-command.place-hold.json", "sha256": "a0b2424c8282e1c11bf71e6f788cb0b97067cc5aabafadedbe6653755943be73"},
+    {"path": "services/manufacturing-core/contracts/v1/operational-command.release-hold.json", "sha256": "ea5493fffb9a65ca14f5721082afd9eb84ba465cb6414d85f2b72b4b6f3ff10f"},
+    {"path": "services/manufacturing-core/contracts/v1/operational-command.dispatch.json", "sha256": "ef0dea6d5522d87153a47a4c8d50591026494656814c25acab1706191b0d71cb"},
+    {"path": "services/manufacturing-core/contracts/v1/operational-command.maintenance.json", "sha256": "c869334e00563d46fed82b1fa8048357935b4e7659acf0fbcd4b0be53128be8c"}
+  ],
+  "authority_level": "Core accepts intent and owns canonical state mutation; Automation owns workflow orchestration and effect verification",
+  "sync_semantics": "SYNC",
+  "security_classification": "Protected manufacturing command metadata; no credentials or Oracle labels",
+  "semantics": {
+    "commands": "PlaceLotOnHold, ReleaseMaterialHold, DispatchLot, CreateMaintenanceWorkOrder",
+    "identity": "command_id and idempotency_key are immutable; command_type and command_version are stable",
+    "preconditions": "Entity revisions are opaque strings; stale or unavailable revision/freshness rejects fail closed",
+    "outcomes": "ACCEPTED is durable acceptance only and is never VERIFIED_SUCCESS; REJECTED and UNRESOLVED are durable",
+    "idempotency": "Same key and same immutable command returns the original outcome; same key with another fingerprint is CONFLICT",
+    "world": "world_id, correlation_id and causation_id are explicit and never inferred"
+  },
+  "deprecation": {"status": "ACTIVE", "replacement": null}
+}

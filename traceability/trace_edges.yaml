@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: 1852a0babf540bc0c820d63d1f86a8c32b21e095fd83bed16dd0f5478b5fbb5b
+  sha256: 42680eff18754db0ccd6a278a44ddd77f913c5258f98d64bf4e5143afe02b69c
 requirements:
   FR-GOV-001:
     meta:
@@ -260,7 +260,7 @@ requirements:
     realization:
       surface: command precondition/revision validator (STALE/CONFLICT outcomes)
       deployable: manufacturing-core
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-core/src/manufacturing_core/commands.py
   FR-CORE-005:
     meta:
       class: F1
@@ -278,7 +278,7 @@ requirements:
     realization:
       surface: 'command idempotency-key store (Item 83 example: core app + idempotency package)'
       deployable: manufacturing-core
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-core/src/manufacturing_core/command_persistence.py
   FR-CORE-006:
     meta:
       class: F1
@@ -296,7 +296,7 @@ requirements:
     realization:
       surface: durable CommandOutcome record (completed/rejected/unresolved)
       deployable: manufacturing-core
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-core/src/manufacturing_core/command_persistence.py
   FR-CORE-007:
     meta:
       class: F1
@@ -475,9 +475,9 @@ requirements:
       planning: VERIFY_PLANNED
       evidence: NOT_YET_EXECUTED
     realization:
-      surface: versioned OpenAPI query/command surface
+      surface: versioned typed command contract surface
       deployable: manufacturing-core
-      ref: TBD_BY_IMPLEMENTATION
+      ref: packages/contracts/registry/core.operational-command.v1.json
   FR-SIM-001:
     meta:
       class: F0
@@ -6031,7 +6031,7 @@ edges:
 - {"from": "FR-CORE-004", "relation": "DERIVED_FROM", "to": "INT-INV-07", "applicability": "PLANNED"}
 - {"from": "FR-CORE-004", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-CMD", "applicability": "PLANNED"}
 - {"from": "FR-CORE-004", "relation": "EXPOSED_BY", "to": "Core Command Acceptance API", "applicability": "PLANNED"}
-- {"from": "FR-CORE-004", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-CORE-004", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-core/src/manufacturing_core/commands.py", "applicability": "RECORDED"}
 - {"from": "FR-CORE-004", "relation": "VERIFIED_BY", "to": "TEST-CORE-REVISION", "applicability": "PLANNED"}
 - {"from": "FR-CORE-004", "relation": "VERIFIED_BY", "to": "TEST-HITL-REPLAY-NEG", "applicability": "PLANNED"}
 - {"from": "FR-CORE-005", "relation": "DERIVED_FROM", "to": "ITEM-15", "applicability": "PLANNED"}
@@ -6041,7 +6041,7 @@ edges:
 - {"from": "FR-CORE-005", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-CMD", "applicability": "PLANNED"}
 - {"from": "FR-CORE-005", "relation": "ALLOCATED_TO", "to": "ARCH-AUTO-IDEMPOTENCY", "applicability": "PLANNED"}
 - {"from": "FR-CORE-005", "relation": "EXPOSED_BY", "to": "IC-AUTO-003 Typed Operational Command", "applicability": "PLANNED"}
-- {"from": "FR-CORE-005", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-CORE-005", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-core/src/manufacturing_core/command_persistence.py", "applicability": "RECORDED"}
 - {"from": "FR-CORE-005", "relation": "EXERCISED_IN", "to": "AV-SCEN-05", "applicability": "PLANNED"}
 - {"from": "FR-CORE-005", "relation": "VERIFIED_BY", "to": "TEST-CORE-IDEMP", "applicability": "PLANNED"}
 - {"from": "FR-CORE-005", "relation": "VERIFIED_BY", "to": "RES-DUP-001", "applicability": "PLANNED"}
@@ -6053,7 +6053,7 @@ edges:
 - {"from": "FR-CORE-006", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-CMD", "applicability": "PLANNED"}
 - {"from": "FR-CORE-006", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-DB", "applicability": "PLANNED"}
 - {"from": "FR-CORE-006", "relation": "EXPOSED_BY", "to": "Core Command Acceptance API", "applicability": "PLANNED"}
-- {"from": "FR-CORE-006", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-CORE-006", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-core/src/manufacturing_core/command_persistence.py", "applicability": "RECORDED"}
 - {"from": "FR-CORE-006", "relation": "EXERCISED_IN", "to": "AV-SCEN-01", "applicability": "PLANNED"}
 - {"from": "FR-CORE-006", "relation": "VERIFIED_BY", "to": "TEST-CORE-IDEMP", "applicability": "PLANNED"}
 - {"from": "FR-CORE-006", "relation": "VERIFIED_BY", "to": "TEST-AUTO-OUTCOME", "applicability": "PLANNED"}
@@ -6162,7 +6162,7 @@ edges:
 - {"from": "FR-CORE-016", "relation": "ALLOCATED_TO", "to": "ARCH-CTR-VERSIONING", "applicability": "PLANNED"}
 - {"from": "FR-CORE-016", "relation": "EXPOSED_BY", "to": "Core Query API", "applicability": "PLANNED"}
 - {"from": "FR-CORE-016", "relation": "EXPOSED_BY", "to": "Core Command Acceptance API", "applicability": "PLANNED"}
-- {"from": "FR-CORE-016", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-CORE-016", "relation": "REALIZED_BY", "to": "repo:packages/contracts/registry/core.operational-command.v1.json", "applicability": "RECORDED"}
 - {"from": "FR-CORE-016", "relation": "VERIFIED_BY", "to": "TEST-CORE-CONTRACT", "applicability": "PLANNED"}
 - {"from": "FR-CORE-016", "relation": "VERIFIED_BY", "to": "TEST-EVT-SCHEMA", "applicability": "PLANNED"}
 - {"from": "FR-SIM-001", "relation": "DERIVED_FROM", "to": "ITEM-10", "applicability": "PLANNED"}

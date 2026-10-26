@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cap:core:operational-command:v1",
+  "title": "Core typed operational command v1",
+  "oneOf": [
+    {"$ref": "#/$defs/PlaceLotOnHold"},
+    {"$ref": "#/$defs/ReleaseMaterialHold"},
+    {"$ref": "#/$defs/DispatchLot"},
+    {"$ref": "#/$defs/CreateMaintenanceWorkOrder"}
+  ],
+  "$defs": {
+    "Target": {
+      "type": "object",
+      "properties": {
+        "entity_type": {"type": "string", "pattern": "^\\S+$"},
+        "entity_id": {"type": "string", "pattern": "^\\S+$"}
+      },
+      "required": ["entity_type", "entity_id"],
+      "additionalProperties": false
+    },
+    "Expected": {
+      "type": "object",
+      "properties": {
+        "expected_revision": {"type": ["string", "null"], "pattern": "^\\S+$"},
+        "observed_at": {"type": ["string", "null"], "format": "date-time"},
+        "max_age_seconds": {"type": ["integer", "null"], "minimum": 0}
+      },
+      "required": [],
+      "additionalProperties": false,
+      "anyOf": [
+        {"required": ["expected_revision"]},
+        {"required": ["observed_at"]}
+      ]
+    },
+    "Common": {
+      "type": "object",
+      "properties": {
+        "command_type": {"type": "string"},
+        "command_version": {"const": 1},
+        "command_id": {"type": "string", "format": "uuid"},
+        "idempotency_key": {"type": "string", "pattern": "^\\S+$"},
+        "world_id": {"type": "string", "pattern": "^\\S+$"},
+        "correlation_id": {"type": "string", "pattern": "^\\S+$"},
+        "causation_id": {"type": ["string", "null"], "pattern": "^\\S+$"},
+        "target": {"$ref": "#/$defs/Target"},
+        "expected": {"$ref": "#/$defs/Expected"},
+        "hold_reason": {"type": "string", "minLength": 1},
+        "material_hold_id": {"type": "string", "pattern": "^\\S+$"},
+        "hold_id": {"type": "string", "pattern": "^\\S+$"},
+        "release_reason": {"type": "string", "minLength": 1},
+        "operation_id": {"type": "string", "pattern": "^\\S+$"},
+        "resource_id": {"type": "string", "pattern": "^\\S+$"},
+        "maintenance_reason": {"type": "string", "minLength": 1},
+        "requested_by": {"type": "string", "pattern": "^\\S+$"}
+      },
+      "required": ["command_type", "command_version", "command_id", "idempotency_key", "world_id", "correlation_id", "target", "expected"],
+      "additionalProperties": false
+    },
+    "PlaceLotOnHold": {
+      "allOf": [
+        {"$ref": "#/$defs/Common"},
+        {"type": "object", "properties": {"command_type": {"const": "PlaceLotOnHold"}, "hold_reason": {"type": "string", "minLength": 1}, "material_hold_id": {"type": "string", "pattern": "^\\S+$"}}, "required": ["hold_reason", "material_hold_id"]}
+      ]
+    },
+    "ReleaseMaterialHold": {
+      "allOf": [
+        {"$ref": "#/$defs/Common"},
+        {"type": "object", "properties": {"command_type": {"const": "ReleaseMaterialHold"}, "hold_id": {"type": "string", "pattern": "^\\S+$"}, "release_reason": {"type": "string", "minLength": 1}}, "required": ["hold_id", "release_reason"]}
+      ]
+    },
+    "DispatchLot": {
+      "allOf": [
+        {"$ref": "#/$defs/Common"},
+        {"type": "object", "properties": {"command_type": {"const": "DispatchLot"}, "operation_id": {"type": "string", "pattern": "^\\S+$"}, "resource_id": {"type": "string", "pattern": "^\\S+$"}}, "required": ["operation_id", "resource_id"]}
+      ]
+    },
+    "CreateMaintenanceWorkOrder": {
+      "allOf": [
+        {"$ref": "#/$defs/Common"},
+        {"type": "object", "properties": {"command_type": {"const": "CreateMaintenanceWorkOrder"}, "maintenance_reason": {"type": "string", "minLength": 1}, "requested_by": {"type": "string", "pattern": "^\\S+$"}}, "required": ["maintenance_reason", "requested_by"]}
+      ]
+    }
+  }
+}
