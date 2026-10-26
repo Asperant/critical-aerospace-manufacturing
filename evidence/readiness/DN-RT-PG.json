@@ -1,6 +1,6 @@
 {
   "schema": "auto-runtime-readiness-basis-v1",
-  "node": "DN-RT-PG",
+  "node": "DN-PLAT-COMPOSE",
   "level": "SKELETON_READY",
   "producer_wp": "WP-PLAT-001",
   "producer_pr": 53,
