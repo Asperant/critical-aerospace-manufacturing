@@ -10,7 +10,7 @@ This record contains only verification actually executed on the WP branch.
 - `uv run --project ci --locked ruff check services/manufacturing-core/src services/manufacturing-core/tests ci/tests/test_core_command_contract.py` — pass.
 - `uv run --project ci --locked python ci/scripts/check_contracts.py` — 19 schemas and 8 instances validated, pass.
 - `PYTHONPATH=packages/contracts/src uv run --project ci --locked python -m cap_contracts.ci_gate` — pass after the contract authority binding was committed.
-- GitHub Actions push run `40393716176`, `t1-integration` — pass; real PostgreSQL 18 migration/persistence and command idempotency acceptance completed successfully at commit `7f75d9c`.
+- GitHub Actions push run `40393716176`, job `121819825156` — pass; real PostgreSQL 18 migration/persistence and command idempotency acceptance completed successfully at commit `7f75d9c` ([run](https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/40393716176)).
 
 ## Not executed
 
