@@ -6,7 +6,6 @@ import fcntl
 import hashlib
 import json
 import os
-import re
 import shutil
 import subprocess
 from pathlib import Path

@@ -25,10 +25,12 @@ GRANT = re.compile(
 
 
 def policy_block(targets=("MERGED", "VALIDATING")):
-    return {"lifecycle_reconciliation": {
-        "schema_version": "cap-lifecycle-reconciliation-v2",
-        "targets": list(targets),
-    }}
+    return {
+        "lifecycle_reconciliation": {
+            "schema_version": "cap-lifecycle-reconciliation-v2",
+            "targets": list(targets),
+        }
+    }
 
 
 class GrantTests(unittest.TestCase):
