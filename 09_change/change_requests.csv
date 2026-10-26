@@ -31,3 +31,4 @@ CHG-037,Consolidate semantic implementation-slot release and bounded queue selec
 CHG-041,Evidence-based generic lifecycle reconciliation for merged work,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-022
 CHG-043,Historical merge-time technical acceptance for semantic Slot Release v2,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-023
 CHG-044,Isolate queue health-probe GitHub timeout,C1,CR-2,Asrın,APPROVED,APPROVED,CTRL-HOST-025
+CHG-045,Root-owned Slot Release v2 diagnostic launcher,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-026

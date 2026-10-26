@@ -560,6 +560,135 @@ def semantic_slot_release_source(t, wp, profile, policy, gh):
     }
 
 
+def semantic_slot_release_diagnose(t, wp, profile, policy, gh):
+    """Read-only, redacted Slot Release v2 diagnosis.
+
+    This deliberately calls the same source and proof functions used by AUTO_NEXT;
+    it only exposes bounded predicate names and fingerprints for operator diagnosis.
+    It never writes the cache, audit, Plane, GitHub, or policy.
+    """
+    global resolver
+    if resolver is None:
+        resolver = load_resolver()
+    result = {
+        "schema": "cap-slot-release-diagnostic-v1",
+        "profile": profile,
+        "wp_id": wp,
+        "slot_release": "FAIL",
+        "sources": {
+            "installed_policy": "/etc/cap-plane-queue/transition-policy.json",
+            "installed_source": "/usr/local/libexec/cap-auto-next.py",
+            "cache": "/run/cap-plane-slot-release-v2.json",
+            "audit": "/var/log/cap-plane-transition/audit.jsonl",
+        },
+    }
+
+    def fail(predicate, details=None):
+        if "first_failed_predicate" not in result:
+            result["first_failed_predicate"] = predicate
+            if details:
+                result["details"] = details
+
+    try:
+        verified = t.last_blocker(wp)
+    except Exception:
+        verified = None
+    result["audit"] = {
+        "latest_blocker_audit_id": verified.get("audit_id")
+        if isinstance(verified, dict)
+        else None,
+        "latest_result": verified.get("result") if isinstance(verified, dict) else None,
+        "latest_operation": verified.get("operation")
+        if isinstance(verified, dict)
+        else None,
+        "audit_identity_valid": bool(
+            isinstance(verified, dict)
+            and t.audit_identity(verified) == verified.get("audit_id")
+        ),
+    }
+    if not isinstance(verified, dict):
+        fail("AUDIT_LATEST_BLOCKER_MISSING")
+    elif verified.get("result") != "VERIFIED" or verified.get("operation") != "BLOCKED":
+        fail("AUDIT_LATEST_BLOCKER_NOT_VERIFIED")
+    elif verified.get("profile") != profile or verified.get("wp_id") != wp:
+        fail("AUDIT_PROFILE_WP_BINDING")
+    elif not result["audit"]["audit_identity_valid"]:
+        fail("AUDIT_IDENTITY_INVALID")
+
+    try:
+        rows = t.blocker_rows(wp)
+    except Exception:
+        rows = []
+    continuity = []
+    if isinstance(verified, dict):
+        for row in rows:
+            if (
+                row.get("result") == "UNCHANGED"
+                and row.get("operation") == "BLOCKED"
+                and row.get("profile") == profile
+                and row.get("wp_id") == wp
+                and row.get("active_blocker_audit_id") == verified.get("audit_id")
+            ):
+                continuity.append(row)
+    result["audit"]["continuity_rows"] = len(continuity)
+    if not continuity:
+        fail("AUDIT_CONTINUITY_REASSERTION_MISSING")
+
+    source = semantic_slot_release_source(t, wp, profile, policy, gh)
+    if source is None:
+        fail("ACCOUNTABLE_ASSESSMENT_OR_BINDING_INVALID")
+    else:
+        result["assessment"] = {
+            "assessment_digest": source["assessment_digest"],
+            "semantic_blocker_id": source["semantic_blocker_id"],
+            "semantic_blocker_class": source["semantic_blocker_class"],
+            "canonical_revision": source["canonical_revision"],
+            "relevant_scope_digest": source["scope"],
+            "proof_fingerprint": source["proof_fingerprint"],
+            "policy_digest": source["policy_digest"],
+        }
+        if source["semantic_blocker_class"] not in resolver.SLOT_RELEASE_CLASSES:
+            fail("BLOCKER_SEMANTIC_CLASS_UNSUPPORTED")
+        elif not source["semantic_blocker_id"]:
+            fail("BLOCKER_SEMANTIC_ID_MISSING")
+        elif source["semantic_blocker_class"] == resolver.DEFERRED_CLASS:
+            try:
+                pr = (
+                    t.pr_fact(gh, source["refs"], wp, profile)
+                    if source["pr_refs"]
+                    else source["comment"]
+                )
+                if pr.get("merged") is not True:
+                    fail("MERGE_NOT_VERIFIED")
+                elif pr.get("merge_commit_sha") != source["canonical_revision"]:
+                    fail("MERGE_REVISION_MISMATCH")
+                else:
+                    try:
+                        t.ci(gh, source["canonical_revision"], policy)
+                    except t.Denied as exc:
+                        if not recorded_historical_technical_acceptance(
+                            t, gh, pr, profile, source["canonical_revision"], policy
+                        ):
+                            fail("CI_NOT_VERIFIED", {"reason": exc.code})
+            except t.Denied as exc:
+                fail("MERGE_EVIDENCE_UNAVAILABLE", {"reason": exc.code})
+        if "first_failed_predicate" not in result:
+            proof = semantic_slot_release_proof(
+                t, wp, profile, policy, gh, source=source
+            )
+            if proof is None:
+                fail("SLOT_RELEASE_PROOF_DENIED")
+            else:
+                result["slot_release"] = "PASS"
+                result["proof"] = {
+                    "schema": proof["schema"],
+                    "semantic_blocker_id": proof["semantic_blocker_id"],
+                    "semantic_blocker_class": proof["semantic_blocker_class"],
+                    "proof_fingerprint": proof["proof_fingerprint"],
+                }
+    return result
+
+
 def require_caller(profile, caller=None):
     """Only the matching Unix account, or an actual root administrator."""
     caller = (

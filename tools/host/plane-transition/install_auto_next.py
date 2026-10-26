@@ -14,6 +14,7 @@ SOURCE = Path("/srv/ailab/project")
 CONFIG = Path("/etc/cap-plane-queue")
 RECONCILE_LIBEXEC = "/usr/local/libexec/cap-plane-reconcile.py"
 RECONCILE_SUDOERS = "/etc/sudoers.d/cap-plane-reconcile"
+DIAGNOSTIC_SUDOERS = "/etc/sudoers.d/cap-plane-slot-release-diagnostic"
 PROFILES = ("asrin", "selman", "batuhan", "yavuz")
 RECONCILE_TARGETS = ("MERGED", "VALIDATING")
 
@@ -29,6 +30,8 @@ def deployment_mapping():
         "/usr/local/libexec/execution_queue.py": "tools/projectctl/src/projectctl/execution_queue.py",
         "/usr/local/bin/cap-plane-advance": "tools/host/plane-transition/cap-plane-advance",
         "/usr/local/bin/cap-plane-health": "tools/host/plane-transition/cap-plane-health",
+        "/usr/local/bin/cap-plane-slot-release-diagnostic": "tools/host/plane-transition/cap-plane-slot-release-diagnostic",
+        "/usr/local/libexec/cap-plane-slot-release-diagnostic.py": "tools/host/plane-transition/slot_release_diagnostic.py",
         "/usr/local/libexec/cap-plane-health.py": "tools/host/plane-transition/health.py",
         "/usr/local/libexec/cap-plane-health-snapshot.py": "tools/host/plane-transition/health_snapshot.py",
         "/etc/systemd/system/cap-plane-health.service": "tools/host/plane-transition/cap-plane-health.service",
@@ -93,6 +96,7 @@ def restore_targets(mapping):
         str(CONFIG / "transition-policy.json"),
         str(CONFIG / "catalog.json"),
         "/usr/local/share/cap-plane-transition/policy-manifest.json",
+        DIAGNOSTIC_SUDOERS,
         "/etc/sudoers.d/cap-plane-advance",
         "/etc/sudoers.d/cap-plane-health",
         RECONCILE_SUDOERS,
@@ -256,6 +260,29 @@ print('AUTO_NEXT deployment restored; Plane states and audit untouched. Source p
     reconcile_draft.write_text("\n".join(reconcile_grants(policy)) + "\n")
     reconcile_draft.chmod(0o440)
     subprocess.run(["/usr/sbin/visudo", "-cf", str(reconcile_draft)], check=True)
+    owners = {
+        "asrin": "Asrın Dündar",
+        "selman": "Selman Özdemir",
+        "batuhan": "Batuhan Kaya",
+        "yavuz": "Yavuz Gümüş",
+    }
+    diagnostic_grants = [
+        "# CTRL-HOST-026 exact profile/WP read-only diagnostic invocations"
+    ]
+    for profile in PROFILES:
+        for wp, context in sorted(policy["contexts"].items()):
+            if (
+                context["work_package"]["primary_owner"]["canonical_name"]
+                == owners[profile]
+            ):
+                diagnostic_grants.append(
+                    f"{profile} ALL=(root) NOPASSWD: NOSETENV: "
+                    f"/usr/bin/python3 -I /usr/local/libexec/cap-plane-slot-release-diagnostic.py {profile} {wp}"
+                )
+    diagnostic_draft = backup / "slot-release-diagnostic-sudoers-check"
+    diagnostic_draft.write_text("\n".join(diagnostic_grants) + "\n")
+    diagnostic_draft.chmod(0o440)
+    subprocess.run(["/usr/sbin/visudo", "-cf", str(diagnostic_draft)], check=True)
     draft = backup / "sudoers-check"
     draft.write_text("\n".join(grants) + "\n")
     draft.chmod(0o440)
@@ -303,6 +330,7 @@ print('AUTO_NEXT deployment restored; Plane states and audit untouched. Source p
         write("/etc/sudoers.d/cap-plane-advance", draft.read_bytes(), 0o440)
         write("/etc/sudoers.d/cap-plane-health", health_draft.read_bytes(), 0o440)
         write(RECONCILE_SUDOERS, reconcile_draft.read_bytes(), 0o440)
+        write(DIAGNOSTIC_SUDOERS, diagnostic_draft.read_bytes(), 0o440)
         subprocess.run(["/usr/sbin/visudo", "-cf", "/etc/sudoers"], check=True)
         subprocess.run(
             [

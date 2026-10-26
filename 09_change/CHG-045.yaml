@@ -1,0 +1,31 @@
+CHG-045:
+  title: Root-owned Slot Release v2 diagnostic launcher
+  trigger: Approved request to close the generic Slot Release v2 diagnostic gap
+  reason: Existing approved launchers expose only aggregate queue/advance outcomes, so the first failing semantic predicate cannot be identified without mutating or duplicating evaluator behavior.
+  class: C3
+  review_risk_class: CR-3
+  raised_in: S4
+  owner: Asrın
+  application_control_item: CTRL-HOST-026
+  required_human_approvals: 0
+  decision: APPROVED
+  status: APPROVED
+  scope:
+    - Add a root-owned, GET-only, profile-scoped launcher with exact canonical WP arguments.
+    - Reuse the installed Slot Release v2 evaluator and expose only the first failing predicate plus redacted fingerprints.
+    - Read installed policy/source, slot cache, transition audit, accountable assessment/binding, merge/CI/provenance/scope evidence and audit continuity.
+    - Do not mutate lifecycle, cache, audit, policy, Plane or GitHub state; do not expose credentials or arbitrary file/command access.
+    - Add focused security and diagnostic regression tests and deploy through the existing root-only installer.
+  invariants_preserved:
+    - Slot Release v2 remains a derived scheduler property and never a lifecycle state.
+    - UNKNOWN or missing evidence remains fail-closed.
+    - Existing evaluator semantics remain authoritative; no second acceptance implementation is introduced.
+    - Sudoers grants are exact profile/WP invocations only.
+  affected_work_packages:
+    - NONE — CORE-003 is diagnostic target only and is not changed by this control item.
+  affected_evidence:
+    - tools/host/plane-transition/test_slot_release_diagnostic.py
+    - focused host security/diagnostic test output
+    - post-deploy CORE-003 diagnostic JSON and fresh queue readback
+  rollout: Merge control-only change with required CI, run the existing root-only installer, invoke the exact CORE-003 diagnostic, and perform a fresh cap-plane-queue readback. No lifecycle transition is authorized.
+  rollback: Restore the previous root-owned helper/policy from the installer backup/rollback record; preserve Plane state, cache, audit history and product evidence.
