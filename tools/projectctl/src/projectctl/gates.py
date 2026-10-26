@@ -1,12 +1,11 @@
 """Read-only, fail-closed DoR/DoD preflight with local evidence support."""
+import re
 from hashlib import sha256
 from pathlib import Path
-import re
 from typing import Literal
 
 from .enums import Severity
 from .queries import context
-
 
 _DOR = re.compile(r"^DOR-(TASK|WP)-\d{2}$")
 _DEP = re.compile(r"^(DEP-\d{3})$")
