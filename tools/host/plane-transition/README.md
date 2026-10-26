@@ -332,6 +332,13 @@ package's pull request really merged to main but Plane never advanced. It record
 CURRENT observed GitHub facts. It is not a bypass of `cap-plane-transition`, whose adjacent
 edges, open-PR predicates and DONE validator are unchanged.
 
+### CTRL-HOST-026 — Slot Release v2 diagnosis
+
+`cap-plane-slot-release-diagnostic <profile> <canonical-WP>` is a root-owned,
+GET-only diagnostic surface. It uses the installed AUTO_NEXT evaluator and
+returns one redacted first-failing predicate plus bounded evidence fingerprints;
+it does not write Plane, cache, audit or policy state.
+
 - **Allow-list**: only cases in `project_control/lifecycle_reconciliation.yaml` (embedded in the
   generated policy and hash-bound) work: one profile, WP, PR, head, merge commit, parents,
   file count, scope prefixes and, for VALIDATING, the exact workflow run IDs.

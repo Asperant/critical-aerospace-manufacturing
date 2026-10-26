@@ -900,6 +900,18 @@ fail-closed UNKNOWN handling, credentials, authority boundaries and all product
 semantics remain unchanged. This control does not authorize CORE-003 or any other
 product WP implementation.
 
+## CHG-045 — root-owned Slot Release v2 diagnostic launcher
+
+CHG-045 / CTRL-HOST-026 adds a fixed, profile-scoped, root-owned GET-only launcher
+for diagnosing Slot Release v2. It reuses the installed AUTO_NEXT source and
+evaluator, reports only the first failed predicate and bounded redacted
+fingerprints, and reads the installed policy/source, cache, transition audit,
+accountable assessment/binding, merge/CI/provenance/scope evidence and audit
+continuity. It has no lifecycle, cache, audit, policy, Plane or GitHub mutation,
+no arbitrary file/command interface, and no credential output. Exact profile/WP
+sudoers grants are generated from canonical policy. CORE-003 is a diagnostic
+target only; no product WP scope or readiness is changed.
+
 ## Merged external integration binding slot exception — CHG-034
 
 CHG-034 / CTRL-HOST-015 (C3 / CR-3) is authorized by the project-owner request of
