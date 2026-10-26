@@ -1659,7 +1659,7 @@ DEP-031:
   need_by: "S2"   # sprint 2
   fallback: F1
   unblock_evidence: "contract merged + contract tests green + example fixture published"
-  precise_requirement: null
+  precise_requirement: "versioned domain-event payload contract; canonical producer/event declaration; TWIN-relevant example fixture; green producer/consumer contract tests"
   risk_class: DR-1
   source: "Item 66 #44"
   status: NOT_READY

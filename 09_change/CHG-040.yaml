@@ -1,0 +1,50 @@
+CHG-040:
+  title: Clarify the DEP-031 TWIN START contract requirement
+  trigger: Explicit project-owner request after merged WP-CORE-005 contract evidence and current-main CI
+  reason: DEP-031's approved unblock evidence names a merged contract, green tests and a fixture, but its consumer-specific precise requirement was null even though the TWIN START scope is now verified.
+  class: C1
+  review_risk_class: CR-1
+  raised_in: S2
+  owner: Asrın
+  application_control_item: WP-TWIN-001
+  required_human_approvals: 0
+  reviewers: []
+  decision: APPROVED
+  decision_basis: Owner-authorized compatible clarification; no dependency stage, readiness level, runtime behavior, authority boundary or integration obligation changes.
+  status: APPROVED
+  scope:
+    - Set DEP-031 precise_requirement to the four existing TWIN START artifacts: versioned domain-event payload contract, canonical producer/event declaration, TWIN-relevant example fixture, and green producer/consumer contract tests.
+    - Keep runtime NATS delivery, transactional outbox publication, subject/stream binding and DEP-032/DEP-033 integration evidence outside the START requirement.
+    - Leave DEP-031 kind, strength, blocking stage, required readiness, need-by, fallback and producer/consumer ownership unchanged.
+  invariants_preserved:
+    - CONTRACT_READY remains a contract-level START gate and does not certify runtime integration.
+    - DEP-032 and DEP-033 remain separate HARD INTEGRATION dependencies.
+    - Merged != Done; no WP lifecycle or Plane state is changed by this metadata clarification.
+  affected_requirements: [FR-TWIN-002, FR-TWIN-009]
+  affected_architecture: [ARCH-TWIN-PROJECTOR, ARCH-CTR-EVTSCHEMA]
+  affected_contracts: []
+  affected_work_packages: [WP-CORE-005, WP-TWIN-001]
+  affected_dependencies: []
+  affected_evidence:
+    - DEP-031 consumer-specific assessment
+    - PR #109 required CI and merge evidence
+    - evidence/WP-CORE-005/CONTRACT-SLICE.md
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - Merged WP-CORE-005 payload schemas, producer declarations, fixtures and contract tests remain current.
+      - DEP-032 and DEP-033 integration evidence remains absent and pending.
+    rerun_required:
+      - Re-evaluate DEP-031 against current main after this canonical metadata merge.
+    limitation: This clarification does not create runtime publication or consumer integration evidence.
+  security_authority_impact: NONE
+  conditions:
+    - Verify the four artifact classes against current main and required CI before certifying DEP-031.
+    - Do not add outbox, NATS, subject/stream or DEP-032/DEP-033 evidence to the START assessment.
+    - Do not change WP-TWIN-001 lifecycle until supported dependency evaluation passes.
+  rollout: Merge the documentation/change-control PR, refresh the current-main project context, then run the supported DEP-031 readiness evaluation and READY transition if all DoR evidence is attributable.
+  rollback: Revert the documentation and CHG-040 record together; no runtime or Plane state replay is required.
+  required_rerun: [projectctl context WP-TWIN-001, supported DEP-031 readiness evaluation]
+  documentation_updates: [docs/05_Dependency_Graph.md, 09_change/CHG-040.yaml]
+  freeze_context: PRE_M6
