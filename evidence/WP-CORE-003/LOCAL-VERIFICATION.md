@@ -10,10 +10,12 @@ This record contains only verification actually executed on the WP branch.
 - `uv run --project ci --locked ruff check services/manufacturing-core/src services/manufacturing-core/tests ci/tests/test_core_command_contract.py` — pass.
 - `uv run --project ci --locked python ci/scripts/check_contracts.py` — 19 schemas and 8 instances validated, pass.
 - `PYTHONPATH=packages/contracts/src uv run --project ci --locked python -m cap_contracts.ci_gate` — pass after the contract authority binding was committed.
+- GitHub Actions push run `40393716176`, `t1-integration` — pass; real PostgreSQL 18 migration/persistence and command idempotency acceptance completed successfully at commit `7f75d9c`.
 
 ## Not executed
 
 - Real PostgreSQL migration/persistence tests: `CI_PG_DSN` and explicit `CORE_TEST_DISPOSABLE=1` were unavailable in the workspace. The test fixture failed closed as designed.
 - Automation consumer acceptance, `DEP-027` integration evidence and `DEP-028` Core transition integration evidence: external integration-stage evidence is not locally claimable.
+- GitHub Actions PR run `40393725605` was re-run with the corrected PR body; the prior attempt's TL-13 failure was caused by stale event-body data and is not a product test result. A fresh synchronize-triggered PR run is required to bind the updated body.
 
 This artifact does not claim `CONTRACT_READY`, `INTEGRATION_READY`, `VERIFIED` or `DONE`.
