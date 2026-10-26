@@ -3795,7 +3795,7 @@ FR-CORE-013:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-013 L169861"}
   DERIVED_FROM: [ITEM-13, ITEM-34, ITEM-35, DA-INV-03, DB-INV-02, INT-INV-01]
   ALLOCATED_TO: [ARCH-CORE-DB, ARCH-CORE-CMD]
-  REALIZED_BY: {surface: "schema-level grants; per-service DB roles; `core` schema privacy", deployable: "manufacturing-core + PostgreSQL runtime", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "versioned migration ledger; explicit per-service role bindings; same-schema grants with cross-schema denial", deployable: "manufacturing-core + PostgreSQL runtime", ref: "services/manufacturing-core/src/manufacturing_core/migrate.py; services/manufacturing-core/src/manufacturing_core/role_matrix.py; services/manufacturing-core/src/manufacturing_core/role_matrix.json"}
   GOVERNED_BY: ["DB role/grant configuration"]
   VERIFIED_BY: [TEST-ARCH-BOUNDARY, TEST-SEC-SVCID, TEST-AUTH-NEG]
   MITIGATES: [ARCH-R05]

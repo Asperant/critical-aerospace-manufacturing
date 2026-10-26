@@ -4,7 +4,7 @@ bindings:
 - id: BIND-EVT002-HTTP-CORE
   producer_wp: WP-CORE-001
   producer_owner: asrin
-  producer_scope: ae63b4b4c35f1a964af05f0cda871999b9a1fc1e2e737f4f19deedab4ea98e6b
+  producer_scope: 891eaa9db4c51e854b98a1ab84e26914aeb7abdf70f05066d0e1e24c490d3223
   consumer_wp: WP-EVT-002
   consumer_owner: asrin
   consumer_scope: 052d908bb24769d74259a455d99c53567dfaa8faafcb8977bf780d154973d499

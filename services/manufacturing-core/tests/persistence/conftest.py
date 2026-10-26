@@ -1,5 +1,6 @@
 """Disposable real database, two independent login roles; never shared state."""
 
+import json
 import os
 import secrets
 import uuid
@@ -75,6 +76,22 @@ def database() -> Iterator[Database]:
                 runtime_role=runtime_role,
             )
             assert migrate(settings.migration_dsn, runtime_role) is True
+            artifact = os.environ.get("CORE_STATUS_ARTIFACT")
+            if artifact:
+                from manufacturing_core.migrate import status
+
+                with open(artifact, "w", encoding="utf-8") as stream:
+                    json.dump(
+                        {
+                            "schema_version": "cap.core-migration-status/v1",
+                            "migrations": [
+                                record.__dict__
+                                for record in status(settings.migration_dsn)
+                            ],
+                        },
+                        stream,
+                        sort_keys=True,
+                    )
             admin.execute(
                 sql.SQL("REVOKE CREATE ON DATABASE {} FROM {}").format(
                     sql.Identifier(name), sql.Identifier(migration_role)
