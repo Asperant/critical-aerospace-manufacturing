@@ -330,7 +330,13 @@ def semantic_slot_release_proof(t, wp, profile, policy, gh, source=None):
                 or pr.get("merge_commit_sha") != source["canonical_revision"]
             ):
                 return None
-            t.ci(gh, source["canonical_revision"], policy)
+            try:
+                t.ci(gh, source["canonical_revision"], policy)
+            except t.Denied:
+                if not recorded_historical_technical_acceptance(
+                    t, gh, pr, source["canonical_revision"], policy
+                ):
+                    raise
         except t.Denied:
             return None
     return {
@@ -345,6 +351,61 @@ def semantic_slot_release_proof(t, wp, profile, policy, gh, source=None):
         "assessment_digest": source["assessment_digest"],
         "proof_fingerprint": source["proof_fingerprint"],
     }
+
+
+def recorded_historical_technical_acceptance(t, gh, pr, merge_sha, policy):
+    """Accept recorded merge-time CI for PRs predating the CHG-038 cutover.
+
+    Historical runs are evaluated by their immutable run/job result, not by
+    today's step names.  Current PRs never enter this path, and missing or
+    ambiguous recorded evidence remains fail-closed.
+    """
+    try:
+        cutoff = policy["historical_technical_acceptance"]["cutoff"]
+        merged_at = pr.get("merged_at")
+        body = pr.get("body")
+        if (
+            pr.get("merged") is not True
+            or pr.get("merge_commit_sha") != merge_sha
+            or not isinstance(merged_at, str)
+            or not isinstance(body, str)
+            or not merged_at < cutoff
+            or "Post-merge actual results:" not in body
+        ):
+            return False
+        match = re.search(
+            r"Post-merge CI evidence:\s*"
+            r"https://github\.com/Asperant/critical-aerospace-manufacturing/"
+            r"actions/runs/([1-9][0-9]*)",
+            body,
+        )
+        if not match:
+            return False
+        run_id = int(match.group(1))
+        run = gh.run(run_id)
+        if not (
+            run.get("head_sha") == merge_sha
+            and run.get("status") == "completed"
+            and run.get("conclusion") == "success"
+        ):
+            return False
+        jobs = gh._get(
+            f"{t.REPO}/actions/runs/{run_id}/jobs?filter=latest&per_page=100"
+        )
+        rows = jobs.get("jobs", []) if isinstance(jobs, dict) else []
+        if jobs.get("total_count") != len(rows) or not rows:
+            return False
+        successful = [
+            job
+            for job in rows
+            if job.get("head_sha") == merge_sha
+            and job.get("status") == "completed"
+            and job.get("conclusion") == "success"
+        ]
+        names = {job.get("name") for job in successful}
+        return len(successful) == len(rows) and "ci-gate" in names and len(names) > 1
+    except (AttributeError, KeyError, TypeError, ValueError, t.Denied):
+        return False
 
 
 def semantic_slot_release_source(t, wp, profile, policy, gh):

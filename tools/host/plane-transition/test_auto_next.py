@@ -934,6 +934,59 @@ class ExternalIntegrationWaitTests(unittest.TestCase):
                 )
         self.assertIsNotNone(proof)
 
+    def test_historical_merge_uses_recorded_technical_acceptance(self):
+        wp, policy, plane, gh, previous = DeferredAcceptanceTests().fixture()
+        policy["historical_technical_acceptance"] = {
+            "schema": "cap-historical-technical-acceptance-v1",
+            "cutoff": "2026-10-26T00:00:00+00:00",
+        }
+        gh.pr_data["body"] += (
+            "\nLocal actionable work: NONE\nImplementation persisted: YES\n"
+            f"Canonical main revision: {MERGE}\n"
+            "Semantic blocker ID: HISTORICAL-TECHNICAL-ACCEPTANCE\n"
+            "Semantic blocker class: WAITING_DOWNSTREAM_INTEGRATED_ACCEPTANCE_EVIDENCE\n"
+            f"Relevant scope digest: {policy['scope_projections'][wp]}\n"
+            "\nPost-merge actual results: recorded successful technical acceptance.\n"
+            "Post-merge CI evidence: "
+            "https://github.com/Asperant/critical-aerospace-manufacturing/"
+            "actions/runs/123\n"
+        )
+        gh.failed_technical_step = True
+        gh._get = Mock(
+            return_value={
+                "total_count": 2,
+                "jobs": [
+                    {
+                        "name": "projectctl",
+                        "head_sha": MERGE,
+                        "status": "completed",
+                        "conclusion": "success",
+                    },
+                    {
+                        "name": "ci-gate",
+                        "head_sha": MERGE,
+                        "status": "completed",
+                        "conclusion": "success",
+                    },
+                ],
+            }
+        )
+        with patch.object(t, "last_blocker", return_value=previous):
+            proof = auto.semantic_slot_release_proof(t, wp, "asrin", policy, gh)
+        self.assertIsNotNone(proof)
+
+        gh.pr_data["merged_at"] = "2026-10-26T00:00:00+00:00"
+        with patch.object(t, "last_blocker", return_value=previous):
+            self.assertIsNone(
+                auto.semantic_slot_release_proof(t, wp, "asrin", policy, gh)
+            )
+        gh.pr_data["merged_at"] = "2026-01-02T00:00:00+00:00"
+        gh.run_data["head_sha"] = "c" * 40
+        with patch.object(t, "last_blocker", return_value=previous):
+            self.assertIsNone(
+                auto.semantic_slot_release_proof(t, wp, "asrin", policy, gh)
+            )
+
     def test_owner_executable_or_incomplete_assessment_keeps_slot(self):
         for name, value in (
             ("Owner-executable implementation work", "REMAINING"),

@@ -80,7 +80,8 @@ class FakeGH:
         self.pr_data={'number':1,'base':{'repo':{'full_name':'Asperant/critical-aerospace-manufacturing'},'ref':'main'},
                       'user':{'login':owner},'head':{'ref':f'wp/{wp}-test','sha':HEAD},'title':f'[{wp}] Implement slice',
                       'body':pr_body(wp),'changed_files':2,'draft':source=='IN_REVIEW' and target=='IN_PROGRESS',
-                      'state':'closed' if post else 'open', 'merged':post,'merge_commit_sha':MERGE if post else None,
+                      'state':'closed' if post else 'open', 'merged':post,'merged_at':'2026-01-02T00:00:00+00:00' if post else None,
+                      'merge_commit_sha':MERGE if post else None,
                       'requested_reviewers':[{'login':peer}],'mergeable':True,'mergeable_state':'clean'}
         ids=sum((policy[k] for k in ['dor_task','dor_pr','dod_pr','dod_wp','dod_research']),[])
         ids+=['BLOCKER-OBSERVED','BLOCKER-RESOLVED','IMPLEMENTATION-STARTED','POST-MERGE-VALIDATION-STARTED',
