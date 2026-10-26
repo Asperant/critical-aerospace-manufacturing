@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cap:core:lot-held:v1",
+  "title": "LotHeld.v1 payload",
+  "description": "The Core-owned payload for the immutable LotHeld domain event. Envelope metadata is validated by WP-EVT-002.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_type",
+    "schema_version",
+    "aggregate_type",
+    "aggregate_id",
+    "aggregate_version",
+    "lot_id",
+    "lot_revision",
+    "material_hold_id",
+    "reason"
+  ],
+  "properties": {
+    "event_type": {
+      "const": "production.lot-held"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "aggregate_type": {
+      "const": "Lot"
+    },
+    "aggregate_id": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    },
+    "aggregate_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "lot_id": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    },
+    "lot_revision": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    },
+    "material_hold_id": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    },
+    "reason": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    }
+  }
+}

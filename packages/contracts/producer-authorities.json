@@ -10,6 +10,16 @@
           "family": "core.order-query",
           "contract_type": "QUERY",
           "authority_level": "Core domain read; no command, approval or execution authority"
+        },
+        {
+          "family": "core.lot-held",
+          "contract_type": "EVENT",
+          "authority_level": "Core canonical manufacturing fact; consumers are read-only or verification-only"
+        },
+        {
+          "family": "core.lot-dispatch-authorized",
+          "contract_type": "EVENT",
+          "authority_level": "Core canonical dispatch-authorization fact; Simulator remains physical execution authority"
         }
       ]
     }

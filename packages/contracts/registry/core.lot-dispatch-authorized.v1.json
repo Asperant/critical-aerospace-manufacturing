@@ -1,0 +1,34 @@
+{
+  "contract_id": "core.lot-dispatch-authorized.v1",
+  "name": "Core LotDispatchAuthorized domain event",
+  "contract_type": "EVENT",
+  "version": 1,
+  "semantic_owner": "Asrın Dündar",
+  "canonical_producer": "manufacturing-core",
+  "declared_consumers": ["Simulator"],
+  "purpose": "Publish the accepted Core dispatch-authorization fact for physical execution intake.",
+  "output_schema": {
+    "path": "services/manufacturing-core/contracts/v1/lot-dispatch-authorized.v1.schema.json",
+    "sha256": "2dc01115a10fdf588c6659fdc31b48dfc0718dde91ca4146e724c55f52f30c8b"
+  },
+  "fixtures": [
+    {
+      "path": "services/manufacturing-core/contracts/v1/lot-dispatch-authorized.twin.json",
+      "sha256": "faea626302cf5cc33ebbb9732e48aacd9c5f60e27cf87798026646517f8d88b3"
+    }
+  ],
+  "authority_level": "Core canonical dispatch-authorization fact; Simulator remains physical execution authority",
+  "sync_semantics": "ASYNC",
+  "security_classification": "Internal manufacturing-domain metadata; no credentials or Oracle labels",
+  "semantics": {
+    "event_name": "LotDispatchAuthorized.v1",
+    "namespace": "production",
+    "envelope": "cap event-envelope.v1 from WP-EVT-002",
+    "partition_key": "lot_id",
+    "replay": "Simulator intake is replay-protected; replay never triggers a live dispatch"
+  },
+  "deprecation": {
+    "status": "ACTIVE",
+    "replacement": null
+  }
+}
