@@ -559,6 +559,48 @@ def generic_run_proof(gh: Any, run_ids: list[int], merge_sha: str) -> list[dict]
     return observed
 
 
+def generic_required_ci(gh: Any, merge_sha: str, policy: dict) -> dict:
+    """Require the successful aggregate main check at the exact merge revision.
+
+    The bounded ``projectctl`` check is a pull-request gate.  It is not rerun on
+    the merge commit; main validation is represented by the required ``ci-gate``
+    aggregate and its exact main workflow run.
+    """
+    aggregate = policy.get("required_aggregate_ci", [])
+    need(
+        isinstance(aggregate, list) and aggregate,
+        "REQUIRED_MAIN_CI_POLICY_MISSING",
+    )
+    checks, _ = gh.checks(merge_sha)
+    observed = []
+    for name in aggregate:
+        matches = [c for c in checks if c.get("name") == name]
+        need(len(matches) == 1, "REQUIRED_MAIN_CI_MISSING")
+        check = matches[0]
+        need(
+            check.get("status") == "completed" and check.get("conclusion") == "success",
+            "REQUIRED_MAIN_CI_NOT_GREEN",
+        )
+        match = re.fullmatch(
+            r"https://github\.com/Asperant/critical-aerospace-manufacturing/actions/runs/([1-9][0-9]*)/job/[1-9][0-9]*",
+            str(check.get("details_url", "")),
+            re.I,
+        )
+        need(match, "REQUIRED_MAIN_CI_RUN_BINDING_UNKNOWN")
+        assert match is not None
+        run_id = int(match[1])
+        run = gh.fresh_run(run_id)
+        need(
+            run.get("head_sha") == merge_sha
+            and run.get("head_branch") == "main"
+            and run.get("status") == "completed"
+            and run.get("conclusion") == "success",
+            "REQUIRED_MAIN_CI_RUN_NOT_GREEN",
+        )
+        observed.append({"name": name, "run_id": run_id, "head_sha": merge_sha})
+    return {"status": "success", "checks": observed}
+
+
 def generic_assessment(
     gh: Any, refs: list[str], wp: str, sha: str, pr: dict, profile: str
 ) -> dict:
@@ -609,7 +651,7 @@ def generic_gather(
     need(files and len(files) == pr.get("changed_files"), "INCOMPLETE_PR_FILE_SCOPE")
     t.pr_scope_paths(files)
     inventory = sorted((f["filename"], f["status"]) for f in files)
-    t.ci(gh, merge_sha, policy)
+    required_ci = generic_required_ci(gh, merge_sha, policy)
     assessment = generic_assessment(gh, refs, wp, merge_sha, pr, profile)
     runs = generic_run_proof(gh, run_ids, merge_sha) if target == "VALIDATING" else []
     return {
@@ -631,7 +673,7 @@ def generic_gather(
                 json.dumps(inventory).encode()
             ).hexdigest(),
         },
-        "required_ci": {"merge_sha": merge_sha, "status": "success"},
+        "required_ci": {"merge_sha": merge_sha, **required_ci},
         "owner_assessment": {
             "owner_work": assessment["owner_work"],
             "owner_assessment": assessment["owner_assessment"],
