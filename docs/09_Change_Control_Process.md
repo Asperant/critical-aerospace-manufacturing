@@ -877,6 +877,18 @@ hash-refresh and rollback procedure after merged required CI.
 Allocation: CHG-041 is the canonical control record for this generic evaluator and
 is approved only for the control surface described above.
 
+## CHG-043 — historical merge-time technical acceptance for semantic Slot Release v2
+
+CHG-043 / CTRL-HOST-023 preserves the current required technical-step policy for
+current and future PRs while handling merged PRs that predate CHG-038. Their
+semantic Slot Release v2 proof may use a recorded successful post-merge technical
+acceptance run only when the run and jobs are bound to the exact merge SHA, the
+recorded evidence is unambiguous, `ci-gate` and at least one technical job
+succeeded, and the merged PR and accountable owner assessment remain valid.
+Missing, failed, stale, ambiguous or wrong-SHA history fails closed. No step-name
+alias, WP-specific exception, lifecycle mutation, DONE waiver or acceptance claim
+is introduced.
+
 ## Merged external integration binding slot exception — CHG-034
 
 CHG-034 / CTRL-HOST-015 (C3 / CR-3) is authorized by the project-owner request of

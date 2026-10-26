@@ -29,3 +29,4 @@ CHG-036,Preserve semantic identity across enriched merged binding wait reasserti
 CHG-038,Bounded pull-request CI gate with nonblocking full regression lane,C2,CR-2,Asrın,APPROVED_WITH_CONDITIONS,APPROVED,CTRL-HOST-019
 CHG-037,Consolidate semantic implementation-slot release and bounded queue selection,C3,CR-3,Asrın,APPROVED_WITH_CONDITIONS,APPROVED,CTRL-HOST-018
 CHG-041,Evidence-based generic lifecycle reconciliation for merged work,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-022
+CHG-043,Historical merge-time technical acceptance for semantic Slot Release v2,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-023

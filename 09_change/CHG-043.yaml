@@ -1,0 +1,24 @@
+CHG-043:
+  title: Historical merge-time technical acceptance for semantic Slot Release v2
+  trigger: Explicit project-owner request on 26 October 2026 after CHG-038
+  reason: Current technical CI step names must not be retroactively required from merge revisions that predate CHG-038; exact merge and recorded successful technical acceptance remain mandatory.
+  class: C3
+  review_risk_class: CR-3
+  raised_in: S2
+  owner: Asrın
+  application_control_item: CTRL-HOST-023
+  required_human_approvals: 0
+  decision: APPROVED
+  status: APPROVED
+  scope:
+    - Keep current required technical step evaluation unchanged for current and future PRs.
+    - For pre-CHG-038 merged PRs only, accept a recorded post-merge technical acceptance run bound to the exact merge SHA.
+    - Require immutable successful run and job evidence, including ci-gate and at least one technical job; missing, failed, ambiguous or wrong-SHA evidence fails closed.
+    - Apply the rule generically without step-name aliases or WP-specific exceptions.
+  invariants_preserved:
+    - Merged PR, exact merge SHA, owner assessment and local actionable work NONE remain mandatory.
+    - Current technical policy is never weakened for new or current PRs.
+    - Slot release remains derived and never changes lifecycle or DONE semantics.
+    - Unknown, stale, unmerged, failed or unverifiable historical evidence remains blocked.
+  rollout: Add focused historical and negative-path tests, merge required CI, regenerate and deploy the current-main policy/helper, then re-evaluate affected deferred waits.
+  rollback: Restore the previous deployed helper and policy from the root-only backup; do not replay Plane state or alter lifecycle fields.
