@@ -16,7 +16,7 @@ def upgrade() -> None:
         Path(__file__).parents[2] / "src/manufacturing_core/migrations/0001_domain.sql"
     )
     source = source_path.read_text(encoding="utf-8")
-    op.execute(sa.text(source))
+    op.get_bind().exec_driver_sql(source)
     digest = __import__("hashlib").sha256(source.encode()).hexdigest()
     runtime_role = op.get_context().opts.get("runtime_role")
     if not isinstance(runtime_role, str) or not runtime_role.strip():
