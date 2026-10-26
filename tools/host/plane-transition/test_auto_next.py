@@ -949,7 +949,7 @@ class ExternalIntegrationWaitTests(unittest.TestCase):
             "\nPost-merge actual results: recorded successful technical acceptance.\n"
             "Post-merge CI evidence: "
             "https://github.com/Asperant/critical-aerospace-manufacturing/"
-            "actions/runs/123\n"
+            "actions/runs/123456789\n"
         )
         gh.failed_technical_step = True
         gh._get = Mock(

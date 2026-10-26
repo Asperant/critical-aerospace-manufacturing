@@ -334,7 +334,7 @@ def semantic_slot_release_proof(t, wp, profile, policy, gh, source=None):
                 t.ci(gh, source["canonical_revision"], policy)
             except t.Denied:
                 if not recorded_historical_technical_acceptance(
-                    t, gh, pr, source["canonical_revision"], policy
+                    t, gh, pr, profile, source["canonical_revision"], policy
                 ):
                     raise
         except t.Denied:
@@ -353,7 +353,7 @@ def semantic_slot_release_proof(t, wp, profile, policy, gh, source=None):
     }
 
 
-def recorded_historical_technical_acceptance(t, gh, pr, merge_sha, policy):
+def recorded_historical_technical_acceptance(t, gh, pr, profile, merge_sha, policy):
     """Accept recorded merge-time CI for PRs predating the CHG-038 cutover.
 
     Historical runs are evaluated by their immutable run/job result, not by
@@ -373,37 +373,59 @@ def recorded_historical_technical_acceptance(t, gh, pr, merge_sha, policy):
             or "Post-merge actual results:" not in body
         ):
             return False
-        match = re.search(
-            r"Post-merge CI evidence:\s*"
-            r"https://github\.com/Asperant/critical-aerospace-manufacturing/"
-            r"actions/runs/([1-9][0-9]*)",
-            body,
+        texts = [body]
+        comments = gh._get(
+            f"{t.REPO}/issues/{pr['number']}/comments?per_page=100&page=1"
         )
-        if not match:
-            return False
-        run_id = int(match.group(1))
-        run = gh.run(run_id)
-        if not (
-            run.get("head_sha") == merge_sha
-            and run.get("status") == "completed"
-            and run.get("conclusion") == "success"
-        ):
-            return False
-        jobs = gh._get(
-            f"{t.REPO}/actions/runs/{run_id}/jobs?filter=latest&per_page=100"
-        )
-        rows = jobs.get("jobs", []) if isinstance(jobs, dict) else []
-        if jobs.get("total_count") != len(rows) or not rows:
-            return False
-        successful = [
-            job
-            for job in rows
-            if job.get("head_sha") == merge_sha
-            and job.get("status") == "completed"
-            and job.get("conclusion") == "success"
-        ]
-        names = {job.get("name") for job in successful}
-        return len(successful) == len(rows) and "ci-gate" in names and len(names) > 1
+        if isinstance(comments, list):
+            for comment in comments:
+                comment_body = comment.get("body")
+                user = comment.get("user") or {}
+                if (
+                    isinstance(comment_body, str)
+                    and user.get("login", "").casefold() == t.GITHUB[profile].casefold()
+                    and comment.get("created_at") == comment.get("updated_at")
+                    and merge_sha in comment_body
+                ):
+                    texts.append(comment_body)
+        run_ids = set()
+        for text in texts:
+            if "CI evidence" not in text and "Main CI run" not in text:
+                continue
+            run_ids.update(
+                int(value)
+                for value in re.findall(
+                    r"(?:actions/runs/|(?:CI|Main CI|projectctl run|run)\D{0,80})"
+                    r"([1-9][0-9]{8,})",
+                    text,
+                    re.IGNORECASE,
+                )
+            )
+        for run_id in sorted(run_ids):
+            run = gh.run(run_id)
+            if not (
+                run.get("head_sha") == merge_sha
+                and run.get("status") == "completed"
+                and run.get("conclusion") == "success"
+            ):
+                continue
+            jobs = gh._get(
+                f"{t.REPO}/actions/runs/{run_id}/jobs?filter=latest&per_page=100"
+            )
+            rows = jobs.get("jobs", []) if isinstance(jobs, dict) else []
+            if jobs.get("total_count") != len(rows) or not rows:
+                continue
+            successful = [
+                job
+                for job in rows
+                if job.get("head_sha") == merge_sha
+                and job.get("status") == "completed"
+                and job.get("conclusion") == "success"
+            ]
+            names = {job.get("name") for job in successful}
+            if len(successful) == len(rows) and "ci-gate" in names and len(names) > 1:
+                return True
+        return False
     except (AttributeError, KeyError, TypeError, ValueError, t.Denied):
         return False
 
