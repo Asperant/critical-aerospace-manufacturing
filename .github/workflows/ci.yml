@@ -106,6 +106,10 @@ jobs:
         run: |
           uv run --project ci --locked python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests -m 'not integration' -q -p pytest_quarantine
           uv run --project ci --locked pyright --project services/manufacturing-core/pyrightconfig.json
+      - name: Twin local projection tests and typing (WP-TWIN-001)
+        run: |
+          uv run --project ci --locked python -m pytest -c services/operational-twin/pyproject.toml services/operational-twin/tests -q -p pytest_quarantine
+          uv run --project ci --locked pyright --project services/operational-twin/pyrightconfig.json
       - name: Simulator kernel unit/property tests and typing (WP-SIM-001)
         run: |
           uv run --project ci --locked python -m pytest -c services/manufacturing-simulator/pyproject.toml services/manufacturing-simulator/tests -q -p pytest_quarantine
