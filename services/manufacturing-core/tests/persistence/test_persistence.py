@@ -53,6 +53,7 @@ def test_schema_creation_and_replay(database: Database) -> None:
             ).fetchall()
         }
         assert tables == {
+            "alembic_version",
             "schema_migration",
             "equipment",
             "manufacturing_route",

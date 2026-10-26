@@ -6,8 +6,10 @@ import os
 import sys
 from dataclasses import asdict, dataclass
 from importlib.resources import files
+from pathlib import Path
 
-from psycopg import sql
+from alembic import command
+from alembic.config import Config
 
 from manufacturing_core.database import connect, require_restricted_role
 
@@ -50,54 +52,47 @@ def migrate(dsn: str, runtime_role: str) -> bool:
         files("manufacturing_core").joinpath("migrations/0001_domain.sql").read_text()
     )
     digest = hashlib.sha256(source.encode()).hexdigest()
-    with connect(dsn) as conn, conn.transaction():
-        conn.execute("SELECT pg_catalog.pg_advisory_xact_lock(731001)")
-        require_restricted_role(conn, runtime_role)
-        if runtime_role == conn.info.user:
+    with connect(dsn) as preflight, preflight.transaction():
+        preflight.execute("SELECT pg_catalog.pg_advisory_xact_lock(731001)")
+        require_restricted_role(preflight, runtime_role)
+        if runtime_role == preflight.info.user:
             raise ValueError("migration and runtime roles must differ")
-        member = conn.execute(
+        member = preflight.execute(
             "SELECT pg_catalog.pg_has_role(%s, current_user, 'MEMBER') AS member",
             (runtime_role,),
         ).fetchone()
         if member is None or member["member"]:
             raise ValueError("runtime must not inherit the migration identity")
-        schema = conn.execute(
+        schema = preflight.execute(
             "SELECT pg_catalog.pg_get_userbyid(nspowner) AS owner "
             "FROM pg_catalog.pg_namespace WHERE nspname = 'core'"
         ).fetchone()
-        if schema is not None and schema["owner"] != conn.info.user:
+        if schema is not None and schema["owner"] != preflight.info.user:
             raise ValueError("Core schema has an unexpected owner")
-        ledger = conn.execute(
+        ledger_ref = preflight.execute(
             "SELECT to_regclass('core.schema_migration') AS ledger"
         ).fetchone()
-        if ledger is None:
-            raise ValueError("migration catalog unavailable")
-        if ledger["ledger"]:
-            applied = conn.execute(
-                "SELECT version, sha256, runtime_role FROM core.schema_migration"
+        ledger = (
+            preflight.execute(
+                "SELECT version, sha256, runtime_role FROM core.schema_migration "
+                "ORDER BY version"
             ).fetchall()
-            if applied != [
+            if ledger_ref is not None and ledger_ref["ledger"]
+            else []
+        )
+        if ledger:
+            if ledger != [
                 {"version": VERSION, "sha256": digest, "runtime_role": runtime_role}
             ]:
                 raise ValueError("migration ledger/version/checksum mismatch")
             return False
-        conn.execute(source.encode())
-        conn.execute(
-            "INSERT INTO core.schema_migration VALUES (%s, %s, %s)",
-            (VERSION, digest, runtime_role),
-        )
-        conn.execute(
-            sql.SQL("GRANT USAGE ON SCHEMA core TO {}").format(
-                sql.Identifier(runtime_role)
-            )
-        )
-        for table in TABLES:
-            conn.execute(
-                sql.SQL("GRANT SELECT, INSERT ON TABLE core.{} TO {}").format(
-                    sql.Identifier(table), sql.Identifier(runtime_role)
-                )
-            )
-        return True
+    config = Config(str(Path(__file__).resolve().parents[2] / "alembic.ini"))
+    config.set_main_option(
+        "sqlalchemy.url", dsn.replace("postgresql://", "postgresql+psycopg://", 1)
+    )
+    config.attributes["runtime_role"] = runtime_role
+    command.upgrade(config, "head")
+    return True
 
 
 def main() -> int:

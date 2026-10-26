@@ -17,6 +17,7 @@ dependencies = [
     "jsonschema==4.23.0",
     "PyYAML==6.0.2",
     "psycopg[binary]==3.2.3",
+    "alembic==1.14.1",
     "nats-py==2.9.0",
     "fastapi==0.142.4",
     "httpx==0.28.1",

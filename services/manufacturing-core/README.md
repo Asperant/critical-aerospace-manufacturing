@@ -11,8 +11,9 @@ no HTTP endpoint or telemetry platform is introduced.
 
 The first service-owned migration lives in
 `src/manufacturing_core/migrations/0001_domain.sql`, included as package data.
-The versioned runner uses the selected Psycopg 3 driver; it applies migrations
-atomically, with an advisory lock and checksum/runtime-role ledger. Status is
+The versioned runner uses the selected Alembic migration tool with the Psycopg
+3 driver; it applies migrations atomically, with an advisory lock and a
+checksum/runtime-role ledger. Status is
 inspectable without mutation:
 
 ```text
