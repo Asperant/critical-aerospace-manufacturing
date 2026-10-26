@@ -11,10 +11,22 @@ no HTTP endpoint or telemetry platform is introduced.
 
 The first service-owned migration lives in
 `src/manufacturing_core/migrations/0001_domain.sql`, included as package data.
-The local runner uses the selected Psycopg 3 driver; it applies only this
-migration, atomically, with an advisory lock and checksum/runtime-role ledger.
-It does not select a shared migration framework, provision the platform,
-implement CD wiring, or certify WP-CORE-007 / DN-RT-PG readiness.
+The versioned runner uses the selected Psycopg 3 driver; it applies migrations
+atomically, with an advisory lock and checksum/runtime-role ledger. Status is
+inspectable without mutation:
+
+```text
+CORE_MIGRATION_DSN='postgresql://...' python -m manufacturing_core.migrate --status
+```
+
+The service package also publishes `role_matrix.json`. It contains only the
+canonical schema and environment-variable bindings; it contains no credentials
+and never creates roles. A deployment must provide explicit restricted roles for
+`core`, `twin`, `automation` and `ai` before applying the matrix. Missing,
+administrative, duplicate or cross-schema bindings fail closed.
+
+The runner does not provision the platform or claim shared-host/integration
+readiness. CD must execute the migration command and retain the status output.
 
 ## External role and connection contract
 

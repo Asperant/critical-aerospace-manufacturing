@@ -1,8 +1,10 @@
-"""Single initial SQL migration; does not choose shared platform/CD tooling."""
+"""Versioned Core migration runner with inspectable status and checksums."""
 
 import hashlib
+import json
 import os
 import sys
+from dataclasses import asdict, dataclass
 from importlib.resources import files
 
 from psycopg import sql
@@ -18,6 +20,23 @@ TABLES = (
     "lot",
     "serialized_component",
 )
+
+
+@dataclass(frozen=True)
+class MigrationStatus:
+    version: str
+    sha256: str
+    runtime_role: str
+
+
+def status(dsn: str) -> list[MigrationStatus]:
+    """Read the migration ledger without changing database state."""
+    with connect(dsn) as conn:
+        ledger = conn.execute(
+            "SELECT version, sha256, runtime_role FROM core.schema_migration "
+            "ORDER BY version"
+        ).fetchall()
+    return [MigrationStatus(**row) for row in ledger]
 
 
 def migrate(dsn: str, runtime_role: str) -> bool:
@@ -83,7 +102,13 @@ def migrate(dsn: str, runtime_role: str) -> bool:
 
 def main() -> int:
     try:
-        migrate(os.environ["CORE_MIGRATION_DSN"], os.environ["CORE_RUNTIME_ROLE"])
+        dsn = os.environ["CORE_MIGRATION_DSN"]
+        if "--status" in sys.argv[1:]:
+            print(
+                json.dumps([asdict(record) for record in status(dsn)], sort_keys=True)
+            )
+            return 0
+        migrate(dsn, os.environ["CORE_RUNTIME_ROLE"])
     except Exception:
         # Connection exceptions may contain DSNs. Never print credentials.
         print(
@@ -91,7 +116,7 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
-    print("Core initial migration verified")
+    print("Core migration verified")
     return 0
 
 

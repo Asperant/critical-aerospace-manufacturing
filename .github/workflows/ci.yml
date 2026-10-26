@@ -174,6 +174,7 @@ jobs:
       PYTHONPATH: ci:ci/scripts
       CI_POSTGRES_IMAGE: postgres:18-alpine
       CORE_TEST_DISPOSABLE: "1"
+      CORE_STATUS_ARTIFACT: ${{ runner.temp }}/core-migration-status.json
     steps:
       - uses: actions/checkout@v4
         with:
@@ -190,6 +191,13 @@ jobs:
         run: uv run --project ci --locked python -m pytest ci/integration -m integration -p pytest_quarantine
       - name: Core initial migration and persistence (real PostgreSQL 18)
         run: uv run --project ci --locked python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests/persistence -m integration -q -p pytest_quarantine
+      - name: Upload Core migration status artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: core-migration-status
+          path: ${{ runner.temp }}/core-migration-status.json
+          if-no-files-found: error
       - name: Consumer idempotency acceptance (REAL PostgreSQL and JetStream, WP-EVT-003)
         env:
           EVT_TEST_DISPOSABLE: "1"

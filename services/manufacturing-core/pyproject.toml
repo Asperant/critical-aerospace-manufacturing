@@ -13,7 +13,7 @@ dependencies = ["pydantic>=2.7,<3"]
 postgres = ["psycopg[binary]>=3.2,<4"]
 
 [tool.setuptools.package-data]
-manufacturing_core = ["migrations/*.sql"]
+manufacturing_core = ["migrations/*.sql", "role_matrix.json"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
