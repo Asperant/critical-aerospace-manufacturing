@@ -7,6 +7,7 @@ import sys
 from dataclasses import asdict, dataclass
 from importlib.resources import files
 from pathlib import Path
+from typing import Any, cast
 
 from alembic import command
 from alembic.config import Config
@@ -33,14 +34,21 @@ def sqlalchemy_url(dsn: str) -> str:
     if dsn.startswith("postgres://"):
         return dsn.replace("postgres://", "postgresql+psycopg://", 1)
     fields = conninfo_to_dict(dsn)
+
+    def field(name: str) -> str | None:
+        value = fields.get(name)
+        return value if isinstance(value, str) else None
+
+    port_value = field("port")
+    url_create = cast(Any, URL).create
     return str(
-        URL.create(
+        url_create(
             "postgresql+psycopg",
-            username=fields.get("user"),
-            password=fields.get("password"),
-            host=fields.get("host"),
-            port=int(fields["port"]) if fields.get("port") else None,
-            database=fields.get("dbname"),
+            username=field("user"),
+            password=field("password"),
+            host=field("host"),
+            port=int(port_value) if port_value is not None else None,
+            database=field("dbname"),
         )
     )
 
