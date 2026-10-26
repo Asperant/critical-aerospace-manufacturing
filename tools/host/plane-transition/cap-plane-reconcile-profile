@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+profile=${0##*-}
+case "$profile" in
+    asrin|selman|batuhan|yavuz) ;;
+    *) exit 2 ;;
+esac
+exec /usr/bin/python3 -I /usr/local/libexec/cap-plane-reconcile.py "$profile" "$@"
