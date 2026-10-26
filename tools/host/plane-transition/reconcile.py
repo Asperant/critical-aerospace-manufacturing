@@ -32,7 +32,8 @@ from pathlib import Path
 from typing import Any
 
 TRANSITION_PATH = "/usr/local/libexec/cap-plane-transition"
-POLICY_SCHEMA = "cap-lifecycle-reconciliation-v1"
+POLICY_SCHEMA = "cap-lifecycle-reconciliation-v1"  # fixture/recovery compatibility
+GENERIC_POLICY_SCHEMA = "cap-lifecycle-reconciliation-v2"
 OPERATION = "LIFECYCLE_RECONCILE"
 TARGETS = ("MERGED", "VALIDATING")
 # Only these premerge states can be reconciled; nothing terminal, nothing backwards.
@@ -97,7 +98,7 @@ def need(value: Any, code: str) -> None:
         raise t.Denied(code)
 
 
-def validate_policy(
+def validate_legacy_policy(
     block: Any, contexts: dict[str, Any], people: dict[str, Any]
 ) -> dict:
     """Strictly validate the allow-list; the same check runs at build and at use time."""
@@ -206,11 +207,49 @@ def validate_policy(
     return block
 
 
+def validate_policy(
+    block: Any, contexts: dict[str, Any], people: dict[str, Any]
+) -> dict:
+    """Validate generic reconciliation policy and legacy recovery fixtures."""
+    if isinstance(block, dict) and block.get("schema_version") == POLICY_SCHEMA:
+        return validate_legacy_policy(block, contexts, people)
+    need(
+        isinstance(block, dict)
+        and set(block)
+        == {
+            "schema_version",
+            "targets",
+            "sources",
+            "require_successful_runs",
+            "assessment_fields",
+            "legacy_recovery_cases",
+        }
+        and block["schema_version"] == GENERIC_POLICY_SCHEMA,
+        "RECONCILIATION_POLICY_INVALID",
+    )
+    need(
+        block["targets"] == list(TARGETS)
+        and block["sources"] == list(SOURCES)
+        and block["require_successful_runs"] is True,
+        "RECONCILIATION_POLICY_INVALID",
+    )
+    need(
+        block["assessment_fields"] == ["Owner assessment", "Owner work"],
+        "RECONCILIATION_POLICY_INVALID",
+    )
+    legacy = {
+        "schema_version": POLICY_SCHEMA,
+        "cases": block["legacy_recovery_cases"],
+    }
+    validate_legacy_policy(legacy, contexts, people)
+    return block
+
+
 def find_case(block: dict, profile: str, wp: str, target: str) -> dict:
-    """The one allow-listed case for this exact profile, WP and target, else denied."""
+    """Legacy fixture/recovery lookup; production reconciliation never calls this."""
     cases = [
         c
-        for c in block["cases"]
+        for c in block.get("cases", [])
         if c["profile"] == profile and c["wp_id"] == wp and target in c["targets"]
     ]
     need(len(cases) == 1, "RECONCILIATION_NOT_AUTHORIZED")
@@ -269,9 +308,12 @@ def validate_recovery_policy(
         )
         owner = contexts[wp]["work_package"]["primary_owner"]["canonical_name"]
         need(owner == people[profile][0], "RECOVERY_OWNER_MISMATCH")
+        legacy_cases = lifecycle.get(
+            "legacy_recovery_cases", lifecycle.get("cases", [])
+        )
         base = [
             c
-            for c in lifecycle["cases"]
+            for c in legacy_cases
             if c["case_id"] == case["reconciliation_case"]
             and c["profile"] == profile
             and c["wp_id"] == wp
@@ -458,6 +500,146 @@ def gather(gh: Any, case: dict, profile: str, wp: str, target: str) -> dict:
     return facts
 
 
+def generic_refs(envelope: dict, target: str) -> tuple[int, list[int], int]:
+    """Parse bounded refs; all identities are re-proved from GitHub."""
+    refs = envelope.get("evidence_refs")
+    need(
+        isinstance(refs, list) and all(isinstance(x, str) for x in refs),
+        "RECONCILIATION_EVIDENCE_REFS_INVALID",
+    )
+    assert isinstance(refs, list)
+    pr_refs = [x for x in refs if re.fullmatch(r"pr:[1-9][0-9]{0,15}", x)]
+    run_refs = [x for x in refs if re.fullmatch(r"run:[1-9][0-9]{0,15}", x)]
+    comment_refs = [x for x in refs if re.fullmatch(r"comment:[1-9][0-9]{0,15}", x)]
+    allowed = set(pr_refs + run_refs + comment_refs)
+    need(
+        len(refs) == len(allowed) and len(pr_refs) == 1 and len(comment_refs) == 1,
+        "RECONCILIATION_EVIDENCE_REFS_INVALID",
+    )
+    if target == "VALIDATING":
+        need(bool(run_refs), "RECONCILIATION_VALIDATION_RUNS_MISSING")
+    else:
+        need(not run_refs, "RECONCILIATION_EVIDENCE_REFS_INVALID")
+    return int(pr_refs[0][3:]), [int(x[4:]) for x in run_refs], int(comment_refs[0][8:])
+
+
+def generic_run_proof(gh: Any, run_ids: list[int], merge_sha: str) -> list[dict]:
+    """Require successful main workflow runs at the exact merge SHA."""
+    observed = []
+    for run_id in run_ids:
+        run = gh.fresh_run(run_id)
+        need(run.get("id") == run_id, "RUN_IDENTITY_MISMATCH")
+        need(
+            run.get("repository", {}).get("full_name", "").casefold()
+            == "Asperant/critical-aerospace-manufacturing".casefold(),
+            "RUN_WRONG_REPOSITORY",
+        )
+        need(run.get("head_sha") == merge_sha, "RUN_WRONG_REVISION")
+        need(
+            run.get("head_branch") == "main" and run.get("event") not in PR_EVENTS,
+            "RUN_NOT_A_MAIN_RUN",
+        )
+        need(
+            WORKFLOW_PATH.fullmatch(str(run.get("path", "")).split("@")[0]),
+            "RUN_WRONG_WORKFLOW",
+        )
+        need(
+            run.get("status") == "completed" and run.get("conclusion") == "success",
+            "REQUIRED_RUN_NOT_SUCCESSFUL",
+        )
+        observed.append(
+            {
+                "run_id": run_id,
+                "workflow_path": str(run.get("path", "")).split("@")[0],
+                "status": run.get("status"),
+                "conclusion": run.get("conclusion"),
+                "head_sha": run.get("head_sha"),
+            }
+        )
+    return observed
+
+
+def generic_assessment(
+    gh: Any, refs: list[str], wp: str, sha: str, pr: dict, profile: str
+) -> dict:
+    """Require one unambiguous accountable owner assessment at the exact revision."""
+    rows = t.records(gh, refs, wp, sha, pr)
+    owner_login = t.GITHUB[profile].casefold()
+    matches = [
+        data
+        for author, data in rows
+        if author.casefold() == owner_login
+        and data.get("_native")
+        and data.get("owner_assessment")
+        and data.get("owner_work") in {"NONE", "YES"}
+    ]
+    need(len(matches) == 1, "ACCOUNTABLE_OWNER_ASSESSMENT_MISSING_OR_AMBIGUOUS")
+    return matches[0]
+
+
+def generic_gather(
+    gh: Any, refs: list[str], profile: str, wp: str, target: str, policy: dict
+) -> dict:
+    """Fresh proof for generic reconciliation; no WP case is consulted."""
+    gh.invalidate()
+    pr_id, run_ids, _ = generic_refs({"evidence_refs": refs}, target)
+    pr = t.pr_fact(gh, [f"pr:{pr_id}"], wp, profile)
+    need(
+        pr.get("merged") is True and pr.get("state") == "closed",
+        "RECONCILIATION_PR_NOT_MERGED",
+    )
+    merge_sha = pr.get("merge_commit_sha")
+    need(SHA.fullmatch(str(merge_sha)), "RECONCILIATION_MERGE_SHA_MISSING")
+    commit = gh.commit(merge_sha)
+    parents = [p.get("sha") for p in commit.get("parents", [])]
+    need(
+        1 <= len(parents) <= 2 and len(set(parents)) == len(parents),
+        "MERGE_PARENT_MISMATCH",
+    )
+    if len(parents) == 2:
+        need(
+            parents[1] == pr.get("head", {}).get("sha"),
+            "MERGE_SECOND_PARENT_NOT_PR_HEAD",
+        )
+        gh.ancestor(parents[0], merge_sha)
+    main_sha = gh.main_sha()
+    gh.ancestor(merge_sha, main_sha)
+    gh.branch_deleted(pr.get("head", {}).get("ref", ""))
+    files = gh.files(pr)
+    need(files and len(files) == pr.get("changed_files"), "INCOMPLETE_PR_FILE_SCOPE")
+    t.pr_scope_paths(files)
+    inventory = sorted((f["filename"], f["status"]) for f in files)
+    t.ci(gh, merge_sha, policy)
+    assessment = generic_assessment(gh, refs, wp, merge_sha, pr, profile)
+    runs = generic_run_proof(gh, run_ids, merge_sha) if target == "VALIDATING" else []
+    return {
+        "pr": {
+            "number": pr_id,
+            "head": pr["head"]["sha"],
+            "branch": pr["head"]["ref"],
+            "merge_commit": merge_sha,
+        },
+        "merge": {
+            "merge_sha": merge_sha,
+            "parents": parents,
+            "main_sha_observed": main_sha,
+            "branch_deleted": True,
+        },
+        "scope": {
+            "changed_files": len(files),
+            "inventory_sha256": hashlib.sha256(
+                json.dumps(inventory).encode()
+            ).hexdigest(),
+        },
+        "required_ci": {"merge_sha": merge_sha, "status": "success"},
+        "owner_assessment": {
+            "owner_work": assessment["owner_work"],
+            "owner_assessment": assessment["owner_assessment"],
+        },
+        "runs": runs,
+    }
+
+
 def stable(facts: dict) -> dict:
     """Facts that must not change between proof and write; main may legitimately move."""
     merge = {k: v for k, v in facts["merge"].items() if k != "main_sha_observed"}
@@ -532,20 +714,23 @@ def verified_slot_releases(
 def reconcile(
     profile, wp, target, envelope, policy, plane, gh, audit, key, now=None
 ) -> dict:
-    """Evaluate and apply one allow-listed reconciliation; the sole write is one PATCH."""
+    """Evaluate and apply one evidence-based reconciliation; the sole write is one PATCH."""
     need(
         profile in t.q.PEOPLE and t.q.WP.fullmatch(wp) and target in TARGETS,
         "INVALID_ARGUMENTS",
     )
     t.policy_checks(policy)
-    block = validate_policy(
-        policy.get("lifecycle_reconciliation"), policy["contexts"], t.q.PEOPLE
+    lifecycle = policy.get("lifecycle_reconciliation")
+    validate_policy(lifecycle, policy["contexts"], t.q.PEOPLE)
+    legacy = (
+        isinstance(lifecycle, dict) and lifecycle.get("schema_version") == POLICY_SCHEMA
     )
-    case = find_case(block, profile, wp, target)
-    need(
-        set(envelope["evidence_refs"]) == expected_refs(case, target),
-        "RECONCILIATION_EVIDENCE_REFS_MISMATCH",
-    )
+    case: dict = find_case(lifecycle, profile, wp, target) if legacy else {}
+    if legacy:
+        need(
+            set(envelope["evidence_refs"]) == expected_refs(case, target),
+            "RECONCILIATION_EVIDENCE_REFS_MISMATCH",
+        )
     item = t.find(
         plane, profile, wp, policy
     )  # unique canonical mapping, owner, assignee
@@ -566,7 +751,11 @@ def reconcile(
                 not owner_queue_conflicts(plane, profile, item, released),
                 "OWNER_QUEUE_CONFLICT",
             )
-    facts = gather(gh, case, profile, wp, target)
+    facts = (
+        gather(gh, case, profile, wp, target)
+        if legacy
+        else generic_gather(gh, envelope["evidence_refs"], profile, wp, target, policy)
+    )
     stamp = (now or t.now)()
     record = {
         "timestamp": stamp,
@@ -583,13 +772,18 @@ def reconcile(
         json.dumps(record, sort_keys=True).encode()
     ).hexdigest()
     record.update(
-        case_id=case["case_id"],
-        change_record=case["change_record"],
-        approvals=case["approvals"],
         facts=facts,
         outstanding=list(OUTSTANDING),
         skipped_state_history_not_asserted=True,
     )
+    if legacy:
+        record.update(
+            case_id=case["case_id"],
+            change_record=case["change_record"],
+            approvals=case["approvals"],
+        )
+    else:
+        record["reconciliation_mode"] = "GENERIC_EVIDENCE"
     if blocked_post_merge:
         record["blocked_preserved"] = True
     if source == target:
@@ -598,9 +792,11 @@ def reconcile(
         record["result"] = "UNCHANGED"
         audit(record, key)
         return record
-    again = gather(
-        gh, case, profile, wp, target
-    )  # recheck GitHub immediately before writing
+    again = (
+        gather(gh, case, profile, wp, target)
+        if legacy
+        else generic_gather(gh, envelope["evidence_refs"], profile, wp, target, policy)
+    )
     need(stable(again) == stable(facts), "CONCURRENT_GITHUB_CHANGE")
     plane.refresh_items()  # fresh queue snapshot immediately before writing
     released = verified_slot_releases(plane, profile, item, policy, gh)
@@ -677,10 +873,13 @@ def main() -> int:
             "HELPER_POLICY_REFRESH_REQUIRED",
         )
         t.auto_next_support().require_caller(profile, caller_uid)
-        block = validate_policy(
-            policy.get("lifecycle_reconciliation"), policy["contexts"], t.q.PEOPLE
-        )
-        find_case(block, profile, wp, target)  # reject before any external lookup
+        lifecycle = policy.get("lifecycle_reconciliation")
+        validate_policy(lifecycle, policy["contexts"], t.q.PEOPLE)
+        if (
+            isinstance(lifecycle, dict)
+            and lifecycle.get("schema_version") == POLICY_SCHEMA
+        ):
+            find_case(lifecycle, profile, wp, target)
         lockfd = os.open(
             "/run/cap-plane-queue.lock", os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600
         )

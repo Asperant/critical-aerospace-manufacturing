@@ -6,7 +6,6 @@ import fcntl
 import hashlib
 import json
 import os
-import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -68,22 +67,19 @@ IMPLEMENTATION_TARGETS = {
 
 
 def reconcile_grants(policy):
-    """Exact-argv sudo lines derived from the policy allow-list; no globs or regexes.
-
-    One line per allow-listed profile, WP and target. Every value is validated
-    before it becomes privileged command text.
-    """
-    lines = ["# Lifecycle reconciliation: exact allow-listed own-profile invocations"]
-    for case in policy["lifecycle_reconciliation"]["cases"]:
-        profile, wp = case["profile"], case["wp_id"]
-        if profile not in PROFILES or not re.fullmatch(r"WP-[A-Z0-9]+-[0-9]{3}", wp):
-            raise ValueError("Invalid reconciliation grant identity")
-        for target in case["targets"]:
-            if target not in RECONCILE_TARGETS:
-                raise ValueError("Invalid reconciliation grant target")
+    """Profile-scoped generic grants; the root helper proves WP ownership and evidence."""
+    config = policy["lifecycle_reconciliation"]
+    if config.get("schema_version") != "cap-lifecycle-reconciliation-v2":
+        raise ValueError("Invalid generic reconciliation policy")
+    targets = config.get("targets")
+    if targets != list(RECONCILE_TARGETS):
+        raise ValueError("Invalid reconciliation grant target")
+    lines = ["# Lifecycle reconciliation: profile-scoped generic evidence invocations"]
+    for profile in PROFILES:
+        for target in targets:
             lines.append(
                 f"{profile} ALL=(root) NOPASSWD: NOSETENV: /usr/bin/python3 -I "
-                f"{RECONCILE_LIBEXEC} {profile} {wp} {target}"
+                f"{RECONCILE_LIBEXEC} {profile} WP-* {target}"
             )
     return lines
 

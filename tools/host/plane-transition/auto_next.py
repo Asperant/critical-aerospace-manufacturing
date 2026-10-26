@@ -1032,11 +1032,11 @@ def recovery_proof(t, wp, profile, policy, gh, today=None):
         previous.get("audit_id") == case["blocker_audit_id"],
         "RECOVERY_BLOCKER_AUDIT_MISMATCH",
     )
-    base = next(
-        c
-        for c in policy["lifecycle_reconciliation"]["cases"]
-        if c["case_id"] == case["reconciliation_case"]
+    legacy_cases = policy["lifecycle_reconciliation"].get(
+        "legacy_recovery_cases",
+        policy["lifecycle_reconciliation"].get("cases", []),
     )
+    base = next(c for c in legacy_cases if c["case_id"] == case["reconciliation_case"])
     reconcile.gather(gh, base, profile, wp, "VALIDATING")  # PR, merge, scope, runs
     again = reassertion(t, wp, profile, previous, "VALIDATING")
     if not isinstance(again, dict):  # None (no re-assertion) or AMBIGUOUS chain
