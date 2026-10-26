@@ -964,6 +964,34 @@ def ci(gh,sha,policy):
     gh.technical_ci(sha,policy)
 
 
+def post_merge_ci(gh,merge_sha,policy):
+    """Require successful aggregate CI from a main run at the merge SHA.
+
+    ``projectctl`` is the bounded pull-request context and is not rerun by the
+    push workflow on main.  DONE therefore uses only the aggregate main check
+    (currently ``ci-gate``), with the linked workflow run proving the exact
+    merge revision.  Missing, failed, or ambiguous GitHub evidence denies the
+    transition.
+    """
+    aggregate=policy.get('required_aggregate_ci',[])
+    need(isinstance(aggregate,list) and aggregate, 'REQUIRED_MAIN_CI_POLICY_MISSING')
+    checks,_=gh.checks(merge_sha)
+    for name in aggregate:
+        matches=[c for c in checks if c.get('name')==name]
+        need(len(matches)==1, 'REQUIRED_MAIN_CI_MISSING')
+        check=matches[0]
+        need(check.get('status')=='completed' and check.get('conclusion')=='success',
+             'REQUIRED_MAIN_CI_NOT_GREEN')
+        match=re.fullmatch(
+            r'https://github\.com/Asperant/critical-aerospace-manufacturing/actions/runs/([1-9][0-9]*)/job/[1-9][0-9]*',
+            str(check.get('details_url','')),re.I)
+        need(match, 'REQUIRED_MAIN_CI_RUN_BINDING_UNKNOWN')
+        run=gh.fresh_run(int(match[1]))
+        need(run.get('head_sha')==merge_sha and run.get('head_branch')=='main'
+             and run.get('event')!='pull_request' and run.get('status')=='completed'
+             and run.get('conclusion')=='success', 'REQUIRED_MAIN_CI_RUN_NOT_GREEN')
+
+
 def confirmation(rows, authors, wp, source, target, sha, policy):
     # Native evidence is bound by GitHub attribution/revision and canonical IDs.
     # No digest/source_manifest/from/to duplication into an extra comment.
@@ -1250,7 +1278,7 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
         need(any(r.get('head_sha')==sha and r.get('head_branch')=='main' and r.get('status')=='in_progress'
                  and r.get('event')!='pull_request' for r in runs), 'POST_MERGE_VALIDATION_NOT_RUNNING')
     elif target=='DONE':
-        ci(gh,sha,policy)
+        post_merge_ci(gh,sha,policy)
         gh.merged_shape(pr)
         owner_record=confirmation(rows,[owner],wp,source,target,sha,policy)
         ids=sorted(set(policy['dod_wp']+card['dod_refs']+context['scope_criteria']))
