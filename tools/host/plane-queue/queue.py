@@ -542,6 +542,27 @@ def _cached_slot_source(entry, policy):
     return source
 
 
+def _cached_deferred_waits(profile, rows, policy):
+    """Return only already-verified, current cached waits before health evaluation.
+
+    This bounded local check preserves fail-closed behavior for unknown proofs while
+    preventing a health timeout from making a previously verified wait actionable.
+    """
+    waits = []
+    cache = _read_slot_cache()
+    for row in rows.values():
+        if (row.get('_profile') != profile or not row.get('blocked')
+                or row.get('plane_state') not in {'IN_PROGRESS', 'VALIDATING'}):
+            continue
+        entry = cache.get(f"{profile}:{row['wp_id']}")
+        source = _cached_slot_source(entry, policy)
+        proof = entry.get('proof') if isinstance(entry, dict) else None
+        if source is not None and isinstance(proof, dict) and _cache_entry_matches(entry, source):
+            waits.append({'wp_id': row['wp_id'], 'state': row['plane_state'],
+                          'blocked': True, 'reason': proof['semantic_blocker_class']})
+    return waits
+
+
 def preflight(profile, key, rows=None):
     """Return verified slot releases even when derived health is unavailable."""
     try:
@@ -562,16 +583,19 @@ def preflight(profile, key, rows=None):
         return None
 
 
-def combine(profile, rows, health):
+def combine(profile, rows, health, preflight_deferred=None):
     """Selection excluding verified waits, plus derived health; health None fails closed."""
-    waits = (health or {}).get('deferred_waits', [])
+    waits = list((health or {}).get('deferred_waits', [])
+                 or preflight_deferred or [])
     deferred = {w['wp_id'] for w in waits if isinstance(w, dict) and isinstance(w.get('wp_id'), str)}
     result = select(profile, rows, deferred)
     if health is not None:
         result.update(prepared_next=health['prepared_next'], health=health['health'],
                       first_blocker=health['first_blocker'], deferred_waits=waits)
     else:
-        result.update(prepared_next=None, health='UNAVAILABLE', first_blocker={'reason': 'PREFLIGHT_SOURCE_UNAVAILABLE'})
+        result.update(prepared_next=None, health='UNAVAILABLE',
+                      first_blocker={'reason': 'PREFLIGHT_SOURCE_UNAVAILABLE'},
+                      deferred_waits=waits)
     return result
 
 
@@ -631,8 +655,10 @@ def main():
             # issue/state snapshot once, then resolve a cycle only for the
             # single task selected by the local queue decision.
             rows, snapshot_cached = load_snapshot(reader, catalog, set())
+            policy = json.loads((ROOT / 'transition-policy.json').read_text())
+            preflight_deferred = _cached_deferred_waits(profile, rows, policy)
             health = bounded_preflight(profile, key, rows)
-            result = combine(profile, rows, health)
+            result = combine(profile, rows, health, preflight_deferred)
             task = result.get('current_task') or result.get('next_task')
             if isinstance(task, dict) and isinstance(task.get('wp_id'), str):
                 selected = rows.get(task['wp_id'])

@@ -196,6 +196,24 @@ class QueueTests(unittest.TestCase):
         self.assertEqual(result['status'], 'AMBIGUOUS')
         self.assertEqual(result['candidate_wp_ids'], ['WP-CORE-004', 'WP-CORE-005'])
 
+    def test_cached_deferred_waits_survive_preflight_timeout(self):
+        rows = {
+            'a': task('WP-CORE-004', 'IN_PROGRESS', blocked=True),
+            'b': task('WP-CORE-005', 'IN_PROGRESS', blocked=True),
+            'c': task('WP-CORE-003', 'BACKLOG'),
+        }
+        health = None  # bounded preflight timed out
+        waits = [
+            {'wp_id': 'WP-CORE-004', 'state': 'IN_PROGRESS', 'blocked': True,
+             'reason': 'WAITING_EXTERNAL_INTEGRATION_BINDINGS'},
+            {'wp_id': 'WP-CORE-005', 'state': 'IN_PROGRESS', 'blocked': True,
+             'reason': 'WAITING_EXTERNAL_INTEGRATION_BINDINGS'},
+        ]
+        result = q.combine('asrin', rows, health, waits)
+        self.assertEqual(result['status'], 'NO_TASK')
+        self.assertIsNone(result['current_task'])
+        self.assertEqual(result['deferred_waits'], waits)
+
     def test_response_bounds_and_redirects_fail_closed(self):
         class Response:
             status = 200
