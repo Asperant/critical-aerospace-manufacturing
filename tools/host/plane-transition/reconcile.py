@@ -603,8 +603,9 @@ def reconcile(
     )  # recheck GitHub immediately before writing
     need(stable(again) == stable(facts), "CONCURRENT_GITHUB_CHANGE")
     plane.refresh_items()  # fresh queue snapshot immediately before writing
+    released = verified_slot_releases(plane, profile, item, policy, gh)
     need(
-        not owner_queue_conflicts(plane, profile, item),
+        not owner_queue_conflicts(plane, profile, item, released),
         "CONCURRENT_OWNER_QUEUE_CHANGE",
     )
     # The final Plane read comes last, after every slower GitHub read, so a change made
