@@ -76,11 +76,10 @@ def reconcile_grants(policy):
         raise ValueError("Invalid reconciliation grant target")
     lines = ["# Lifecycle reconciliation: profile-scoped generic evidence invocations"]
     for profile in PROFILES:
-        for target in targets:
-            lines.append(
-                f"{profile} ALL=(root) NOPASSWD: NOSETENV: /usr/bin/python3 -I "
-                f"{RECONCILE_LIBEXEC} {profile} WP-* {target}"
-            )
+        lines.append(
+            f"{profile} ALL=(root) NOPASSWD: NOSETENV: /usr/bin/python3 -I "
+            f"{RECONCILE_LIBEXEC} {profile}"
+        )
     return lines
 
 

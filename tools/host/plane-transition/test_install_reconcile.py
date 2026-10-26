@@ -20,7 +20,7 @@ LAUNCHER = HERE / "cap-plane-reconcile"
 GRANT = re.compile(
     r"(asrin|selman|batuhan|yavuz) ALL=\(root\) NOPASSWD: NOSETENV: "
     r"/usr/bin/python3 -I /usr/local/libexec/cap-plane-reconcile\.py "
-    r"\1 WP-[A-Z0-9]+-[0-9]{3} (MERGED|VALIDATING)"
+    r"\1$"
 )
 
 
@@ -37,8 +37,8 @@ class GrantTests(unittest.TestCase):
     def test_grants_are_profile_scoped_generic_lines_for_each_target(self):
         lines = ins.reconcile_grants(policy_block())
         self.assertEqual(lines[0].startswith("#"), True)
-        self.assertEqual(len(lines[1:]), 8)
-        self.assertTrue(all("WP-*" in line for line in lines[1:]))
+        self.assertEqual(len(lines[1:]), 4)
+        self.assertTrue(all("WP-*" not in line for line in lines[1:]))
         self.assertTrue(all("WP-TWIN-001" not in line for line in lines[1:]))
 
     def test_invalid_identities_or_targets_never_become_privileged_text(self):
@@ -61,6 +61,7 @@ class GrantTests(unittest.TestCase):
                 "/usr/bin/python3 -I /usr/local/libexec/cap-plane-reconcile.py "
             )
         )
+        self.assertTrue(GRANT.fullmatch(ins.reconcile_grants(policy_block())[1]))
 
 
 class MappingTests(unittest.TestCase):
