@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: 849ff19d24a4b53843e0dd18427392bbf6cdd4a97c145326f51b10ec228137c5
+  sha256: 1852a0babf540bc0c820d63d1f86a8c32b21e095fd83bed16dd0f5478b5fbb5b
 requirements:
   FR-GOV-001:
     meta:
@@ -743,13 +743,14 @@ requirements:
       env: CI + INTEGRATION + EVALUATION
       m6_freeze_sensitive: true
     state:
-      coverage: ALLOCATED
+      coverage: IMPLEMENTED
       planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      evidence: EVIDENCE_PENDING
+    note: Local projection slice implemented; DEP-032/DEP-033 real integration and F0 acceptance remain pending.
     realization:
       surface: twin-projector-worker + twin-query-api + `twin` schema
       deployable: digital-twin-service
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/operational-twin/; evidence/WP-TWIN-001/SLICE1_LOCAL_PROJECTION.md
   FR-TWIN-002:
     meta:
       class: F1
@@ -761,13 +762,14 @@ requirements:
       env: CI
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
+      coverage: IMPLEMENTED
       planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      evidence: EVIDENCE_PENDING
+    note: Read-only boundary and event-derived handlers are locally verified; runtime integration remains pending.
     realization:
       surface: event-consumer projection handlers (no mutation endpoint)
       deployable: digital-twin-service
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/operational-twin/src/operational_twin/projector.py
   FR-TWIN-003:
     meta:
       class: F1
@@ -887,13 +889,14 @@ requirements:
       env: CI
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
+      coverage: IMPLEMENTED
       planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      evidence: EVIDENCE_PENDING
+    note: Source EventID/revision ledger model and local tests exist; real PostgreSQL migration evidence is DEP-033 pending.
     realization:
       surface: projection revision ↔ source EventID/revision ledger
       deployable: digital-twin-service
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/operational-twin/src/operational_twin/projector.py; services/operational-twin/migrations/0001_twin.sql
   FR-TWIN-010:
     meta:
       class: F1
@@ -6321,7 +6324,8 @@ edges:
 - {"from": "FR-TWIN-001", "relation": "ALLOCATED_TO", "to": "ARCH-TWIN-STATE", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-001", "relation": "ALLOCATED_TO", "to": "ARCH-TWIN-API", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-001", "relation": "EXPOSED_BY", "to": "Twin Query API", "applicability": "PLANNED"}
-- {"from": "FR-TWIN-001", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-TWIN-001", "relation": "REALIZED_BY", "to": "repo:services/operational-twin/", "applicability": "RECORDED"}
+- {"from": "FR-TWIN-001", "relation": "REALIZED_BY", "to": "repo:evidence/WP-TWIN-001/SLICE1_LOCAL_PROJECTION.md", "applicability": "RECORDED"}
 - {"from": "FR-TWIN-001", "relation": "EXERCISED_IN", "to": "E2E-01", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-001", "relation": "EXERCISED_IN", "to": "AV-SCEN-01", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-001", "relation": "VERIFIED_BY", "to": "TEST-TWIN-PROJECTION", "applicability": "PLANNED"}
@@ -6333,7 +6337,7 @@ edges:
 - {"from": "FR-TWIN-002", "relation": "DERIVED_FROM", "to": "ARCH-INV-04", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-002", "relation": "ALLOCATED_TO", "to": "ARCH-TWIN-PROJECTOR", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-002", "relation": "EXPOSED_BY", "to": "consumed domain event schemas", "applicability": "PLANNED"}
-- {"from": "FR-TWIN-002", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-TWIN-002", "relation": "REALIZED_BY", "to": "repo:services/operational-twin/src/operational_twin/projector.py", "applicability": "RECORDED"}
 - {"from": "FR-TWIN-002", "relation": "VERIFIED_BY", "to": "TEST-TWIN-PROJECTION", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-002", "relation": "VERIFIED_BY", "to": "TEST-TWIN-READONLY", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-002", "relation": "MITIGATES", "to": "ARCH-R06", "applicability": "PLANNED"}
@@ -6404,7 +6408,8 @@ edges:
 - {"from": "FR-TWIN-009", "relation": "ALLOCATED_TO", "to": "ARCH-TWIN-PROJECTOR", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-009", "relation": "ALLOCATED_TO", "to": "ARCH-TWIN-FRESHNESS", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-009", "relation": "EXPOSED_BY", "to": "Twin Query API (source revision)", "applicability": "PLANNED"}
-- {"from": "FR-TWIN-009", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-TWIN-009", "relation": "REALIZED_BY", "to": "repo:services/operational-twin/src/operational_twin/projector.py", "applicability": "RECORDED"}
+- {"from": "FR-TWIN-009", "relation": "REALIZED_BY", "to": "repo:services/operational-twin/migrations/0001_twin.sql", "applicability": "RECORDED"}
 - {"from": "FR-TWIN-009", "relation": "VERIFIED_BY", "to": "TEST-TWIN-PROJECTION", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-010", "relation": "DERIVED_FROM", "to": "ITEM-07", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-010", "relation": "DERIVED_FROM", "to": "ITEM-18", "applicability": "PLANNED"}
