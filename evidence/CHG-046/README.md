@@ -19,3 +19,9 @@ Current status: `NOT_YET_EXECUTED`; no readiness artifact or test result is
 claimed by CHG-046. The existing merged-binding provenance pins were refreshed
 to the current canonical WBS revision; their scope digests and binding meaning
 are unchanged.
+
+The controlling requirement is `DEP-020`: before the WP-CORE-002 transition
+engine starts, the minimal lifecycle component must be implemented, its
+component tests must be green on current main, and an attributable
+`COMPONENT_READY` artifact bound to `DN-CORE-LIFECYCLE` and WP-CORE-002 must
+exist. This record does not satisfy that requirement.
