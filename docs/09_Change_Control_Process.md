@@ -1073,6 +1073,17 @@ updated from 174 to 173 expected precision warnings. No product requirement,
 architecture, lifecycle state, or readiness claim is introduced by this
 correction.
 
+## CHG-059 — record WP-CORE-009 COMPONENT_READY and DEP-020 binding
+
+CHG-059 records the completed local WP-CORE-009 lifecycle component after its
+implementation PR merged and exact current-main verification passed. The
+artifact binds the immutable order/lot/serialized-component state models,
+separate execution state, forward-only PostgreSQL migration, TEST-CORE-
+LIFECYCLE, real PostgreSQL persistence evidence, and current-main CI to
+DN-CORE-LIFECYCLE and DEP-020's WP-CORE-002 consumer. It does not implement or
+certify WP-CORE-002 transition legality. DEP-019 remains a separate HARD /
+INTEGRATION wait and is not changed by this record.
+
 ## CHG-052 — generic audit-backed BLOCKED projection reconciliation
 
 CHG-052 / CTRL-HOST-030 repairs only the orthogonal Plane `BLOCKED` label when

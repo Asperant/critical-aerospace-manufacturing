@@ -1,0 +1,52 @@
+CHG-059:
+  title: Record WP-CORE-009 COMPONENT_READY and DEP-020 binding
+  trigger: WP-CORE-009 implementation merged and exact current-main component, PostgreSQL and CI evidence completed
+  reason: DEP-020 requires an attributable COMPONENT_READY artifact before WP-CORE-002 may consume the lifecycle producer slice
+  class: C1
+  review_risk_class: CR-1
+  raised_in: S4
+  owner: Asrın
+  required_human_approvals: 0
+  reviewers: []
+  decision: APPROVED
+  status: APPROVED
+  decision_basis: The artifact records executed implementation and verification facts only; no transition semantics or integration readiness is added.
+  scope:
+    - Bind WP-CORE-009 to DN-CORE-LIFECYCLE at COMPONENT_READY.
+    - Bind DEP-020 exactly to WP-CORE-002 as consumer.
+    - Preserve DEP-019 as HARD/INTEGRATION and unresolved.
+  invariants_preserved:
+    - WP-CORE-002 remains the sole owner of legal transition semantics.
+    - Lifecycle and execution state remain separate dimensions.
+    - COMPONENT_READY is not WP-CORE-009 DONE and does not certify PostgreSQL runtime readiness for downstream integration.
+  precise_requirement: NONE — readiness evidence binding only; DEP-020 precise requirement remains canonical in docs/05.
+  affected_requirements: [FR-CORE-003]
+  affected_architecture: [ARCH-CORE-DOMAIN, ARCH-CORE-DB]
+  affected_contracts:
+    - id: NONE
+      compatibility: NON_BREAKING
+      consumers_reviewed: [WP-CORE-002]
+  affected_work_packages: [WP-CORE-009, WP-CORE-002]
+  affected_dependencies: [DEP-020]
+  affected_evidence:
+    - evidence/WP-CORE-009/COMPONENT-READY.md
+    - evidence/readiness/DN-CORE-LIFECYCLE.json
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - DEP-019 remains NOT_READY at INTEGRATION stage.
+      - WP-CORE-009 final DONE evidence and downstream integration acceptance remain open.
+    rerun_required: []
+  security_authority_impact: NONE
+  conditions:
+    - Do not use COMPONENT_READY as evidence of legal transition implementation.
+    - Do not mark WP-CORE-009 DONE while DEP-019 or other actual DoD facts remain unresolved.
+  rollout: Merge the attributable current-main COMPONENT_READY artifact and exact DEP-020 binding.
+  rollback: Revert the readiness artifact and DEP-020 status projection together without deleting implementation or test evidence.
+  required_rerun: [projectctl startability WP-CORE-002, post-merge current-main validation]
+  documentation_updates:
+    - docs/05_Dependency_Graph.md
+    - docs/09_Change_Control_Process.md
+    - 09_change/change_requests.csv
+  freeze_context: PRE_M6
