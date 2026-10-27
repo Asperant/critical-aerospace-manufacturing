@@ -25,6 +25,20 @@ x-infra-profiles: &infra-profiles
   - full
   - e2e
 
+# WP-PLAT-003: 02 "Resource profiles": Temporal belongs to PLANNING (Scheduler,
+# Automation worker) and to every profile that runs the full topology.
+x-temporal-profiles: &temporal-profiles
+  - planning
+  - platform
+  - full
+  - e2e
+
+x-temporal-sql: &temporal-sql
+  SQL_PLUGIN: postgres12
+  SQL_HOST: postgres
+  SQL_PORT: "5432"
+  SQL_USER: cap
+
 services:
   postgres:
     image: postgres:18.6-alpine
@@ -157,8 +171,116 @@ services:
           memory: 1g
     restart: unless-stopped
 
+  # WP-PLAT-003 — Temporal, self-hosted on PostgreSQL (02: PostgreSQL persistence,
+  # no Cassandra). A one-shot job creates and migrates the two databases, the
+  # server starts only after it succeeded, and a second job creates the platform
+  # namespace. Both jobs are idempotent, so every `up` re-applies them safely.
+  temporal-schema:
+    image: temporalio/admin-tools:1.32.1
+    profiles: *temporal-profiles
+    environment: *temporal-sql
+    env_file:
+      - path: ${CAP_PLATFORM_STATE_DIR:-${HOME}/.local/state/cap-platform}/temporal.env
+        required: false
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >-
+        set -eu;
+        for db in temporal temporal_visibility; do
+        temporal-sql-tool --db "$$db" create-database 2>/dev/null || echo "database $$db exists";
+        done;
+        temporal-sql-tool --db temporal setup-schema -v 0.0 2>/dev/null || true;
+        temporal-sql-tool --db temporal update-schema -d /etc/temporal/schema/postgresql/v12/temporal/versioned;
+        temporal-sql-tool --db temporal_visibility setup-schema -v 0.0 2>/dev/null || true;
+        temporal-sql-tool --db temporal_visibility update-schema -d /etc/temporal/schema/postgresql/v12/visibility/versioned;
+        echo "temporal schemas current"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+    restart: "no"
+
+  temporal:
+    image: temporalio/server:1.32.1
+    profiles: *temporal-profiles
+    environment:
+      DB: postgres12
+      POSTGRES_SEEDS: postgres
+      DB_PORT: "5432"
+      POSTGRES_USER: cap
+      BIND_ON_IP: 0.0.0.0
+      DYNAMIC_CONFIG_FILE_PATH: /etc/temporal/dynamicconfig.yaml
+    env_file:
+      - path: ${CAP_PLATFORM_STATE_DIR:-${HOME}/.local/state/cap-platform}/temporal.env
+        required: false
+    configs:
+      - source: temporal-dynamicconfig
+        target: /etc/temporal/dynamicconfig.yaml
+    ports:
+      - "127.0.0.1:${CAP_TEMPORAL_PORT:-27233}:7233"
+      - "127.0.0.1:${CAP_TEMPORAL_HTTP_PORT:-27243}:7243"
+    healthcheck:
+      # The frontend HTTP API answers only when the frontend service is serving.
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:7243/api/v1/system-info >/dev/null"]
+      start_period: 20s
+      interval: 5s
+      timeout: 5s
+      retries: 36
+    depends_on:
+      postgres:
+        condition: service_healthy
+      temporal-schema:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          memory: 768m
+    restart: unless-stopped
+
+  # Creates the platform namespace, then stays up as its readiness probe: healthy
+  # only while the namespace is registered. A job that exits would make
+  # `up --wait` (stack.sh and mfgctl) fail even with status 0, as nothing awaits it.
+  temporal-namespace:
+    image: temporalio/admin-tools:1.32.1
+    profiles: *temporal-profiles
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
+      CAP_TEMPORAL_NAMESPACE: ${CAP_TEMPORAL_NAMESPACE:-cap}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >-
+        set -eu;
+        temporal operator namespace describe -n "$$CAP_TEMPORAL_NAMESPACE" >/dev/null 2>&1 ||
+        temporal operator namespace create -n "$$CAP_TEMPORAL_NAMESPACE";
+        echo "namespace $$CAP_TEMPORAL_NAMESPACE registered";
+        exec sleep infinity
+    healthcheck:
+      test: ["CMD-SHELL", "temporal operator namespace describe -n \"$$CAP_TEMPORAL_NAMESPACE\" >/dev/null"]
+      start_period: 10s
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      temporal:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+    restart: unless-stopped
+
 volumes:
   postgres-data:
   nats-data:
   seaweedfs-data:
   keycloak-data:
+
+configs:
+  # Temporal dynamic configuration: server defaults; overrides are added here and
+  # reviewed like any other runtime setting, never changed inside a container.
+  temporal-dynamicconfig:
+    content: |
+      {}

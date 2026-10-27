@@ -72,11 +72,28 @@ def test_ports_bind_localhost_only(name: str) -> None:
         assert str(port).startswith("127.0.0.1:"), f"{name}: {port}"
 
 
+def one_shot(service: dict[str, Any]) -> bool:
+    """A setup job (WP-PLAT-003): runs to completion, never restarted."""
+    return service.get("restart") == "no"
+
+
 @pytest.mark.parametrize("name", sorted(SERVICES))
 def test_every_service_has_health_check_and_memory_limit(name: str) -> None:
     service = SERVICES[name]
-    assert service.get("healthcheck", {}).get("test"), f"{name}: health check"
     mebibytes(service["deploy"]["resources"]["limits"]["memory"])
+    if not one_shot(service):
+        assert service.get("healthcheck", {}).get("test"), f"{name}: health check"
+        return
+    # A one-shot job has no running state to probe: it publishes no port and
+    # starts only once everything it needs is healthy or has completed.
+    assert not service.get("ports"), f"{name}: a setup job publishes no port"
+    needs = service.get("depends_on")
+    assert isinstance(needs, dict) and needs, f"{name}: a setup job declares its needs"
+    for dependency, condition in needs.items():
+        assert condition.get("condition") in {
+            "service_healthy",
+            "service_completed_successfully",
+        }, f"{name} -> {dependency}: wait for health or completion"
 
 
 def test_infra_memory_budget() -> None:
@@ -126,7 +143,7 @@ def test_registry_matches_the_composition() -> None:
 def test_credentials_never_in_the_definition() -> None:
     text = (HERE / "compose.yaml").read_text("utf-8")
     assert not re.search(r"(PASSWORD|SECRET|TOKEN)\s*:", text)
-    for name in ("postgres", "keycloak"):
+    for name in ("postgres", "keycloak", "temporal-schema", "temporal"):
         (entry,) = SERVICES[name]["env_file"]
         assert entry["path"].startswith("${CAP_PLATFORM_STATE_DIR:-${HOME}/"), entry
 

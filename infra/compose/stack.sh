@@ -32,8 +32,12 @@ CAP_VALKEY_PORT="${CAP_VALKEY_PORT:-26379}"
 CAP_S3_PORT="${CAP_S3_PORT:-28333}"
 CAP_SEAWEED_MASTER_PORT="${CAP_SEAWEED_MASTER_PORT:-29333}"
 CAP_KEYCLOAK_PORT="${CAP_KEYCLOAK_PORT:-28080}"
+CAP_TEMPORAL_PORT="${CAP_TEMPORAL_PORT:-27233}"
+CAP_TEMPORAL_HTTP_PORT="${CAP_TEMPORAL_HTTP_PORT:-27243}"
+CAP_TEMPORAL_NAMESPACE="${CAP_TEMPORAL_NAMESPACE:-cap}"
 export CAP_PG_PORT CAP_NATS_PORT CAP_NATS_MON_PORT CAP_VALKEY_PORT CAP_S3_PORT \
-  CAP_SEAWEED_MASTER_PORT CAP_KEYCLOAK_PORT
+  CAP_SEAWEED_MASTER_PORT CAP_KEYCLOAK_PORT CAP_TEMPORAL_PORT CAP_TEMPORAL_HTTP_PORT \
+  CAP_TEMPORAL_NAMESPACE
 PROFILES_ALL=(infra core vision ai planning platform full e2e)
 
 secret() { od -An -N16 -tx1 /dev/urandom | tr -d ' \n'; }
@@ -75,6 +79,8 @@ load_credentials() {
   ( umask 077
     printf 'POSTGRES_PASSWORD=%s\n' "${CAP_POSTGRES_PASSWORD}" > "${STATE_DIR}/postgres.env"
     printf 'KC_BOOTSTRAP_ADMIN_PASSWORD=%s\n' "${CAP_KEYCLOAK_ADMIN_PASSWORD}" > "${STATE_DIR}/keycloak.env"
+    # WP-PLAT-003: Temporal server (POSTGRES_PWD) and its schema job (SQL_PASSWORD).
+    printf 'POSTGRES_PWD=%s\nSQL_PASSWORD=%s\n' "${CAP_POSTGRES_PASSWORD}" "${CAP_POSTGRES_PASSWORD}" > "${STATE_DIR}/temporal.env"
     # SeaweedFS S3 identities: with any identity defined, anonymous access is denied.
     # admin creates buckets; writer reads, lists and writes artifacts; reader only reads
     # (it signs the short-lived read capabilities). Mounted read-only into the container.
@@ -158,6 +164,9 @@ case "${1:-}" in
     echo "CAP_KEYCLOAK_URL=http://127.0.0.1:${CAP_KEYCLOAK_PORT}"
     echo "CAP_KEYCLOAK_ADMIN_USER=cap-admin"
     echo "CAP_KEYCLOAK_ADMIN_PASSWORD=${CAP_KEYCLOAK_ADMIN_PASSWORD}"
+    echo "CAP_TEMPORAL_ADDRESS=127.0.0.1:${CAP_TEMPORAL_PORT}"
+    echo "CAP_TEMPORAL_HTTP_URL=http://127.0.0.1:${CAP_TEMPORAL_HTTP_PORT}"
+    echo "CAP_TEMPORAL_NAMESPACE=${CAP_TEMPORAL_NAMESPACE}"
     ;;
   status)
     load_credentials

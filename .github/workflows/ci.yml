@@ -281,9 +281,9 @@ jobs:
           infra/observability/stack.sh dashboards
       - name: Telemetry pipeline smoke (boundary mode REAL)
         run: uv run --project ci --locked python -m pytest infra/observability/tests -m integration -q -p pytest_quarantine
-      - name: Start REAL platform infra profile (WP-PLAT-001)
+      - name: Start REAL platform planning profile (WP-PLAT-001, WP-PLAT-003)
         run: |
-          infra/compose/stack.sh up infra
+          infra/compose/stack.sh up planning
           infra/compose/stack.sh env >> "$GITHUB_ENV"
       - name: Platform runtime tests (boundary mode REAL)
         run: uv run --project ci --locked python -m pytest infra/compose/tests -m integration -q -p pytest_quarantine

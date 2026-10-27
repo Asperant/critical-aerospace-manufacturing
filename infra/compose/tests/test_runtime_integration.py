@@ -90,3 +90,37 @@ def test_keycloak_serves_the_master_realm() -> None:
     status, body = http_get(required("CAP_KEYCLOAK_URL") + "/realms/master")
     assert status == 200
     assert json.loads(body).get("realm") == "master"
+
+
+# ------------------------------------------- WP-PLAT-003: planning profile ---
+
+
+def test_temporal_serves_the_platform_namespace() -> None:
+    """Temporal on PostgreSQL answers its frontend API and the namespace is registered."""
+    namespace = required("CAP_TEMPORAL_NAMESPACE")
+    status, body = http_get(f"{required('CAP_TEMPORAL_HTTP_URL')}/api/v1/namespaces/{namespace}")
+    assert status == 200, body[:300]
+    info = json.loads(body)["namespaceInfo"]
+    assert info["name"] == namespace
+    assert info["state"] == "NAMESPACE_STATE_REGISTERED"
+
+
+def test_temporal_persists_in_postgresql() -> None:
+    """02: PostgreSQL persistence, no Cassandra; both Temporal databases carry a schema."""
+    import psycopg
+
+    with psycopg.connect(required("CAP_PG_DSN"), connect_timeout=10) as connection:
+        names = {
+            row[0]
+            for row in connection.execute(
+                "SELECT datname FROM pg_database WHERE datname LIKE 'temporal%'"
+            )
+        }
+    assert names == {"temporal", "temporal_visibility"}
+    base = required("CAP_PG_DSN").rsplit("/", 1)[0]
+    for database in sorted(names):
+        with psycopg.connect(f"{base}/{database}", connect_timeout=10) as connection:
+            (version,) = connection.execute(
+                "SELECT curr_version FROM schema_version"
+            ).fetchone()
+        assert version, f"{database}: no Temporal schema version"

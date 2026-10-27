@@ -10,10 +10,10 @@ definitions are the basis of the shared Integration environment (WP-PLAT-003).
 | `core` | infra + manufacturing-core, manufacturing-simulator, digital-twin-service, operations-bff | infra only; services join as their container builds land |
 | `vision` | infra + Vision runtime, artifact storage, inspection fixtures | infra only |
 | `ai` | infra + Twin/query interfaces, AI Intelligence, knowledge/RAG dependencies | infra only |
-| `planning` | infra + Simulator, Twin snapshot source, Scheduler, Automation | infra only |
-| `platform` | application services + observability + health + operational tooling | infra only; observability runs from `infra/observability` |
-| `full` | full logical topology under local resource limits (not the daily default) | infra only |
-| `e2e` | deterministic test environment: fresh runtime, known schema/scenario/seed | infra only |
+| `planning` | infra + Simulator, Twin snapshot source, Scheduler, Automation | infra + Temporal (WP-PLAT-003); application services join as their builds land |
+| `platform` | application services + observability + health + operational tooling | infra + Temporal; observability runs from `infra/observability` |
+| `full` | full logical topology under local resource limits (not the daily default) | infra + Temporal |
+| `e2e` | deterministic test environment: fresh runtime, known schema/scenario/seed | infra + Temporal |
 
 ## infra layer
 
@@ -31,6 +31,22 @@ Host ports stay below 32768, outside the Linux ephemeral port range
 (32768–60999): a fixed host port inside that range can be taken by an outgoing
 client connection, and Docker then fails to bind it (seen on a CI runner in run
 40099708897). A static test enforces this.
+
+## Workflow engine (WP-PLAT-003)
+
+Temporal runs self-hosted on the same PostgreSQL (02: PostgreSQL persistence, no
+Cassandra) in the `planning`, `platform`, `full` and `e2e` profiles.
+
+| Service | Image (exact pin) | Host port (localhost) | Memory limit | Health / role |
+|---|---|---|---|---|
+| `temporal-schema` | `temporalio/admin-tools:1.32.1` | — | 256 MiB | one-shot: creates `temporal` and `temporal_visibility` and applies the versioned schemas; idempotent |
+| `temporal` | `temporalio/server:1.32.1` | 27233 (gRPC), 27243 (HTTP API) | 768 MiB | frontend `/api/v1/system-info`; starts only after the schema job succeeded |
+| `temporal-namespace` | `temporalio/admin-tools:1.32.1` | — | 128 MiB | registers the platform namespace (`CAP_TEMPORAL_NAMESPACE`, default `cap`) and stays up as its probe: healthy only while it is registered |
+
+Workflow definitions, task queues and further namespaces belong to their owners
+(Temporal semantics: Batuhan; runtime: Yavuz, 02). Temporal currently connects as
+the platform PostgreSQL user; a dedicated least-privilege role is a known limitation.
+`stack.sh env` adds `CAP_TEMPORAL_ADDRESS`, `CAP_TEMPORAL_HTTP_URL` and `CAP_TEMPORAL_NAMESPACE`.
 
 ## Run it
 
