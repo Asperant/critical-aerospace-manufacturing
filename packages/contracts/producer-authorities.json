@@ -83,6 +83,18 @@
           "authority_level": "Simulation operational fact about one intake; not Core canonical state and not an effect-verification result"
         }
       ]
+    },
+    {
+      "producer": "vision-service",
+      "semantic_owner": "Selman Özdemir",
+      "source_roots": ["services/vision-service/contracts/"],
+      "contracts": [
+        {
+          "family": "vision.inspection-observation",
+          "contract_type": "EVENT",
+          "authority_level": "Vision perception evidence only; no quality disposition, hold, root-cause or acceptance authority"
+        }
+      ]
     }
   ]
 }

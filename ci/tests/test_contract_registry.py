@@ -279,6 +279,7 @@ def test_repository_registry_loads_and_verifies() -> None:
         "simulator.decision-request.v1",
         "simulator.dispatch-intake.v1",
         "simulator.dispatch-outcome.v1",
+        "vision.inspection-observation.v1",
     )
     registry.verify(REPO)
 
