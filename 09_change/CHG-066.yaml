@@ -1,0 +1,50 @@
+title: Record current-main DEP-034 Twin skeleton readiness
+trigger: DEP-034 remained NOT_READY although the merged WP-TWIN-001 skeleton satisfies the bounded projector-test predicate
+reason: WP-TWIN-002 requires the local Twin skeleton before its S3 component work can start; the existing producer evidence is exact and current-main verified
+class: C1
+review_risk_class: CR-1
+raised_in: S3
+owner: Asrın
+required_human_approvals: 0
+reviewers: []
+decision: APPROVED
+status: APPROVED
+application_control_item: CTRL-HOST-040
+decision_basis: Mechanical current-main status projection for the exact DEP-034 COMPONENT_READY predicate; no event-spine, database, integration or final Twin semantics are inferred.
+scope:
+  - Bind DEP-034 to WP-TWIN-001 PR #111, its merged skeleton and focused projector tests.
+  - Record DEP-034 READY at COMPONENT_READY.
+  - Preserve DEP-032, DEP-033 and DEP-035 as separate later-stage gates.
+invariants_preserved:
+  - Twin remains a rebuildable read-only projection and never canonical manufacturing authority.
+  - World and branch scope, idempotency and fail-closed gap semantics remain required.
+  - Fixture/local test evidence is not real runtime acceptance evidence.
+precise_requirement: NONE — the bounded DEP-034 predicate is recorded in the edge-specific readiness basis.
+affected_requirements: [FR-TWIN-001, FR-TWIN-002, FR-TWIN-009]
+affected_architecture: [ARCH-TWIN-PROJECTOR, ARCH-TWIN-API, ARCH-WORLD-SCOPE]
+affected_contracts: [NONE]
+affected_work_packages: [WP-TWIN-001, WP-TWIN-002]
+affected_dependencies: [DEP-034]
+affected_evidence:
+  - evidence/readiness/DN-TWIN-SKELETON-DEP-034.json
+  - evidence/WP-TWIN-001/SLICE1_LOCAL_PROJECTION.md
+  - services/operational-twin/tests/test_projector.py
+evidence_staleness:
+  question_answered: true
+  stale: []
+  unaffected:
+    - DEP-032 real NATS event-spine delivery remains unresolved.
+    - DEP-033 real PostgreSQL runtime persistence remains unresolved.
+    - DEP-035 simulated reentrant integration remains a later milestone gate.
+    - WP-TWIN-001 and WP-TWIN-002 are not marked DONE.
+  rerun_required:
+    - Evaluate WP-TWIN-002 startability and its owner-local implementation slice after merge.
+security_authority_impact: NONE
+conditions:
+  - Do not infer WP-TWIN-002 completion or meaningful Twin freshness semantics from DEP-034.
+  - Do not infer real event-spine or PostgreSQL runtime readiness.
+rollout: Merge the exact evidence and READY projection, then evaluate WP-TWIN-002 under its remaining DEP-035 milestone gate.
+rollback: Revert the DEP-034 status projection and edge evidence together.
+required_rerun: [projectctl validate, projectctl startability WP-TWIN-002, current-main Twin projector tests]
+documentation_updates: [docs/05_Dependency_Graph.md, docs/09_Change_Control_Process.md, 09_change/change_requests.csv]
+freeze_context: PRE_M6

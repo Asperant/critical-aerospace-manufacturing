@@ -1222,3 +1222,13 @@ The owner/cycle projection remains the CHG-053 projection: Asrın 74, Batuhan
 32, Selman 17, Yavuz 57; 175 scheduled and 5 unscheduled WPs. Lifecycle state
 is not reset. Rollback restores deployed helper source only and never replays a
 stale Plane snapshot.
+
+## CHG-066 — record current-main DEP-034 Twin skeleton readiness
+
+CHG-066 / CTRL-HOST-040 records DEP-034 as READY at COMPONENT_READY. WP-TWIN-001
+PR #111 is merged at `86781ad`, the local Twin skeleton has explicit world and
+branch scope, duplicate idempotency, stale-order/gap rejection and a green
+focused projector suite (7 passed) on current main. This projection only opens
+the local WP-TWIN-002 start gate; it does not claim real NATS delivery,
+PostgreSQL persistence, simulated-world integration or final freshness and
+epistemic semantics.
