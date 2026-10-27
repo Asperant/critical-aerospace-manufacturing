@@ -900,6 +900,17 @@ fail-closed UNKNOWN handling, credentials, authority boundaries and all product
 semantics remain unchanged. This control does not authorize CORE-003 or any other
 product WP implementation.
 
+## CHG-047 — bounded queue health worker shutdown
+
+CHG-047 / CTRL-HOST-027 is a compatible correction to CHG-044. The advisory
+health probe keeps its four-second overall budget and one-second per-request
+GitHub timeout, while propagating the remaining probe deadline to each worker
+subprocess. This prevents executor cleanup from waiting through multiple
+sequential `gh api` timeouts after the advisory probe has already failed closed.
+Queue pacing, snapshot parallelism, GET-only behavior, JSON compatibility,
+credentials, fail-closed UNKNOWN handling and all product semantics are
+unchanged. The control applies only to host control-plane latency.
+
 ## CHG-045 — root-owned Slot Release v2 diagnostic launcher
 
 CHG-045 / CTRL-HOST-026 adds a fixed, profile-scoped, root-owned GET-only launcher

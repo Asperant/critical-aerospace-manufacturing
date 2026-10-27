@@ -432,6 +432,10 @@ def _slot_waits(profile, key, rows, auto=None, transition=None, policy=None):
     cache_lock = threading.Lock()
 
     gh = t.GitHub(profile, request_timeout=HEALTH_GITHUB_TIMEOUT_SECONDS)
+    # CHG-047: the SIGALRM budget must also bound worker subprocesses.  Without
+    # this deadline, ThreadPoolExecutor cleanup can wait for a sequence of
+    # per-request gh timeouts after the advisory probe has already expired.
+    gh.deadline = time.monotonic() + HEALTH_BUDGET_SECONDS
 
     def evaluate(candidate):
         wp, state = candidate

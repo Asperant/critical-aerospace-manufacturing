@@ -152,6 +152,37 @@ class QueueTests(unittest.TestCase):
                           {'policy_digest': 'p'})
         self.assertEqual(observed, {'profile': 'asrin', 'request_timeout': 1})
 
+    def test_health_probe_binds_worker_deadline_to_health_budget(self):
+        transition = type('Transition', (), {})()
+        observed = {}
+        instances = []
+
+        class GitHub:
+            def __init__(self, profile, request_timeout=30):
+                observed.update(profile=profile, request_timeout=request_timeout)
+                instances.append(self)
+
+        transition.GitHub = GitHub  # pyright: ignore[reportAttributeAccessIssue]
+        auto = type('Auto', (), {
+            'semantic_slot_release_source': staticmethod(lambda *args: None),
+            'semantic_slot_release_proof': staticmethod(lambda *args, **kwargs: None),
+        })
+        rows = {'candidate': task('WP-CORE-004', 'IN_PROGRESS', blocked=True)}
+        executor = type('Executor', (), {
+            '__init__': lambda self, **kwargs: None,
+            '__enter__': lambda self: self,
+            '__exit__': lambda self, *args: None,
+            'submit': lambda self, fn, *args: (fn(*args), object())[1],
+        })
+        with patch.object(q, '_read_slot_cache', return_value={}), \
+             patch.object(q.concurrent.futures, 'ThreadPoolExecutor', executor), \
+             patch.object(q.concurrent.futures, 'as_completed', return_value=[]), \
+             patch.object(q.time, 'monotonic', return_value=10.0):
+            q._slot_waits('asrin', 'sentinel-secret', rows, auto, transition,
+                          {'policy_digest': 'p'})
+        self.assertEqual(observed, {'profile': 'asrin', 'request_timeout': 1})
+        self.assertEqual(instances[0].deadline, 10.0 + q.HEALTH_BUDGET_SECONDS)
+
     def test_slot_release_cache_reuses_only_matching_fingerprint(self):
         source = {
             'wp_id': 'WP-CORE-004',

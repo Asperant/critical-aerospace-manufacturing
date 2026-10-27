@@ -1065,5 +1065,19 @@ class TransitionTests(unittest.TestCase):
         with patch.object(t.subprocess,'run',return_value=response),patch.object(t.pwd,'getpwnam',return_value=account),self.assertRaises(t.Denied):
             t.GitHub('yavuz')
 
+    def test_github_probe_deadline_clips_each_subprocess_timeout(self):
+        client = object.__new__(t.GitHub)
+        client.cache = {}
+        client.env = {}
+        client.uid = 1000
+        client.gid = 1000
+        client.request_timeout = 1
+        client.deadline = 100.0
+        response = subprocess.CompletedProcess([], 0, b'{}', b'')
+        with patch.object(t.time, 'monotonic', return_value=99.75), \
+             patch.object(t.subprocess, 'run', return_value=response) as called:
+            self.assertEqual(client._get('repos/example'), {})
+        self.assertEqual(called.call_args.kwargs['timeout'], 0.25)
+
 
 if __name__=='__main__': unittest.main()
