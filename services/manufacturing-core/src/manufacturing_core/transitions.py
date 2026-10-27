@@ -12,7 +12,7 @@ from collections.abc import Collection, Mapping, Set
 from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Annotated, Any, TypeVar
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import psycopg
 from pydantic import BaseModel, ConfigDict, StringConstraints
@@ -54,8 +54,8 @@ class MaterialHold(BaseModel):
     placed_at: datetime
     released_at: datetime | None = None
     release_reason: str | None = None
-    placed_command_id: str
-    released_command_id: str | None = None
+    placed_command_id: UUID
+    released_command_id: UUID | None = None
 
 
 class TransitionRejected(CommandRejected):

@@ -26,6 +26,9 @@ def setup_lot(connection: psycopg.Connection[DictRow]) -> None:
     connection.execute(
         "INSERT INTO core.lot(id, revision, order_id) VALUES ('L-1', 'l-r1', 'O-1')"
     )
+    connection.execute(
+        "INSERT INTO core.lot_state(id, revision) VALUES ('L-1', 'l-r1')"
+    )
 
 
 def hold_command(key: str = "hold-1") -> PlaceLotOnHold:

@@ -226,7 +226,7 @@ def test_runtime_transition_grants_are_column_scoped(
         "pg_catalog.has_table_privilege(current_user, 'core.material_hold', 'INSERT') AS hold_insert"
     ).fetchone()
     assert privileges == {
-        "lot_update": True,
+        "lot_update": False,
         "lot_revision_update": True,
         "lot_order_update": False,
         "hold_insert": True,
