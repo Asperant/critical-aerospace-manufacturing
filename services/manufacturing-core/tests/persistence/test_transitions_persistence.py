@@ -30,6 +30,15 @@ def setup_lot(connection: psycopg.Connection[DictRow]) -> None:
     )
 
 
+def setup_second_lot(connection: psycopg.Connection[DictRow]) -> None:
+    connection.execute(
+        "INSERT INTO core.lot(id, revision, order_id) VALUES ('L-2', 'l-r1', 'O-1')"
+    )
+    connection.execute(
+        "INSERT INTO core.lot_state(id, revision) VALUES ('L-2', 'l-r1')"
+    )
+
+
 def hold_command(key: str = "hold-1") -> PlaceLotOnHold:
     return PlaceLotOnHold.model_validate(
         {
@@ -86,6 +95,57 @@ def test_hold_release_is_atomic_retained_and_idempotent(
     ).fetchone()
     assert revision is not None
     assert revision["revision"] == "l-r1"
+    event = connection.execute(
+        "SELECT event, publication_status, attempt_count FROM core.outbox "
+        "WHERE event->>'event_type' = 'production.lot-held'"
+    ).fetchone()
+    assert event is not None
+    assert event["event"]["event_type"] == "production.lot-held"
+    assert event["event"]["payload"]["material_hold_id"] == "H-1"
+    assert event["publication_status"] == "PENDING"
+    assert event["attempt_count"] == 0
+
+
+def test_outbox_constraint_failure_rolls_back_core_mutation(
+    connection: psycopg.Connection[DictRow], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    setup_lot(connection)
+    service = CoreTransitionService(connection)
+    permissions = {"core.lot.place_hold"}
+    first = service.place_lot_on_hold(permissions, hold_command())
+    assert first.status is OutcomeStatus.ACCEPTED
+    existing = connection.execute(
+        "SELECT event_id FROM core.outbox WHERE event_type = 'production.lot-held'"
+    ).fetchone()
+    assert existing is not None
+    setup_second_lot(connection)
+    duplicate_event_id = existing["event_id"]
+    monkeypatch.setattr(
+        "manufacturing_core.transitions.new_event_id", lambda: duplicate_event_id
+    )
+    second_data = hold_command("hold-2").model_dump(mode="json")
+    second_data.update(
+        {
+            "correlation_id": "corr-hold-2",
+            "target": {"entity_type": "Lot", "entity_id": "L-2"},
+            "material_hold_id": "H-2",
+        }
+    )
+    second = PlaceLotOnHold.model_validate(second_data)
+    with pytest.raises(psycopg.errors.UniqueViolation):
+        service.place_lot_on_hold(permissions, second)
+    assert (
+        connection.execute(
+            "SELECT 1 FROM core.material_hold WHERE id = 'H-2'"
+        ).fetchone()
+        is None
+    )
+    assert (
+        connection.execute(
+            "SELECT 1 FROM core.command_outcome WHERE idempotency_key = 'hold-2'"
+        ).fetchone()
+        is None
+    )
 
 
 def test_hold_dispatch_and_authorization_negative_paths(

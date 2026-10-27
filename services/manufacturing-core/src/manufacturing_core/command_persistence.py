@@ -28,6 +28,7 @@ from manufacturing_core.commands import (
     validate_preconditions,
 )
 from manufacturing_core.observability import record
+from manufacturing_core.outbox import OutboxRecord, OutboxRepository
 
 
 class PostgresCommandLedger:
@@ -41,7 +42,8 @@ class PostgresCommandLedger:
         command: TypedOperationalCommand,
         *,
         current_revision: str | None,
-        mutate: Callable[[], None] | None = None,
+        mutate: Callable[[], Any] | None = None,
+        emit: Callable[[Any], OutboxRecord] | None = None,
         now: datetime | None = None,
         expected_world_id: str | None = None,
     ) -> CommandOutcome:
@@ -81,8 +83,11 @@ class PostgresCommandLedger:
                 validate_preconditions(
                     command, current_revision=current_revision, now=now
                 )
+                mutation_result: Any = None
                 if mutate is not None:
-                    mutate()
+                    mutation_result = mutate()
+                if emit is not None:
+                    OutboxRepository(self.connection).insert(emit(mutation_result))
                 outcome = self._persist_outcome(command, OutcomeStatus.ACCEPTED)
             except CommandRejected as error:
                 outcome = self._persist_outcome(
