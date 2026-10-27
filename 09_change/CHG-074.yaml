@@ -1,0 +1,55 @@
+title: Bind the bounded Core event-contract slice to DEP-023
+trigger: DEP-023 remained NOT_READY although the envelope and current Core domain-event contract artifacts are merged and validated
+reason: S2/S3 closure requires a precise producer/consumer contract binding for the initial Core async event family without claiming broker transport or integrated event-spine behavior
+class: C1
+review_risk_class: CR-1
+raised_in: S3
+owner: Asrın
+required_human_approvals: 0
+reviewers: []
+decision: APPROVED
+status: APPROVED
+application_control_item: CTRL-HOST-048
+decision_basis: Mechanical edge-specific contract readiness reconciliation for existing merged envelope, Core event schemas, fixtures, registry declarations and boundary tests; no runtime, broker or authority-installation change.
+scope:
+  - Bind DEP-023 to the bounded initial Core async event-contract family.
+  - Record DEP-023 READY at CONTRACT_READY.
+  - Preserve explicit LotHeld.v1 compatibility and LotHeld.v2 producer/consumer versioning.
+  - Keep DEP-024, DEP-025, downstream consumer adoption and event-spine integration separate.
+invariants_preserved:
+  - Core remains the canonical producer of Core manufacturing facts.
+  - Contract validation is not broker delivery, consumer projection or physical effect verification.
+  - LotHeld.v1 remains unchanged and active.
+  - Synthetic fixtures remain contract examples, not real-factory observations.
+precise_requirement: The bounded initial Core async event family shall publish event-envelope.v1 metadata plus LotHeld.v1, LotHeld.v2 and LotDispatchAuthorized.v1 schemas, fixtures, explicit registry producer/consumer declarations and green producer/consumer boundary validation.
+affected_requirements: [FR-EVT-001, FR-EVT-006, FR-EVT-008, NFR-DATA-005]
+affected_architecture: [ARCH-CTR-EVTSCHEMA, ARCH-EVT-SCHEMA, ARCH-CTR-VERSIONING]
+affected_contracts: [cap.event-envelope.v1, core.lot-held.v1, core.lot-held.v2, core.lot-dispatch-authorized.v1]
+affected_work_packages: [WP-EVT-001, WP-EVT-002, WP-CORE-005]
+affected_dependencies: [DEP-023]
+affected_evidence:
+  - evidence/readiness/DN-EVT-CONTRACTS-DEP-023.json
+  - evidence/CTRL-HOST-048/S2-S3-REACHABILITY-AUDIT-2026-10-27.md
+  - packages/contracts/registry/core.lot-held.v1.json
+  - packages/contracts/registry/core.lot-held.v2.json
+  - packages/contracts/registry/core.lot-dispatch-authorized.v1.json
+  - ci/tests/test_core_domain_event_contracts.py
+  - ci/tests/test_event_envelope.py
+evidence_staleness:
+  question_answered: true
+  stale: []
+  unaffected:
+    - DEP-024 remains the real outbox-to-NATS-to-consumer integration edge.
+    - DEP-025 remains the NATS runtime edge.
+    - Envelope propagation, broker ACL installation, downstream adoption and event-spine acceptance remain separate.
+    - No WP-EVT-001/WP-EVT-002/WP-CORE-005 DONE claim is made.
+security_authority_impact: NONE
+conditions:
+  - Do not infer NATS/JetStream delivery or runtime subject/ACL enforcement.
+  - Do not infer consumer projection or effect verification from schema validation.
+  - Do not replace the bounded event family with an unapproved global event contract claim.
+rollout: Merge the control-only edge reconciliation after focused contract validation, then re-run the S2/S3 dependency audit.
+rollback: Revert the DEP-023 edge projection, readiness artifact and this control record together.
+required_rerun: [projectctl validate, contract registry and authority tests, event envelope tests, Core domain-event producer/consumer tests, contract schema check]
+documentation_updates: [docs/05_Dependency_Graph.md, docs/09_Change_Control_Process.md, 09_change/change_requests.csv]
+freeze_context: PRE_M6
