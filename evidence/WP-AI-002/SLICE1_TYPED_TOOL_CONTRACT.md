@@ -27,6 +27,7 @@ and does not claim orchestrator or RCA completion.
 - `ci/tests/test_contract_registry.py`: passed
 - `ci/tests/test_contract_producer_authority.py`: passed
 - `cap_contracts.ci_gate`: PASS, 5 validated, 0 failures
+- `ci/test-strategy.json`: registered as `TEST-AI-002-001` in the unit tooling suite
 
 The remaining WP-AI-002 typed clients, runtime allowlist enforcement and
 orchestrator integration are separate work and are not claimed by this slice.
