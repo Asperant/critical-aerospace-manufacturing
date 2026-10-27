@@ -1,0 +1,28 @@
+{
+  "contract_id": "ai.tool-interface.v1",
+  "name": "Typed AI tool interface",
+  "contract_type": "QUERY",
+  "version": 1,
+  "semantic_owner": "Asrın Dündar",
+  "canonical_producer": "ai-intelligence",
+  "declared_consumers": ["AI orchestrator", "RCA"],
+  "purpose": "Versioned, typed and authority-tagged AI tools for READ, SIMULATE and PROPOSE operations.",
+  "output_schema": {"path": "services/ai-intelligence/contracts/v1/ai-tool-interface.v1.schema.json", "sha256": "24b40734647d425f39f567419807de08a60473ec6ed23924d3a90bd47b915848"},
+  "fixtures": [
+    {"path": "services/ai-intelligence/contracts/v1/ai-tool.core-order-read.json", "sha256": "ad3478ad78f5669e9958c922145960515d874d07eb9811410423f37f485768b9"},
+    {"path": "services/ai-intelligence/contracts/v1/ai-tool.twin-snapshot-read.json", "sha256": "73d9cbac666abb522d856b5811474e64e392d9bb88404ccb82836b3578b9dc0e"},
+    {"path": "services/ai-intelligence/contracts/v1/ai-tool.simulate-recovery.json", "sha256": "4ae29e9aeae9149469beaaec266ab6cd523c0dfac88a4bab0403be9842d65e5b"},
+    {"path": "services/ai-intelligence/contracts/v1/ai-tool.propose-recovery.json", "sha256": "312db622d954f1b7990ae2dc250e6d2ece2cea9dae2af91e6432870419a08121"}
+  ],
+  "authority_level": "AI may read, simulate and propose; it has no canonical manufacturing mutation or protected-action execution authority.",
+  "sync_semantics": "SYNC",
+  "security_classification": "Internal tool metadata; no credentials, secrets or hidden Simulator Oracle state",
+  "semantics": {
+    "identity": "tool_id and tool_version are stable; invocation_id is unique per call",
+    "world": "world_id is explicit and separates primary and counterfactual contexts",
+    "authority": "READ cannot mutate; SIMULATE cannot mutate canonical state; PROPOSE emits no executable command",
+    "allowlist": "core.order.read:READ, twin.scheduling_snapshot.read:READ, sim.recovery.counterfactual:SIMULATE, ai.recovery.propose:PROPOSE",
+    "negative_surface": "No shell, arbitrary SQL, credentials, broker administration or direct Core mutation tool is allowlisted"
+  },
+  "deprecation": {"status": "ACTIVE", "replacement": null}
+}

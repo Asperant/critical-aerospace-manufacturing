@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cap:ai:tool-interface:v1",
+  "title": "Typed AI tool interface v1",
+  "oneOf": [
+    {"$ref": "#/$defs/CoreOrderRead"},
+    {"$ref": "#/$defs/TwinSnapshotRead"},
+    {"$ref": "#/$defs/SimulateRecovery"},
+    {"$ref": "#/$defs/ProposeRecovery"}
+  ],
+  "$defs": {
+    "CoreOrderRead": {
+      "type": "object",
+      "properties": {
+        "tool_id": {"const": "core.order.read"}, "tool_version": {"const": 1},
+        "invocation_id": {"type": "string", "format": "uuid"}, "world_id": {"type": "string", "pattern": "^\\S+$"},
+        "authority": {"const": "READ"}, "input": {"type": "object", "properties": {"order_id": {"type": "string", "pattern": "^\\S+$"}}, "required": ["order_id"], "additionalProperties": false}
+      },
+      "required": ["tool_id", "tool_version", "invocation_id", "world_id", "authority", "input"],
+      "additionalProperties": false
+    },
+    "TwinSnapshotRead": {
+      "type": "object",
+      "properties": {
+        "tool_id": {"const": "twin.scheduling_snapshot.read"}, "tool_version": {"const": 1},
+        "invocation_id": {"type": "string", "format": "uuid"}, "world_id": {"type": "string", "pattern": "^\\S+$"},
+        "authority": {"const": "READ"}, "input": {"type": "object", "properties": {"snapshot_revision": {"type": "string", "pattern": "^\\S+$"}}, "required": ["snapshot_revision"], "additionalProperties": false}
+      },
+      "required": ["tool_id", "tool_version", "invocation_id", "world_id", "authority", "input"],
+      "additionalProperties": false
+    },
+    "SimulateRecovery": {
+      "type": "object",
+      "properties": {
+        "tool_id": {"const": "sim.recovery.counterfactual"}, "tool_version": {"const": 1},
+        "invocation_id": {"type": "string", "format": "uuid"}, "world_id": {"type": "string", "pattern": "^\\S+$"},
+        "authority": {"const": "SIMULATE"}, "input": {"type": "object", "properties": {"scenario_id": {"type": "string", "pattern": "^\\S+$"}, "change_set": {"type": "array", "items": {"type": "string", "pattern": "^\\S+$"}}}, "required": ["scenario_id", "change_set"], "additionalProperties": false}
+      },
+      "required": ["tool_id", "tool_version", "invocation_id", "world_id", "authority", "input"],
+      "additionalProperties": false
+    },
+    "ProposeRecovery": {
+      "type": "object",
+      "properties": {
+        "tool_id": {"const": "ai.recovery.propose"}, "tool_version": {"const": 1},
+        "invocation_id": {"type": "string", "format": "uuid"}, "world_id": {"type": "string", "pattern": "^\\S+$"},
+        "authority": {"const": "PROPOSE"}, "input": {"type": "object", "properties": {"action_kind": {"type": "string", "enum": ["CONTINUE", "HOLD", "ALTERNATE_RESOURCE", "MAINTENANCE", "REWORK"]}, "base_revision": {"type": "string", "pattern": "^\\S+$"}, "evidence_refs": {"type": "array", "items": {"type": "string", "pattern": "^\\S+$"}, "minItems": 1}}, "required": ["action_kind", "base_revision", "evidence_refs"], "additionalProperties": false}
+      },
+      "required": ["tool_id", "tool_version", "invocation_id", "world_id", "authority", "input"],
+      "additionalProperties": false
+    }
+  }
+}
