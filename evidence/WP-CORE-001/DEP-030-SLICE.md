@@ -19,6 +19,7 @@ granting mutation, approval or execution authority.
 - Core query plus snapshot focused tests: 43 passed.
 - Ruff format/check and the manufacturing-core Pyright project: clean; 0
   errors, 0 warnings, 0 informations.
+- `git diff --check`: clean on the producer branch before publication.
 
 This is a producer contract slice, not Twin export, Scheduler implementation,
 transport, database snapshot assembly, eligibility calculation, maintenance
