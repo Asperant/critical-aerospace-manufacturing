@@ -47,6 +47,8 @@ def test_production_projection_is_traceable_and_read_only() -> None:
     assert query is not None
     assert query["source_event_id"] == "E-1"
     assert projector.health()["source_revision"] == "E-1"
+    assert query["epistemic_class"] == "OBSERVED"
+    assert query["freshness"] == "FRESH"
     assert not hasattr(projector, "mutate")
 
 
@@ -65,6 +67,48 @@ def test_old_and_gap_events_fail_closed_and_gap_marks_stale() -> None:
     with pytest.raises(ProjectionGap):
         projector.apply(event("E-3", 3))
     assert projector.health()["status"] == "STALE"
+    assert projector.health()["freshness"] == "STALE"
+    assert projector.health()["degraded_reason"] == "projection gap requires reconciliation"
+
+
+def test_epistemic_class_is_explicit_and_recoverable_degradation_is_visible() -> None:
+    projector = Projector(ProjectionState("PRIMARY"))
+    observed = event("E-1", 1)
+    projector.apply(
+        ProjectionEvent(
+            observed.event_id,
+            observed.event_type,
+            observed.world_id,
+            observed.aggregate_type,
+            observed.aggregate_id,
+            observed.aggregate_version,
+            {**observed.payload, "epistemic_class": "INFERRED"},
+            observed.branch_id,
+        )
+    )
+    projector.mark_degraded("event consumer lag")
+    assert projector.query("Lot", "LOT-1")["epistemic_class"] == "INFERRED"  # type: ignore[index]
+    assert projector.health()["freshness"] == "DEGRADED"
+    assert projector.health()["degraded_reason"] == "event consumer lag"
+
+
+def test_unknown_epistemic_class_fails_before_projection_effect() -> None:
+    projector = Projector(ProjectionState("PRIMARY"))
+    item = event("E-1", 1)
+    with pytest.raises(ValueError, match="epistemic_class"):
+        projector.apply(
+            ProjectionEvent(
+                item.event_id,
+                item.event_type,
+                item.world_id,
+                item.aggregate_type,
+                item.aggregate_id,
+                item.aggregate_version,
+                {**item.payload, "epistemic_class": "GUESS"},
+                item.branch_id,
+            )
+        )
+    assert projector.query("Lot", "LOT-1") is None
 
 
 def test_world_and_branch_are_admitted_explicitly() -> None:

@@ -82,6 +82,7 @@ class ProjectionState:
     aggregate_revisions: dict[tuple[str, str], int] = field(default_factory=dict)
     source_revision: str | None = None
     status: str = "FRESH"
+    degraded_reason: str | None = None
 
     def snapshot(self) -> dict[str, Any]:
         return {
@@ -92,6 +93,7 @@ class ProjectionState:
             "aggregate_revisions": dict(self.aggregate_revisions),
             "source_revision": self.source_revision,
             "status": self.status,
+            "degraded_reason": self.degraded_reason,
         }
 
 
@@ -105,12 +107,19 @@ class ApplyResult:
 
 Handler = Callable[[ProjectionState, ProjectionEvent], None]
 
+EPISTEMIC_CLASSES = frozenset(
+    {"ACTUAL", "OBSERVED", "INFERRED", "PREDICTED", "PLANNED", "COUNTERFACTUAL"}
+)
+
 
 def _entity_key(event: ProjectionEvent) -> tuple[str, str]:
     return event.aggregate_type, event.aggregate_id
 
 
 def _set_entity(state: ProjectionState, event: ProjectionEvent, **fields: Any) -> None:
+    epistemic_class = event.payload.get("epistemic_class", "OBSERVED")
+    if epistemic_class not in EPISTEMIC_CLASSES:
+        raise AdmissionError("epistemic_class: unsupported class")
     key = _entity_key(event)
     current = dict(state.entities.get(key, {}))
     current.update(fields)
@@ -120,6 +129,7 @@ def _set_entity(state: ProjectionState, event: ProjectionEvent, **fields: Any) -
         aggregate_version=event.aggregate_version,
         source_event_id=event.event_id,
         source_revision=event.payload.get("source_revision", event.event_id),
+        epistemic_class=epistemic_class,
     )
     state.entities[key] = current
 
@@ -200,6 +210,7 @@ class Projector:
             raise ProjectionOrderError("event is older than applied aggregate revision")
         if event.aggregate_version != previous + 1:
             self.state.status = "STALE"
+            self.state.degraded_reason = "projection gap requires reconciliation"
             raise ProjectionGap("aggregate revision gap requires reconciliation")
         namespace = event.event_type.split(".", 1)[0]
         handler = HANDLERS.get(namespace)
@@ -210,6 +221,7 @@ class Projector:
         self.state.aggregate_revisions[key] = event.aggregate_version
         self.state.source_revision = event.event_id
         self.state.status = "FRESH"
+        self.state.degraded_reason = None
         return ApplyResult(
             "PROCESSED", event.event_id, event.event_id, self.state.status
         )
@@ -220,13 +232,35 @@ class Projector:
 
     def query(self, aggregate_type: str, aggregate_id: str) -> dict[str, Any] | None:
         value = self.state.entities.get((aggregate_type, aggregate_id))
-        return deepcopy(value) if value is not None else None
+        if value is None:
+            return None
+        result = deepcopy(value)
+        result["freshness"] = self.state.status
+        return result
+
+    def mark_degraded(self, reason: str) -> None:
+        """Mark a recoverable projection dependency issue without hiding STALE."""
+
+        if not isinstance(reason, str) or not reason.strip():
+            raise ValueError("reason must be nonblank")
+        if self.state.status != "STALE":
+            self.state.status = "DEGRADED"
+        self.state.degraded_reason = reason
 
     def health(self) -> dict[str, Any]:
         return {
             "status": self.state.status,
+            "freshness": self.state.status,
             "world_id": self.state.world_id,
             "branch_id": self.state.branch_id,
             "source_revision": self.state.source_revision,
             "applied_event_count": len(self.state.applied_events),
+            "epistemic_classes": sorted(
+                {
+                    value["epistemic_class"]
+                    for value in self.state.entities.values()
+                    if "epistemic_class" in value
+                }
+            ),
+            "degraded_reason": getattr(self.state, "degraded_reason", None),
         }
