@@ -1,5 +1,6 @@
 [Unit]
-Description=Bounded canonical preparation and guarded AUTO_NEXT
+Description=Bounded canonical preparation and guarded AUTO_NEXT (on-demand)
+ConditionPathExists=/etc/cap-plane-prepare.enabled
 After=network-online.target
 
 [Service]

@@ -9,6 +9,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[2]
+PROJECTION_LAUNCHER = HERE / "cap-plane-projection-reconcile"
 spec = importlib.util.spec_from_file_location(
     "install_auto_next_under_test", HERE / "install_auto_next.py"
 )
@@ -60,6 +61,22 @@ class GrantTests(unittest.TestCase):
         )
         self.assertTrue(GRANT.fullmatch(ins.reconcile_grants(policy_block())[1]))
 
+    def test_projection_grants_are_exact_profile_scoped_commands(self):
+        lines = ins.projection_grants(policy_block())
+        self.assertEqual(len(lines[1:]), 4)
+        self.assertTrue(all("WP-*" not in line for line in lines[1:]))
+        self.assertTrue(
+            all("cap-plane-projection-reconcile.py" in line for line in lines[1:])
+        )
+
+    def test_projection_launcher_uses_the_exact_granted_argv(self):
+        text = PROJECTION_LAUNCHER.read_text()
+        self.assertIn(
+            "exec /usr/bin/sudo -n /usr/bin/python3 -I "
+            '/usr/local/libexec/cap-plane-projection-reconcile.py "$CAP_PROFILE"',
+            text,
+        )
+
 
 class MappingTests(unittest.TestCase):
     def test_policy_pinned_implementations_are_all_deployed_files(self):
@@ -69,6 +86,7 @@ class MappingTests(unittest.TestCase):
         for kind, dest in ins.IMPLEMENTATION_TARGETS.items():
             with self.subTest(kind=kind):
                 self.assertIn(dest, deployed)
+        self.assertIn("projection_reconcile", ins.IMPLEMENTATION_TARGETS)
 
     def test_rollback_restores_the_new_files_and_grant(self):
         restore = ins.restore_targets(ins.deployment_mapping())

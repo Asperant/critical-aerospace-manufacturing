@@ -1,0 +1,81 @@
+CHG-054:
+  title: Simplify product execution startability and make control-plane scheduling advisory
+  trigger: Approved planning-owner decision to remove control-plane authorization coupling from product implementation start
+  reason: Queue health, Slot Release proofs and preparation evidence had become scheduling gates even when canonical owner/scope and HARD START dependency semantics were sufficient to decide whether implementation could begin.
+  class: C3
+  review_risk_class: CR-3
+  raised_in: S4
+  owner: Asrın
+  application_control_item: CTRL-HOST-031
+  required_human_approvals: 0
+  decision: APPROVED
+  status: APPROVED
+  human_decision_basis: Explicit planning-owner decision on 27 October 2026; CHG-018 zero required development approvals remains applicable.
+  doctrine:
+    start: fail-open outside canonical owner/scope ambiguity, unresolved HARD+START dependency, or unsafe/spec-conflicting operation
+    done: fail-closed; UNKNOWN is never PASS
+  affected_requirements:
+    - NONE — product requirements and manufacturing authority boundaries are unchanged
+  requirements_declaration: NONE — control-plane governance/architecture change; no product requirement semantics changed
+  affected_architecture:
+    - Existing control-plane/projectctl/Plane boundary; execution scheduling is advisory and no new runtime platform is introduced
+  affected_contracts:
+    - id: CTRL-STARTABILITY-v1
+      compatibility: NON_BREAKING
+      consumers_reviewed: [projectctl, cap-plane-transition, cap-plane-queue]
+    - id: CTRL-QUEUE-READ-v1
+      compatibility: NON_BREAKING
+      consumers_reviewed: [cap-plane-queue]
+  affected_work_packages:
+    - NONE — product WP implementation and lifecycle data are not reset or selected by this change
+  affected_dependencies:
+    - Canonical HARD+START edges remain the only dependency class that can block implementation start
+    - HARD INTEGRATION/MILESTONE_EXIT/FREEZE edges remain applicable at their existing later gates
+  gates:
+    removed_from_start:
+      - queue AMBIGUOUS/NO_TASK/UNAVAILABLE
+      - Plane health/read failures and current_task absence
+      - Slot Release v2 proof/cache/fingerprint/continuity
+      - audit continuity and policy/provenance cache freshness
+      - READY.md/DoR/preflight source availability
+      - metadata reconciliation requirements
+    retained_for_start:
+      - canonical owner and scope are uniquely known
+      - unresolved canonical HARD+START dependency
+      - unsafe or spec-conflicting operation requiring human decision
+    retained_for_merge_ready:
+      - current PR CI, scope/static/contract checks and merge correctness
+    retained_for_done:
+      - exact merged SHA, required main/post-merge CI, real DoD/evidence, applicable HARD acceptance, traceability and runtime/integration verification
+  startability_rule:
+    schema: cap-startability-v1
+    result: STARTABLE
+    predicates:
+      - canonical WP resolves exactly once
+      - canonical owner is unambiguous
+      - canonical scope is present and non-contradictory
+      - no unresolved HARD+START dependency edge exists
+  scheduler_mode:
+    queue: advisory diagnostics only; no authorization exit status
+    auto_next: no automatic lifecycle promotion is invoked from product transitions
+    preparation: on-demand only; automatic timer is disabled by default
+    slot_release: historical diagnostic/evidence compatibility remains, but it is not required for product scheduling
+  evidence:
+    - tools/projectctl/tests/test_execution_queue.py
+    - tools/host/plane-queue/test_auto_queue.py
+    - tools/host/plane-queue/test_queue.py
+    - tools/host/plane-transition/test_transition.py
+    - .venv/bin/projectctl startability WP-CORE-009
+  rollout: Merge the control-only branch with required technical CI, deploy only merged reference source, refresh installed helpers/policy and run the WP-CORE-009 smoke evaluation without changing its lifecycle.
+  rollback: Restore the prior deployed helper source using the existing root-only backup/rollback procedure; do not replay Plane snapshots or reset product lifecycle state.
+  documentation_updates:
+    - 09_change/CHG-054.yaml
+    - 09_change/change_requests.csv
+    - docs/09_Change_Control_Process.md
+    - AGENTS.md
+    - project_control/TEAM_WORKFLOW.md
+    - project_control/ENGINEERING_WORKFLOW.md
+    - project_control/PROJECT_SETUP_MASTER_EXECUTION_SPEC.md
+    - tools/projectctl/README.md
+    - tools/host/plane-queue/README.md
+  freeze_context: POST_M6_PERMITTED

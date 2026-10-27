@@ -38,4 +38,7 @@ CHG-048,Hard-bound all queue external reads and worker cleanup,C1,CR-2,Asrın,AP
 CHG-049,Generic Plane WP static-drift reconciliation with mutable lifecycle preservation,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-PM-016
 CHG-050,Generic Plane WP relationship-drift reconciliation with exact association cleanup,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-PM-017
 CHG-051,Align queue identity validation with canonical Plane assignment policy,C1,CR-2,Asrın,APPROVED,APPROVED,CTRL-HOST-029
+CHG-052,Generic audit-to-Plane orthogonal BLOCKED projection reconciliation,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-030
+CHG-053,Restore canonical Plane owner assignments and approved single-cycle projection,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-PM-018
+CHG-054,Simplify product execution startability and make control-plane scheduling advisory,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-031
 CHG-056,Preserve the first telemetry warning on fresh monotonic clocks,C1,CR-2,Asrın,APPROVED,APPROVED,CTRL-HOST-032

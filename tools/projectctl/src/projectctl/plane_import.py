@@ -1,7 +1,7 @@
 """Bounded, explicitly approved WP import; canonical data is always regenerated.
 
 No sync command, persistent execution store, updates, deletes or invitations.
-The terminal cycle policy applies only to Plane's coordination projection.
+The approved single-cycle policy applies only to Plane's coordination projection.
 """
 
 import json
@@ -10,9 +10,16 @@ from copy import deepcopy
 from html.parser import HTMLParser
 
 from .plane import PlaneError, PlaneReader
-from .plane_plan import VISIBLE_ID, WP_ID, _description, bootstrap_plan
+from .plane_plan import (
+    SINGLE_CYCLE_POLICY,
+    VISIBLE_ID,
+    WP_ID,
+    _description,
+    approved_single_cycle,
+    bootstrap_plan,
+)
 
-POLICY = "human-approved-terminal-target-completion-v1"
+POLICY = SINGLE_CYCLE_POLICY
 ASRIN = "Asrın Dündar"
 UNSCHEDULED = ["WP-R2-001", "WP-R2-002", "WP-R2-003", "WP-S-001", "WP-X-001"]
 MILESTONES = {
@@ -148,9 +155,9 @@ def expected_projection(project, audit):
         )
     ):
         raise PlaneError("Unexpected structures or invented cycle dates")
-    asrin = base["owner_mapping"].get(ASRIN)
-    if not asrin:
-        raise PlaneError("Exact Asrın project membership required")
+    owner_map = base["owner_mapping"]
+    if not owner_map or any(not member_id for member_id in owner_map.values()):
+        raise PlaneError("Exact canonical owner project membership required")
     modules = {r["name"]: r["id"] for r in audit["modules"]}
     cycles = {r["name"]: r["id"] for r in audit["cycles"]}
     labels = {r["name"]: r["id"] for r in audit["labels"]}
@@ -164,15 +171,15 @@ def expected_projection(project, audit):
         w = wps[op["identity"]]
         metadata = dict(op["canonical_metadata"])
         ids = metadata["cycle_ids"]
-        terminal = max(ids, key=lambda s: int(s[1:])) if ids else None
+        cycle = approved_single_cycle(ids)
         metadata.update(
             canonical_sprint_window=w.sprint_window,
             raw_planning_window=w.raw_planning_window,
             PrimaryOwner=metadata["canonical_owner"],
             plane_cycle_projection={
                 "policy": POLICY,
-                "coordination_cycle": terminal,
-                "meaning": "coordination / target-completion projection; canonical full window remains authoritative",
+                "coordination_cycle": cycle,
+                "meaning": "single-cycle operational projection; canonical full window remains authoritative",
             },
         )
         body = {
@@ -181,7 +188,7 @@ def expected_projection(project, audit):
             "external_source": "projectctl",
             "description_html": _description(metadata),
             "state": backlog,
-            "assignees": [asrin] if metadata["canonical_owner"] == ASRIN else [],
+            "assignees": [owner_map[metadata["canonical_owner"]]],
             "labels": [labels["MS:" + w.milestone]]
             if w.milestone in MILESTONES
             else [],
@@ -192,7 +199,7 @@ def expected_projection(project, audit):
                 "metadata": metadata,
                 "create_body": body,
                 "module_id": modules[w.capability_area],
-                "cycle_id": cycles[terminal] if terminal else None,
+                "cycle_id": cycles[cycle] if cycle else None,
             }
         )
     single = sum(len(o["metadata"]["cycle_ids"]) == 1 for o in projected)
@@ -207,7 +214,7 @@ def expected_projection(project, audit):
         or multi != 117
         or unscheduled != UNSCHEDULED
         or dict(distribution) != MILESTONES
-        or sum(bool(o["create_body"]["assignees"]) for o in projected) != 74
+        or sum(bool(o["create_body"]["assignees"]) for o in projected) != 180
     ):
         raise PlaneError(
             "Canonical approved import invariants failed; no count correction permitted"
@@ -228,13 +235,13 @@ def expected_projection(project, audit):
         "pilot_wp_id": pilot,
         "projections": projected,
         "missing_owners": base["missing_owners"],
-        "assignment_policy": "74 exact Asrın assignments; 106 unassigned",
+        "assignment_policy": "All 180 canonical owner assignments; queue filtering is profile-scoped",
         "semantic_end_state": {
             "work_items": 180,
             "modules": 180,
             "cycles": 175,
             "milestones": 175,
-            "assignees": 74,
+            "assignees": 180,
         },
         "single_cycle": single,
         "multi_cycle": multi,
@@ -846,7 +853,6 @@ class WPImport:
             "cycle_relationships": 175,
             "milestone_relationships": 175,
             "asrin_assigned": 74,
-            "unassigned": 106,
             "module_distribution": dict(
                 sorted(
                     Counter(
@@ -865,8 +871,10 @@ class WPImport:
             ),
             "milestone_distribution": projection["milestone_distribution"],
             "unscheduled_ids": UNSCHEDULED,
-            "single_cycle": 57,
-            "terminal_multi_cycle": 117,
+            "single_cycle": 58,
+            "multi_cycle_windows": 117,
+            "assigned": 180,
+            "unassigned": 0,
             "issue_relations": 0,
             "source_manifest": self.project.source_manifest,
             "execution_evidence": "NOT ASSERTED",
