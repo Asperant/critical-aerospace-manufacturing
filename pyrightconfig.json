@@ -4,7 +4,9 @@
     "ci",
     "packages/contracts/src",
     "services/manufacturing-simulator/src",
-    "services/manufacturing-simulator/tests"
+    "services/manufacturing-simulator/tests",
+    "services/scheduler-service/src",
+    "services/scheduler-service/tests"
   ],
   "exclude": ["**/.venv", "**/__pycache__"],
   "pythonVersion": "3.11",
@@ -19,6 +21,13 @@
       "extraPaths": [
         "services/manufacturing-simulator/src",
         "services/manufacturing-simulator/tests"
+      ]
+    },
+    {
+      "root": "services/scheduler-service",
+      "extraPaths": [
+        "services/scheduler-service/src",
+        "services/scheduler-service/tests"
       ]
     }
   ]
