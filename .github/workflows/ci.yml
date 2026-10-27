@@ -100,6 +100,8 @@ jobs:
           uv run --project ci --locked ruff check packages/event-consumer
           uv run --project ci --locked ruff format --check packages/event-consumer
           uv run --project ci --locked pyright --project packages/event-consumer/pyrightconfig.json
+      - name: Architecture boundary rules (WP-EVT-005)
+        run: uv run --project ci --locked python ci/scripts/check_architecture_boundaries.py
       - name: Set up Node (version pinned in .node-version)
         uses: actions/setup-node@v4
         with:
