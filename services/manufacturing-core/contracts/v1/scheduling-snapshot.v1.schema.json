@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cap:core:scheduling-snapshot:v1",
+  "title": "Core SchedulingSnapshot contract v1",
+  "description": "Bounded, immutable planning input; it carries no simulator Oracle state and has no mutation authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "world_id",
+    "snapshot_revision",
+    "generated_at",
+    "freshness",
+    "lots",
+    "equipment",
+    "current_schedule_version"
+  ],
+  "properties": {
+    "contract_version": {"const": "core.scheduling-snapshot.v1"},
+    "world_id": {"type": "string", "pattern": "^\\S+$"},
+    "snapshot_revision": {"type": "string", "pattern": "^\\S+$"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "valid_until"],
+      "properties": {
+        "status": {"enum": ["FRESH", "DEGRADED", "STALE"]},
+        "valid_until": {"type": "string", "format": "date-time"}
+      }
+    },
+    "lots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "revision",
+          "route_position",
+          "priority",
+          "due_at",
+          "eligible_equipment_ids"
+        ],
+        "properties": {
+          "id": {"type": "string", "pattern": "^\\S+$"},
+          "revision": {"type": "string", "pattern": "^\\S+$"},
+          "route_position": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["route_id", "visit_id", "position", "operation_class_id"],
+            "properties": {
+              "route_id": {"type": "string", "pattern": "^\\S+$"},
+              "visit_id": {"type": "string", "pattern": "^\\S+$"},
+              "position": {"type": "integer", "minimum": 0},
+              "operation_class_id": {"type": "string", "pattern": "^\\S+$"}
+            }
+          },
+          "priority": {"type": "integer", "minimum": 0},
+          "due_at": {"type": "string", "format": "date-time"},
+          "eligible_equipment_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^\\S+$"}
+          }
+        }
+      }
+    },
+    "equipment": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "revision", "maintenance_state"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^\\S+$"},
+          "revision": {"type": "string", "pattern": "^\\S+$"},
+          "maintenance_state": {
+            "enum": ["AVAILABLE", "PLANNED_MAINTENANCE", "IN_MAINTENANCE", "UNAVAILABLE"]
+          }
+        }
+      }
+    },
+    "current_schedule_version": {
+      "type": ["string", "null"],
+      "pattern": "^\\S+$"
+    }
+  }
+}

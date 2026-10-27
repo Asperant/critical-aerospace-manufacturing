@@ -55,3 +55,18 @@ Fixture `order-query.normal.json` has CNC then metrology.
 Fixture `order-query.reentrant.json` has CNC, metrology, then CNC with distinct
 visit IDs in deliberately nonlexicographic traversal order. Both include two
 lots and cross-referenced serialized components.
+
+## Bounded SchedulingSnapshot v1
+
+`scheduling-snapshot.v1.schema.json` and `scheduling-snapshot.normal.json`
+publish the minimum producer contract bound to DEP-030: an immutable
+world/revision/freshness envelope; explicit lot route position and current lot
+revision; lot-specific eligible equipment; priority and due date; and current
+equipment maintenance state. `current_schedule_version` is included as the
+snapshot's current schedule reference. The fixture is a **SYNTHETIC TEST**
+example, not a factory observation.
+
+This is a contract slice for the later Twin/Scheduler read surface. It does not
+implement Twin export, a scheduler, transport, database assembly, eligibility
+calculation, maintenance mutation, or execution authority. Hidden Simulator
+Oracle state is explicitly outside the schema.

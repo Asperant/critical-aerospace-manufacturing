@@ -1,0 +1,60 @@
+title: Publish the bounded SchedulingSnapshot producer contract for DEP-030
+trigger: DEP-030 requires route position, equipment eligibility, current lot revision, priorities and due dates, and maintenance state, none of which are present together in core.order-query.v1
+reason: The Core query contract is insufficient for the exact snapshot consumer predicate; a minimum versioned read-only producer contract is required before WP-TWIN-003 may start
+class: C2
+review_risk_class: CR-2
+raised_in: S3
+owner: Asrın
+required_human_approvals: 0
+reviewers: []
+decision: APPROVED
+status: APPROVED
+decision_basis: This is a bounded producer-contract extension within the Core contract surface. It publishes only the exact DEP-030 fields and preserves the Twin projection, Scheduler candidate-only, Simulator Oracle isolation and Core authority invariants.
+scope:
+  - Add core.scheduling-snapshot.v1 as a closed Snapshot Contract schema and synthetic fixture.
+  - Register the contract and its producer authority under manufacturing-core.
+  - Add contract and negative-path tests for all DEP-030 dimensions and Oracle-state rejection.
+  - Record the bounded producer slice without projecting DEP-030 READY before current-main verification.
+invariants_preserved:
+  - The snapshot is immutable read-only planning input and cannot mutate Core, Twin, Simulator or equipment state.
+  - Lot revision and snapshot revision remain opaque identity/version values.
+  - Equipment capability/eligibility remains distinct from current maintenance/availability state.
+  - Hidden Simulator Oracle state is not exposed.
+  - Twin export and Scheduler execution remain downstream responsibilities.
+precise_requirement: The merged/current-main producer contract for DEP-030 must carry explicit lot route position, current lot revision, lot-specific eligible equipment, priority and due date, equipment maintenance state, and immutable snapshot world/revision/freshness metadata; schema, fixture and contract tests must be green.
+affected_requirements: [FR-CORE-001, FR-CORE-002, FR-CORE-013, FR-TWIN-008, FR-SCH-001]
+affected_architecture: [ARCH-CORE-DOMAIN, ARCH-TWIN-API, ARCH-TWIN-FRESHNESS]
+affected_contracts:
+  - id: core.scheduling-snapshot.v1
+    compatibility: ADDITIVE
+    consumers_reviewed: [Digital Twin, Scheduler]
+affected_work_packages: [WP-CORE-001, WP-TWIN-003]
+affected_dependencies: [DEP-030]
+affected_evidence:
+  - services/manufacturing-core/contracts/v1/scheduling-snapshot.v1.schema.json
+  - services/manufacturing-core/contracts/v1/scheduling-snapshot.normal.json
+  - packages/contracts/registry/core.scheduling-snapshot.v1.json
+  - packages/contracts/producer-authorities.json
+  - services/manufacturing-core/tests/test_scheduling_snapshot_contract.py
+  - evidence/WP-CORE-001/DEP-030-SLICE.md
+evidence_staleness:
+  question_answered: true
+  stale: []
+  unaffected:
+    - core.order-query.v1 and DEP-018/DEP-021 bindings remain unchanged.
+    - Twin export, Scheduler consumption, transport and integrated acceptance remain unverified.
+    - The contract does not contain real factory or Simulator Oracle data.
+  rerun_required:
+    - Verify the producer PR merge, exact current-main blobs and focused CI before DEP-030 status projection.
+security_authority_impact: NONE
+conditions:
+  - Do not project DEP-030 READY until the producer PR is merged and exact current-main evidence passes.
+  - Do not infer WP-TWIN-003 implementation, Twin export or Scheduler readiness from this contract slice.
+  - Do not use the contract as a command or execution authority.
+rollout: Merge the producer contract slice, then create the separate current-main DEP-030 readiness/status projection.
+rollback: Revert the registry, schema, fixture, authority and test additions together; do not alter existing query contracts.
+required_rerun: [projectctl validate, current-main registry and authority tests, current-main snapshot contract tests, DEP-030 readiness evaluator]
+documentation_updates:
+  - 09_change/change_requests.csv
+  - docs/09_Change_Control_Process.md
+freeze_context: PRE_M6

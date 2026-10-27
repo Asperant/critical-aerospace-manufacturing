@@ -1,0 +1,51 @@
+{
+  "contract_version": "core.scheduling-snapshot.v1",
+  "world_id": "PRIMARY",
+  "snapshot_revision": "twin-rev-184202",
+  "generated_at": "2026-10-27T08:00:00Z",
+  "freshness": {
+    "status": "FRESH",
+    "valid_until": "2026-10-27T08:05:00Z"
+  },
+  "lots": [
+    {
+      "id": "LOT-001",
+      "revision": "lot-rev-11",
+      "route_position": {
+        "route_id": "ROUTE-A",
+        "visit_id": "VISIT-A-03",
+        "position": 2,
+        "operation_class_id": "FINISH-CNC"
+      },
+      "priority": 90,
+      "due_at": "2026-10-28T12:00:00Z",
+      "eligible_equipment_ids": ["CNC-5AX-07"]
+    },
+    {
+      "id": "LOT-002",
+      "revision": "lot-rev-4",
+      "route_position": {
+        "route_id": "ROUTE-B",
+        "visit_id": "VISIT-B-01",
+        "position": 0,
+        "operation_class_id": "ROUGH-CNC"
+      },
+      "priority": 40,
+      "due_at": "2026-10-30T16:00:00Z",
+      "eligible_equipment_ids": ["CNC-5AX-07", "CNC-5AX-08"]
+    }
+  ],
+  "equipment": [
+    {
+      "id": "CNC-5AX-07",
+      "revision": "equipment-rev-7",
+      "maintenance_state": "AVAILABLE"
+    },
+    {
+      "id": "CNC-5AX-08",
+      "revision": "equipment-rev-3",
+      "maintenance_state": "PLANNED_MAINTENANCE"
+    }
+  ],
+  "current_schedule_version": "schedule-v19"
+}

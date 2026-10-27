@@ -1,0 +1,34 @@
+{
+  "contract_id": "core.scheduling-snapshot.v1",
+  "name": "Core SchedulingSnapshot planning input",
+  "contract_type": "SNAPSHOT",
+  "version": 1,
+  "semantic_owner": "Asrın Dündar",
+  "canonical_producer": "manufacturing-core",
+  "declared_consumers": ["Digital Twin", "Scheduler"],
+  "purpose": "Bounded immutable planning input with route position, lot revision, lot-specific equipment eligibility, priority, due date and equipment maintenance state.",
+  "output_schema": {
+    "path": "services/manufacturing-core/contracts/v1/scheduling-snapshot.v1.schema.json",
+    "sha256": "4aa6ee4b6354c766f3fa53bf3893445d308118084f2a586a5b70bc612649a26d"
+  },
+  "fixtures": [
+    {
+      "path": "services/manufacturing-core/contracts/v1/scheduling-snapshot.normal.json",
+      "sha256": "201308e2fd1b99cea6f041279c3181196c0451677785fa6a28ac0f228a0da18f"
+    }
+  ],
+  "authority_level": "Core/Twin read-only planning snapshot; no command, approval or execution authority",
+  "sync_semantics": "SYNC",
+  "security_classification": "Internal manufacturing planning metadata; no credentials or hidden Simulator Oracle state",
+  "semantics": {
+    "revision": "snapshot_revision identifies the immutable bulk view; each lot and equipment entry preserves its current opaque revision.",
+    "freshness": "freshness.status is explicit and may be FRESH, DEGRADED or STALE; stale state is not silently usable for high-impact execution.",
+    "eligibility": "eligible_equipment_ids is lot-specific qualification/eligibility, not a claim that equipment is currently available.",
+    "authority": "read-only planning input; the contract cannot mutate Core, Twin, Simulator or equipment state.",
+    "world": "world_id separates primary and counterfactual/simulation contexts; hidden Oracle state is never carried."
+  },
+  "deprecation": {
+    "status": "ACTIVE",
+    "replacement": null
+  }
+}
