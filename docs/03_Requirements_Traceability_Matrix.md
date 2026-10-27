@@ -3690,7 +3690,7 @@ FR-CORE-003:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-003 L169851"}
   DERIVED_FROM: [ITEM-09, ITEM-15, BE-INV-01, WL-INV-06, WL-INV-07]
   ALLOCATED_TO: [ARCH-CORE-DOMAIN, ARCH-CORE-CMD]
-  REALIZED_BY: {surface: "manufacturing state machine / transition guard module", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "manufacturing state machine / transition guard module", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/transitions.py"}
   EXPOSED_BY: ["Core Command Acceptance API"]
   VERIFIED_BY: [TEST-CORE-STATEMACHINE]
   EXERCISED_IN: [AV-SCEN-01]
@@ -3738,7 +3738,7 @@ FR-CORE-007:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-007 L169855"}
   DERIVED_FROM: [ITEM-09, ITEM-15, ITEM-23, WL-INV-06]
   ALLOCATED_TO: [ARCH-CORE-CMD, ARCH-CORE-DOMAIN]
-  REALIZED_BY: {surface: "PlaceLotOnHold command handler (CMD-PlaceLotOnHold-v1)", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "PlaceLotOnHold command handler (CMD-PlaceLotOnHold-v1)", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/transitions.py:CoreTransitionService.place_lot_on_hold"}
   EXPOSED_BY: ["PlaceLotOnHold / CMD-PlaceLotOnHold-v1"]
   VERIFIED_BY: [TEST-CORE-STATEMACHINE]
   EXERCISED_IN: [E2E-01, AV-SCEN-01]
@@ -3750,7 +3750,7 @@ FR-CORE-008:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-008 L169856"}
   DERIVED_FROM: [ITEM-09, ITEM-24, HITL-INV-03]
   ALLOCATED_TO: [ARCH-CORE-CMD, ARCH-CORE-DOMAIN]
-  REALIZED_BY: {surface: "ReleaseMaterialHold eligibility handler", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "ReleaseMaterialHold eligibility handler", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/transitions.py:CoreTransitionService.release_material_hold"}
   EXPOSED_BY: ["ReleaseMaterialHold command"]
   VERIFIED_BY: [TEST-CORE-STATEMACHINE, TEST-AUTH-NEG]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
