@@ -1549,10 +1549,10 @@ DEP-021:
   need_by: "S1–S2"   # sprint 2
   fallback: F1
   unblock_evidence: "contract merged + contract tests green + example fixture published"
-  precise_requirement: null
+  precise_requirement: "For the initial EVT contract-registry and envelope slices, WP-CORE-001 must publish the merged/current-main core.order-query.v1 request/response contract with opaque nonblank entity IDs and per-entity revisions, ordered re-entrant route visits, normal and reentrant fixtures, and green producer contract tests. This edge-specific binding does not promote DN-CORE-CONTRACTS globally, and does not cover Core domain events, outbox, broker, command, transport, or full DN-EVT-CONTRACTS readiness."
   risk_class: DR-1
   source: "Item 66 #44; Item 22"
-  status: NOT_READY
+  status: READY
 DEP-022:
   predecessor: {node: DN-CORE-LIFECYCLE, owner: "Asrın"}
   successor: {node: DN-CORE-OUTBOX, owner: "Asrın"}

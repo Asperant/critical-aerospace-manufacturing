@@ -1098,6 +1098,19 @@ Integration readiness, and does not mark `WP-CORE-007` DONE. PostgreSQL
 migration implementation and all post-merge/DoD gates remain governed by
 `WP-CORE-007`.
 
+## CHG-061 — edge-specific Core query binding for DEP-021
+
+CHG-061 / CTRL-HOST-036 makes the existing merged `core.order-query.v1`
+contract usable for the bounded initial EVT contract-registry and envelope
+slices. The requirement is deliberately edge-specific: opaque entity
+identity/revision semantics, ordered re-entrant route visits, normal and
+reentrant fixtures, and green producer contract tests. It does not generalize
+the `DEP-018` basis, promote global `DN-CORE-CONTRACTS`, or certify domain
+events, the outbox, broker/transport, commands or full `DN-EVT-CONTRACTS`
+readiness. The current-main evidence and exact artifact binding are recorded in
+`evidence/CTRL-HOST-036/DEP-021-CURRENT-MAIN.md` and
+`evidence/readiness/DN-CORE-CONTRACTS-DEP-021.json`.
+
 ## CHG-052 — generic audit-backed BLOCKED projection reconciliation
 
 CHG-052 / CTRL-HOST-030 repairs only the orthogonal Plane `BLOCKED` label when

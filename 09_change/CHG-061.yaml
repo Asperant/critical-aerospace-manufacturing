@@ -1,0 +1,63 @@
+title: Bind DEP-021 to the bounded Core query contract slice
+trigger: DEP-021 had a null precise requirement although the merged CORE-001 query contract and producer tests satisfy the bounded initial EVT consumer input
+reason: WP-EVT-001 and WP-EVT-002 need an exact edge-specific contract predicate; the existing DEP-018 basis must not be generalized to a different consumer edge or to global event-contract readiness
+class: C2
+review_risk_class: CR-2
+raised_in: S3
+owner: Asrın
+required_human_approvals: 0
+reviewers: []
+decision: APPROVED
+status: APPROVED
+application_control_item: CTRL-HOST-036
+decision_basis: The change makes the already-implemented Core query contract consumable for the bounded initial EVT slices without changing authority boundaries or certifying the broader event-contract node. The exact current-main producer artifacts, fixtures and focused tests are recorded in the edge-specific basis.
+scope:
+  - Add the exact DEP-021 consumer requirement for the initial EVT contract-registry and envelope slices.
+  - Bind the current-main core.order-query.v1 schema, normal/reentrant fixtures and producer contract tests to DEP-021.
+  - Project DEP-021 to READY only for this exact CONTRACT_READY edge predicate.
+  - Preserve DEP-018 as a separate consumer-edge binding.
+invariants_preserved:
+  - Core remains the canonical authority for manufacturing state and domain identity/revision semantics.
+  - The query contract remains read-only and transport-independent.
+  - DEP-031 remains a separate domain-event contract gate.
+  - Synthetic fixtures are not real-factory data and no integration acceptance is claimed.
+precise_requirement: For the initial EVT contract-registry and envelope slices, WP-CORE-001 must publish the merged/current-main core.order-query.v1 request/response contract with opaque nonblank entity IDs and per-entity revisions, ordered re-entrant route visits, normal and reentrant fixtures, and green producer contract tests. This edge-specific binding does not promote DN-CORE-CONTRACTS globally, and does not cover Core domain events, outbox, broker, command, transport, or full DN-EVT-CONTRACTS readiness.
+affected_requirements: [FR-CORE-001, FR-CORE-002, FR-CORE-013, FR-EVT-001, FR-EVT-002]
+affected_architecture: [ARCH-CORE-DOMAIN, ARCH-CTR-API, ARCH-EVT-CONSUMER]
+affected_contracts:
+  - id: core.order-query.v1
+    compatibility: NON_BREAKING
+    consumers_reviewed: [Simulator, Digital Twin, Scheduler, WP-EVT-001, WP-EVT-002]
+affected_work_packages: [WP-CORE-001, WP-EVT-001, WP-EVT-002]
+affected_dependencies: [DEP-021]
+affected_evidence:
+  - evidence/readiness/DN-CORE-CONTRACTS-DEP-021.json
+  - evidence/CTRL-HOST-036/DEP-021-CURRENT-MAIN.md
+  - services/manufacturing-core/contracts/v1/order-query.schema.json
+  - services/manufacturing-core/contracts/v1/order-query.normal.json
+  - services/manufacturing-core/contracts/v1/order-query.reentrant.json
+  - services/manufacturing-core/tests/test_query_contract.py
+  - evidence/WP-EVT-001/SLICE1.md
+  - evidence/WP-EVT-002/SLICE1.md
+evidence_staleness:
+  question_answered: true
+  stale: []
+  unaffected:
+    - The existing DEP-018 basis remains bound only to DEP-018.
+    - DEP-031 domain-event payload and Twin fixture obligations remain unverified.
+    - Full DN-EVT-CONTRACTS integration and final WP acceptance remain unclaimed.
+  rerun_required:
+    - Evaluate the edge-specific DEP-021 basis on current main after merge.
+security_authority_impact: NONE
+conditions:
+  - Do not generalize the DEP-018 basis to DEP-021 without this exact edge binding.
+  - Do not infer DEP-031, outbox, broker, transport or WP-EVT DONE from DEP-021.
+  - Do not treat fixture evidence as real-factory evidence.
+rollout: Merge the edge-specific requirement, evidence and status projection, then re-evaluate the dependent S3 startability on the resulting current main.
+rollback: Revert the DEP-021 precise requirement, evidence binding and READY projection together; preserve the existing DEP-018 basis.
+required_rerun: [projectctl validate, projectctl startability WP-EVT-001, projectctl startability WP-EVT-002, current-main focused producer contract tests]
+documentation_updates:
+  - docs/05_Dependency_Graph.md
+  - docs/09_Change_Control_Process.md
+  - 09_change/change_requests.csv
+freeze_context: PRE_M6
