@@ -47,3 +47,4 @@ CHG-057,Record the current-main PASS for DEP-018,C1,CR-1,Asrın,APPROVED,APPROVE
 CHG-058,Refresh the dependency precision diagnostic baseline after CHG-055,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-034
 CHG-059,Record WP-CORE-009 COMPONENT_READY and DEP-020 binding,C1,CR-1,Asrın,APPROVED,APPROVED,WP-CORE-009
 CHG-060,Record the current-main PASS for DEP-006,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-035
+CHG-061,Bind DEP-021 to the bounded Core query contract slice,C2,CR-2,Asrın,APPROVED,APPROVED,CTRL-HOST-036

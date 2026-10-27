@@ -1,0 +1,23 @@
+{
+  "schema": "edge-contract-readiness-basis-v1",
+  "edge": "DEP-021",
+  "predecessor_node": "DN-CORE-CONTRACTS",
+  "successor_node": "DN-EVT-CONTRACTS",
+  "level": "CONTRACT_READY",
+  "producer_wp": "WP-CORE-001",
+  "producer_pr": 24,
+  "producer_merge_sha": "ad30bc67077bd0fb6009efdc85f8ec20649d99ce",
+  "verified_main_sha": "30c92c13f71e1a021f17df1e55d2ac1eac79f03d",
+  "precise_requirement": "core.order-query.v1 with opaque identity/revision fields, ordered re-entrant route visits, normal and reentrant fixtures, and green producer contract tests",
+  "scope_boundary": "This is an edge-specific DEP-021 binding. It does not generalize the DEP-018 basis or certify global DN-CORE-CONTRACTS, domain events, outbox, broker, command, transport, or full DN-EVT-CONTRACTS readiness.",
+  "artifacts": [
+    {"path": "services/manufacturing-core/contracts/v1/README.md", "blob": "f5e59af4195a0bcf966007f94c82063426c6a03d", "role": "contract"},
+    {"path": "services/manufacturing-core/contracts/v1/order-query.schema.json", "blob": "557a8926b7f6ebbda2570d0993b7439a5a6b18be", "role": "schema"},
+    {"path": "services/manufacturing-core/contracts/v1/order-query.normal.json", "blob": "b545077b0ca16e56bad91bb98a96ee4623dba575", "role": "fixture"},
+    {"path": "services/manufacturing-core/contracts/v1/order-query.reentrant.json", "blob": "2de3f94f999aedf54a927c610d9931321a89ac4e", "role": "fixture"}
+  ],
+  "tests": [
+    {"test_id": "TEST-CORE-CONTRACT", "path": "services/manufacturing-core/tests/test_query_contract.py", "blob": "da95200f75e767214e0b2cc660a752209e36bc2a", "result": "34 passed"}
+  ],
+  "verification": "Current-main focused producer contract tests passed; producer PR #24 is merged and its merge is an ancestor of verified current main. No global DN-CORE-CONTRACTS promotion is inferred."
+}
