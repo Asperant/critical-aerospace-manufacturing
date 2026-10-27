@@ -214,3 +214,106 @@ export interface CursorPage {
    */
   next_cursor: string | null;
 }
+/**
+ * Read-only Twin-backed facility state for one explicit world. Lifecycle, execution and hold dimensions remain separate; freshness and epistemic class are preserved from the Twin.
+ *
+ * This interface was referenced by `ContractRoot`'s JSON-Schema
+ * via the `definition` "FacilityStateResponse".
+ */
+export interface FacilityStateResponse {
+  contract_version: "bff.facility-state.v1";
+  meta: QueryMeta;
+  facility: FacilityState;
+}
+/**
+ * This interface was referenced by `FacilityStateResponse`'s JSON-Schema
+ * via the `definition` "FacilityState".
+ */
+export interface FacilityState {
+  equipment: EquipmentState[];
+  lots: LotState[];
+}
+/**
+ * This interface was referenced by `FacilityStateResponse`'s JSON-Schema
+ * via the `definition` "EquipmentState".
+ */
+export interface EquipmentState {
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  equipment_id: string;
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  revision: string;
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  equipment_state: string;
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  maintenance_state: string;
+  /**
+   * Facility-wide epistemic vocabulary. Classes are never flattened into one status.
+   */
+  epistemic_class: "ACTUAL" | "OBSERVED" | "INFERRED" | "PREDICTED" | "PLANNED" | "COUNTERFACTUAL" | "STALE";
+  /**
+   * Staleness Contract classification, ordered FRESH (best), DEGRADED, STALE (worst).
+   */
+  freshness: "FRESH" | "DEGRADED" | "STALE";
+}
+/**
+ * This interface was referenced by `FacilityStateResponse`'s JSON-Schema
+ * via the `definition` "LotState".
+ */
+export interface LotState {
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  lot_id: string;
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  revision: string;
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  lifecycle_state: string;
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  execution_state: string;
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  hold_state: string;
+  route_position: RoutePosition;
+  /**
+   * Facility-wide epistemic vocabulary. Classes are never flattened into one status.
+   */
+  epistemic_class: "ACTUAL" | "OBSERVED" | "INFERRED" | "PREDICTED" | "PLANNED" | "COUNTERFACTUAL" | "STALE";
+  /**
+   * Staleness Contract classification, ordered FRESH (best), DEGRADED, STALE (worst).
+   */
+  freshness: "FRESH" | "DEGRADED" | "STALE";
+}
+/**
+ * This interface was referenced by `FacilityStateResponse`'s JSON-Schema
+ * via the `definition` "RoutePosition".
+ */
+export interface RoutePosition {
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  route_id: string;
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  visit_id: string;
+  position: number;
+  /**
+   * Opaque nonblank identifier or revision token. Compared for equality only.
+   */
+  operation_class_id: string;
+}

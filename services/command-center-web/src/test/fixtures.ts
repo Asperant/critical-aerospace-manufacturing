@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import type {
+  FacilityStateResponse,
   ManufacturingOverviewResponse,
   SessionResponse,
 } from "../contract/generated";
@@ -22,6 +23,10 @@ export function contractSession(): SessionResponse {
 
 export function contractOverview(): ManufacturingOverviewResponse {
   return load<ManufacturingOverviewResponse>("overview-query.normal.json");
+}
+
+export function contractFacilityState(): FacilityStateResponse {
+  return load<FacilityStateResponse>("facility-state.normal.json");
 }
 
 export function contractOpenApi(): string {

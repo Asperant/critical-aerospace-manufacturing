@@ -19,6 +19,7 @@ const root = {
     SessionResponse: { $ref: "session.schema.json" },
     ErrorEnvelope: { $ref: "common.schema.json#/$defs/ErrorEnvelope" },
     ManufacturingOverviewResponse: { $ref: "overview-query.schema.json" },
+    FacilityStateResponse: { $ref: "facility-state.schema.json" },
   },
 };
 

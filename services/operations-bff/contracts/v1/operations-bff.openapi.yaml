@@ -105,6 +105,58 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "503":
           $ref: "#/components/responses/Error"
+  /v1/facility-state:
+    get:
+      operationId: getFacilityState
+      summary: Twin-backed facility state for the active world (Query)
+      description: >-
+        Read only. Returns Twin-projected equipment and lot state for one
+        explicit world. Lifecycle, execution and hold dimensions are kept
+        separate, and source freshness is never hidden.
+      x-bff-class: QUERY
+      security:
+        - browserSession: []
+      parameters:
+        - name: world_id
+          in: query
+          required: true
+          description: Explicit world binding; there is no implicit current world.
+          schema:
+            type: string
+            pattern: "\\S"
+        - name: simulation_run_id
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: "\\S"
+        - name: branch_id
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: "\\S"
+        - name: as_of
+          in: query
+          required: false
+          description: Historical-as-of instant; omitted means live. Historical views are read only.
+          schema:
+            $ref: "common.schema.json#/$defs/Timestamp"
+      responses:
+        "200":
+          description: Twin-backed facility state view.
+          content:
+            application/json:
+              schema:
+                $ref: "facility-state.schema.json"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "503":
+          $ref: "#/components/responses/Error"
   /v1/commands:
     post:
       operationId: submitCommand

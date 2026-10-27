@@ -1,10 +1,15 @@
 import { vi } from "vitest";
 
 import type {
+  FacilityStateResponse,
   ManufacturingOverviewResponse,
   SessionResponse,
 } from "../contract/generated";
-import { contractOverview, contractSession } from "./fixtures";
+import {
+  contractFacilityState,
+  contractOverview,
+  contractSession,
+} from "./fixtures";
 
 export interface RecordedCall {
   method: string;
@@ -44,6 +49,8 @@ export class FakeBff {
   logoutStatus: number | null = null;
   overview: (query: URLSearchParams) => Response = () =>
     jsonResponse(200, contractOverview());
+  facilityState: (query: URLSearchParams) => Response = () =>
+    jsonResponse(200, contractFacilityState());
 
   install(): this {
     vi.stubGlobal("fetch", this.handle);
@@ -52,6 +59,11 @@ export class FakeBff {
 
   withOverview(body: ManufacturingOverviewResponse): this {
     this.overview = () => jsonResponse(200, body);
+    return this;
+  }
+
+  withFacilityState(body: FacilityStateResponse): this {
+    this.facilityState = () => jsonResponse(200, body);
     return this;
   }
 
@@ -101,6 +113,14 @@ export class FakeBff {
           envelope("UNAUTHORIZED", "Authentication required"),
         );
       return this.overview(url.searchParams);
+    }
+    if (url.pathname === "/v1/facility-state" && method === "GET") {
+      if (!this.session)
+        return jsonResponse(
+          401,
+          envelope("UNAUTHORIZED", "Authentication required"),
+        );
+      return this.facilityState(url.searchParams);
     }
     return jsonResponse(404);
   };
