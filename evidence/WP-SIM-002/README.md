@@ -7,8 +7,9 @@ establish.
 
 ## Run of record
 
-`runs/run-3-uncommitted/` — one local run of `capture_run.py` on the **uncommitted**
-tree, started 2026-10-27T22:10:17Z (UTC), all seven commands exit 0:
+`runs/run-4-committed/` — one local run of `capture_run.py` on a **clean committed tree**,
+source commit `5263ff886b7cd195a090e9eafc7ea5896100eadd`, started 2026-10-27T22:18:30Z
+(UTC), all seven commands exit 0:
 
 | Command | Result |
 |---|---|
@@ -49,11 +50,12 @@ marked binary in `runs/.gitattributes`) with byte counts and SHA-256 in `results
 `display_result_line` there is derived for reading only. `identity.json` has source, tool,
 lock, workload and host identity, with host load at start and at finish.
 
-- **Source state:** `tree_clean` is false. Commit was not authorized, so `identity.json`
-  lists base commit `3242d1f` and the SHA-256 of each of the 22 changed or untracked files
-  outside `runs/` and this README (the replay code, tests, scripts, CI wiring, `docs/` and
-  `traceability/` included). A run on committed source will be a new run, never a
-  replacement of this one.
+- **Source state:** `tree_clean` is true, `head_commit` is `5263ff8…` (tree `a86d96614…`)
+  and the changed-file manifest is empty. That commit is the **tested source**. The commit
+  that adds this run and this README has a different SHA and changes only files under
+  `evidence/WP-SIM-002/`, so every source, test, script, CI and trace file the run tested is
+  unchanged (check with `git diff 5263ff8 <evidence commit> --stat`). The run records the
+  tested SHA, never its own commit.
 - **Not available, so not claimed:** a governed ReleaseManifest, EnvironmentManifest image
   digest or HardwareProfile; the host facts are local labels. Their canonical producer is
   WP-PLAT-005 (docs/04), not started, so DOD-WP-11 stays open here. `source_id` and
@@ -64,18 +66,21 @@ lock, workload and host identity, with host load at start and at finish.
 
 ## Earlier runs kept as history
 
-Both are unchanged byte for byte, each describes only the source it ran on, and neither
-may be cited as evidence of the final behaviour.
+All three are unchanged byte for byte and each describes only the tree it ran on. They are
+local runs on the then-uncommitted tree (their `identity.json` lists changed files, not a
+commit), so none is committed-source evidence.
 
 - `runs/run-1-uncommitted/`: the source Codex's first review found defective. Its tests then
   accepted a result with an unsupported format or impossible clock as `MATCH` against itself,
   accepted reversed events with a recomputed digest, labelled a run with a declared NumPy/RNG
-  identity it did not check, and reported two equal budget-limited runs as `MATCH`.
+  identity it did not check, and reported two equal budget-limited runs as `MATCH`. Superseded.
 - `runs/run-2-uncommitted/`: the source after those fixes, whose result validator built
   `set(range(next_sequence))`. A tiny malformed result or JSON with a huge `next_sequence`
   therefore made it allocate without bound before rejecting, instead of raising the named
-  `CanonicalizationError` (Codex's R4). Run-3 is on the corrected validator, which proves the
-  same invariant from the actual sequence IDs in time proportional to the input.
+  `CanonicalizationError` (Codex's R4). Superseded.
+- `runs/run-3-uncommitted/`: the corrected validator, taken before commit. Its code and test
+  files are the ones run-4 tested (compare the digests in its `identity.json`); it is kept
+  because it was the run Codex's last review verified.
 
 ## What this is not
 
