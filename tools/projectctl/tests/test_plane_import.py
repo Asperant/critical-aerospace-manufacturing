@@ -73,6 +73,14 @@ class FakePlane:
             item = next(i for i in self.audit["work_items"] if i["id"] == tail)
             item.update(deepcopy(body))
             return httpx.Response(200, json=deepcopy(item))
+        if req.method == "DELETE":
+            assert tail == path[-1] and path[-2] in {"module-issues", "cycle-issues"}
+            family = "modules" if path[-2] == "module-issues" else "cycles"
+            entity_id, issue_id = path[-3], path[-1]
+            self.writes.append(("relationship-delete", {"family": family, "entity": entity_id, "issue": issue_id}))
+            current = self.memberships[family].get(issue_id, [])
+            self.memberships[family][issue_id] = [value for value in current if value != entity_id]
+            return httpx.Response(204)
         assert req.method == "POST" and tail in {"issues", "module-issues", "cycle-issues"}
         body = json.loads(req.content)
         self.writes.append((tail, body))
@@ -154,6 +162,34 @@ def CounterWrites(fake):
     return dict(Counter(kind for kind, _ in fake.writes))
 
 
+def test_existing_relationship_drift_is_repaired_without_state_reset(project):
+    fake = FakePlane(project)
+    projection = expected_projection(project, fake.audit)
+    first = projection["projections"][0]
+    second = projection["projections"][1]
+    fake.audit["work_items"] = [
+        {"id": "first", **first["create_body"]},
+        {"id": "second", **second["create_body"], "state": "READY"},
+    ]
+    fake.memberships["modules"] = {"first": [first["module_id"]], "second": [second["module_id"]]}
+    fake.memberships["cycles"] = {"first": [first["cycle_id"]], "second": ["stale-cycle"]}
+    # The normal audit cannot expose a noncanonical relation entity; use a real cycle
+    # that is wrong for this issue, as the live Plane inventory does.
+    wrong_cycle = next(e["id"] for e in fake.audit["cycles"] if e["id"] != second["cycle_id"])
+    fake.memberships["cycles"]["second"] = [wrong_cycle]
+    with runner(project, fake) as run:
+        run.prepare()
+        assert run.report["preview"]["conflicts"] == []
+        op = next(o for o in run.report["preview"]["operations"] if o["wp_id"] == second["wp_id"])
+        assert op["relationship_repairs"]["cycles"]["remove"] == [wrong_cycle]
+        run.apply_one(first["wp_id"])
+        run.apply_one(second["wp_id"])
+    item = next(i for i in fake.audit["work_items"] if i["id"] == "second")
+    assert item["state"] == "READY"
+    assert fake.memberships["cycles"]["second"] == [second["cycle_id"]]
+    assert any(kind == "relationship-delete" for kind, _ in fake.writes)
+
+
 @pytest.mark.parametrize("corrupt", ["labels", "state", "metadata"])
 def test_pilot_failure_stops_bulk_without_repair(project, corrupt):
     fake = FakePlane(project)
@@ -192,7 +228,7 @@ def test_partial_resume_preserves_pilot_and_only_fills_absent_relations(project)
     assert sum(b.get("external_id") == item["external_id"] for _, b in fake.writes) == 1
 
 
-@pytest.mark.parametrize("failure", ["default", "duplicate", "wrong_module", "unknown", "blocked", "state"])
+@pytest.mark.parametrize("failure", ["default", "duplicate", "unknown", "blocked", "state"])
 def test_unsafe_preconditions_fail_before_writes(project, failure):
     fake = FakePlane(project)
     projection = expected_projection(project, fake.audit)
@@ -202,9 +238,6 @@ def test_unsafe_preconditions_fail_before_writes(project, failure):
         fake.default = "asrin"
     elif failure == "duplicate":
         fake.audit["work_items"] = [item, {**item, "id": "other"}]
-    elif failure == "wrong_module":
-        fake.audit["work_items"] = [item]
-        fake.memberships["modules"]["existing"] = ["WP-CORE"]
     elif failure == "unknown":
         fake.audit["work_items"] = [{"id": "unknown", "name": "FR-CORE-001"}]
     elif failure == "blocked":

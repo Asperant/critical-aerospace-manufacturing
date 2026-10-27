@@ -992,3 +992,23 @@ regressions themselves; it does not widen or weaken the bounded 90-second gate.
 The PR records `Requirements (stable IDs, or NONE — reason / control-only scope):
 NONE` with that same control-plane-only rationale,
 so the control-only impact is explicit to the CI trace gate.
+
+## CHG-050 — generic Plane WP relationship-drift reconciliation
+
+CHG-050 / CTRL-PM-017 extends the approved canonical Plane projection with a
+bounded, generic repair for deterministic module and coordination-cycle
+association drift. A canonical WP's current module/cycle memberships are read
+from the full live Plane inventory. For a known canonical target, non-target
+associations are removed through an exact allowlisted association endpoint and
+the target is added when absent; an unscheduled WP has no cycle association.
+Every removal or addition is followed by a fresh association read-back. No
+Plane issue is deleted, no workflow state is patched, and no control-only item
+is included in this repair. Unknown entities, duplicate relationship evidence,
+identity/parent/state conflicts and ambiguous reads remain fail-closed.
+
+This is a generic C3 / CR-3 control-plane change under CHG-018. It does not
+authorize product implementation, readiness evidence, dependency changes or
+product lifecycle transitions. `CTRL-PM-015-PILOT-001` remains preserved as a
+canonical control item. The importer must report zero remaining conflicts after
+reconciliation, apart from explicitly preserved valid mutable state
+differences.

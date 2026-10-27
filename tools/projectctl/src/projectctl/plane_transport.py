@@ -74,7 +74,7 @@ class PlaneStream:
             self.gate.defer(seconds)
 
     def request(self, method, path, *, params=None, json=None, idempotent=False, attempt=1):
-        if path.startswith("/") or ":" in path or ".." in path or method not in {"GET", "POST", "PATCH"}:
+        if path.startswith("/") or ":" in path or ".." in path or method not in {"GET", "POST", "PATCH", "DELETE"}:
             raise PlaneError("Unsafe Plane request path or method")
         limit = self.MAX_ATTEMPTS if method == "GET" or idempotent else 1
         with self.gate.lock:

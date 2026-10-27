@@ -196,7 +196,7 @@ def check_issue(item, expected, *, valid_state_ids=None, allow_state_difference=
 
 
 def import_plan(projection, inventory):
-    """No mutation; repair owned static fields, preserve valid mutable state."""
+    """No mutation; repair owned static fields and canonical relationships, preserving state."""
     expected = projection["projections"]
     from .control_plane import ControlItem, canonical_audit
     registry = [ControlItem.model_validate(s) for s in projection.get("control_registry", [])]
@@ -209,7 +209,7 @@ def import_plan(projection, inventory):
     state_ids = {s["id"] for s in inventory["audit"]["states"]}
     for e in expected:
         item = index.get(e["wp_id"])
-        missing = []
+        missing, relationship_repairs = [], {}
         repair, state_difference = {}, False
         try:
             if item:
@@ -217,28 +217,37 @@ def import_plan(projection, inventory):
                 repair, state_difference = drift["repair"], drift["state_difference"]
                 for family, target in [("modules", e["module_id"]), ("cycles", e["cycle_id"])]:
                     actual = inventory["memberships"][family].get(item["id"], [])
-                    if actual and actual != ([target] if target else []):
-                        raise PlaneError(e["wp_id"] + ": unexpected/multiple " + family + " memberships")
-                    if target and not actual:
+                    if len(actual) != len(set(actual)):
+                        raise PlaneError(e["wp_id"] + ": duplicate " + family + " membership evidence")
+                    remove = [entity_id for entity_id in actual if entity_id != target]
+                    add = target if target and target not in actual else None
+                    if remove or add:
+                        relationship_repairs[family] = {"remove": remove, "add": add}
+                    if add:
                         missing.append(family)
             else:
                 missing = ["work_items", "modules"] + (["cycles"] if e["cycle_id"] else [])
         except PlaneError as error:
             conflicts.append({"wp_id": e["wp_id"], "diagnostic": str(error)})
         conflict_for_item = conflicts and conflicts[-1]["wp_id"] == e["wp_id"]
-        action = "conflict" if conflict_for_item else "create" if missing else "repair" if repair else "unchanged"
+        action = ("conflict" if conflict_for_item else "create" if missing and not item
+                  else "repair" if repair or relationship_repairs or missing else "unchanged")
         operations.append({"wp_id": e["wp_id"], "plane_id": item["id"] if item else None,
                            "action": action, "missing": missing,
-                           "repair_fields": sorted(repair), "preserved_state": state_difference})
+                           "repair_fields": sorted(repair), "relationship_repairs": relationship_repairs,
+                           "preserved_state": state_difference})
     counts = Counter(f for o in operations for f in o["missing"])
     updates = sum(o["action"] == "repair" for o in operations)
+    relationship_updates = sum(len(r["remove"])
+                               for o in operations for r in o.get("relationship_repairs", {}).values())
     new = [e for e in expected if e["wp_id"] not in index]
     return {"schema_version": "plane-wp-import-plan-v1", "dry_run": True, "policy": POLICY,
             "operations": operations, "conflicts": conflicts, "updates": updates,
             "creates": {f: counts[f] for f in ("work_items", "modules", "cycles")},
             "embedded_milestones": sum(bool(e["create_body"]["labels"]) for e in new),
             "embedded_assignees": sum(bool(e["create_body"]["assignees"]) for e in new),
-            "http_mutation_requests": sum(counts.values()) + updates,
+            "http_mutation_requests": sum(counts.values()) + updates + relationship_updates,
+            "relationship_updates": relationship_updates,
             "preserved_state_differences": sum(o["preserved_state"] for o in operations),
             "unchanged": sum(o["action"] == "unchanged" for o in operations)}
 
@@ -298,6 +307,8 @@ class WPImport:
         self.report["before"] = inventory
         self.working_inventory = deepcopy(inventory)
         self.valid_state_ids = {s["id"] for s in inventory["audit"]["states"]}
+        self.relation_entity_ids = {family: {row["id"] for row in inventory["audit"][family]}
+                                    for family in ("modules", "cycles")}
         self.report["projection"] = self.projection
         plan = import_plan(self.projection, inventory)
         if plan["conflicts"]:
@@ -317,7 +328,16 @@ class WPImport:
                             and set(body) <= repair_fields
                             and bool(body)
                             and all(body[field] == expected["create_body"][field] for field in body))
-        if not permitted_create and not permitted_repair:
+        relation_parts = suffix.rstrip("/").split("/")
+        permitted_relation_delete = (method == "DELETE" and expected is not None and body is None
+                                     and len(relation_parts) == 4
+                                     and relation_parts[0] in {"modules", "cycles"}
+                                     and relation_parts[2] in {"module-issues", "cycle-issues"}
+                                     and relation_parts[1] in self.relation_entity_ids[relation_parts[0]]
+                                     and relation_parts[3] == self.issue_id
+                                     and relation_parts[1] != (expected["module_id"] if relation_parts[0] == "modules"
+                                                               else expected["cycle_id"]))
+        if not permitted_create and not permitted_repair and not permitted_relation_delete:
             raise PlaneError("Mutation outside approved WP import scope")
         entry = {"wp_id": wp_id, "method": method, "path": "/api/v1/" + self.prefix + suffix,
                  "body": body, "attempt": attempt}
@@ -329,7 +349,7 @@ class WPImport:
             entry["outcome"] = "AMBIGUOUS_TRANSPORT"
             return None
         entry["status"] = response.status_code
-        if response.status_code in ({200} if method == "PATCH" else {200, 201}):
+        if response.status_code in ({200} if method == "PATCH" else {200, 201} if method == "POST" else {200, 204}):
             entry["outcome"] = "ACCEPTED_PENDING_READ"
             try:
                 data = response.json()
@@ -404,34 +424,59 @@ class WPImport:
     def _relationship(self, expected, family, inventory):
         target = expected["module_id" if family == "modules" else "cycle_id"]
         actual = inventory["memberships"][family].get(self.issue_id, [])
-        if actual and actual != ([target] if target else []):
-            raise PlaneError(expected["wp_id"] + ": conflicting relationship; no automatic moves")
-        if not target:
-            return
         route = "module-issues" if family == "modules" else "cycle-issues"
-        suffix = f"{family}/{target}/{route}/"
+        stale = [entity_id for entity_id in actual if entity_id != target]
+        if not stale and (not target or target in actual):
+            return
         for attempt in range(1, 6):
-            rows = self.reader._list(self.prefix + suffix)
-            if any(r["id"] == self.issue_id for r in rows):
-                return
-            write = self._write(suffix, {"issues": [self.issue_id]}, expected["wp_id"], attempt)
-            rows = self.reader._list(self.prefix + suffix)
-            if any(r["id"] == self.issue_id for r in rows):
-                ambiguous = write is None or write["outcome"] == "AMBIGUOUS_JSON"
-                self.report["mutations"][-1].update(outcome="VERIFIED", entity_id=self.issue_id, relationship_id=target)
+            stale_present = False
+            for stale_id in stale:
+                stale_suffix = f"{family}/{stale_id}/{route}/{self.issue_id}/"
+                rows = self.reader._list(self.prefix + f"{family}/{stale_id}/{route}/")
+                if not any(r["id"] == self.issue_id for r in rows):
+                    continue
+                write = self._write(stale_suffix, None, expected["wp_id"], attempt, method="DELETE")
+                rows = self.reader._list(self.prefix + f"{family}/{stale_id}/{route}/")
+                if any(r["id"] == self.issue_id for r in rows):
+                    if write is not None and write["outcome"] == "ACCEPTED_PENDING_READ":
+                        raise PlaneError("Accepted relationship removal missing from fresh read-back")
+                    self.report["reconciliations"].append({"wp_id": expected["wp_id"], "kind": family,
+                                                            "result": "PRESENT", "attempt": attempt})
+                    stale_present = True
+                    break
+                self.report["mutations"][-1].update(outcome="VERIFIED", entity_id=self.issue_id,
+                                                     relationship_id=stale_id)
+            if stale_present:
+                if attempt < 5:
+                    continue
+                raise PlaneError("Relationship removal did not converge")
+            if target:
+                suffix = f"{family}/{target}/{route}/"
+                rows = self.reader._list(self.prefix + suffix)
+                if not any(r["id"] == self.issue_id for r in rows):
+                    write = self._write(suffix, {"issues": [self.issue_id]}, expected["wp_id"], attempt)
+                    rows = self.reader._list(self.prefix + suffix)
+                    if not any(r["id"] == self.issue_id for r in rows):
+                        if write is not None and write["outcome"] == "ACCEPTED_PENDING_READ":
+                            raise PlaneError("Accepted relationship missing from fresh read-back")
+                        self.report["reconciliations"].append({"wp_id": expected["wp_id"], "kind": family,
+                                                                "result": "ABSENT", "attempt": attempt})
+                        continue
+                    self.report["mutations"][-1].update(outcome="VERIFIED", entity_id=self.issue_id,
+                                                         relationship_id=target)
+                    if write is None or write["outcome"] == "AMBIGUOUS_JSON":
+                        self.report["reconciliations"].append({"wp_id": expected["wp_id"], "kind": family,
+                                                                "result": "PERSISTED"})
+            expected_membership = [target] if target else []
+            observed = [entity_id for entity_id in actual if entity_id not in stale]
+            if target and target not in observed:
+                observed.append(target)
+            if observed != expected_membership:
+                raise PlaneError("Relationship reconciliation produced conflicting memberships")
+            inventory["memberships"][family].pop(self.issue_id, None)
+            if target:
                 inventory["memberships"][family][self.issue_id] = [target]
-                if ambiguous:
-                    self.report["reconciliations"].append({"wp_id": expected["wp_id"], "kind": family, "result": "PERSISTED"})
-                    fresh = self.inventory()
-                    if fresh["memberships"][family].get(self.issue_id) != [target]:
-                        raise PlaneError("Ambiguous relationship produced multiple/conflicting memberships")
-                return
-            if write is not None and write["outcome"] == "ACCEPTED_PENDING_READ":
-                raise PlaneError("Accepted relationship missing from fresh read-back")
-            fresh = self.inventory()
-            if fresh["memberships"][family].get(self.issue_id):
-                raise PlaneError("Conflicting relationship after ambiguous write")
-            self.report["reconciliations"].append({"wp_id": expected["wp_id"], "kind": family, "result": "ABSENT", "attempt": attempt})
+            return
         raise PlaneError("Relationship reconciliation exhausted after 5 attempts")
 
     def apply_one(self, wp_id):
