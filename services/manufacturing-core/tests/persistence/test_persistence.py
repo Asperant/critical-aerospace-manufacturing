@@ -14,6 +14,15 @@ from manufacturing_core.domain import (
     RouteVisit,
     SerializedComponent,
 )
+from manufacturing_core.lifecycle import (
+    ExecutionState,
+    LotLifecycle,
+    LotState,
+    ProductionOrderLifecycle,
+    ProductionOrderState,
+    SerializedComponentLifecycle,
+    SerializedComponentState,
+)
 from manufacturing_core.migrate import migrate
 from manufacturing_core.repository import CoreRepository
 from psycopg import errors, sql
@@ -63,6 +72,9 @@ def test_schema_creation_and_replay(database: Database) -> None:
             "serialized_component",
             "command_idempotency",
             "command_outcome",
+            "production_order_state",
+            "lot_state",
+            "serialized_component_state",
         }
         assert admin.execute(
             "SELECT pg_catalog.pg_get_userbyid(nspowner) FROM pg_catalog.pg_namespace WHERE nspname = 'core'"
@@ -94,6 +106,31 @@ def test_full_round_trip(connection: psycopg.Connection[DictRow]) -> None:
         "CNC",
     ]
     assert repo.get(Lot, "absent") is None
+
+
+def test_lifecycle_state_round_trip(connection: psycopg.Connection[DictRow]) -> None:
+    repo = CoreRepository(connection)
+    repo.insert(Equipment(id="E-1", revision="eq-r1"))
+    repo.insert(sample_route())
+    repo.insert(ProductionOrder(id="O-1", revision="order-r1", route_id="R-1"))
+    repo.insert(Lot(id="L-1", revision="lot-r1", order_id="O-1"))
+    repo.insert(SerializedComponent(id="C-1", revision="component-r1", lot_id="L-1"))
+
+    assert repo.get_state(ProductionOrderState, "O-1") == ProductionOrderState(
+        id="O-1", revision="order-r1", lifecycle_state=ProductionOrderLifecycle.CREATED
+    )
+    assert repo.get_state(LotState, "L-1") == LotState(
+        id="L-1",
+        revision="lot-r1",
+        lifecycle_state=LotLifecycle.CREATED,
+        execution_state=ExecutionState.READY,
+    )
+    assert repo.get_state(SerializedComponentState, "C-1") == SerializedComponentState(
+        id="C-1",
+        revision="component-r1",
+        lifecycle_state=SerializedComponentLifecycle.CREATED,
+        execution_state=ExecutionState.READY,
+    )
 
 
 @pytest.mark.parametrize(

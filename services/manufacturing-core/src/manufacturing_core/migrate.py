@@ -16,7 +16,7 @@ from sqlalchemy.engine import URL
 
 from manufacturing_core.database import connect, require_restricted_role
 
-VERSION = "0002_command_acceptance"
+VERSION = "0003_lifecycle"
 TABLES = (
     "equipment",
     "manufacturing_route",
@@ -24,6 +24,9 @@ TABLES = (
     "production_order",
     "lot",
     "serialized_component",
+    "production_order_state",
+    "lot_state",
+    "serialized_component_state",
     "command_idempotency",
     "command_outcome",
 )
@@ -82,6 +85,7 @@ def migrate(dsn: str, runtime_role: str) -> bool:
         for version, filename in (
             ("0001_domain", "migrations/0001_domain.sql"),
             ("0002_command_acceptance", "migrations/0002_command_acceptance.sql"),
+            ("0003_lifecycle", "migrations/0003_lifecycle.sql"),
         )
     )
     expected = [
