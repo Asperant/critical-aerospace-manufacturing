@@ -167,6 +167,7 @@ jobs:
       - name: Scheduler dispatch baselines unit/property tests and typing (WP-SCH-001)
         run: |
           uv run --project ci --locked python -m pytest -c services/scheduler-service/pyproject.toml services/scheduler-service/tests -q -p pytest_quarantine
+          uv run --project ci --locked python -m pytest evidence/WP-SCH-001/tests -q -p pytest_quarantine
           uv run --project ci --locked pyright --project services/scheduler-service/pyrightconfig.json
       - name: mfgctl tests (quarantine-aware)
         run: uv run --project ci --locked python -m pytest tools/mfgctl/tests -q -p pytest_quarantine
