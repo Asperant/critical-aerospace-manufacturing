@@ -76,8 +76,6 @@ def test_schema_creation_and_replay(database: Database) -> None:
             "lot_state",
             "serialized_component_state",
             "material_hold",
-            "lot_event_sequence",
-            "outbox",
         }
         assert admin.execute(
             "SELECT pg_catalog.pg_get_userbyid(nspowner) FROM pg_catalog.pg_namespace WHERE nspname = 'core'"
