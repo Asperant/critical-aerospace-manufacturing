@@ -1,0 +1,99 @@
+{
+  "schema": "vision.smoke/v1",
+  "result": "PASS",
+  "sample": {
+    "version": "vision-smoke-synthetic/1",
+    "images": 8,
+    "size_px": [
+      512,
+      512
+    ],
+    "provenance": "SYNTHETIC"
+  },
+  "pipeline": {
+    "models": [
+      {
+        "task": "BASELINE_ALGORITHM",
+        "model_package_id": "vision-baseline-local-deviation",
+        "model_version": "1.0.0"
+      }
+    ],
+    "preprocessing_version": "vision-prep-gray-unit/1",
+    "threshold_policy_version": "vision-tp-baseline-z6/1",
+    "output_schema_version": "vision.inspection-observation.v1"
+  },
+  "threshold_s_per_image": 15.0,
+  "max_s_per_image": 0.0142,
+  "mean_s_per_image": 0.0111,
+  "functional_ok": true,
+  "accelerator_used": false,
+  "host": {
+    "cpu_model": "Intel(R) Core(TM) i7-9700K CPU @ 3.60GHz",
+    "logical_cpus": 8,
+    "memory_gib": 30.3,
+    "machine": "x86_64",
+    "os": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+    "python": "3.11.16",
+    "numpy": "2.4.6",
+    "hardware_profile": "PRIMARY_SHARED_HOST (01 Final Human Reconciliation)"
+  },
+  "limitation": "SYNTHETIC smoke sample, not the accepted small inspection sample: smoke/characterization result, not NFR-PERF-009 acceptance",
+  "images": [
+    {
+      "image": "smoke-00",
+      "seconds": 0.0142,
+      "outcome": "DEFECT_CANDIDATES",
+      "expected_candidates": true,
+      "functional_ok": true
+    },
+    {
+      "image": "smoke-01",
+      "seconds": 0.0103,
+      "outcome": "NO_DEFECT_CANDIDATES",
+      "expected_candidates": false,
+      "functional_ok": true
+    },
+    {
+      "image": "smoke-02",
+      "seconds": 0.0106,
+      "outcome": "DEFECT_CANDIDATES",
+      "expected_candidates": true,
+      "functional_ok": true
+    },
+    {
+      "image": "smoke-03",
+      "seconds": 0.0112,
+      "outcome": "NO_DEFECT_CANDIDATES",
+      "expected_candidates": false,
+      "functional_ok": true
+    },
+    {
+      "image": "smoke-04",
+      "seconds": 0.011,
+      "outcome": "DEFECT_CANDIDATES",
+      "expected_candidates": true,
+      "functional_ok": true
+    },
+    {
+      "image": "smoke-05",
+      "seconds": 0.0106,
+      "outcome": "NO_DEFECT_CANDIDATES",
+      "expected_candidates": false,
+      "functional_ok": true
+    },
+    {
+      "image": "smoke-06",
+      "seconds": 0.0106,
+      "outcome": "DEFECT_CANDIDATES",
+      "expected_candidates": true,
+      "functional_ok": true
+    },
+    {
+      "image": "smoke-07",
+      "seconds": 0.0102,
+      "outcome": "NO_DEFECT_CANDIDATES",
+      "expected_candidates": false,
+      "functional_ok": true
+    }
+  ]
+}
