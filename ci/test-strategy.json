@@ -36,6 +36,8 @@
     {"path": "packages/artifacts/tests", "owner": "Yavuz", "work_package": "WP-OBJ-001", "families": ["TEST-DATA-CHECKSUM"], "test_ids": ["TEST-OBJ-001-001", "TEST-OBJ-001-002", "TEST-OBJ-001-003", "TEST-OBJ-001-004", "TEST-OBJ-001-005", "TEST-OBJ-001-006", "TEST-OBJ-001-007"],
      "runs": [{"tier": "unit", "boundary_mode": "STUB_ALLOWED", "ci_step": "Artifact reference contract tests and typing (WP-OBJ-001)"},
               {"tier": "integration", "boundary_mode": "REAL", "ci_step": "Artifact store tests (REAL SeaweedFS, WP-OBJ-001)"}]},
+    {"path": "services/vision-service/tests", "owner": "Selman", "work_package": "WP-VIS-001", "families": ["TEST-VIS-PIPELINE"], "test_ids": ["TEST-VIS-001-002"],
+     "runs": [{"tier": "unit", "boundary_mode": "STUB_ALLOWED", "ci_step": "Vision inspection pipeline tests and typing (WP-VIS-001)"}]},
     {"path": "infra/observability/tests", "owner": "Yavuz", "work_package": "WP-OBS-001", "families": ["TEST-OBS-TELEMETRY"], "test_ids": ["TEST-OBS-001-002"],
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Observability standard tests and typing (WP-OBS-001)"},
               {"tier": "integration", "boundary_mode": "REAL", "ci_step": "Telemetry pipeline smoke (boundary mode REAL)"}]},
