@@ -1051,6 +1051,18 @@ test. It has no product, lifecycle, dependency-readiness or authority impact.
 Control-only PRs applying this correction must declare `NONE` with the explicit
 top-level (non-bulleted) Requirements field required by TL-13.
 
+## CHG-057 — record current-main DEP-018 readiness PASS
+
+CHG-057 / CTRL-HOST-033 records the canonical dependency status after the
+already-approved CHG-055 basis passed its current-main mechanical evaluation.
+The evaluation verified the producer PR #24 merge ancestry, exact artifact and
+test blobs, normal/reentrant fixtures, producer contract checks, trace coverage,
+non-null precise requirement, and current-main CI. This C1 record changes only
+the DEP-018 status projection from `NOT_READY` to `READY`; it adds no product
+capability, does not certify PostgreSQL integration, and does not alter
+WP-CORE-002 transition ownership. The status is intentionally not changed
+until the exact current-main evaluation is complete.
+
 ## CHG-052 — generic audit-backed BLOCKED projection reconciliation
 
 CHG-052 / CTRL-HOST-030 repairs only the orthogonal Plane `BLOCKED` label when

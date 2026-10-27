@@ -43,3 +43,4 @@ CHG-053,Restore canonical Plane owner assignments and approved single-cycle proj
 CHG-054,Simplify product execution startability and make control-plane scheduling advisory,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-031
 CHG-056,Preserve the first telemetry warning on fresh monotonic clocks,C1,CR-2,Asrın,APPROVED,APPROVED,CTRL-HOST-032
 CHG-055,Bind DEP-018 to the existing Core domain contract evidence,C2,CR-2,Asrın,APPROVED,APPROVED,WP-CORE-009
+CHG-057,Record the current-main PASS for DEP-018,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-033
