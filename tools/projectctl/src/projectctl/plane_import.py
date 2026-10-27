@@ -160,23 +160,43 @@ def expected_projection(project, audit):
             "milestone_distribution": dict(sorted(distribution.items()))}
 
 
-def check_issue(item, expected):
+def issue_drift(item, expected, *, valid_state_ids=None, allow_state_difference=False):
     body = expected["create_body"]
-    for field in ("name", "external_id", "external_source", "state"):
+    for field in ("name", "external_id", "external_source"):
         if item.get(field) != body[field]:
             raise PlaneError(f"{expected['wp_id']}: issue contract mismatch in {field}; no automatic repair")
+    if item.get("parent") is not None:
+        raise PlaneError(expected["wp_id"] + ": unexpected sub-item relationship")
+    if valid_state_ids is not None and item.get("state") not in valid_state_ids:
+        raise PlaneError(expected["wp_id"] + ": unknown workflow state; no automatic repair")
+    state_difference = item.get("state") != body["state"]
+    if state_difference and not allow_state_difference:
+        raise PlaneError(f"{expected['wp_id']}: issue contract mismatch in state; no automatic repair")
+    repair = {}
     for field in ("labels", "assignees"):
         values = item.get(field)
         if not isinstance(values, list) or sorted(values) != sorted(body[field]):
-            raise PlaneError(f"{expected['wp_id']}: issue contract mismatch in {field}; no automatic repair")
-    if canonical_metadata(item.get("description_html")) != expected["metadata"]:
-        raise PlaneError(expected["wp_id"] + ": canonical metadata round-trip mismatch")
-    if item.get("parent") is not None:
-        raise PlaneError(expected["wp_id"] + ": unexpected sub-item relationship")
+            repair[field] = body[field]
+    try:
+        metadata_matches = canonical_metadata(item.get("description_html")) == expected["metadata"]
+    except PlaneError:
+        metadata_matches = False
+    if not metadata_matches:
+        repair["description_html"] = body["description_html"]
+    return {"repair": repair, "state_difference": state_difference}
+
+
+def check_issue(item, expected, *, valid_state_ids=None, allow_state_difference=False):
+    drift = issue_drift(item, expected, valid_state_ids=valid_state_ids,
+                        allow_state_difference=allow_state_difference)
+    if drift["repair"]:
+        raise PlaneError(expected["wp_id"] + ": issue static fields differ; reconciliation required: "
+                         + ",".join(sorted(drift["repair"])))
+    return drift
 
 
 def import_plan(projection, inventory):
-    """No mutation; all updates and conflicting relationships fail closed."""
+    """No mutation; repair owned static fields, preserve valid mutable state."""
     expected = projection["projections"]
     from .control_plane import ControlItem, canonical_audit
     registry = [ControlItem.model_validate(s) for s in projection.get("control_registry", [])]
@@ -186,12 +206,15 @@ def import_plan(projection, inventory):
             raise PlaneError("Control-only Plane item has module/cycle relationship")
     index = identity_index(audit["work_items"], {e["wp_id"] for e in expected})
     operations, conflicts = [], []
+    state_ids = {s["id"] for s in inventory["audit"]["states"]}
     for e in expected:
         item = index.get(e["wp_id"])
         missing = []
+        repair, state_difference = {}, False
         try:
             if item:
-                check_issue(item, e)
+                drift = issue_drift(item, e, valid_state_ids=state_ids, allow_state_difference=True)
+                repair, state_difference = drift["repair"], drift["state_difference"]
                 for family, target in [("modules", e["module_id"]), ("cycles", e["cycle_id"])]:
                     actual = inventory["memberships"][family].get(item["id"], [])
                     if actual and actual != ([target] if target else []):
@@ -202,17 +225,21 @@ def import_plan(projection, inventory):
                 missing = ["work_items", "modules"] + (["cycles"] if e["cycle_id"] else [])
         except PlaneError as error:
             conflicts.append({"wp_id": e["wp_id"], "diagnostic": str(error)})
+        conflict_for_item = conflicts and conflicts[-1]["wp_id"] == e["wp_id"]
+        action = "conflict" if conflict_for_item else "create" if missing else "repair" if repair else "unchanged"
         operations.append({"wp_id": e["wp_id"], "plane_id": item["id"] if item else None,
-                           "action": "conflict" if conflicts and conflicts[-1]["wp_id"] == e["wp_id"]
-                           else "create" if missing else "unchanged", "missing": missing})
+                           "action": action, "missing": missing,
+                           "repair_fields": sorted(repair), "preserved_state": state_difference})
     counts = Counter(f for o in operations for f in o["missing"])
+    updates = sum(o["action"] == "repair" for o in operations)
     new = [e for e in expected if e["wp_id"] not in index]
     return {"schema_version": "plane-wp-import-plan-v1", "dry_run": True, "policy": POLICY,
-            "operations": operations, "conflicts": conflicts, "updates": 0,
+            "operations": operations, "conflicts": conflicts, "updates": updates,
             "creates": {f: counts[f] for f in ("work_items", "modules", "cycles")},
             "embedded_milestones": sum(bool(e["create_body"]["labels"]) for e in new),
             "embedded_assignees": sum(bool(e["create_body"]["assignees"]) for e in new),
-            "http_mutation_requests": sum(counts.values()),
+            "http_mutation_requests": sum(counts.values()) + updates,
+            "preserved_state_differences": sum(o["preserved_state"] for o in operations),
             "unchanged": sum(o["action"] == "unchanged" for o in operations)}
 
 
@@ -270,6 +297,7 @@ class WPImport:
         self.allowed = {e["wp_id"]: e for e in self.projection["projections"]}
         self.report["before"] = inventory
         self.working_inventory = deepcopy(inventory)
+        self.valid_state_ids = {s["id"] for s in inventory["audit"]["states"]}
         self.report["projection"] = self.projection
         plan = import_plan(self.projection, inventory)
         if plan["conflicts"]:
@@ -277,24 +305,31 @@ class WPImport:
         self.report["preview"] = plan
         return plan
 
-    def _write(self, suffix, body, wp_id, attempt):
+    def _write(self, suffix, body, wp_id, attempt, *, method="POST"):
         expected = self.allowed.get(wp_id)
-        permitted = expected is not None and (
+        repair_fields = {"description_html", "assignees", "labels"}
+        permitted_create = method == "POST" and expected is not None and (
             suffix == "issues/" and body == expected["create_body"] or
             suffix == f"modules/{expected['module_id']}/module-issues/" and set(body) == {"issues"} or
             expected["cycle_id"] and suffix == f"cycles/{expected['cycle_id']}/cycle-issues/" and set(body) == {"issues"})
-        if not permitted or suffix != "issues/" and body != {"issues": [self.issue_id]}:
+        permitted_repair = (method == "PATCH" and expected is not None
+                            and suffix == f"issues/{self.issue_id}/"
+                            and set(body) <= repair_fields
+                            and bool(body)
+                            and all(body[field] == expected["create_body"][field] for field in body))
+        if not permitted_create and not permitted_repair:
             raise PlaneError("Mutation outside approved WP import scope")
-        entry = {"wp_id": wp_id, "method": "POST", "path": "/api/v1/" + self.prefix + suffix,
+        entry = {"wp_id": wp_id, "method": method, "path": "/api/v1/" + self.prefix + suffix,
                  "body": body, "attempt": attempt}
         self.report["mutations"].append(entry)
         try:
-            response = self.reader.stream.request("POST", self.prefix + suffix, json=body, attempt=attempt)
+            response = self.reader.stream.request(method, self.prefix + suffix, json=body,
+                                                  idempotent=method == "PATCH", attempt=attempt)
         except PlaneError:
             entry["outcome"] = "AMBIGUOUS_TRANSPORT"
             return None
         entry["status"] = response.status_code
-        if response.status_code in {200, 201}:
+        if response.status_code in ({200} if method == "PATCH" else {200, 201}):
             entry["outcome"] = "ACCEPTED_PENDING_READ"
             try:
                 data = response.json()
@@ -307,7 +342,7 @@ class WPImport:
             self.reader.stream.defer(min(2 ** attempt, 30))
             return None
         entry["outcome"] = "REJECTED"
-        raise PlaneError(f"WP import POST rejected: HTTP {response.status_code} (body redacted)")
+        raise PlaneError(f"WP import {method} rejected: HTTP {response.status_code} (body redacted)")
 
     def _issues(self):
         from .control_plane import canonical_audit
@@ -321,8 +356,8 @@ class WPImport:
         for attempt in range(1, 6):
             index = self._issues()  # Fresh stable-ID inventory; duplicates stop before POST.
             if wp_id in index:
-                check_issue(index[wp_id], expected)
-                return index[wp_id]
+                self.issue_id = index[wp_id]["id"]
+                return self._reconcile_issue(expected, index[wp_id], attempt)
             project = self.reader._get(self.prefix)
             if "default_assignee" not in project or project["default_assignee"] is not None:
                 raise PlaneError("Project default assignee changed; create withheld")
@@ -342,6 +377,29 @@ class WPImport:
                 raise PlaneError("Accepted issue create missing from fresh inventory")
             self.report["reconciliations"].append({"wp_id": wp_id, "kind": "work_items", "result": "ABSENT", "attempt": attempt})
         raise PlaneError("Issue create reconciliation exhausted after 5 attempts")
+
+    def _reconcile_issue(self, expected, item, attempt):
+        """Repair canonical static fields; never write workflow state."""
+        drift = issue_drift(item, expected, valid_state_ids=self.valid_state_ids,
+                            allow_state_difference=True)
+        if not drift["repair"]:
+            return item
+        body = drift["repair"]
+        suffix = f"issues/{item['id']}/"
+        write = self._write(suffix, body, expected["wp_id"], attempt, method="PATCH")
+        fresh = self.reader._get(self.prefix + suffix)
+        verified = issue_drift(fresh, expected, valid_state_ids=self.valid_state_ids,
+                               allow_state_difference=True)
+        if verified["repair"]:
+            if write is not None and write["outcome"] == "ACCEPTED_PENDING_READ":
+                raise PlaneError(expected["wp_id"] + ": accepted issue repair missing from fresh read-back")
+            raise PlaneError(expected["wp_id"] + ": issue repair did not converge")
+        if write is not None:
+            write.update(outcome="VERIFIED", entity_id=item["id"], repaired_fields=sorted(body))
+        else:
+            self.report["reconciliations"].append({"wp_id": expected["wp_id"], "kind": "issue_static_fields",
+                                                    "result": "PERSISTED", "fields": sorted(body)})
+        return fresh
 
     def _relationship(self, expected, family, inventory):
         target = expected["module_id" if family == "modules" else "cycle_id"]
@@ -384,7 +442,7 @@ class WPImport:
         self._relationship(e, "modules", inventory)
         self._relationship(e, "cycles", inventory)
         fresh = self.reader._get(self.prefix + f"issues/{self.issue_id}/")
-        check_issue(fresh, e)
+        check_issue(fresh, e, valid_state_ids=self.valid_state_ids, allow_state_difference=True)
         self.report["verified_wps"].append({"wp_id": wp_id, "plane_id": self.issue_id,
                                             "module_id": e["module_id"], "cycle_id": e["cycle_id"],
                                             "labels": fresh["labels"], "assignees": fresh["assignees"]})

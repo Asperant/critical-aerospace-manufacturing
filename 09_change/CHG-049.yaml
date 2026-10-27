@@ -1,0 +1,56 @@
+CHG-049:
+  title: Generic Plane WP static-drift reconciliation with mutable lifecycle preservation
+  trigger: Canonical 180-WP provisioning was fail-closed by existing owner and metadata drift while valid Plane lifecycle state differed from creation state
+  reason: The approved CTRL-PM-009 projection already defined canonical owned static fields and stated that existing workflow state must not be reset, but the live importer treated every static or state difference as an unreconcilable conflict. This left global drift unresolved and blocked missing canonical WP provisioning.
+  class: C3
+  review_risk_class: CR-3
+  raised_in: S4
+  owner: Asrın
+  application_control_item: CTRL-PM-016
+  required_human_approvals: 0
+  decision: APPROVED
+  status: APPROVED
+  affected_requirements:
+    - NONE — control-plane reconciliation semantics only; no product requirement or lifecycle authority changes
+  affected_architecture:
+    - NONE — existing canonical projectctl-to-Plane boundary is preserved; no new service, store or authority is introduced
+  affected_contracts:
+    - id: CTRL-PLANE-RECONCILIATION-v1
+      compatibility: NON_BREAKING
+      consumers_reviewed: [CTRL-PM-009, CTRL-PM-010, fresh cap-plane-queue catalog read]
+  affected_work_packages:
+    - NONE — no product WP implementation, readiness, dependency or lifecycle transition is performed
+  affected_dependencies:
+    - NONE — dependency edges and readiness semantics remain unchanged
+  affected_evidence:
+    - tools/projectctl/tests/test_plane_import.py
+    - tools/projectctl/tests/test_control_plane.py
+    - deterministic dry-run conflict classification
+    - fresh Plane set-equality audit
+    - repeated fresh cap-plane-queue readback
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - Plane control-item registry and CTRL-PM-015-PILOT-001 remain separately validated and are never treated as canonical WPs.
+      - Identity, external_source, name, parent and relationship conflicts remain fail-closed.
+      - Product lifecycle transitions, queue selection, DoR/DoD and readiness evidence remain unchanged.
+    rerun_required:
+      - Static owner/metadata/label repair and read-back tests
+      - Valid mutable-state preservation and unknown-state fail-closed tests
+      - Fresh global Plane reconciliation and catalog set equality
+      - Repeated fresh cap-plane-queue readback
+  security_authority_impact: NONE — no credential, identity-authentication, authorization, protected-action or manufacturing-authority semantics change
+  rollout: Merge the control-only branch with required CI, refresh the root-owned projectctl source through the supported deployment path, run the approved generic importer after the recorded dry-run preview, preserve valid existing lifecycle states, and verify fresh Plane and queue readbacks. No product WP lifecycle transition is authorized.
+  rollback: Restore the merged helper source with the supported root-only rollback procedure. Do not replay stale Plane snapshots, delete issues, or reset lifecycle state.
+  required_rerun:
+    - Generic static-field reconciliation regression suite
+    - Identity/relationship/state negative-path suite
+    - Fresh 180-WP plus control-item Plane audit
+    - Repeated fresh cap-plane-queue readback
+  documentation_updates:
+    - 09_change/CHG-049.yaml
+    - 09_change/change_requests.csv
+    - docs/09_Change_Control_Process.md
+    - project_control/PROJECT_SETUP_MASTER_EXECUTION_SPEC.md
+  freeze_context: POST_M6_PERMITTED

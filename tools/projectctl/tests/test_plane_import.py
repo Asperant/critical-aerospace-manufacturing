@@ -66,6 +66,13 @@ class FakePlane:
             else:
                 data = self.audit["work_items" if tail == "issues" else tail]
             return httpx.Response(200, json=deepcopy(data))
+        if req.method == "PATCH":
+            assert path[-2] == "issues"
+            body = json.loads(req.content)
+            self.writes.append(("issue-patch", body))
+            item = next(i for i in self.audit["work_items"] if i["id"] == tail)
+            item.update(deepcopy(body))
+            return httpx.Response(200, json=deepcopy(item))
         assert req.method == "POST" and tail in {"issues", "module-issues", "cycle-issues"}
         body = json.loads(req.content)
         self.writes.append((tail, body))
@@ -279,8 +286,8 @@ def test_code_wrapper_does_not_hide_semantic_metadata_drift(project):
     item = {"id": "existing", **deepcopy(expected["create_body"]), "parent": None}
     item["description_html"] = "<pre><code>" + html.escape(json.dumps(changed)) + "</code></pre>"
     assert canonical_metadata(item["description_html"]) == changed
-    with pytest.raises(PlaneError, match="canonical metadata round-trip mismatch"):
-        check_issue(item, expected)
+    with pytest.raises(PlaneError, match="reconciliation required: description_html"):
+        check_issue(item, expected, allow_state_difference=True)
 
 
 def test_second_run_never_resets_real_execution_state(project):
@@ -290,6 +297,27 @@ def test_second_run_never_resets_real_execution_state(project):
     fake.audit["work_items"][0]["state"] = "IN_PROGRESS"
     count = len(fake.writes)
     with runner(project, fake) as run:
-        with pytest.raises(ImportFailure):
-            run.run()
+        report = run.run()
+    assert report["result"] == "PASS"
     assert len(fake.writes) == count and fake.audit["work_items"][0]["state"] == "IN_PROGRESS"
+    assert report["post_import"]["dry_run"]["preserved_state_differences"] == 1
+
+
+def test_existing_static_drift_is_repaired_without_state_reset(project):
+    fake = FakePlane(project)
+    with runner(project, fake) as run:
+        run.run()
+    item = fake.audit["work_items"][0]
+    item["description_html"] = "<p>stale static metadata</p>"
+    item["assignees"] = ["wrong-owner"]
+    item["state"] = "READY"
+    count = len(fake.writes)
+    with runner(project, fake) as run:
+        report = run.run()
+    patches = [body for kind, body in fake.writes[count:] if kind == "issue-patch"]
+    assert len(patches) == 1
+    assert set(patches[0]) == {"description_html", "assignees"}
+    assert "state" not in patches[0]
+    assert item["state"] == "READY"
+    assert report["result"] == "PASS"
+    assert report["post_import"]["dry_run"]["preserved_state_differences"] == 1
