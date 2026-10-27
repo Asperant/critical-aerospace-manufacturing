@@ -36,6 +36,13 @@ protected-command contract are not defined by current canonical inputs.
 | `projectctl check-done WP-CORE-004` | UNKNOWN; post-merge/owner DoD evidence gate remains fail-closed |
 | `git diff --check` | PASS |
 
+The first PR CI rerun (`40573152080`) classified the implementation, static,
+contract and scope jobs successfully. Its TL-13 step failed before executing
+tests because the rerun event carried the pre-update PR body without the
+required `Requirements` field. The current PR body contains the canonical
+requirements field; a fresh synchronize event is required for that metadata
+check to evaluate the current body.
+
 The PostgreSQL run used an isolated disposable database and separate restricted
 migration/runtime roles. It exercised the complete current-main migration chain,
 including rework and lineage revisions, foreign keys, rollback, replay,
