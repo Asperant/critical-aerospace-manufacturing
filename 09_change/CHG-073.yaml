@@ -1,0 +1,53 @@
+title: Bind the verified Core owner-local outbox slice to DEP-022
+trigger: WP-CORE-005 owner-local mutation/outbox work is merged, but DEP-022 still has no precise readiness predicate or current evidence binding
+reason: S2/S3 closure requires the exact lifecycle-to-outbox capability edge to be reconciled from truthful real PostgreSQL evidence without claiming relay delivery or downstream integration
+class: C1
+review_risk_class: CR-1
+raised_in: S3
+owner: Asrın
+required_human_approvals: 0
+reviewers: []
+decision: APPROVED
+status: APPROVED
+application_control_item: CTRL-HOST-047
+decision_basis: Mechanical edge-specific readiness reconciliation for the merged WP-CORE-005 owner-local predicate and its real PostgreSQL evidence; no global outbox, relay, broker or downstream readiness change.
+scope:
+  - Bind DEP-022 to the merged transactional mutation plus durable outbox owner-local implementation.
+  - Record DEP-022 READY at COMPONENT_READY using the exact real PostgreSQL 18 integration evidence and current-main product revision.
+  - Record the LotHeld.v2 producer/consumer compatibility evidence without changing LotHeld.v1 semantics.
+  - Keep DEP-023, DEP-024, DEP-025, DN-EVT-SPINE and NATS relay delivery as separate unresolved gates.
+invariants_preserved:
+  - Core remains the canonical authority for manufacturing state mutation.
+  - Mutation, revision/idempotency, command outcome and outbox insertion remain one transactional boundary.
+  - LotHeld.v1 remains byte-compatible and active; v2 is an explicit versioned successor.
+  - Owner-local outbox persistence is not broker delivery or downstream effect verification.
+precise_requirement: The Core lifecycle command path shall persist the accepted material hold mutation, exact revision/idempotency outcome, per-lot event sequence and LotHeld.v2 outbox row atomically on real PostgreSQL 18, with replay, conflicting idempotency and rollback/constraint-failure paths verified.
+affected_requirements: [FR-CORE-014, FR-CORE-015, FR-CORE-016]
+affected_architecture: [ARCH-CORE-OUTBOX, ARCH-CORE-DB, ARCH-EVT-OUTBOX, ARCH-CTR-VERSIONING]
+affected_contracts: [core.lot-held.v1, core.lot-held.v2]
+affected_work_packages: [WP-CORE-005]
+affected_dependencies: [DEP-022]
+affected_evidence:
+  - evidence/readiness/DN-CORE-OUTBOX-DEP-022.json
+  - evidence/WP-CORE-005/SLICE-ATOMIC-OUTBOX-V2.md
+  - evidence/WP-CORE-005/CURRENT-MAIN-VALIDATION-2026-10-27.md
+  - services/manufacturing-core/contracts/v1/lot-held.v2.schema.json
+  - packages/contracts/registry/core.lot-held.v2.json
+evidence_staleness:
+  question_answered: true
+  stale: []
+  unaffected:
+    - DEP-023 remains the separate event-contract edge.
+    - DEP-024 remains the real outbox-to-NATS-to-consumer integration edge.
+    - DEP-025 remains the NATS runtime edge.
+    - WP-CORE-005 completion and downstream consumer/effect verification are not claimed.
+security_authority_impact: NONE
+conditions:
+  - Do not modify or reinterpret LotHeld.v1.
+  - Do not claim NATS publication, relay delivery, consumer projection or effect verification.
+  - Keep the verified product revision and CI step identity exact in the readiness artifact.
+rollout: Merge the control-only readiness reconciliation after focused validation, then re-run the S2/S3 dependency and startability audit.
+rollback: Revert the DEP-022 edge projection, readiness artifact, RTM binding note and this control record together.
+required_rerun: [projectctl validate, projectctl startability WP-CORE-005, Core contract tests, real PostgreSQL 18 integration lane evidence review, dependency audit]
+documentation_updates: [docs/03_Requirements_Traceability_Matrix.md, docs/05_Dependency_Graph.md, docs/09_Change_Control_Process.md, 09_change/change_requests.csv]
+freeze_context: PRE_M6

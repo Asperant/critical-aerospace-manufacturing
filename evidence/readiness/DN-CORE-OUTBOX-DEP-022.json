@@ -1,0 +1,31 @@
+{
+  "schema": "edge-capability-readiness-basis-v1",
+  "edge": "DEP-022",
+  "predecessor_node": "DN-CORE-LIFECYCLE",
+  "successor_node": "DN-CORE-OUTBOX",
+  "level": "COMPONENT_READY",
+  "producer_wp": "WP-CORE-005",
+  "producer_pr": 171,
+  "producer_merge_sha": "5e9544bcc1cbcd2dc57f85a529ecf53e0e79a5bf",
+  "verified_main_sha": "5e9544bcc1cbcd2dc57f85a529ecf53e0e79a5bf",
+  "precise_requirement": "The Core lifecycle command path shall persist the accepted material hold mutation, exact revision/idempotency outcome, per-lot event sequence and LotHeld.v2 outbox row atomically on real PostgreSQL 18, with replay, conflicting idempotency and rollback/constraint-failure paths verified.",
+  "scope_boundary": "This edge certifies only the owner-local COMPONENT_READY predicate at the merged WP-CORE-005 product revision. It does not claim LotHeld.v1 semantic change, NATS publication, relay delivery, downstream consumer adoption, effect verification, DEP-023, DEP-024, DEP-025, DN-EVT-SPINE readiness or WP-CORE-005 DONE.",
+  "artifacts": [
+    {"path": "services/manufacturing-core/src/manufacturing_core/commands.py", "role": "transactional_command_path"},
+    {"path": "services/manufacturing-core/src/manufacturing_core/outbox.py", "role": "durable_outbox_emission"},
+    {"path": "services/manufacturing-core/src/manufacturing_core/events_v2.py", "role": "LotHeld_v2_producer_payload"},
+    {"path": "services/manufacturing-core/contracts/v1/lot-held.v2.schema.json", "role": "versioned_event_schema"},
+    {"path": "packages/contracts/registry/core.lot-held.v2.json", "role": "producer_consumer_registry"},
+    {"path": "services/manufacturing-core/tests/persistence/test_commands_integration.py", "role": "real_postgresql_atomicity_replay_rollback_tests"},
+    {"path": "services/manufacturing-core/tests/persistence/test_query_round_trip.py", "role": "real_postgresql_persistence_cleanup_and_round_trip"},
+    {"path": "evidence/WP-CORE-005/SLICE-ATOMIC-OUTBOX-V2.md", "role": "producer_scope_evidence"}
+  ],
+  "tests": [
+    {"test_id": "TEST-CORE-OUTBOX", "path": "services/manufacturing-core/tests/persistence/test_commands_integration.py", "result": "real PostgreSQL 18 integration job step passed"},
+    {"test_id": "TEST-CORE-OUTBOX-REPLAY", "path": "services/manufacturing-core/tests/persistence/test_commands_integration.py", "result": "duplicate replay and conflicting idempotency paths covered"},
+    {"test_id": "TEST-CORE-OUTBOX-ROLLBACK", "path": "services/manufacturing-core/tests/persistence/test_commands_integration.py", "result": "event-constraint failure rolls back mutation, sequence and outcome"},
+    {"test_id": "TEST-EVT-SCHEMA", "path": "ci/tests/test_contract_registry.py + ci/tests/test_contract_compatibility.py", "result": "producer/consumer compatibility and v1 byte-compatibility checks passed"}
+  ],
+  "verification": "PR #171 merged the product slice at 5e9544bcc1cbcd2dc57f85a529ecf53e0e79a5bf. T1 CI run 40551363304 executed the real PostgreSQL 18 integration lane; its Core migration/persistence step completed successfully at the exact merged revision. Control-only CHG-072 later changed only the projectctl diagnostic baseline on main, so this artifact binds the product evidence to the unchanged product merge revision rather than claiming the still-running shared browser/full-regression jobs.",
+  "control": "CHG-073 / CTRL-HOST-047"
+}

@@ -730,6 +730,7 @@ Exact names/subjects may be refined (#76) but semantic boundaries cannot disappe
 | PlaceLotOnHold.v1 | DN-CORE-CMDCON (Core semantic owner) | DN-AUTO-EXEC (invoker) | CMD-PlaceLotOnHold-v1 (01/02) | INTEGRATION_READY | RESOLVED — schema/evidence freeze remains implementation work |
 | DispatchLot.v1 | DN-CORE-CMDCON | DN-AUTO-EXEC | DispatchLot.v1 (01 Item71); IC-SCH-005 is decision data, ActivateSchedule is a different action | INTEGRATION_READY | RESOLVED — dispatch execution is distinct from plan activation |
 | LotHeld.v1 | DN-CORE-OUTBOX | DN-TWIN-PROJ, DN-SIM-COREINT, DN-AUTO-VERIFY | Core domain event | CONTRACT_READY | aligned |
+| LotHeld.v2 | DN-CORE-OUTBOX | DN-TWIN-PROJ, DN-SIM-COREINT, DN-AUTO-VERIFY | Core domain event | CONTRACT_READY | aligned; explicit versioned successor; v1 unchanged |
 | LotDispatchAuthorized.v1 | DN-CORE-OUTBOX | DN-SIM-COREINT | Core domain event | CONTRACT_READY | aligned |
 | OperationStarted.v1 | DN-SIM-COREINT | DN-CORE-LIFECYCLE, DN-TWIN-PROJ | physical execution event | CONTRACT_READY | aligned |
 | TwinProjectionAdvanced.v1 | DN-TWIN-PROJ | DN-UI-SHELL, DN-AUTO-VERIFY | Twin revision event | CONTRACT_READY | aligned |
@@ -1560,10 +1561,10 @@ DEP-022:
   need_by: "M1 (S2)"   # sprint 2
   fallback: null
   unblock_evidence: "atomic mutation+outbox test on real PostgreSQL"
-  precise_requirement: null
+  precise_requirement: "The Core lifecycle command path shall persist the accepted material hold mutation, exact revision/idempotency outcome, per-lot event sequence and LotHeld.v2 outbox row atomically on real PostgreSQL 18, with replay, conflicting idempotency and rollback/constraint-failure paths verified."
   risk_class: DR-1
   source: "Item 66 #96"
-  status: NOT_READY
+  status: READY
 DEP-023:
   predecessor: {node: DN-EVT-CONTRACTS, owner: "Asrın"}
   successor: {node: DN-EVT-SPINE, owner: "Asrın"}
@@ -3800,7 +3801,7 @@ For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §1
 | DEP-019 | DN-CORE-LIFECYCLE at INTEGRATION | DN-RT-PG: PostgreSQL runtime; SKELETON_READY; Core migrations apply on PostgreSQL | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-020 | DN-CORE-TRANSITIONS at START | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; minimal lifecycle component implemented, lifecycle component tests green on current main, and attributable COMPONENT_READY readiness artifact bound to WP-CORE-002 | Producer is WP-CORE-009; the artifact must bind the current-main revision, CI/component-test evidence and DN-CORE-LIFECYCLE readiness to the WP-CORE-002 consumer. Legal transition semantics remain in WP-CORE-002. |
 | DEP-021 | DN-EVT-CONTRACTS at START | DN-CORE-CONTRACTS: Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
-| DEP-022 | DN-CORE-OUTBOX at INTEGRATION | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; atomic mutation+outbox test on real PostgreSQL | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-022 | DN-CORE-OUTBOX at INTEGRATION | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; atomic mutation+outbox test on real PostgreSQL 18, including replay/idempotency and rollback paths | Bound by CHG-073 to the merged WP-CORE-005 owner-local transaction/outbox implementation and exact real PostgreSQL 18 CI evidence at product merge SHA `5e9544b`. This does not claim NATS/relay delivery, downstream consumer adoption, DEP-023/024/025 or work-package DONE. |
 | DEP-023 | DN-EVT-SPINE at INTEGRATION | DN-EVT-CONTRACTS: Event contracts (envelope + domain events, IC registry); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-024 | DN-EVT-SPINE at INTEGRATION | DN-CORE-OUTBOX: Transactional outbox + relay; INTEGRATION_READY; real cross-boundary integration test green on INTEGRATION (outbox → NATS → consumer) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-025 | DN-EVT-SPINE at INTEGRATION | DN-RT-NATS: NATS JetStream runtime; INTEGRATION_READY; real JetStream in CI + INTEGRATION (no fake bus, CI-INV-07) | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |

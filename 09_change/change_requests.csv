@@ -59,3 +59,4 @@ CHG-069,Bind the merged typed AI tool contract to DEP-064,C1,CR-1,Asrın,APPROVE
 CHG-070,Bind the merged Core command contract to DEP-027,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-044
 CHG-071,Introduce versioned LotHeld.v2 and bind Core transactional outbox emission,C2,CR-2,Asrın,APPROVED,APPROVED,CTRL-HOST-045
 CHG-072,Refresh the projectctl precision diagnostic baseline after approved bindings,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-046
+CHG-073,Bind the verified owner-local Core outbox slice to DEP-022,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-047

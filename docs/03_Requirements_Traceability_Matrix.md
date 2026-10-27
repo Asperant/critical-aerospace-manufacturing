@@ -3819,7 +3819,7 @@ FR-CORE-014:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-014 L169862"}
   DERIVED_FROM: [ITEM-12, ITEM-15, EV-INV-10, BE-INV-03]
   ALLOCATED_TO: [ARCH-CORE-OUTBOX, ARCH-EVT-OUTBOX]
-  REALIZED_BY: {surface: "domain-event emission per accepted transition", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "domain-event emission per accepted transition", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/outbox.py; services/manufacturing-core/src/manufacturing_core/events_v2.py"}
   EXPOSED_BY: ["Core domain event schemas (Production/Equipment/Quality/Schedule namespaces)"]
   VERIFIED_BY: [TEST-CORE-OUTBOX, TEST-EVT-SCHEMA]
   EXERCISED_IN: [AV-SCEN-01]
@@ -3831,7 +3831,7 @@ FR-CORE-015:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-015 L169863"}
   DERIVED_FROM: [ITEM-15, ITEM-36, EVTINF-INV-06, TECH-INV-10]
   ALLOCATED_TO: [ARCH-CORE-OUTBOX, ARCH-CORE-DB, ARCH-EVT-OUTBOX]
-  REALIZED_BY: {surface: "transactional outbox table + relay", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "transactional outbox table + relay", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/outbox.py; services/manufacturing-core/migrations/versions/0005_outbox.sql"}
   EXPOSED_BY: ["Outbox record schema"]
   VERIFIED_BY: [TEST-CORE-OUTBOX, RES-BROKER-001]
   EXERCISED_IN: [AV-SCEN-07]

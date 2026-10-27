@@ -1293,3 +1293,16 @@ v1 schema, while major-version breaking changes remain fail-closed unless the
 version policy permits them. The owner-local PostgreSQL mutation/outbox and
 rollback evidence is separate from NATS publication, downstream consumer
 adoption and cross-boundary integration acceptance.
+
+## CHG-073 — bind the verified owner-local Core outbox slice to DEP-022
+
+CHG-073 / CTRL-HOST-047 is a C1 control-plane reconciliation for DEP-022.
+The merged WP-CORE-005 implementation and exact real PostgreSQL 18 evidence
+bind the lifecycle-to-outbox owner-local predicate at COMPONENT_READY. The
+precise predicate includes accepted mutation, revision/idempotency outcome,
+per-lot event sequencing, LotHeld.v2 emission, replay/conflict handling and
+rollback on constraint failure. LotHeld.v1 remains unchanged.
+
+This projection does not claim NATS publication, relay delivery, downstream
+consumer adoption, effect verification, DEP-023, DEP-024, DEP-025, global
+DN-CORE-OUTBOX INTEGRATION_READY or WP-CORE-005 DONE.
