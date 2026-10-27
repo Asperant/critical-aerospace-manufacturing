@@ -1,8 +1,8 @@
 # TEST-CORE-STATEMACHINE — WP-CORE-002
 
-Evidence status: `PARTIAL_LOCAL_EXECUTION`
+Evidence status: `PARTIAL_CI_EXECUTION`
 
-This artifact records the executable local evidence available on 2026-10-27.
+This artifact records executable local and CI evidence available on 2026-10-27.
 It does not claim `DN-CORE-TRANSITIONS` `INTEGRATION_READY`, WP `DONE`, or
 post-merge acceptance.
 
@@ -39,7 +39,7 @@ uv run --project ci --locked python -m mfgctl trace drift --strict
 no drift between traceability/trace_edges.yaml and docs/03_Requirements_Traceability_Matrix.md §17
 ```
 
-The focused transition suite is included in the 308 passing tests and covers
+The focused transition suite is included in the 309 passing tests and covers
 all declared legal matrix edges plus negative cases for terminal states,
 invalid execution jumps, active holds, unavailable resources, missing
 dispatch, missing ReworkDirective and governed reopen.
@@ -53,7 +53,7 @@ hold/release, retained history, revision preservation, idempotency, duplicate
 hold rejection, target binding and authorization denial.
 
 This workspace had no `CI_PG_DSN` and no `CORE_TEST_DISPOSABLE=1`, so the
-disposable PostgreSQL run was **not executed**. The required command is:
+disposable PostgreSQL run was not executed locally. The required command is:
 
 ```text
 CORE_TEST_DISPOSABLE=1 CI_PG_DSN='<disposable-admin-dsn>' \
@@ -62,8 +62,12 @@ CORE_TEST_DISPOSABLE=1 CI_PG_DSN='<disposable-admin-dsn>' \
   services/manufacturing-core/tests/persistence -m integration -q
 ```
 
-No PostgreSQL pass, CI pass, PR, merge SHA, or post-merge main validation is
-claimed by this artifact.
+Push CI run `40483695799` at commit `506a512034216a1c2451debff0bea6dc5fc3a406`
+executed the disposable PostgreSQL 18 suite and the `Core initial migration and
+persistence` step passed. The same run was later cancelled by the 20-minute
+integration job timeout while installing shared Playwright browsers; therefore
+the push `ci-gate`, PR mergeability, merge SHA and post-merge main validation
+remain unverified.
 
 ## Boundary evidence
 
