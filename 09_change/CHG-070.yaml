@@ -1,0 +1,50 @@
+title: Bind the merged Core command contract to DEP-027
+trigger: DEP-027 remained NOT_READY although the bounded typed command contract slice was merged and verified
+reason: S2/S3 closure requires the exact Core command producer contract to be bound to the canonical edge without claiming later execution or integration work
+class: C1
+review_risk_class: CR-1
+raised_in: S3
+owner: Asrın
+required_human_approvals: 0
+reviewers: []
+decision: APPROVED
+status: APPROVED
+application_control_item: CTRL-HOST-044
+decision_basis: Mechanical edge-specific readiness reconciliation for merged contract artifacts; no product scope, authority boundary or later-stage readiness change.
+scope:
+  - Bind DEP-027 to the merged core.operational-command.v1 registry/schema and four fixtures.
+  - Record DEP-027 READY at CONTRACT_READY.
+  - Preserve command execution, legal transitions and real integration as separate capability gates.
+invariants_preserved:
+  - Core remains the canonical authority for manufacturing command acceptance and state mutation.
+  - Contract acceptance is not command execution or verified physical effect.
+  - Idempotent/durable outcomes and legal transition integration remain separate gates.
+precise_requirement: The Core operational-command v1 contract shall publish versioned hold/release/dispatch/maintenance-request command schemas with stable command/version identity, compatibility/example fixtures, and green producer/consumer contract tests.
+affected_requirements: [FR-CORE-004, FR-CORE-005, FR-CORE-006, FR-CORE-016]
+affected_architecture: [ARCH-CORE-CMD, ARCH-CTR-CMDSCHEMA, ARCH-CTR-VERSIONING]
+affected_contracts: [core.operational-command.v1]
+affected_work_packages: [WP-CORE-003]
+affected_dependencies: [DEP-027]
+affected_evidence:
+  - evidence/readiness/DN-CORE-CMDCON-DEP-027.json
+  - evidence/WP-CORE-003/LOCAL-VERIFICATION.md
+  - packages/contracts/registry/core.operational-command.v1.json
+  - services/manufacturing-core/contracts/v1/operational-command.v1.schema.json
+  - ci/tests/test_core_command_contract.py
+evidence_staleness:
+  question_answered: true
+  stale: []
+  unaffected:
+    - WP-CORE-003 execution persistence/idempotency remains separate capability work.
+    - DEP-028 legal transition integration remains unresolved.
+    - DEP-022/024/025/032/033 runtime and cross-boundary integration remain unresolved.
+    - no work-package DONE claim is made.
+security_authority_impact: NONE
+conditions:
+  - Do not infer durable execution outcomes or real PostgreSQL acceptance.
+  - Do not promote DEP-028 or any integration-stage dependency from current readiness.
+rollout: Merge the control-only edge reconciliation, then re-run validation, focused Core command contract tests and S2/S3 dependency audit.
+rollback: Revert the DEP-027 edge projection, readiness artifact and this control record together.
+required_rerun: [projectctl validate, projectctl startability WP-CORE-003, Core command contract tests, registry and producer-authority tests, contract gate]
+documentation_updates: [docs/05_Dependency_Graph.md, docs/09_Change_Control_Process.md, 09_change/change_requests.csv]
+freeze_context: PRE_M6
