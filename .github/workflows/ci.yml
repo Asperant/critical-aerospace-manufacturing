@@ -164,6 +164,9 @@ jobs:
         run: |
           uv run --project ci --locked python -m pytest -c services/manufacturing-simulator/pyproject.toml services/manufacturing-simulator/tests -q -p pytest_quarantine
           uv run --project ci --locked pyright --project services/manufacturing-simulator/pyrightconfig.json
+      - name: Simulator replay and hash determinism regression (WP-SIM-002)
+        run: |
+          uv run --project ci --locked python -m pytest -c services/manufacturing-simulator/pyproject.toml services/manufacturing-simulator/tests/test_serialization.py services/manufacturing-simulator/tests/test_replay.py services/manufacturing-simulator/tests/test_replay_validation.py -q -p pytest_quarantine
       - name: mfgctl tests (quarantine-aware)
         run: uv run --project ci --locked python -m pytest tools/mfgctl/tests -q -p pytest_quarantine
       - name: Observability standard tests and typing (WP-OBS-001)
