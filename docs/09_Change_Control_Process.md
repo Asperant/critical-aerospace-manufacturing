@@ -1111,6 +1111,19 @@ readiness. The current-main evidence and exact artifact binding are recorded in
 `evidence/CTRL-HOST-036/DEP-021-CURRENT-MAIN.md` and
 `evidence/readiness/DN-CORE-CONTRACTS-DEP-021.json`.
 
+## CHG-062 — bounded SchedulingSnapshot producer contract for DEP-030
+
+CHG-062 records the minimum Core contract slice required by DEP-030 after
+inspection showed that `core.order-query.v1` did not carry the exact scheduling
+dimensions together. `core.scheduling-snapshot.v1` adds explicit lot route
+position, current lot revision, lot-specific equipment eligibility, priority,
+due date, equipment maintenance state, and immutable world/revision/freshness
+metadata. It is a closed, read-only planning contract with a synthetic fixture;
+it contains no Simulator Oracle state and grants no mutation or execution
+authority. Twin export, Scheduler implementation and integration readiness are
+not claimed. DEP-030 receives a separate current-main status projection only
+after this producer change is merged and verified.
+
 ## CHG-052 — generic audit-backed BLOCKED projection reconciliation
 
 CHG-052 / CTRL-HOST-030 repairs only the orthogonal Plane `BLOCKED` label when

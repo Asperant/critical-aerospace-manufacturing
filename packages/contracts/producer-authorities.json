@@ -12,6 +12,11 @@
           "authority_level": "Core domain read; no command, approval or execution authority"
         },
         {
+          "family": "core.scheduling-snapshot",
+          "contract_type": "SNAPSHOT",
+          "authority_level": "Core/Twin read-only planning snapshot; no command, approval or execution authority"
+        },
+        {
           "family": "core.lot-held",
           "contract_type": "EVENT",
           "authority_level": "Core canonical manufacturing fact; consumers are read-only or verification-only"
