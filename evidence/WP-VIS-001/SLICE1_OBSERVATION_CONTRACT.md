@@ -10,6 +10,10 @@ This slice publishes `vision.inspection-observation.v1` (EVT-InspectionObservati
 as a registered EVENT payload contract with SYNTHETIC TEST fixtures. It is
 contract-only: no runtime code, broker binding, artifact fetch, preprocessing or
 inference is added, and no other owner's code or canonical document is changed.
+Because `services/vision-service/` now exists, its telemetry coverage entry
+(`infra/observability/coverage.json`) moves from `NOT_PRESENT` to `PENDING` with an
+owner exemption expiring 2026-11-20, as the WP-OBS-001 coverage gate requires;
+platform-owner confirmation is requested, not claimed.
 
 | Deliverable part | Where |
 |---|---|
@@ -51,22 +55,29 @@ separate governed step by its owners; this slice does not change its status.
 
 ## Verification (local, 2026-10-27)
 
-Environment: shared host, project `.venv` (Python 3.14.4, jsonschema 4.19.2,
-pytest 9.1.1); ruff 0.7.4 and pyright 1.1.389 (CI-pinned versions) in a separate
-tool environment. CI itself runs Python 3.11 through `uv`, which was not
-available locally.
+Environment: shared host, the locked CI toolchain (`uv 0.12.13 sync --project ci
+--locked`, Python 3.11.16), running the workflow's own step commands and job
+environment (`PYTHONPATH=ci:ci/scripts` for t1-unit). The first PR CI run failed
+t1-unit on `packages/observability/tests/test_health_coverage.py` because the new
+directory had no coverage entry; this was not caught earlier because only a subset
+of steps had been run locally. The coverage entry above fixes it.
 
-| Check | Result |
+| Check (CI step) | Result |
 |---|---|
-| `pytest ci/tests/test_vision_inspection_observation_contract.py` | 37 passed |
-| registry, producer-authority, Core event and AI tool contract tests | 189 passed |
-| full `ci/tests` | 772 passed, 1 failed — `test_event_envelope.py::…[2026-10-25T24:00:00Z]`, which fails identically on unmodified `origin/main` with Python 3.14 (CI uses 3.11); unrelated to this slice |
-| `python -m cap_contracts.ci_gate` (base `origin/main`) | PASS: added 1, unchanged 7, validated 8, 0 failures |
-| `cap_trace validate --base origin/main`, `cap_trace drift --strict` | PASS; no drift |
-| `ci/scripts/check_contracts.py` | PASS |
-| `ci/scripts/check_test_strategy.py` | PASS, 0 violations |
-| `ci/scripts/check_architecture_boundaries.py` | PASS |
-| ruff check / format, pyright (strict `ci`) on the new test | clean |
+| `ci/tests` (CI tooling tests) | 773 passed, including 37 new Vision contract tests |
+| test strategy, flake policy | PASS, 0 violations |
+| event-consumer / Core / Twin / Simulator / mfgctl / artifacts / compose tests | 6 / 384 / 14 / 202 / 113 / 77 / 32 passed |
+| observability tests, `cap_observability check-coverage` | 126 passed; PASS (vision-service PENDING) |
+| trace tests, `cap_trace validate`, `drift --strict`, TL-13 impact | 125 passed; PASS; no drift; PASS |
+| Host Plane queue / transition tests | 44 / 288 OK |
+| static ratchet (ruff, pyright), architecture boundaries | PASS, no new findings; PASS |
+| `cap_contracts.ci_gate` (base `origin/main`) | PASS: added 1, unchanged 7, validated 8, 0 failures |
+| `check_contracts.py` (JSON Schema tier) | PASS, 24 schemas, 8 instances |
+| Operations BFF contract tests | 228 passed |
+
+Not run locally: frontend npm steps (no frontend change) and t1-integration
+(REAL PostgreSQL/NATS; no runtime change). The PR's CI run is the authoritative
+record.
 
 Negative paths exercised: invalid input reported as no defect; NOT_EVALUATED with
 valid input, scores or candidates; outcome/candidate disagreement; non-VALID quality
