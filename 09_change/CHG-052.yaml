@@ -1,0 +1,50 @@
+title: Generic audit-to-Plane orthogonal BLOCKED projection reconciliation
+trigger: Verified BLOCKED transition audits for CORE-004 and CORE-005 were not reflected by the Plane BLOCKED label, causing valid Slot Release v2 waits to remain active queue candidates
+reason: The transition audit is authoritative for the orthogonal blocker projection, while lifecycle state remains independent. The existing transition writer could repair a label only through a new user-shaped transition request; no generic reconciliation path existed for an audit-backed projection drift.
+class: C3
+review_risk_class: CR-3
+raised_in: S4
+owner: Asrın
+application_control_item: CTRL-HOST-030
+required_human_approvals: 0
+decision: APPROVED
+status: APPROVED
+affected_requirements:
+  - NONE — control-plane projection reconciliation only; no product requirement or lifecycle authority change
+affected_architecture:
+  - NONE — existing transition audit, Plane adapter and Slot Release boundary are preserved
+affected_contracts:
+  - id: CTRL-PLANE-BLOCKED-PROJECTION-v1
+    compatibility: NON_BREAKING
+    consumers_reviewed: [cap-plane-transition, cap-plane-queue, Slot Release v2]
+affected_work_packages:
+  - NONE — CORE-004/005 are only reconciliation observations; CORE-009 is untouched
+affected_dependencies:
+  - NONE — external-wait semantics and dependency evidence remain unchanged
+affected_evidence:
+  - tools/host/plane-transition/projection_reconcile.py
+  - tools/host/plane-transition/test_projection_reconcile.py
+  - verified BLOCKED/UNBLOCKED audit identity and lifecycle-state binding
+  - fresh Plane label readback with unchanged lifecycle state
+  - fresh cap-plane-queue deferred-candidate readback
+evidence_staleness:
+  question_answered: true
+  stale: []
+  unaffected:
+    - Missing, malformed, ambiguous or state-mismatched audits fail closed.
+    - BLOCKED projection is orthogonal; lifecycle state is never patched.
+    - Slot Release v2 evaluator semantics are unchanged.
+    - UNBLOCKED projection removes the label only after a valid verified resolution audit.
+  rerun_required:
+    - Verified BLOCKED audit plus missing-label projection regression
+    - Verified UNBLOCKED audit plus present-label projection regression
+    - Invalid/ambiguous audit fail-closed regression
+    - Fresh CORE-004/005 Plane projection and queue readback
+security_authority_impact: NONE — no credentials, authorization, protected action or manufacturing authority semantics change
+rollout: Merge the control-only branch with required CI, deploy only merged reference source through the supported root installer, run the profile-scoped generic projection reconciler, and verify exact Plane label/state readback plus fresh queue selection.
+rollback: Restore deployed helper source with the supported root-only rollback procedure. Do not replay stale Plane snapshots, reset lifecycle state or remove audit history.
+documentation_updates:
+  - 09_change/CHG-052.yaml
+  - 09_change/change_requests.csv
+  - docs/09_Change_Control_Process.md
+freeze_context: POST_M6_PERMITTED
