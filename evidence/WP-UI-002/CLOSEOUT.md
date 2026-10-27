@@ -2,6 +2,7 @@
 
 Baseline: current `origin/main` `dd2dfa3e6059c68db80c9980ffc22bed01009380`.
 Branch: `wp/WP-UI-002-state-views`.
+Requirements: `FR-UI-002`, `NFR-PERF-005`.
 Owner-local implementation status: complete for the scoped product slice.
 Final DONE status: not claimed.
 
