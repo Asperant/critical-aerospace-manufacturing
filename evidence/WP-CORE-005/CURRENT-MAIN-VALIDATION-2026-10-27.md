@@ -1,10 +1,10 @@
 # WP-CORE-005 — exact merged-revision owner-local validation
 
-Date: 2026-10-27  
-Owner: Asrın Dündar  
-Canonical WP: `WP-CORE-005`  
-Readiness control: `CHG-073 / CTRL-HOST-047`  
-Product merge SHA: `5e9544bcc1cbcd2dc57f85a529ecf53e0e79a5bf`  
+Date: 2026-10-27
+Owner: Asrın Dündar
+Canonical WP: `WP-CORE-005`
+Readiness control: `CHG-073 / CTRL-HOST-047`
+Product merge SHA: `5e9544bcc1cbcd2dc57f85a529ecf53e0e79a5bf`
 Product PR: `#171`
 
 ## Verification
