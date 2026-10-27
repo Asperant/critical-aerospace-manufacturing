@@ -417,7 +417,7 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 | FR-SIM-005 | F1 | Batu | 01 Item81 FR-SIM-005 L169876 | ITEM-10, ITEM-57 | VERIFY_PLANNED | — |
 | FR-SIM-006 | F1 | Batu | 01 Item81 FR-SIM-006 L169877 | ITEM-10, WL-INV-05 | VERIFY_PLANNED | — |
 | FR-SIM-007 | F1 | Batu | 01 Item81 FR-SIM-007 L169878 | ITEM-10, ITEM-60, EXP-INV-10 | EVIDENCE_PENDING | — |
-| FR-SIM-008 | F1 | Batu | 01 Item81 FR-SIM-008 L169879 | ITEM-10, ITEM-60, TEST-INV-06 | VERIFY_PLANNED | — |
+| FR-SIM-008 | F1 | Batu | 01 Item81 FR-SIM-008 L169879 | ITEM-10, ITEM-60, TEST-INV-06 | EVIDENCE_PENDING | — |
 | FR-SIM-009 | F1 | Batu | 01 Item81 FR-SIM-009 L169880 | ITEM-10, ITEM-37, DT-INV-10 | VERIFY_PLANNED | — |
 | FR-SIM-010 | F1 | Batu | 01 Item81 FR-SIM-010 L169881 | ITEM-10, ITEM-19, SCH-INV-10 | VERIFY_PLANNED | — |
 | FR-SIM-011 | F1 | Batu | 01 Item81 FR-SIM-011 L169882 | ITEM-10, EV-INV-05, AUTO-INV-08, SEC-INV-20 | VERIFY_PLANNED | — |
@@ -750,7 +750,7 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 
 | ID | Class | PrimaryOwner | Catalog anchor | Source decisions (DERIVED_FROM) | Planning state | Flags |
 |---|---|---|---|---|---|---|
-| NFR-REP-001 | H0 | Batu | 01 Item82 NFR-REP-001 L172035 | ITEM-10, ITEM-60, NFR-INV-35 | VERIFY_PLANNED | — |
+| NFR-REP-001 | H0 | Batu | 01 Item82 NFR-REP-001 L172035 | ITEM-10, ITEM-60, NFR-INV-35 | EVIDENCE_PENDING | — |
 | NFR-REP-002 | H0 | Asrın | 01 Item82 NFR-REP-002 L172051 | ITEM-60, ITEM-79, BENCH-INV-43 | VERIFY_PLANNED | — |
 | NFR-REP-003 | A1 | Yavuz | 01 Item82 NFR-REP-003 L172064 | ITEM-42, ITEM-79, NFR-INV-37 | VERIFY_PLANNED | — |
 | NFR-REP-004 | A1 | Yavuz | 01 Item82 NFR-REP-004 L172073 | ITEM-79, NFR-INV-38, BENCH-INV-40 | VERIFY_PLANNED | — |
@@ -3955,14 +3955,15 @@ FR-SIM-008:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SIM-008 L169879"}
   DERIVED_FROM: [ITEM-10, ITEM-60, TEST-INV-06]
   ALLOCATED_TO: [ARCH-SIM-ENGINE, ARCH-SIM-SCENARIO]
-  REALIZED_BY: {surface: "deterministic replay + event-sequence hash", deployable: "manufacturing-simulator", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "deterministic replay + event-sequence hash", deployable: "manufacturing-simulator", ref: "services/manufacturing-simulator/src/manufacturing_simulator/; services/manufacturing-simulator/tests/"}
   USES_DATA: ["SeedSet", "SCENARIO:ScenarioVersion"]
   VERIFIED_BY: [TEST-SIM-DETERMINISM, BENCH-SIMVAL-001, REPRO-NONOWNER-001]
   MITIGATES: [SIM-R06]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [evidence/WP-SIM-002/runs/run-4-committed]  # kernel-level local run (toy scenario); REAL/integrated acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L4, env: "CI + EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "The local run is an uncommitted-tree run of the toy kernel fixture (TEST-SIM-DETERMINISM): versioned canonical hash, replay API, controlled negative matrix. evidence/WP-SIM-002/README.md records limits: BENCH-SIMVAL-001 and REPRO-NONOWNER-001 not executed, no governed Release/Environment/Hardware identity, no VERIFIED claim."
 FR-SIM-009:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SIM-009 L169880"}
   DERIVED_FROM: [ITEM-10, ITEM-37, DT-INV-10]
@@ -6724,10 +6725,11 @@ NFR-REP-001:
   MEASUREMENT: {metric: "final state + deterministic event sequence/hash equality for same release/scenario/state/seed", threshold: "identical", workload: "deterministic scenarios", hardware: "N/A (not hardware-bound)", observed: null}
   VERIFIED_BY: [TEST-SIM-DETERMINISM, BENCH-SIMVAL-001, REPRO-NONOWNER-001]
   MITIGATES: [SIM-R06]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [evidence/WP-SIM-002/runs/run-4-committed]  # kernel-level local run (toy scenario); REAL/integrated acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L4, env: "CI + EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Local kernel-level regression only (toy fixture); MEASUREMENT observed stays null. H0 acceptance still needs BENCH-SIMVAL-001 and a real non-owner reproduction (REPRO-NONOWNER-001), neither executed. evidence/WP-SIM-002/README.md records the limits."
 NFR-REP-002:
   meta: {class: H0, owner: Asrın, anchor: "01 Item82 NFR-REP-002 L172051"}
   DERIVED_FROM: [ITEM-60, ITEM-79, BENCH-INV-43]
