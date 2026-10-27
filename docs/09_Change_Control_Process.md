@@ -911,6 +911,18 @@ Queue pacing, snapshot parallelism, GET-only behavior, JSON compatibility,
 credentials, fail-closed UNKNOWN handling and all product semantics are
 unchanged. The control applies only to host control-plane latency.
 
+## CHG-048 — hard-bound all queue external reads and worker cleanup
+
+CHG-048 / CTRL-HOST-028 is the generic continuation for the residual
+boundedness defect after CHG-047. A queue invocation now has one hard read
+budget covering lock acquisition, Plane snapshot HTTP reads, response-body
+reads, cycle reads and advisory slot proofs. Snapshot workers are daemonized
+and joined only within the remaining budget; slot proofs no longer create an
+executor whose shutdown can outlive the budget. Expired or unavailable paths
+fail closed and do not use stale/cache data as authoritative state. GET-only,
+pacing, parallel snapshot behavior, Slot Release proof semantics, JSON output,
+credentials and all product lifecycle semantics remain unchanged.
+
 ## CHG-045 — root-owned Slot Release v2 diagnostic launcher
 
 CHG-045 / CTRL-HOST-026 adds a fixed, profile-scoped, root-owned GET-only launcher

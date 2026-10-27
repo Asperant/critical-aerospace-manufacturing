@@ -34,3 +34,4 @@ CHG-044,Isolate queue health-probe GitHub timeout,C1,CR-2,Asrın,APPROVED,APPROV
 CHG-045,Root-owned Slot Release v2 diagnostic launcher,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-026
 CHG-046,Independent Core lifecycle producer slice,C3,CR-2,Asrın,APPROVED,APPROVED,CTRL-DOC-008
 CHG-047,Bound queue health worker shutdown to advisory probe deadline,C1,CR-2,Asrın,APPROVED,APPROVED,CTRL-HOST-027
+CHG-048,Hard-bound all queue external reads and worker cleanup,C1,CR-2,Asrın,APPROVED,APPROVED,CTRL-HOST-028
