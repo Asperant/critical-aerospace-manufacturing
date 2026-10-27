@@ -7,14 +7,15 @@ semantics). This directory holds the local verification run and its limits.
 
 ## Run
 
-`runs/run-5-uncommitted-2026-10-27/` is the run of record: one local run of
-`capture_run.py` (corrected after review), started 2026-10-27T20:11:23Z, all six
-commands exit 0:
+`runs/run-6-committed-394176a/` is the run of record: one local run of `capture_run.py`
+on a **clean committed tree** at source commit `394176a60432d75cd3bcdafa5fe88b2bf2b53929`
+(branch `wp/WP-SCH-001-dispatch-baselines`, which contains the merge of `origin/main`
+`3242d1f`), started 2026-10-27T20:25:05Z, all six commands exit 0:
 
 | Command | Result |
 |---|---|
 | scheduler suite (pytest, 99 tests incl. Hypothesis properties) | 99 passed |
-| collector tests (`evidence/WP-SCH-001/tests`, 5 tests) | 5 passed |
+| collector tests (`evidence/WP-SCH-001/tests`, 6 tests) | 6 passed |
 | `ruff check` / `ruff format --check` on the package and the three evidence scripts | clean / 18 files formatted |
 | `pyright --project services/scheduler-service/pyrightconfig.json` | 0 errors |
 | `replay_comparison.py`: 6 seeds x 4 `PYTHONHASHSEED` values in fresh processes | all equal to the in-process trace |
@@ -25,16 +26,21 @@ Per command the run keeps the exact stdout and stderr bytes (`<id>.stdout`,
 `identity.json` has source, tool, lock, workload and host identity, with host load
 taken at start and at finish.
 
-- **Source state:** the tree was **not clean**. Commit was not authorized, so
-  `identity.json` lists the base commit `3ab912de…` and the SHA-256 of each of the 32
-  changed or untracked files, including the capture, replay and collector-test
-  scripts, `docs/` and `traceability/`; only `runs/` and this README are excluded. A
-  later commit can be checked against them. A run on committed source will be a new
-  run, never a replacement of this one.
-- **Run-3 is kept unchanged** (`runs/run-3-uncommitted-2026-10-27/`), with its
-  limits: its collector stored stdout with trailing whitespace stripped, kept only
-  three stderr lines, left the evidence scripts out of its 24-file manifest and read
-  host load after the commands. It contains no failure; all its commands passed.
+- **Tested source versus evidence commit:** `394176a` is the tested source. The commit
+  that adds this run and this README has a different SHA; it changes only files under
+  `evidence/WP-SCH-001/`, so the tested source files are unchanged (check with
+  `git diff 394176a <evidence commit> --stat`). The run records the tested SHA, never
+  its own commit.
+- **Not checked by this run:** the static ratchet, trace and `ci/tests` ran separately
+  (reported in `tasks/WP-SCH-001/FINAL_REPORT.md`), and
+  `check-coverage` plus `test_repository_registry_matches_the_repository` are **red**
+  for the undecided observability exemption (see below).
+- **Earlier local runs** (`run-3`, `run-5`) were taken on the then-uncommitted tree
+  and are kept as history. Their identity lists the changed files outside the commits;
+  `run-5` used the collector before its clean-tree fix, and `run-3` the collector
+  before the review corrections (it stored stdout with trailing whitespace stripped,
+  three stderr lines only, left the evidence scripts out of its manifest and read host
+  load after the commands). All their commands passed.
 - **Not available, so not claimed:** a governed ReleaseManifest, EnvironmentManifest
   image digest or HardwareProfile. The host facts are local labels. Their canonical
   producer is WP-PLAT-005 (docs/04), not started; DOD-WP-11 stays open for this WP.
