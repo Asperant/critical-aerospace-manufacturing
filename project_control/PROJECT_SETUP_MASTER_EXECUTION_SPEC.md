@@ -399,14 +399,14 @@ After explicit human approval, resume from this control item and execute idempot
 
 Re-read Plane and audit exact resulting structures.
 
-## CTRL-PM-009 — 179 WP Idempotent Plane Import
+## CTRL-PM-009 — 180 WP Idempotent Plane Import
 
 Goal: import all canonical WPs exactly once.
 
 Rules:
 
-- 179 WPs
-- all begin BACKLOG
+- 180 canonical WPs
+- a missing WP is created in BACKLOG; an existing valid Plane lifecycle state is preserved
 - no automatic READY
 - canonical WP ID visibly preserved
 - assign owner only when correct Plane member exists
@@ -420,7 +420,14 @@ Rules:
 
 If an owner is not a Plane member, do not assign to a wrong person. Preserve canonical owner metadata and report the missing membership.
 
-Run import twice. Second run must create zero duplicates and zero semantic drift.
+Run import twice. Second run must create zero duplicates and zero static semantic drift; intentionally preserved valid lifecycle-state differences are reported, not reset.
+
+CHG-049 / CTRL-PM-016 defines the generic reconciliation rule for this import:
+canonical owner binding, milestone labels and structured planning metadata on
+owned `projectctl` issues may be repaired by an exact allowlisted PATCH plus fresh
+read-back. Identity, parent, relationship and unknown-state conflicts remain
+fail-closed. Registered control-only items, including
+`CTRL-PM-015-PILOT-001`, remain separate and are never deleted.
 
 ## CTRL-PM-010 — Plane Post-Import Audit
 
@@ -428,7 +435,7 @@ Goal: prove Plane matches canonical planning data.
 
 Assert:
 
-- 179 canonical WP identities
+- 180 canonical WP identities
 - 29 modules
 - 13 cycles
 - S1–S13

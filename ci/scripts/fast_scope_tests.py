@@ -95,6 +95,18 @@ def main() -> int:
                     [*PYTEST, "tools/projectctl/tests/test_gates.py", "-q"],
                 )
             )
+        elif "tools/projectctl/src/projectctl/plane_import.py" in paths:
+            selected.append(
+                (
+                    "projectctl-plane-import",
+                    [
+                        *PYTEST,
+                        "tools/projectctl/tests/test_plane_import.py",
+                        "tools/projectctl/tests/test_control_plane.py",
+                        "-q",
+                    ],
+                )
+            )
         elif projectctl_test_paths == {"tools/projectctl/tests/test_dependencies.py"}:
             selected.append(
                 (

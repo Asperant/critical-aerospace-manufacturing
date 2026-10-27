@@ -968,3 +968,27 @@ output appearing, local work, stale assessment or incomplete/UNKNOWN proof retai
 the slot. VALIDATING/BLOCKED visibility, DoD, DONE, dependency satisfaction,
 CHG-022/024 and canonical selection rules are unchanged. No live state application
 or deployment is authorized by this implementation record alone.
+
+## CHG-049 — generic Plane WP static-drift reconciliation
+
+CHG-049 / CTRL-PM-016 corrects the live implementation of the already approved
+canonical Plane projection. Existing canonical WP identity, parent and
+relationship conflicts remain fail-closed. For an owned `projectctl` issue,
+canonical owner binding, labels and structured planning metadata may be repaired
+through an exact allowlisted idempotent PATCH followed by a fresh read-back.
+Workflow state is mutable Plane coordination state: a valid existing state is
+reported as intentionally preserved and is never normalized to `BACKLOG`; only
+creation of a missing issue uses the canonical initial `BACKLOG` state. Unknown
+states (including state IDs that do not resolve to one canonical workflow
+state), identity mismatches, control-item mismatches and relationship conflicts
+still block the import. `CTRL-PM-015-PILOT-001` remains a separately validated
+control item and is never deleted or counted as a canonical WP.
+
+This is a generic C3 / CR-3 control-plane change under the zero-development-
+approval policy of CHG-018. It does not authorize product implementation,
+readiness evidence, dependency changes or any product lifecycle transition. Its
+PR fast-scope selector routes importer changes to the importer/control-plane
+regressions themselves; it does not widen or weaken the bounded 90-second gate.
+The PR records `Requirements (stable IDs, or NONE — reason / control-only scope):
+NONE` with that same control-plane-only rationale,
+so the control-only impact is explicit to the CI trace gate.
