@@ -1,0 +1,54 @@
+title: Record current-main PASS for DEP-030
+trigger: The merged WP-CORE-001 SchedulingSnapshot producer contract passed exact current-main artifact, registry and CI verification while DEP-030 remained NOT_READY
+reason: CHG-054 startability consumes the canonical HARD+START status projection; retaining NOT_READY would keep WP-TWIN-003 blocked after the exact DEP-030 producer predicate passed
+class: C1
+review_risk_class: CR-1
+raised_in: S3
+owner: Asrın
+required_human_approvals: 0
+reviewers: []
+decision: APPROVED
+status: APPROVED
+application_control_item: CTRL-HOST-037
+decision_basis: The status projection records only a mechanically verified current-main contract readiness fact for the exact DEP-030 edge. It adds no Twin implementation, Scheduler capability, integration readiness or authority change.
+scope:
+  - Record DEP-030 as READY in the canonical dependency registry.
+  - Bind the result to WP-CORE-001 PR #152, exact merge/current-main SHA and producer artifacts.
+  - Preserve the bounded CHG-062 contract scope and downstream separation.
+invariants_preserved:
+  - DEP-030 remains HARD, CONTRACT, START, CONTRACT_READY and producer-owned by WP-CORE-001.
+  - WP-TWIN-003 remains responsible for Twin query/export implementation and its own DoD.
+  - No Twin, Scheduler, database assembly or integration readiness is inferred.
+  - Synthetic fixture evidence is not real-factory evidence.
+precise_requirement: NONE — status projection only; the bounded DEP-030 requirement remains the CHG-062 requirement.
+affected_requirements: [NONE — status projection only]
+affected_architecture: [NONE]
+affected_contracts:
+  - id: NONE
+    compatibility: NON_BREAKING
+    consumers_reviewed: [NONE]
+affected_work_packages: [WP-CORE-001, WP-TWIN-003]
+affected_dependencies: [DEP-030]
+affected_evidence:
+  - evidence/readiness/DN-CORE-SNAPCON-DEP-030.json
+  - evidence/CTRL-HOST-037/DEP-030-CURRENT-MAIN.md
+  - docs/05_Dependency_Graph.md
+evidence_staleness:
+  question_answered: true
+  stale: []
+  unaffected:
+    - CHG-062 producer contract implementation remains unchanged.
+    - DEP-034, Twin export, Scheduler integration and final WP acceptance remain unclaimed.
+  rerun_required: []
+security_authority_impact: NONE
+conditions:
+  - Do not infer WP-TWIN-003 DONE or DEP-034 readiness from this status projection.
+  - Do not use the snapshot contract as a mutation or execution authority.
+rollout: Merge the exact current-main readiness evidence and status projection, then re-evaluate WP-TWIN-003 startability.
+rollback: Revert the DEP-030 status projection and control evidence only; preserve CHG-062 and the producer contract implementation.
+required_rerun: [projectctl validate, projectctl startability WP-TWIN-003, current-main DEP-030 artifact and CI verification]
+documentation_updates:
+  - docs/05_Dependency_Graph.md
+  - docs/09_Change_Control_Process.md
+  - 09_change/change_requests.csv
+freeze_context: PRE_M6

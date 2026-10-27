@@ -1651,7 +1651,7 @@ DEP-030:
   precise_requirement: "route position, equipment eligibility, current lot revision, priorities/due dates, maintenance state"
   risk_class: DR-1
   source: "Item 66 #26, #71"
-  status: NOT_READY
+  status: READY
 DEP-031:
   predecessor: {node: DN-EVT-CONTRACTS, owner: "Asrın"}
   successor: {node: DN-TWIN-SKELETON, owner: "Asrın"}

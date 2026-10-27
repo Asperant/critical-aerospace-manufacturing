@@ -1124,6 +1124,17 @@ authority. Twin export, Scheduler implementation and integration readiness are
 not claimed. DEP-030 receives a separate current-main status projection only
 after this producer change is merged and verified.
 
+## CHG-063 — record current-main DEP-030 readiness PASS
+
+CHG-063 / CTRL-HOST-037 records the exact current-main verification of the
+bounded `core.scheduling-snapshot.v1` producer contract for DEP-030. PR #152 is
+merged at the verified main SHA, required CI is green, the registry and
+producer-authority binding is valid, and the contract test suite includes
+negative-path rejection of omitted DEP-030 dimensions and hidden Oracle state.
+The change therefore projects DEP-030 as READY at CONTRACT_READY. It does not
+claim Twin export, Scheduler consumption, integration readiness or
+WP-TWIN-003 completion.
+
 ## CHG-052 — generic audit-backed BLOCKED projection reconciliation
 
 CHG-052 / CTRL-HOST-030 repairs only the orthogonal Plane `BLOCKED` label when
