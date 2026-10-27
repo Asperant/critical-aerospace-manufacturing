@@ -49,3 +49,4 @@ CHG-059,Record WP-CORE-009 COMPONENT_READY and DEP-020 binding,C1,CR-1,Asrın,AP
 CHG-060,Record the current-main PASS for DEP-006,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-035
 CHG-061,Bind DEP-021 to the bounded Core query contract slice,C2,CR-2,Asrın,APPROVED,APPROVED,CTRL-HOST-036
 CHG-062,Publish the bounded SchedulingSnapshot producer contract for DEP-030,C2,CR-2,Asrın,APPROVED,APPROVED,WP-CORE-001
+CHG-063,Record current-main PASS for DEP-030,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-037

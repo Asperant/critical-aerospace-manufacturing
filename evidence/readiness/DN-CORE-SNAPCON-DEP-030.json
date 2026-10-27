@@ -1,0 +1,24 @@
+{
+  "schema": "edge-contract-readiness-basis-v1",
+  "edge": "DEP-030",
+  "predecessor_node": "DN-CORE-CONTRACTS",
+  "successor_node": "DN-CORE-SNAPCON",
+  "level": "CONTRACT_READY",
+  "producer_wp": "WP-CORE-001",
+  "producer_pr": 152,
+  "producer_merge_sha": "4ca1e3dc90e8ffbbf17f7ca14470d3e84a336f21",
+  "verified_main_sha": "4ca1e3dc90e8ffbbf17f7ca14470d3e84a336f21",
+  "precise_requirement": "explicit lot route position, current lot revision, lot-specific eligible equipment, priority and due date, equipment maintenance state, and immutable snapshot world/revision/freshness metadata",
+  "scope_boundary": "This binding certifies only the bounded producer contract predicate for DEP-030. It does not certify Twin export, Scheduler consumption, database snapshot assembly, integration readiness, or WP-TWIN-003 completion.",
+  "artifacts": [
+    {"path": "services/manufacturing-core/contracts/v1/scheduling-snapshot.v1.schema.json", "blob": "6247d2cc0cdbf7a2c5815f22f454f08e424f9bab", "sha256": "4aa6ee4b6354c766f3fa53bf3893445d308118084f2a586a5b70bc612649a26d", "role": "schema"},
+    {"path": "services/manufacturing-core/contracts/v1/scheduling-snapshot.normal.json", "blob": "ee2ed492add746477f990fa5dbd31e0d97a14468", "sha256": "201308e2fd1b99cea6f041279c3181196c0451677785fa6a28ac0f228a0da18f", "role": "fixture"},
+    {"path": "packages/contracts/registry/core.scheduling-snapshot.v1.json", "blob": "46e57bde89632818e11871ca1d4c91070c1941e9", "sha256": "1a62c23bd7ca8f5e5c903670fb36f2979ad1c7415f7d32064ae0dfa31ea65da6", "role": "registry"},
+    {"path": "packages/contracts/producer-authorities.json", "blob": "58d6cf582803e3df6694acd14422a1e11c56efdc", "sha256": "4198ed4458e86f27255f2928d08752ee677f9ae43742dd8c225539a552cbc245", "role": "authority"}
+  ],
+  "tests": [
+    {"test_id": "TEST-CORE-SCHEDULING-SNAPSHOT", "path": "services/manufacturing-core/tests/test_scheduling_snapshot_contract.py", "blob": "6cccbcf35234424f821c5b34e07835dd1734f115", "result": "9 passed"},
+    {"test_id": "TEST-EVT-001-REGISTRY", "path": "ci/tests/test_contract_registry.py", "result": "170 registry/authority/compatibility tests passed"}
+  ],
+  "verification": "Producer PR #152 is merged by the canonical owner, the merge is current main, required CI is green, and the exact contract artifacts and negative-path tests are bound above."
+}
