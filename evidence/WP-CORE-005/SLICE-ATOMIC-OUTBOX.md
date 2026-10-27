@@ -4,6 +4,7 @@ Date: 2026-10-27
 Owner: Asrın Dündar
 Branch: `wp/WP-CORE-005-transactional-outbox`
 Canonical WP: `WP-CORE-005`
+PR: `#167`
 
 ## Implemented
 
