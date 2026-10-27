@@ -8,6 +8,7 @@ missing, malformed, ambiguous, or state-mismatched audit evidence fails closed.
 
 import contextlib
 import hashlib
+import importlib.machinery
 import importlib.util
 import json
 import os
@@ -27,13 +28,14 @@ t: Any = None
 
 
 def load_transition() -> Any:
-    spec = importlib.util.spec_from_file_location(
+    loader = importlib.machinery.SourceFileLoader(
         "cap_projection_transition", TRANSITION_PATH
     )
-    if spec is None or spec.loader is None:
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    if spec is None:
         raise RuntimeError("TRANSITION_SOURCE_UNAVAILABLE")
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    loader.exec_module(module)
     module.__dict__["q"] = module.load_support()
     return module
 
