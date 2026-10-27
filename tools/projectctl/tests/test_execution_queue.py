@@ -101,12 +101,12 @@ def test_startability_ignores_integration_dependency():
 
 
 def test_startability_blocks_ambiguous_owner_or_scope():
-    assert startability_from_view(
-        startability_view(owner=""), "WP-TEST-001"
-    )["blockers"] == ["CANONICAL_OWNER_AMBIGUOUS"]
-    assert startability_from_view(
-        startability_view(scope_known=False), "WP-TEST-001"
-    )["blockers"] == ["CANONICAL_SCOPE_UNKNOWN"]
+    assert startability_from_view(startability_view(owner=""), "WP-TEST-001")[
+        "blockers"
+    ] == ["CANONICAL_OWNER_AMBIGUOUS"]
+    assert startability_from_view(startability_view(scope_known=False), "WP-TEST-001")[
+        "blockers"
+    ] == ["CANONICAL_SCOPE_UNKNOWN"]
 
 
 def qualify(data, wp):

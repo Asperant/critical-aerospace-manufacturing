@@ -295,7 +295,10 @@ def startability_from_view(view: dict[str, Any], wp_id: str) -> dict[str, Any]:
         result["blockers"].append("CANONICAL_SCOPE_UNKNOWN")
     for edge in card.get("edges", []):
         semantics = edge.get("semantics", {})
-        if semantics.get("strength") != "HARD" or semantics.get("blocking_stage") != "START":
+        if (
+            semantics.get("strength") != "HARD"
+            or semantics.get("blocking_stage") != "START"
+        ):
             continue
         if edge.get("status") != "READY":
             result["blockers"].append(

@@ -413,7 +413,7 @@ def select(profile, rows, deferred=None):
     ready = [r for r in own if r['plane_state'] == 'READY']
     result = {'profile': profile, 'canonical_owner': PEOPLE[profile][0], 'status': 'NO_TASK',
               'current_task': None, 'next_task': None, 'ambiguity': None,
-              'read_timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat()}
+              'read_timestamp': datetime.datetime.now(datetime.UTC).isoformat()}
     if len(active) > 1 or len(ready) > 1:
         result.update(status='AMBIGUOUS', ambiguity='MULTIPLE_IN_PROGRESS_OR_READY',
                       candidate_wp_ids=sorted(r['wp_id'] for r in active + ready))
@@ -627,7 +627,6 @@ def combine(profile, rows, health, preflight_deferred=None):
     """Advisory queue projection; proof and health never authorize selection."""
     waits = list((health or {}).get('deferred_waits', [])
                  or preflight_deferred or [])
-    deferred = {w['wp_id'] for w in waits if isinstance(w, dict) and isinstance(w.get('wp_id'), str)}
     result = select(profile, rows)
     if health is not None:
         result.update(prepared_next=health['prepared_next'], health=health['health'],
@@ -740,13 +739,13 @@ def main():
         # command error; a valid queue read failure below is advisory.
         emit({'profile': profile, 'canonical_owner': PEOPLE[profile][0], 'status': 'UNAVAILABLE',
               'reason': 'LIVE_READ_OR_IDENTITY_VALIDATION_FAILED',
-              'read_timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat()})
+              'read_timestamp': datetime.datetime.now(datetime.UTC).isoformat()})
         return 2
     except Exception:
         # Never format exceptions, response bodies, URLs, config or credential data.
         emit({'profile': profile, 'canonical_owner': PEOPLE[profile][0], 'status': 'UNAVAILABLE',
               'reason': 'LIVE_READ_OR_IDENTITY_VALIDATION_FAILED',
-              'read_timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat()})
+              'read_timestamp': datetime.datetime.now(datetime.UTC).isoformat()})
         return 0
     finally:
         signal.setitimer(signal.ITIMER_REAL, 0)

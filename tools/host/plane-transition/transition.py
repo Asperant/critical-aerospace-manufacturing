@@ -1257,12 +1257,13 @@ def product_startability(context):
     )
     for edge in context.get('dependency_edges', []):
         semantics = edge.get('semantics', {})
-        if semantics.get('strength') == 'HARD' and semantics.get('blocking_stage') == 'START':
+        if (semantics.get('strength') == 'HARD'
+                and semantics.get('blocking_stage') == 'START'
+                and 'status' in edge):
             # Canonical execution snapshots may carry an explicit resolver
             # status.  Older transition policy records intentionally omit it;
             # their evidence-backed READY gate remains authoritative.
-            if 'status' in edge:
-                need(edge.get('status') == 'READY', 'HARD_START_DEPENDENCY_UNRESOLVED:' + edge.get('id', 'UNKNOWN'))
+            need(edge.get('status') == 'READY', 'HARD_START_DEPENDENCY_UNRESOLVED:' + edge.get('id', 'UNKNOWN'))
 
 
 def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=None,projection=None):
