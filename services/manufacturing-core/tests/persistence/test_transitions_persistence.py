@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import psycopg
 import pytest
-from conftest import Database
 from manufacturing_core.commands import (
     DispatchLot,
     OutcomeStatus,
@@ -11,7 +10,7 @@ from manufacturing_core.commands import (
 )
 from manufacturing_core.enforcement import AuthorizationDenied
 from manufacturing_core.transitions import CoreTransitionService
-from psycopg.rows import DictRow, dict_row
+from psycopg.rows import DictRow
 
 pytestmark = pytest.mark.integration
 
@@ -60,36 +59,33 @@ def release_command(key: str = "release-1") -> ReleaseMaterialHold:
 
 
 def test_hold_release_is_atomic_retained_and_idempotent(
-    database: Database,
+    connection: psycopg.Connection[DictRow],
 ) -> None:
-    with psycopg.Connection[DictRow].connect(
-        database.runtime_dsn, row_factory=dict_row
-    ) as connection:
-        setup_lot(connection)
-        service = CoreTransitionService(connection)
-        permissions = {"core.lot.place_hold", "core.material.release_hold"}
-        placed = service.place_lot_on_hold(permissions, hold_command())
-        assert placed.status is OutcomeStatus.ACCEPTED
-        duplicate = service.place_lot_on_hold(permissions, hold_command("hold-2"))
-        assert duplicate.status is OutcomeStatus.REJECTED
-        assert duplicate.error_code == "HOLD_ALREADY_ACTIVE"
-        release = release_command()
-        released = service.release_material_hold(permissions, release)
-        assert released.status is OutcomeStatus.ACCEPTED
-        retry = service.release_material_hold(permissions, release)
-        assert retry == released
-        row = connection.execute(
-            "SELECT status, released_at, release_reason FROM core.material_hold WHERE id = 'H-1'"
-        ).fetchone()
-        assert row is not None
-        assert row["status"] == "RELEASED"
-        assert row["released_at"] is not None
-        assert row["release_reason"] == "review complete"
-        revision = connection.execute(
-            "SELECT revision FROM core.lot WHERE id = 'L-1'"
-        ).fetchone()
-        assert revision is not None
-        assert revision["revision"] == "l-r1"
+    setup_lot(connection)
+    service = CoreTransitionService(connection)
+    permissions = {"core.lot.place_hold", "core.material.release_hold"}
+    placed = service.place_lot_on_hold(permissions, hold_command())
+    assert placed.status is OutcomeStatus.ACCEPTED
+    duplicate = service.place_lot_on_hold(permissions, hold_command("hold-2"))
+    assert duplicate.status is OutcomeStatus.REJECTED
+    assert duplicate.error_code == "HOLD_ALREADY_ACTIVE"
+    release = release_command()
+    released = service.release_material_hold(permissions, release)
+    assert released.status is OutcomeStatus.ACCEPTED
+    retry = service.release_material_hold(permissions, release)
+    assert retry == released
+    row = connection.execute(
+        "SELECT status, released_at, release_reason FROM core.material_hold WHERE id = 'H-1'"
+    ).fetchone()
+    assert row is not None
+    assert row["status"] == "RELEASED"
+    assert row["released_at"] is not None
+    assert row["release_reason"] == "review complete"
+    revision = connection.execute(
+        "SELECT revision FROM core.lot WHERE id = 'L-1'"
+    ).fetchone()
+    assert revision is not None
+    assert revision["revision"] == "l-r1"
 
 
 def test_hold_dispatch_and_authorization_negative_paths(
