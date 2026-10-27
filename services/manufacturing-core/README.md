@@ -135,7 +135,10 @@ acceptance and always has `NOT_VERIFIED` effect status. Operators query the
 outcome before retrying unresolved work, and must verify the canonical event or
 effect separately. Accepted hold and dispatch transitions form their versioned
 Core event envelope and insert it into `core.outbox` in the same command
-transaction. A failed event insert rolls back the mutation and durable
+transaction. Hold placement emits `LotHeld.v2`; `LotHeld.v1` remains unchanged
+for compatibility, and v2's reason field follows the existing
+`PlaceLotOnHold.hold_reason` text semantics, including human-readable whitespace
+such as `NDT anomaly`. A failed event insert rolls back the mutation and durable
 acceptance together.
 
 `OutboxRelay` is transport-neutral: it publishes committed event envelopes

@@ -270,6 +270,7 @@ def test_repository_registry_loads_and_verifies() -> None:
         "ai.tool-interface.v1",
         "core.lot-dispatch-authorized.v1",
         "core.lot-held.v1",
+        "core.lot-held.v2",
         "core.operational-command.v1",
         EXEMPLAR,
         "core.scheduling-snapshot.v1",

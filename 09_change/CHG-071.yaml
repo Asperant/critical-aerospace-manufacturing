@@ -1,0 +1,63 @@
+title: Introduce versioned LotHeld.v2 and bind Core transactional outbox emission
+trigger: Post-merge PostgreSQL integration exposed that the unchanged LotHeld.v1 schema cannot represent the existing PlaceLotOnHold reason text "NDT anomaly"
+reason: LotHeld.v1 is an existing published contract and must remain byte-compatible; the approved correction requires an explicit major-version contract, producer emission binding and consumer compatibility proof
+class: C2
+review_risk_class: CR-2
+raised_in: S2
+owner: Asrın
+required_human_approvals: 0
+reviewers: []
+decision: APPROVED
+status: APPROVED
+application_control_item: CTRL-HOST-045
+decision_basis: The project-owner decision explicitly approves a versioned LotHeld.v2. It preserves LotHeld.v1, changes only the reason-field contract needed to align with PlaceLotOnHold, and keeps downstream transport/integration acceptance separate.
+scope:
+  - Preserve the published LotHeld.v1 schema, fixture, registry declaration and Python payload semantics unchanged.
+  - Add LotHeld.v2 with the same event meaning and explicit producer/consumer contract identity; permit command-compatible human-readable reasons containing whitespace.
+  - Add compatibility-detector handling for the existing valid const-only and $id schema forms without weakening fail-closed version policy.
+  - Complete the owner-local WP-CORE-005 mutation, idempotency/revision, rollback and durable outbox boundary and validate it against real PostgreSQL 18.
+invariants_preserved:
+  - Core remains the canonical authority for manufacturing state and accepted domain facts.
+  - LotHeld.v1 is not edited in place and remains active for existing consumers.
+  - LotHeld.v2 changes no unrelated event semantics and does not grant consumers mutation or execution authority.
+  - Outbox evidence is owner-local durable persistence only; NATS/relay delivery remains a later integration boundary.
+  - Command acceptance remains distinct from downstream effect verification.
+precise_requirement: WP-CORE-005 shall atomically persist each accepted hold/dispatch mutation, command outcome and versioned event intent in PostgreSQL 18; hold placement shall emit core.lot-held.v2 with the existing PlaceLotOnHold reason semantics, while LotHeld.v1 remains unchanged and both producer/consumer boundaries are compatibility-tested.
+affected_requirements: [FR-CORE-014, FR-CORE-015, FR-EVT-002, FR-EVT-003, FR-EVT-004, FR-EVT-006]
+affected_architecture: [ARCH-CORE-DB, ARCH-CORE-OUTBOX, ARCH-EVT-OUTBOX, ARCH-CTR-EVTSCHEMA, ARCH-CTR-VERSIONING]
+affected_contracts:
+  - id: core.lot-held.v1
+    compatibility: BREAKING
+    consumers_reviewed: [Digital Twin, Simulator, Automation verification]
+  - id: core.lot-held.v2
+    compatibility: BREAKING
+    consumers_reviewed: [Digital Twin, Simulator, Automation verification]
+  - id: core.lot-dispatch-authorized.v1
+    compatibility: NON_BREAKING
+    consumers_reviewed: [Simulator]
+affected_work_packages: [WP-CORE-005, WP-EVT-001, WP-EVT-002]
+affected_dependencies: [DEP-022, DEP-023, DEP-024]
+affected_evidence:
+  - evidence/WP-CORE-005/SLICE-ATOMIC-OUTBOX-V2.md
+  - packages/contracts/registry/core.lot-held.v1.json
+  - packages/contracts/registry/core.lot-held.v2.json
+  - services/manufacturing-core/tests/test_events.py
+  - services/manufacturing-core/tests/persistence/test_transitions_persistence.py
+  - ci/tests/test_core_domain_event_contracts.py
+  - ci/tests/test_contract_compatibility.py
+evidence_staleness:
+  question_answered: true
+  stale:
+    - Prior WP-CORE-005 outbox evidence associated with the reverted LotHeld.v1 implementation and failed post-merge PostgreSQL validation.
+  unaffected:
+    - LotHeld.v1 consumer compatibility remains current because its schema and fixture are unchanged and hash-pinned.
+    - Existing Core command acceptance, lifecycle and authorization evidence remains separate from this outbox slice.
+    - NATS/relay delivery and cross-boundary integration remain unverified.
+  rerun_required:
+    - Current-main contract, static, unit and real PostgreSQL 18 integration lanes at the exact merge revision.
+security_authority_impact: NONE — no identity, credential, HITL, Oracle-state or authority-policy change
+rollout: New ReleaseManifest identity is the exact merged revision; apply the additive 0005 outbox migration, publish LotHeld.v2 from Core, and sequence consumer adoption by explicit contract ID. No broker delivery claim is made here.
+rollback: Revert the WP-CORE-005 implementation and CHG-071 artifacts to the safe main revision; LotHeld.v1 remains the compatibility fallback.
+required_rerun: [projectctl validate, projectctl startability WP-CORE-005, contract registry and authority tests, compatibility tests, Core unit tests, real PostgreSQL 18 migration/persistence/negative-path tests]
+documentation_updates: [packages/contracts/README.md, services/manufacturing-core/README.md, docs/05_Dependency_Graph.md, docs/09_Change_Control_Process.md, 09_change/change_requests.csv]
+freeze_context: PRE_M6

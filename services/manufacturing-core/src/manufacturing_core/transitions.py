@@ -29,12 +29,11 @@ from manufacturing_core.events_v1 import (
     EntityReference,
     LotDispatchAuthorizedEvent,
     LotDispatchAuthorizedPayloadV1,
-    LotHeldEvent,
-    LotHeldPayloadV1,
     UtcOccurrence,
     new_event_id,
     new_trace_id,
 )
+from manufacturing_core.events_v2 import LotHeldEventV2, LotHeldPayloadV2
 from manufacturing_core.lifecycle import (
     ExecutionState,
     LotLifecycle,
@@ -370,7 +369,7 @@ class TransitionRepository:
                 "HOLD_ID_CONFLICT", "hold identity is already used"
             ) from error
         event_version = self.next_lot_event_version(lot_id)
-        event = LotHeldEvent(
+        event = LotHeldEventV2(
             event_id=new_event_id(),
             producer="manufacturing-core",
             world_id=command.world_id,
@@ -383,10 +382,10 @@ class TransitionRepository:
                 EntityReference(entity_type="Lot", id=lot_id, revision=revision),
             ),
             event_type="production.lot-held",
-            schema_version=1,
-            payload=LotHeldPayloadV1(
+            schema_version=2,
+            payload=LotHeldPayloadV2(
                 event_type="production.lot-held",
-                schema_version=1,
+                schema_version=2,
                 aggregate_type="Lot",
                 aggregate_id=lot_id,
                 aggregate_version=event_version,

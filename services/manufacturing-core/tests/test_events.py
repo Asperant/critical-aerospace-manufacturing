@@ -11,6 +11,7 @@ from manufacturing_core.events_v1 import (
     LotHeldPayloadV1,
     UtcOccurrence,
 )
+from manufacturing_core.events_v2 import LotHeldEventV2, LotHeldPayloadV2
 from pydantic import ValidationError
 
 
@@ -105,3 +106,39 @@ def test_dispatch_event_rejects_non_utc_occurrence() -> None:
             schema_version=1,
             payload=payload,
         )
+
+
+def test_lot_held_v2_accepts_command_compatible_human_reason() -> None:
+    payload = LotHeldPayloadV2(
+        event_type="production.lot-held",
+        schema_version=2,
+        aggregate_type="Lot",
+        aggregate_id="LOT-1",
+        aggregate_version=1,
+        lot_id="LOT-1",
+        lot_revision="rev-1",
+        material_hold_id="HOLD-1",
+        reason="NDT anomaly",
+    )
+    event = LotHeldEventV2(
+        event_id="event-v2",
+        producer="manufacturing-core",
+        world_id="primary",
+        correlation_id="corr-1",
+        causation_id="command-1",
+        trace_id="trace-1",
+        occurred_at=UtcOccurrence(
+            clock="UTC", value=datetime(2026, 10, 27, 12, tzinfo=UTC)
+        ),
+        observed_at=datetime(2026, 10, 27, 12, tzinfo=UTC),
+        entity_refs=(EntityReference(entity_type="Lot", id="LOT-1", revision="rev-1"),),
+        event_type="production.lot-held",
+        schema_version=2,
+        payload=payload,
+    )
+    assert LotHeldEventV2.model_validate(event.model_dump()) == event
+
+
+def test_lot_held_v1_still_rejects_whitespace_reason() -> None:
+    with pytest.raises(ValidationError):
+        held_payload(reason="NDT anomaly")

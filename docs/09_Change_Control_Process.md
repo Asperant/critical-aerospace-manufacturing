@@ -1272,3 +1272,15 @@ producer/consumer contract validation is green. DEP-027 is therefore projected
 READY. This does not claim WP-CORE-003 completion, command execution,
 idempotent/durable outcomes, legal transition integration, real PostgreSQL
 acceptance, or DEP-028 acceptance.
+
+## CHG-071 — introduce versioned LotHeld.v2 and bind the Core outbox slice
+
+CHG-071 / CTRL-HOST-045 is the approved C2/CR-2 change for the WP-CORE-005
+recovery. `core.lot-held.v1` remains unchanged and active; the new
+`core.lot-held.v2` explicitly carries the existing `PlaceLotOnHold.hold_reason`
+text semantics, including reasons containing whitespace. The compatibility
+detector now verifies the valid const-only and `$id` forms used by the existing
+v1 schema, while major-version breaking changes remain fail-closed unless the
+version policy permits them. The owner-local PostgreSQL mutation/outbox and
+rollback evidence is separate from NATS publication, downstream consumer
+adoption and cross-boundary integration acceptance.

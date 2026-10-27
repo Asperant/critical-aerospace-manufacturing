@@ -12,7 +12,7 @@ CREATE TABLE core.outbox (
     event_type text GENERATED ALWAYS AS (event ->> 'event_type') STORED
         NOT NULL CHECK (event_type IN ('production.lot-held', 'production.lot-dispatch-authorized')),
     schema_version integer GENERATED ALWAYS AS ((event ->> 'schema_version')::integer) STORED
-        NOT NULL CHECK (schema_version = 1),
+        NOT NULL CHECK (schema_version IN (1, 2)),
     aggregate_id text GENERATED ALWAYS AS (event -> 'payload' ->> 'aggregate_id') STORED
         NOT NULL CHECK (aggregate_id ~ '\S'),
     aggregate_version bigint GENERATED ALWAYS AS ((event -> 'payload' ->> 'aggregate_version')::bigint) STORED
@@ -41,12 +41,13 @@ CREATE TABLE core.outbox (
         (event_type = 'production.lot-held'
             AND payload ->> 'lot_id' = aggregate_id
             AND payload ->> 'event_type' = event_type
-            AND payload ->> 'schema_version' = '1'
+            AND payload ->> 'schema_version' = schema_version::text
             AND payload ->> 'aggregate_version' = aggregate_version::text)
         OR
         (event_type = 'production.lot-dispatch-authorized'
             AND payload ->> 'lot_id' = aggregate_id
             AND payload ->> 'event_type' = event_type
+            AND schema_version = 1
             AND payload ->> 'schema_version' = '1'
             AND payload ->> 'aggregate_version' = aggregate_version::text)
     )

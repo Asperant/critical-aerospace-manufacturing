@@ -6,6 +6,7 @@ broker, outbox or runtime consumer is exercised here.
 """
 
 import copy
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -26,6 +27,7 @@ AUTHORITIES = ProducerAuthorities.load(
 
 EVENTS = (
     "core.lot-held.v1",
+    "core.lot-held.v2",
     "core.lot-dispatch-authorized.v1",
 )
 
@@ -46,6 +48,11 @@ def test_core_event_declarations_are_registered_and_owned() -> None:
         REGISTRY.get(contract_id).sync_semantics == "ASYNC" for contract_id in EVENTS
     )
     assert REGISTRY.get("core.lot-held.v1").declared_consumers == (
+        "Digital Twin",
+        "Simulator",
+        "Automation verification",
+    )
+    assert REGISTRY.get("core.lot-held.v2").declared_consumers == (
         "Digital Twin",
         "Simulator",
         "Automation verification",
@@ -83,3 +90,26 @@ def test_event_payload_requires_its_versioned_identity(contract_id: str) -> None
     del invalid["schema_version"]
     with pytest.raises(ContractViolation):
         validator.validate(invalid, role="producer")
+
+
+def test_lot_held_v1_schema_and_fixture_remain_byte_compatible() -> None:
+    declaration = REGISTRY.get("core.lot-held.v1")
+    expected = {
+        declaration.output_schema.path: "532dfaa6f2c5a7fea4fbc538c141d2e5a4e9cebef7443ddbe463bc5388285acf",
+        declaration.fixtures[0].path: "799b5ad29d1ceb029a3f1bdc1b15cd08c69f175f474e50a678d18304664f72ac",
+    }
+    for path, digest in expected.items():
+        assert hashlib.sha256((REPO / path).read_bytes()).hexdigest() == digest
+
+
+def test_lot_held_v2_uses_command_compatible_reason_whitespace() -> None:
+    declaration = REGISTRY.get("core.lot-held.v2")
+    validator = BoundaryValidator(declaration, REPO)
+    value = payload("core.lot-held.v2")
+    assert value["reason"] == "NDT anomaly"
+    validator.validate(value, role="producer")
+    validator.validate(value, role="consumer")
+    invalid = copy.deepcopy(value)
+    invalid["reason"] = ""
+    with pytest.raises(ContractViolation):
+        validator.validate(invalid, role="consumer")

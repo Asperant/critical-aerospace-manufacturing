@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from datetime import datetime
-from typing import Literal, Protocol, TypeVar
+from typing import Literal, Protocol, TypeAlias, TypeVar
 from uuid import uuid4
 
 import psycopg
@@ -13,7 +13,13 @@ from psycopg.rows import DictRow
 from psycopg.types.json import Jsonb
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
 
-from manufacturing_core.events_v1 import DomainEventV1
+from manufacturing_core.events_v1 import (
+    LotDispatchAuthorizedEvent,
+    LotHeldEvent,
+)
+from manufacturing_core.events_v2 import LotHeldEventV2
+
+DomainEvent: TypeAlias = LotHeldEvent | LotHeldEventV2 | LotDispatchAuthorizedEvent
 
 T = TypeVar("T")
 
@@ -22,14 +28,14 @@ class OutboxRecord(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     outbox_id: str = Field(pattern=r"^\S+$")
-    event: DomainEventV1
+    event: DomainEvent
     created_at: AwareDatetime
     attempt_count: int = Field(default=0, ge=0)
     last_error: str | None = None
     publication_status: Literal["PENDING", "PUBLISHED"] = "PENDING"
 
     @classmethod
-    def new(cls, event: DomainEventV1, *, created_at: datetime) -> OutboxRecord:
+    def new(cls, event: DomainEvent, *, created_at: datetime) -> OutboxRecord:
         return cls(outbox_id=str(uuid4()), event=event, created_at=created_at)
 
 

@@ -101,7 +101,9 @@ def test_hold_release_is_atomic_retained_and_idempotent(
     ).fetchone()
     assert event is not None
     assert event["event"]["event_type"] == "production.lot-held"
+    assert event["event"]["schema_version"] == 2
     assert event["event"]["payload"]["material_hold_id"] == "H-1"
+    assert event["event"]["payload"]["reason"] == "inspection anomaly"
     assert event["publication_status"] == "PENDING"
     assert event["attempt_count"] == 0
 

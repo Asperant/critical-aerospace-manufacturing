@@ -101,7 +101,8 @@ clock or substitutes observation time for occurrence time.
 
 This is the shared EVT-002 metadata boundary for registered event payload
 contracts; event-specific payload schemas remain separate from envelope metadata.
-WP-CORE-005 registers the Core-owned LotHeld.v1 and LotDispatchAuthorized.v1
+WP-CORE-005 registers the Core-owned LotHeld.v1, LotHeld.v2 and
+LotDispatchAuthorized.v1
 payload declarations against this envelope. HTTP/NATS/Temporal propagation,
 production subject/stream bindings, outbox, runtime ACLs and REAL integrated
 acceptance remain subsequent work. Focused
@@ -160,9 +161,8 @@ The bounded schema subset supports explicit types, properties, required fields,
 boolean additionalProperties, items, enum/const and scalar/collection constraints.
 Local references are resolved before comparing their effective shape (see below).
 General composition, formats, alternate dialects, unknown keywords and schemas
-without explicit types remain unverifiable even when unchanged. The Core output
-exemplar still has unsupported keywords, including `$id`; this slice does not
-certify its compatibility. Unverifiable
+without explicit types or a const/enum constraint remain unverifiable even when
+unchanged. `$id` is treated as a checked schema identity annotation. Unverifiable
 results must never be accepted as compatible. Semantic changes absent from declared
 metadata cannot be inferred. Optional-addition policy is not proof that strict old
 consumers accept new payloads: consumer tests remain required. Explicit version-policy
