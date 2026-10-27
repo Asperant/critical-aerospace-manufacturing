@@ -3852,6 +3852,17 @@ FR-CORE-016:
   state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
 ```
 
+#### CHG-073 owner-local evidence binding (not final requirement evidence)
+
+The merged WP-CORE-005 owner-local transaction/outbox implementation and its
+real PostgreSQL 18 validation are bound to `DEP-022` by
+`evidence/readiness/DN-CORE-OUTBOX-DEP-022.json` and
+`evidence/WP-CORE-005/CURRENT-MAIN-VALIDATION-2026-10-27.md`. This is an
+edge-readiness projection only: the FR-CORE-014/015 structured records above
+remain `VERIFY_PLANNED` / `NOT_YET_EXECUTED` for their full EV-L3 scope until
+the later relay, broker, scenario and immutable EvidenceBundle obligations are
+executed. No final RTM EvidenceID is invented.
+
 ### 17.FC FR-SIM
 
 ```yaml
