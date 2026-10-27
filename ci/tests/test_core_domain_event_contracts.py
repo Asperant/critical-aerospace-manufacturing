@@ -96,7 +96,9 @@ def test_lot_held_v1_schema_and_fixture_remain_byte_compatible() -> None:
     declaration = REGISTRY.get("core.lot-held.v1")
     expected = {
         declaration.output_schema.path: "532dfaa6f2c5a7fea4fbc538c141d2e5a4e9cebef7443ddbe463bc5388285acf",
-        declaration.fixtures[0].path: "799b5ad29d1ceb029a3f1bdc1b15cd08c69f175f474e50a678d18304664f72ac",
+        declaration.fixtures[
+            0
+        ].path: "799b5ad29d1ceb029a3f1bdc1b15cd08c69f175f474e50a678d18304664f72ac",
     }
     for path, digest in expected.items():
         assert hashlib.sha256((REPO / path).read_bytes()).hexdigest() == digest

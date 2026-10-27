@@ -283,7 +283,9 @@ class TransitionRepository:
             (lot_id,),
         ).fetchone()
         if row is None:
-            raise TransitionRejected("EVENT_VERSION_UNAVAILABLE", "lot event sequence missing")
+            raise TransitionRejected(
+                "EVENT_VERSION_UNAVAILABLE", "lot event sequence missing"
+            )
         return row["next_version"]
 
     def active_hold(

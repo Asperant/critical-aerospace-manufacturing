@@ -136,12 +136,18 @@ def test_outbox_constraint_failure_rolls_back_core_mutation(
     second = PlaceLotOnHold.model_validate(second_data)
     with pytest.raises(psycopg.errors.UniqueViolation):
         service.place_lot_on_hold(permissions, second)
-    assert connection.execute(
-        "SELECT 1 FROM core.material_hold WHERE id = 'H-2'"
-    ).fetchone() is None
-    assert connection.execute(
-        "SELECT 1 FROM core.command_outcome WHERE idempotency_key = 'hold-2'"
-    ).fetchone() is None
+    assert (
+        connection.execute(
+            "SELECT 1 FROM core.material_hold WHERE id = 'H-2'"
+        ).fetchone()
+        is None
+    )
+    assert (
+        connection.execute(
+            "SELECT 1 FROM core.command_outcome WHERE idempotency_key = 'hold-2'"
+        ).fetchone()
+        is None
+    )
 
 
 def test_hold_dispatch_and_authorization_negative_paths(

@@ -101,7 +101,9 @@ def test_dispatch_event_rejects_non_utc_occurrence() -> None:
                 value=datetime(2026, 10, 27, 12, tzinfo=timezone(timedelta(hours=3))),
             ),
             observed_at=datetime(2026, 10, 27, 12, tzinfo=UTC),
-            entity_refs=(EntityReference(entity_type="Lot", id="LOT-1", revision="rev-2"),),
+            entity_refs=(
+                EntityReference(entity_type="Lot", id="LOT-1", revision="rev-2"),
+            ),
             event_type="production.lot-dispatch-authorized",
             schema_version=1,
             payload=payload,

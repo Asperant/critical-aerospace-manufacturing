@@ -117,7 +117,9 @@ def execute_with_outbox(
     earlier caller work and leaving the surrounding transaction usable.
     """
     if connection.info.transaction_status != TransactionStatus.INTRANS:
-        raise ValueError("atomic outbox execution requires an active caller transaction")
+        raise ValueError(
+            "atomic outbox execution requires an active caller transaction"
+        )
     form: Callable[[T], OutboxRecord]
     if isinstance(record, OutboxRecord):
         fixed = OutboxRecord.model_validate(record.model_dump())
@@ -142,9 +144,7 @@ class OutboxRelay:
     def __init__(self, connection: psycopg.Connection[DictRow]) -> None:
         self.connection = connection
 
-    def publish_pending(
-        self, publisher: OutboxPublisher, *, limit: int = 100
-    ) -> int:
+    def publish_pending(self, publisher: OutboxPublisher, *, limit: int = 100) -> int:
         """Publish committed rows and mark success only after publisher returns.
 
         The publish and status update share a DB transaction.  A crash after the

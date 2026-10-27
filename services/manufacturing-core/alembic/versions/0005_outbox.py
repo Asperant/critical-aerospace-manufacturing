@@ -13,8 +13,7 @@ depends_on = None
 
 def upgrade() -> None:
     source_path = (
-        Path(__file__).parents[2]
-        / "src/manufacturing_core/migrations/0005_outbox.sql"
+        Path(__file__).parents[2] / "src/manufacturing_core/migrations/0005_outbox.sql"
     )
     source = source_path.read_text(encoding="utf-8")
     connection = op.get_bind()
@@ -37,9 +36,7 @@ def upgrade() -> None:
     connection.exec_driver_sql(
         f"GRANT SELECT, INSERT, UPDATE ON TABLE core.lot_event_sequence TO {quoted}"
     )
-    connection.exec_driver_sql(
-        f"GRANT SELECT, INSERT ON TABLE core.outbox TO {quoted}"
-    )
+    connection.exec_driver_sql(f"GRANT SELECT, INSERT ON TABLE core.outbox TO {quoted}")
     connection.exec_driver_sql(
         f"GRANT UPDATE(publication_status, attempt_count, last_error) "
         f"ON TABLE core.outbox TO {quoted}"
