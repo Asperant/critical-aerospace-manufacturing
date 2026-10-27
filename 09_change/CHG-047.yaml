@@ -1,0 +1,48 @@
+CHG-047:
+  title: Bound queue health worker shutdown to advisory probe deadline
+  trigger: Measured cap-plane-queue operator timeout despite CHG-044 per-request GitHub timeout
+  reason: ThreadPoolExecutor cleanup could wait for multiple sequential gh subprocess timeouts after the four-second advisory health budget expired.
+  class: C1
+  review_risk_class: CR-2
+  raised_in: S4
+  owner: Asrın
+  application_control_item: CTRL-HOST-027
+  required_human_approvals: 0
+  decision: APPROVED
+  status: APPROVED
+  affected_requirements:
+    - NONE — host/control latency correction; product requirements and lifecycle semantics are unchanged
+  affected_architecture:
+    - NONE — existing root-owned queue and transition-helper boundary is preserved
+  affected_contracts:
+    - id: CTRL-QUEUE-READ-v1
+      compatibility: NON_BREAKING
+      consumers_reviewed: [Remote SSH developer queue gate]
+  affected_work_packages:
+    - NONE — no product WP implementation or readiness semantics are changed
+  affected_dependencies:
+    - NONE — no product dependency edge or readiness stage changes
+  affected_evidence:
+    - tools/host/plane-queue/test_queue.py
+    - tools/host/plane-transition/test_transition.py
+    - focused queue and transition helper suites
+    - post-deploy fresh cap-plane-queue readback
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - Existing queue JSON/read-only, pacing, parallel snapshot, fail-closed and UNKNOWN semantics remain current.
+    rerun_required:
+      - Focused host control regression suite
+      - Root helper hash/policy refresh and fresh cap-plane-queue readback
+  security_authority_impact: NONE — no credential, identity, authorization, authority boundary, or audit semantics change
+  rollout: Merge the control-only change with required CI, then use the supported root-only installer to refresh helper hashes. Perform a fresh read-only cap-plane-queue readback; do not transition Plane state.
+  rollback: Restore the previous root-owned helper and policy from the installer backup/rollback record; preserve Plane state, audit history and product evidence.
+  required_rerun:
+    - Focused host queue and transition regression tests
+    - Fresh cap-plane-queue read-only verification
+  documentation_updates:
+    - 09_change/CHG-047.yaml
+    - 09_change/change_requests.csv
+    - docs/09_Change_Control_Process.md
+  freeze_context: POST_M6_PERMITTED
