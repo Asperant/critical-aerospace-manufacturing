@@ -60,3 +60,4 @@ CHG-070,Bind the merged Core command contract to DEP-027,C1,CR-1,Asrın,APPROVED
 CHG-071,Introduce versioned LotHeld.v2 and bind Core transactional outbox emission,C2,CR-2,Asrın,APPROVED,APPROVED,CTRL-HOST-045
 CHG-072,Refresh the projectctl precision diagnostic baseline after approved bindings,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-046
 CHG-073,Bind the verified owner-local Core outbox slice to DEP-022,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-047
+CHG-074,Bind the bounded Core event-contract slice to DEP-023,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-048

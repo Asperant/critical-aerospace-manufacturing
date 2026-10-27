@@ -1306,3 +1306,16 @@ rollback on constraint failure. LotHeld.v1 remains unchanged.
 This projection does not claim NATS publication, relay delivery, downstream
 consumer adoption, effect verification, DEP-023, DEP-024, DEP-025, global
 DN-CORE-OUTBOX INTEGRATION_READY or WP-CORE-005 DONE.
+
+## CHG-074 — bind the bounded Core event-contract slice to DEP-023
+
+CHG-074 / CTRL-HOST-048 is a C1 control-plane reconciliation for DEP-023.
+The current-main event-envelope contract, Core LotHeld.v1/v2 and
+LotDispatchAuthorized.v1 schemas/fixtures, explicit registry declarations and
+producer/consumer boundary tests satisfy the bounded initial contract predicate
+at CONTRACT_READY. LotHeld.v1 remains unchanged and v2 remains explicitly
+versioned.
+
+This projection does not claim global DN-EVT-CONTRACTS completeness, broker or
+NATS/JetStream delivery, ACL installation, downstream adoption, event-spine
+integration, DEP-024, DEP-025 or any work-package DONE state.

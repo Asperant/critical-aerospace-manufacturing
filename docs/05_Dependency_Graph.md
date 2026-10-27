@@ -1572,10 +1572,10 @@ DEP-023:
   need_by: "M1 (S2)"   # sprint 2
   fallback: F1
   unblock_evidence: "contract merged + contract tests green + example fixture published"
-  precise_requirement: null
+  precise_requirement: "The bounded initial Core async event family shall publish event-envelope.v1 metadata plus LotHeld.v1, LotHeld.v2 and LotDispatchAuthorized.v1 schemas, fixtures, explicit registry producer/consumer declarations and green producer/consumer boundary validation."
   risk_class: DR-2
   source: "Item 66 spine"
-  status: NOT_READY
+  status: READY
 DEP-024:
   predecessor: {node: DN-CORE-OUTBOX, owner: "Asrın"}
   successor: {node: DN-EVT-SPINE, owner: "Asrın"}
@@ -3802,7 +3802,7 @@ For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §1
 | DEP-020 | DN-CORE-TRANSITIONS at START | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; minimal lifecycle component implemented, lifecycle component tests green on current main, and attributable COMPONENT_READY readiness artifact bound to WP-CORE-002 | Producer is WP-CORE-009; the artifact must bind the current-main revision, CI/component-test evidence and DN-CORE-LIFECYCLE readiness to the WP-CORE-002 consumer. Legal transition semantics remain in WP-CORE-002. |
 | DEP-021 | DN-EVT-CONTRACTS at START | DN-CORE-CONTRACTS: Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-022 | DN-CORE-OUTBOX at INTEGRATION | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; atomic mutation+outbox test on real PostgreSQL 18, including replay/idempotency and rollback paths | Bound by CHG-073 to the merged WP-CORE-005 owner-local transaction/outbox implementation and exact real PostgreSQL 18 CI evidence at product merge SHA `5e9544b`. This does not claim NATS/relay delivery, downstream consumer adoption, DEP-023/024/025 or work-package DONE. |
-| DEP-023 | DN-EVT-SPINE at INTEGRATION | DN-EVT-CONTRACTS: Event contracts (envelope + domain events, IC registry); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-023 | DN-EVT-SPINE at INTEGRATION | DN-EVT-CONTRACTS: bounded initial Core event contracts (envelope + LotHeld v1/v2 + LotDispatchAuthorized v1 + registry); CONTRACT_READY; merged artifacts, fixtures and producer/consumer tests green | Bound by CHG-074 to the current-main envelope and Core domain-event contract slice. This does not claim global event-contract completeness, broker transport, NATS/JetStream delivery, downstream adoption, DEP-024 or DEP-025. |
 | DEP-024 | DN-EVT-SPINE at INTEGRATION | DN-CORE-OUTBOX: Transactional outbox + relay; INTEGRATION_READY; real cross-boundary integration test green on INTEGRATION (outbox → NATS → consumer) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-025 | DN-EVT-SPINE at INTEGRATION | DN-RT-NATS: NATS JetStream runtime; INTEGRATION_READY; real JetStream in CI + INTEGRATION (no fake bus, CI-INV-07) | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-026 | DN-CORE-CMDCON at START | DN-CORE-CONTRACTS: Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity); CONTRACT_READY; contract merged + contract tests green + example fixture published | Bound by CTRL-HOST-042 to the merged `core.operational-command.v1` registry/schema and four versioned fixtures; producer/consumer contract validation is green. This opens the contract gate only; command execution, durable outcomes and integration remain DEP-027/028 scope. |
