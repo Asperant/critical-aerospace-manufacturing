@@ -1038,7 +1038,7 @@ uses an explicit unset sentinel, keeps the existing first-warning-once and
 subsequent 60-second throttling behavior, and adds a fresh-clock regression
 test. It has no product, lifecycle, dependency-readiness or authority impact.
 Control-only PRs applying this correction must declare `NONE` with the explicit
-control-only Requirements field required by TL-13.
+top-level (non-bulleted) Requirements field required by TL-13.
 
 ## CHG-052 — generic audit-backed BLOCKED projection reconciliation
 
