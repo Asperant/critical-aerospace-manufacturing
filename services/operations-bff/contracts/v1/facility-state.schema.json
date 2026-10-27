@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.cap.invalid/operations-bff/v1/facility-state.schema.json",
+  "title": "FacilityStateResponse",
+  "description": "Read-only Twin-backed facility state for one explicit world. Lifecycle, execution and hold dimensions remain separate; freshness and epistemic class are preserved from the Twin.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "meta", "facility"],
+  "properties": {
+    "contract_version": { "const": "bff.facility-state.v1" },
+    "meta": { "$ref": "common.schema.json#/$defs/QueryMeta" },
+    "facility": { "$ref": "#/$defs/FacilityState" }
+  },
+  "$defs": {
+    "FacilityState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["equipment", "lots"],
+      "properties": {
+        "equipment": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/EquipmentState" }
+        },
+        "lots": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LotState" }
+        }
+      }
+    },
+    "EquipmentState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "equipment_id",
+        "revision",
+        "equipment_state",
+        "maintenance_state",
+        "epistemic_class",
+        "freshness"
+      ],
+      "properties": {
+        "equipment_id": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "revision": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "equipment_state": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "maintenance_state": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "epistemic_class": { "$ref": "common.schema.json#/$defs/EpistemicClass" },
+        "freshness": { "$ref": "common.schema.json#/$defs/Freshness" }
+      }
+    },
+    "LotState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lot_id",
+        "revision",
+        "lifecycle_state",
+        "execution_state",
+        "hold_state",
+        "route_position",
+        "epistemic_class",
+        "freshness"
+      ],
+      "properties": {
+        "lot_id": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "revision": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "lifecycle_state": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "execution_state": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "hold_state": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "route_position": { "$ref": "#/$defs/RoutePosition" },
+        "epistemic_class": { "$ref": "common.schema.json#/$defs/EpistemicClass" },
+        "freshness": { "$ref": "common.schema.json#/$defs/Freshness" }
+      }
+    },
+    "RoutePosition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["route_id", "visit_id", "position", "operation_class_id"],
+      "properties": {
+        "route_id": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "visit_id": { "$ref": "common.schema.json#/$defs/OpaqueId" },
+        "position": { "type": "integer", "minimum": 0 },
+        "operation_class_id": { "$ref": "common.schema.json#/$defs/OpaqueId" }
+      }
+    }
+  }
+}

@@ -20,6 +20,7 @@ BASE = "https://contracts.cap.invalid/operations-bff/v1/"
 SCHEMA_FILES = (
     "common.schema.json",
     "overview-query.schema.json",
+    "facility-state.schema.json",
     "command.schema.json",
     "stream-message.schema.json",
     "session.schema.json",
@@ -151,6 +152,7 @@ def test_openapi_structure() -> None:
     assert "servers" not in doc
     assert set(doc["paths"]) == {
         "/v1/overview",
+        "/v1/facility-state",
         "/v1/commands",
         "/v1/session",
         "/v1/session/login",
@@ -160,6 +162,7 @@ def test_openapi_structure() -> None:
     ops = operations()
     assert set(ops) == {
         "getManufacturingOverview",
+        "getFacilityState",
         "submitCommand",
         "getSession",
         "startLogin",
@@ -225,10 +228,23 @@ def test_overview_has_no_synthesized_overall_status() -> None:
                 assert not name_parts(name) & forbidden, name
 
 
+def test_facility_state_keeps_independent_state_dimensions() -> None:
+    state = load_json("facility-state.schema.json")
+    lot = state["$defs"]["LotState"]["properties"]
+    assert {"lifecycle_state", "execution_state", "hold_state"} <= set(lot)
+    assert "state" not in lot
+
+
 def test_normal_fixture_validates_and_is_composed_faithfully() -> None:
     fixture = load_json("overview-query.normal.json")
     validator_for("overview-query.schema.json").validate(fixture)
     assert check_composition(fixture) == []
+
+
+def test_facility_state_fixture_validates() -> None:
+    validator_for("facility-state.schema.json").validate(
+        load_json("facility-state.normal.json")
+    )
 
 
 @pytest.mark.parametrize("field", ["revision", "as_of", "generated_at", "freshness"])
