@@ -7,7 +7,7 @@
   "producer_wp": "WP-UI-001",
   "producer_pr": 39,
   "producer_merge_sha": "1e54f9c5cd8ff9f208b422c15093d3d7a3ecf5da",
-  "verified_main_sha": "80b1420e8f19bf8b4d984a85833cb22a8f6c32d7",
+  "verified_main_sha": "5462191dc80496fede955d070d13047715b16052",
   "precise_requirement": "WP-UI-001 must publish the merged/current-main operations-bff v1 OpenAPI contract, including session and overview query boundaries, a validating overview fixture, and green BFF contract tests. This edge does not certify real Core/Twin integration, Keycloak runtime acceptance, DEP-106 or WP-UI-002 completion.",
   "scope_boundary": "This is an edge-specific DEP-105 binding. It certifies the contract artifact and contract-test predicate only; fixture data is synthetic and no integrated UI acceptance is claimed.",
   "artifacts": [
@@ -21,5 +21,5 @@
     {"test_id": "CONTRACT-SCHEMA-VALIDATION", "path": "ci/scripts/check_contracts.py", "result": "20 schemas and 8 instances PASS"},
     {"test_id": "UI-BFF-TYPING", "path": "services/operations-bff/pyrightconfig.json", "result": "0 errors"}
   ],
-  "verification": "PR #39 is merged and its required CI checks are green. The exact contract artifacts and the current-main BFF suite were re-run at verified main SHA 80b1420e8f19bf8b4d984a85833cb22a8f6c32d7. DEP-106, real Core/Twin adapters, live Keycloak and final UI acceptance remain separate."
+  "verification": "PR #39 is merged and its required CI checks are green. The exact contract artifacts and the current-main BFF suite were re-run at verified main SHA 5462191dc80496fede955d070d13047715b16052. DEP-106, real Core/Twin adapters, live Keycloak and final UI acceptance remain separate."
 }

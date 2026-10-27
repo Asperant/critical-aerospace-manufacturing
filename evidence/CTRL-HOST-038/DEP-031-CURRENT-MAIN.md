@@ -4,7 +4,7 @@ DEP-031 is READY at CONTRACT_READY for the bounded Core domain-event contract
 set: versioned payload schemas, canonical producer/event declarations,
 Twin-relevant fixtures and green producer/consumer boundary tests.
 
-- Current main: `80b1420e8f19bf8b4d984a85833cb22a8f6c32d7` (PR #154 merge)
+- Current main: `5462191dc80496fede955d070d13047715b16052` (PR #160 merge)
 - Producer PR #73 merge: `d8388a7e6c7f5c93ffc3c4343bbe6246a5d0269f`
 - Producer PR #76 merge: `9db6a1080b8604a36a4629d85c8f844b57879cd6`
 - Both merges are ancestors of current main and were authored by Asperant.
