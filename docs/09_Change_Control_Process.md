@@ -1063,6 +1063,16 @@ capability, does not certify PostgreSQL integration, and does not alter
 WP-CORE-002 transition ownership. The status is intentionally not changed
 until the exact current-main evaluation is complete.
 
+## CHG-058 — refresh the dependency precision diagnostic baseline
+
+CHG-058 / CTRL-HOST-034 is a generic C1 test-baseline correction required by
+CHG-055. The approved DEP-018 precise requirement removes exactly one
+`PRECISION_MISSING` diagnostic while preserving the dependency graph shape,
+severity rules, and all other findings. The project-control regression test is
+updated from 174 to 173 expected precision warnings. No product requirement,
+architecture, lifecycle state, or readiness claim is introduced by this
+correction.
+
 ## CHG-052 — generic audit-backed BLOCKED projection reconciliation
 
 CHG-052 / CTRL-HOST-030 repairs only the orthogonal Plane `BLOCKED` label when

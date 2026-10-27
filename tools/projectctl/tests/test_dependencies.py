@@ -19,7 +19,9 @@ def test_dependency_baseline_and_findings(graph):
     findings = validate_dependencies(graph)
     assert not [d for d in findings if d.severity == Severity.ERROR]
     assert {d.record_id for d in findings if d.code == "READINESS_INCOMPATIBLE"} == set()
-    assert len([d for d in findings if d.code == "PRECISION_MISSING"]) == 174
+    # CHG-055 made DEP-018 precise; the canonical warning baseline therefore
+    # decreased by one without changing the graph shape.
+    assert len([d for d in findings if d.code == "PRECISION_MISSING"]) == 173
     assert {d.record_id for d in findings if d.code == "FIXTURE_SEMANTICS"} == set()
 
 
