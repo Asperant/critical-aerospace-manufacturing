@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import cast
-
 import psycopg
 import pytest
 from conftest import Database
@@ -13,7 +11,7 @@ from manufacturing_core.commands import (
 )
 from manufacturing_core.enforcement import AuthorizationDenied
 from manufacturing_core.transitions import CoreTransitionService
-from psycopg.rows import DictRow
+from psycopg.rows import DictRow, dict_row
 
 pytestmark = pytest.mark.integration
 
@@ -61,10 +59,11 @@ def release_command(key: str = "release-1") -> ReleaseMaterialHold:
 def test_hold_release_is_atomic_retained_and_idempotent(
     database: Database,
 ) -> None:
-    with psycopg.connect(database.runtime_dsn) as raw_connection:
-        connection = cast(psycopg.Connection[DictRow], raw_connection)
+    with psycopg.Connection[DictRow].connect(
+        database.runtime_dsn, row_factory=dict_row
+    ) as connection:
         setup_lot(connection)
-        service = CoreTransitionService(cast(psycopg.Connection[DictRow], connection))
+        service = CoreTransitionService(connection)
         permissions = {"core.lot.place_hold", "core.material.release_hold"}
         placed = service.place_lot_on_hold(permissions, hold_command())
         assert placed.status is OutcomeStatus.ACCEPTED

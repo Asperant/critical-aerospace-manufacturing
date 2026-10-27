@@ -220,12 +220,17 @@ def test_runtime_transition_grants_are_column_scoped(
     connection: psycopg.Connection[DictRow],
 ) -> None:
     privileges = connection.execute(
-        "SELECT pg_catalog.has_table_privilege(current_user, 'core.lot', 'UPDATE'), "
-        "pg_catalog.has_column_privilege(current_user, 'core.lot', 'revision', 'UPDATE'), "
-        "pg_catalog.has_column_privilege(current_user, 'core.lot', 'order_id', 'UPDATE'), "
-        "pg_catalog.has_table_privilege(current_user, 'core.material_hold', 'INSERT')"
+        "SELECT pg_catalog.has_table_privilege(current_user, 'core.lot', 'UPDATE') AS lot_update, "
+        "pg_catalog.has_column_privilege(current_user, 'core.lot', 'revision', 'UPDATE') AS lot_revision_update, "
+        "pg_catalog.has_column_privilege(current_user, 'core.lot', 'order_id', 'UPDATE') AS lot_order_update, "
+        "pg_catalog.has_table_privilege(current_user, 'core.material_hold', 'INSERT') AS hold_insert"
     ).fetchone()
-    assert privileges == (True, True, False, True)
+    assert privileges == {
+        "lot_update": True,
+        "lot_revision_update": True,
+        "lot_order_update": False,
+        "hold_insert": True,
+    }
     with pytest.raises(errors.InsufficientPrivilege), connection.transaction():
         connection.execute(
             "UPDATE core.lot SET order_id = 'forbidden' WHERE id = 'missing'"
