@@ -5,6 +5,7 @@ Owner: Asrın Dündar
 Branch: `wp/WP-CORE-005-transactional-outbox`
 Canonical WP: `WP-CORE-005`
 PR: `#167`
+Requirements: `FR-CORE-014`, `FR-CORE-015`
 
 ## Implemented
 
