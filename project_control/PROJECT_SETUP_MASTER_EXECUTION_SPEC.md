@@ -429,6 +429,17 @@ read-back. Identity, parent, relationship and unknown-state conflicts remain
 fail-closed. Registered control-only items, including
 `CTRL-PM-015-PILOT-001`, remain separate and are never deleted.
 
+CHG-050 / CTRL-PM-017 defines the generic relationship reconciliation rule:
+canonical module and coordination-cycle memberships are read from the full live
+inventory. For an existing WP, non-target canonical associations may be removed
+only through the exact association endpoint and only when the canonical target
+is deterministic; the target is then added if absent. Unscheduled WPs have no
+cycle association. Each association mutation requires a fresh relationship
+read-back. Plane issues, workflow state, control-item membership and lifecycle
+transitions are never changed by this rule. Unknown relationship entities,
+duplicate relationship evidence, identity/parent/state conflicts and ambiguous
+read-backs remain fail-closed.
+
 ## CTRL-PM-010 — Plane Post-Import Audit
 
 Goal: prove Plane matches canonical planning data.

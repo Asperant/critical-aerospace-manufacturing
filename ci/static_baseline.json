@@ -6,9 +6,9 @@
     "pyright": "pyright 1.1.389"
   },
   "totals": {
-    "ruff": 306,
-    "pyright": 189,
-    "unformatted_files": 56
+    "ruff": 298,
+    "pyright": 187,
+    "unformatted_files": 53
   },
   "ruff": {
     "project_control/documentation-reconciliation/audit.py": {
@@ -110,15 +110,8 @@
       "I001": 1,
       "SIM105": 1
     },
-    "tools/projectctl/src/projectctl/plane_import.py": {
-      "I001": 1
-    },
     "tools/projectctl/src/projectctl/plane_plan.py": {
       "I001": 1
-    },
-    "tools/projectctl/src/projectctl/plane_transport.py": {
-      "I001": 1,
-      "SIM105": 1
     },
     "tools/projectctl/src/projectctl/queries.py": {
       "SIM102": 1
@@ -180,12 +173,6 @@
       "E702": 5,
       "I001": 1,
       "SIM117": 5
-    },
-    "tools/projectctl/tests/test_plane_import.py": {
-      "E741": 1,
-      "F401": 1,
-      "I001": 1,
-      "SIM117": 2
     },
     "tools/projectctl/tests/test_plane_plan.py": {
       "I001": 1
@@ -259,7 +246,7 @@
     "tools/projectctl/src/projectctl/plane_import.py": {
       "reportAssignmentType": 1,
       "reportOperatorIssue": 2,
-      "reportOptionalIterable": 3,
+      "reportOptionalIterable": 1,
       "reportOptionalMemberAccess": 1,
       "reportOptionalSubscript": 9
     },
@@ -330,9 +317,7 @@
     "tools/projectctl/src/projectctl/parsers/yaml_blocks.py",
     "tools/projectctl/src/projectctl/plane.py",
     "tools/projectctl/src/projectctl/plane_bootstrap.py",
-    "tools/projectctl/src/projectctl/plane_import.py",
     "tools/projectctl/src/projectctl/plane_plan.py",
-    "tools/projectctl/src/projectctl/plane_transport.py",
     "tools/projectctl/src/projectctl/project.py",
     "tools/projectctl/src/projectctl/queries.py",
     "tools/projectctl/src/projectctl/rendering.py",
@@ -353,7 +338,6 @@
     "tools/projectctl/tests/test_parser.py",
     "tools/projectctl/tests/test_plane.py",
     "tools/projectctl/tests/test_plane_bootstrap.py",
-    "tools/projectctl/tests/test_plane_import.py",
     "tools/projectctl/tests/test_plane_plan.py",
     "tools/projectctl/tests/test_plane_transport.py",
     "tools/projectctl/tests/test_project.py",

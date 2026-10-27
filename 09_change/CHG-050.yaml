@@ -1,0 +1,59 @@
+CHG-050:
+  title: Generic Plane WP relationship-drift reconciliation with exact association cleanup
+  trigger: CHG-049 dry-run removed static and lifecycle blockers but found 56 deterministic canonical cycle-membership conflicts
+  reason: The approved canonical projection owns module and coordination-cycle membership, but the importer still treated every existing noncanonical association as an unreconcilable conflict. This left global drift unresolved and prevented the missing canonical WP from being provisioned.
+  class: C3
+  review_risk_class: CR-3
+  raised_in: S4
+  owner: Asrın
+  application_control_item: CTRL-PM-017
+  required_human_approvals: 0
+  decision: APPROVED
+  status: APPROVED
+  affected_requirements:
+    - NONE — control-plane reconciliation semantics only; no product requirement or lifecycle authority changes
+  affected_architecture:
+    - NONE — existing canonical projectctl-to-Plane boundary is preserved; no new service, store or authority is introduced
+  affected_contracts:
+    - id: CTRL-PLANE-RECONCILIATION-v1
+      compatibility: NON_BREAKING
+      consumers_reviewed: [CTRL-PM-009, CTRL-PM-010, fresh cap-plane-queue catalog read]
+  affected_work_packages:
+    - NONE — no product WP implementation, readiness, dependency or lifecycle transition is performed
+  affected_dependencies:
+    - NONE — dependency edges and readiness semantics remain unchanged
+  affected_evidence:
+    - tools/projectctl/src/projectctl/plane_import.py
+    - tools/projectctl/src/projectctl/plane_transport.py
+    - tools/projectctl/tests/test_plane_import.py
+    - deterministic relationship-drift dry-run classification
+    - exact association DELETE/POST fresh read-back
+    - fresh Plane set-equality audit
+    - repeated fresh cap-plane-queue readback
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - Existing valid Plane lifecycle states remain preserved and are never reset to BACKLOG.
+      - Identity, external_id/name, parent, unknown-state, duplicate-evidence and control-item conflicts remain fail-closed.
+      - CTRL-PM-015-PILOT-001 remains a canonical control item and is never deleted or related to a WP.
+      - Product lifecycle transitions, queue selection, readiness and dependency evidence remain unchanged.
+    rerun_required:
+      - Deterministic wrong/multiple/unscheduled relationship repair tests
+      - Exact allowlisted association delete/add and fresh read-back tests
+      - Fresh 180-WP plus control-item Plane audit
+      - Repeated fresh cap-plane-queue readback
+  security_authority_impact: NONE — no credential, identity-authentication, authorization, protected-action or manufacturing-authority semantics change
+  rollout: Merge the control-only branch with required CI, refresh the root-owned projectctl source through the supported deployment path, run the approved generic importer after the recorded dry-run preview, preserve valid existing lifecycle states, and verify fresh Plane and queue readbacks. No product WP lifecycle transition is authorized.
+  rollback: Restore the merged helper source with the supported root-only rollback procedure. Do not replay stale Plane snapshots, delete issues, or reset lifecycle state. Association rollback requires a newly reviewed canonical reconciliation; no blind replay is permitted.
+  required_rerun:
+    - Generic relationship reconciliation regression suite
+    - Identity/control-item/state negative-path suite
+    - Fresh 180-WP plus control-item Plane audit
+    - Repeated fresh cap-plane-queue readback
+  documentation_updates:
+    - 09_change/CHG-050.yaml
+    - 09_change/change_requests.csv
+    - docs/09_Change_Control_Process.md
+    - project_control/PROJECT_SETUP_MASTER_EXECUTION_SPEC.md
+  freeze_context: POST_M6_PERMITTED
