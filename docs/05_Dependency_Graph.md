@@ -1662,7 +1662,7 @@ DEP-031:
   precise_requirement: "versioned domain-event payload contract; canonical producer/event declaration; TWIN-relevant example fixture; green producer/consumer contract tests"
   risk_class: DR-1
   source: "Item 66 #44"
-  status: NOT_READY
+  status: READY
 DEP-032:
   predecessor: {node: DN-EVT-SPINE, owner: "Asrın"}
   successor: {node: DN-TWIN-SKELETON, owner: "Asrın"}

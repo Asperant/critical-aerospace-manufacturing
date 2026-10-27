@@ -1,0 +1,30 @@
+title: Record current-main PASS for DEP-031
+trigger: Existing merged Core domain-event declarations, Twin fixtures and producer/consumer tests satisfy DEP-031 while the dependency remained NOT_READY
+reason: WP-TWIN-001 needs the bounded versioned domain-event and Twin fixture contract before its skeleton can start
+class: C1
+review_risk_class: CR-1
+raised_in: S3
+owner: Asrın
+required_human_approvals: 0
+reviewers: []
+decision: APPROVED
+status: APPROVED
+application_control_item: CTRL-HOST-038
+decision_basis: Exact current-main event-contract projection only; envelope, outbox, broker, event-spine and Twin readiness remain separate.
+scope: ["Record DEP-031 READY", "bind PR #73/#76 event contracts and tests", "preserve downstream separation"]
+invariants_preserved: ["Core canonical producer", "immutable events", "Twin projection authority boundary", "Simulator Oracle isolation"]
+precise_requirement: NONE — status projection only; the non-null DEP-031 predicate remains in docs/05.
+affected_requirements: [NONE — status projection only]
+affected_architecture: [NONE]
+affected_contracts: [core.lot-held.v1, core.lot-dispatch-authorized.v1]
+affected_work_packages: [WP-EVT-001, WP-EVT-002, WP-TWIN-001]
+affected_dependencies: [DEP-031]
+affected_evidence: [evidence/CTRL-HOST-038/DEP-031-CURRENT-MAIN.md, ci/tests/test_core_domain_event_contracts.py]
+evidence_staleness: {question_answered: true, stale: [], unaffected: ["Full event spine", "transport and Twin integration"], rerun_required: []}
+security_authority_impact: NONE
+conditions: ["Do not infer DEP-032/033/034 or WP-TWIN-001 DONE"]
+rollout: Merge and re-evaluate WP-TWIN-001 startability.
+rollback: Revert the DEP-031 projection and control evidence only.
+required_rerun: [projectctl validate, projectctl startability WP-TWIN-001, current-main event contract tests]
+documentation_updates: [docs/05_Dependency_Graph.md, 09_change/change_requests.csv]
+freeze_context: PRE_M6
