@@ -4,7 +4,8 @@
 
 Requirement coverage: `FR-AI-002` (typed versioned interfaces) and `FR-AI-003`
 (READ/SIMULATE/PROPOSE allowlist).
-The pull request records this requirement impact explicitly for TL-13 review.
+The pull request records this requirement impact explicitly in the required
+stable-ID field for TL-13 review.
 
 This slice publishes `ai.tool-interface.v1` with four explicit, versioned tool
 surfaces:
