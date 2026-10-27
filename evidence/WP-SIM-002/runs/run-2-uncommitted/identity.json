@@ -1,0 +1,87 @@
+{
+  "kind": "NEW local verification run; not CI, INTEGRATION or EVALUATION evidence",
+  "source": {
+    "head_commit": "3242d1f18f1e4f5bbf857d28b21e6b250fb381b8",
+    "head_tree": "a6d2efa26a95de42fc758fe398dfefc0a00966a7",
+    "branch": "wp/WP-SIM-002-deterministic-replay",
+    "tree_clean": false,
+    "manifest_excludes": [
+      "evidence/WP-SIM-002/runs/",
+      "evidence/WP-SIM-002/README.md"
+    ],
+    "changed_or_untracked_files_sha256": {
+      ".github/workflows/ci.yml": "ee8db2d84cc5fe79e0a7f71762ac004f3ab0f18702690b68afcd76a97de1fdf2",
+      "ci/test-strategy.json": "c31dde4fd81a5814527a3c4b751dd9effdfd285643f0412c17beb7d7eebe58fe",
+      "docs/03_Requirements_Traceability_Matrix.md": "da6adc77a731952c3402847f58cf1ad1e8e762299f8e3cc96ed5e4191865e848",
+      "docs/04_Work_Breakdown_Structure.md": "281aa5c8a74309641e51d74a0428754393a978c6e2c017c5723d13f8913da6ac",
+      "evidence/WP-SIM-002/capture_run.py": "1166ba8e2c8e9bd89562b9e292479186c6b6820e102b5fc26638d641b9e3b8d9",
+      "evidence/WP-SIM-002/replay_matrix.py": "eaef9ae7c6ea2f2240a69208622998cbd52aa7c2bb26143787ea73f8d2a2206a",
+      "evidence/WP-SIM-002/tests/test_capture_run.py": "94b3380c9ed925875648fd4108e200949acf264aad88984ff83d5e2bfa707342",
+      "services/manufacturing-simulator/README.md": "fc0865b045d546ba83c14a3522a3c99511a8b84f40f024247a0bc2dfc371d483",
+      "services/manufacturing-simulator/src/manufacturing_simulator/__init__.py": "c2a48ffe8154dc9d1593a3e8db1190b7f5dd7ec4a398b512f439f21c29e65b62",
+      "services/manufacturing-simulator/src/manufacturing_simulator/errors.py": "eb4560a0c843398591a7fe464288adcb369141b62596cd17711f7aec09dfbdbe",
+      "services/manufacturing-simulator/src/manufacturing_simulator/replay.py": "ce40fe4b6799cea0d2d61d05e2d1b37b9ecaae90eeb138c748c7efc3e0fac84b",
+      "services/manufacturing-simulator/src/manufacturing_simulator/serialization.py": "09133325e9d3a0f38b0aa3078521b2e917028d3f4ca0dfbf6332c672475aa1c3",
+      "services/manufacturing-simulator/tests/replay_api_worker.py": "fbc2c14ae15c9872c2035f6a0b273356887476a4c1f10d0807325a308cd47fed",
+      "services/manufacturing-simulator/tests/replay_fixtures.py": "015884f8a13e49703638ca047fd8344c39bbb53c2738175064ac9762538fa5db",
+      "services/manufacturing-simulator/tests/replay_matrices.py": "c99c51fcb10cbe822a387c424bab0455703a56a63ec131968b1e584e17cd5277",
+      "services/manufacturing-simulator/tests/test_replay.py": "fcb4fd94ae21640a966d5bdf0ad28134d450f2085f01b76c3a5f18395a29249c",
+      "services/manufacturing-simulator/tests/test_replay_validation.py": "852af94b6bec616f970c2b36018cd09fa44b4ca306f30d8f0ea69cbca36751df",
+      "services/manufacturing-simulator/tests/test_serialization.py": "e5f972f5b1c1ca72c3d1002c0840bdbcd31d68adcaaac896cddf3d7d1b39f54c",
+      "traceability/generated/evidence_coverage.csv": "6203304609202ba168211887a434a017ac8ef61636e268f83e77bb744700f6cd",
+      "traceability/generated/orphan_report.json": "fae377a9cc6ca6f608b56ebc2cde6bef0a85d22cb129df4da13e96b7e742b1e1",
+      "traceability/generated/requirements.csv": "066236751daa396cd35e06174cde2e01299ae4dd012a978ba78dfa08d32ac627",
+      "traceability/trace_edges.yaml": "9668f3ee0cf2dcf4e483bc1cee941b9494f0eb656910dae0a8fc680fde1822a2"
+    },
+    "lock_sha256": "430cd33dfe6e6f3ca96dccdf831a0624b255843a16d9f6cf7856f443f3ab5c84"
+  },
+  "runtime": {
+    "python": "3.11.16",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+    "machine": "x86_64",
+    "uv": "uv 0.12.13 (x86_64-unknown-linux-gnu)",
+    "pythonpath": "ci:ci/scripts",
+    "packages": {
+      "numpy": "2.4.6",
+      "hypothesis": "6.168.1",
+      "pytest": "8.3.3",
+      "ruff": "0.7.4",
+      "pyright": "1.1.389",
+      "manufacturing-simulator": "0.1.0"
+    }
+  },
+  "hardware": {
+    "cpu_model": "Intel(R) Core(TM) i7-9700K CPU @ 3.60GHz",
+    "logical_cpus": 8,
+    "mem_total_mib": 30978,
+    "gpu": null
+  },
+  "host_at_start": {
+    "recorded_utc": "2026-10-27T21:55:19+00:00",
+    "loadavg": [
+      1.49462890625,
+      2.05029296875,
+      1.6962890625
+    ]
+  },
+  "host_at_finish": {
+    "recorded_utc": "2026-10-27T21:55:39+00:00",
+    "loadavg": [
+      1.994140625,
+      2.11474609375,
+      1.72412109375
+    ]
+  },
+  "workload": {
+    "scenario": "toy-kernel v1 kernel-mechanics fixture (not the canonical ScenarioDefinition)",
+    "matrix": "seeds, hash seeds and variants are listed in replay-matrix.stdout",
+    "shared_host": true,
+    "containers_started": false,
+    "commands_sequential": true
+  },
+  "unavailable": [
+    "governed Release identity (ReleaseManifest)",
+    "governed Environment ID and image digest",
+    "governed Hardware ID (HardwareProfile)"
+  ]
+}

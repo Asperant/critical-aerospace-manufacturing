@@ -1,0 +1,79 @@
+{
+  "kind": "NEW local verification run; not CI, INTEGRATION or EVALUATION evidence",
+  "source": {
+    "head_commit": "3242d1f18f1e4f5bbf857d28b21e6b250fb381b8",
+    "head_tree": "a6d2efa26a95de42fc758fe398dfefc0a00966a7",
+    "branch": "wp/WP-SIM-002-deterministic-replay",
+    "tree_clean": false,
+    "manifest_excludes": [
+      "evidence/WP-SIM-002/runs/",
+      "evidence/WP-SIM-002/README.md"
+    ],
+    "changed_or_untracked_files_sha256": {
+      ".github/workflows/ci.yml": "5289456cada1b9eb89f714a1c0d469fb544a00482850077a85bea19493b94dbe",
+      "ci/test-strategy.json": "edd880472d09d3ed71edcc1f18ab78f5af53a1da44d8e86f045f748408c682d1",
+      "evidence/WP-SIM-002/capture_run.py": "6ec6b992ee05944777211f323cebc9e7aab7c5511e5c66d93fc8dbf831f11a2a",
+      "evidence/WP-SIM-002/replay_matrix.py": "a951ac63e37bc07da59759a4adfd7a13de5e5744add195ea61b7f630492c9386",
+      "evidence/WP-SIM-002/tests/test_capture_run.py": "94b3380c9ed925875648fd4108e200949acf264aad88984ff83d5e2bfa707342",
+      "services/manufacturing-simulator/README.md": "092ff24f43a1cd09ba4543c30b95939be3bdeba7c731f556f850af09665498c4",
+      "services/manufacturing-simulator/src/manufacturing_simulator/__init__.py": "67e1484436e118c1b061ce82826367a178dd8174a982420a962c9eda9a4b6904",
+      "services/manufacturing-simulator/src/manufacturing_simulator/errors.py": "ccb2d843cf5b8ce2718337939d6b2162c36dce47a6c47b5897067aff357a6add",
+      "services/manufacturing-simulator/src/manufacturing_simulator/replay.py": "0d27a6137f65f76e3145a77e24f74805f2504d1d47ce18d98c81dc5b8042bcd7",
+      "services/manufacturing-simulator/src/manufacturing_simulator/serialization.py": "6a91dcd41cc204e3851c26989176c0c8ac3cdd15f0fa54aa2d42eb2789b05d7c",
+      "services/manufacturing-simulator/tests/replay_api_worker.py": "5dd6743847a4f4bf11bf9aca4bc64289bfc9f4d863166d77c02e4c19e01f8f0e",
+      "services/manufacturing-simulator/tests/replay_fixtures.py": "b6b04d3d51dfd87d084a35cdd3d22f0f896b22c63f32042c75a81858264c87ae",
+      "services/manufacturing-simulator/tests/test_replay.py": "1648ec77d921416636c184e5069f52309100100ad90dd38a256a210cb9c56633",
+      "services/manufacturing-simulator/tests/test_serialization.py": "62ece44dc029d965d80da354a26b51e84abbe004e40d25e3c5a1203e081fd454"
+    },
+    "lock_sha256": "430cd33dfe6e6f3ca96dccdf831a0624b255843a16d9f6cf7856f443f3ab5c84"
+  },
+  "runtime": {
+    "python": "3.11.16",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+    "machine": "x86_64",
+    "uv": "uv 0.12.13 (x86_64-unknown-linux-gnu)",
+    "pythonpath": "ci:ci/scripts",
+    "packages": {
+      "numpy": "2.4.6",
+      "hypothesis": "6.168.1",
+      "pytest": "8.3.3",
+      "ruff": "0.7.4",
+      "pyright": "1.1.389",
+      "manufacturing-simulator": "0.1.0"
+    }
+  },
+  "hardware": {
+    "cpu_model": "Intel(R) Core(TM) i7-9700K CPU @ 3.60GHz",
+    "logical_cpus": 8,
+    "mem_total_mib": 30978,
+    "gpu": null
+  },
+  "host_at_start": {
+    "recorded_utc": "2026-10-27T21:27:41+00:00",
+    "loadavg": [
+      0.40234375,
+      0.69677734375,
+      0.74267578125
+    ]
+  },
+  "host_at_finish": {
+    "recorded_utc": "2026-10-27T21:27:59+00:00",
+    "loadavg": [
+      0.5732421875,
+      0.71728515625,
+      0.74853515625
+    ]
+  },
+  "workload": {
+    "scenario": "toy-kernel v1 kernel-mechanics fixture (not the canonical ScenarioDefinition)",
+    "matrix": "seeds, hash seeds and variants are listed in replay-matrix.stdout",
+    "shared_host": true,
+    "containers_started": false,
+    "commands_sequential": true
+  },
+  "unavailable": [
+    "governed Release identity (ReleaseManifest)",
+    "governed Environment ID and image digest",
+    "governed Hardware ID (HardwareProfile)"
+  ]
+}

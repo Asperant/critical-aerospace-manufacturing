@@ -63,6 +63,8 @@
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Simulator replay and hash determinism regression (WP-SIM-002)"}]},
     {"path": "services/manufacturing-simulator/tests/test_replay_validation.py", "owner": "Batu", "work_package": "WP-SIM-002", "families": ["TEST-SIM-DETERMINISM"], "test_ids": ["TEST-SIM-002-003"],
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Simulator replay and hash determinism regression (WP-SIM-002)"}]},
+    {"path": "evidence/WP-SIM-002/tests", "owner": "Batu", "work_package": "WP-SIM-002", "families": [], "family_note": "tests of the evidence collector, not a verification family", "test_ids": [],
+     "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Simulator replay and hash determinism regression (WP-SIM-002)"}]},
     {"path": "services/operations-bff/tests", "owner": "Asrın", "work_package": "WP-UI-001", "families": [], "family_note": "family allocation by the owning work package", "test_ids": [],
      "runs": [{"tier": "contract", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Operations BFF v1 contract tests and typing (WP-UI-001)"}]},
     {"path": "services/command-center-web/src", "owner": "Asrın", "work_package": "WP-UI-001", "families": [], "family_note": "family allocation by the owning work package", "test_ids": [],
