@@ -71,10 +71,3 @@ CREATE TABLE core.rework_execution (
 
 ALTER TABLE core.rework_directive ADD FOREIGN KEY (origin_execution_id, component_id)
     REFERENCES core.rework_execution(id, component_id);
-
--- Separate ledger preserves the unchanged single-initial-migration runner.
-CREATE TABLE core.rework_schema_migration (
-    version text PRIMARY KEY,
-    sha256 text NOT NULL,
-    runtime_role text NOT NULL
-);

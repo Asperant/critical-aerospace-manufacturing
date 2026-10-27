@@ -21,8 +21,8 @@ from manufacturing_core.lineage import (
     LotLineageHistory,
     LotMembershipSnapshot,
 )
-from manufacturing_core.lineage_migrate import TABLES, migrate
 from manufacturing_core.lineage_repository import LotLineageRepository
+from manufacturing_core.migrate import LINEAGE_TABLES, migrate
 from manufacturing_core.repository import CoreRepository
 from psycopg import errors, sql
 from psycopg.conninfo import make_conninfo
@@ -133,7 +133,7 @@ def seed(conn: psycopg.Connection[DictRow]) -> LotLineageHistory:
 
 def counts(conn: psycopg.Connection[DictRow]) -> list[int]:
     result: list[int] = []
-    for table in TABLES:
+    for table in LINEAGE_TABLES:
         row = conn.execute(
             sql.SQL("SELECT count(*) AS n FROM core.{}").format(sql.Identifier(table))
         ).fetchone()

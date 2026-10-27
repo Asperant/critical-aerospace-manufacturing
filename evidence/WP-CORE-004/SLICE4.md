@@ -13,7 +13,7 @@ FR-CORE-010/011, Item 09 and Item 25, WL-INV-01/02/03 and KG-INV-04, with the
 existing Core authority and temporal semantics unchanged. This is additive internal
 storage (C1), not a new published event/command/query contract or authority.
 
-The scoped `0003_lot_lineage.sql` migration stores a world-keyed closure marker,
+The Core migration chain's `0007_lot_lineage.sql` revision stores a world-keyed closure marker,
 ordered immutable event facts, ordered roots/children, component memberships and
 parent references relationally. No serialized-component identities are cloned.
 Existing canonical lots/components are foreign-key references; storage does not
@@ -32,9 +32,8 @@ identities and linkage; the model retains all conservation/ancestry checks.
 Only SELECT/INSERT is granted to runtime. No update/delete/upsert API exists.
 Savepoints roll back failed writes; the caller controls the enclosing transaction.
 
-The additive runner verifies the unchanged initial migration and uses the existing
-migration lock plus a separate checksum ledger, following Slice 2's scoped pattern.
-Neither original migration nor rework persistence is changed. RTM realization
+The current-main Alembic chain applies this revision after the rework persistence
+revision, using the shared migration lock and checksum ledger. RTM realization
 references now point to the repository while retaining ALLOCATED coverage and
 NOT_YET_EXECUTED final acceptance; no accepted EvidenceID is invented.
 
@@ -47,7 +46,7 @@ This is not real factory data or integrated producer evidence.
 
 | Check | Actual result |
 |---|---|
-| `ci/.venv/bin/python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests/persistence/test_lineage_persistence.py -m integration -q` with `CORE_TEST_DISPOSABLE=1` and disposable `CI_PG_DSN` | 30 passed in 0.56 s |
+| `ci/.venv/bin/python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests/persistence/test_lineage_persistence.py -m integration -q` with `CORE_TEST_DISPOSABLE=1` and disposable `CI_PG_DSN` | 30 passed in 0.56 s (historical scoped run) |
 | `ci/.venv/bin/ruff check` on lineage repository, scoped runner and focused DB test | All checks passed |
 | `ci/.venv/bin/ruff format --check` on those three Python files | 3 files already formatted |
 | `ci/.venv/bin/pyright --project services/manufacturing-core/pyrightconfig.json --pythonpath ci/.venv/bin/python` | 0 errors, 0 warnings |

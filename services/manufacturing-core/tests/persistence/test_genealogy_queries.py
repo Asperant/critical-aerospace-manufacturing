@@ -35,7 +35,6 @@ from manufacturing_core.rework import (
     ReworkDirective,
     ReworkExecutionSegment,
 )
-from manufacturing_core.rework_migrate import migrate
 from manufacturing_core.rework_repository import ReworkHistoryRepository
 from psycopg.rows import DictRow
 from pydantic import ValidationError
@@ -48,9 +47,6 @@ BASE = datetime(2026, 10, 24, 10, tzinfo=UTC)
 
 @pytest.fixture(scope="module")
 def query_database(lineage_database: Database) -> Database:  # noqa: F811
-    assert (
-        migrate(lineage_database.migration_dsn, lineage_database.runtime_role) is True
-    )
     return lineage_database
 
 
@@ -350,46 +346,48 @@ def test_correlated_logs(
     assert "ROOT" not in caplog.text
 
 
-@pytest.mark.parametrize("available", [True, False])
-def test_read_health_and_missing_schema(
-    query_database: Database, database: Database, available: bool
-) -> None:
-    settings = query_database if available else database
-    with connect_runtime(settings.runtime_dsn) as conn, conn.transaction():
+def test_read_health_and_unknown_history(query_database: Database) -> None:
+    with connect_runtime(query_database.runtime_dsn) as conn, conn.transaction():
         conn.execute("SET TRANSACTION READ ONLY")
         queries = GenealogyQueries(conn)
-        assert queries.health(correlation_id="read-health").status == (
-            "READY" if available else "UNAVAILABLE"
+        assert queries.health(correlation_id="read-health").status == "READY"
+        assert (
+            queries.lot(LotTraceRequest(world_id="unknown", lot_id="unknown")) is None
         )
-        if available:
-            assert (
-                queries.lot(LotTraceRequest(world_id="unknown", lot_id="unknown"))
-                is None
-            )
-            assert queries.rework_history("unknown") is None
-            assert queries.equipment_exposure(exposure("unknown")) == ()
-            assert queries.common_equipment_exposure(
-                CohortExposureRequest(component_ids=("unknown",))
-            ).missing_history_ids == ("unknown",)
+        assert queries.rework_history("unknown") is None
+        assert queries.equipment_exposure(exposure("unknown")) == ()
+        assert queries.common_equipment_exposure(
+            CohortExposureRequest(component_ids=("unknown",))
+        ).missing_history_ids == ("unknown",)
 
 
-def test_failure_propagates_and_is_observed(
-    database: Database, caplog: pytest.LogCaptureFixture
+def test_health_fails_closed_when_a_required_table_is_unavailable(
+    database: Database,
+    caplog: pytest.LogCaptureFixture,
 ) -> None:
-    with (
-        connect_runtime(database.runtime_dsn) as conn,
-        conn.transaction(force_rollback=True),
-    ):
-        with (
-            caplog.at_level(logging.INFO, logger="manufacturing_core"),
-            pytest.raises(psycopg.errors.UndefinedTable),
-            conn.transaction(),
-        ):
-            GenealogyQueries(conn).lot(
-                LotTraceRequest(world_id="W", lot_id="L"), correlation_id="failed-query"
+    with psycopg.connect(database.admin_dsn, autocommit=True) as admin:
+        admin.execute("ALTER TABLE core.lineage_lot RENAME TO lineage_lot_unavailable")
+        try:
+            with (
+                connect_runtime(database.runtime_dsn) as conn,
+                conn.transaction(),
+                caplog.at_level(logging.INFO, logger="manufacturing_core"),
+            ):
+                conn.execute("SET TRANSACTION READ ONLY")
+                queries = GenealogyQueries(conn)
+                assert queries.health(correlation_id="missing-schema").status == (
+                    "UNAVAILABLE"
+                )
+                with pytest.raises(psycopg.errors.UndefinedTable):
+                    queries.lot(
+                        LotTraceRequest(world_id="W", lot_id="L"),
+                        correlation_id="failed-query",
+                    )
+                assert json.loads(caplog.records[-1].message)["outcome"] == "FAILED"
+        finally:
+            admin.execute(
+                "ALTER TABLE core.lineage_lot_unavailable RENAME TO lineage_lot"
             )
-        assert json.loads(caplog.records[-1].message)["outcome"] == "FAILED"
-        assert GenealogyQueries(conn).health().status == "UNAVAILABLE"
 
 
 def test_independent_time_ties_and_world_isolation(

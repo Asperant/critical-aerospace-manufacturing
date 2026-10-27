@@ -50,7 +50,8 @@ or shared credentials are embedded in the application or migration.
   ownership, schema CREATE or migration-role membership.
 
 The migration grants runtime only schema USAGE and SELECT/INSERT on the domain,
-lifecycle-state and material-hold tables. `0004_material_hold` adds narrowly
+lifecycle-state, material-hold and append-only rework/lineage tables.
+`0004_material_hold` adds narrowly
 scoped UPDATE privileges: only the revision/state columns used by the Core
 transition surface and the release fields of `material_hold` are writable;
 identity, ownership, command-ledger, DDL, DELETE and cross-schema access remain
@@ -216,12 +217,12 @@ database schema and published order-query contracts are unchanged.
 
 ## Append-only rework persistence — WP-CORE-004 slice 2
 
-With the same explicit migration DSN and restricted runtime role as above, run
-`python -m manufacturing_core.rework_migrate`. This verifies/applies the unchanged
-initial domain migration first, then atomically applies the additive
-`0002_rework_history.sql`. A separate checksum/runtime-role ledger preserves the
-initial runner's single-migration contract. Replays verify both ledgers; a changed
-checksum or runtime-role binding fails closed. No platform roles are provisioned.
+The Core migration runner applies this storage as Alembic revision
+`0006_rework_history`, after the current-main `0001`–`0005` chain. Run
+`python -m manufacturing_core.migrate` with the same explicit migration DSN and
+restricted runtime role as above. The shared `core.schema_migration` ledger binds
+the SQL checksum and runtime role; replay or mismatch fails closed. No platform
+roles are provisioned.
 
 `ReworkHistoryRepository(connection)` provides only `create(history)`,
 `append_rework(component_id, segment)` and `get(component_id)`. Component, lot and
@@ -242,8 +243,9 @@ UPDATE/DELETE/TRUNCATE or migration-ledger access. Errors propagate to the calle
 This is internal storage of caller-validated history, not protected rework
 execution, a lifecycle transition or active membership management. Integration
 still requires the actual canonical producer/authorization binding under DEP-029.
-No schema deployment is automatic. A code rollback can leave the additive tables
-intact; never delete history to roll back an application version.
+Deployment must invoke the main migration runner before using these repositories.
+A code rollback can leave the additive tables intact; never delete history to roll
+back an application version.
 
 Focused database verification uses the existing disposable-DB opt-in:
 
@@ -302,16 +304,16 @@ internal history storage, not a public ingestion/query contract. Canonical lot
 and component references must already exist; current component membership is
 never reassigned. No protected action or merge-eligibility decision is added.
 
-Apply the additive migration with explicit `CORE_MIGRATION_DSN` and
-`CORE_RUNTIME_ROLE`, as for the other scoped migration:
+The Core migration runner applies this storage as Alembic revision
+`0007_lot_lineage`, after `0006_rework_history`. Apply the complete forward-only
+chain with explicit `CORE_MIGRATION_DSN` and `CORE_RUNTIME_ROLE`:
 
 ```
-python -m manufacturing_core.lineage_migrate
+python -m manufacturing_core.migrate
 ```
 
-The unchanged base migration is verified first. A separate checksum ledger and
-the existing migration lock keep this additive migration independently replayable
-alongside rework storage. Runtime receives SELECT/INSERT only. Create/append use
+The shared checksum ledger and existing migration lock keep the chain replayable.
+Runtime receives SELECT/INSERT only. Create/append use
 per-world transaction locks and savepoints; callers retain outer rollback control.
 All inputs are revalidated by the complete lineage model, including ancestry,
 world isolation and exact component conservation, before insertion. There is no
@@ -327,7 +329,8 @@ python -m pytest -c services/manufacturing-core/pyproject.toml services/manufact
 ```
 
 The fixture creates/drops its own database and uses separate restricted migrator
-and runtime roles. No shared schema or existing migration contract is changed.
+and runtime roles. The current-main migration contract is exercised, including
+the rework and lineage revisions.
 
 
 ## Genealogy exposure reads — WP-CORE-004

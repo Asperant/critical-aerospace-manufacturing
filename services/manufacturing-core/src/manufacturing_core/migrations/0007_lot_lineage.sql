@@ -49,8 +49,3 @@ CREATE TABLE core.lineage_parent (
     FOREIGN KEY (world_id, event_id) REFERENCES core.lineage_event(world_id, id),
     FOREIGN KEY (world_id, lot_id) REFERENCES core.lineage_lot(world_id, lot_id)
 );
-CREATE TABLE core.lineage_schema_migration (
-    version text PRIMARY KEY,
-    sha256 text NOT NULL,
-    runtime_role text NOT NULL
-);

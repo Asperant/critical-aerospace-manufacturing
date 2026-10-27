@@ -18,7 +18,7 @@ from manufacturing_core.domain import (
     RouteVisit,
     SerializedComponent,
 )
-from manufacturing_core.migrate import migrate as migrate_domain
+from manufacturing_core.migrate import REWORK_TABLES, migrate
 from manufacturing_core.repository import CoreRepository
 from manufacturing_core.rework import (
     ComponentExecutionHistory,
@@ -27,7 +27,6 @@ from manufacturing_core.rework import (
     ReworkDirective,
     ReworkExecutionSegment,
 )
-from manufacturing_core.rework_migrate import TABLES, migrate
 from manufacturing_core.rework_repository import ReworkHistoryRepository
 from psycopg import errors, sql
 from psycopg.conninfo import make_conninfo
@@ -161,7 +160,7 @@ def seed(
 
 def counts(conn: psycopg.Connection[DictRow]) -> dict[str, int]:
     result = {}
-    for table in TABLES:
+    for table in REWORK_TABLES:
         row = conn.execute(
             sql.SQL("SELECT count(*) AS n FROM core.{}").format(sql.Identifier(table))
         ).fetchone()
@@ -290,7 +289,7 @@ def test_outer_rollback_leaves_no_history(
     assert counts(rework_connection) == before
 
 
-@pytest.mark.parametrize("table", TABLES)
+@pytest.mark.parametrize("table", REWORK_TABLES)
 @pytest.mark.parametrize("operation", ["UPDATE", "DELETE", "TRUNCATE"])
 def test_runtime_cannot_rewrite_history(
     rework_connection: psycopg.Connection[DictRow], table: str, operation: str
@@ -325,23 +324,25 @@ def test_append_requires_existing_history(
 
 def test_migration_replay_preserves_base_runner(rework_database: Database) -> None:
     assert migrate(rework_database.migration_dsn, rework_database.runtime_role) is False
-    assert (
-        migrate_domain(rework_database.migration_dsn, rework_database.runtime_role)
-        is False
-    )
 
 
 def test_migration_checksum_tampering_rejected(rework_database: Database) -> None:
     with psycopg.connect(rework_database.admin_dsn, autocommit=True) as admin:
         checksum = admin.execute(
-            "SELECT sha256 FROM core.rework_schema_migration"
+            "SELECT sha256 FROM core.schema_migration "
+            "WHERE version = '0006_rework_history'"
         ).fetchone()
         assert checksum is not None
-        admin.execute("UPDATE core.rework_schema_migration SET sha256 = 'tampered'")
+        admin.execute(
+            "UPDATE core.schema_migration SET sha256 = 'tampered' "
+            "WHERE version = '0006_rework_history'"
+        )
         try:
             with pytest.raises(ValueError, match="checksum"):
                 migrate(rework_database.migration_dsn, rework_database.runtime_role)
         finally:
             admin.execute(
-                "UPDATE core.rework_schema_migration SET sha256 = %s", (checksum[0],)
+                "UPDATE core.schema_migration SET sha256 = %s "
+                "WHERE version = '0006_rework_history'",
+                (checksum[0],),
             )

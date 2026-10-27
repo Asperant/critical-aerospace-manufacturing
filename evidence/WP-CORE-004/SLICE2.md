@@ -5,6 +5,11 @@ Implementation revision: the commit containing this evidence, on
 `wp/WP-CORE-004-temporal-genealogy`, starting from
 `5a858a9facf3b384f8cd3af74be923fad63166e5`.
 
+This is historical slice evidence from the workstream branch. The current-main
+implementation incorporates the same SQL through shared Alembic revisions
+`0006_rework_history`/`0007_lot_lineage`; see
+`CURRENT-MAIN-LOCAL-VALIDATION.md` for the current migration-chain rerun.
+
 ## Exact scope
 
 Persist Slice 1's unchanged internal immutable values relationally. New tables
