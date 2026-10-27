@@ -26,6 +26,7 @@ Canonical WP: `WP-CORE-005`
 321 passed, 38 deselected — Core non-integration tests
 105 passed — Core event contract and registry tests
 Ruff: PASS
+Ruff format: PASS
 Pyright: 0 errors
 projectctl startability WP-CORE-005: STARTABLE
 ```
