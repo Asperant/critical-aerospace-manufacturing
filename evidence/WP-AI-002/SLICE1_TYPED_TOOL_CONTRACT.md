@@ -2,6 +2,9 @@
 
 ## Scope
 
+Requirement coverage: `FR-AI-002` (typed versioned interfaces) and `FR-AI-003`
+(READ/SIMULATE/PROPOSE allowlist).
+
 This slice publishes `ai.tool-interface.v1` with four explicit, versioned tool
 surfaces:
 
