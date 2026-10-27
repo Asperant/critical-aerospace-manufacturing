@@ -2,8 +2,9 @@
 
 Owner: Asrın Dündar. Validation date: 27 October 2026.
 Base: `origin/main` at `3ab912deaeadf478b7f535470fcfedfb9c8e96da`.
-Status: owner-local implementation batch validated; post-merge and integrated
-acceptance remain pending. This evidence does not claim DONE.
+Status: owner-local implementation batch merged and current-main verified;
+integrated acceptance remains pending. This evidence does not claim DONE.
+Merged PR: #178. Merge commit: `d2753de2d6f142fca822c055a6ff6d3a809a40bf`.
 
 ## Completed owner-local scope
 
@@ -35,6 +36,18 @@ protected-command contract are not defined by current canonical inputs.
 | `projectctl validate --json` | PASS; existing documentation diagnostics retained |
 | `projectctl check-done WP-CORE-004` | UNKNOWN; post-merge/owner DoD evidence gate remains fail-closed |
 | `git diff --check` | PASS |
+
+## Post-merge verification
+
+- `origin/main` is at merge commit
+  `d2753de2d6f142fca822c055a6ff6d3a809a40bf`.
+- The merged PR head `811d74f0aaa450a3ccf580d4cdcaa030c5296fe6` is an exact
+  ancestor of `origin/main`, with no tree difference.
+- The focused current-main rework/lineage suite passed again: 61 tests.
+- Required PR CI passed on the merged head: CI run `40573889658`, push CI run
+  `40573880325`, and projectctl run `40573889906`.
+- `projectctl check-done` remains `UNKNOWN` and `transition_authorized=false`;
+  the merge and local verification do not certify DONE.
 
 The first PR CI rerun (`40573152080`) classified the implementation, static,
 contract and scope jobs successfully. Its TL-13 step failed before executing
