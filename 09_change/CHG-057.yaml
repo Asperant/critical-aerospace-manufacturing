@@ -1,0 +1,52 @@
+CHG-057:
+  title: Record the current-main PASS for DEP-018
+  trigger: CHG-055 readiness basis passed the exact current-main dependency evaluator but the canonical dependency status projection remained NOT_READY
+  reason: CHG-054 startability consumes the canonical HARD+START status projection; leaving a verified dependency at NOT_READY would keep a real blocker visible after its evidence passed
+  class: C1
+  review_risk_class: CR-1
+  raised_in: S4
+  owner: Asrın
+  required_human_approvals: 0
+  reviewers: []
+  decision: APPROVED
+  status: APPROVED
+  decision_basis: The status is changed only after the current-main CHG-055 mechanical readiness evaluation and exact producer CI pass. No implementation, requirement, architecture or authority semantics change.
+  scope:
+    - Record DEP-018 as READY in the canonical dependency board and dependency YAML projection.
+    - Preserve CHG-055 evidence, producer attribution, exact current-main binding and precise requirement.
+  invariants_preserved:
+    - DEP-018 remains HARD, CONTRACT, START, CONTRACT_READY and producer-owned by WP-CORE-001.
+    - No readiness is certified by this record without the current-main evaluator PASS.
+    - DEP-019 remains HARD/INTEGRATION and does not block local WP-CORE-009 implementation.
+    - WP-CORE-002 remains the sole producer of transition legality.
+  precise_requirement: NONE — status projection only; the non-null consumer requirement remains the CHG-055 requirement.
+  affected_requirements: [NONE — status projection only]
+  affected_architecture: [NONE]
+  affected_contracts:
+    - id: NONE
+      compatibility: NON_BREAKING
+      consumers_reviewed: [NONE]
+  affected_work_packages: [WP-CORE-001, WP-CORE-009]
+  affected_dependencies: [DEP-018]
+  affected_evidence:
+    - evidence/readiness/DN-CORE-CONTRACTS.json
+    - docs/05_Dependency_Graph.md
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - CORE-001 producer artifacts and tests remain unchanged.
+      - DEP-019 integration readiness and final WP-CORE-009 acceptance remain unclaimed.
+    rerun_required: []
+  security_authority_impact: NONE
+  conditions:
+    - Do not change DEP-018 to READY without the exact current-main evaluator PASS.
+    - Do not infer WP-CORE-009 DONE or DEP-019 acceptance from this status projection.
+  rollout: Merge the status projection after the current-main CHG-055 readiness evaluation passes.
+  rollback: Revert the status projection only; do not remove the producer evidence or readiness basis.
+  required_rerun: [projectctl startability WP-CORE-009, DEP-018 readiness evaluator]
+  documentation_updates:
+    - docs/05_Dependency_Graph.md
+    - docs/09_Change_Control_Process.md
+    - 09_change/change_requests.csv
+  freeze_context: PRE_M6
