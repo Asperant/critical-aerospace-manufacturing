@@ -1,0 +1,52 @@
+CHG-051:
+  title: Align queue identity validation with canonical Plane assignment policy
+  trigger: Fresh queue validation rejected a valid non-Asrın WP with canonical owner metadata and intentionally empty Plane assignees
+  reason: CTRL-PM-009 assigns only the current Asrın owner in Plane while preserving every WP's canonical owner in metadata/catalog. The queue helper incorrectly required every canonical owner to be a Plane assignee, making valid global catalog state unavailable.
+  class: C1
+  review_risk_class: CR-2
+  raised_in: S4
+  owner: Asrın
+  application_control_item: CTRL-HOST-029
+  required_human_approvals: 0
+  decision: APPROVED
+  status: APPROVED
+  affected_requirements:
+    - NONE — generic queue identity-validation correction; no product requirement or lifecycle semantics change
+  affected_architecture:
+    - NONE — existing read-only queue and canonical Plane boundary is preserved
+  affected_contracts:
+    - id: CTRL-QUEUE-READ-v1
+      compatibility: NON_BREAKING
+      consumers_reviewed: [Remote SSH developer queue gate, CTRL-PM-009 Plane projection]
+  affected_work_packages:
+    - NONE — no product WP implementation, readiness, dependency or lifecycle transition is performed
+  affected_dependencies:
+    - NONE — dependency edges and readiness semantics remain unchanged
+  affected_evidence:
+    - tools/host/plane-queue/queue.py
+    - tools/host/plane-queue/test_queue.py
+    - fresh 180-WP Plane set-equality audit
+    - repeated fresh cap-plane-queue readback
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - Canonical owner metadata remains required for every WP.
+      - Only the approved Asrın assignment projection is required as a Plane assignee; other canonical owners remain intentionally unassigned.
+      - Plane state, catalog selection, fail-closed behavior, credentials and Slot Release semantics are unchanged.
+    rerun_required:
+      - Non-Asrın unassigned identity validation regression
+      - Wrong non-Asrın assignment negative-path regression
+      - Repeated fresh cap-plane-queue readback
+  security_authority_impact: NONE — no credential, authentication, authorization or protected manufacturing action semantics change
+  rollout: Merge the control-only branch with required CI, deploy only merged reference source through the supported root installer, and run repeated fresh cap-plane-queue readback. No Plane mutation or product lifecycle transition is authorized.
+  rollback: Restore the previous root-owned helper through the supported rollback procedure; do not alter Plane issues or replay stale queue snapshots.
+  required_rerun:
+    - Host Plane queue focused regression suite
+    - Full bounded queue/transition host suite as selected by CI
+    - Repeated fresh cap-plane-queue readback
+  documentation_updates:
+    - 09_change/CHG-051.yaml
+    - 09_change/change_requests.csv
+    - docs/09_Change_Control_Process.md
+  freeze_context: POST_M6_PERMITTED

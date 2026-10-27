@@ -1012,3 +1012,17 @@ product lifecycle transitions. `CTRL-PM-015-PILOT-001` remains preserved as a
 canonical control item. The importer must report zero remaining conflicts after
 reconciliation, apart from explicitly preserved valid mutable state
 differences.
+
+## CHG-051 — queue assignment-policy identity validation
+
+CHG-051 / CTRL-HOST-029 corrects a generic queue validation mismatch exposed by
+the fresh reconciled Plane catalog. CTRL-PM-009 keeps every WP's canonical
+owner authoritative in metadata and the root catalog, but intentionally assigns
+only the current Asrın owner in Plane (74 exact assignments); the remaining
+canonical owners are validly unassigned Plane issues. Queue identity validation
+therefore requires the Asrın Plane assignee only for Asrın-owned WPs and an
+empty assignee list for the other canonical owners. It continues to require the
+exact canonical owner metadata, known workflow state, projectctl identity and
+full 180-item set equality. This is a generic policy alignment, not a WP-
+specific bypass; state, selection, fail-closed and Slot Release semantics are
+unchanged.
