@@ -16,6 +16,7 @@ CHG-054:
     done: fail-closed; UNKNOWN is never PASS
   affected_requirements:
     - NONE — product requirements and manufacturing authority boundaries are unchanged
+  requirements_declaration: NONE — control-plane governance/architecture change; no product requirement semantics changed
   affected_architecture:
     - Existing control-plane/projectctl/Plane boundary; execution scheduling is advisory and no new runtime platform is introduced
   affected_contracts:
