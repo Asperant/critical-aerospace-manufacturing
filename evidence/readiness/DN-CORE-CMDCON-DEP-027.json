@@ -1,0 +1,30 @@
+{
+  "schema": "edge-capability-readiness-basis-v1",
+  "edge": "DEP-027",
+  "predecessor_node": "DN-CORE-CMDCON",
+  "successor_node": "DN-CORE-CMDEXEC",
+  "level": "CONTRACT_READY",
+  "producer_wp": "WP-CORE-003",
+  "producer_pr": 128,
+  "producer_merge_sha": "6706249a885cdeea077279e30bd01ebbe04d4d8f",
+  "verified_main_sha": "e4d51ccffda8f15497f3b9b24dcca13e0adf458b",
+  "precise_requirement": "The Core operational-command v1 contract shall publish versioned hold/release/dispatch/maintenance-request command schemas with stable command/version identity, compatibility/example fixtures, and green producer/consumer contract tests.",
+  "scope_boundary": "This edge certifies only the command-contract producer predicate. It does not claim WP-CORE-003 completion, command execution, idempotent or durable outcomes, legal transition integration, real PostgreSQL acceptance, DEP-028 acceptance or downstream protected execution.",
+  "artifacts": [
+    {"path": "packages/contracts/registry/core.operational-command.v1.json", "blob": "a45f638e212edc01f9987fb5240e9b7c73b6d560", "role": "contract_registry"},
+    {"path": "services/manufacturing-core/contracts/v1/operational-command.v1.schema.json", "blob": "973e58c51c0e47d8e84030aeae666e3e5e8484a8", "role": "versioned_schema"},
+    {"path": "services/manufacturing-core/contracts/v1/operational-command.place-hold.json", "blob": "069190f3376787bc3aa19670e1747c59391649b4", "role": "example_fixture"},
+    {"path": "services/manufacturing-core/contracts/v1/operational-command.release-hold.json", "blob": "15202e364d1a925f5649dd08c135c4ba429d041d", "role": "example_fixture"},
+    {"path": "services/manufacturing-core/contracts/v1/operational-command.dispatch.json", "blob": "4ca30888e66f8f76a55cc210cea099006a8999be", "role": "example_fixture"},
+    {"path": "services/manufacturing-core/contracts/v1/operational-command.maintenance.json", "blob": "fbd5cf6aa3aaff2502411fd608c5a58baf723768", "role": "example_fixture"},
+    {"path": "ci/tests/test_core_command_contract.py", "blob": "5d4c3e4b451a0ba620b8ab7c3c68ccac07593634", "role": "producer_consumer_contract_tests"}
+  ],
+  "tests": [
+    {"test_id": "TEST-CORE-COMMAND-CONTRACT", "path": "ci/tests/test_core_command_contract.py", "result": "3 passed"},
+    {"test_id": "CONTRACT-REGISTRY-PRODUCER-AUTHORITY", "path": "ci/tests/test_contract_registry.py + ci/tests/test_contract_producer_authority.py", "result": "133 passed"},
+    {"test_id": "CONTRACT-SCHEMA-CHECK", "path": "ci/scripts/check_contracts.py", "result": "20 schemas / 8 instances PASS"},
+    {"test_id": "CONTRACT-GATE", "path": "packages/contracts/src/cap_contracts/ci_gate.py", "result": "6 validated; 0 failures"},
+    {"test_id": "TEST-STRATEGY", "path": "ci/scripts/check_test_strategy.py", "result": "134 files / 23 suites / 0 violations"}
+  ],
+  "verification": "The bounded command-contract artifacts are present on current main at e4d51ccffda8f15497f3b9b24dcca13e0adf458b and were originally merged by PR #128 at 6706249a885cdeea077279e30bd01ebbe04d4d8f. Focused producer/consumer tests, registry/authority checks, schema checks and contract gate pass. The evidence binds only DEP-027 CONTRACT_READY; execution, legal transitions and integration remain separate gates."
+}

@@ -1262,3 +1262,13 @@ predicate, with green producer/consumer and authority validation. DEP-064 is
 therefore projected READY. This does not claim WP-AI-002 runtime clients or
 enforcement, WP-AI-001 orchestration, protected-action execution, direct Core
 mutation, runtime integration or DEP-076 acceptance.
+
+## CHG-070 — bind the merged Core command contract to DEP-027
+
+CHG-070 / CTRL-HOST-044 is a C1 control-plane reconciliation for DEP-027.
+The merged `core.operational-command.v1` registry, versioned schema and four
+fixtures satisfy the edge-specific CONTRACT_READY predicate, and current-main
+producer/consumer contract validation is green. DEP-027 is therefore projected
+READY. This does not claim WP-CORE-003 completion, command execution,
+idempotent/durable outcomes, legal transition integration, real PostgreSQL
+acceptance, or DEP-028 acceptance.
