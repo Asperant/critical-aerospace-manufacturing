@@ -989,3 +989,4 @@ approval policy of CHG-018. It does not authorize product implementation,
 readiness evidence, dependency changes or any product lifecycle transition. Its
 PR fast-scope selector routes importer changes to the importer/control-plane
 regressions themselves; it does not widen or weaken the bounded 90-second gate.
+The PR records `Requirements: NONE` with that same control-plane-only rationale.
