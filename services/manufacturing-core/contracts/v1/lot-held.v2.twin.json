@@ -1,0 +1,11 @@
+{
+  "event_type": "production.lot-held",
+  "schema_version": 2,
+  "aggregate_type": "Lot",
+  "aggregate_id": "LOT-417",
+  "aggregate_version": 7,
+  "lot_id": "LOT-417",
+  "lot_revision": "lot-rev-7",
+  "material_hold_id": "HOLD-008",
+  "reason": "NDT anomaly"
+}

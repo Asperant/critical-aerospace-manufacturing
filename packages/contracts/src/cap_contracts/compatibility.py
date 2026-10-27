@@ -23,6 +23,7 @@ _MAPS = {"properties"}
 _CHILDREN = {"items"}
 _KEYWORDS = {
     "$schema",
+    "$id",
     "type",
     "properties",
     "required",
@@ -53,6 +54,7 @@ _KEYWORDS = {
 }
 _ANNOTATIONS = {
     "$schema",
+    "$id",
     "title",
     "description",
     "default",
@@ -90,8 +92,10 @@ def _supported(schema: Any, path: str, issues: list[str]) -> None:
         issues.append(f"{_pointer(path, key)}: unsupported keyword")
     if "$schema" in schema and schema["$schema"] != _DIALECT:
         issues.append(f"{path}: unsupported dialect")
-    # Without an explicit type, property applicability is ambiguous.
-    if "type" not in schema:
+    # const/enum constrain the instance type themselves.  Existing v1 event
+    # schemas use those valid JSON-Schema forms without repeating `type`; do
+    # not make that historical, compatible shape unverifiable.
+    if "type" not in schema and "const" not in schema and "enum" not in schema:
         issues.append(f"{path}: explicit type required")
     for name in schema.get("required", []):
         if name not in schema.get("properties", {}):

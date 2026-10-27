@@ -133,9 +133,20 @@ command returns the original outcome; a different fingerprint returns
 etc.); unclassifiable effects are `UNRESOLVED`. `ACCEPTED` is only a durable
 acceptance and always has `NOT_VERIFIED` effect status. Operators query the
 outcome before retrying unresolved work, and must verify the canonical event or
-effect separately. This slice emits no event, so Core outbox relay integration
-remains a separate capability; an event-emitting mutation must keep its outbox
-write inside this transaction boundary.
+effect separately. Accepted hold and dispatch transitions form their versioned
+Core event envelope and insert it into `core.outbox` in the same command
+transaction. Hold placement emits `LotHeld.v2`; `LotHeld.v1` remains unchanged
+for compatibility, and v2's reason field follows the existing
+`PlaceLotOnHold.hold_reason` text semantics, including human-readable whitespace
+such as `NDT anomaly`. A failed event insert rolls back the mutation and durable
+acceptance together.
+
+`OutboxRelay` is transport-neutral: it publishes committed event envelopes
+through a caller-supplied publisher and marks an entry `PUBLISHED` only after
+the publisher returns. Failures increment the persisted attempt count and retain
+the pending row. A crash after broker acceptance and before the status commit may
+duplicate publication; downstream idempotency remains mandatory. NATS subject,
+stream and runtime ACL binding remain the Yavuz-owned integration boundary.
 ## Lifecycle component
 
 `manufacturing_core.lifecycle` provides the immutable `ProductionOrderState`,
@@ -156,9 +167,9 @@ retains the row as `RELEASED` history. A partial unique index permits one active
 hold per lot, and active holds block dispatch.
 
 The forward-only `0004_material_hold` migration creates the hold table, status
-invariants, command foreign keys and history index. Outbox/event publication is
-not implemented here; it remains WP-CORE-005. Physical execution remains the
-Simulator boundary.
+invariants, command foreign keys and history index. `0005_outbox` adds the
+Core-owned event sequence and transactional outbox. Physical execution remains
+the Simulator boundary.
 
 ## Lifecycle transition verification — WP-CORE-002
 
