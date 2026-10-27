@@ -979,7 +979,8 @@ through an exact allowlisted idempotent PATCH followed by a fresh read-back.
 Workflow state is mutable Plane coordination state: a valid existing state is
 reported as intentionally preserved and is never normalized to `BACKLOG`; only
 creation of a missing issue uses the canonical initial `BACKLOG` state. Unknown
-states, identity mismatches, control-item mismatches and relationship conflicts
+states (including state IDs that do not resolve to one canonical workflow
+state), identity mismatches, control-item mismatches and relationship conflicts
 still block the import. `CTRL-PM-015-PILOT-001` remains a separately validated
 control item and is never deleted or counted as a canonical WP.
 
