@@ -9,6 +9,13 @@ from .projector import (
     ProjectionState,
     Projector,
 )
+from .scheduling_snapshot import (
+    SCHEDULING_SNAPSHOT_READ,
+    ReadScopeDenied,
+    SnapshotQueryError,
+    TwinQueryAPI,
+    TwinReadContext,
+)
 
 __all__ = [
     "AdmissionError",
@@ -18,4 +25,9 @@ __all__ = [
     "ProjectionOrderError",
     "ProjectionState",
     "Projector",
+    "SCHEDULING_SNAPSHOT_READ",
+    "ReadScopeDenied",
+    "SnapshotQueryError",
+    "TwinQueryAPI",
+    "TwinReadContext",
 ]
