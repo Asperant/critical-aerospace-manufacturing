@@ -1027,6 +1027,17 @@ full 180-item set equality. This is a generic policy alignment, not a WP-
 specific bypass; state, selection, fail-closed and Slot Release semantics are
 unchanged.
 
+## CHG-055 — precise Core contract binding for DEP-018
+
+CHG-055 is the product change-control record for the DEP-018 precision gap.
+It makes the existing CORE-001 domain/query contract evidence attributable to
+the exact WP-CORE-009 consumer requirement: immutable opaque identity/revision,
+ordered re-entrant route visits, published normal/reentrant fixtures and green
+producer contract tests, all bound to a current-main `CONTRACT_READY` basis.
+It does not add lifecycle transition legality, migration readiness or final
+integrated acceptance. WP-CORE-002 remains the sole producer of legal
+transition semantics.
+
 ## CHG-056 — first telemetry warning on fresh monotonic clocks
 
 CHG-056 / CTRL-HOST-032 is a generic C1 observability reliability correction

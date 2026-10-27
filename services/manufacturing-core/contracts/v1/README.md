@@ -10,7 +10,7 @@
 | Output schema | `order-query.schema.json` |
 | Implementation | `OrderQueryRequestV1`, `OrderQueryResultV1`, `query_order_v1` |
 | Authority | Core domain read; no command, approval or execution authority |
-| Status / dependency | Initial v1 implementation for DN-CORE-CONTRACTS; not a merged CONTRACT_READY declaration |
+| Status / dependency | `CONTRACT_READY` for DN-CORE-CONTRACTS/DEP-018, mechanically bound by `evidence/readiness/DN-CORE-CONTRACTS.json` to the merged CORE-001 producer artifacts and current-main checks |
 | Security | Internal manufacturing-domain metadata; no credentials or Oracle labels |
 | Deprecation | None; initial version, no earlier supported wire contract |
 
