@@ -253,7 +253,7 @@ function FacilityStateViewPanel({
       return <p role="status">Loading facility state…</p>;
     case "unavailable":
       return (
-        <div role="alert">
+        <div role="status">
           <p>The Twin facility state is unavailable.</p>
           {state.sources.length > 0 ? (
             <p>Unavailable: {state.sources.join(", ")}</p>
@@ -265,11 +265,11 @@ function FacilityStateViewPanel({
       );
     case "invalid":
       return (
-        <p role="alert">Facility state request rejected: {state.message}</p>
+        <p role="status">Facility state request rejected: {state.message}</p>
       );
     case "error":
       return (
-        <div role="alert">
+        <div role="status">
           <p>The facility state could not be loaded.</p>
           <button type="button" onClick={reload}>
             Retry facility state

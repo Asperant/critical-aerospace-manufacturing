@@ -180,6 +180,23 @@ describe("overview", () => {
     expect(stateCall?.query.get("world_id")).toBe("W-SYNTHETIC-TEST");
   });
 
+  it("keeps facility-state unavailability separate from the overview alert", async () => {
+    const bff = new FakeBff();
+    bff.facilityState = () =>
+      jsonResponse(
+        503,
+        envelope("DEPENDENCY_UNAVAILABLE", "Twin is unavailable", {
+          unavailable_sources: ["digital-twin-service"],
+        }),
+      );
+    bff.install();
+    await renderAt("/overview?world_id=W-SYNTHETIC-TEST", bff);
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      "digital-twin-service",
+    );
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
   it("polls the BFF for the same world at a bounded cadence", async () => {
     vi.useFakeTimers();
     try {

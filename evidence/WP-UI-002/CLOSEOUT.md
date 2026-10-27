@@ -32,7 +32,7 @@ Final DONE status: not claimed.
 |---|---|
 | FR-UI-002 | `facility-state.v1`, `FacilityStateService`, `OverviewPage` facility view, world-scoped client and browser tests |
 | NFR-PERF-005 | Bounded polling implementation and a focused cadence test; final accepted LAN/integration p95 measurement remains pending |
-| TEST-UI-BROWSER | 93 frontend tests, including facility rendering, malformed/unavailable responses, world binding and polling cadence |
+| TEST-UI-BROWSER | 94 frontend tests, including facility rendering, malformed/unavailable responses, world binding and polling cadence |
 | Contract validation | BFF contract/transport tests validate the new schema, fixture, OpenAPI path and negative paths |
 
 The frontend local check passed: contract generation/check, ESLint, Prettier,
@@ -42,7 +42,13 @@ Starlette/httpx TestClient deprecation warning.
 
 CI note: the first current-head run failed only because the pull-request body
 payload lacked the governance `Requirements:` field. The field is now present
-in the PR body and this closeout; no product test failure or code retry occurred.
+in the PR body and this closeout. The first post-merge main run then exposed a
+real browser regression: the new facility-state unavailable panel added a
+second `role="alert"`, making the existing overview acceptance selector
+ambiguous in Chromium and Firefox. The follow-up correction keeps facility
+polling status in a live `status` region and adds a regression test; focused
+frontend tests, lint and type-check pass locally. The corrective PR's required
+post-merge CI result remains pending.
 
 ## Readiness and acceptance boundary
 
