@@ -19,6 +19,11 @@ from manufacturing_core.domain import (
     RouteVisit,
     SerializedComponent,
 )
+from manufacturing_core.lifecycle import (
+    LotState,
+    ProductionOrderState,
+    SerializedComponentState,
+)
 
 T = TypeVar("T", bound=Entity)
 TABLES: dict[type[Entity], str] = {
@@ -63,6 +68,25 @@ class CoreRepository:
                             visit.equipment_id,
                         ),
                     )
+            else:
+                state_model = None
+                if isinstance(entity, ProductionOrder):
+                    state_model = ProductionOrderState
+                elif isinstance(entity, Lot):
+                    state_model = LotState
+                elif isinstance(entity, SerializedComponent):
+                    state_model = SerializedComponentState
+                if state_model is not None:
+                    state = state_model(id=entity.id, revision=entity.revision)
+                    state_data = state.model_dump(mode="json")
+                    self.connection.execute(
+                        sql.SQL("INSERT INTO core.{}_state ({}) VALUES ({})").format(
+                            sql.Identifier(table),
+                            sql.SQL(", ").join(map(sql.Identifier, state_data)),
+                            sql.SQL(", ").join(sql.Placeholder() for _ in state_data),
+                        ),
+                        list(state_data.values()),
+                    )
 
     def get(self, model: type[T], identity: str) -> T | None:
         row = self.connection.execute(
@@ -96,3 +120,21 @@ class CoreRepository:
             (lot_id,),
         ).fetchall()
         return tuple(SerializedComponent.model_validate(row) for row in rows)
+
+    def get_state(
+        self,
+        model: type[ProductionOrderState | LotState | SerializedComponentState],
+        identity: str,
+    ) -> ProductionOrderState | LotState | SerializedComponentState | None:
+        tables = {
+            ProductionOrderState: "production_order_state",
+            LotState: "lot_state",
+            SerializedComponentState: "serialized_component_state",
+        }
+        row = self.connection.execute(
+            sql.SQL("SELECT * FROM core.{} WHERE id = %s").format(
+                sql.Identifier(tables[model])
+            ),
+            (identity,),
+        ).fetchone()
+        return None if row is None else model.model_validate(row)

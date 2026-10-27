@@ -49,9 +49,10 @@ or shared credentials are embedded in the application or migration.
   The function checks restricted role attributes and refuses Core schema
   ownership, schema CREATE or migration-role membership.
 
-The migration grants runtime only schema USAGE and SELECT/INSERT on the six
-domain tables. It grants no ledger, DDL, UPDATE, DELETE, or cross-schema access.
-The initial repository inserts and reads domain entities; it does not execute
+The migration grants runtime only schema USAGE and SELECT/INSERT on the domain
+and lifecycle-state tables. It grants no ledger, DDL, UPDATE, DELETE, or
+cross-schema access. The repository inserts and reads domain entities together
+with their initial lifecycle state; it does not execute
 manufacturing transitions. Caller transactions can group inserts; a single
 route plus its visits is atomic. Query/API contracts, lifecycle mutation,
 deployment environment/secret binding, broader role provisioning and CD remain
@@ -132,3 +133,12 @@ outcome before retrying unresolved work, and must verify the canonical event or
 effect separately. This slice emits no event, so Core outbox relay integration
 remains a separate capability; an event-emitting mutation must keep its outbox
 write inside this transaction boundary.
+## Lifecycle component
+
+`manufacturing_core.lifecycle` provides the immutable `ProductionOrderState`,
+`LotState`, and `SerializedComponentState` records. Lifecycle and execution
+state are separate dimensions; these models validate and serialize canonical
+values but intentionally expose no transition operation. Legal transition
+semantics remain owned by WP-CORE-002. State persistence is applied by the
+forward-only `0003_lifecycle` migration and is written alongside the existing
+Core entity insert mapping.
