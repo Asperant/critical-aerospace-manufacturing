@@ -6,7 +6,7 @@
     "pyright": "pyright 1.1.389"
   },
   "totals": {
-    "ruff": 307,
+    "ruff": 306,
     "pyright": 189,
     "unformatted_files": 56
   },
@@ -185,7 +185,7 @@
       "E741": 1,
       "F401": 1,
       "I001": 1,
-      "SIM117": 3
+      "SIM117": 2
     },
     "tools/projectctl/tests/test_plane_plan.py": {
       "I001": 1
