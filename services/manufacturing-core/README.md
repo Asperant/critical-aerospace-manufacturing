@@ -49,12 +49,15 @@ or shared credentials are embedded in the application or migration.
   The function checks restricted role attributes and refuses Core schema
   ownership, schema CREATE or migration-role membership.
 
-The migration grants runtime only schema USAGE and SELECT/INSERT on the domain
-and lifecycle-state tables. It grants no ledger, DDL, UPDATE, DELETE, or
-cross-schema access. The repository inserts and reads domain entities together
-with their initial lifecycle state; it does not execute
-manufacturing transitions. Caller transactions can group inserts; a single
-route plus its visits is atomic. Query/API contracts, lifecycle mutation,
+The migration grants runtime only schema USAGE and SELECT/INSERT on the domain,
+lifecycle-state and material-hold tables. `0004_material_hold` adds narrowly
+scoped UPDATE privileges: only the revision/state columns used by the Core
+transition surface and the release fields of `material_hold` are writable;
+identity, ownership, command-ledger, DDL, DELETE and cross-schema access remain
+protected. The repository inserts and reads domain entities together with their
+initial lifecycle state; transition mutation is exposed only through the
+explicit `CoreTransitionService` command handlers. Caller transactions can
+group inserts; a single route plus its visits is atomic. Query/API contracts,
 deployment environment/secret binding, broader role provisioning and CD remain
 separate later work. This interface does not claim deployment readiness.
 
@@ -137,8 +140,46 @@ write inside this transaction boundary.
 
 `manufacturing_core.lifecycle` provides the immutable `ProductionOrderState`,
 `LotState`, and `SerializedComponentState` records. Lifecycle and execution
-state are separate dimensions; these models validate and serialize canonical
-values but intentionally expose no transition operation. Legal transition
-semantics remain owned by WP-CORE-002. State persistence is applied by the
-forward-only `0003_lifecycle` migration and is written alongside the existing
-Core entity insert mapping.
+state are separate dimensions. `manufacturing_core.transitions` owns the
+explicit legal matrices, stable rejection codes, terminal-state protection,
+dispatch/resource/active-hold guards and the explicit ReworkDirective guard.
+It does not execute rework history or split/merge genealogy.
+
+`CoreTransitionService` runs `PlaceLotOnHold`, `ReleaseMaterialHold` and
+`DispatchLot` through the existing `PostgresCommandLedger`; the command
+reservation, durable outcome and canonical mutation share one transaction.
+Same-fingerprint retries return the durable prior outcome, conflicts do not
+execute a second effect, and stale revisions are rejected both before and
+under the row lock. Hold placement creates a first-class `ACTIVE` row without
+changing lot lifecycle or execution. Release is authorized, target-bound and
+retains the row as `RELEASED` history. A partial unique index permits one active
+hold per lot, and active holds block dispatch.
+
+The forward-only `0004_material_hold` migration creates the hold table, status
+invariants, command foreign keys and history index. Outbox/event publication is
+not implemented here; it remains WP-CORE-005. Physical execution remains the
+Simulator boundary.
+
+## Lifecycle transition verification — WP-CORE-002
+
+Pure negative-first matrix coverage is in
+`tests/test_transitions.py`. Disposable PostgreSQL coverage is in
+`tests/persistence/test_transitions.py` and extends the migration/role tests
+with atomic hold/release, idempotency, retained history, revision preservation,
+authorization denial and dispatch rejection. Run the local slice with:
+
+```
+uv run --project ci --locked python -m pytest \
+  -c services/manufacturing-core/pyproject.toml \
+  services/manufacturing-core/tests -m 'not integration' -q
+```
+
+Run the real PostgreSQL 18 slice only with an explicitly disposable
+`CI_PG_DSN` and `CORE_TEST_DISPOSABLE=1`; missing configuration is not a pass:
+
+```
+CORE_TEST_DISPOSABLE=1 CI_PG_DSN='<disposable-admin-dsn>' \
+  uv run --project ci --locked python -m pytest \
+  -c services/manufacturing-core/pyproject.toml \
+  services/manufacturing-core/tests/persistence -m integration -q
+```

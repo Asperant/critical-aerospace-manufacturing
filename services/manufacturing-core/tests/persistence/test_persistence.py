@@ -75,6 +75,7 @@ def test_schema_creation_and_replay(database: Database) -> None:
             "production_order_state",
             "lot_state",
             "serialized_component_state",
+            "material_hold",
         }
         assert admin.execute(
             "SELECT pg_catalog.pg_get_userbyid(nspowner) FROM pg_catalog.pg_namespace WHERE nspname = 'core'"
@@ -213,6 +214,27 @@ def test_runtime_is_not_migrator(
 ) -> None:
     with pytest.raises(errors.InsufficientPrivilege), connection.transaction():
         connection.execute(statement)
+
+
+def test_runtime_transition_grants_are_column_scoped(
+    connection: psycopg.Connection[DictRow],
+) -> None:
+    privileges = connection.execute(
+        "SELECT pg_catalog.has_table_privilege(current_user, 'core.lot', 'UPDATE') AS lot_update, "
+        "pg_catalog.has_column_privilege(current_user, 'core.lot', 'revision', 'UPDATE') AS lot_revision_update, "
+        "pg_catalog.has_column_privilege(current_user, 'core.lot', 'order_id', 'UPDATE') AS lot_order_update, "
+        "pg_catalog.has_table_privilege(current_user, 'core.material_hold', 'INSERT') AS hold_insert"
+    ).fetchone()
+    assert privileges == {
+        "lot_update": False,
+        "lot_revision_update": True,
+        "lot_order_update": False,
+        "hold_insert": True,
+    }
+    with pytest.raises(errors.InsufficientPrivilege), connection.transaction():
+        connection.execute(
+            "UPDATE core.lot SET order_id = 'forbidden' WHERE id = 'missing'"
+        )
 
 
 def test_cross_schema_write_denied(

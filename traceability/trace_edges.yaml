@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: 42680eff18754db0ccd6a278a44ddd77f913c5258f98d64bf4e5143afe02b69c
+  sha256: 10b6c37cdd82629e986a30420657789592b84500e5cd51d90f222036387c7800
 requirements:
   FR-GOV-001:
     meta:
@@ -242,7 +242,7 @@ requirements:
     realization:
       surface: manufacturing state machine / transition guard module
       deployable: manufacturing-core
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-core/src/manufacturing_core/transitions.py
   FR-CORE-004:
     meta:
       class: F1
@@ -315,7 +315,7 @@ requirements:
     realization:
       surface: PlaceLotOnHold command handler (CMD-PlaceLotOnHold-v1)
       deployable: manufacturing-core
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-core/src/manufacturing_core/transitions.py:CoreTransitionService.place_lot_on_hold
   FR-CORE-008:
     meta:
       class: F1
@@ -333,7 +333,7 @@ requirements:
     realization:
       surface: ReleaseMaterialHold eligibility handler
       deployable: manufacturing-core
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-core/src/manufacturing_core/transitions.py:CoreTransitionService.release_material_hold
   FR-CORE-009:
     meta:
       class: F1
@@ -6022,7 +6022,7 @@ edges:
 - {"from": "FR-CORE-003", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-DOMAIN", "applicability": "PLANNED"}
 - {"from": "FR-CORE-003", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-CMD", "applicability": "PLANNED"}
 - {"from": "FR-CORE-003", "relation": "EXPOSED_BY", "to": "Core Command Acceptance API", "applicability": "PLANNED"}
-- {"from": "FR-CORE-003", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-CORE-003", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-core/src/manufacturing_core/transitions.py", "applicability": "RECORDED"}
 - {"from": "FR-CORE-003", "relation": "EXERCISED_IN", "to": "AV-SCEN-01", "applicability": "PLANNED"}
 - {"from": "FR-CORE-003", "relation": "VERIFIED_BY", "to": "TEST-CORE-STATEMACHINE", "applicability": "PLANNED"}
 - {"from": "FR-CORE-004", "relation": "DERIVED_FROM", "to": "ITEM-15", "applicability": "PLANNED"}
@@ -6064,7 +6064,7 @@ edges:
 - {"from": "FR-CORE-007", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-CMD", "applicability": "PLANNED"}
 - {"from": "FR-CORE-007", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-DOMAIN", "applicability": "PLANNED"}
 - {"from": "FR-CORE-007", "relation": "EXPOSED_BY", "to": "PlaceLotOnHold / CMD-PlaceLotOnHold-v1", "applicability": "PLANNED"}
-- {"from": "FR-CORE-007", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-CORE-007", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-core/src/manufacturing_core/transitions.py", "applicability": "RECORDED"}
 - {"from": "FR-CORE-007", "relation": "EXERCISED_IN", "to": "E2E-01", "applicability": "PLANNED"}
 - {"from": "FR-CORE-007", "relation": "EXERCISED_IN", "to": "AV-SCEN-01", "applicability": "PLANNED"}
 - {"from": "FR-CORE-007", "relation": "VERIFIED_BY", "to": "TEST-CORE-STATEMACHINE", "applicability": "PLANNED"}
@@ -6074,7 +6074,7 @@ edges:
 - {"from": "FR-CORE-008", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-CMD", "applicability": "PLANNED"}
 - {"from": "FR-CORE-008", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-DOMAIN", "applicability": "PLANNED"}
 - {"from": "FR-CORE-008", "relation": "EXPOSED_BY", "to": "ReleaseMaterialHold command", "applicability": "PLANNED"}
-- {"from": "FR-CORE-008", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-CORE-008", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-core/src/manufacturing_core/transitions.py", "applicability": "RECORDED"}
 - {"from": "FR-CORE-008", "relation": "VERIFIED_BY", "to": "TEST-CORE-STATEMACHINE", "applicability": "PLANNED"}
 - {"from": "FR-CORE-008", "relation": "VERIFIED_BY", "to": "TEST-AUTH-NEG", "applicability": "PLANNED"}
 - {"from": "FR-CORE-009", "relation": "DERIVED_FROM", "to": "ITEM-09", "applicability": "PLANNED"}

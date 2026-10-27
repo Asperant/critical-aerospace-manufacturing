@@ -16,7 +16,7 @@ from sqlalchemy.engine import URL
 
 from manufacturing_core.database import connect, require_restricted_role
 
-VERSION = "0003_lifecycle"
+VERSION = "0004_material_hold"
 TABLES = (
     "equipment",
     "manufacturing_route",
@@ -29,6 +29,7 @@ TABLES = (
     "serialized_component_state",
     "command_idempotency",
     "command_outcome",
+    "material_hold",
 )
 
 
@@ -86,6 +87,7 @@ def migrate(dsn: str, runtime_role: str) -> bool:
             ("0001_domain", "migrations/0001_domain.sql"),
             ("0002_command_acceptance", "migrations/0002_command_acceptance.sql"),
             ("0003_lifecycle", "migrations/0003_lifecycle.sql"),
+            ("0004_material_hold", "migrations/0004_material_hold.sql"),
         )
     )
     expected = [
@@ -125,9 +127,10 @@ def migrate(dsn: str, runtime_role: str) -> bool:
             else []
         )
         if ledger:
-            if ledger != expected:
+            if len(ledger) > len(expected) or ledger != expected[: len(ledger)]:
                 raise ValueError("migration ledger/version/checksum mismatch")
-            return False
+            if len(ledger) == len(expected):
+                return False
     config = Config(str(Path(__file__).resolve().parents[2] / "alembic.ini"))
     config.set_main_option("sqlalchemy.url", sqlalchemy_url(dsn))
     config.attributes["runtime_role"] = runtime_role
