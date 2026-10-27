@@ -1,7 +1,6 @@
 #!/usr/bin/python3 -I
 """CTRL-HOST-002: fixed-project GET-only queue. No repository imports or writes."""
 import datetime
-import concurrent.futures
 import contextlib
 import fcntl
 import hashlib
@@ -53,6 +52,7 @@ HEALTH_BUDGET_SECONDS = 4
 HEALTH_GITHUB_TIMEOUT_SECONDS = 1
 MAX_READ_WORKERS = 4
 PARALLEL_REQUEST_INTERVAL = REQUEST_INTERVAL / MAX_READ_WORKERS
+QUEUE_BUDGET_SECONDS = 20
 SNAPSHOT_CACHE_PATH = Path('/run/cap-plane-snapshot.json')
 SNAPSHOT_CACHE_SCHEMA = 'cap-plane-snapshot-v1'
 SNAPSHOT_CACHE_TTL_SECONDS = 60.0
@@ -67,6 +67,22 @@ CACHE_MAX_BYTES = 2_000_000
 
 class Unsafe(Exception):
     pass
+
+
+class QueueTimeout(Exception):
+    """The invocation-wide read budget expired; callers must fail closed."""
+
+
+ACTIVE_DEADLINE = None
+
+
+def _remaining_budget():
+    if ACTIVE_DEADLINE is None:
+        return None
+    remaining = ACTIVE_DEADLINE - time.monotonic()
+    if remaining <= 0:
+        raise QueueTimeout()
+    return remaining
 
 
 def require(value):
@@ -138,6 +154,9 @@ class RateLimiter:
             now = time.monotonic()
             delay = max(0.0, self.next_at - now)
             self.next_at = max(now, self.next_at) + PARALLEL_REQUEST_INTERVAL
+        remaining = _remaining_budget()
+        if remaining is not None and delay > remaining:
+            raise QueueTimeout()
         if delay:
             time.sleep(delay)
 
@@ -149,12 +168,13 @@ class RateLimiter:
 
 
 class Reader:
-    def __init__(self, key, limiter=None):
+    def __init__(self, key, limiter=None, deadline=None):
         self.key = key
         self.opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
         self.last = 0
         self.calls = []
         self.limiter = limiter
+        self.deadline = deadline
         self.metrics = {'get_count': 0}
 
     def get(self, route, cursor=None):
@@ -165,14 +185,21 @@ class Reader:
                                         headers={'X-API-Key': self.key}, method='GET')
         for attempt in range(MAX_429_RETRIES + 1):
             if self.limiter is None:
-                time.sleep(max(0, REQUEST_INTERVAL - (time.monotonic() - self.last)))
+                delay = max(0, REQUEST_INTERVAL - (time.monotonic() - self.last))
+                remaining = _remaining_budget()
+                if remaining is not None and delay > remaining:
+                    raise QueueTimeout()
+                time.sleep(delay)
                 self.last = time.monotonic()
             else:
                 self.limiter.wait()
+                _remaining_budget()
             self.calls.append(('GET', route))
             self.metrics['get_count'] += 1
             try:
-                with self.opener.open(request, timeout=10) as response:
+                remaining = _remaining_budget()
+                timeout = 10 if remaining is None else min(10, remaining)
+                with self.opener.open(request, timeout=max(0.01, timeout)) as response:
                     require(response.status == 200)
                     raw = response.read(8_000_001)
                     require(len(raw) <= 8_000_000)
@@ -235,7 +262,7 @@ def _read_routes(reader, routes, limiter=None):
                 route = routes[next_route]
                 next_route += 1
             try:
-                child = Reader(reader.key, limiter)
+                child = Reader(reader.key, limiter, reader.deadline)
                 child.metrics = reader.metrics
                 result[route] = child.rows(route)
             except BaseException as exc:
@@ -243,12 +270,15 @@ def _read_routes(reader, routes, limiter=None):
                     errors.append(exc)
                 return
 
-    workers = [threading.Thread(target=worker)
+    workers = [threading.Thread(target=worker, daemon=True)
                for _ in range(min(MAX_READ_WORKERS, len(routes)))]
     for thread in workers:
         thread.start()
     for thread in workers:
-        thread.join()
+        remaining = _remaining_budget()
+        thread.join(timeout=remaining)
+        if thread.is_alive():
+            raise QueueTimeout()
     if errors:
         raise errors[0]
     return result
@@ -477,15 +507,14 @@ def _slot_waits(profile, key, rows, auto=None, transition=None, policy=None):
                     'reason': proof['semantic_blocker_class']}
         return None
 
+    # Do not create futures here: executor shutdown can outlive the advisory
+    # health alarm.  The invocation-wide budget and per-request deadline still
+    # bound every candidate, while proof semantics remain unchanged.
     waits = []
-    with concurrent.futures.ThreadPoolExecutor(
-        max_workers=min(MAX_READ_WORKERS, len(candidates))
-    ) as pool:
-        futures = [pool.submit(evaluate, candidate) for candidate in candidates]
-        for future in concurrent.futures.as_completed(futures):
-            result = future.result()
-            if result:
-                waits.append(result)
+    for candidate in candidates:
+        result = evaluate(candidate)
+        if result:
+            waits.append(result)
     return waits
 
 
@@ -629,6 +658,7 @@ def bounded_preflight(profile, key, rows=None):
         raise HealthTimeout()
 
     previous = signal.signal(signal.SIGALRM, alarm_handler)
+    previous_timer = signal.setitimer(signal.ITIMER_REAL, 0)
     signal.setitimer(signal.ITIMER_REAL, HEALTH_BUDGET_SECONDS)
     try:
         return preflight(profile, key) if rows is None else preflight(profile, key, rows)
@@ -637,11 +667,14 @@ def bounded_preflight(profile, key, rows=None):
     finally:
         signal.setitimer(signal.ITIMER_REAL, 0)
         signal.signal(signal.SIGALRM, previous)
+        if previous_timer[0] > 0:
+            signal.setitimer(signal.ITIMER_REAL, previous_timer[0], previous_timer[1])
 
 
 def main():
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     profile = sys.argv[1] if len(sys.argv) == 2 and sys.argv[1] in PEOPLE else None
+    previous_alarm = signal.getsignal(signal.SIGALRM)
     if profile is None:
         print('{"status":"UNAVAILABLE","reason":"INVALID_PROFILE_OR_ARGUMENTS"}')
         return 2
@@ -655,10 +688,24 @@ def main():
         catalog = json.loads((ROOT / 'catalog.json').read_text())
         # Serialize whole reads across the four endpoints; no cached execution data.
         fd = os.open('/run/cap-plane-queue.lock', os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
+        global ACTIVE_DEADLINE
+        ACTIVE_DEADLINE = time.monotonic() + QUEUE_BUDGET_SECONDS
+        def queue_alarm(signum, frame):
+            raise QueueTimeout()
+        previous_alarm = signal.signal(signal.SIGALRM, queue_alarm)
+        signal.setitimer(signal.ITIMER_REAL, QUEUE_BUDGET_SECONDS)
         with os.fdopen(fd, 'r+') as lock:
             require(os.fstat(lock.fileno()).st_uid == 0)
-            fcntl.flock(lock, fcntl.LOCK_EX)
-            reader = Reader(key, RateLimiter())
+            while True:
+                try:
+                    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    break
+                except BlockingIOError:
+                    remaining = _remaining_budget()
+                    if remaining is None:
+                        raise QueueTimeout() from None
+                    time.sleep(min(0.05, remaining))
+            reader = Reader(key, RateLimiter(), ACTIVE_DEADLINE)
             # Cycle membership is presentation data. Read the authoritative
             # issue/state snapshot once, then resolve a cycle only for the
             # single task selected by the local queue decision.
@@ -707,6 +754,11 @@ def main():
               'reason': 'LIVE_READ_OR_IDENTITY_VALIDATION_FAILED',
               'read_timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat()})
         return 2
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        with contextlib.suppress(UnboundLocalError):
+            signal.signal(signal.SIGALRM, previous_alarm)
+        ACTIVE_DEADLINE = None
 
 
 if __name__ == '__main__':

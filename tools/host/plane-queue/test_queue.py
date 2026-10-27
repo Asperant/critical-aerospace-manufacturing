@@ -139,15 +139,7 @@ class QueueTests(unittest.TestCase):
             'semantic_slot_release_proof': staticmethod(lambda *args, **kwargs: None),
         })
         rows = {'candidate': task('WP-CORE-004', 'IN_PROGRESS', blocked=True)}
-        executor = type('Executor', (), {
-            '__init__': lambda self, **kwargs: None,
-            '__enter__': lambda self: self,
-            '__exit__': lambda self, *args: None,
-            'submit': lambda self, *args: object(),
-        })
-        with patch.object(q, '_read_slot_cache', return_value={}), \
-             patch.object(q.concurrent.futures, 'ThreadPoolExecutor', executor), \
-             patch.object(q.concurrent.futures, 'as_completed', return_value=[]):
+        with patch.object(q, '_read_slot_cache', return_value={}):
             q._slot_waits('asrin', 'sentinel-secret', rows, auto, transition,
                           {'policy_digest': 'p'})
         self.assertEqual(observed, {'profile': 'asrin', 'request_timeout': 1})
@@ -168,20 +160,57 @@ class QueueTests(unittest.TestCase):
             'semantic_slot_release_proof': staticmethod(lambda *args, **kwargs: None),
         })
         rows = {'candidate': task('WP-CORE-004', 'IN_PROGRESS', blocked=True)}
-        executor = type('Executor', (), {
-            '__init__': lambda self, **kwargs: None,
-            '__enter__': lambda self: self,
-            '__exit__': lambda self, *args: None,
-            'submit': lambda self, fn, *args: (fn(*args), object())[1],
-        })
         with patch.object(q, '_read_slot_cache', return_value={}), \
-             patch.object(q.concurrent.futures, 'ThreadPoolExecutor', executor), \
-             patch.object(q.concurrent.futures, 'as_completed', return_value=[]), \
              patch.object(q.time, 'monotonic', return_value=10.0):
             q._slot_waits('asrin', 'sentinel-secret', rows, auto, transition,
                           {'policy_digest': 'p'})
         self.assertEqual(observed, {'profile': 'asrin', 'request_timeout': 1})
         self.assertEqual(instances[0].deadline, 10.0 + q.HEALTH_BUDGET_SECONDS)
+
+    def test_plane_read_timeout_is_clipped_to_invocation_deadline(self):
+        class Response:
+            status = 200
+            def __enter__(self): return self
+            def __exit__(self, *args): pass
+            def read(self, limit): return b'[]'
+
+        reader = q.Reader('sentinel-secret')
+        q.__dict__['ACTIVE_DEADLINE'] = 10.25
+        try:
+            with patch.object(q.time, 'monotonic', return_value=10.0), \
+                 patch.object(reader.opener, 'open', return_value=Response()) as opened:
+                reader.get('issues/')
+            self.assertEqual(opened.call_args.kwargs['timeout'], 0.25)
+        finally:
+            q.__dict__['ACTIVE_DEADLINE'] = None
+
+    def test_rate_limiter_does_not_sleep_past_invocation_deadline(self):
+        limiter = q.RateLimiter()
+        limiter.next_at = 20.0
+        q.__dict__['ACTIVE_DEADLINE'] = 10.0
+        try:
+            with patch.object(q.time, 'monotonic', return_value=10.0), \
+                 patch.object(q.time, 'sleep') as sleep, \
+                 self.assertRaises(q.QueueTimeout):
+                limiter.wait()
+            sleep.assert_not_called()
+        finally:
+            q.__dict__['ACTIVE_DEADLINE'] = None
+
+    def test_hung_plane_worker_is_daemon_and_join_is_budgeted(self):
+        reader = q.Reader('sentinel-secret')
+        q.__dict__['ACTIVE_DEADLINE'] = time.monotonic() + 0.05
+        try:
+            with patch.object(q.Reader, 'rows', side_effect=lambda route: time.sleep(0.2)):
+                started = time.monotonic()
+                with self.assertRaises(q.QueueTimeout):
+                    q._read_routes(reader, ['issues/'])
+                self.assertLess(time.monotonic() - started, 0.15)
+        finally:
+            q.__dict__['ACTIVE_DEADLINE'] = None
+
+    def test_slot_proof_has_no_executor_cleanup_path(self):
+        self.assertFalse(hasattr(q, 'concurrent'))
 
     def test_slot_release_cache_reuses_only_matching_fingerprint(self):
         source = {

@@ -1,0 +1,51 @@
+CHG-048:
+  title: Hard-bound all queue external reads and worker cleanup
+  trigger: Residual cap-plane-queue hangs after CHG-047 deployment
+  reason: Queue lock acquisition, Plane snapshot joins, response reads and slot-proof executor cleanup were not governed by one invocation-wide deadline.
+  class: C1
+  review_risk_class: CR-2
+  raised_in: S4
+  owner: Asrın
+  application_control_item: CTRL-HOST-028
+  required_human_approvals: 0
+  decision: APPROVED
+  status: APPROVED
+  affected_requirements:
+    - NONE — host/control boundedness correction; product requirements and lifecycle semantics are unchanged
+  affected_architecture:
+    - NONE — existing root-owned queue, Plane read and transition-helper boundaries are preserved
+  affected_contracts:
+    - id: CTRL-QUEUE-READ-v1
+      compatibility: NON_BREAKING
+      consumers_reviewed: [Remote SSH developer queue gate]
+  affected_work_packages:
+    - NONE — no product WP implementation or readiness semantics are changed
+  affected_dependencies:
+    - NONE — no product dependency edge or readiness stage changes
+  affected_evidence:
+    - tools/host/plane-queue/test_queue.py
+    - tools/host/plane-transition/test_transition.py
+    - focused queue and transition helper suites
+    - repeated fresh cap-plane-queue readback
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - Existing GET-only, pacing, parallel snapshot, fail-closed, cache and Slot Release semantics remain current.
+    rerun_required:
+      - Focused timeout/concurrency regression suite
+      - Root helper/policy refresh and repeated fresh queue readback
+  security_authority_impact: NONE — no credential, identity, authorization, authority boundary, or audit semantics change
+  rollout: Merge the control-only change with required CI, refresh the canonical root source/policy and deploy with the supported root-only installer. Do not transition Plane state.
+  rollback: Restore the previous root-owned helper and policy from the installer backup/rollback record; preserve Plane state, audit history and product evidence.
+  required_rerun:
+    - Hung Plane read regression
+    - Hung GitHub/identity read regression
+    - Worker/future cleanup regression
+    - Subprocess child timeout regression
+    - Repeated fresh cap-plane-queue readback
+  documentation_updates:
+    - 09_change/CHG-048.yaml
+    - 09_change/change_requests.csv
+    - docs/09_Change_Control_Process.md
+  freeze_context: POST_M6_PERMITTED
