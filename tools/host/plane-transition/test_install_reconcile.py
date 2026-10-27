@@ -60,6 +60,14 @@ class GrantTests(unittest.TestCase):
         )
         self.assertTrue(GRANT.fullmatch(ins.reconcile_grants(policy_block())[1]))
 
+    def test_projection_grants_are_exact_profile_scoped_commands(self):
+        lines = ins.projection_grants(policy_block())
+        self.assertEqual(len(lines[1:]), 4)
+        self.assertTrue(all("WP-*" not in line for line in lines[1:]))
+        self.assertTrue(
+            all("cap-plane-projection-reconcile.py" in line for line in lines[1:])
+        )
+
 
 class MappingTests(unittest.TestCase):
     def test_policy_pinned_implementations_are_all_deployed_files(self):
@@ -69,6 +77,7 @@ class MappingTests(unittest.TestCase):
         for kind, dest in ins.IMPLEMENTATION_TARGETS.items():
             with self.subTest(kind=kind):
                 self.assertIn(dest, deployed)
+        self.assertIn("projection_reconcile", ins.IMPLEMENTATION_TARGETS)
 
     def test_rollback_restores_the_new_files_and_grant(self):
         restore = ins.restore_targets(ins.deployment_mapping())

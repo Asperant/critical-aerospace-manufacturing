@@ -15,6 +15,8 @@ CONFIG = Path("/etc/cap-plane-queue")
 RECONCILE_LIBEXEC = "/usr/local/libexec/cap-plane-reconcile.py"
 RECONCILE_SUDOERS = "/etc/sudoers.d/cap-plane-reconcile"
 DIAGNOSTIC_SUDOERS = "/etc/sudoers.d/cap-plane-slot-release-diagnostic"
+PROJECTION_SUDOERS = "/etc/sudoers.d/cap-plane-projection-reconcile"
+PROJECTION_LIBEXEC = "/usr/local/libexec/cap-plane-projection-reconcile.py"
 PROFILES = ("asrin", "selman", "batuhan", "yavuz")
 RECONCILE_TARGETS = ("MERGED", "VALIDATING")
 
@@ -32,6 +34,8 @@ def deployment_mapping():
         "/usr/local/bin/cap-plane-health": "tools/host/plane-transition/cap-plane-health",
         "/usr/local/bin/cap-plane-slot-release-diagnostic": "tools/host/plane-transition/cap-plane-slot-release-diagnostic",
         "/usr/local/libexec/cap-plane-slot-release-diagnostic.py": "tools/host/plane-transition/slot_release_diagnostic.py",
+        PROJECTION_LIBEXEC: "tools/host/plane-transition/projection_reconcile.py",
+        "/usr/local/bin/cap-plane-projection-reconcile": "tools/host/plane-transition/cap-plane-projection-reconcile",
         "/usr/local/libexec/cap-plane-health.py": "tools/host/plane-transition/health.py",
         "/usr/local/libexec/cap-plane-health-snapshot.py": "tools/host/plane-transition/health_snapshot.py",
         "/etc/systemd/system/cap-plane-health.service": "tools/host/plane-transition/cap-plane-health.service",
@@ -70,6 +74,7 @@ IMPLEMENTATION_TARGETS = {
     "preparation": "/usr/local/libexec/cap-preparation.py",
     "prepare": "/usr/local/libexec/cap-plane-prepare.py",
     "reconcile": RECONCILE_LIBEXEC,
+    "projection_reconcile": PROJECTION_LIBEXEC,
 }
 
 
@@ -90,6 +95,17 @@ def reconcile_grants(policy):
     return lines
 
 
+def projection_grants(policy):
+    """Profile-scoped generic audit-to-projection repair grants."""
+    lines = ["# CTRL-HOST-030 exact own-profile BLOCKED projection reconciliation"]
+    for profile in PROFILES:
+        lines.append(
+            f"{profile} ALL=(root) NOPASSWD: NOSETENV: "
+            f"/usr/bin/python3 -I {PROJECTION_LIBEXEC} {profile}"
+        )
+    return lines
+
+
 def restore_targets(mapping):
     """Back up wider operational context, restore only files this feature changes."""
     return set(mapping) | {
@@ -100,6 +116,7 @@ def restore_targets(mapping):
         "/etc/sudoers.d/cap-plane-advance",
         "/etc/sudoers.d/cap-plane-health",
         RECONCILE_SUDOERS,
+        PROJECTION_SUDOERS,
     }
 
 
@@ -152,6 +169,7 @@ def main():
         "/etc/sudoers.d/cap-plane-transition",
         "/etc/sudoers.d/cap-plane-health",
         RECONCILE_SUDOERS,
+        PROJECTION_SUDOERS,
     ]
     originals = []
     for name in touched:
@@ -260,6 +278,10 @@ print('AUTO_NEXT deployment restored; Plane states and audit untouched. Source p
     reconcile_draft.write_text("\n".join(reconcile_grants(policy)) + "\n")
     reconcile_draft.chmod(0o440)
     subprocess.run(["/usr/sbin/visudo", "-cf", str(reconcile_draft)], check=True)
+    projection_draft = backup / "projection-sudoers-check"
+    projection_draft.write_text("\n".join(projection_grants(policy)) + "\n")
+    projection_draft.chmod(0o440)
+    subprocess.run(["/usr/sbin/visudo", "-cf", str(projection_draft)], check=True)
     owners = {
         "asrin": "Asrın Dündar",
         "selman": "Selman Özdemir",
@@ -330,6 +352,7 @@ print('AUTO_NEXT deployment restored; Plane states and audit untouched. Source p
         write("/etc/sudoers.d/cap-plane-advance", draft.read_bytes(), 0o440)
         write("/etc/sudoers.d/cap-plane-health", health_draft.read_bytes(), 0o440)
         write(RECONCILE_SUDOERS, reconcile_draft.read_bytes(), 0o440)
+        write(PROJECTION_SUDOERS, projection_draft.read_bytes(), 0o440)
         write(DIAGNOSTIC_SUDOERS, diagnostic_draft.read_bytes(), 0o440)
         subprocess.run(["/usr/sbin/visudo", "-cf", "/etc/sudoers"], check=True)
         subprocess.run(

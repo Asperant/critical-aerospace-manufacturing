@@ -1026,3 +1026,15 @@ exact canonical owner metadata, known workflow state, projectctl identity and
 full 180-item set equality. This is a generic policy alignment, not a WP-
 specific bypass; state, selection, fail-closed and Slot Release semantics are
 unchanged.
+
+## CHG-052 — generic audit-backed BLOCKED projection reconciliation
+
+CHG-052 / CTRL-HOST-030 repairs only the orthogonal Plane `BLOCKED` label when
+the latest attributable transition audit is an identity-valid `VERIFIED BLOCKED`
+or `VERIFIED UNBLOCKED` record for the same lifecycle state. The audit remains
+the source of truth for the projection; missing, malformed, ambiguous or
+state-mismatched audit evidence fails closed. The helper records its own
+projection-reconciliation evidence, performs one exact label PATCH with fresh
+readback, and never changes lifecycle state, clears an unresolved blocker, or
+changes Slot Release v2 semantics. A valid repaired projection is then consumed
+by the existing queue evaluator as a deferred wait.
