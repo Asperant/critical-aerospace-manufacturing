@@ -8,12 +8,12 @@ definitions are the basis of the shared Integration environment (WP-PLAT-003).
 |---|---|---|
 | `infra` | PostgreSQL, event backbone, S3-compatible object storage, cache, identity provider | **defined** |
 | `core` | infra + manufacturing-core, manufacturing-simulator, digital-twin-service, operations-bff | infra only; services join as their container builds land |
-| `vision` | infra + Vision runtime, artifact storage, inspection fixtures | infra only |
-| `ai` | infra + Twin/query interfaces, AI Intelligence, knowledge/RAG dependencies | infra only |
+| `vision` | infra + Vision runtime, artifact storage, inspection fixtures | infra + MLflow (WP-PLAT-003) |
+| `ai` | infra + Twin/query interfaces, AI Intelligence, knowledge/RAG dependencies | infra + Qdrant + MLflow (WP-PLAT-003) |
 | `planning` | infra + Simulator, Twin snapshot source, Scheduler, Automation | infra + Temporal (WP-PLAT-003); application services join as their builds land |
-| `platform` | application services + observability + health + operational tooling | infra + Temporal; observability runs from `infra/observability` |
-| `full` | full logical topology under local resource limits (not the daily default) | infra + Temporal |
-| `e2e` | deterministic test environment: fresh runtime, known schema/scenario/seed | infra + Temporal |
+| `platform` | application services + observability + health + operational tooling | infra + Temporal + Qdrant + MLflow; observability runs from `infra/observability` |
+| `full` | full logical topology under local resource limits (not the daily default) | infra + Temporal + Qdrant + MLflow |
+| `e2e` | deterministic test environment: fresh runtime, known schema/scenario/seed | infra + Temporal + Qdrant + MLflow |
 
 ## infra layer
 
@@ -47,6 +47,21 @@ Workflow definitions, task queues and further namespaces belong to their owners
 (Temporal semantics: Batuhan; runtime: Yavuz, 02). Temporal currently connects as
 the platform PostgreSQL user; a dedicated least-privilege role is a known limitation.
 `stack.sh env` adds `CAP_TEMPORAL_ADDRESS`, `CAP_TEMPORAL_HTTP_URL` and `CAP_TEMPORAL_NAMESPACE`.
+
+## Retrieval and experiment tracking (WP-PLAT-003)
+
+| Service | Image (exact pin) | Host port (localhost) | Memory limit | Health / role |
+|---|---|---|---|---|
+| `qdrant` | `qdrant/qdrant:v1.19.2` | 26333 (HTTP), 26334 (gRPC) | 512 MiB | `/readyz`; every API request needs the per-host key `CAP_QDRANT_API_KEY`; rebuildable RAG projection, never a canonical store (02) |
+| `mlflow-init` | `cap-platform/mlflow:3.16.1-cap1` (built from `mlflow/Dockerfile`) | — | 256 MiB | one-shot: creates the `mlflow` database and the `cap-mlflow-artifacts` bucket; the only holder of the S3 admin identity |
+| `mlflow` | same image | 25000 | 768 MiB | `/health`; metadata in PostgreSQL, artifacts in SeaweedFS served through the server with the bucket-scoped `cap-mlflow` identity; tracking support, never the model-governance authority (02) |
+
+The MLflow image is the upstream `ghcr.io/mlflow/mlflow:v3.16.1` plus exactly two pinned
+wheels (PostgreSQL driver, S3 client), running as a non-root user. Server-side job
+execution is disabled: it is not tracking support and its consumer pool exhausted
+the memory limit. `stack.sh` restarts a running SeaweedFS when the S3 identities
+change, because the gateway reads them only at start. `stack.sh env` adds
+`CAP_QDRANT_URL`, `CAP_QDRANT_API_KEY` and `CAP_MLFLOW_URL`.
 
 ## Run it
 

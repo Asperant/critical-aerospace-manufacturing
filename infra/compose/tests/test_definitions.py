@@ -143,7 +143,15 @@ def test_registry_matches_the_composition() -> None:
 def test_credentials_never_in_the_definition() -> None:
     text = (HERE / "compose.yaml").read_text("utf-8")
     assert not re.search(r"(PASSWORD|SECRET|TOKEN)\s*:", text)
-    for name in ("postgres", "keycloak", "temporal-schema", "temporal"):
+    for name in (
+        "postgres",
+        "keycloak",
+        "temporal-schema",
+        "temporal",
+        "qdrant",
+        "mlflow-init",
+        "mlflow",
+    ):
         (entry,) = SERVICES[name]["env_file"]
         assert entry["path"].startswith("${CAP_PLATFORM_STATE_DIR:-${HOME}/"), entry
 
@@ -167,3 +175,14 @@ def test_stack_script_defaults_match_the_definition() -> None:
     compose = (HERE / "compose.yaml").read_text("utf-8")
     declared = dict(re.findall(r"\$\{(CAP_[A-Z_]+_PORT):-(\d+)\}", compose))
     assert defaults == declared and declared
+
+
+def test_mlflow_server_never_holds_the_s3_admin_identity() -> None:
+    """WP-PLAT-003: only the one-shot init job creates the bucket; the server is bucket-scoped."""
+    script = (HERE / "stack.sh").read_text("utf-8")
+    (server_env,) = re.findall(
+        r"printf 'MLFLOW_BACKEND_STORE_URI=[^\n]*\n[^\n]*mlflow\.env\"", script
+    )
+    assert "S3_ADMIN" not in server_env and "S3_MLFLOW_KEY" in server_env
+    assert SERVICES["mlflow"]["env_file"][0]["path"].endswith("/mlflow.env")
+    assert SERVICES["mlflow-init"]["env_file"][0]["path"].endswith("/mlflow-init.env")

@@ -98,7 +98,9 @@ def test_keycloak_serves_the_master_realm() -> None:
 def test_temporal_serves_the_platform_namespace() -> None:
     """Temporal on PostgreSQL answers its frontend API and the namespace is registered."""
     namespace = required("CAP_TEMPORAL_NAMESPACE")
-    status, body = http_get(f"{required('CAP_TEMPORAL_HTTP_URL')}/api/v1/namespaces/{namespace}")
+    status, body = http_get(
+        f"{required('CAP_TEMPORAL_HTTP_URL')}/api/v1/namespaces/{namespace}"
+    )
     assert status == 200, body[:300]
     info = json.loads(body)["namespaceInfo"]
     assert info["name"] == namespace
@@ -124,3 +126,99 @@ def test_temporal_persists_in_postgresql() -> None:
                 "SELECT curr_version FROM schema_version"
             ).fetchone()
         assert version, f"{database}: no Temporal schema version"
+
+
+# ------------------------------------------------ WP-PLAT-003: ai profile ---
+
+
+def http_json(
+    method: str,
+    url: str,
+    payload: object | None = None,
+    headers: dict[str, str] | None = None,
+) -> tuple[int, dict]:
+    data = None if payload is None else json.dumps(payload).encode()
+    request = urllib.request.Request(url, data=data, method=method)
+    request.add_header("Content-Type", "application/json")
+    for key, value in (headers or {}).items():
+        request.add_header(key, value)
+    try:
+        with urllib.request.urlopen(request, timeout=15) as response:
+            body = response.read()
+            return response.status, json.loads(body) if body else {}
+    except urllib.error.HTTPError as exc:
+        return exc.code, {}
+    except urllib.error.URLError as exc:
+        pytest.fail(f"{url} unreachable: {exc.reason}")
+
+
+def test_qdrant_requires_its_api_key() -> None:
+    base = required("CAP_QDRANT_URL")
+    assert http_get(base + "/readyz")[0] == 200
+    status, _ = http_json("GET", base + "/collections")
+    assert status == 401, f"anonymous request answered HTTP {status}"
+
+
+def test_qdrant_round_trips_a_vector() -> None:
+    base = required("CAP_QDRANT_URL")
+    key = {"api-key": required("CAP_QDRANT_API_KEY")}
+    name = f"cap-smoke-{os.getpid()}"
+    status, _ = http_json(
+        "PUT",
+        f"{base}/collections/{name}",
+        {"vectors": {"size": 4, "distance": "Cosine"}},
+        key,
+    )
+    assert status == 200
+    try:
+        status, _ = http_json(
+            "PUT",
+            f"{base}/collections/{name}/points?wait=true",
+            {"points": [{"id": 1, "vector": [0.1, 0.2, 0.3, 0.4]}]},
+            key,
+        )
+        assert status == 200
+        status, body = http_json(
+            "POST",
+            f"{base}/collections/{name}/points/query",
+            {"query": [0.1, 0.2, 0.3, 0.4], "limit": 1},
+            key,
+        )
+        assert status == 200 and body["result"]["points"][0]["id"] == 1
+    finally:
+        http_json("DELETE", f"{base}/collections/{name}", None, key)
+
+
+def test_mlflow_tracks_in_postgresql_and_serves_artifacts_from_s3() -> None:
+    """02: metadata in PostgreSQL, artifacts in SeaweedFS (proxied by the server)."""
+    import psycopg
+
+    base = required("CAP_MLFLOW_URL")
+    assert http_get(base + "/health")[0] == 200
+    name = f"cap-smoke-{os.getpid()}"
+    status, body = http_json(
+        "POST", f"{base}/api/2.0/mlflow/experiments/create", {"name": name}
+    )
+    assert status == 200, f"experiment create answered HTTP {status}"
+    experiment = body["experiment_id"]
+    try:
+        payload = f"artifact {name}".encode()
+        path = f"{base}/api/2.0/mlflow-artifacts/artifacts/{name}/smoke.txt"
+        upload = urllib.request.Request(path, data=payload, method="PUT")
+        with urllib.request.urlopen(upload, timeout=15) as response:
+            assert response.status == 200
+        assert http_get(path) == (200, payload)
+
+        dsn = required("CAP_PG_DSN").rsplit("/", 1)[0] + "/mlflow"
+        with psycopg.connect(dsn, connect_timeout=10) as connection:
+            row = connection.execute(
+                "SELECT name FROM experiments WHERE experiment_id = %s",
+                (int(experiment),),
+            ).fetchone()
+        assert row == (name,)
+    finally:
+        http_json(
+            "POST",
+            f"{base}/api/2.0/mlflow/experiments/delete",
+            {"experiment_id": experiment},
+        )

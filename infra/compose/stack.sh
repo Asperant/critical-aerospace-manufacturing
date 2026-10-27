@@ -35,18 +35,25 @@ CAP_KEYCLOAK_PORT="${CAP_KEYCLOAK_PORT:-28080}"
 CAP_TEMPORAL_PORT="${CAP_TEMPORAL_PORT:-27233}"
 CAP_TEMPORAL_HTTP_PORT="${CAP_TEMPORAL_HTTP_PORT:-27243}"
 CAP_TEMPORAL_NAMESPACE="${CAP_TEMPORAL_NAMESPACE:-cap}"
+CAP_QDRANT_PORT="${CAP_QDRANT_PORT:-26333}"
+CAP_QDRANT_GRPC_PORT="${CAP_QDRANT_GRPC_PORT:-26334}"
+CAP_MLFLOW_PORT="${CAP_MLFLOW_PORT:-25000}"
 export CAP_PG_PORT CAP_NATS_PORT CAP_NATS_MON_PORT CAP_VALKEY_PORT CAP_S3_PORT \
   CAP_SEAWEED_MASTER_PORT CAP_KEYCLOAK_PORT CAP_TEMPORAL_PORT CAP_TEMPORAL_HTTP_PORT \
-  CAP_TEMPORAL_NAMESPACE
+  CAP_TEMPORAL_NAMESPACE CAP_QDRANT_PORT CAP_QDRANT_GRPC_PORT CAP_MLFLOW_PORT
 PROFILES_ALL=(infra core vision ai planning platform full e2e)
 
 secret() { od -An -N16 -tx1 /dev/urandom | tr -d ' \n'; }
 
-SECRET_VARS=(CAP_POSTGRES_PASSWORD CAP_KEYCLOAK_ADMIN_PASSWORD CAP_S3_ADMIN_SECRET CAP_S3_WRITER_SECRET CAP_S3_READER_SECRET)
+SECRET_VARS=(CAP_POSTGRES_PASSWORD CAP_KEYCLOAK_ADMIN_PASSWORD CAP_S3_ADMIN_SECRET CAP_S3_WRITER_SECRET CAP_S3_READER_SECRET
+  CAP_S3_MLFLOW_SECRET CAP_QDRANT_API_KEY)
 # WP-OBJ-001: least-privilege S3 identities. Access keys are names, not secrets.
 S3_ADMIN_KEY=cap-artifacts-admin
 S3_WRITER_KEY=cap-artifacts-writer
 S3_READER_KEY=cap-artifacts-reader
+# WP-PLAT-003: MLflow reads, lists and writes only its own artifact bucket.
+S3_MLFLOW_KEY=cap-mlflow
+MLFLOW_BUCKET=cap-mlflow-artifacts
 ARTIFACT_BUCKETS=(cap-artifacts-rc-b cap-artifacts-rc-c cap-artifacts-rc-d)
 
 s3_actions() {  # s3_actions Read List Write -> "Read:b1","List:b1",... for every artifact bucket
@@ -76,19 +83,34 @@ load_credentials() {
   fi
   export "${SECRET_VARS[@]}"
   # Service files read by Compose (also by `mfgctl up`), regenerated each time.
+  local s3_before=""
+  [[ -f "${STATE_DIR}/s3.json" ]] && s3_before="$(cat "${STATE_DIR}/s3.json")"
   ( umask 077
     printf 'POSTGRES_PASSWORD=%s\n' "${CAP_POSTGRES_PASSWORD}" > "${STATE_DIR}/postgres.env"
     printf 'KC_BOOTSTRAP_ADMIN_PASSWORD=%s\n' "${CAP_KEYCLOAK_ADMIN_PASSWORD}" > "${STATE_DIR}/keycloak.env"
     # WP-PLAT-003: Temporal server (POSTGRES_PWD) and its schema job (SQL_PASSWORD).
     printf 'POSTGRES_PWD=%s\nSQL_PASSWORD=%s\n' "${CAP_POSTGRES_PASSWORD}" "${CAP_POSTGRES_PASSWORD}" > "${STATE_DIR}/temporal.env"
+    printf 'QDRANT__SERVICE__API_KEY=%s\n' "${CAP_QDRANT_API_KEY}" > "${STATE_DIR}/qdrant.env"
+    # MLflow: only the one-shot init job sees the S3 admin identity (bucket creation);
+    # the server gets the backend URI and its bucket-scoped identity.
+    printf 'CAP_POSTGRES_PASSWORD=%s\nCAP_S3_ADMIN_ACCESS_KEY=%s\nCAP_S3_ADMIN_SECRET_KEY=%s\n' \
+      "${CAP_POSTGRES_PASSWORD}" "${S3_ADMIN_KEY}" "${CAP_S3_ADMIN_SECRET}" > "${STATE_DIR}/mlflow-init.env"
+    printf 'MLFLOW_BACKEND_STORE_URI=postgresql://cap:%s@postgres:5432/mlflow\nAWS_ACCESS_KEY_ID=%s\nAWS_SECRET_ACCESS_KEY=%s\n' \
+      "${CAP_POSTGRES_PASSWORD}" "${S3_MLFLOW_KEY}" "${CAP_S3_MLFLOW_SECRET}" > "${STATE_DIR}/mlflow.env"
     # SeaweedFS S3 identities: with any identity defined, anonymous access is denied.
     # admin creates buckets; writer reads, lists and writes artifacts; reader only reads
     # (it signs the short-lived read capabilities). Mounted read-only into the container.
-    printf '{"identities": [%s, %s, %s]}\n' \
+    printf '{"identities": [%s, %s, %s, %s]}\n' \
       "{\"name\": \"${S3_ADMIN_KEY}\", \"credentials\": [{\"accessKey\": \"${S3_ADMIN_KEY}\", \"secretKey\": \"${CAP_S3_ADMIN_SECRET}\"}], \"actions\": [\"Admin\", \"Read\", \"List\", \"Write\"]}" \
       "{\"name\": \"${S3_WRITER_KEY}\", \"credentials\": [{\"accessKey\": \"${S3_WRITER_KEY}\", \"secretKey\": \"${CAP_S3_WRITER_SECRET}\"}], \"actions\": [$(s3_actions Read List Write)]}" \
       "{\"name\": \"${S3_READER_KEY}\", \"credentials\": [{\"accessKey\": \"${S3_READER_KEY}\", \"secretKey\": \"${CAP_S3_READER_SECRET}\"}], \"actions\": [$(s3_actions Read)]}" \
+      "{\"name\": \"${S3_MLFLOW_KEY}\", \"credentials\": [{\"accessKey\": \"${S3_MLFLOW_KEY}\", \"secretKey\": \"${CAP_S3_MLFLOW_SECRET}\"}], \"actions\": [\"Read:${MLFLOW_BUCKET}\", \"List:${MLFLOW_BUCKET}\", \"Write:${MLFLOW_BUCKET}\"]}" \
       > "${STATE_DIR}/s3.json" )
+  # SeaweedFS reads s3.json only when it starts: an identity added here (WP-PLAT-003:
+  # cap-mlflow) would stay unknown to a running gateway until it restarts.
+  S3_IDENTITIES_CHANGED=0
+  [[ -n "${s3_before}" && "${s3_before}" != "$(cat "${STATE_DIR}/s3.json")" ]] && S3_IDENTITIES_CHANGED=1
+  return 0
 }
 
 mask_in_ci() {
@@ -124,7 +146,12 @@ case "${1:-}" in
     load_credentials
     mask_in_ci
     mapfile -t args < <(profile_args "${profiles[@]}")
-    "${COMPOSE[@]}" "${args[@]}" pull --quiet
+    "${COMPOSE[@]}" "${args[@]}" pull --quiet --ignore-buildable
+    "${COMPOSE[@]}" "${args[@]}" build --quiet
+    if [[ ${S3_IDENTITIES_CHANGED} -eq 1 && -n "$("${COMPOSE[@]}" "${args[@]}" ps -q seaweedfs)" ]]; then
+      echo "S3 identities changed: restarting seaweedfs" >&2
+      "${COMPOSE[@]}" "${args[@]}" restart seaweedfs
+    fi
     started=$(date +%s)
     if ! "${COMPOSE[@]}" "${args[@]}" up --detach --wait --wait-timeout 300; then
       "${COMPOSE[@]}" "${args[@]}" ps >&2 || true
@@ -167,6 +194,9 @@ case "${1:-}" in
     echo "CAP_TEMPORAL_ADDRESS=127.0.0.1:${CAP_TEMPORAL_PORT}"
     echo "CAP_TEMPORAL_HTTP_URL=http://127.0.0.1:${CAP_TEMPORAL_HTTP_PORT}"
     echo "CAP_TEMPORAL_NAMESPACE=${CAP_TEMPORAL_NAMESPACE}"
+    echo "CAP_QDRANT_URL=http://127.0.0.1:${CAP_QDRANT_PORT}"
+    echo "CAP_QDRANT_API_KEY=${CAP_QDRANT_API_KEY}"
+    echo "CAP_MLFLOW_URL=http://127.0.0.1:${CAP_MLFLOW_PORT}"
     ;;
   status)
     load_credentials
