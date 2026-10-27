@@ -2037,10 +2037,10 @@ DEP-064:
   need_by: "S2–S3"   # sprint 3
   fallback: F1
   unblock_evidence: "contract merged + contract tests green + example fixture published"
-  precise_requirement: null
+  precise_requirement: "The AI typed tool interface v1 shall publish versioned typed tools with explicit READ, SIMULATE and PROPOSE authority tags, explicit WorldID/tool identity, compatibility/example fixtures, and green producer/consumer contract validation; no execution or direct Core mutation surface is included."
   risk_class: DR-1
   source: "Item 66 #62"
-  status: NOT_READY
+  status: READY
 DEP-065:
   predecessor: {node: DN-VIS-OBSCON, owner: "Selman"}
   successor: {node: DN-AI-RCA, owner: "Asrın"}
@@ -3832,7 +3832,7 @@ For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §1
 | DEP-061 | DN-VIS-OBSCON at START | DN-VIS-ARTCON: Inspection artifact identity contract (ArtifactRef, Lot/SerializedComponent refs, model metadata); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-062 | DN-VIS-EPISODES at MILESTONE_EXIT | DN-SIM-COREINT: Simulator/Core integration (Core-validated physical commands, events); INTEGRATION_READY; ScenarioEpisodes with genealogy/state generated | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-063 | DN-VIS-EPISODES at MILESTONE_EXIT | DN-CORE-GENEALOGY: Temporal genealogy / exposure queries; INTEGRATION_READY; genealogy linked to episodes | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
-| DEP-064 | DN-AI-ORCH at START | DN-AI-TOOLCON: AI typed tool schemas + fixtures; CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-064 | DN-AI-ORCH at START | DN-AI-TOOLCON: AI typed tool schemas + fixtures; CONTRACT_READY; contract merged + contract tests green + example fixture published | Bound by CTRL-HOST-043 to the merged `ai.tool-interface.v1` registry/schema and four fixtures; producer/consumer contract and authority validation are green. This opens only DN-AI-TOOLCON; WP-AI-002 runtime clients/enforcement and WP-AI-001 orchestration remain separate. |
 | DEP-066 | DN-AI-RCA at START | DN-AI-ORCH: Deterministic AI orchestrator; COMPONENT_READY; orchestrator state machine tests green | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-070 | DN-RAG at START | DN-RAG-CORPUS: Documentary corpus (DocumentVersion/CorpusVersion); COMPONENT_READY; versioned CorpusVersion ingested | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-074 | DN-ML at MILESTONE_EXIT | DN-SIM-SYNTH: Synthetic operational data / generated history (ScenarioInstances); EVALUATION_READY; sufficient historical data/features/labels generated | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
