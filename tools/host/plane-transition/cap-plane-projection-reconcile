@@ -8,4 +8,4 @@ case "${CAP_PROFILE-}" in
     asrin|selman|batuhan|yavuz) ;;
     *) printf '%s\n' '{"result":"DENIED","reason_code":"INVALID_CAP_PROFILE"}'; exit 2 ;;
 esac
-exec /usr/bin/sudo -n /usr/local/libexec/cap-plane-projection-reconcile.py "$CAP_PROFILE"
+exec /usr/bin/sudo -n /usr/bin/python3 -I /usr/local/libexec/cap-plane-projection-reconcile.py "$CAP_PROFILE"
