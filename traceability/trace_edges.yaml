@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: 10b6c37cdd82629e986a30420657789592b84500e5cd51d90f222036387c7800
+  sha256: b1e7b0c7c96d4675bf6f8e947d3e08258a8f77cd1e23c78a3a0e2d822037a07c
 requirements:
   FR-GOV-001:
     meta:
@@ -351,7 +351,7 @@ requirements:
     realization:
       surface: ReworkDirective + append-only route-visit history
       deployable: manufacturing-core
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-core/src/manufacturing_core/rework_repository.py
   FR-CORE-010:
     meta:
       class: F1
@@ -369,7 +369,7 @@ requirements:
     realization:
       surface: lot split relation model
       deployable: manufacturing-core
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-core/src/manufacturing_core/genealogy_queries.py
   FR-CORE-011:
     meta:
       class: F1
@@ -387,7 +387,7 @@ requirements:
     realization:
       surface: lot merge relation model (policy-permitted)
       deployable: manufacturing-core
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-core/src/manufacturing_core/genealogy_queries.py
   FR-CORE-012:
     meta:
       class: F1
@@ -405,7 +405,7 @@ requirements:
     realization:
       surface: relational temporal genealogy (no mandatory graph DB, backfill ADR 12)
       deployable: manufacturing-core
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-core/src/manufacturing_core/genealogy_queries.py
   FR-CORE-013:
     meta:
       class: F1
@@ -6084,7 +6084,7 @@ edges:
 - {"from": "FR-CORE-009", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-DOMAIN", "applicability": "PLANNED"}
 - {"from": "FR-CORE-009", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-GENEALOGY", "applicability": "PLANNED"}
 - {"from": "FR-CORE-009", "relation": "EXPOSED_BY", "to": "ExecuteApprovedReworkDirective command", "applicability": "PLANNED"}
-- {"from": "FR-CORE-009", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-CORE-009", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-core/src/manufacturing_core/rework_repository.py", "applicability": "RECORDED"}
 - {"from": "FR-CORE-009", "relation": "VERIFIED_BY", "to": "TEST-CORE-STATEMACHINE", "applicability": "PLANNED"}
 - {"from": "FR-CORE-009", "relation": "VERIFIED_BY", "to": "TEST-CORE-GENEALOGY", "applicability": "PLANNED"}
 - {"from": "FR-CORE-009", "relation": "VERIFIED_BY", "to": "BENCH-E2E-001", "applicability": "PLANNED"}
@@ -6093,14 +6093,14 @@ edges:
 - {"from": "FR-CORE-010", "relation": "DERIVED_FROM", "to": "WL-INV-03", "applicability": "PLANNED"}
 - {"from": "FR-CORE-010", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-GENEALOGY", "applicability": "PLANNED"}
 - {"from": "FR-CORE-010", "relation": "EXPOSED_BY", "to": "Core Query API (genealogy)", "applicability": "PLANNED"}
-- {"from": "FR-CORE-010", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-CORE-010", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-core/src/manufacturing_core/genealogy_queries.py", "applicability": "RECORDED"}
 - {"from": "FR-CORE-010", "relation": "VERIFIED_BY", "to": "TEST-CORE-GENEALOGY", "applicability": "PLANNED"}
 - {"from": "FR-CORE-011", "relation": "DERIVED_FROM", "to": "ITEM-09", "applicability": "PLANNED"}
 - {"from": "FR-CORE-011", "relation": "DERIVED_FROM", "to": "WL-INV-02", "applicability": "PLANNED"}
 - {"from": "FR-CORE-011", "relation": "DERIVED_FROM", "to": "WL-INV-03", "applicability": "PLANNED"}
 - {"from": "FR-CORE-011", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-GENEALOGY", "applicability": "PLANNED"}
 - {"from": "FR-CORE-011", "relation": "EXPOSED_BY", "to": "Core Query API (genealogy)", "applicability": "PLANNED"}
-- {"from": "FR-CORE-011", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-CORE-011", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-core/src/manufacturing_core/genealogy_queries.py", "applicability": "RECORDED"}
 - {"from": "FR-CORE-011", "relation": "VERIFIED_BY", "to": "TEST-CORE-GENEALOGY", "applicability": "PLANNED"}
 - {"from": "FR-CORE-012", "relation": "DERIVED_FROM", "to": "ITEM-25", "applicability": "PLANNED"}
 - {"from": "FR-CORE-012", "relation": "DERIVED_FROM", "to": "KG-INV-05", "applicability": "PLANNED"}
@@ -6110,7 +6110,7 @@ edges:
 - {"from": "FR-CORE-012", "relation": "ALLOCATED_TO", "to": "ARCH-CORE-DB", "applicability": "PLANNED"}
 - {"from": "FR-CORE-012", "relation": "DECIDED_BY", "to": "ADR-0012", "applicability": "PLANNED"}
 - {"from": "FR-CORE-012", "relation": "EXPOSED_BY", "to": "Core Query API (genealogy)", "applicability": "PLANNED"}
-- {"from": "FR-CORE-012", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-CORE-012", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-core/src/manufacturing_core/genealogy_queries.py", "applicability": "RECORDED"}
 - {"from": "FR-CORE-012", "relation": "EXERCISED_IN", "to": "AV-SCEN-01", "applicability": "PLANNED"}
 - {"from": "FR-CORE-012", "relation": "VERIFIED_BY", "to": "TEST-CORE-GENEALOGY", "applicability": "PLANNED"}
 - {"from": "FR-CORE-012", "relation": "VERIFIED_BY", "to": "BENCH-RQ1-001", "applicability": "PLANNED"}
