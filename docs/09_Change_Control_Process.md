@@ -1135,6 +1135,22 @@ The change therefore projects DEP-030 as READY at CONTRACT_READY. It does not
 claim Twin export, Scheduler consumption, integration readiness or
 WP-TWIN-003 completion.
 
+## CHG-065 — bind current-main DEP-003 and DEP-105 closure predicates
+
+CHG-065 / CTRL-HOST-039 binds two independent edge-specific readiness facts for
+the S2/S3 closure pass. DEP-105 is READY at CONTRACT_READY because WP-UI-001's
+merged operations-bff OpenAPI contract, overview fixture and 218-test BFF suite
+are present on current main, with contract validation and Pyright passing. This
+does not claim real Core/Twin integration, live Keycloak acceptance, DEP-106 or
+WP-UI-002 completion.
+
+DEP-003 is READY at SKELETON_READY because current-main `mfgctl bootstrap`
+completes and `mfgctl doctor` executes with the versioned diagnostic output.
+The observed Docker socket permission failure is retained as an external host
+runtime blocker; it is not promoted to Compose or Integration readiness. The
+two projections do not mark any work package DONE and do not alter authority
+boundaries.
+
 ## CHG-052 — generic audit-backed BLOCKED projection reconciliation
 
 CHG-052 / CTRL-HOST-030 repairs only the orthogonal Plane `BLOCKED` label when

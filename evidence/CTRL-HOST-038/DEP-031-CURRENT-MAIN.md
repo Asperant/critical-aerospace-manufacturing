@@ -4,11 +4,14 @@ DEP-031 is READY at CONTRACT_READY for the bounded Core domain-event contract
 set: versioned payload schemas, canonical producer/event declarations,
 Twin-relevant fixtures and green producer/consumer boundary tests.
 
-- Current main: `d0c3dba6d6a173cf59e185b43f5b2255175b8278`
+- Current main: `80b1420e8f19bf8b4d984a85833cb22a8f6c32d7` (PR #154 merge)
 - Producer PR #73 merge: `d8388a7e6c7f5c93ffc3c4343bbe6246a5d0269f`
 - Producer PR #76 merge: `9db6a1080b8604a36a4629d85c8f844b57879cd6`
 - Both merges are ancestors of current main and were authored by Asperant.
 - `ci/tests/test_core_domain_event_contracts.py`: **7 passed**.
+- PR #154 required checks: **PASS** (`ci-scope`, `projectctl`, `t1-contract`,
+  `t1-static`, `t1-unit`, `ci-gate`); `t1-integration` correctly skipped for
+  this contract-only change.
 - Bound contracts: `core.lot-held.v1` and `core.lot-dispatch-authorized.v1`,
   including payload schemas and Twin fixtures.
 

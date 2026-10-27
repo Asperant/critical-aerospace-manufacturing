@@ -1,0 +1,25 @@
+{
+  "schema": "edge-contract-readiness-basis-v1",
+  "edge": "DEP-105",
+  "predecessor_node": "DN-UI-BFFCON",
+  "successor_node": "DN-UI-SHELL",
+  "level": "CONTRACT_READY",
+  "producer_wp": "WP-UI-001",
+  "producer_pr": 39,
+  "producer_merge_sha": "1e54f9c5cd8ff9f208b422c15093d3d7a3ecf5da",
+  "verified_main_sha": "80b1420e8f19bf8b4d984a85833cb22a8f6c32d7",
+  "precise_requirement": "WP-UI-001 must publish the merged/current-main operations-bff v1 OpenAPI contract, including session and overview query boundaries, a validating overview fixture, and green BFF contract tests. This edge does not certify real Core/Twin integration, Keycloak runtime acceptance, DEP-106 or WP-UI-002 completion.",
+  "scope_boundary": "This is an edge-specific DEP-105 binding. It certifies the contract artifact and contract-test predicate only; fixture data is synthetic and no integrated UI acceptance is claimed.",
+  "artifacts": [
+    {"path": "services/operations-bff/contracts/v1/operations-bff.openapi.yaml", "blob": "345c091b5571490193fca53d538d8a22fdd2067d", "role": "openapi"},
+    {"path": "services/operations-bff/contracts/v1/overview-query.schema.json", "blob": "49659b9e0b72dcc72b75a24f35fafc01c686a7f7", "role": "schema"},
+    {"path": "services/operations-bff/contracts/v1/overview-query.normal.json", "blob": "4c78cddf0e50b6ff49e75e26e09009b010ec4ff5", "role": "fixture"},
+    {"path": "services/operations-bff/tests/test_contract_v1.py", "blob": "f4b16f9c6fad46030dccd8ceaedc3ebb0af14fc8", "role": "contract_tests"}
+  ],
+  "tests": [
+    {"test_id": "TEST-UI-BFF-CONTRACT", "path": "services/operations-bff/tests", "result": "218 passed"},
+    {"test_id": "CONTRACT-SCHEMA-VALIDATION", "path": "ci/scripts/check_contracts.py", "result": "20 schemas and 8 instances PASS"},
+    {"test_id": "UI-BFF-TYPING", "path": "services/operations-bff/pyrightconfig.json", "result": "0 errors"}
+  ],
+  "verification": "PR #39 is merged and its required CI checks are green. The exact contract artifacts and the current-main BFF suite were re-run at verified main SHA 80b1420e8f19bf8b4d984a85833cb22a8f6c32d7. DEP-106, real Core/Twin adapters, live Keycloak and final UI acceptance remain separate."
+}
