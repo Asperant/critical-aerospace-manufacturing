@@ -175,6 +175,10 @@ jobs:
         run: |
           uv run --project ci --locked python -m pytest -c packages/artifacts/pyproject.toml packages/artifacts/tests -m 'not integration' -q -p pytest_quarantine
           uv run --project ci --locked pyright --project packages/artifacts/pyrightconfig.json
+      - name: Vision inspection pipeline tests and typing (WP-VIS-001)
+        run: |
+          uv run --project ci --locked python -m pytest -c services/vision-service/pyproject.toml services/vision-service/tests -q -p pytest_quarantine
+          uv run --project ci --locked pyright --project services/vision-service/pyrightconfig.json
       - name: Trace registry lint and tests (WP-GOV-002)
         env:
           PYTHONPATH: ci:ci/scripts:tools/trace/src
