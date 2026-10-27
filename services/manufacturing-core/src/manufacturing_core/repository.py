@@ -80,8 +80,8 @@ class CoreRepository:
                     state = state_model(id=entity.id, revision=entity.revision)
                     state_data = state.model_dump(mode="json")
                     self.connection.execute(
-                        sql.SQL("INSERT INTO core.{}_state ({}) VALUES ({})").format(
-                            sql.Identifier(table),
+                        sql.SQL("INSERT INTO core.{} ({}) VALUES ({})").format(
+                            sql.Identifier(f"{table}_state"),
                             sql.SQL(", ").join(map(sql.Identifier, state_data)),
                             sql.SQL(", ").join(sql.Placeholder() for _ in state_data),
                         ),
