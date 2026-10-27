@@ -5005,15 +5005,15 @@ FR-SCH-010:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SCH-010 L170011"}
   DERIVED_FROM: [ITEM-59, ITEM-31, BASE-INV-13]
   ALLOCATED_TO: [ARCH-SCH-HEURISTIC, ARCH-VIS-EVAL, ARCH-SCH-EVAL]
-  REALIZED_BY: {surface: "FIFO/EDD/CR/SPT/SRPT baseline implementations (BaselineDefinition)", deployable: "scheduling evaluation harness — GAP-RTM-002", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "FIFO/EDD/CR/SPT/SRPT baseline implementations (BaselineDefinition)", deployable: "scheduling evaluation harness — GAP-RTM-002", ref: "services/scheduler-service/src/manufacturing_scheduler/; services/scheduler-service/tests/"}
   USES_DATA: ["BaselineDefinition"]
   VERIFIED_BY: [BENCH-SCH-001, BENCH-RQ2-001]
   MITIGATES: [SCH-R06]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
-  note: "ARCH-SCH-EVAL is the dedicated scheduling-evaluation component; ARCH-VIS-EVAL is Vision-specific."
+  state: {coverage: IMPLEMENTED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
+  note: "ARCH-SCH-EVAL is the dedicated scheduling-evaluation component; ARCH-VIS-EVAL is Vision-specific. WP-SCH-001 delivers the five offline dispatch rules, the BaselineDefinition records SCH-B1..SCH-B5 and the synthetic instance generator only. BENCH-SCH-001 and BENCH-RQ2-001 have not run, so evidence stays NOT_YET_EXECUTED; evidence/WP-SCH-001/README.md records the local unit run and its limits. No VERIFIED claim."
 FR-SCH-011:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SCH-011 L170012"}
   DERIVED_FROM: [ITEM-31, SCH-INV-12]

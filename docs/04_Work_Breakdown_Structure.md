@@ -3435,7 +3435,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-SCH-HEUR |
 | Size band (indicative, no hour estimates) | S (≈1–3 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `services/scheduler-service/`; `evidence/WP-SCH-001/` |
 
 **Purpose.** Implement the baseline dispatch policies that both unblock early integration and serve as research baselines.
 

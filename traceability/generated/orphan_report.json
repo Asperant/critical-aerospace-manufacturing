@@ -6,11 +6,11 @@
     "ALLOCATED_TO": [],
     "VERIFIED_BY": []
   },
-  "without_recorded_realization": 258,
+  "without_recorded_realization": 257,
   "without_run": 272,
   "coverage_states": {
-    "ALLOCATED": 269,
+    "ALLOCATED": 268,
     "EVIDENCE_PENDING": 34,
-    "IMPLEMENTED": 3
+    "IMPLEMENTED": 4
   }
 }
