@@ -48,7 +48,8 @@
     },
     "reason": {
       "type": "string",
-      "pattern": "^\\S+$"
+      "minLength": 1,
+      "pattern": ".*\\S.*"
     }
   }
 }

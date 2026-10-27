@@ -21,6 +21,9 @@ from pydantic import (
 )
 
 Identity = Annotated[str, StringConstraints(strict=True, pattern=r"^\S+$")]
+NonBlankText = Annotated[
+    str, StringConstraints(strict=True, min_length=1, pattern=r".*\S.*")
+]
 PositiveVersion = Annotated[int, Field(gt=0)]
 
 
@@ -50,7 +53,7 @@ class LotHeldPayloadV1(BaseModel):
     lot_id: Identity
     lot_revision: Identity
     material_hold_id: Identity
-    reason: Identity
+    reason: NonBlankText
 
     @model_validator(mode="after")
     def identity_matches_aggregate(self) -> LotHeldPayloadV1:

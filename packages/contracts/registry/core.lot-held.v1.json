@@ -9,7 +9,7 @@
   "purpose": "Publish the accepted Core material-hold fact for projection, simulation and effect verification.",
   "output_schema": {
     "path": "services/manufacturing-core/contracts/v1/lot-held.v1.schema.json",
-    "sha256": "532dfaa6f2c5a7fea4fbc538c141d2e5a4e9cebef7443ddbe463bc5388285acf"
+    "sha256": "3cd23ad1f3b192124dc6083bf2d7d9cdb063a24b50cc71534ffbaaf5471063b5"
   },
   "fixtures": [
     {

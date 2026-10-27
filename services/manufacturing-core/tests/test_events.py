@@ -76,6 +76,12 @@ def test_payload_identity_and_event_identity_must_match() -> None:
         )
 
 
+def test_lot_held_reason_preserves_nonblank_human_text() -> None:
+    assert held_payload(reason="inspection anomaly").reason == "inspection anomaly"
+    with pytest.raises(ValidationError):
+        held_payload(reason="   ")
+
+
 def test_dispatch_event_rejects_non_utc_occurrence() -> None:
     payload = LotDispatchAuthorizedPayloadV1(
         event_type="production.lot-dispatch-authorized",
