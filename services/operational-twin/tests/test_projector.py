@@ -68,7 +68,10 @@ def test_old_and_gap_events_fail_closed_and_gap_marks_stale() -> None:
         projector.apply(event("E-3", 3))
     assert projector.health()["status"] == "STALE"
     assert projector.health()["freshness"] == "STALE"
-    assert projector.health()["degraded_reason"] == "projection gap requires reconciliation"
+    assert (
+        projector.health()["degraded_reason"]
+        == "projection gap requires reconciliation"
+    )
 
 
 def test_epistemic_class_is_explicit_and_recoverable_degradation_is_visible() -> None:
