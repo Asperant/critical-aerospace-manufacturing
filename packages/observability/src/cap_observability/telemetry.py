@@ -334,7 +334,10 @@ class OtlpLogHandler(logging.Handler):
         self._queue: queue.Queue[dict[str, Any]] = queue.Queue(maxsize=queue_size)
         self._stop = threading.Event()
         self._send_lock = threading.Lock()
-        self._last_warning = 0.0
+        # A fresh CI runner can have a monotonic clock below the throttle
+        # interval. An explicit unset sentinel keeps the first warning
+        # independent of the clock origin.
+        self._last_warning: float | None = None
         self._thread = threading.Thread(
             target=self._run, name="cap-otlp-logs", daemon=True
         )
@@ -392,7 +395,7 @@ class OtlpLogHandler(logging.Handler):
 
     def _warn(self, what: str) -> None:
         now = time.monotonic()
-        if now - self._last_warning >= 60:
+        if self._last_warning is None or now - self._last_warning >= 60:
             self._last_warning = now
             print(
                 f"cap_observability: {what}; {self.dropped} log records dropped so far",

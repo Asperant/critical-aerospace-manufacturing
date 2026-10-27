@@ -64,7 +64,7 @@ def main():
     if keyfile.stat().st_uid != 0 or stat.S_IMODE(keyfile.stat().st_mode) != 0o600:
         raise RuntimeError('Unsafe credential ownership/mode')
     catalog = json.loads(CATALOG.read_text())
-    if len(catalog['owners']) != 179 or set(catalog['owners'].values()) != {'Asrın Dündar','Selman Özdemir','Batuhan Kaya','Yavuz Gümüş'}:
+    if len(catalog['owners']) != 180 or set(catalog['owners'].values()) != {'Asrın Dündar','Selman Özdemir','Batuhan Kaya','Yavuz Gümüş'}:
         raise RuntimeError('Invalid canonical identity catalog')
     write(ROOT / 'catalog.json', json.dumps(catalog).encode(), 0o644)
     write(HELPER, (SOURCE / 'queue.py').read_bytes(), 0o755)

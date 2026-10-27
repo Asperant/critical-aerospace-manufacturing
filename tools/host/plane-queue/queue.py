@@ -29,10 +29,8 @@ PEOPLE = {
     'batuhan': ('Batuhan Kaya', '51137169-2989-42bd-9260-997b26e7e6dd', 'batuhankaya0204@gmail.com'),
     'yavuz': ('Yavuz Gümüş', '3ccd9ad8-99e9-4b75-ae65-2325503d347f', 'yavuzzgumus@gmail.com'),
 }
-# CTRL-PM-009 assigns only the current Asrın queue owner in Plane. The
-# canonical owner for every WP remains authoritative in metadata/catalog;
-# other owners are intentionally represented as unassigned Plane items.
-ASSIGNEE_PROFILES = frozenset({'asrin'})
+# Plane carries the canonical owner for every WP. Queue selection remains
+# profile-scoped below; assignment is not used as a global queue filter.
 CYCLES = dict(enumerate([
     '24c63960-2f75-4d61-957c-98e60f27cd9b', 'f3bd6141-b612-4d81-a5d9-6670135dfcc4',
     'a3a6a89a-0a43-4d4b-bb3c-bb3225203dc7', '8cbdd9f6-21d1-48c2-a1be-b0ebfaad3398',
@@ -340,7 +338,7 @@ def snapshot(reader, catalog, cycle_targets=None):
         meta = metadata(item.get('description_html'))
         require(meta.get('canonical_wp_id') == wp and meta.get('canonical_owner') == catalog['owners'][wp])
         owner = next(p for p, details in PEOPLE.items() if details[0] == meta['canonical_owner'])
-        expected_assignees = [PEOPLE[owner][1]] if owner in ASSIGNEE_PROFILES else []
+        expected_assignees = [PEOPLE[owner][1]]
         require(item.get('assignees') == expected_assignees and item['state'] in state_map)
         require(isinstance(item.get('labels'), list))
         rows[wp] = {'wp_id': wp, 'title': item['name'].split('] ', 1)[1], 'plane_state': state_map[item['state']],
@@ -415,7 +413,7 @@ def select(profile, rows, deferred=None):
     ready = [r for r in own if r['plane_state'] == 'READY']
     result = {'profile': profile, 'canonical_owner': PEOPLE[profile][0], 'status': 'NO_TASK',
               'current_task': None, 'next_task': None, 'ambiguity': None,
-              'read_timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat()}
+              'read_timestamp': datetime.datetime.now(datetime.UTC).isoformat()}
     if len(active) > 1 or len(ready) > 1:
         result.update(status='AMBIGUOUS', ambiguity='MULTIPLE_IN_PROGRESS_OR_READY',
                       candidate_wp_ids=sorted(r['wp_id'] for r in active + ready))
@@ -626,11 +624,10 @@ def preflight(profile, key, rows=None):
 
 
 def combine(profile, rows, health, preflight_deferred=None):
-    """Selection excluding verified waits, plus derived health; health None fails closed."""
+    """Advisory queue projection; proof and health never authorize selection."""
     waits = list((health or {}).get('deferred_waits', [])
                  or preflight_deferred or [])
-    deferred = {w['wp_id'] for w in waits if isinstance(w, dict) and isinstance(w.get('wp_id'), str)}
-    result = select(profile, rows, deferred)
+    result = select(profile, rows)
     if health is not None:
         result.update(prepared_next=health['prepared_next'], health=health['health'],
                       first_blocker=health['first_blocker'], deferred_waits=waits)
@@ -648,9 +645,9 @@ def emit(result, key=''):
 
 
 def exit_status(result):
-    if result['status'] in {'OK','NO_TASK'}:
-        return 0
-    return 2 if result['status']=='UNAVAILABLE' else 1
+    # CHG-054: queue output is diagnostic only. Canonical startability and
+    # lifecycle evaluators, not queue status, decide whether work may proceed.
+    return 0
 
 
 class HealthTimeout(Exception):
@@ -691,8 +688,9 @@ def main():
         key = json.loads((ROOT / 'credential.json').read_text())['api_key']
         require(isinstance(key, str) and key and '\n' not in key and '\r' not in key)
         catalog = json.loads((ROOT / 'catalog.json').read_text())
-        # Serialize whole reads across the four endpoints; no cached execution data.
-        fd = os.open('/run/cap-plane-queue.lock', os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
+        # Queue reads have their own advisory lock and never contend with product
+        # lifecycle transitions or AUTO_NEXT/proof refresh.
+        fd = os.open('/run/cap-plane-queue-read.lock', os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
         global ACTIVE_DEADLINE
         ACTIVE_DEADLINE = time.monotonic() + QUEUE_BUDGET_SECONDS
         def queue_alarm(signum, frame):
@@ -715,17 +713,14 @@ def main():
             # issue/state snapshot once, then resolve a cycle only for the
             # single task selected by the local queue decision.
             rows, snapshot_cached = load_snapshot(reader, catalog, set())
-            policy = json.loads((ROOT / 'transition-policy.json').read_text())
-            preflight_deferred = _cached_deferred_waits(profile, rows, policy)
-            health = bounded_preflight(profile, key, rows)
-            result = combine(profile, rows, health, preflight_deferred)
+            result = combine(profile, rows, None)
             task = result.get('current_task') or result.get('next_task')
             if isinstance(task, dict) and isinstance(task.get('wp_id'), str):
                 selected = rows.get(task['wp_id'])
                 if selected is not None and selected.get('cycle') is None:
                     populate_cycles(reader, rows, {task['wp_id']})
                     _write_snapshot_cache(rows)
-                    result = combine(profile, rows, health)
+                    result = combine(profile, rows, None)
             result['plane_gets'] = reader.metrics['get_count']
             result['plane_snapshot_cached'] = snapshot_cached
             if result['status']=='BLOCKED':
@@ -737,28 +732,21 @@ def main():
                     matches=[r for r in matches if r.get('wp_id')==task['wp_id'] and r.get('result')=='VERIFIED' and r.get('operation') in {'BLOCKED','UNBLOCKED'}]
                     if matches and matches[-1]['operation']=='BLOCKED':
                         result['reason']=clean(matches[-1].get('reason','ACTIVE_BLOCKER'))
-            if result['status']=='NO_TASK':
-                loader=__import__('importlib.machinery',fromlist=['SourceFileLoader']).SourceFileLoader('cap_auto_next','/usr/local/libexec/cap-auto-next.py')
-                spec=__import__('importlib.util',fromlist=['spec_from_loader']).spec_from_loader(loader.name,loader)
-                auto=__import__('importlib.util',fromlist=['module_from_spec']).module_from_spec(spec)
-                loader.exec_module(auto)
-                t=auto.load_transition()
-                policy=json.loads((ROOT/'transition-policy.json').read_text())
-                t.verify_policy_sources(policy)
-                decision=auto.advance_owner(t,profile,policy,lambda:t.Plane(key),t.GitHub,lambda *_:None,key,preview=True)
-                result['eligibility']=decision
-                result['reason']='; '.join(decision.get('reasons',[])) or 'ELIGIBLE_WORK_AWAITS_GUARDED_RECOVERY'
-                if decision['status'] in {'UNAVAILABLE','INVALID_BASELINE'}:
-                    result['status']='UNAVAILABLE'
-                    result['display_status']='UNAVAILABLE'
         emit(result, key)
         return exit_status(result)
+    except Unsafe:
+        # Invalid invocation, identity mismatch and malformed input remain a
+        # command error; a valid queue read failure below is advisory.
+        emit({'profile': profile, 'canonical_owner': PEOPLE[profile][0], 'status': 'UNAVAILABLE',
+              'reason': 'LIVE_READ_OR_IDENTITY_VALIDATION_FAILED',
+              'read_timestamp': datetime.datetime.now(datetime.UTC).isoformat()})
+        return 2
     except Exception:
         # Never format exceptions, response bodies, URLs, config or credential data.
         emit({'profile': profile, 'canonical_owner': PEOPLE[profile][0], 'status': 'UNAVAILABLE',
               'reason': 'LIVE_READ_OR_IDENTITY_VALIDATION_FAILED',
-              'read_timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat()})
-        return 2
+              'read_timestamp': datetime.datetime.now(datetime.UTC).isoformat()})
+        return 0
     finally:
         signal.setitimer(signal.ITIMER_REAL, 0)
         with contextlib.suppress(UnboundLocalError):

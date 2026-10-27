@@ -23,7 +23,10 @@ def audit():
             "project": {"id": "project", "name": "Graduation Project", "identifier": "CAP"},
             "states": [{"id": s, "name": s} for s in STATES],
             "labels": [{"id": "blocked", "name": "BLOCKED"}], "modules": [], "cycles": [], "work_items": [],
-            "project_members": [{"id": "asrin", "first_name": "asrın", "last_name": "dündar"}],
+            "project_members": [{"id": "asrin", "first_name": "asrın", "last_name": "dündar"},
+                                 {"id": "selman", "first_name": "selman", "last_name": "özdemir"},
+                                 {"id": "batuhan", "first_name": "batuhan", "last_name": "kaya"},
+                                 {"id": "yavuz", "first_name": "yavuz", "last_name": "gümüş"}],
             "workspace_members": []}
 
 
@@ -36,17 +39,44 @@ def test_full_dry_run_counts_mappings_and_determinism(project, audit):
                               "milestone_labels": 9, "work_packages": 180, "scheduled": 175,
                               "unscheduled_ids": ["WP-R2-001", "WP-R2-002", "WP-R2-003", "WP-S-001", "WP-X-001"]}
     assert plan["owner_mapping"]["Asrın Dündar"] == "asrin"
-    assert len(plan["missing_owners"]) == 3
-    assert len(plan["ambiguous_mappings"]) == 117
-    assert not plan["ready_for_live_mutation"]
+    assert len(plan["missing_owners"]) == 0
+    assert len(plan["ambiguous_mappings"]) == 0
+    assert plan["ready_for_live_mutation"]
     items = [o for o in plan["operations"] if o["kind"] == "work_items"]
     assert all(o["request"]["body"]["state"] == "BACKLOG" for o in items)
-    assert sum("assignees" in o["request"]["body"] for o in items) == 74
+    assert sum("assignees" in o["request"]["body"] for o in items) == 180
     assert all(o["relations"]["cycle"] is None for o in items if o["identity"] in plan["summary"]["unscheduled_ids"])
-    assert all(o["relations"]["cycle"] is None and o["blockers"] for o in items
+    assert all(o["relations"]["cycle"] is not None and not o["blockers"] for o in items
                if len(o["canonical_metadata"]["cycle_ids"]) == 2)
+    from collections import Counter
+    projected_cycles = Counter(
+        o["relations"]["cycle"].rsplit(":", 1)[-1]
+        for o in items
+        if o["relations"]["cycle"]
+    )
+    assert projected_cycles == Counter({
+        "S1": 2, "S2": 14, "S3": 21, "S5": 27, "S7": 39,
+        "S9": 30, "S11": 17, "S12": 15, "S13": 10,
+    })
     assert {o["desired"]["name"] for o in plan["operations"] if o["kind"] == "cycles"} == {f"S{i}" for i in range(1,14)}
     assert not any("start_date" in o["desired"] or "end_date" in o["desired"] for o in plan["operations"])
+
+
+def test_verified_member_ids_bind_incomplete_plane_profiles(project, audit):
+    audit["project_members"] = [
+        {"id": "0b4a5417-2ed5-4ac2-95ff-e74104c5d601", "first_name": "asrın", "last_name": "dündar"},
+        {"id": "51137169-2989-42bd-9260-997b26e7e6dd", "first_name": "batu", "last_name": ""},
+        {"id": "a3d25336-e7d0-43f8-bfef-c0b5c2137a60", "first_name": "Selman", "last_name": ""},
+        {"id": "3ccd9ad8-99e9-4b75-ae65-2325503d347f", "first_name": "YAVUZ GÜMÜŞ", "last_name": ""},
+    ]
+    plan = bootstrap_plan(project, audit)
+    assert plan["missing_owners"] == []
+    assert plan["owner_mapping"] == {
+        "Asrın Dündar": "0b4a5417-2ed5-4ac2-95ff-e74104c5d601",
+        "Batuhan Kaya": "51137169-2989-42bd-9260-997b26e7e6dd",
+        "Selman Özdemir": "a3d25336-e7d0-43f8-bfef-c0b5c2137a60",
+        "Yavuz Gümüş": "3ccd9ad8-99e9-4b75-ae65-2325503d347f",
+    }
 
 
 def test_projection_idempotency_after_simulated_apply_and_state_preservation(project, audit):
@@ -79,6 +109,7 @@ def test_duplicates_and_identity_conflicts_never_title_match(project, audit):
 
 def test_exact_workflow_names_and_no_guessing_members(project, audit):
     audit["states"] = [s for s in audit["states"] if s["name"] != "IN_REVIEW"] + [{"id": "typo", "name": "IN_REVİEW"}]
+    audit["project_members"] = [m for m in audit["project_members"] if m["first_name"] != "selman"]
     audit["project_members"].append({"id": "wrong", "display_name": "Selman Özdemir", "first_name": "Selman", "last_name": "Different"})
     plan = bootstrap_plan(project, audit)
     assert len(plan["conflicts"]) == 2

@@ -1037,3 +1037,88 @@ producer contract tests, all bound to a current-main `CONTRACT_READY` basis.
 It does not add lifecycle transition legality, migration readiness or final
 integrated acceptance. WP-CORE-002 remains the sole producer of legal
 transition semantics.
+
+## CHG-056 — first telemetry warning on fresh monotonic clocks
+
+CHG-056 / CTRL-HOST-032 is a generic C1 observability reliability correction
+found while investigating PR #143. `OtlpLogHandler` previously used `0.0` as
+the last-warning sentinel. On a newly booted CI runner, the monotonic clock can
+be below the 60-second throttle interval, which suppressed the first collector
+failure warning and caused the standard telemetry test to fail. The correction
+uses an explicit unset sentinel, keeps the existing first-warning-once and
+subsequent 60-second throttling behavior, and adds a fresh-clock regression
+test. It has no product, lifecycle, dependency-readiness or authority impact.
+Control-only PRs applying this correction must declare `NONE` with the explicit
+top-level (non-bulleted) Requirements field required by TL-13.
+
+## CHG-052 — generic audit-backed BLOCKED projection reconciliation
+
+CHG-052 / CTRL-HOST-030 repairs only the orthogonal Plane `BLOCKED` label when
+the latest attributable transition audit is an identity-valid `VERIFIED BLOCKED`
+or `VERIFIED UNBLOCKED` record for the same lifecycle state. The audit remains
+the source of truth for the projection; missing, malformed, ambiguous or
+state-mismatched audit evidence fails closed. The helper records its own
+projection-reconciliation evidence, performs one exact label PATCH with fresh
+readback, and never changes lifecycle state, clears an unresolved blocker, or
+changes Slot Release v2 semantics. A valid repaired projection is then consumed
+by the existing queue evaluator as a deferred wait.
+
+## CHG-053 — restore canonical Plane owner and single-cycle projection
+
+CHG-053 / CTRL-PM-018 restores the approved operational Plane projection after
+a fresh 180-WP audit found non-Asrın owner assignments missing and the terminal
+cycle rule emptying intermediate cycles. Every canonical WP is assigned to its
+verified Plane owner member. Queue selection remains profile-scoped and does
+not use the global assignment set as a substitute for ownership filtering.
+
+For a scheduled WP, Plane carries exactly one cycle: the first cycle in the
+canonical ordered cycle window. The full window remains in canonical metadata;
+`S3–S4`, `S5–S6` and similar windows are never converted to the terminal cycle.
+The five unscheduled WPs remain cycleless. This is a generic rule derived from
+the historical approved single-cycle operational projection, not a WP-specific
+mapping. Lifecycle state, BLOCKED labels, Slot Release proofs, modules,
+milestones and control items are outside the change and must remain unchanged.
+
+This is an approved C3 / CR-3 control-plane correction under CHG-018's zero
+development-approval policy. It authorizes the merged-source deployment and
+fresh audited reconciliation only; it does not authorize product WP lifecycle
+transitions, CORE-009 cleanup or readiness/DONE claims.
+
+## CHG-054 — fail-open product startability and advisory control-plane scheduling
+
+CHG-054 / CTRL-HOST-031 is an approved C3 / CR-3 control-plane simplification
+under the planning-owner decision of 27 October 2026. It changes product
+implementation start authorization to `START fail-open / DONE fail-closed`.
+
+Product implementation may start when the canonical WP resolves exactly once,
+its canonical owner and scope are unambiguous, and no canonical `HARD + START`
+dependency remains unresolved. Only canonical owner/scope ambiguity, an
+unresolved real `HARD + START` dependency, or an unsafe/spec-conflicting
+operation requiring a human decision blocks start. Queue `AMBIGUOUS`, `NO_TASK`,
+`UNAVAILABLE`, missing `current_task`, Plane health/read failures, missing
+READY/DoR material, preflight/cache/audit continuity, metadata reconciliation,
+and Slot Release v2 proofs are advisory diagnostics and never product-start
+authorization gates. HARD `INTEGRATION`, `MILESTONE_EXIT` and `FREEZE` edges
+remain at their existing later-stage gates.
+
+`projectctl startability` exposes the deterministic `cap-startability-v1`
+decision. `cap-plane-queue` remains a sanitized read-only diagnostic and no
+longer invokes AUTO_NEXT, GitHub evidence discovery or Slot Release proof
+refresh; its status and exit result do not authorize or deny implementation.
+Product transitions no longer perform WIP/Slot Release accounting or invoke
+AUTO_NEXT/health/preparation after a verified lifecycle write. Preparation is
+on-demand and its automatic timer is disabled by default. Historical proof,
+audit, readiness, Plane cards, WBS/RTM/dependency documents and CI gates remain
+available as diagnostics/evidence.
+
+MERGE_READY and DONE remain fail-closed. MERGE_READY still requires the actual
+current PR CI, scope/static/contract checks and merge correctness. DONE still
+requires the exact merged SHA, required main/post-merge CI, real DoD/evidence,
+applicable HARD integration/dependency acceptance, traceability and runtime or
+integration verification. `UNKNOWN` is never PASS, and this change does not
+start or mutate WP-CORE-009.
+
+The owner/cycle projection remains the CHG-053 projection: Asrın 74, Batuhan
+32, Selman 17, Yavuz 57; 175 scheduled and 5 unscheduled WPs. Lifecycle state
+is not reset. Rollback restores deployed helper source only and never replays a
+stale Plane snapshot.

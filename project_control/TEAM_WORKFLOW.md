@@ -115,3 +115,14 @@ Verified MERGED contract publication and verified UNBLOCKED resolution also trig
 ### Lifecycle reconciliation of merged work — CHG-031 (proposed, UNDER_REVIEW)
 
 When a work package's PR really merged but Plane was never advanced, `cap-plane-reconcile <WP-ID> <MERGED|VALIDATING>` can record the current observed fact. It is not a general bypass: only cases allow-listed in `project_control/lifecycle_reconciliation.yaml` work, for the named profile, WP, PR, head, merge commit and parents. Evidence is exactly `pr:N` (plus the policy's `run:N` refs for VALIDATING). The helper re-proves the merge, the complete file scope and the started main runs live, writes a durable INTENT audit row, performs one state PATCH and reads it back; a lost response is read back, never blindly retried. It does not fabricate skipped history, set DONE, clear BLOCKED, call AUTO_NEXT or touch other work, and it is not DoR/DoD or acceptance evidence. Installing it on the host and each live application are separately authorized steps.
+
+### CHG-054 / CTRL-HOST-031 — advisory product execution
+
+The earlier queue/Slot Release scheduling text is historical diagnostic behavior
+for product start. Product implementation uses the canonical WP context and
+`projectctl startability <WP-ID>`: exact owner, exact scope and no unresolved
+`HARD + START` dependency. Plane/queue availability, READY/DoR, proof/cache and
+audit continuity do not authorize or deny the start. `cap-plane-queue` is
+read-only advisory output; external/downstream BLOCKED work does not consume a
+developer's ability to select another WP. MERGE_READY and DONE safeguards remain
+unchanged and fail-closed.

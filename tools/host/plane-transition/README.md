@@ -379,6 +379,15 @@ it does not write Plane, cache, audit or policy state.
   a developer checkout. Installation and each live application need separate authorization;
   offline tests never write to root, start a service or call Plane or GitHub.
 
+### CTRL-HOST-030 — audit-backed BLOCKED projection reconciliation
+
+`cap-plane-projection-reconcile` is a profile-scoped generic control helper.
+It reads the latest identity-valid `VERIFIED BLOCKED` or `VERIFIED UNBLOCKED`
+transition audit and repairs only the orthogonal Plane `BLOCKED` label. Missing,
+ambiguous or lifecycle-mismatched audit evidence fails closed. The helper uses
+one exact label PATCH with fresh readback, records projection evidence, and
+never changes lifecycle state or Slot Release v2 evaluation.
+
 Reconciliation is not DoR, DoD, trace or integrated-acceptance evidence and does not make
 Merged equal Done.
 
