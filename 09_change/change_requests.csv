@@ -44,3 +44,4 @@ CHG-054,Simplify product execution startability and make control-plane schedulin
 CHG-056,Preserve the first telemetry warning on fresh monotonic clocks,C1,CR-2,Asrın,APPROVED,APPROVED,CTRL-HOST-032
 CHG-055,Bind DEP-018 to the existing Core domain contract evidence,C2,CR-2,Asrın,APPROVED,APPROVED,WP-CORE-009
 CHG-057,Record the current-main PASS for DEP-018,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-033
+CHG-058,Refresh the dependency precision diagnostic baseline after CHG-055,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-034

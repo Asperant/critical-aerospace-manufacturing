@@ -1,0 +1,47 @@
+CHG-058:
+  title: Refresh the dependency precision diagnostic baseline after CHG-055
+  trigger: Full projectctl regression found the approved DEP-018 precision change reduced the expected warning count by one
+  reason: The generic baseline test still asserted the pre-CHG-055 warning count and therefore rejected the canonical precise requirement
+  class: C1
+  review_risk_class: CR-1
+  raised_in: S4
+  owner: Asrın
+  required_human_approvals: 0
+  reviewers: []
+  decision: APPROVED
+  status: APPROVED
+  decision_basis: CHG-055 already approved the DEP-018 precise requirement; this change only aligns the project-control regression expectation with the resulting canonical diagnostic set.
+  scope:
+    - Change the expected PRECISION_MISSING count from 174 to 173.
+    - Preserve dependency graph nodes, edges, severities and all other baseline assertions.
+  invariants_preserved:
+    - No dependency edge, readiness level or product requirement is changed.
+    - DEP-018 remains READY only under CHG-055/CHG-057 evidence.
+    - Project-control tests remain fail-closed on unexpected diagnostics.
+  precise_requirement: NONE — generic test-baseline correction only; no product requirement semantics.
+  affected_requirements: [NONE — control-only scope]
+  affected_architecture: [NONE]
+  affected_contracts:
+    - id: NONE
+      compatibility: NON_BREAKING
+      consumers_reviewed: [NONE]
+  affected_work_packages: [WP-CORE-009]
+  affected_dependencies: [DEP-018]
+  affected_evidence: [tools/projectctl/tests/test_dependencies.py]
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - CHG-055 readiness evidence and current-main PASS remain authoritative.
+      - Product implementation and PostgreSQL evidence are unchanged.
+    rerun_required: [projectctl full regression]
+  security_authority_impact: NONE
+  conditions:
+    - Do not alter graph counts or weaken diagnostic assertions.
+  rollout: Merge after focused and full project-control regression passes.
+  rollback: Revert the expected warning count to the previous baseline only with a corresponding canonical dependency change.
+  required_rerun: [projectctl full regression, projectctl validate]
+  documentation_updates:
+    - docs/09_Change_Control_Process.md
+    - 09_change/change_requests.csv
+  freeze_context: PRE_M6
