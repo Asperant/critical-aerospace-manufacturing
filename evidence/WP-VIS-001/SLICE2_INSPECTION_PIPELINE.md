@@ -67,8 +67,12 @@ SeaweedFS and validates the observation against the registered contract; a refer
 with a foreign checksum must be refused by the real read. It runs in t1-integration
 ("Vision pipeline over REAL SeaweedFS (WP-VIS-001)") after the infra profile starts.
 It could not run locally (no Docker access for this account): locally it fails with
-`CAP_S3_ENDPOINT not set`, by design never skipping. The PR's CI run is the only
-REAL result.
+`CAP_S3_ENDPOINT not set`, by design never skipping.
+
+REAL result: push CI of `4401f0f` on `wp/WP-VIS-001-inspection-pipeline`,
+t1-integration job 122483330885, step "Vision pipeline over REAL SeaweedFS
+(WP-VIS-001)": `2 passed, 56 deselected`. All jobs of that run passed (ci-gate,
+t1-static, t1-unit, t1-contract, t1-integration, ci-scope).
 
 ## Broker integration: blocked, not attempted
 
