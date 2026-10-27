@@ -1,0 +1,26 @@
+{
+  "schema": "edge-capability-readiness-basis-v1",
+  "edge": "DEP-003",
+  "predecessor_node": "DN-PLAT-TOOLING",
+  "successor_node": "DN-PLAT-COMPOSE",
+  "level": "SKELETON_READY",
+  "producer_wp": "WP-PLAT-002",
+  "producer_pr": 27,
+  "producer_merge_sha": "0ac2ca7848ea723bb95dd1b78d9703ae3fefd5f3",
+  "verified_main_sha": "80b1420e8f19bf8b4d984a85833cb22a8f6c32d7",
+  "precise_requirement": "On current main, mfgctl bootstrap exits successfully and mfgctl doctor executes on the shared development host, emitting the versioned structured diagnostic result. A Docker socket permission failure remains an external host-runtime blocker and is not converted into compose health or integration readiness.",
+  "scope_boundary": "This binding certifies only the DN-PLAT-TOOLING SKELETON_READY command surface required by DEP-003. It does not certify Docker access, compose startup, the Integration profile, DEP-004 or WP-PLAT-001 completion.",
+  "artifacts": [
+    {"path": "tools/mfgctl/README.md", "blob": "967f9ea8a8360501caf252c3817895e6d0589f75", "role": "command_contract"},
+    {"path": "tools/mfgctl/src/mfgctl/cli.py", "blob": "ba72efd139d387d5dea198d24fd28565bbd08e79", "role": "implementation"},
+    {"path": "tools/mfgctl/tests/test_cli.py", "blob": "549d7269d0cbed9294bf38c22d4d7dfa1a9f618d", "role": "tests"},
+    {"path": "infra/mfgctl/capabilities.json", "role": "consumer_registry_present_on_current_main"}
+  ],
+  "tests": [
+    {"test_id": "TEST-PLAT-FABCTL", "path": "tools/mfgctl/tests", "result": "CI/unit suite green"},
+    {"test_id": "MFGCTL-BOOTSTRAP", "command": "uv run --project ci --locked mfgctl bootstrap", "result": "exit 0; already up to date"},
+    {"test_id": "MFGCTL-DOCTOR", "command": "uv run --project ci --locked mfgctl doctor --json", "result": "structured mfgctl.doctor/v1 emitted; Docker permission failure recorded"},
+    {"test_id": "MFGCTL-PROFILE-REGISTRY", "command": "uv run --project ci --locked mfgctl profile list", "result": "profiles and platform-infra capability listed"}
+  ],
+  "verification": "The producer PR #27 is merged and current main contains the command surface and consumer capability registry. The exact SKELETON_READY predicate is satisfied; external Docker access remains a later runtime/integration blocker rather than a fabricated PASS."
+}

@@ -1,0 +1,53 @@
+title: Bind current-main UI and platform skeleton predicates for S2/S3 closure
+trigger: DEP-105 and DEP-003 remained NOT_READY although their bounded producer artifacts are merged and their exact command/contract predicates are verifiable on current main
+reason: WP-UI-002 and WP-PLAT-001 require the exact edge readiness facts before their later work can be evaluated; stale null predicates would block valid owner-local closure work
+class: C2
+review_risk_class: CR-2
+raised_in: S3
+owner: Asrın
+required_human_approvals: 0
+reviewers: []
+decision: APPROVED
+status: APPROVED
+application_control_item: CTRL-HOST-039
+decision_basis: Bind only the two explicit edge predicates to merged current-main artifacts and fresh verification. No UI/Twin integration, Docker runtime, Keycloak acceptance, or work-package DONE claim is made.
+scope:
+  - Bind DEP-105 to the merged operations-bff OpenAPI, fixture and green contract-test predicate.
+  - Bind DEP-003 to the mfgctl bootstrap/doctor skeleton command predicate.
+  - Record the exact external Docker permission limitation without treating it as successful runtime evidence.
+  - Preserve DEP-106, DEP-004 and all final acceptance gates.
+invariants_preserved:
+  - Browser access remains through the BFF contract; no direct broker or database access is introduced.
+  - Core remains canonical and Twin remains a read-only projection.
+  - Platform SKELETON_READY does not imply Docker, Compose or Integration readiness.
+  - Fixture evidence is not real-factory or integrated acceptance evidence.
+precise_requirement: DEP-105 and DEP-003 receive separate edge-specific predicates in docs/05; neither readiness projection generalizes to the associated node or downstream work package.
+affected_requirements: [FR-UI-001, FR-PLAT-003]
+affected_architecture: [ARCH-EDGE-BFF, ARCH-EDGE-WEB, ARCH-PLAT-CLI, ARCH-PLAT-COMPOSE]
+affected_contracts: [bff.operations-bff.v1, mfgctl.doctor/v1]
+affected_work_packages: [WP-UI-001, WP-UI-002, WP-PLAT-001, WP-PLAT-002]
+affected_dependencies: [DEP-003, DEP-105]
+affected_evidence:
+  - evidence/readiness/DN-UI-BFFCON-DEP-105.json
+  - evidence/readiness/DN-PLAT-TOOLING-DEP-003.json
+  - evidence/WP-UI-001/DEVELOPER-CLOSEOUT.md
+  - evidence/WP-PLAT-002/RUN-PLAT-002-DEV-001/record.json
+evidence_staleness:
+  question_answered: true
+  stale: []
+  unaffected:
+    - DEP-106 still requires real Twin state through the BFF at milestone exit.
+    - DEP-004 and full Compose/Integration runtime acceptance remain unresolved.
+    - WP-UI-001, WP-UI-002, WP-PLAT-001 and WP-PLAT-002 are not marked DONE.
+  rerun_required:
+    - Re-evaluate current-main startability for WP-UI-002 and WP-PLAT-001 after merge.
+security_authority_impact: NONE
+conditions:
+  - Do not infer WP-UI-002 completion or DEP-106 from DEP-105.
+  - Do not infer Docker runtime or Integration readiness from DEP-003.
+  - Keep the Docker socket permission issue attributable to host administration.
+rollout: Merge the edge-specific evidence and status projection, then re-evaluate both startability results and continue owner-local work.
+rollback: Revert the DEP-003/DEP-105 precise predicates, evidence files and READY projections together.
+required_rerun: [projectctl validate, projectctl startability WP-UI-002, projectctl startability WP-PLAT-001, current-main BFF contract tests, mfgctl bootstrap and doctor]
+documentation_updates: [docs/05_Dependency_Graph.md, docs/09_Change_Control_Process.md, 09_change/change_requests.csv]
+freeze_context: PRE_M6

@@ -51,3 +51,4 @@ CHG-061,Bind DEP-021 to the bounded Core query contract slice,C2,CR-2,Asrın,APP
 CHG-062,Publish the bounded SchedulingSnapshot producer contract for DEP-030,C2,CR-2,Asrın,APPROVED,APPROVED,WP-CORE-001
 CHG-063,Record current-main PASS for DEP-030,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-037
 CHG-064,Record current-main PASS for DEP-031,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-038
+CHG-065,Bind current-main UI and platform skeleton predicates for S2/S3 closure,C2,CR-2,Asrın,APPROVED,APPROVED,CTRL-HOST-039

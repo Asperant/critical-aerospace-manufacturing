@@ -1225,10 +1225,10 @@ DEP-003:
   need_by: "M0 (S1)"   # sprint 1
   fallback: null
   unblock_evidence: "`mfgctl bootstrap/doctor` runs on dev host"
-  precise_requirement: null
+  precise_requirement: "On current main, mfgctl bootstrap exits successfully and mfgctl doctor executes on the shared development host, emitting the versioned structured diagnostic result. A Docker socket permission failure remains an external host-runtime blocker and is not converted into compose health or integration readiness."
   risk_class: DR-3
   source: "Item 66 #94; Item 74"
-  status: NOT_READY
+  status: READY
 DEP-004:
   predecessor: {node: DN-PLAT-COMPOSE, owner: "Yavuz"}
   successor: {node: DN-PLAT-INTEG, owner: "Yavuz"}
@@ -2503,10 +2503,10 @@ DEP-105:
   need_by: "S1–S2"   # sprint 2
   fallback: F1
   unblock_evidence: "contract merged + contract tests green + example fixture published (OpenAPI + fixtures)"
-  precise_requirement: null
+  precise_requirement: "WP-UI-001 must publish the merged/current-main operations-bff v1 OpenAPI contract, including session and overview query boundaries, a validating overview fixture, and green BFF contract tests. This edge does not certify real Core/Twin integration, Keycloak runtime acceptance, DEP-106 or WP-UI-002 completion."
   risk_class: DR-1
   source: "Item 66 #121, #162"
-  status: NOT_READY
+  status: READY
 DEP-106:
   predecessor: {node: DN-TWIN-SKELETON, owner: "Asrın"}
   successor: {node: DN-UI-SHELL, owner: "Asrın"}
@@ -3785,7 +3785,7 @@ For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §1
 | HARD edge with unknown field-level precision | Declared consumer | Required producer artifact/readiness and existing evidence predicate | Null justification / remaining DoR |
 |---|---|---|---|
 | DEP-002 | DN-PLAT-CD at START | DN-PLAT-REPO: Repository, protected main, CI baseline; INTEGRATION_READY; CI builds immutable images to GHCR | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
-| DEP-003 | DN-PLAT-COMPOSE at START | DN-PLAT-TOOLING: Runtime language/tooling baseline + mfgctl; SKELETON_READY; `mfgctl bootstrap/doctor` runs on dev host | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-003 | DN-PLAT-COMPOSE at START | DN-PLAT-TOOLING: Runtime language/tooling baseline + mfgctl; SKELETON_READY; current-main `mfgctl bootstrap` succeeds and `mfgctl doctor` emits structured diagnostics on the dev host; Docker permission remains external runtime evidence | Edge-specific predicate bound by CHG-065; Docker/Compose/Integration readiness is not inferred. |
 | DEP-005 | DN-PLAT-CD at INTEGRATION | DN-PLAT-INTEG: Integration runtime (shared Linux host bootstrap); INTEGRATION_READY; runtime healthy on shared host + smoke check in CI/INTEGRATION | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-007 | DN-RT-PG at INTEGRATION | DN-PLAT-INTEG: Integration runtime (shared Linux host bootstrap); INTEGRATION_READY; runtime healthy on shared host + smoke check in CI/INTEGRATION | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-008 | DN-RT-NATS at INTEGRATION | DN-PLAT-INTEG: Integration runtime (shared Linux host bootstrap); INTEGRATION_READY; runtime healthy on shared host + smoke check in CI/INTEGRATION | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
@@ -3859,7 +3859,7 @@ For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §1
 | DEP-101 | DN-AUTO-EXEC at INTEGRATION | DN-SCH-PLANCON: RecoveryPlan contract; CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-102 | DN-AUTO-VERIFY at INTEGRATION | DN-AUTO-EXEC: Protected execution via Core typed commands (final revalidation); COMPONENT_READY; effect verification step in workflow | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-103 | DN-AUTO-VERIFY at INTEGRATION | DN-TWIN-VERIFY: Twin verification view for effect verification; INTEGRATION_READY; verified Core/Twin effect (HTTP success insufficient) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
-| DEP-105 | DN-UI-SHELL at START | DN-UI-BFFCON: BFF/OpenAPI contracts + UI fixtures; CONTRACT_READY; contract merged + contract tests green + example fixture published (OpenAPI + fixtures) | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-105 | DN-UI-SHELL at START | DN-UI-BFFCON: BFF/OpenAPI contracts + UI fixtures; CONTRACT_READY; current-main operations-bff OpenAPI/fixtures are merged and BFF contract tests are green | Edge-specific predicate bound by CHG-065; real Core/Twin integration, Keycloak and DEP-106 remain separate. |
 | DEP-106 | DN-UI-SHELL at MILESTONE_EXIT | DN-TWIN-SKELETON: Twin skeleton (projector + query API); INTEGRATION_READY; UI shows real Twin state via BFF | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-107 | DN-UI-APPROVAL at START | DN-UI-SHELL: Command Center shell via BFF; COMPONENT_READY; shell routing + auth session in place | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-108 | DN-UI-APPROVAL at INTEGRATION | DN-RT-IDP: Keycloak identity runtime; INTEGRATION_READY; real login in Approval Center | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
