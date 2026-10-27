@@ -1273,6 +1273,15 @@ READY. This does not claim WP-CORE-003 completion, command execution,
 idempotent/durable outcomes, legal transition integration, real PostgreSQL
 acceptance, or DEP-028 acceptance.
 
+## CHG-072 — refresh the projectctl precision diagnostic baseline
+
+CHG-072 / CTRL-HOST-046 is a C1 control-only housekeeping correction. The
+canonical dependency graph remains unchanged; current validation produces 167
+`PRECISION_MISSING` warnings after the approved edge-specific precision
+bindings, while the stale regression assertion expected 173. The correction
+changes only that expected diagnostic count and preserves all graph shape,
+severity, readiness-incompatibility and fixture-diagnostic assertions.
+
 ## CHG-071 — introduce versioned LotHeld.v2 and bind the Core outbox slice
 
 CHG-071 / CTRL-HOST-045 is the approved C2/CR-2 change for the WP-CORE-005
