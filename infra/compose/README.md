@@ -63,6 +63,23 @@ the memory limit. `stack.sh` restarts a running SeaweedFS when the S3 identities
 change, because the gateway reads them only at start. `stack.sh env` adds
 `CAP_QDRANT_URL`, `CAP_QDRANT_API_KEY` and `CAP_MLFLOW_URL`.
 
+## Startup order and recovery (WP-PLAT-003, 02 Sequence I)
+
+`compose up` follows 02 Sequence I: identity (Keycloak) → data stores (PostgreSQL,
+SeaweedFS, Valkey, Qdrant, the Temporal and MLflow stores) → event backbone (NATS),
+with application services after them as they land. A service waits only for the
+health or completion of a service in its own or an earlier layer, never with a bare
+start order, and the wait graph has no cycle (static tests). Nothing waits without a
+real runtime need: PostgreSQL does not wait for Keycloak's slow first boot.
+
+After a host reboot Docker restarts containers itself, all at once and without
+`depends_on`. Recovery then rests on health checks plus `restart: unless-stopped`:
+a service that started before its store (Temporal before PostgreSQL) exits and is
+restarted until the store answers. Setup jobs do not run on reboot; they are
+idempotent and rerun with the next `stack.sh up`. `stack.sh up` waits up to 11
+minutes, because Keycloak's first `start-dev` boot builds Quarkus (205 s measured
+on the shared host).
+
 ## Run it
 
 ```bash

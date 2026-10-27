@@ -182,7 +182,9 @@ services:
           grep -q '"status": "UP"' <&3
       interval: 10s
       timeout: 5s
-      retries: 30
+      # First start-dev boot runs the Quarkus build: 205 s on the shared host
+      # (WP-PLAT-003 measurement), so allow up to ~10 minutes before unhealthy.
+      retries: 60
       start_period: 20s
     deploy:
       resources:

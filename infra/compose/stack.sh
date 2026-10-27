@@ -153,7 +153,7 @@ case "${1:-}" in
       "${COMPOSE[@]}" "${args[@]}" restart seaweedfs
     fi
     started=$(date +%s)
-    if ! "${COMPOSE[@]}" "${args[@]}" up --detach --wait --wait-timeout 300; then
+    if ! "${COMPOSE[@]}" "${args[@]}" up --detach --wait --wait-timeout 660; then
       "${COMPOSE[@]}" "${args[@]}" ps >&2 || true
       "${COMPOSE[@]}" "${args[@]}" logs --tail 60 >&2 || true
       echo "ERROR: profile(s) ${profiles[*]} did not become healthy" >&2

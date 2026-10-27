@@ -186,3 +186,91 @@ def test_mlflow_server_never_holds_the_s3_admin_identity() -> None:
     assert "S3_ADMIN" not in server_env and "S3_MLFLOW_KEY" in server_env
     assert SERVICES["mlflow"]["env_file"][0]["path"].endswith("/mlflow.env")
     assert SERVICES["mlflow-init"]["env_file"][0]["path"].endswith("/mlflow-init.env")
+
+
+# ------------------------------- WP-PLAT-003: dependency-ordered startup ---
+
+# 02 Sequence I (host reboot / platform recovery): identity -> data stores (with the
+# workflow-engine and artifact stores) -> event backbone -> application services.
+STARTUP_LAYERS = {
+    "keycloak": 0,
+    "postgres": 1,
+    "seaweedfs": 1,
+    "valkey": 1,
+    "qdrant": 1,
+    "temporal-schema": 1,
+    "temporal": 1,
+    "temporal-namespace": 1,
+    "mlflow-init": 1,
+    "mlflow": 1,
+    "nats": 2,
+}
+
+
+def layer_violations(services: dict[str, Any], layers: dict[str, int]) -> list[str]:
+    """Waits that are not readiness, or that point to a later Sequence I layer."""
+    found = []
+    for name, service in services.items():
+        for dependency, condition in (service.get("depends_on") or {}).items():
+            if condition.get("condition") not in {
+                "service_healthy",
+                "service_completed_successfully",
+            }:
+                found.append(
+                    f"{name} -> {dependency}: bare start order is not readiness"
+                )
+            elif layers[dependency] > layers[name]:
+                found.append(
+                    f"{name} (layer {layers[name]}) waits for {dependency} "
+                    f"(layer {layers[dependency]}): against 02 Sequence I"
+                )
+    return found
+
+
+def startup_cycle(services: dict[str, Any]) -> list[str] | None:
+    """The first wait cycle found, as a path, or None."""
+    state: dict[str, int] = {}
+
+    def visit(name: str, path: list[str]) -> list[str] | None:
+        if state.get(name) == 2:
+            return None
+        if state.get(name) == 1:
+            return path + [name]
+        state[name] = 1
+        for dependency in services[name].get("depends_on") or {}:
+            if cycle := visit(dependency, path + [name]):
+                return cycle
+        state[name] = 2
+        return None
+
+    for name in services:
+        if cycle := visit(name, []):
+            return cycle
+    return None
+
+
+def test_every_service_has_a_startup_layer() -> None:
+    assert set(STARTUP_LAYERS) == set(SERVICES)
+
+
+def test_dependencies_follow_sequence_i() -> None:
+    """A service waits only for the health or completion of its own or an earlier layer."""
+    assert layer_violations(SERVICES, STARTUP_LAYERS) == []
+
+
+def test_startup_graph_has_no_cycle() -> None:
+    """No health check can wait, directly or transitively, on a service that waits on it."""
+    assert startup_cycle(SERVICES) is None
+
+
+def test_ordering_checks_reject_broken_graphs() -> None:
+    healthy = {"condition": "service_healthy"}
+    later = {"keycloak": {"depends_on": {"nats": healthy}}, "nats": {}}
+    assert layer_violations(later, {"keycloak": 0, "nats": 2})
+    bare = {
+        "temporal": {"depends_on": {"postgres": {"condition": "service_started"}}},
+        "postgres": {},
+    }
+    assert layer_violations(bare, {"temporal": 1, "postgres": 1})
+    loop = {"a": {"depends_on": {"b": healthy}}, "b": {"depends_on": {"a": healthy}}}
+    assert startup_cycle(loop) == ["a", "b", "a"]
