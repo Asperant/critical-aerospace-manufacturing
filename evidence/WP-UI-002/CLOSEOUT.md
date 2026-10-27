@@ -40,6 +40,10 @@ TypeScript, Vitest and Vite production build. The BFF local suite passed 228
 tests, and Ruff check/format passed. The only observed warning is the existing
 Starlette/httpx TestClient deprecation warning.
 
+CI note: the first current-head run failed only because the pull-request body
+payload lacked the governance `Requirements:` field. The field is now present
+in the PR body and this closeout; no product test failure or code retry occurred.
+
 ## Readiness and acceptance boundary
 
 - `projectctl startability WP-UI-002` on the current baseline is `STARTABLE`.
