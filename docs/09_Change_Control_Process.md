@@ -1242,3 +1242,13 @@ Twin projector, BFF/schema and test-strategy checks were re-run at that SHA.
 No readiness level, work-package status, authority boundary or integration
 claim changes. The Docker socket permission failure, DEP-032/033/035, DEP-004
 and DEP-106 remain explicit downstream or external blockers.
+
+## CHG-068 — bind the existing Core operational-command v1 contract to DEP-026
+
+CHG-068 / CTRL-HOST-042 is a C1 control-plane reconciliation for DEP-026. The
+existing merged `core.operational-command.v1` registry, versioned schema and
+four example fixtures satisfy the edge-specific CONTRACT_READY predicate, and
+the producer/consumer contract checks are green on current main. DEP-026 is
+therefore projected READY. This does not claim WP-CORE-003 completion,
+idempotent command execution, durable command outcomes, real database
+integration, or DEP-027/DEP-028 acceptance.

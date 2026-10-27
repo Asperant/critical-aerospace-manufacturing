@@ -1604,10 +1604,10 @@ DEP-026:
   need_by: "S2"   # sprint 2
   fallback: F1
   unblock_evidence: "contract merged + contract tests green + example fixture published"
-  precise_requirement: null
+  precise_requirement: "The Core operational-command v1 contract shall be published with stable command/version identity for PlaceLotOnHold, ReleaseMaterialHold, DispatchLot and CreateMaintenanceWorkOrder, compatibility/example fixtures, and green producer/consumer contract validation."
   risk_class: DR-1
   source: "Item 66 #42"
-  status: NOT_READY
+  status: READY
 DEP-027:
   predecessor: {node: DN-CORE-CMDCON, owner: "Asrın"}
   successor: {node: DN-CORE-CMDEXEC, owner: "Asrın"}
@@ -3804,7 +3804,7 @@ For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §1
 | DEP-023 | DN-EVT-SPINE at INTEGRATION | DN-EVT-CONTRACTS: Event contracts (envelope + domain events, IC registry); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-024 | DN-EVT-SPINE at INTEGRATION | DN-CORE-OUTBOX: Transactional outbox + relay; INTEGRATION_READY; real cross-boundary integration test green on INTEGRATION (outbox → NATS → consumer) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-025 | DN-EVT-SPINE at INTEGRATION | DN-RT-NATS: NATS JetStream runtime; INTEGRATION_READY; real JetStream in CI + INTEGRATION (no fake bus, CI-INV-07) | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
-| DEP-026 | DN-CORE-CMDCON at START | DN-CORE-CONTRACTS: Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-026 | DN-CORE-CMDCON at START | DN-CORE-CONTRACTS: Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity); CONTRACT_READY; contract merged + contract tests green + example fixture published | Bound by CTRL-HOST-042 to the merged `core.operational-command.v1` registry/schema and four versioned fixtures; producer/consumer contract validation is green. This opens the contract gate only; command execution, durable outcomes and integration remain DEP-027/028 scope. |
 | DEP-027 | DN-CORE-CMDEXEC at INTEGRATION | DN-CORE-CMDCON: Core command contracts (hold / release / dispatch / maintenance request); CONTRACT_READY; versioned hold/release/dispatch/maintenance-request command schemas + stable command/version identity + compatibility/example fixtures + green producer/consumer contract tests | Existing CONTRACT planning predicate is explicit; the contract-first producer slice is owned by WP-CORE-003; execution persistence/idempotency remains a later capability slice. |
 | DEP-029 | DN-CORE-GENEALOGY at INTEGRATION | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; genealogy queries over real lineage | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-031 | DN-TWIN-SKELETON at START | DN-EVT-CONTRACTS: Event contracts (envelope + domain events, IC registry); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
