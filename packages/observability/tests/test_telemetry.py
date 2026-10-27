@@ -8,6 +8,7 @@ from collections.abc import Iterator
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from typing import Any
 
+import cap_observability.telemetry as telemetry_module
 import pytest
 from cap_observability import check_log_lines, check_log_record, check_resource
 from cap_observability.telemetry import (
@@ -293,6 +294,19 @@ def test_unreachable_collector_drops_and_warns_once(
     handler.flush()  # must not raise into the application
     handler.close()
     assert handler.dropped == 2 and handler.sent == 0
+    assert capsys.readouterr().err.count("cap_observability:") == 1
+
+
+def test_first_warning_is_not_suppressed_on_a_fresh_monotonic_clock(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    monkeypatch.setattr(telemetry_module.time, "monotonic", lambda: 1.0)
+    post = FakePost(error=OSError("connection refused"))
+    handler = handler_with(post, batch_size=1)
+    handler.emit(make("a"))
+    handler.flush()
+    handler.close()
     assert capsys.readouterr().err.count("cap_observability:") == 1
 
 
