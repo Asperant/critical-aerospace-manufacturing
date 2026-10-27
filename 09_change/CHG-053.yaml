@@ -1,0 +1,65 @@
+CHG-053:
+  title: Restore canonical Plane owner assignments and approved single-cycle projection
+  trigger: Fresh privileged 180-WP Plane audit after reconciliation showed 106 non-Asrın canonical owners unassigned and terminal-cycle projection emptied S3, S5, S7 and S9
+  reason: The current generic projection preserved canonical owner metadata but incorrectly limited Plane assignees to the Asrın queue profile and converted multi-cycle roadmap windows to their terminal cycle. The historical approved operational model assigns every WP to its canonical owner and stores exactly one cycle using the first ordered cycle in the approved planning window.
+  class: C3
+  review_risk_class: CR-3
+  raised_in: S4
+  owner: Asrın
+  application_control_item: CTRL-PM-018
+  required_human_approvals: 0
+  decision: APPROVED
+  status: APPROVED
+  human_decision_basis: Explicit project-owner request on 27 October 2026 for a control-plane regression repair; no product WP implementation is authorized
+  affected_requirements:
+    - NONE — control-plane Plane projection and queue filtering only; product requirements are unchanged
+  affected_architecture:
+    - NONE — existing projectctl/Plane boundary and queue profile boundary are preserved
+  affected_contracts:
+    - id: CTRL-PLANE-RECONCILIATION-v1
+      compatibility: NON_BREAKING
+      consumers_reviewed: [CTRL-PM-009, CTRL-PM-010, cap-plane-queue]
+    - id: CTRL-QUEUE-READ-v1
+      compatibility: NON_BREAKING
+      consumers_reviewed: [profile-scoped cap-plane-queue selection]
+  affected_work_packages:
+    - NONE — all 180 WPs are reconciliation targets only; CORE-009 and all product lifecycle semantics remain untouched
+  affected_dependencies:
+    - NONE — dependency edges, readiness, Slot Release proofs and BLOCKED projection remain unchanged
+  affected_evidence:
+    - evidence/project-setup/CTRL-PM-009-observed.json — historical approved single-cycle source for the 179-WP predecessor projection
+    - project_control/TEAM_WORKFLOW.md — verified owner/member identity bindings
+    - fresh privileged sanitized 180-WP Plane audit before mutation
+    - complete owner/cycle/lifecycle mismatch preview and post-merge readback
+    - tools/projectctl/tests/test_plane_import.py
+    - tools/projectctl/tests/test_plane_plan.py
+    - tools/host/plane-queue/test_queue.py
+  evidence_staleness:
+    question_answered: true
+    stale:
+      - Current terminal-cycle and Asrın-only assignment projection is superseded as an operational projection, but retained as historical audit evidence
+    unaffected:
+      - Plane lifecycle state, orthogonal BLOCKED labels, Slot Release proofs, milestone/module membership and control items
+      - Canonical full cycle windows and owner metadata in project documentation
+      - Queue profile filtering and product WP selection semantics
+    rerun_required:
+      - Generic all-owner assignment and wrong-owner negative-path tests
+      - Generic first-cycle projection and exact-one-cycle tests, including all S1–S13 counts
+      - Fresh 180-WP before/after audit with lifecycle equality assertion
+      - Fresh profile-filtered cap-plane-queue readback for Asrın
+  security_authority_impact: NONE — verified existing Plane member IDs are used for deterministic owner binding; no credentials, authentication, authorization or manufacturing authority changes
+  rollout: Merge the control-only branch with required CI, deploy only merged reference source through the supported root installer, run the existing generic Plane reconciliation with a fresh mutation preview, apply owner and relationship repairs with per-write read-back, then run a fresh privileged audit and profile-filtered queue readback.
+  rollback: Restore deployed helper source through the supported root-only rollback procedure. Do not replay stale Plane snapshots, reset lifecycle state, remove relationships blindly or alter Slot Release/audit history.
+  required_rerun:
+    - Plane projection focused regression suite
+    - Queue identity and profile-filtering focused regression suite
+    - Full projectctl and host control regression suites selected by CI
+    - Fresh privileged sanitized 180-WP Plane audit
+    - Fresh Asrın cap-plane-queue readback
+  documentation_updates:
+    - 09_change/CHG-053.yaml
+    - 09_change/change_requests.csv
+    - docs/09_Change_Control_Process.md
+    - project_control/PROJECT_SETUP_MASTER_EXECUTION_SPEC.md
+    - tools/projectctl/README.md
+  freeze_context: POST_M6_PERMITTED

@@ -34,6 +34,13 @@ class QueueTests(unittest.TestCase):
         self.assertEqual(q.select('asrin', {'a': task(state='BACKLOG')})['status'], 'NO_TASK')
         self.assertEqual(q.select('selman', {'a': task()})['status'], 'NO_TASK')
 
+    def test_profile_filter_is_separate_from_plane_assignment(self):
+        selman = task('WP-VIS-001')
+        selman['_profile'] = 'selman'
+        rows = {'asrin': task('WP-GOV-001'), 'selman': selman}
+        self.assertEqual(q.select('asrin', rows)['current_task']['wp_id'], 'WP-GOV-001')
+        self.assertEqual(q.select('selman', rows)['current_task']['wp_id'], 'WP-VIS-001')
+
     def test_multiple_candidates_never_choose(self):
         for states in [('READY', 'READY'), ('IN_PROGRESS', 'IN_PROGRESS')]:
             result = q.select('asrin', {str(n): task(str(n), state) for n, state in enumerate(states)})
@@ -407,7 +414,7 @@ class QueueTests(unittest.TestCase):
                  'name': '[WP-GOV-001] Title',
                  'description_html': json.dumps({'canonical_wp_id': 'WP-GOV-001',
                                                  'canonical_owner': 'Selman Özdemir'}),
-                 'assignees': [], 'state': 'READY', 'labels': []}
+                 'assignees': [q.PEOPLE['selman'][1]], 'state': 'READY', 'labels': []}
         data = {'members/': [{'id': p[1], 'email': p[2]} for p in q.PEOPLE.values()],
                 'states/': [{'id': s, 'name': s} for s in q.STATES],
                 'labels/': [{'id': 'blocked', 'name': 'BLOCKED'}], 'issues/': [issue]}
@@ -420,8 +427,9 @@ class QueueTests(unittest.TestCase):
             def rows(self, route):
                 return data[route]
 
-        self.assertEqual(q.snapshot(Fake(), catalog, set())['WP-GOV-001']['_profile'], 'selman')
-        issue['assignees'] = [q.PEOPLE['selman'][1]]
+        row = q.snapshot(Fake(), catalog, set())['WP-GOV-001']
+        self.assertEqual(row['_profile'], 'selman')
+        issue['assignees'] = []
         with self.assertRaises(q.Unsafe):
             q.snapshot(Fake(), catalog, set())
 
