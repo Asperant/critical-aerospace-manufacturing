@@ -139,6 +139,15 @@ readiness or completion.
 
 `projectctl check-ready <WP-ID>` and `projectctl check-done <WP-ID>` emit deterministic JSON to stdout. PASS exits 0; FAIL and UNKNOWN exit 1; input-loading failures exit 2. `check-ready` can produce PASS only from the supported bound Markdown assessment format; invalid, missing or ambiguous evidence remains UNKNOWN. `check-done` remains fail-closed pending its post-merge evidence adapter. No Plane calls, state writes, automatic transitions or local execution database are introduced.
 
+## CHG-054 / CTRL-HOST-031 — startability
+
+`projectctl startability <WP-ID>` emits `cap-startability-v1` without reading
+Plane, READY/DoR evidence, audit history, caches or Slot Release data. It returns
+`STARTABLE` only when the canonical WP/owner/scope resolve unambiguously and no
+canonical `HARD + START` edge is unresolved. `HARD + INTEGRATION` and later-stage
+edges do not block implementation start. This command is a startability
+diagnostic, not a DONE or acceptance certification.
+
 
 Development-review policy validation checks the active static companion
 `09_change/development_review_policy.json` against its CHG-018 final owner decision and

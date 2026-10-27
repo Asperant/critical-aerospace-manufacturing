@@ -144,3 +144,12 @@ or IDs). `current_task` is the owner's current actionable work; READY work is ad
 `deferred_waits`; with no actionable work both tasks are null. If the resolver classification is
 unavailable nothing is excluded (previous fail-closed behavior); multiple actionable work remains
 AMBIGUOUS.
+
+## CHG-054 / CTRL-HOST-031 — advisory queue
+
+Queue status, health, read failures, cache state and deferred/Slot Release
+classification are diagnostics only. They never authorize or deny product
+implementation and do not determine whether a developer may select another WP.
+Use `projectctl startability <WP-ID>` for the canonical owner/scope and
+`HARD + START` dependency decision. The helper no longer invokes AUTO_NEXT,
+GitHub evidence polling or proof refresh on the queue read path.

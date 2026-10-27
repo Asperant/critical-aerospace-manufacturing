@@ -668,15 +668,41 @@ Execution fields may live in Plane.
 
 ### Execution queue
 
-Plane is the source of truth for execution state, assignment and blockers; GitHub remains engineering-work/review/evidence truth and docs remain specification truth. Read the assignee's live Plane queue first: IN_PROGRESS is the current WP; otherwise READY is the next WP. Normally keep at most one READY WP per person. Multiple IN_PROGRESS or multiple READY candidates, or no IN_PROGRESS/READY task, require planning-owner resolution; never select work independently from BACKLOG. A blocked active WP must be surfaced, not silently replaced.
+Under CHG-054 / CTRL-HOST-031, Plane remains the source of execution visibility,
+assignment and blockers; GitHub remains engineering-work/review/evidence truth and
+docs remain specification truth. `cap-plane-queue` is advisory only: its task,
+health, read, cache and `AMBIGUOUS`/`NO_TASK`/`UNAVAILABLE` results never
+authorize or deny product implementation. A queue read may be used for
+diagnostics, but product work is selected from an explicit canonical WP and its
+canonical context.
 
-At the start of every Remote SSH developer session, run `cap-plane-queue` (uses `CAP_PROFILE`) to read the live queue without exposing Plane credentials. For product WP implementation, use the canonical WP ID from `current_task` (IN_PROGRESS), otherwise `next_task` (READY), then run `projectctl context <WP-ID>`. Do not start product WP implementation when the live result is UNAVAILABLE, AMBIGUOUS, BLOCKED, NO_TASK, or the task state is not IN_PROGRESS/READY. Do not start product WP implementation directly from BACKLOG or choose arbitrary BACKLOG work. The queue helper remains read-only.
+At the start of every Remote SSH developer session, `cap-plane-queue` may be
+run for diagnostics without exposing Plane credentials. Product implementation
+uses an explicit canonical WP and `projectctl context <WP-ID>`; it does not
+require `current_task`, `next_task`, READY, or a successful queue read.
+
+Product startability is exactly: the WP resolves exactly once, canonical owner
+and scope are unambiguous, and no unresolved canonical `HARD + START`
+dependency exists. Plane availability, READY/DoR, audit continuity, Slot Release
+proofs, preflight/cache freshness and metadata reconciliation are not START
+blockers. HARD `INTEGRATION`, `MILESTONE_EXIT` and `FREEZE` edges remain at
+their existing later-stage gates. Use `projectctl startability <WP-ID>` for the
+deterministic canonical check.
 
 Approved control-plane maintenance is a narrow exception to the product-WP queue gate. It may proceed when all of the following are true: the work has an explicit approved CHG/CTRL identifier; the branch is `control/<CTRL-ID>-<slug>`; the implementation is limited to control-plane, governance, or project-control tooling scope; and it does not implement a product WP or mutate product lifecycle state. For this exception, the explicit CHG/CTRL context and its canonical scope replace `projectctl context <WP-ID>`; no product WP context may be invented or selected to satisfy the gate. Normal focused tests, PR, CI, review, merge, deployment, and evidence rules remain mandatory. If any exception condition is missing or ambiguous, the normal product-WP queue gate applies and implementation remains fail-closed.
 
 As execution actually progresses, product WP work uses `cap-plane-transition <WP-ID> <TARGET_STATE>` with a reason and evidence references to keep only the assigned canonical WP workflow/BLOCKED projection current. Control maintenance must not use product-WP lifecycle transitions or alter Plane assignment/state for unrelated work. CAP_PROFILE plus canonical owner and live Plane assignee matching are trusted-team operational guards, not a security boundary between processes sharing ailab. Never touch another profile's assignment or other Plane fields.
 
-Before product-WP implementation, retrieve `projectctl context <WP-ID>` for that exact canonical WP, inspect dependencies and DoR, and use its WP branch. For approved control maintenance, retrieve and inspect the explicit CHG/CTRL context and use its `control/<CTRL-ID>-<slug>` branch instead. `projectctl next` gives planning candidates, not permission to start; offline `status` is not the live queue. The assigned developer agent may release BACKLOG to READY only after evidenced canonical DoR and actual dependency/readiness checks; this never authorizes random BACKLOG selection. Move READY to IN_PROGRESS only after implementation actually starts. Every transition must satisfy canonical DoR/DoD/governance and actual GitHub/PR/CI/evidence facts; Plane must never run ahead of reality. Mechanically observable progress uses those actual facts without an additional machine-generated confirmation comment. Accountable DoR/DoD assessments, scope cancellation decisions and blocker reasons/resolutions still require real attributable evidence; no human reviewer presence is required; reuse existing PR, review or repository evidence rather than copying it into a special JSON comment. Missing/ambiguous evidence fails closed. BLOCKED is orthogonal: record a real reason, blocker owner/work or external dependency, and verified resolution before clearing it. CANCELED requires an explicit recorded project-owner decision; agents cannot cancel scope themselves. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted. UNKNOWN from `check-ready` is not PASS; an applicable accountable owner assessment must have attributable evidence and limitations in GitHub and the transition audit. A Plane state or tool result alone never certifies verification.
+Before product-WP implementation, retrieve `projectctl context <WP-ID>` for
+that exact canonical WP, inspect its canonical dependencies, run the
+`HARD + START` check and use its WP branch. For approved control maintenance,
+retrieve and inspect the explicit CHG/CTRL context and use its
+`control/<CTRL-ID>-<slug>` branch instead. `projectctl next` gives planning
+candidates, not permission to start; it is not a replacement for canonical
+context. Plane may be reconciled later. Lifecycle transitions, MERGE_READY and
+DONE must still satisfy their actual technical/CI/evidence facts; UNKNOWN is
+never PASS. BLOCKED is orthogonal, CANCELED still requires an explicit
+project-owner decision, and Merged != Done.
 
 
 ---
@@ -790,6 +816,28 @@ Do not improvise architecture.
 Read the canonical documentation.
 
 If the documentation is insufficient or contradictory, surface the ambiguity explicitly.
+
+## CHG-054 / CTRL-HOST-031 — product execution control-plane simplification
+
+This approved control supersedes earlier queue/Slot Release authorization wording
+for product implementation start. The doctrine is `START fail-open / DONE
+fail-closed`. Product start is blocked only by canonical owner/scope ambiguity,
+an unresolved real `HARD + START` dependency, or an unsafe/spec-conflicting
+operation requiring human decision. Queue status, Plane health/readability,
+`current_task`, READY/DoR, audit continuity, proof/cache freshness, preflight
+availability and metadata reconciliation are advisory diagnostics.
+
+`cap-plane-queue` must remain read-only and advisory. Slot Release v2 and its
+historical proof/cache/fingerprint/continuity data may remain for diagnostics but
+must not veto a developer's next WP. External or downstream blockers remain
+visible as orthogonal `BLOCKED`/`VALIDATING` state; when local work is complete,
+the developer may select another canonical WP without Slot Release proof.
+
+`projectctl startability <WP-ID>` is the exact start check. MERGE_READY and DONE
+remain fail-closed with exact merged revision, CI, real evidence, dependency
+acceptance, traceability and runtime/integration verification; `UNKNOWN != PASS`.
+AUTO_NEXT and preparation are advisory/on-demand, and automatic preparation is
+disabled by default. This control never starts or mutates WP-CORE-009.
 
 
 ## AUTO_NEXT — CHG-019 / CTRL-HOST-004 (22 October 2026)

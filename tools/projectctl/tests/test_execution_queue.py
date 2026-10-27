@@ -19,6 +19,7 @@ from projectctl.execution_queue import (
     preflight_health,
     project_view,
     scope_projection,
+    startability_from_view,
     validate_preferences,
 )
 from projectctl.project import load_project
@@ -55,6 +56,57 @@ def baseline():
 def evaluate(data, owner="asrin"):
     project, policy, live, evidence = data
     return compute_next_eligible(project, live, evidence, owner, policy)
+
+
+def startability_view(*edges, owner="Asrın Dündar", scope_known=True):
+    return {
+        "cards": {
+            "WP-TEST-001": {
+                "owner": owner,
+                "scope_known": scope_known,
+                "edges": list(edges),
+            }
+        }
+    }
+
+
+def edge(identity, strength="HARD", stage="START", status="READY"):
+    return {
+        "id": identity,
+        "status": status,
+        "semantics": {"strength": strength, "blocking_stage": stage},
+    }
+
+
+def test_startability_ignores_queue_or_plane_diagnostics():
+    result = startability_from_view(startability_view(), "WP-TEST-001")
+    assert result["result"] == "STARTABLE"
+    assert result["blockers"] == []
+
+
+def test_startability_blocks_only_unresolved_hard_start():
+    result = startability_from_view(
+        startability_view(edge("DEP-018", status="NOT_READY")), "WP-TEST-001"
+    )
+    assert result["result"] == "BLOCK"
+    assert result["blockers"] == ["HARD_START_DEPENDENCY_UNRESOLVED:DEP-018"]
+
+
+def test_startability_ignores_integration_dependency():
+    result = startability_from_view(
+        startability_view(edge("DEP-019", stage="INTEGRATION", status="NOT_READY")),
+        "WP-TEST-001",
+    )
+    assert result["result"] == "STARTABLE"
+
+
+def test_startability_blocks_ambiguous_owner_or_scope():
+    assert startability_from_view(
+        startability_view(owner=""), "WP-TEST-001"
+    )["blockers"] == ["CANONICAL_OWNER_AMBIGUOUS"]
+    assert startability_from_view(
+        startability_view(scope_known=False), "WP-TEST-001"
+    )["blockers"] == ["CANONICAL_SCOPE_UNKNOWN"]
 
 
 def qualify(data, wp):

@@ -890,3 +890,19 @@ It must:
 - leave the repository reviewable at every checkpoint.
 
 Do not optimize for speed by weakening governance. Correctness, traceability, idempotency, and reversibility are more important than finishing quickly.
+
+## CHG-054 / CTRL-HOST-031 — start fail-open, DONE fail-closed
+
+This approved control supersedes the earlier queue-authorization wording for
+product implementation. `cap-plane-queue`, Plane health/readability,
+`current_task`, READY/DoR, audit continuity, Slot Release proofs and preparation
+state are advisory diagnostics. A product WP is startable when its canonical
+record, owner and scope resolve unambiguously and it has no unresolved canonical
+`HARD + START` dependency. Later-stage dependency semantics remain unchanged.
+
+The 180-WP owner/cycle projection from CTRL-PM-018 remains intact (Asrın 74,
+Batuhan 32, Selman 17, Yavuz 57; 175 scheduled and 5 unscheduled), and this
+control does not reset lifecycle state or start WP-CORE-009. MERGE_READY and
+DONE retain their exact revision, CI, evidence, integration, traceability and
+runtime verification gates; `UNKNOWN` is never PASS. Automatic preparation is
+disabled by default and remains available only on demand.

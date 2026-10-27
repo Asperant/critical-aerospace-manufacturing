@@ -5,7 +5,6 @@ CAP_PROFILE is an operational guard, not a same-UID security boundary.
 Only this module's constructed state/BLOCKED PATCH is possible. No generic API CLI.
 """
 import base64
-import contextlib
 import datetime as dt
 import fcntl
 import hashlib
@@ -25,6 +24,20 @@ import urllib.request
 def load_support():
     loader = importlib.machinery.SourceFileLoader('cap_queue', '/usr/local/libexec/cap-plane-queue')
     spec = importlib.util.spec_from_loader(loader.name, loader)
+    module = importlib.util.module_from_spec(spec)
+    loader.exec_module(module)
+    return module
+
+
+def auto_next_support():
+    """Compatibility hook for historical tests and on-demand diagnostics.
+
+    CHG-054 removes all automatic calls from the transition critical path; an
+    explicit diagnostic may still load the advisory helper when requested.
+    """
+    loader = importlib.machinery.SourceFileLoader('cap_auto_next', '/usr/local/libexec/cap-auto-next.py')
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     loader.exec_module(module)
     return module
@@ -1228,6 +1241,30 @@ def policy_checks(policy):
          and data.get('product_hitl_unchanged') is True, 'REVIEW_POLICY_CONFLICT')
 
 
+def product_startability(context):
+    """CHG-054: the only implementation-start blockers are canonical facts."""
+    work_package = context.get('work_package', {})
+    owner = work_package.get('primary_owner', {}).get('canonical_name')
+    need(owner in {details[0] for details in q.PEOPLE.values()}, 'CANONICAL_OWNER_AMBIGUOUS')
+    need(
+        all(
+            work_package.get(field)
+            for field in (
+                'id', 'scope_class', 'dor_refs', 'dod_refs',
+            )
+        ),
+        'CANONICAL_SCOPE_UNKNOWN',
+    )
+    for edge in context.get('dependency_edges', []):
+        semantics = edge.get('semantics', {})
+        if semantics.get('strength') == 'HARD' and semantics.get('blocking_stage') == 'START':
+            # Canonical execution snapshots may carry an explicit resolver
+            # status.  Older transition policy records intentionally omit it;
+            # their evidence-backed READY gate remains authoritative.
+            if 'status' in edge:
+                need(edge.get('status') == 'READY', 'HARD_START_DEPENDENCY_UNRESOLVED:' + edge.get('id', 'UNKNOWN'))
+
+
 def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=None,projection=None):
     policy_checks(policy)
     context=policy['contexts'][wp]
@@ -1253,10 +1290,7 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
     if post and pr: need(pr.get('merged') is True, 'PR_NOT_ACTUALLY_MERGED')
     owner=GITHUB[profile]
     # Only semantic operations/readiness actually consume assessment records.
-    start_dependencies=target=='IN_PROGRESS' and any(
-        e['semantics']['strength']=='HARD' and e['semantics']['blocking_stage']=='START'
-        for e in context['dependency_edges'])
-    rows=records(gh,refs,wp,sha,pr) if target in {'READY','BLOCKED','UNBLOCKED','CANCELED','DONE'} or source=='DONE' or start_dependencies else []
+    rows=records(gh,refs,wp,sha,pr) if target in {'READY','BLOCKED','UNBLOCKED','CANCELED','DONE'} or source=='DONE' else []
     if target=='CANCELED':
         decision=confirmation(rows,['Asperant'],wp,source,target,sha,policy)
         need(decision.get('owner_decision')=='CANCEL', 'EXPLICIT_OWNER_CANCELLATION_REQUIRED')
@@ -1315,32 +1349,11 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
         criteria(gh,record,sorted(record['checks']) if record.get('_ready_canonical')
                  else policy['dor_task']+card['dor_refs'],sha)
     elif target=='IN_PROGRESS':
+        product_startability(context)
         if starting_commit: gh.started_commit(wp,sha,profile)
         else: need(not pr.get('merged') and pr.get('state')=='open', 'NO_LIVE_IMPLEMENTATION_PR')
         if source=='IN_REVIEW': need(pr.get('draft') is True, 'REWORK_REQUIRES_DRAFT_PR')
-        active=[r for r in plane.items if r.get('assignees')==[q.PEOPLE[profile][1]] and
-                r.get('state')==plane.states['IN_PROGRESS'] and r['id']!=item['id']]
-        if active:
-            try:
-                auto=auto_next_support()
-                resolver=auto.load_resolver()
-                live=auto.live_view(sys.modules[__name__],plane,policy,profile,gh)
-                need(live.get('complete') is True, 'WIP_LIVE_VIEW_INCOMPLETE')
-                # Only a fresh, positively verified released wait frees a slot.
-                # Missing/invalid/UNKNOWN evidence keeps the original active set.
-                active=[r for r in active if resolver.released_wait(
-                    r['external_id'],live['items'][r['external_id']]) is None]
-            except Exception:
-                pass
-        need(len(active)<2, 'IMPLEMENTATION_WIP_LIMIT')
-        def heavy(identity):
-            c=policy['contexts'][identity]['work_package']
-            band=re.fullmatch(r'([SML])(?: \(.*\))?',c.get('size_band') or '')
-            need(band is not None, 'WORKLOAD_CLASS_UNKNOWN')
-            return band.group(1)=='L' or identity.startswith('WP-CORE-')
-        if heavy(wp): need(not any(heavy(r.get('external_id','')) for r in active), 'HEAVY_CORE_WIP_LIMIT')
         # An actual changed WP branch/PR proves work started; no extra event comment.
-        dependencies(gh,rows,context,{},sha,policy)
     elif target=='IN_REVIEW':
         need(pr.get('state')=='open' and not pr.get('draft') and not pr.get('merged'), 'REAL_REVIEWABLE_PR_REQUIRED')
         ci(gh,sha,policy)
@@ -1517,15 +1530,6 @@ def verify_policy_sources(policy):
     need(hashlib.sha256(Path('/usr/local/libexec/cap-plane-queue').read_bytes()).hexdigest()==policy['implementation_sha256']['queue'], 'QUEUE_POLICY_REFRESH_REQUIRED')
 
 
-def auto_next_support():
-    loader = importlib.machinery.SourceFileLoader('cap_auto_next', '/usr/local/libexec/cap-auto-next.py')
-    spec = importlib.util.spec_from_loader(loader.name, loader)
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    loader.exec_module(module)
-    return module
-
-
 def main():
     global q
     resource.setrlimit(resource.RLIMIT_CORE,(0,0))
@@ -1545,8 +1549,8 @@ def main():
         # Reject raw secret input before logging or external lookups.
         need(key not in json.dumps(envelope) and key not in envelope['reason'], 'SECRET_IN_INPUT')
         verify_policy_sources(policy)
-        auto = auto_next_support()
-        auto.require_caller(profile,caller_uid)
+        account = pwd.getpwnam(profile)
+        need(caller_uid in {0, account.pw_uid}, 'PROFILE_UID_MISMATCH')
         need(wp in policy['contexts'] and policy['contexts'][wp]['work_package']['primary_owner']['canonical_name']==q.PEOPLE[profile][0], 'WRONG_OR_NON_CANONICAL_OWNER')
         lockfd=os.open('/run/cap-plane-queue.lock',os.O_CREAT|os.O_RDWR|os.O_NOFOLLOW,0o600)
         with os.fdopen(lockfd,'r+') as lock:
@@ -1556,26 +1560,9 @@ def main():
             plane=Plane(key)
             gh=GitHub(profile)
             result=execute(profile,wp,target,envelope,policy,plane,gh,append_audit,key,last_blocker(wp),last_projection(wp))
-            if target=='DONE' and result.get('result')=='VERIFIED':
-                try:
-                    result['auto_next']=auto.after_done(sys.modules[__name__],wp,policy,lambda:Plane(key),GitHub,append_audit,key)
-                except Exception:
-                    result['auto_next']={'status':'UNAVAILABLE','reasons':['ADVANCE_REQUIRES_RECOVERY']}
-            elif target in {'MERGED','UNBLOCKED'} and result.get('result')=='VERIFIED':
-                # Contract readiness and verified blocker resolution may precede DONE.
-                try:
-                    result['auto_next']=auto.after_done(sys.modules[__name__],wp,policy,lambda:Plane(key),GitHub,append_audit,key)
-                except Exception:
-                    result['auto_next']={'status':'UNAVAILABLE','reasons':['ADVANCE_REQUIRES_RECOVERY']}
-            if result.get('result')=='VERIFIED':
-                try:
-                    result['health']=auto.after_transition(sys.modules[__name__],wp,policy,lambda:Plane(key),GitHub)
-                except Exception:
-                    result['health']={'health':'UNAVAILABLE','reasons':['PREFLIGHT_SOURCE_UNAVAILABLE']}
         if result.get('result')=='VERIFIED':
-            # Nonblocking replenishment after lock release; failure cannot undo work.
-            with contextlib.suppress(OSError,subprocess.TimeoutExpired):
-                subprocess.run(['/usr/bin/systemctl','--no-block','start','cap-plane-prepare.service'],capture_output=True,timeout=5,check=False)
+            # CHG-054: automatic selection/preparation is advisory and on-demand.
+            result['auto_next']={'status':'ADVISORY_ONLY','reason':'PRODUCT_START_IS_EXPLICIT'}
         q.emit(result,key)
         return 0
     except Denied as exc:
