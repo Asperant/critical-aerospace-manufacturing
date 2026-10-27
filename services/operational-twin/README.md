@@ -11,6 +11,12 @@ Duplicate delivery is idempotent. Old events are rejected, revision gaps mark
 the projection `STALE` and require reconciliation, and world/branch mismatch is
 rejected before any local effect.
 
+Projected entities expose an explicit epistemic class (`ACTUAL`, `OBSERVED`,
+`INFERRED`, `PREDICTED`, `PLANNED` or `COUNTERFACTUAL`) and query freshness.
+Recoverable dependency lag is marked `DEGRADED`; revision gaps remain
+fail-closed `STALE`. Unknown epistemic values are rejected before projection
+state changes.
+
 `migrations/0001_twin.sql` defines the `twin` read model, applied-event ledger,
 and projection revision tables. The SQL is a model/migration artifact only until
 the runtime PostgreSQL binding is supplied by DEP-033.
