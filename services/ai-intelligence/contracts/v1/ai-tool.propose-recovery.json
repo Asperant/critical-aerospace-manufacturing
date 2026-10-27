@@ -1,0 +1,1 @@
+{"tool_id":"ai.recovery.propose","tool_version":1,"invocation_id":"44444444-4444-4444-8444-444444444444","world_id":"primary","authority":"PROPOSE","input":{"action_kind":"HOLD","base_revision":"lot-r3","evidence_refs":["inspection:OBS-001","telemetry:TEL-001"]}}

@@ -1,0 +1,1 @@
+{"tool_id":"twin.scheduling_snapshot.read","tool_version":1,"invocation_id":"22222222-2222-4222-8222-222222222222","world_id":"primary","authority":"READ","input":{"snapshot_revision":"snap-r1"}}
