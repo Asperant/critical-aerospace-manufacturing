@@ -585,6 +585,12 @@ class WPImport:
         canonical, _ = canonical_audit(audit, self.project.control_items)
         return identity_index(canonical["work_items"], set(self.allowed))
 
+    def _relation_rows(self, path):
+        rows = self.reader._list(path)
+        if rows is None:
+            raise PlaneError("Required Plane relationship list must not be null")
+        return rows
+
     def _create(self, expected):
         wp_id = expected["wp_id"]
         for attempt in range(1, 6):
@@ -687,13 +693,17 @@ class WPImport:
             stale_present = False
             for stale_id in stale:
                 stale_suffix = f"{family}/{stale_id}/{route}/{self.issue_id}/"
-                rows = self.reader._list(self.prefix + f"{family}/{stale_id}/{route}/")
+                rows = self._relation_rows(
+                    self.prefix + f"{family}/{stale_id}/{route}/"
+                )
                 if not any(r["id"] == self.issue_id for r in rows):
                     continue
                 write = self._write(
                     stale_suffix, None, expected["wp_id"], attempt, method="DELETE"
                 )
-                rows = self.reader._list(self.prefix + f"{family}/{stale_id}/{route}/")
+                rows = self._relation_rows(
+                    self.prefix + f"{family}/{stale_id}/{route}/"
+                )
                 if any(r["id"] == self.issue_id for r in rows):
                     if (
                         write is not None
@@ -723,12 +733,12 @@ class WPImport:
                 raise PlaneError("Relationship removal did not converge")
             if target:
                 suffix = f"{family}/{target}/{route}/"
-                rows = self.reader._list(self.prefix + suffix)
+                rows = self._relation_rows(self.prefix + suffix)
                 if not any(r["id"] == self.issue_id for r in rows):
                     write = self._write(
                         suffix, {"issues": [self.issue_id]}, expected["wp_id"], attempt
                     )
-                    rows = self.reader._list(self.prefix + suffix)
+                    rows = self._relation_rows(self.prefix + suffix)
                     if not any(r["id"] == self.issue_id for r in rows):
                         if (
                             write is not None
