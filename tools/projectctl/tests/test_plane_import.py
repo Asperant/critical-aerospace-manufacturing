@@ -47,7 +47,10 @@ class FakePlane:
             "cycles": [],
             "work_items": [],
             "project_members": [
-                {"id": "asrin", "first_name": "Asrın", "last_name": "Dündar"}
+                {"id": "asrin", "first_name": "Asrın", "last_name": "Dündar"},
+                {"id": "batuhan", "first_name": "Batuhan", "last_name": "Kaya"},
+                {"id": "selman", "first_name": "Selman", "last_name": "Özdemir"},
+                {"id": "yavuz", "first_name": "Yavuz", "last_name": "Gümüş"},
             ],
             "workspace_members": [],
         }
@@ -201,15 +204,19 @@ def test_exact_full_import_pilot_scope_html_and_live_noop(project):
             item["state"] == "BACKLOG"
             and metadata["PrimaryOwner"] == metadata["canonical_owner"]
         )
-        assert item["assignees"] == (
-            ["asrin"] if metadata["canonical_owner"] == "Asrın Dündar" else []
-        )
+        assert item["assignees"] == [
+            {
+                "Asrın Dündar": "asrin",
+                "Batuhan Kaya": "batuhan",
+                "Selman Özdemir": "selman",
+                "Yavuz Gümüş": "yavuz",
+            }[metadata["canonical_owner"]]
+        ]
         assert len(fake.memberships["modules"][item["id"]]) == 1
         if item["external_id"] in UNSCHEDULED:
             assert not item["labels"] and not fake.memberships["cycles"].get(item["id"])
         else:
-            terminal = max(metadata["cycle_ids"], key=lambda s: int(s[1:]))
-            assert fake.memberships["cycles"][item["id"]] == [terminal]
+            assert fake.memberships["cycles"][item["id"]] == [metadata["cycle_ids"][0]]
             assert item["labels"] == ["MS:" + metadata["milestone"]]
             assert metadata["canonical_sprint_window"]
     assert report["post_import"]["summary"]["milestone_distribution"] == MILESTONES

@@ -440,6 +440,16 @@ transitions are never changed by this rule. Unknown relationship entities,
 duplicate relationship evidence, identity/parent/state conflicts and ambiguous
 read-backs remain fail-closed.
 
+CHG-053 / CTRL-PM-018 restores the approved operational Plane projection:
+every canonical WP is assigned to its verified canonical owner member, while
+queue selection remains profile-scoped and never treats assignment as a global
+queue filter. Every scheduled WP receives exactly one Plane cycle using the
+first cycle in its canonical ordered window; the full window remains in
+metadata and the five unscheduled WPs remain cycleless. Terminal-cycle
+selection is not used. Lifecycle state, BLOCKED projection, Slot Release
+proofs, module/milestone membership, control items and product WP state are
+never changed by this rule.
+
 ## CTRL-PM-010 — Plane Post-Import Audit
 
 Goal: prove Plane matches canonical planning data.

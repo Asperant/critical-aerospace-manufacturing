@@ -1038,3 +1038,24 @@ projection-reconciliation evidence, performs one exact label PATCH with fresh
 readback, and never changes lifecycle state, clears an unresolved blocker, or
 changes Slot Release v2 semantics. A valid repaired projection is then consumed
 by the existing queue evaluator as a deferred wait.
+
+## CHG-053 — restore canonical Plane owner and single-cycle projection
+
+CHG-053 / CTRL-PM-018 restores the approved operational Plane projection after
+a fresh 180-WP audit found non-Asrın owner assignments missing and the terminal
+cycle rule emptying intermediate cycles. Every canonical WP is assigned to its
+verified Plane owner member. Queue selection remains profile-scoped and does
+not use the global assignment set as a substitute for ownership filtering.
+
+For a scheduled WP, Plane carries exactly one cycle: the first cycle in the
+canonical ordered cycle window. The full window remains in canonical metadata;
+`S3–S4`, `S5–S6` and similar windows are never converted to the terminal cycle.
+The five unscheduled WPs remain cycleless. This is a generic rule derived from
+the historical approved single-cycle operational projection, not a WP-specific
+mapping. Lifecycle state, BLOCKED labels, Slot Release proofs, modules,
+milestones and control items are outside the change and must remain unchanged.
+
+This is an approved C3 / CR-3 control-plane correction under CHG-018's zero
+development-approval policy. It authorizes the merged-source deployment and
+fresh audited reconciliation only; it does not authorize product WP lifecycle
+transitions, CORE-009 cleanup or readiness/DONE claims.

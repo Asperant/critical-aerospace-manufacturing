@@ -102,33 +102,38 @@ respected without changing Plane configuration. Offline commands are unchanged.
 
 CTRL-PM-009 adds the explicitly approval-gated `WPImport` helper outside the CLI.
 It imports one canonical WP per issue, with the existing `[WP-ID] title` format
-and structured canonical metadata. The human-approved
-`human-approved-terminal-target-completion-v1` policy selects the last numbered
-cycle for Plane coordination only; the full original sprint window, all canonical
-cycle IDs, canonical owner, milestone and source provenance remain in the HTML
-description. The five unscheduled WPs receive neither cycle nor milestone label.
-Only Asrın's exact project member receives his 73 WPs; the other 106 stay unassigned.
+and structured canonical metadata. The approved `approved-single-cycle-v1`
+policy selects the first ordered cycle for Plane coordination only; the full
+original sprint window, all canonical cycle IDs, canonical owner, milestone and
+source provenance remain in the HTML description. The five unscheduled WPs
+receive neither cycle nor milestone label. Every canonical owner receives the
+verified Plane member assignment; queue profile filtering remains a separate
+selection concern.
 A missing/non-null project default assignee blocks creation.
 
 The exact lexicographically first eligible Asrın single-cycle WP is the permanent
 pilot. A checkpoint records its projection before creation; fresh issue and
-relationship reads must verify BACKLOG, labels, assignee, full metadata, module
-and cycle before bulk import proceeds. Description comparison parses the single
-JSON metadata block after HTML normalization; duplicates and corrupted content
-fail closed. Labels/assignees are embedded in creation. Only issue POSTs and
-single-WP module/cycle association POSTs are allowed; updates, invitations,
-blockers, state changes and deletes are unavailable. Existing conflicting
-metadata or relationships stop import rather than moving/resetting them.
-Ambiguous POSTs reconcile fresh inventory with at most five attempts.
+relationship reads must verify BACKLOG, labels, canonical owner assignee, full
+metadata, module and exactly one approved cycle before bulk import proceeds.
+Description comparison parses the single JSON metadata block after HTML
+normalization; duplicates and corrupted content fail closed. Labels/assignees
+are embedded in creation. The full canonical cycle window remains metadata,
+while Plane stores the first ordered cycle as the generic single-cycle
+operational projection. Queue selection is profile-scoped and independent from
+the global owner assignment projection. Only issue POSTs and single-WP
+module/cycle association POSTs are allowed; updates, invitations, blockers,
+state changes and deletes are unavailable. Existing conflicting metadata or
+relationships stop import rather than moving/resetting them. Ambiguous POSTs
+reconcile fresh inventory with at most five attempts.
 
 `expected_projection` and `import_plan` produce pure previews;
 `WPImport.inventory` and `WPImport.audit` read all module/cycle memberships and,
 for complete audits, every issue's relations. Evidence snapshots are reproducible
 observations, never an execution database. A fresh second `run` must have no
-mutation requests, no conflicts and all 179 issues unchanged. The older generic
-`plane-plan` retains its original unapproved multi-cycle behavior; it is not this
-explicitly approved policy's executable import plan. No general apply/sync CLI
-has been introduced. Import conformity does not certify readiness or completion.
+mutation requests, no conflicts and all 180 issues unchanged. `plane-plan` and
+the approved importer share the same generic single-cycle projection rule. No
+general apply/sync CLI has been introduced. Import conformity does not certify
+readiness or completion.
 
 ## Fail-closed governance checks
 

@@ -13,6 +13,17 @@ from .project import PARSER_VERSION
 STATES = ["BACKLOG", "READY", "IN_PROGRESS", "IN_REVIEW", "MERGE_READY", "MERGED", "VALIDATING", "DONE", "CANCELED"]
 WP_ID = re.compile(r"^WP-[A-Z0-9]+-\d{3}$")
 VISIBLE_ID = re.compile(r"^\[(WP-[A-Z0-9]+-\d{3})\](?:\s|$)")
+SINGLE_CYCLE_POLICY = "approved-single-cycle-v1"
+# Verified Plane user bindings from the project team identity closure.  The
+# live Plane profile fields for some users are incomplete (for example, an
+# empty last name), so owner resolution may fall back to this exact immutable
+# member ID binding; it never guesses from a username or a WP title.
+CANONICAL_OWNER_MEMBER_IDS = {
+    "Asrın Dündar": "0b4a5417-2ed5-4ac2-95ff-e74104c5d601",
+    "Batuhan Kaya": "51137169-2989-42bd-9260-997b26e7e6dd",
+    "Selman Özdemir": "a3d25336-e7d0-43f8-bfef-c0b5c2137a60",
+    "Yavuz Gümüş": "3ccd9ad8-99e9-4b75-ae65-2325503d347f",
+}
 
 
 def _name(value):
@@ -22,6 +33,15 @@ def _name(value):
 def _description(metadata):
     return '<p>projectctl canonical planning projection; planning is not evidence.</p><pre>' + html.escape(
         json.dumps(metadata, ensure_ascii=False, sort_keys=True, indent=2)) + '</pre>'
+
+
+def approved_single_cycle(cycle_ids):
+    """Project a canonical schedule window to the approved single Plane cycle."""
+    if not isinstance(cycle_ids, list) or len(cycle_ids) != len(set(cycle_ids)):
+        raise PlaneError("Invalid canonical cycle window")
+    if not all(isinstance(cycle, str) and re.fullmatch(r"S[1-9][0-9]*", cycle) for cycle in cycle_ids):
+        raise PlaneError("Invalid canonical cycle identity")
+    return cycle_ids[0] if cycle_ids else None
 
 
 def bootstrap_plan(project, audit):
@@ -58,6 +78,9 @@ def bootstrap_plan(project, audit):
     for owner in owners:
         matches = [m for m in audit.get("project_members") or []
                    if _name(m.get("first_name", "") + " " + m.get("last_name", "")) == _name(owner)]
+        if not matches and audit.get("project_members") is not None:
+            member_id = CANONICAL_OWNER_MEMBER_IDS.get(owner)
+            matches = [m for m in audit["project_members"] if m.get("id") == member_id]
         owner_map[owner] = matches[0]["id"] if len(matches) == 1 else None
         if len(matches) > 1:
             conflict("AMBIGUOUS_OWNER", owner, member_ids=[m["id"] for m in matches])
@@ -109,12 +132,7 @@ def bootstrap_plan(project, audit):
 
     for wp in c.work_packages:
         cycle_ids = [s.id for s in c.schedule.cycles if wp.id in s.work_package_ids]
-        unresolved_cycle = len(cycle_ids) > 1
-        if unresolved_cycle:
-            ambiguities.append({"code": "SINGLE_PLANE_CYCLE_UNRESOLVED", "identity": wp.id,
-                                "canonical_cycle_ids": cycle_ids, "source": wp.provenance.path,
-                                "raw_planning_window": wp.raw_planning_window,
-                                "reason": "No approved rule chooses one cycle from the canonical multi-cycle window"})
+        cycle = approved_single_cycle(cycle_ids)
         owner = wp.primary_owner.canonical_name
         metadata = {"canonical_wp_id": wp.id, "canonical_owner": owner, "capability_area": wp.capability_area,
                     "cycle_ids": cycle_ids, "milestone": wp.milestone, "scope_class": wp.scope_class,
@@ -144,15 +162,15 @@ def bootstrap_plan(project, audit):
             action = "update" if changes else "unchanged"
         # Relations are separate v1 operations. References resolve only after structures are re-read.
         module_id = module_map[wp.capability_area]
-        cycle_id = cycle_map[cycle_ids[0]] if len(cycle_ids) == 1 else None
+        cycle_id = cycle_map[cycle] if cycle else None
         label_ids = [labels[wp.milestone]] if wp.milestone in labels else []
         relations = {"module": module_id, "cycle": cycle_id, "milestone_labels": label_ids,
-                     "cycle_resolution": "UNRESOLVED" if unresolved_cycle else "SCHEDULED" if cycle_ids else "UNSCHEDULED"}
+                     "cycle_resolution": "SINGLE_CYCLE" if cycle else "UNSCHEDULED"}
         if existing is not None:
             # Issue list responses may omit module/cycle memberships. Do not invent an empty relation.
             ambiguities.append({"code": "RELATION_READ_REQUIRED", "identity": wp.id,
                                 "reason": "Re-read module/cycle issue membership before planning relationship mutations"})
-        blockers = (["SINGLE_PLANE_CYCLE_UNRESOLVED"] if unresolved_cycle else []) + ([] if backlog else ["BACKLOG_STATE_UNAVAILABLE"])
+        blockers = ([] if backlog else ["BACKLOG_STATE_UNAVAILABLE"])
         operations.append({"kind": "work_items", "identity": wp.id, "action": action,
                            "plane_id": existing["id"] if existing else None, "canonical_metadata": metadata,
                            "desired": desired, "relations": relations, "blockers": blockers,

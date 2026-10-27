@@ -22,8 +22,13 @@ def inventory(project):
              "workspace": {"slug": "test", "id": "workspace"},
              "project": {"id": "project", "name": "Graduation Project", "identifier": "CAP"},
              "states": [{"id": s, "name": s} for s in STATES], "modules": [], "cycles": [],
-             "labels": [{"id": "blocked", "name": "BLOCKED"}], "work_items": [],
-             "project_members": [{"id": "asrin", "first_name": "Asrın", "last_name": "Dündar"}]}
+                 "labels": [{"id": "blocked", "name": "BLOCKED"}], "work_items": [],
+                 "project_members": [
+                     {"id": "asrin", "first_name": "Asrın", "last_name": "Dündar"},
+                     {"id": "batuhan", "first_name": "Batuhan", "last_name": "Kaya"},
+                     {"id": "selman", "first_name": "Selman", "last_name": "Özdemir"},
+                     {"id": "yavuz", "first_name": "Yavuz", "last_name": "Gümüş"},
+                 ]}
     for op in bootstrap_plan(project, audit)["operations"]:
         if op["kind"] != "work_items" and op["action"] == "create":
             audit[op["kind"]].append({"id": op["identity"], **op["desired"]})
@@ -47,7 +52,7 @@ def test_control_is_exactly_separate_from_180_and_import_noop(project, inventory
     data, projection = deepcopy(inventory)
     report = classify_inventory(project, data["audit"], memberships=data["memberships"], require_controls=True)
     assert (report["canonical_wp_count"], report["control_item_count"], report["total_work_item_count"]) == (180, 1, 181)
-    assert report["canonical_assigned"] == 74 and report["canonical_unassigned"] == 106
+    assert report["canonical_assigned"] == 180 and report["canonical_unassigned"] == 0
     assert report["canonical_owner_distribution"] == {"Asrın Dündar": 74, "Selman Özdemir": 17, "Batuhan Kaya": 32, "Yavuz Gümüş": 57}
     plan = import_plan(projection, data)
     assert not plan["conflicts"] and plan["unchanged"] == 180 and plan["http_mutation_requests"] == 0

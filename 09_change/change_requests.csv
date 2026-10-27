@@ -39,3 +39,4 @@ CHG-049,Generic Plane WP static-drift reconciliation with mutable lifecycle pres
 CHG-050,Generic Plane WP relationship-drift reconciliation with exact association cleanup,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-PM-017
 CHG-051,Align queue identity validation with canonical Plane assignment policy,C1,CR-2,Asrın,APPROVED,APPROVED,CTRL-HOST-029
 CHG-052,Generic audit-to-Plane orthogonal BLOCKED projection reconciliation,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-HOST-030
+CHG-053,Restore canonical Plane owner assignments and approved single-cycle projection,C3,CR-3,Asrın,APPROVED,APPROVED,CTRL-PM-018
