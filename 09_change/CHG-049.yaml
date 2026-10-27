@@ -23,6 +23,8 @@ CHG-049:
   affected_dependencies:
     - NONE — dependency edges and readiness semantics remain unchanged
   affected_evidence:
+    - ci/scripts/fast_scope_tests.py
+    - ci/tests/test_fast_scope.py
     - tools/projectctl/tests/test_plane_import.py
     - tools/projectctl/tests/test_control_plane.py
     - deterministic dry-run conflict classification

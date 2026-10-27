@@ -986,4 +986,6 @@ control item and is never deleted or counted as a canonical WP.
 
 This is a generic C3 / CR-3 control-plane change under the zero-development-
 approval policy of CHG-018. It does not authorize product implementation,
-readiness evidence, dependency changes or any product lifecycle transition.
+readiness evidence, dependency changes or any product lifecycle transition. Its
+PR fast-scope selector routes importer changes to the importer/control-plane
+regressions themselves; it does not widen or weaken the bounded 90-second gate.
