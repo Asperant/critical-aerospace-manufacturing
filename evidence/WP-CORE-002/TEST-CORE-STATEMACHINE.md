@@ -79,3 +79,5 @@ remain unverified.
 - Outbox/relay publication is intentionally absent; it remains WP-CORE-005.
 - Rework legality is guarded here, while directive execution/history and
   split/merge/genealogy remain outside this WP.
+- PR metadata binds the behavior change to `FR-CORE-003`, `FR-CORE-007` and
+  `FR-CORE-008` in the `Requirements` field for TL-13 trace validation.
