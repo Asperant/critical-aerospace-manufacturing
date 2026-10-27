@@ -1084,6 +1084,20 @@ DN-CORE-LIFECYCLE and DEP-020's WP-CORE-002 consumer. It does not implement or
 certify WP-CORE-002 transition legality. DEP-019 remains a separate HARD /
 INTEGRATION wait and is not changed by this record.
 
+## CHG-060 — record the current-main PASS for DEP-006
+
+CHG-060 / CTRL-HOST-035 records the exact current-main verification of the
+existing `DN-PLAT-COMPOSE` runtime basis for `DEP-006`. Producer PR #53 is
+merged, its merge is an ancestor of current main, the producer-authored
+readiness and REAL infra-profile evidence blobs match, and the required CI
+checks are successful. The change therefore projects `DEP-006` as `READY` at
+`SKELETON_READY` without adding implementation or runtime claims.
+
+This record does not promote `DEP-007`, does not claim shared-host or full
+Integration readiness, and does not mark `WP-CORE-007` DONE. PostgreSQL
+migration implementation and all post-merge/DoD gates remain governed by
+`WP-CORE-007`.
+
 ## CHG-052 — generic audit-backed BLOCKED projection reconciliation
 
 CHG-052 / CTRL-HOST-030 repairs only the orthogonal Plane `BLOCKED` label when

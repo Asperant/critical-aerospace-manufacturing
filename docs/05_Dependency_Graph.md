@@ -1261,7 +1261,7 @@ DEP-006:
   precise_requirement: "local profile only; shared host not START-blocking (#30)"
   risk_class: DR-3
   source: "Item 66 #30–#31"
-  status: NOT_READY
+  status: READY
 DEP-007:
   predecessor: {node: DN-PLAT-INTEG, owner: "Yavuz"}
   successor: {node: DN-RT-PG, owner: "Yavuz"}
