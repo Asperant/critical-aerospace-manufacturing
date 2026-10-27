@@ -80,4 +80,5 @@ remain unverified.
 - Rework legality is guarded here, while directive execution/history and
   split/merge/genealogy remain outside this WP.
 - PR metadata binds the behavior change to `FR-CORE-003`, `FR-CORE-007` and
-  `FR-CORE-008` in the `Requirements` field for TL-13 trace validation.
+  `FR-CORE-008` in the template-compatible `Requirements (stable IDs, or
+  NONE — reason / control-only scope; checked by TL-13):` field.
