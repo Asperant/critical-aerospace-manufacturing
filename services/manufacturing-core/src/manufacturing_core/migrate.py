@@ -16,7 +16,7 @@ from sqlalchemy.engine import URL
 
 from manufacturing_core.database import connect, require_restricted_role
 
-VERSION = "0005_outbox"
+VERSION = "0004_material_hold"
 TABLES = (
     "equipment",
     "manufacturing_route",
@@ -30,8 +30,6 @@ TABLES = (
     "command_idempotency",
     "command_outcome",
     "material_hold",
-    "lot_event_sequence",
-    "outbox",
 )
 
 
@@ -90,7 +88,6 @@ def migrate(dsn: str, runtime_role: str) -> bool:
             ("0002_command_acceptance", "migrations/0002_command_acceptance.sql"),
             ("0003_lifecycle", "migrations/0003_lifecycle.sql"),
             ("0004_material_hold", "migrations/0004_material_hold.sql"),
-            ("0005_outbox", "migrations/0005_outbox.sql"),
         )
     )
     expected = [
