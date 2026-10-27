@@ -1,0 +1,62 @@
+CHG-055:
+  title: Bind DEP-018 to the existing Core domain contract evidence
+  trigger: Dependency precision audit found DEP-018 had a null precise requirement despite merged CORE-001 contract artifacts and tests
+  reason: WP-CORE-009 needs an exact, attributable contract predicate before implementation can start; the existing dependency row cannot distinguish the required identity/revision and re-entrant route semantics from an unbounded contract claim.
+  class: C2
+  review_risk_class: CR-2
+  raised_in: S4
+  owner: Asrın
+  required_human_approvals: 0
+  reviewers: []
+  decision: APPROVED
+  status: APPROVED
+  decision_basis: The approved product execution doctrine requires the sole HARD+START blocker to be evaluated against a non-null precise requirement. This correction makes the already-declared DEP-018 unblock evidence mechanically attributable without changing Core authority boundaries or adding product capability.
+  scope:
+    - Add the exact DEP-018 consumer requirement for WP-CORE-009.
+    - Bind CORE-001 merged/current-main domain and query artifacts, producer contract tests and normal/reentrant fixtures to DN-CORE-CONTRACTS/CONTRACT_READY.
+    - Preserve immutable identity/revision and ordered re-entrant route/visit semantics.
+    - Keep WP-CORE-009 lifecycle/state representation separate from WP-CORE-002 legal transition semantics.
+  invariants_preserved:
+    - DEP-018 remains HARD, CONTRACT, START, CONTRACT_READY and producer-owned by WP-CORE-001.
+    - No readiness is certified by this record alone; the readiness basis must pass current-main mechanical checks.
+    - WP-CORE-002 remains the sole producer of transition legality, hold/release, rework and split/merge semantics.
+    - Existing CORE-001 domain, query and fixture evidence is not relabelled as real-factory data or final integrated acceptance.
+  precise_requirement: WP-CORE-009 must consume the merged/current-main CORE-001 domain and query contracts for ProductionOrder, Lot, SerializedComponent, immutable identity/revision validation, and ordered re-entrant RouteVisit semantics. CORE-001 producer contract tests and both normal and reentrant fixtures must be green and published, and an attributable current-main DN-CORE-CONTRACTS/CONTRACT_READY artifact must bind those contracts to DEP-018. This requirement does not authorize WP-CORE-002 transition semantics.
+  affected_requirements: [FR-CORE-001, FR-CORE-002, FR-CORE-016]
+  affected_architecture: [ARCH-CORE-DOMAIN, ARCH-CTR-API]
+  affected_contracts:
+    - id: core.order-query.v1
+      compatibility: NON_BREAKING
+      consumers_reviewed: [Simulator, Digital Twin, Scheduler]
+  affected_work_packages: [WP-CORE-001, WP-CORE-009]
+  affected_dependencies: [DEP-018]
+  affected_evidence:
+    - evidence/readiness/DN-CORE-CONTRACTS.json
+    - evidence/WP-CORE-001/SLICE1.md
+    - evidence/WP-CORE-001/SLICE3.md
+    - services/manufacturing-core/contracts/v1/order-query.normal.json
+    - services/manufacturing-core/contracts/v1/order-query.reentrant.json
+    - TEST-CORE-DOMAIN
+    - TEST-CORE-CONTRACT
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - Existing CORE-001 implementation, PostgreSQL and query evidence remains scoped engineering evidence.
+      - Final integrated, milestone and real-factory acceptance claims remain unmade.
+    rerun_required:
+      - Evaluate DEP-018 against the exact current-main basis and SHA-bound producer checks.
+  security_authority_impact: NONE
+  conditions:
+    - Do not start WP-CORE-009 before DEP-018 has a current-main CONTRACT_READY PASS.
+    - Do not implement legal transition semantics in WP-CORE-009.
+    - Do not treat this change or fixture evidence as final integrated acceptance.
+  rollout: Merge the dependency precision and producer-attributed readiness basis with the WP-CORE-009 product branch workflow. Re-evaluate DEP-018 on the exact merged main revision before the lifecycle implementation slice.
+  rollback: Revert the CHG-055 dependency precision and readiness binding together; do not erase prior CORE-001 implementation or evidence.
+  required_rerun: [projectctl context WP-CORE-009, projectctl context WP-CORE-001, projectctl startability WP-CORE-009, DEP-018 readiness evaluator, producer contract tests]
+  documentation_updates:
+    - docs/05_Dependency_Graph.md
+    - docs/09_Change_Control_Process.md
+    - evidence/readiness/DN-CORE-CONTRACTS.json
+    - evidence/WP-CORE-001/CONTRACT-READY.md
+  freeze_context: PRE_M6

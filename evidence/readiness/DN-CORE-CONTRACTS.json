@@ -1,0 +1,35 @@
+{
+  "schema": "auto-readiness-semantic-basis-v1",
+  "node": "DN-CORE-CONTRACTS",
+  "level": "CONTRACT_READY",
+  "producer": {"owner": "Asrın Dündar", "login": "Asperant"},
+  "producer_wp": "WP-CORE-001",
+  "producer_pr": 24,
+  "producer_merge_sha": "ad30bc67077bd0fb6009efdc85f8ec20649d99ce",
+  "scope_projections": {
+    "WP-CORE-001": "bd9a7f21479369aac8361fd85358bdffc4b36bfc9b526801b29c4b5ec1625452"
+  },
+  "certification": "CONTRACT_READY",
+  "semantic_basis": {
+    "stability": "The v1 Core query contract and nested domain identities are merged and version-pinned; corrections require a new version or governed compatible change.",
+    "consumer_usability": "Declared consumers can validate the published schema and deterministic normal/reentrant fixtures without transport or Core mutation authority.",
+    "compatibility_intent": "The binding preserves the existing v1 shape and semantics: opaque identity/revision values, exact references, and ordered distinct route visits for re-entrant operation classes.",
+    "scope_meaning": "This binding covers Core domain/query contracts only; it does not cover lifecycle transition legality, protected actions, PostgreSQL integration readiness, or final acceptance."
+  },
+  "consumer_edges": ["DEP-018"],
+  "artifacts": [
+    {"path": "services/manufacturing-core/contracts/v1/README.md", "blob": "f5e59af4195a0bcf966007f94c82063426c6a03d", "role": "contract"},
+    {"path": "services/manufacturing-core/contracts/v1/order-query.schema.json", "blob": "557a8926b7f6ebbda2570d0993b7439a5a6b18be", "role": "schema"},
+    {"path": "services/manufacturing-core/contracts/v1/order-query.normal.json", "blob": "b545077b0ca16e56bad91bb98a96ee4623dba575", "role": "fixture"},
+    {"path": "services/manufacturing-core/contracts/v1/order-query.reentrant.json", "blob": "2de3f94f999aedf54a927c610d9931321a89ac4e", "role": "fixture"}
+  ],
+  "tests": [
+    {"test_id": "TEST-CORE-DOMAIN", "check": "t1-unit", "path": "services/manufacturing-core/tests/test_domain.py", "blob": "299013ab7bce57cb031b5f0e2b37291f60d39ffe"},
+    {"test_id": "TEST-CORE-CONTRACT", "check": "t1-contract", "path": "services/manufacturing-core/tests/test_query_contract.py", "blob": "da95200f75e767214e0b2cc660a752209e36bc2a"}
+  ],
+  "trace": [
+    {"requirement": "FR-CORE-001", "path": "evidence/WP-CORE-001/SLICE1.md", "blob": "439401d384455d57ea583edf765cb60785c55a6a"},
+    {"requirement": "FR-CORE-002", "path": "evidence/WP-CORE-001/SLICE3.md", "blob": "f4198ef42b44a83db6894b6d594c3477a6f06ffa"},
+    {"requirement": "FR-CORE-016", "path": "services/manufacturing-core/contracts/v1/README.md", "blob": "f5e59af4195a0bcf966007f94c82063426c6a03d"}
+  ]
+}
