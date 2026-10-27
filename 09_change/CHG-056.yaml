@@ -1,0 +1,46 @@
+CHG-056:
+  title: Preserve the first telemetry warning on fresh monotonic clocks
+  trigger: PR #143 exposed a WP-OBS-001 unit-test failure on a fresh CI runner while the unrelated CORE-009 diff did not touch observability
+  reason: OtlpLogHandler used 0.0 as the last-warning sentinel. When a fresh runner's monotonic clock was below the 60-second throttle interval, the first collector failure warning was incorrectly suppressed.
+  class: C1
+  review_risk_class: CR-2
+  raised_in: S4
+  owner: Asrın
+  application_control_item: CTRL-HOST-032
+  required_human_approvals: 0
+  decision: APPROVED
+  status: APPROVED
+  decision_basis: Generic CI/test reliability correction requested while investigating PR #143; the fix preserves the existing warning rate limit and only makes the first warning unconditional.
+  scope:
+    - Replace the monotonic warning timestamp sentinel with an explicit unset value.
+    - Add a regression test for a fresh monotonic clock origin.
+    - Keep collector delivery, drop counting and subsequent 60-second throttling unchanged.
+  invariants_preserved:
+    - No CORE-009, manufacturing lifecycle or canonical-state semantics change.
+    - No warning is skipped, and no test is quarantined or retried into green.
+    - The first warning is emitted once; later warnings remain throttled for 60 seconds.
+  affected_requirements:
+    - NONE — generic observability reliability correction
+  affected_architecture:
+    - NONE — existing telemetry helper boundary is preserved
+  affected_contracts:
+    - id: cap-observability-telemetry-v1
+      compatibility: NON_BREAKING
+      consumers_reviewed: [services, CI observability tests]
+  affected_work_packages: [WP-OBS-001]
+  affected_dependencies: []
+  affected_evidence:
+    - packages/observability/src/cap_observability/telemetry.py
+    - packages/observability/tests/test_telemetry.py
+    - PR #143 t1-unit failure log
+  rollout: Merge the control branch after focused and full observability tests plus required CI pass; return to PR #143 and rerun its required CI.
+  rollback: Revert the control commit; do not skip or quarantine the warning regression test.
+  required_rerun:
+    - isolated fresh-clock regression test
+    - full WP-OBS-001 non-integration suite
+    - PR #143 required CI after the control fix is on main
+  documentation_updates:
+    - 09_change/CHG-056.yaml
+    - 09_change/change_requests.csv
+    - docs/09_Change_Control_Process.md
+  freeze_context: PRE_M6

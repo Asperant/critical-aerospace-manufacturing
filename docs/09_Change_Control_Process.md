@@ -1027,6 +1027,19 @@ full 180-item set equality. This is a generic policy alignment, not a WP-
 specific bypass; state, selection, fail-closed and Slot Release semantics are
 unchanged.
 
+## CHG-056 — first telemetry warning on fresh monotonic clocks
+
+CHG-056 / CTRL-HOST-032 is a generic C1 observability reliability correction
+found while investigating PR #143. `OtlpLogHandler` previously used `0.0` as
+the last-warning sentinel. On a newly booted CI runner, the monotonic clock can
+be below the 60-second throttle interval, which suppressed the first collector
+failure warning and caused the standard telemetry test to fail. The correction
+uses an explicit unset sentinel, keeps the existing first-warning-once and
+subsequent 60-second throttling behavior, and adds a fresh-clock regression
+test. It has no product, lifecycle, dependency-readiness or authority impact.
+Control-only PRs applying this correction must declare `NONE` with the explicit
+top-level (non-bulleted) Requirements field required by TL-13.
+
 ## CHG-052 — generic audit-backed BLOCKED projection reconciliation
 
 CHG-052 / CTRL-HOST-030 repairs only the orthogonal Plane `BLOCKED` label when
