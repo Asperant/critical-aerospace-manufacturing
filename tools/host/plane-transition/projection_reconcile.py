@@ -105,8 +105,10 @@ def authoritative_projection(
         "AUDIT_PROFILE_WP_BINDING",
     )
     need(t.audit_identity(latest) == latest.get("audit_id"), "AUDIT_IDENTITY_INVALID")
+    need(state in t.q.STATES, "UNKNOWN_PLANE_STATE")
     need(
-        latest.get("from_state") == state and latest.get("to_state") == state,
+        latest.get("from_state") in t.q.STATES
+        and latest.get("from_state") == latest.get("to_state"),
         "AUDIT_LIFECYCLE_STATE_MISMATCH",
     )
     operation = latest.get("operation")

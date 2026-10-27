@@ -23,7 +23,10 @@ class Denied(Exception):
 
 
 class FakePlane:
-    names = {"STATE-IN-PROGRESS": "IN_PROGRESS"}
+    names = {
+        "STATE-IN-PROGRESS": "IN_PROGRESS",
+        "STATE-VALIDATING": "VALIDATING",
+    }
 
     def __init__(self, item):
         self.items = [copy.deepcopy(item)]
@@ -104,6 +107,7 @@ class ProjectionTests(unittest.TestCase):
         self.audit_log = []
         fake_q = types.SimpleNamespace(
             PEOPLE={"asrin": ("Asrın Dündar", "owner-id", "asrin@example.test")},
+            STATES={"BACKLOG", "READY", "IN_PROGRESS", "VALIDATING", "DONE"},
             metadata=lambda value: json.loads(value),
         )
         projection.__dict__["t"] = types.SimpleNamespace(
@@ -183,6 +187,23 @@ class ProjectionTests(unittest.TestCase):
         self.assertNotIn("BLOCKED-LABEL", plane.items[0]["labels"])
         self.assertEqual(plane.items[0]["state"], "STATE-IN-PROGRESS")
         self.assertEqual(result["repaired"][0]["projection"], "UNBLOCKED")
+
+    def test_projection_repair_keeps_lifecycle_state_separate_from_audit_snapshot(
+        self,
+    ):
+        wp, rows, item, policy = fixture()
+        item["state"] = "STATE-VALIDATING"
+        self.rows[wp] = rows
+        plane = FakePlane(item)
+        result = projection.reconcile_profile(
+            "asrin",
+            policy,
+            plane,
+            lambda record, key: self.audit_log.append(copy.deepcopy(record)),
+            "secret",
+        )
+        self.assertEqual(result["repaired"][0]["projection"], "BLOCKED")
+        self.assertEqual(plane.items[0]["state"], "STATE-VALIDATING")
 
     def test_missing_audit_with_blocked_projection_fails_closed(self):
         wp, _, item, policy = fixture(labels=["BLOCKED-LABEL"])
