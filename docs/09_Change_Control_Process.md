@@ -1319,3 +1319,11 @@ versioned.
 This projection does not claim global DN-EVT-CONTRACTS completeness, broker or
 NATS/JetStream delivery, ACL installation, downstream adoption, event-spine
 integration, DEP-024, DEP-025 or any work-package DONE state.
+
+## CHG-075 — refresh the projectctl precision baseline after DEP-023
+
+CHG-075 / CTRL-HOST-049 is a C1 control-only housekeeping correction. The
+approved DEP-023 precise requirement removes one `PRECISION_MISSING` diagnostic,
+so the deterministic projectctl baseline is now 165 instead of 166. Graph
+shape, severity and diagnostic identity assertions remain unchanged; no product
+readiness or lifecycle state is changed.
