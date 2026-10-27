@@ -34,6 +34,9 @@ uv run --project ci --locked ruff format --check services/manufacturing-core
 uv run --project ci --locked pyright \
   --project services/manufacturing-core/pyrightconfig.json
 0 errors, 0 warnings, 0 informations
+
+uv run --project ci --locked python -m mfgctl trace drift --strict
+no drift between traceability/trace_edges.yaml and docs/03_Requirements_Traceability_Matrix.md §17
 ```
 
 The focused transition suite is included in the 308 passing tests and covers
