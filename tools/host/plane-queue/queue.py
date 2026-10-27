@@ -29,6 +29,10 @@ PEOPLE = {
     'batuhan': ('Batuhan Kaya', '51137169-2989-42bd-9260-997b26e7e6dd', 'batuhankaya0204@gmail.com'),
     'yavuz': ('Yavuz Gümüş', '3ccd9ad8-99e9-4b75-ae65-2325503d347f', 'yavuzzgumus@gmail.com'),
 }
+# CTRL-PM-009 assigns only the current Asrın queue owner in Plane. The
+# canonical owner for every WP remains authoritative in metadata/catalog;
+# other owners are intentionally represented as unassigned Plane items.
+ASSIGNEE_PROFILES = frozenset({'asrin'})
 CYCLES = dict(enumerate([
     '24c63960-2f75-4d61-957c-98e60f27cd9b', 'f3bd6141-b612-4d81-a5d9-6670135dfcc4',
     'a3a6a89a-0a43-4d4b-bb3c-bb3225203dc7', '8cbdd9f6-21d1-48c2-a1be-b0ebfaad3398',
@@ -336,7 +340,8 @@ def snapshot(reader, catalog, cycle_targets=None):
         meta = metadata(item.get('description_html'))
         require(meta.get('canonical_wp_id') == wp and meta.get('canonical_owner') == catalog['owners'][wp])
         owner = next(p for p, details in PEOPLE.items() if details[0] == meta['canonical_owner'])
-        require(item.get('assignees') == [PEOPLE[owner][1]] and item['state'] in state_map)
+        expected_assignees = [PEOPLE[owner][1]] if owner in ASSIGNEE_PROFILES else []
+        require(item.get('assignees') == expected_assignees and item['state'] in state_map)
         require(isinstance(item.get('labels'), list))
         rows[wp] = {'wp_id': wp, 'title': item['name'].split('] ', 1)[1], 'plane_state': state_map[item['state']],
                     'blocked': blocked_id in item['labels'], 'cycle': None, '_id': item['id'], '_profile': owner}

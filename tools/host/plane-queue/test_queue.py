@@ -401,6 +401,30 @@ class QueueTests(unittest.TestCase):
         self.assertIsNone(rows['WP-GOV-001']['cycle'])
         self.assertNotIn('cycles/', reader.calls)
 
+    def test_snapshot_applies_canonical_assignment_policy(self):
+        catalog = {'owners': {'WP-GOV-001': 'Selman Özdemir'}}
+        issue = {'id': 'issue', 'external_id': 'WP-GOV-001', 'external_source': 'projectctl',
+                 'name': '[WP-GOV-001] Title',
+                 'description_html': json.dumps({'canonical_wp_id': 'WP-GOV-001',
+                                                 'canonical_owner': 'Selman Özdemir'}),
+                 'assignees': [], 'state': 'READY', 'labels': []}
+        data = {'members/': [{'id': p[1], 'email': p[2]} for p in q.PEOPLE.values()],
+                'states/': [{'id': s, 'name': s} for s in q.STATES],
+                'labels/': [{'id': 'blocked', 'name': 'BLOCKED'}], 'issues/': [issue]}
+
+        class Fake:
+            def get(self, route):
+                return {'id': q.PREFIX.split('/')[-2], 'name': 'Graduation Project',
+                        'identifier': 'CAP'}
+
+            def rows(self, route):
+                return data[route]
+
+        self.assertEqual(q.snapshot(Fake(), catalog, set())['WP-GOV-001']['_profile'], 'selman')
+        issue['assignees'] = [q.PEOPLE['selman'][1]]
+        with self.assertRaises(q.Unsafe):
+            q.snapshot(Fake(), catalog, set())
+
 
 class DeferredWaitVisibilityTests(unittest.TestCase):
     WAITS = [{'wp_id': 'WP-CORE-005', 'state': 'IN_PROGRESS', 'blocked': True,
