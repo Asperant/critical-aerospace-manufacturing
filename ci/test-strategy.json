@@ -18,6 +18,7 @@
     {"path": "ci/tests", "owner": "Yavuz", "work_package": "WP-CICD-001", "families": ["TEST-DX-FLAKE"], "test_ids": ["TEST-CICD-001", "TEST-CICD-002", "TEST-TEST-001-001"],
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "CI tooling tests"}]},
     {"path": "ci/tests/test_architecture_boundaries.py", "owner": "Asrın", "work_package": "WP-EVT-005", "families": ["TEST-ARCH-BOUNDARY"], "test_ids": ["TEST-EVT-005-001"],
+     "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "CI tooling tests"}]},
     {"path": "ci/tests/test_wp_test_002_contract_suite.py", "owner": "Asrın", "work_package": "WP-TEST-002", "families": ["TEST-DATA-CONTRACTVALID", "TEST-EVT-SCHEMA"], "test_ids": ["TEST-TEST-002-001"],
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "CI tooling tests"}]},
     {"path": "ci/integration", "owner": "Yavuz", "work_package": "WP-CICD-001", "families": [], "family_note": "integration-tier gate integrity (03 §19.2: no planned family)", "test_ids": ["TEST-CICD-003"],
