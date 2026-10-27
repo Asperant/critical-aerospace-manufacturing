@@ -73,9 +73,10 @@ def test_hold_release_is_atomic_retained_and_idempotent(
         duplicate = service.place_lot_on_hold(permissions, hold_command("hold-2"))
         assert duplicate.status is OutcomeStatus.REJECTED
         assert duplicate.error_code == "HOLD_ALREADY_ACTIVE"
-        released = service.release_material_hold(permissions, release_command())
+        release = release_command()
+        released = service.release_material_hold(permissions, release)
         assert released.status is OutcomeStatus.ACCEPTED
-        retry = service.release_material_hold(permissions, release_command())
+        retry = service.release_material_hold(permissions, release)
         assert retry == released
         row = connection.execute(
             "SELECT status, released_at, release_reason FROM core.material_hold WHERE id = 'H-1'"
