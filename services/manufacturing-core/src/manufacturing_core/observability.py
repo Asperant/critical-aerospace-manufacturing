@@ -38,6 +38,25 @@ def record(
     )
 
 
+def record_transition_rejection(
+    correlation_id: str, command_id: str, operation: str, error_code: str
+) -> None:
+    """Emit safe transition rejection context without domain payloads."""
+    LOGGER.info(
+        json.dumps(
+            {
+                "service": "manufacturing-core",
+                "correlation_id": correlation_id,
+                "command_id": command_id,
+                "operation": operation,
+                "outcome": "REJECTED",
+                "error_code": error_code,
+            },
+            sort_keys=True,
+        )
+    )
+
+
 @dataclass(frozen=True)
 class CoreHealth:
     status: Literal["READY", "UNAVAILABLE"]
