@@ -87,7 +87,10 @@ infra/compose/stack.sh readiness   # OK/WAIT per edge; exit 1 when a HARD edge i
 ```
 
 DEP-011 is served by the observability stack (`infra/observability`, WP-OBS-001), so
-it shows WAIT until that stack runs too. The list is a checklist and a live health
+it shows WAIT until that stack runs too. Health is read from Docker's project labels,
+not through a Compose file (the observability file needs credentials just to render);
+its two services have no Docker health check, so they are probed on the HTTP surfaces
+`infra/observability/stack.sh` itself waits for. The list is a checklist and a live health
 view; a readiness claim rests on the recorded run on the shared host.
 
 ## Startup order and recovery (WP-PLAT-003, 02 Sequence I)

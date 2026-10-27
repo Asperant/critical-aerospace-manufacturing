@@ -4,6 +4,20 @@
   "producer_node": "DN-PLAT-INTEG",
   "source": "docs/05_Dependency_Graph.md",
   "gate": "E2E-01",
+  "stacks": {
+    "infra/compose": "cap-platform",
+    "infra/observability": "cap-observability"
+  },
+  "probes": {
+    "openobserve": {
+      "url": "http://127.0.0.1:${O2_HTTP_PORT:-55080}/healthz",
+      "note": "no Docker health check; same surface as infra/observability/stack.sh wait_for"
+    },
+    "otel-collector": {
+      "url": "http://127.0.0.1:${OTEL_HEALTH_PORT:-53133}/",
+      "note": "no Docker health check; same surface as infra/observability/stack.sh wait_for"
+    }
+  },
   "note": "Checklist of the runtime edges out of DN-PLAT-INTEG (05). Each item names the services that realize the consumer node and the REAL checks that prove it; `stack.sh readiness` reports their live health. A listed item is a checklist entry, not a readiness claim: the claim is the recorded run on the shared host.",
   "items": [
     {
@@ -15,8 +29,20 @@
       "need_by": "M1 (S2)",
       "precise_requirement": "runtime healthy on shared host + smoke check in CI/INTEGRATION",
       "stack": "infra/compose",
-      "services": ["keycloak", "postgres", "seaweedfs", "valkey", "qdrant", "temporal", "temporal-namespace", "mlflow", "nats"],
-      "checks": ["infra/compose/tests/test_runtime_integration.py"]
+      "services": [
+        "keycloak",
+        "postgres",
+        "seaweedfs",
+        "valkey",
+        "qdrant",
+        "temporal",
+        "temporal-namespace",
+        "mlflow",
+        "nats"
+      ],
+      "checks": [
+        "infra/compose/tests/test_runtime_integration.py"
+      ]
     },
     {
       "dep": "DEP-007",
@@ -27,8 +53,12 @@
       "need_by": "M1 (S2)",
       "precise_requirement": "runtime healthy on shared host + smoke check in CI/INTEGRATION",
       "stack": "infra/compose",
-      "services": ["postgres"],
-      "checks": ["infra/compose/tests/test_runtime_integration.py::test_postgres_accepts_queries"]
+      "services": [
+        "postgres"
+      ],
+      "checks": [
+        "infra/compose/tests/test_runtime_integration.py::test_postgres_accepts_queries"
+      ]
     },
     {
       "dep": "DEP-008",
@@ -39,8 +69,12 @@
       "need_by": "M1 (S2)",
       "precise_requirement": "runtime healthy on shared host + smoke check in CI/INTEGRATION",
       "stack": "infra/compose",
-      "services": ["nats"],
-      "checks": ["infra/compose/tests/test_runtime_integration.py::test_nats_jetstream_is_enabled"]
+      "services": [
+        "nats"
+      ],
+      "checks": [
+        "infra/compose/tests/test_runtime_integration.py::test_nats_jetstream_is_enabled"
+      ]
     },
     {
       "dep": "DEP-009",
@@ -51,8 +85,12 @@
       "need_by": "E2E-01 readiness (end S4)",
       "precise_requirement": "runtime healthy on shared host + smoke check in CI/INTEGRATION",
       "stack": "infra/compose",
-      "services": ["seaweedfs"],
-      "checks": ["infra/compose/tests/test_runtime_integration.py::test_seaweedfs_master_and_s3_answer"]
+      "services": [
+        "seaweedfs"
+      ],
+      "checks": [
+        "infra/compose/tests/test_runtime_integration.py::test_seaweedfs_master_and_s3_answer"
+      ]
     },
     {
       "dep": "DEP-010",
@@ -63,7 +101,9 @@
       "need_by": "E2E-01 readiness (end S4)",
       "precise_requirement": "Keycloak realm/clients deployed; real login works",
       "stack": "infra/compose",
-      "services": ["keycloak"],
+      "services": [
+        "keycloak"
+      ],
       "checks": [
         "infra/compose/tests/test_runtime_integration.py::test_keycloak_issues_a_real_token_for_the_platform_realm",
         "infra/compose/tests/test_runtime_integration.py::test_keycloak_rejects_a_wrong_client_secret"
@@ -79,8 +119,13 @@
       "need_by": "M1 (S2)",
       "precise_requirement": "health/basic instrumentation visible in OpenObserve",
       "stack": "infra/observability",
-      "services": ["openobserve", "otel-collector"],
-      "checks": ["infra/observability/tests/test_pipeline_integration.py::test_service_helper_reaches_openobserve"]
+      "services": [
+        "openobserve",
+        "otel-collector"
+      ],
+      "checks": [
+        "infra/observability/tests/test_pipeline_integration.py::test_service_helper_reaches_openobserve"
+      ]
     },
     {
       "dep": "DEP-012",
@@ -91,7 +136,10 @@
       "need_by": "E2E-01 formal run (end S5)",
       "precise_requirement": "runtime healthy on shared host + smoke check in CI/INTEGRATION",
       "stack": "infra/compose",
-      "services": ["temporal", "temporal-namespace"],
+      "services": [
+        "temporal",
+        "temporal-namespace"
+      ],
       "checks": [
         "infra/compose/tests/test_runtime_integration.py::test_temporal_serves_the_platform_namespace",
         "infra/compose/tests/test_runtime_integration.py::test_temporal_persists_in_postgresql"
@@ -106,7 +154,9 @@
       "need_by": "M4 (S8)",
       "precise_requirement": "runtime healthy on shared host + smoke check in CI/INTEGRATION",
       "stack": "infra/compose",
-      "services": ["qdrant"],
+      "services": [
+        "qdrant"
+      ],
       "checks": [
         "infra/compose/tests/test_runtime_integration.py::test_qdrant_requires_its_api_key",
         "infra/compose/tests/test_runtime_integration.py::test_qdrant_round_trips_a_vector"
@@ -121,8 +171,12 @@
       "need_by": "M4/M5",
       "precise_requirement": "runtime healthy on shared host + smoke check in CI/INTEGRATION",
       "stack": "infra/compose",
-      "services": ["mlflow"],
-      "checks": ["infra/compose/tests/test_runtime_integration.py::test_mlflow_tracks_in_postgresql_and_serves_artifacts_from_s3"]
+      "services": [
+        "mlflow"
+      ],
+      "checks": [
+        "infra/compose/tests/test_runtime_integration.py::test_mlflow_tracks_in_postgresql_and_serves_artifacts_from_s3"
+      ]
     },
     {
       "dep": "DEP-015",
@@ -133,8 +187,12 @@
       "need_by": "— (R2/S)",
       "precise_requirement": "—",
       "stack": "infra/compose",
-      "services": ["valkey"],
-      "checks": ["infra/compose/tests/test_runtime_integration.py::test_valkey_answers_ping"]
+      "services": [
+        "valkey"
+      ],
+      "checks": [
+        "infra/compose/tests/test_runtime_integration.py::test_valkey_answers_ping"
+      ]
     }
   ]
 }

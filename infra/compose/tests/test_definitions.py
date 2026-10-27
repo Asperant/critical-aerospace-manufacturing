@@ -346,3 +346,33 @@ def test_readiness_checklist_points_to_real_services_and_checks() -> None:
             path, _, test = check.partition("::")
             text = (REPO / path).read_text("utf-8")
             assert not test or f"def {test}(" in text, (item["dep"], check)
+
+
+def test_readiness_stacks_and_probes_match_the_compose_files() -> None:
+    """The project names are the ones Docker labels containers with; probes name real services."""
+    stacks = READINESS["stacks"]
+    for stack, project in stacks.items():
+        compose = yaml.safe_load((REPO / stack / "compose.yaml").read_text("utf-8"))
+        assert compose["name"] == project, (stack, project)
+    assert {item["stack"] for item in READINESS["items"]} <= set(stacks)
+    observed = yaml.safe_load(
+        (REPO / "infra/observability/compose.yaml").read_text("utf-8")
+    )
+    for service, spec in READINESS["probes"].items():
+        assert service in observed["services"], service
+        assert (
+            "healthcheck" not in observed["services"][service]
+        ), f"{service} has a Docker health check: drop its probe"
+        assert spec["url"].startswith("http://127.0.0.1:"), service
+
+
+def test_readiness_view_never_reports_a_missing_service_healthy() -> None:
+    """A stack that is not running must give WAIT for its items, never OK."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("readiness", HERE / "readiness.py")
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert module.service_health("cap-no-such-project") == {}
+    assert module.probe("http://127.0.0.1:1/") == "unreachable"

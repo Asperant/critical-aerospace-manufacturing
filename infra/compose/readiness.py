@@ -9,25 +9,33 @@ health view: the readiness claim itself is the recorded run on the shared host.
 from __future__ import annotations
 
 import json
+import os
+import re
 import subprocess
 import sys
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
 
 
-def service_health(stack: str) -> dict[str, str]:
-    """Compose service -> Docker health ("healthy", "starting", ...) or state."""
+def service_health(project: str) -> dict[str, str]:
+    """Compose service -> "healthy", "starting", "unhealthy" or the container state.
+
+    Read from Docker's own project labels, not through the Compose file: a stack
+    whose file needs credentials to render (the observability stack) still reports.
+    """
     result = subprocess.run(
         [
             "docker",
-            "compose",
-            "-f",
-            str(REPO / stack / "compose.yaml"),
             "ps",
+            "--all",
+            "--filter",
+            f"label=com.docker.compose.project={project}",
             "--format",
-            "json",
+            '{{.Label "com.docker.compose.service"}}\t{{.State}}\t{{.Status}}',
         ],
         capture_output=True,
         text=True,
@@ -35,21 +43,47 @@ def service_health(stack: str) -> dict[str, str]:
     )
     if result.returncode != 0:
         return {}
-    rows = [json.loads(line) for line in result.stdout.splitlines() if line.strip()]
-    return {
-        row["Service"]: row.get("Health") or row.get("State", "unknown") for row in rows
-    }
+    health: dict[str, str] = {}
+    for line in result.stdout.splitlines():
+        service, state, status = line.split("\t", 2)
+        if "(healthy)" in status:
+            health[service] = "healthy"
+        elif "(unhealthy)" in status:
+            health[service] = "unhealthy"
+        elif "(health: starting)" in status:
+            health[service] = "starting"
+        else:
+            health[service] = state
+    return health
+
+
+def probe(url: str) -> str:
+    """HTTP health surface of a service without a Docker health check."""
+    url = re.sub(r"\$\{(\w+):-([^}]*)\}", lambda m: os.environ.get(m[1], m[2]), url)
+    try:
+        with urllib.request.urlopen(url, timeout=5):
+            return "healthy"
+    except (urllib.error.URLError, OSError):
+        return "unreachable"
 
 
 def main() -> int:
     checklist = json.loads((HERE / "readiness.json").read_text("utf-8"))
     health = {
-        stack: service_health(stack)
-        for stack in {item["stack"] for item in checklist["items"]}
+        stack: service_health(project) for stack, project in checklist["stacks"].items()
     }
     failed = False
     for item in checklist["items"]:
-        states = {s: health[item["stack"]].get(s, "missing") for s in item["services"]}
+        states = {}
+        for service in item["services"]:
+            if service in checklist.get("probes", {}):
+                states[service] = (
+                    probe(checklist["probes"][service]["url"])
+                    if health[item["stack"]].get(service) == "running"
+                    else health[item["stack"]].get(service, "missing")
+                )
+            else:
+                states[service] = health[item["stack"]].get(service, "missing")
         ok = all(state == "healthy" for state in states.values())
         failed |= not ok and item["strength"] == "HARD"
         bad = ", ".join(f"{s}={st}" for s, st in states.items() if st != "healthy")
