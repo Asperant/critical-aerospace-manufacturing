@@ -23,6 +23,8 @@
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "CI tooling tests"}]},
     {"path": "ci/tests/test_ai_tool_contract.py", "owner": "Asrın", "work_package": "WP-AI-002", "families": ["TEST-AI-TOOLS"], "test_ids": ["TEST-AI-002-001"],
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "CI tooling tests"}]},
+    {"path": "ci/tests/test_vision_inspection_observation_contract.py", "owner": "Selman", "work_package": "WP-VIS-001", "families": ["TEST-EVT-SCHEMA"], "test_ids": ["TEST-VIS-001-001"],
+     "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "CI tooling tests"}]},
     {"path": "ci/integration", "owner": "Yavuz", "work_package": "WP-CICD-001", "families": [], "family_note": "integration-tier gate integrity (03 §19.2: no planned family)", "test_ids": ["TEST-CICD-003"],
      "runs": [{"tier": "integration", "boundary_mode": "REAL", "ci_step": "Integration smoke (boundary mode REAL)"}]},
     {"path": "packages/observability/tests", "owner": "Yavuz", "work_package": "WP-OBS-001", "families": ["TEST-OBS-LOGS", "TEST-OBS-HEALTH"], "test_ids": ["TEST-OBS-001-001", "TEST-OBS-001-003", "TEST-OBS-001-004"],
