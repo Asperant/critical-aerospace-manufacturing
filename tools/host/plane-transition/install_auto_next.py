@@ -377,8 +377,11 @@ print('AUTO_NEXT deployment restored; Plane states and audit untouched. Source p
             ],
             check=True,
         )
+        # Preparation is explicitly on-demand under CHG-054. Keep the unit
+        # installed and verifiable, but do not make it a background product-WP
+        # scheduling path during deployment.
         subprocess.run(
-            ["systemctl", "enable", "--now", "cap-plane-prepare.timer"], check=True
+            ["systemctl", "disable", "--now", "cap-plane-prepare.timer"], check=True
         )
         hashes = {
             dest: hashlib.sha256(Path(dest).read_bytes()).hexdigest()

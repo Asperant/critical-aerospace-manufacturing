@@ -1059,3 +1059,42 @@ This is an approved C3 / CR-3 control-plane correction under CHG-018's zero
 development-approval policy. It authorizes the merged-source deployment and
 fresh audited reconciliation only; it does not authorize product WP lifecycle
 transitions, CORE-009 cleanup or readiness/DONE claims.
+
+## CHG-054 — fail-open product startability and advisory control-plane scheduling
+
+CHG-054 / CTRL-HOST-031 is an approved C3 / CR-3 control-plane simplification
+under the planning-owner decision of 27 October 2026. It changes product
+implementation start authorization to `START fail-open / DONE fail-closed`.
+
+Product implementation may start when the canonical WP resolves exactly once,
+its canonical owner and scope are unambiguous, and no canonical `HARD + START`
+dependency remains unresolved. Only canonical owner/scope ambiguity, an
+unresolved real `HARD + START` dependency, or an unsafe/spec-conflicting
+operation requiring a human decision blocks start. Queue `AMBIGUOUS`, `NO_TASK`,
+`UNAVAILABLE`, missing `current_task`, Plane health/read failures, missing
+READY/DoR material, preflight/cache/audit continuity, metadata reconciliation,
+and Slot Release v2 proofs are advisory diagnostics and never product-start
+authorization gates. HARD `INTEGRATION`, `MILESTONE_EXIT` and `FREEZE` edges
+remain at their existing later-stage gates.
+
+`projectctl startability` exposes the deterministic `cap-startability-v1`
+decision. `cap-plane-queue` remains a sanitized read-only diagnostic and no
+longer invokes AUTO_NEXT, GitHub evidence discovery or Slot Release proof
+refresh; its status and exit result do not authorize or deny implementation.
+Product transitions no longer perform WIP/Slot Release accounting or invoke
+AUTO_NEXT/health/preparation after a verified lifecycle write. Preparation is
+on-demand and its automatic timer is disabled by default. Historical proof,
+audit, readiness, Plane cards, WBS/RTM/dependency documents and CI gates remain
+available as diagnostics/evidence.
+
+MERGE_READY and DONE remain fail-closed. MERGE_READY still requires the actual
+current PR CI, scope/static/contract checks and merge correctness. DONE still
+requires the exact merged SHA, required main/post-merge CI, real DoD/evidence,
+applicable HARD integration/dependency acceptance, traceability and runtime or
+integration verification. `UNKNOWN` is never PASS, and this change does not
+start or mutate WP-CORE-009.
+
+The owner/cycle projection remains the CHG-053 projection: Asrın 74, Batuhan
+32, Selman 17, Yavuz 57; 175 scheduled and 5 unscheduled WPs. Lifecycle state
+is not reset. Rollback restores deployed helper source only and never replays a
+stale Plane snapshot.

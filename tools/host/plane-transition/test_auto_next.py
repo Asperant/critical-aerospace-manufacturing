@@ -207,8 +207,8 @@ class AutoNextTests(unittest.TestCase):
 
     def test_hook_only_after_verified_done(self):
         source = (HERE / "transition.py").read_text()
-        self.assertIn("target=='DONE' and result.get('result')=='VERIFIED'", source)
-        self.assertIn("auto.after_done", source)
+        self.assertNotIn("auto.after_done", source)
+        self.assertNotIn("auto.after_transition", source)
 
     def test_global_lock_covers_decision_apply_and_done_hook(self):
         source = (HERE / "auto_next.py").read_text()

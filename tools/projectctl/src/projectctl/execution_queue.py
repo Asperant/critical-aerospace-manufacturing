@@ -247,6 +247,15 @@ def project_view(project: Any) -> dict[str, Any]:
             "scheduled": bool(data["cycle_ids"]),
             "nodes": wp.readiness_refs or [],
             "edges": data["dependency_edges"],
+            "scope_known": all(
+                bool(getattr(wp, field, None))
+                for field in (
+                    "id",
+                    "scope_class",
+                    "dor_refs",
+                    "dod_refs",
+                )
+            ),
         }
     return {
         "cards": cards,
@@ -257,6 +266,52 @@ def project_view(project: Any) -> dict[str, Any]:
         "source_manifest": project.source_manifest,
         "valid": project.summary()["validation"] == "PASS",
     }
+
+
+def startability_from_view(view: dict[str, Any], wp_id: str) -> dict[str, Any]:
+    """Evaluate the deliberately small CHG-054 product start rule.
+
+    This is a canonical documentation decision only.  It intentionally does not
+    inspect Plane, READY/DoR evidence, queue health, audit continuity, caches or
+    Slot Release proofs.  A dependency is a start blocker only when its canonical
+    edge is HARD + START and its recorded readiness status is not READY.
+    """
+    cards = view.get("cards", {}) if isinstance(view, dict) else {}
+    result = {
+        "schema_version": "cap-startability-v1",
+        "wp_id": wp_id,
+        "result": "BLOCK",
+        "blockers": [],
+        "advisories": [],
+    }
+    card = cards.get(wp_id)
+    if not isinstance(card, dict):
+        result["blockers"] = ["CANONICAL_WP_UNKNOWN"]
+        return result
+    owner = card.get("owner")
+    if owner not in OWNERS.values():
+        result["blockers"].append("CANONICAL_OWNER_AMBIGUOUS")
+    if card.get("scope_known", True) is not True:
+        result["blockers"].append("CANONICAL_SCOPE_UNKNOWN")
+    for edge in card.get("edges", []):
+        semantics = edge.get("semantics", {})
+        if (
+            semantics.get("strength") != "HARD"
+            or semantics.get("blocking_stage") != "START"
+        ):
+            continue
+        if edge.get("status") != "READY":
+            result["blockers"].append(
+                "HARD_START_DEPENDENCY_UNRESOLVED:" + str(edge.get("id", "UNKNOWN"))
+            )
+    if not result["blockers"]:
+        result["result"] = "STARTABLE"
+    return result
+
+
+def evaluate_startability(project: Any, wp_id: str) -> dict[str, Any]:
+    """Evaluate startability without any execution-plane or evidence input."""
+    return startability_from_view(project_view(project), wp_id)
 
 
 def validate_preferences(project: Any, policy: dict[str, Any]) -> list[str]:

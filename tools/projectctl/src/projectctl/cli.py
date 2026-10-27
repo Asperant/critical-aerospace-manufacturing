@@ -126,6 +126,18 @@ def check_ready(wp_id: str, root: Path | None = typer.Option(None)):
     check_gate(wp_id, root, "ready")
 
 
+@app.command(name="startability")
+def startability(wp_id: str, root: Path | None = typer.Option(None)):
+    """Evaluate CHG-054's canonical product-start rule; no Plane or evidence reads."""
+    from .execution_queue import evaluate_startability
+
+    project = read_project(root)
+    payload = evaluate_startability(project, wp_id)
+    emit_json(payload)
+    if payload["result"] != "STARTABLE":
+        raise typer.Exit(1)
+
+
 @app.command(name="check-done")
 def check_done(wp_id: str, root: Path | None = typer.Option(None)):
     """Fail-closed read-only DoD check; merge/tests never imply DONE."""

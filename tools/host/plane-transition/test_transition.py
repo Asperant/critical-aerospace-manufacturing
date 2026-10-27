@@ -843,12 +843,14 @@ class TransitionTests(unittest.TestCase):
         def dep(policy,plane,gh,envelope):
             card=policy['contexts'][plane.item['external_id']]
             card['dependency_edges']=[{'id':'DEP-001','predecessor':{'node':'DN-ONE'},
+                                      'status':'NOT_READY',
                                       'semantics':{'strength':'HARD','blocking_stage':'START','required_readiness':'CONTRACT_READY'}}]
             policy['node_owners']['DN-ONE']='selman'
             policy['node_levels']['DN-ONE']=['DEFINED','CONTRACT_READY']
         with self.assertRaises(t.Denied): run_case(mutate=dep)
         def satisfied(policy,plane,gh,envelope):
             dep(policy,plane,gh,envelope)
+            policy['contexts'][plane.item['external_id']]['dependency_edges'][0]['status']='READY'
             record=gh.comments[3]
             data=json.loads(record['body'])
             data['cap_plane_transition']['dependency_readiness']={'DEP-001':{'readiness':'CONTRACT_READY',
@@ -966,7 +968,7 @@ class TransitionTests(unittest.TestCase):
         self.assertEqual(second['result'],'UNCHANGED')
         self.assertEqual(len(plane.patches),1)
 
-    def test_canonical_raw_size_bands_enforce_relative_heavy_wip_without_day_estimates(self):
+    def test_canonical_raw_size_bands_do_not_gate_product_start(self):
         def second_heavy(policy,plane,gh,envelope):
             wp=plane.item['external_id']
             policy['contexts'][wp]['work_package']['size_band']='L (≈7–12 focused days)'
@@ -976,8 +978,8 @@ class TransitionTests(unittest.TestCase):
             active=deepcopy(plane.item)
             active.update(id='other-id',external_id=other,name='['+other+'] Other active WP',state='IN_PROGRESS')
             plane.items.append(active)
-        with self.assertRaises(t.Denied) as raised: run_case(mutate=second_heavy)
-        self.assertEqual(raised.exception.code,'HEAVY_CORE_WIP_LIMIT')
+        result,*_=run_case(mutate=second_heavy)
+        self.assertEqual(result['result'],'VERIFIED')
         def actual_small_band(policy,plane,gh,envelope):
             policy['contexts'][plane.item['external_id']]['work_package']['size_band']='S (≈1–3 focused days)'
         result,*_=run_case(mutate=actual_small_band)

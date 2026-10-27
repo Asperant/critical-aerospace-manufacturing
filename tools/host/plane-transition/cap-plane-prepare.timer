@@ -1,5 +1,6 @@
 [Unit]
-Description=Replenish canonical PREPARED buffer every 15 minutes
+Description=Disabled automatic preparation timer; preparation is on-demand under CHG-054
+ConditionPathExists=/etc/cap-plane-prepare.enabled
 
 [Timer]
 OnBootSec=3min
