@@ -46,7 +46,7 @@ PROFILES_ALL=(infra core vision ai planning platform full e2e)
 secret() { od -An -N16 -tx1 /dev/urandom | tr -d ' \n'; }
 
 SECRET_VARS=(CAP_POSTGRES_PASSWORD CAP_KEYCLOAK_ADMIN_PASSWORD CAP_S3_ADMIN_SECRET CAP_S3_WRITER_SECRET CAP_S3_READER_SECRET
-  CAP_S3_MLFLOW_SECRET CAP_QDRANT_API_KEY)
+  CAP_S3_MLFLOW_SECRET CAP_QDRANT_API_KEY CAP_KEYCLOAK_SMOKE_CLIENT_SECRET)
 # WP-OBJ-001: least-privilege S3 identities. Access keys are names, not secrets.
 S3_ADMIN_KEY=cap-artifacts-admin
 S3_WRITER_KEY=cap-artifacts-writer
@@ -87,7 +87,9 @@ load_credentials() {
   [[ -f "${STATE_DIR}/s3.json" ]] && s3_before="$(cat "${STATE_DIR}/s3.json")"
   ( umask 077
     printf 'POSTGRES_PASSWORD=%s\n' "${CAP_POSTGRES_PASSWORD}" > "${STATE_DIR}/postgres.env"
-    printf 'KC_BOOTSTRAP_ADMIN_PASSWORD=%s\n' "${CAP_KEYCLOAK_ADMIN_PASSWORD}" > "${STATE_DIR}/keycloak.env"
+    # WP-PLAT-003: the platform realm's smoke-client secret, resolved by Keycloak on import.
+    printf 'KC_BOOTSTRAP_ADMIN_PASSWORD=%s\nCAP_KEYCLOAK_SMOKE_CLIENT_SECRET=%s\n' \
+      "${CAP_KEYCLOAK_ADMIN_PASSWORD}" "${CAP_KEYCLOAK_SMOKE_CLIENT_SECRET}" > "${STATE_DIR}/keycloak.env"
     # WP-PLAT-003: Temporal server (POSTGRES_PWD) and its schema job (SQL_PASSWORD).
     printf 'POSTGRES_PWD=%s\nSQL_PASSWORD=%s\n' "${CAP_POSTGRES_PASSWORD}" "${CAP_POSTGRES_PASSWORD}" > "${STATE_DIR}/temporal.env"
     printf 'QDRANT__SERVICE__API_KEY=%s\n' "${CAP_QDRANT_API_KEY}" > "${STATE_DIR}/qdrant.env"
@@ -191,6 +193,9 @@ case "${1:-}" in
     echo "CAP_KEYCLOAK_URL=http://127.0.0.1:${CAP_KEYCLOAK_PORT}"
     echo "CAP_KEYCLOAK_ADMIN_USER=cap-admin"
     echo "CAP_KEYCLOAK_ADMIN_PASSWORD=${CAP_KEYCLOAK_ADMIN_PASSWORD}"
+    echo "CAP_KEYCLOAK_REALM=cap-platform"
+    echo "CAP_KEYCLOAK_SMOKE_CLIENT_ID=cap-platform-smoke"
+    echo "CAP_KEYCLOAK_SMOKE_CLIENT_SECRET=${CAP_KEYCLOAK_SMOKE_CLIENT_SECRET}"
     echo "CAP_TEMPORAL_ADDRESS=127.0.0.1:${CAP_TEMPORAL_PORT}"
     echo "CAP_TEMPORAL_HTTP_URL=http://127.0.0.1:${CAP_TEMPORAL_HTTP_PORT}"
     echo "CAP_TEMPORAL_NAMESPACE=${CAP_TEMPORAL_NAMESPACE}"

@@ -162,7 +162,9 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.0.5
     profiles: *infra-profiles
-    command: ["start-dev", "--http-port=8080", "--health-enabled=true"]
+    # --import-realm creates the platform realm from the definition below when it
+    # does not exist yet; an existing realm is never overwritten (WP-PLAT-003).
+    command: ["start-dev", "--http-port=8080", "--health-enabled=true", "--import-realm"]
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: cap-admin
     env_file:
@@ -170,6 +172,9 @@ services:
         required: false
     volumes:
       - keycloak-data:/opt/keycloak/data
+    configs:
+      - source: keycloak-platform-realm
+        target: /opt/keycloak/data/import/cap-platform-realm.json
     ports:
       - "127.0.0.1:${CAP_KEYCLOAK_PORT:-28080}:8080"
     healthcheck:
@@ -406,3 +411,33 @@ configs:
   temporal-dynamicconfig:
     content: |
       {}
+
+  # WP-PLAT-003 — minimal platform realm as code: proves that the identity provider
+  # issues real tokens (DEP-010). Roles, users, BFF/UI OIDC clients and TLS belong to
+  # WP-SEC-001. The client secret is resolved by Keycloak from its environment
+  # (keycloak.env, generated per host by stack.sh); it is never in this file.
+  keycloak-platform-realm:
+    content: |
+      {
+        "realm": "cap-platform",
+        "enabled": true,
+        "sslRequired": "external",
+        "registrationAllowed": false,
+        "accessTokenLifespan": 300,
+        "clients": [
+          {
+            "clientId": "cap-platform-smoke",
+            "name": "Platform readiness smoke client (WP-PLAT-003)",
+            "enabled": true,
+            "protocol": "openid-connect",
+            "publicClient": false,
+            "clientAuthenticatorType": "client-secret",
+            "secret": "$${CAP_KEYCLOAK_SMOKE_CLIENT_SECRET}",
+            "serviceAccountsEnabled": true,
+            "standardFlowEnabled": false,
+            "implicitFlowEnabled": false,
+            "directAccessGrantsEnabled": false,
+            "redirectUris": []
+          }
+        ]
+      }

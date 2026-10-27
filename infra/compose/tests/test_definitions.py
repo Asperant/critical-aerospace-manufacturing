@@ -274,3 +274,19 @@ def test_ordering_checks_reject_broken_graphs() -> None:
     assert layer_violations(bare, {"temporal": 1, "postgres": 1})
     loop = {"a": {"depends_on": {"b": healthy}}, "b": {"depends_on": {"a": healthy}}}
     assert startup_cycle(loop) == ["a", "b", "a"]
+
+
+def test_platform_realm_carries_no_secret() -> None:
+    """WP-PLAT-003: the realm is code; its client secret comes from the host's keycloak.env."""
+    import json
+
+    realm = json.loads(COMPOSE["configs"]["keycloak-platform-realm"]["content"])
+    (client,) = realm["clients"]
+    assert client["secret"] == "$${CAP_KEYCLOAK_SMOKE_CLIENT_SECRET}"
+    assert client["serviceAccountsEnabled"] and not client["publicClient"]
+    assert not client["directAccessGrantsEnabled"] and not client["standardFlowEnabled"]
+    script = (HERE / "stack.sh").read_text("utf-8")
+    assert (
+        "CAP_KEYCLOAK_SMOKE_CLIENT_SECRET"
+        in script.split("SECRET_VARS=(", 1)[1].split(")")[0]
+    )

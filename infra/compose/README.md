@@ -63,6 +63,17 @@ the memory limit. `stack.sh` restarts a running SeaweedFS when the S3 identities
 change, because the gateway reads them only at start. `stack.sh env` adds
 `CAP_QDRANT_URL`, `CAP_QDRANT_API_KEY` and `CAP_MLFLOW_URL`.
 
+## Platform realm (WP-PLAT-003)
+
+Keycloak starts with `--import-realm` and creates the `cap-platform` realm from the
+`keycloak-platform-realm` config in `compose.yaml` when it does not exist yet (an
+existing realm is never overwritten). The realm holds one confidential
+service-account client, `cap-platform-smoke`, that proves the identity provider
+issues real tokens (05 DEP-010); its secret is a placeholder resolved by Keycloak
+from `keycloak.env`, generated per host by `stack.sh`. Roles, users, the BFF/UI OIDC
+clients and TLS belong to WP-SEC-001. `stack.sh env` adds `CAP_KEYCLOAK_REALM`,
+`CAP_KEYCLOAK_SMOKE_CLIENT_ID` and `CAP_KEYCLOAK_SMOKE_CLIENT_SECRET`.
+
 ## Startup order and recovery (WP-PLAT-003, 02 Sequence I)
 
 `compose up` follows 02 Sequence I: identity (Keycloak) → data stores (PostgreSQL,

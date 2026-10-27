@@ -222,3 +222,46 @@ def test_mlflow_tracks_in_postgresql_and_serves_artifacts_from_s3() -> None:
             f"{base}/api/2.0/mlflow/experiments/delete",
             {"experiment_id": experiment},
         )
+
+
+# ------------------------------------------- WP-PLAT-003: platform realm ---
+
+
+def token_request(secret: str) -> tuple[int, dict]:
+    import base64
+    from urllib.parse import urlencode
+
+    url = (
+        f"{required('CAP_KEYCLOAK_URL')}/realms/{required('CAP_KEYCLOAK_REALM')}"
+        "/protocol/openid-connect/token"
+    )
+    client = required("CAP_KEYCLOAK_SMOKE_CLIENT_ID")
+    request = urllib.request.Request(
+        url,
+        data=urlencode({"grant_type": "client_credentials"}).encode(),
+        method="POST",
+    )
+    credentials = base64.b64encode(f"{client}:{secret}".encode()).decode()
+    request.add_header("Authorization", f"Basic {credentials}")
+    try:
+        with urllib.request.urlopen(request, timeout=15) as response:
+            return response.status, json.loads(response.read())
+    except urllib.error.HTTPError as exc:
+        return exc.code, {}
+
+
+def test_keycloak_issues_a_real_token_for_the_platform_realm() -> None:
+    """DEP-010: the realm is deployed from code and the identity provider issues tokens."""
+    import base64
+
+    status, body = token_request(required("CAP_KEYCLOAK_SMOKE_CLIENT_SECRET"))
+    assert status == 200 and body.get("token_type", "").lower() == "bearer"
+    payload = body["access_token"].split(".")[1]
+    claims = json.loads(base64.urlsafe_b64decode(payload + "=" * (-len(payload) % 4)))
+    assert claims["iss"].endswith(f"/realms/{required('CAP_KEYCLOAK_REALM')}")
+    assert claims["azp"] == required("CAP_KEYCLOAK_SMOKE_CLIENT_ID")
+
+
+def test_keycloak_rejects_a_wrong_client_secret() -> None:
+    status, body = token_request("not-the-secret")
+    assert status == 401 and "access_token" not in body
