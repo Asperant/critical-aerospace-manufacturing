@@ -29,6 +29,7 @@ affected_work_packages: [WP-EVT-001, WP-EVT-002, WP-CORE-005]
 affected_dependencies: [DEP-023]
 affected_evidence:
   - evidence/readiness/DN-EVT-CONTRACTS-DEP-023.json
+  - evidence/CTRL-HOST-048/S2-S3-REACHABILITY-AUDIT-2026-10-27.md
   - packages/contracts/registry/core.lot-held.v1.json
   - packages/contracts/registry/core.lot-held.v2.json
   - packages/contracts/registry/core.lot-dispatch-authorized.v1.json
