@@ -1102,7 +1102,7 @@ Operational guidance derived from the overlay: avoid unrelated architecture migr
 
 | DEP | Dependency (capability terms) | Required by | Required state | Delivering owner | Consuming capability (owner) | Status |
 |---|---|---|---|---|---|---|
-| DEP-018 | Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity) → Core minimal lifecycle implementation | S1–S2 | CONTRACT_READY | Asrın | DN-CORE-LIFECYCLE (Asrın) | NOT_READY |
+| DEP-018 | Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity) → Core minimal lifecycle implementation | S1–S2 | CONTRACT_READY | Asrın | DN-CORE-LIFECYCLE (Asrın) | READY |
 | DEP-038 | Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity) → Operational semantics (reentrant routing, queues, failures, maintenance, rework) | S2 | CONTRACT_READY | Asrın | DN-SIM-OPSEM (Batu) | NOT_READY |
 | DEP-008 | Integration runtime (shared Linux host bootstrap) → NATS JetStream runtime | M1 (S2) | INTEGRATION_READY | Yavuz | DN-RT-NATS (Yavuz) | NOT_READY |
 | DEP-007 | Integration runtime (shared Linux host bootstrap) → PostgreSQL runtime | M1 (S2) | INTEGRATION_READY | Yavuz | DN-RT-PG (Yavuz) | NOT_READY |
@@ -1519,7 +1519,7 @@ DEP-018:
   precise_requirement: "WP-CORE-009 must consume the merged/current-main CORE-001 domain and query contracts for ProductionOrder, Lot, SerializedComponent, immutable identity/revision validation, and ordered re-entrant RouteVisit semantics. CORE-001 producer contract tests and both normal and reentrant fixtures must be green and published, and an attributable current-main DN-CORE-CONTRACTS/CONTRACT_READY artifact must bind those contracts to DEP-018. This requirement does not authorize WP-CORE-002 transition semantics."
   risk_class: DR-1
   source: "Item 66 #39"
-  status: NOT_READY
+  status: READY
 DEP-019:
   predecessor: {node: DN-RT-PG, owner: "Yavuz"}
   successor: {node: DN-CORE-LIFECYCLE, owner: "Asrın"}
