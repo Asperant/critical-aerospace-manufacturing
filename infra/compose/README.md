@@ -74,6 +74,22 @@ from `keycloak.env`, generated per host by `stack.sh`. Roles, users, the BFF/UI 
 clients and TLS belong to WP-SEC-001. `stack.sh env` adds `CAP_KEYCLOAK_REALM`,
 `CAP_KEYCLOAK_SMOKE_CLIENT_ID` and `CAP_KEYCLOAK_SMOKE_CLIENT_SECRET`.
 
+## Runtime readiness checklist (WP-PLAT-003, E2E-01 gate)
+
+`readiness.json` lists every runtime edge out of DN-PLAT-INTEG in 05 (DEP-005,
+DEP-007…015) with 05's own consumer node, strength, stage, required readiness,
+need-by and precise requirement, plus the services that realize it and the REAL
+checks that prove it. A static test fails when the list and 05 disagree, when an
+edge is missing, or when a named service or check does not exist.
+
+```bash
+infra/compose/stack.sh readiness   # OK/WAIT per edge; exit 1 when a HARD edge is not healthy
+```
+
+DEP-011 is served by the observability stack (`infra/observability`, WP-OBS-001), so
+it shows WAIT until that stack runs too. The list is a checklist and a live health
+view; a readiness claim rests on the recorded run on the shared host.
+
 ## Startup order and recovery (WP-PLAT-003, 02 Sequence I)
 
 `compose up` follows 02 Sequence I: identity (Keycloak) → data stores (PostgreSQL,

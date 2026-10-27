@@ -3,13 +3,14 @@
 # The same script runs in GitHub Actions (t1-integration) and on a developer or
 # shared host with Docker, so both use identical images and settings.
 #
-# Usage: infra/compose/stack.sh up [PROFILE...]|down|reset|env|status|logs|config [PROFILE]|smoke
+# Usage: infra/compose/stack.sh up [PROFILE...]|down|reset|env|status|readiness|logs|config [PROFILE]|smoke
 #   up      create credentials if needed, start the profiles (default: infra) and
 #           wait until every service is healthy; prints startup-to-healthy seconds
 #   down    stop all services, keep data and credentials
 #   reset   stop, delete all data volumes and credentials (fresh start next time)
 #   env     print connection settings and credentials as KEY=VALUE lines
 #   status  docker compose ps
+#   readiness  live health per 05 edge out of DN-PLAT-INTEG (readiness.json, WP-PLAT-003)
 #   logs    recent logs of all services
 #   config  render the definition for a profile (validation, no containers)
 #   smoke   REAL checks of the running infra layer (mfgctl smoke platform-infra)
@@ -208,6 +209,10 @@ case "${1:-}" in
     mapfile -t args < <(profile_args "${PROFILES_ALL[@]}")
     "${COMPOSE[@]}" "${args[@]}" ps
     ;;
+  readiness)
+    load_credentials
+    python3 "${HERE}/readiness.py"
+    ;;
   logs)
     load_credentials
     mapfile -t args < <(profile_args "${PROFILES_ALL[@]}")
@@ -227,7 +232,7 @@ case "${1:-}" in
       python -m pytest infra/compose/tests -m integration -q -p pytest_quarantine
     ;;
   *)
-    echo "usage: $0 up [PROFILE...]|down|reset|env|status|logs|config [PROFILE]|smoke" >&2
+    echo "usage: $0 up [PROFILE...]|down|reset|env|status|readiness|logs|config [PROFILE]|smoke" >&2
     exit 2
     ;;
 esac

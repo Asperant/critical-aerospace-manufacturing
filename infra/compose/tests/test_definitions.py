@@ -290,3 +290,59 @@ def test_platform_realm_carries_no_secret() -> None:
         "CAP_KEYCLOAK_SMOKE_CLIENT_SECRET"
         in script.split("SECRET_VARS=(", 1)[1].split(")")[0]
     )
+
+
+# ------------------------------ WP-PLAT-003: runtime readiness checklist ---
+
+READINESS = __import__("json").loads((HERE / "readiness.json").read_text("utf-8"))
+DEP_ROW = re.compile(
+    r"^\| (DEP-\d{3}) \| DN-PLAT-INTEG → (\S+) \| RUNTIME \| (HARD|SOFT) \| (\S+) \| (\S+) \| "
+    r"([^|]+?) \| [^|]+ \| [^|]+ \| [^|]+ \| ([^|]+?) \|",
+    re.M,
+)
+
+
+def canonical_edges() -> dict[str, dict[str, str]]:
+    text = (REPO / "docs/05_Dependency_Graph.md").read_text("utf-8")
+    return {
+        m[1]: {
+            "consumer_node": m[2],
+            "strength": m[3],
+            "stage": m[4],
+            "required_readiness": m[5],
+            "need_by": m[6],
+            "precise_requirement": m[7],
+        }
+        for m in DEP_ROW.finditer(text)
+    }
+
+
+def test_readiness_checklist_matches_05_exactly() -> None:
+    """Every runtime edge out of DN-PLAT-INTEG is listed once, with 05's own values."""
+    edges = canonical_edges()
+    assert edges, "no DN-PLAT-INTEG runtime edge parsed from 05"
+    items = {item["dep"]: item for item in READINESS["items"]}
+    assert len(items) == len(READINESS["items"]), "duplicate checklist entry"
+    assert set(items) == set(edges)
+    for dep, edge in edges.items():
+        assert {key: items[dep][key] for key in edge} == edge, dep
+
+
+def test_readiness_checklist_points_to_real_services_and_checks() -> None:
+    stacks = {"infra/compose": SERVICES}
+    other = yaml.safe_load(
+        (REPO / "infra/observability/compose.yaml").read_text("utf-8")
+    )
+    stacks["infra/observability"] = other["services"]
+    for item in READINESS["items"]:
+        services = stacks[item["stack"]]
+        for name in item["services"]:
+            assert name in services and not one_shot(services[name]), (
+                item["dep"],
+                name,
+            )
+        assert item["checks"], item["dep"]
+        for check in item["checks"]:
+            path, _, test = check.partition("::")
+            text = (REPO / path).read_text("utf-8")
+            assert not test or f"def {test}(" in text, (item["dep"], check)
