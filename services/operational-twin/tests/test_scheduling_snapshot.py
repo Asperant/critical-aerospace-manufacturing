@@ -5,7 +5,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from operational_twin import (
     SCHEDULING_SNAPSHOT_READ,
     ReadScopeDenied,
@@ -14,8 +13,13 @@ from operational_twin import (
     TwinReadContext,
 )
 
-
-FIXTURE = Path(__file__).parents[2] / "manufacturing-core" / "contracts" / "v1" / "scheduling-snapshot.normal.json"
+FIXTURE = (
+    Path(__file__).parents[2]
+    / "manufacturing-core"
+    / "contracts"
+    / "v1"
+    / "scheduling-snapshot.normal.json"
+)
 
 
 def snapshot() -> dict[str, object]:
@@ -49,7 +53,9 @@ def test_unknown_identity_and_missing_scope_are_denied() -> None:
             world_id="PRIMARY",
         )
     with pytest.raises(ReadScopeDenied):
-        api().get_scheduling_snapshot_v1(TwinReadContext("scheduler-service", frozenset()), world_id="PRIMARY")
+        api().get_scheduling_snapshot_v1(
+            TwinReadContext("scheduler-service", frozenset()), world_id="PRIMARY"
+        )
 
 
 def test_world_scope_is_explicit_and_provider_cannot_return_another_world() -> None:
@@ -58,7 +64,9 @@ def test_world_scope_is_explicit_and_provider_cannot_return_another_world() -> N
     wrong = snapshot()
     wrong["world_id"] = "OTHER"
     with pytest.raises(SnapshotQueryError, match="world_id"):
-        api(copy.deepcopy(wrong)).get_scheduling_snapshot_v1(context(), world_id="PRIMARY")
+        api(copy.deepcopy(wrong)).get_scheduling_snapshot_v1(
+            context(), world_id="PRIMARY"
+        )
 
 
 def test_hidden_oracle_fields_and_shape_drift_fail_closed() -> None:

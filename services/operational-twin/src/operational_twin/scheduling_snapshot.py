@@ -12,7 +12,6 @@ from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any
 
-
 SCHEDULING_SNAPSHOT_READ = "twin:scheduling-snapshot:read"
 _FRESHNESS_STATUSES = frozenset({"FRESH", "DEGRADED", "STALE"})
 _MAINTENANCE_STATES = frozenset(
@@ -55,7 +54,9 @@ def _exact_keys(value: Mapping[str, Any], required: set[str], field: str) -> Non
         )
 
 
-def _validate_snapshot(snapshot: Mapping[str, Any], expected_world_id: str) -> dict[str, Any]:
+def _validate_snapshot(
+    snapshot: Mapping[str, Any], expected_world_id: str
+) -> dict[str, Any]:
     top_level = {
         "contract_version",
         "world_id",
@@ -91,7 +92,14 @@ def _validate_snapshot(snapshot: Mapping[str, Any], expected_world_id: str) -> d
             raise SnapshotQueryError(f"{field}: object required")
         _exact_keys(
             lot,
-            {"id", "revision", "route_position", "priority", "due_at", "eligible_equipment_ids"},
+            {
+                "id",
+                "revision",
+                "route_position",
+                "priority",
+                "due_at",
+                "eligible_equipment_ids",
+            },
             field,
         )
         _nonblank(lot["id"], f"{field}.id")
@@ -110,14 +118,20 @@ def _validate_snapshot(snapshot: Mapping[str, Any], expected_world_id: str) -> d
         for route_field in ("route_id", "visit_id", "operation_class_id"):
             _nonblank(route[route_field], f"{field}.route_position.{route_field}")
         if type(route["position"]) is not int or route["position"] < 0:
-            raise SnapshotQueryError(f"{field}.route_position.position: non-negative integer required")
+            raise SnapshotQueryError(
+                f"{field}.route_position.position: non-negative integer required"
+            )
         equipment_ids = lot["eligible_equipment_ids"]
         if not isinstance(equipment_ids, list) or any(
             not isinstance(item, str) or not item.strip() for item in equipment_ids
         ):
-            raise SnapshotQueryError(f"{field}.eligible_equipment_ids: nonblank string array required")
+            raise SnapshotQueryError(
+                f"{field}.eligible_equipment_ids: nonblank string array required"
+            )
         if len(set(equipment_ids)) != len(equipment_ids):
-            raise SnapshotQueryError(f"{field}.eligible_equipment_ids: values must be unique")
+            raise SnapshotQueryError(
+                f"{field}.eligible_equipment_ids: values must be unique"
+            )
 
     equipment = snapshot["equipment"]
     if not isinstance(equipment, list):
@@ -159,10 +173,11 @@ class TwinQueryAPI:
         consumer_id = _nonblank(context.consumer_id, "consumer_id")
         configured = self._consumer_scopes.get(consumer_id)
         if configured is None or SCHEDULING_SNAPSHOT_READ not in configured:
-            raise ReadScopeDenied("consumer is not approved for SchedulingSnapshot reads")
+            raise ReadScopeDenied(
+                "consumer is not approved for SchedulingSnapshot reads"
+            )
         if SCHEDULING_SNAPSHOT_READ not in context.scopes:
             raise ReadScopeDenied("request context lacks SchedulingSnapshot read scope")
         requested_world = _nonblank(world_id, "world_id")
         snapshot = self._snapshot_provider(requested_world)
         return _validate_snapshot(snapshot, requested_world)
-
