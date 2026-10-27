@@ -177,7 +177,7 @@ jobs:
           uv run --project ci --locked pyright --project packages/artifacts/pyrightconfig.json
       - name: Vision inspection pipeline tests and typing (WP-VIS-001)
         run: |
-          uv run --project ci --locked python -m pytest -c services/vision-service/pyproject.toml services/vision-service/tests -q -p pytest_quarantine
+          uv run --project ci --locked python -m pytest -c services/vision-service/pyproject.toml services/vision-service/tests -m 'not integration' -q -p pytest_quarantine
           uv run --project ci --locked pyright --project services/vision-service/pyrightconfig.json
       - name: Trace registry lint and tests (WP-GOV-002)
         env:
@@ -295,6 +295,8 @@ jobs:
         env:
           CAP_ARTIFACT_TEST_DISPOSABLE: "1"
         run: uv run --project ci --locked python -m pytest -c packages/artifacts/pyproject.toml packages/artifacts/tests -m integration -q -p pytest_quarantine
+      - name: Vision pipeline over REAL SeaweedFS (WP-VIS-001)
+        run: uv run --project ci --locked python -m pytest -c services/vision-service/pyproject.toml services/vision-service/tests -m integration -q -p pytest_quarantine
       - name: Set up Node (version pinned in .node-version)
         uses: actions/setup-node@v4
         with:

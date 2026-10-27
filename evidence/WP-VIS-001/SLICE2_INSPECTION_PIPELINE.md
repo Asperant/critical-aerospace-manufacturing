@@ -59,9 +59,27 @@ input (NOT_EVALUATED); PNG signature, CRC, truncation, unsupported depth/color/
 interlace, hostile dimensions, data-length mismatch, decompression bound, unknown
 filter; candidate cap; naive clock.
 
+## REAL object storage (TEST-VIS-001-003)
+
+`services/vision-service/tests/test_pipeline_integration.py` writes a synthetic image
+with the writer identity, runs the pipeline with the reader identity against REAL
+SeaweedFS and validates the observation against the registered contract; a reference
+with a foreign checksum must be refused by the real read. It runs in t1-integration
+("Vision pipeline over REAL SeaweedFS (WP-VIS-001)") after the infra profile starts.
+It could not run locally (no Docker access for this account): locally it fails with
+`CAP_S3_ENDPOINT not set`, by design never skipping. The PR's CI run is the only
+REAL result.
+
+## Broker integration: blocked, not attempted
+
+`InspectionRequested` consumption and observation publication need a stream/subject
+binding (`packages/contracts/stream-definitions.json`, WP-EVT-001) and a real
+IC-VIS-001 producer; neither exists on main. Inventing Vision subjects or streams
+would cross the WP-EVT-001 boundary, so this slice does not.
+
 ## What this evidence does not claim
 
-No broker consumption or event publication, no REAL SeaweedFS read, no persistence
+No broker consumption or event publication, no persistence
 and no telemetry adoption. FR-VIS-001 and FR-VIS-009 are not verified: that requires
 the integrated path (E2E-01, AV-SCEN-01). The baseline has no measured accuracy and is
 not a ModelPackage. Test images are synthetic.

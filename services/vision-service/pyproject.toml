@@ -20,3 +20,4 @@ where = ["src"]
 testpaths = ["tests"]
 pythonpath = ["src", "../../packages/artifacts/src", "../../packages/contracts/src"]
 addopts = "-p no:cacheprovider"
+markers = ["integration: needs a real SeaweedFS S3 gateway"]
