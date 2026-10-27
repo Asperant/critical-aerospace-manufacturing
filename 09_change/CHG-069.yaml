@@ -1,0 +1,50 @@
+title: Bind the merged typed AI tool contract to DEP-064
+trigger: DEP-064 remained NOT_READY although the bounded typed tool contract slice was merged and verified
+reason: S2/S3 closure requires the exact AI tool producer contract to be bound to the canonical edge without claiming runtime clients, orchestration or execution
+class: C1
+review_risk_class: CR-1
+raised_in: S3
+owner: Asrın
+required_human_approvals: 0
+reviewers: []
+decision: APPROVED
+status: APPROVED
+application_control_item: CTRL-HOST-043
+decision_basis: Mechanical edge-specific readiness reconciliation for merged contract artifacts; no product scope, authority boundary or later-stage readiness change.
+scope:
+  - Bind DEP-064 to the ai.tool-interface.v1 registry/schema and four fixtures.
+  - Record DEP-064 READY at CONTRACT_READY.
+  - Preserve WP-AI-002 runtime enforcement and DEP-076 AuthorityPolicy as separate work.
+invariants_preserved:
+  - AI may READ, SIMULATE and PROPOSE only; it never directly mutates Core or executes protected actions.
+  - WorldID/tool identity and proposal base revision/evidence binding remain explicit.
+  - Fixtures and CI are contract evidence, not runtime/integration acceptance.
+precise_requirement: The AI typed tool interface v1 shall publish versioned typed tools with explicit READ, SIMULATE and PROPOSE authority tags, explicit WorldID/tool identity, compatibility/example fixtures, and green producer/consumer contract validation; no execution or direct Core mutation surface is included.
+affected_requirements: [FR-AI-002, FR-AI-003]
+affected_architecture: [ARCH-AI-TOOLS, ARCH-SEC-AUTHZ]
+affected_contracts: [ai.tool-interface.v1]
+affected_work_packages: [WP-AI-002]
+affected_dependencies: [DEP-064]
+affected_evidence:
+  - evidence/readiness/DN-AI-TOOLCON-DEP-064.json
+  - evidence/WP-AI-002/SLICE1_TYPED_TOOL_CONTRACT.md
+  - packages/contracts/registry/ai.tool-interface.v1.json
+  - services/ai-intelligence/contracts/v1/ai-tool-interface.v1.schema.json
+  - ci/tests/test_ai_tool_contract.py
+evidence_staleness:
+  question_answered: true
+  stale: []
+  unaffected:
+    - WP-AI-002 runtime typed clients and enforcement remain separate work.
+    - WP-AI-001 orchestrator and DEP-066 remain unresolved.
+    - DEP-076 AuthorityPolicy remains unresolved.
+    - no work-package DONE claim is made.
+security_authority_impact: NONE
+conditions:
+  - Do not infer protected-action execution or direct Core mutation.
+  - Do not promote DEP-076 or DEP-066 from current readiness.
+rollout: Merge the control-only edge reconciliation, then re-run validation, focused AI contract tests and S2/S3 dependency audit.
+rollback: Revert the DEP-064 edge projection, readiness artifact and this control record together.
+required_rerun: [projectctl validate, projectctl startability WP-AI-002, AI tool contract tests, registry and producer-authority tests, contract gate]
+documentation_updates: [docs/05_Dependency_Graph.md, docs/09_Change_Control_Process.md, 09_change/change_requests.csv]
+freeze_context: PRE_M6

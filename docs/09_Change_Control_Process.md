@@ -1252,3 +1252,13 @@ the producer/consumer contract checks are green on current main. DEP-026 is
 therefore projected READY. This does not claim WP-CORE-003 completion,
 idempotent command execution, durable command outcomes, real database
 integration, or DEP-027/DEP-028 acceptance.
+
+## CHG-069 — bind the merged typed AI tool contract to DEP-064
+
+CHG-069 / CTRL-HOST-043 is a C1 control-plane reconciliation for DEP-064.
+The merged `ai.tool-interface.v1` registry, typed schema, four fixtures and
+producer-authority registration satisfy the edge-specific CONTRACT_READY
+predicate, with green producer/consumer and authority validation. DEP-064 is
+therefore projected READY. This does not claim WP-AI-002 runtime clients or
+enforcement, WP-AI-001 orchestration, protected-action execution, direct Core
+mutation, runtime integration or DEP-076 acceptance.
