@@ -54,3 +54,4 @@ CHG-064,Record current-main PASS for DEP-031,C1,CR-1,Asrın,APPROVED,APPROVED,CT
 CHG-065,Bind current-main UI and platform skeleton predicates for S2/S3 closure,C2,CR-2,Asrın,APPROVED,APPROVED,CTRL-HOST-039
 CHG-066,Record current-main DEP-034 Twin skeleton readiness,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-040
 CHG-067,Refresh current-main edge evidence after S2/S3 closure merges,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-041
+CHG-068,Bind the existing Core operational-command v1 contract to DEP-026,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-042
