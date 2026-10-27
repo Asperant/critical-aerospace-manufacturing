@@ -1,0 +1,31 @@
+{
+  "schema": "component-readiness-evidence-v1",
+  "node": "DN-CORE-LIFECYCLE",
+  "level": "COMPONENT_READY",
+  "producer_wp": "WP-CORE-009",
+  "producer_pr": 146,
+  "producer_merge_sha": "84bebc4d925e0c0c093edeb980195d0b37de4721",
+  "validated_main_sha": "dda541038d6289b8ed79c0c4c80092c9263847c9",
+  "consumer_edges": ["DEP-020"],
+  "consumer_wp": "WP-CORE-002",
+  "artifact": "evidence/WP-CORE-009/COMPONENT-READY.md",
+  "change_control": "CHG-059",
+  "scope": {
+    "lifecycle_models": "ProductionOrderState, LotState, SerializedComponentState",
+    "execution_state_separate": true,
+    "persistence_migration": "0003_lifecycle",
+    "test_id": "TEST-CORE-LIFECYCLE",
+    "transition_legality": "OUT_OF_SCOPE_WP-CORE-002"
+  },
+  "ci": {
+    "product_push_run": 40474885983,
+    "product_merge_main_run": 40475355234,
+    "final_t1_run": 40476475004,
+    "final_projectctl_full_run": 40476474980
+  },
+  "dep_019": {
+    "stage": "INTEGRATION",
+    "status": "NOT_READY",
+    "does_not_block_local_component_ready": true
+  }
+}

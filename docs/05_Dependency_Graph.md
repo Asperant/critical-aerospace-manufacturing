@@ -1541,7 +1541,7 @@ DEP-020:
   precise_requirement: "Before the WP-CORE-002 transition engine starts, the minimal canonical lifecycle/state component must be implemented, its lifecycle component tests must be green on current main, and an attributable COMPONENT_READY readiness artifact bound to DN-CORE-LIFECYCLE and WP-CORE-002 must exist. This producer slice does not implement legal transition semantics."
   risk_class: DR-1
   source: "Item 66 #41"
-  status: NOT_READY
+  status: READY
 DEP-021:
   predecessor: {node: DN-CORE-CONTRACTS, owner: "Asrın"}
   successor: {node: DN-EVT-CONTRACTS, owner: "Asrın"}
