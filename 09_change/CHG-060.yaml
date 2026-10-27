@@ -1,0 +1,56 @@
+CHG-060:
+  title: Record the current-main PASS for DEP-006
+  trigger: The existing DN-PLAT-COMPOSE runtime basis passed current-main producer, artifact and CI binding checks while DEP-006 remained NOT_READY
+  reason: CHG-054 startability consumes the canonical HARD+START status projection; retaining NOT_READY would keep WP-CORE-007 blocked after the exact SKELETON_READY evidence was verified
+  class: C1
+  review_risk_class: CR-1
+  raised_in: S2
+  owner: Asrın
+  required_human_approvals: 0
+  reviewers: []
+  decision: APPROVED
+  status: APPROVED
+  application_control_item: CTRL-HOST-035
+  decision_basis: The status projection records only a mechanically verified current-main runtime readiness fact. It introduces no implementation, requirement, architecture, authority or integration-readiness change.
+  scope:
+    - Record DEP-006 as READY in the canonical dependency registry and YAML projection.
+    - Bind the result to DN-PLAT-COMPOSE SKELETON_READY, producer WP-PLAT-001 PR #53, merge SHA 932edbaf87dd0d06b0984c25b4b75497a265e607 and current main d5d72e01fc0f1d8480d20b7538b59b7b4f0f9b46.
+    - Preserve the existing REAL development runtime evidence and exact producer-authored artifact blobs.
+  invariants_preserved:
+    - DEP-006 remains HARD, RUNTIME, START, SKELETON_READY and producer-owned by WP-PLAT-001.
+    - DEP-007 remains HARD/INTEGRATION/INTEGRATION_READY and unresolved.
+    - WP-CORE-007 PostgreSQL migration implementation, integration readiness and final DONE gates remain separate.
+    - No shared-host or full Integration readiness is inferred from the local profile evidence.
+  precise_requirement: NONE — status projection only; DEP-006's existing local-profile requirement remains canonical.
+  affected_requirements: [NONE — status projection only]
+  affected_architecture: [NONE]
+  affected_contracts:
+    - id: NONE
+      compatibility: NON_BREAKING
+      consumers_reviewed: [NONE]
+  affected_work_packages: [WP-PLAT-001, WP-CORE-007]
+  affected_dependencies: [DEP-006]
+  affected_evidence:
+    - evidence/readiness/DN-PLAT-COMPOSE.json
+    - evidence/WP-PLAT-001/RUN-PLAT-001-DEV-001/record.json
+    - evidence/CTRL-HOST-035/DEP-006-CURRENT-MAIN.md
+    - docs/05_Dependency_Graph.md
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - WP-PLAT-001 producer implementation and REAL infra-profile evidence remain unchanged.
+      - DEP-007 integration readiness, WP-CORE-007 post-merge validation and final acceptance remain unclaimed.
+    rerun_required: []
+  security_authority_impact: NONE
+  conditions:
+    - Do not change DEP-006 to READY without the exact current-main producer, PR, ancestor, blob and CI checks recorded in the control evidence.
+    - Do not infer DEP-007, full Integration readiness or WP-CORE-007 DONE from this status projection.
+  rollout: Merge the status projection and control evidence, then re-evaluate WP-CORE-007 startability on the exact resulting main revision.
+  rollback: Revert the DEP-006 status projection and control evidence only; do not delete WP-PLAT-001 runtime evidence or implementation.
+  required_rerun: [projectctl startability WP-CORE-007, projectctl context WP-CORE-007, current-main dependency validation]
+  documentation_updates:
+    - docs/05_Dependency_Graph.md
+    - docs/09_Change_Control_Process.md
+    - 09_change/change_requests.csv
+  freeze_context: PRE_M6
