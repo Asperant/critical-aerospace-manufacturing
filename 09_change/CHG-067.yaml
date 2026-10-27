@@ -1,0 +1,50 @@
+title: Refresh current-main edge evidence after S2/S3 closure merges
+trigger: DEP-031, DEP-003, DEP-034 and DEP-105 evidence remained bound to an earlier main revision after the closure-chain merges
+reason: Final closure requires exact current-main artifact, test and limitation binding without broadening any readiness predicate
+class: C1
+review_risk_class: CR-1
+raised_in: S3
+owner: Asrın
+required_human_approvals: 0
+reviewers: []
+decision: APPROVED
+status: APPROVED
+application_control_item: CTRL-HOST-041
+decision_basis: Mechanical evidence refresh at the exact merged current-main SHA; no product scope, architecture, authority or readiness-level change.
+scope:
+  - Refresh the verified_main_sha binding for DEP-003, DEP-031, DEP-034 and DEP-105.
+  - Re-run the bounded current-main contract, Twin projector, BFF and schema/test-strategy checks.
+  - Preserve the Docker socket permission limitation and all downstream integration gates.
+invariants_preserved:
+  - Core remains canonical and Twin remains read-only.
+  - Edge-specific readiness does not imply work-package DONE or integration readiness.
+  - Synthetic fixtures and local projector tests are not real factory or runtime acceptance evidence.
+precise_requirement: NONE — this control only refreshes evidence provenance to the exact current main revision.
+affected_requirements: [FR-PLAT-003, FR-TWIN-001, FR-UI-001]
+affected_architecture: [ARCH-PLAT-CLI, ARCH-TWIN-PROJECTOR, ARCH-EDGE-BFF]
+affected_contracts: [bff.operations-bff.v1, mfgctl.doctor/v1]
+affected_work_packages: [WP-PLAT-002, WP-TWIN-001, WP-UI-001]
+affected_dependencies: [DEP-003, DEP-031, DEP-034, DEP-105]
+affected_evidence:
+  - evidence/CTRL-HOST-038/DEP-031-CURRENT-MAIN.md
+  - evidence/readiness/DN-PLAT-TOOLING-DEP-003.json
+  - evidence/readiness/DN-TWIN-SKELETON-DEP-034.json
+  - evidence/readiness/DN-UI-BFFCON-DEP-105.json
+evidence_staleness:
+  question_answered: true
+  stale: []
+  unaffected:
+    - DEP-032, DEP-033 and DEP-035 remain later Twin/runtime gates.
+    - DEP-004 and real Compose/Integration acceptance remain unresolved.
+    - DEP-106 and real Core/Twin BFF integration remain unresolved.
+    - Docker socket access remains a host-administration blocker owned by Yavuz.
+security_authority_impact: NONE
+conditions:
+  - Do not promote any edge predicate to work-package DONE.
+  - Do not convert Docker doctor failure into runtime readiness.
+  - Preserve exact current-main SHA and test results in every evidence artifact.
+rollout: Merge the control-only evidence refresh, then perform the final S2/S3 closure audit.
+rollback: Revert only the evidence refresh and this control record; do not replay stale state snapshots.
+required_rerun: [projectctl validate, projectctl startability WP-UI-002, projectctl startability WP-PLAT-001, current-main focused contract/Twin/BFF tests, mfgctl bootstrap and doctor]
+documentation_updates: [docs/09_Change_Control_Process.md, 09_change/change_requests.csv]
+freeze_context: PRE_M6

@@ -7,7 +7,7 @@
   "producer_wp": "WP-TWIN-001",
   "producer_pr": 111,
   "producer_merge_sha": "86781ad20963ecf8d15022d065f11c251e6178f6",
-  "verified_main_sha": "80b1420e8f19bf8b4d984a85833cb22a8f6c32d7",
+  "verified_main_sha": "5462191dc80496fede955d070d13047715b16052",
   "precise_requirement": "The merged Twin skeleton must provide deterministic projection and read-only query primitives with explicit world/branch scope, duplicate idempotency, stale-order and gap rejection, and green focused projector tests.",
   "scope_boundary": "This edge certifies only the local COMPONENT_READY skeleton predicate. It does not claim real NATS delivery, PostgreSQL persistence, meaningful epistemic/freshness semantics, DEP-032, DEP-033, DEP-035 or WP-TWIN-002 completion.",
   "artifacts": [
@@ -16,8 +16,8 @@
     {"path": "evidence/WP-TWIN-001/SLICE1_LOCAL_PROJECTION.md", "role": "producer_evidence"}
   ],
   "tests": [
-    {"test_id": "TEST-TWIN-PROJECTION", "path": "services/operational-twin/tests/test_projector.py", "result": "7 passed"},
+    {"test_id": "TEST-TWIN-PROJECTION", "path": "services/operational-twin/tests/test_projector.py", "result": "9 passed"},
     {"test_id": "TEST-TWIN-READONLY", "path": "services/operational-twin/tests/test_projector.py", "result": "read-only and negative-path assertions passed"}
   ],
-  "verification": "WP-TWIN-001 PR #111 is merged with required CI green. The focused projector suite was re-run on current main at 80b1420e8f19bf8b4d984a85833cb22a8f6c32d7. Runtime event-spine and PostgreSQL acceptance remain explicitly outside this edge."
+  "verification": "WP-TWIN-001 PR #111 is merged with required CI green. The focused projector suite was re-run on current main at 5462191dc80496fede955d070d13047715b16052. Runtime event-spine and PostgreSQL acceptance remain explicitly outside this edge."
 }

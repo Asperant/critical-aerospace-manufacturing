@@ -1232,3 +1232,13 @@ focused projector suite (7 passed) on current main. This projection only opens
 the local WP-TWIN-002 start gate; it does not claim real NATS delivery,
 PostgreSQL persistence, simulated-world integration or final freshness and
 epistemic semantics.
+
+## CHG-067 — refresh current-main edge evidence after closure merges
+
+CHG-067 / CTRL-HOST-041 is a C1 mechanical evidence refresh. After the S2/S3
+closure-chain merges, the exact current-main revision is rebound in the
+DEP-031, DEP-003, DEP-034 and DEP-105 evidence artifacts. The bounded contract,
+Twin projector, BFF/schema and test-strategy checks were re-run at that SHA.
+No readiness level, work-package status, authority boundary or integration
+claim changes. The Docker socket permission failure, DEP-032/033/035, DEP-004
+and DEP-106 remain explicit downstream or external blockers.
