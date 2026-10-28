@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: a91c968768de7c5521a155548caa2b749031d54cf158f5c50da72840d02b120f
+  sha256: ac3056f9a8d6d2f7b3a15729402bea42dbd267f8a5f88e3cfc8e02da4b459792
 requirements:
   FR-GOV-001:
     meta:
@@ -508,13 +508,14 @@ requirements:
       env: CI + INTEGRATION + EVALUATION
       m6_freeze_sensitive: true
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: 'Local run (TEST-SIM-KERNEL) of the offline operational model: re-entrant route visits with distinct identity, executed through the dispatch gate on a test facility. evidence/WP-SIM-003/README.md records limits: test facility only, no AV-SCEN-02, E2E-01 or BENCH-* executed, no Core integration or DEP-039 legality acceptance, no governed identities, no VERIFIED claim.'
     realization:
       surface: reentrant lot routing executor
       deployable: manufacturing-simulator
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-simulator/src/manufacturing_simulator/operations/; services/manufacturing-simulator/tests/
   FR-SIM-003:
     meta:
       class: F1
@@ -526,13 +527,14 @@ requirements:
       env: CI + INTEGRATION + EVALUATION
       m6_freeze_sensitive: true
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: 'Local run (TEST-SIM-KERNEL) of the offline operational model: per-visit dispatchable queues with deterministic listing and no double booking. evidence/WP-SIM-003/README.md records limits: test facility only, no AV-SCEN-02, E2E-01 or BENCH-* executed, no Core integration or DEP-039 legality acceptance, no governed identities, no VERIFIED claim.'
     realization:
       surface: equipment queue model
       deployable: manufacturing-simulator
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-simulator/src/manufacturing_simulator/operations/; services/manufacturing-simulator/tests/
   FR-SIM-004:
     meta:
       class: F1
@@ -544,13 +546,14 @@ requirements:
       env: CI + INTEGRATION + EVALUATION
       m6_freeze_sensitive: true
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: 'Local run (TEST-SIM-KERNEL) of the offline operational model: scheduled, stochastic and usage-based failure, pause and resume on the same machine, repair with optional qualification. evidence/WP-SIM-003/README.md records limits: test facility only, no AV-SCEN-02, E2E-01 or BENCH-* executed, no Core integration or DEP-039 legality acceptance, no governed identities, no VERIFIED claim.'
     realization:
       surface: equipment availability/failure/repair model
       deployable: manufacturing-simulator
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-simulator/src/manufacturing_simulator/operations/; services/manufacturing-simulator/tests/
   FR-SIM-005:
     meta:
       class: F1
@@ -562,13 +565,14 @@ requirements:
       env: CI + INTEGRATION + EVALUATION
       m6_freeze_sensitive: true
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: 'Local run (TEST-SIM-KERNEL) of the offline operational model: planned maintenance windows that wait for idle and restore health. evidence/WP-SIM-003/README.md records limits: test facility only, no AV-SCEN-02, E2E-01 or BENCH-* executed, no Core integration or DEP-039 legality acceptance, no governed identities, no VERIFIED claim.'
     realization:
       surface: maintenance effect model
       deployable: manufacturing-simulator
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-simulator/src/manufacturing_simulator/operations/; services/manufacturing-simulator/tests/
   FR-SIM-006:
     meta:
       class: F1
@@ -580,13 +584,14 @@ requirements:
       env: CI + EVALUATION
       m6_freeze_sensitive: true
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: 'Local run (TEST-SIM-KERNEL) of the offline operational model: execution of an injected approved rework directive only, scrap and count limits, defects as operational facts. evidence/WP-SIM-003/README.md records limits: test facility only, no AV-SCEN-02, E2E-01 or BENCH-* executed, no Core integration or DEP-039 legality acceptance, no governed identities, no VERIFIED claim.'
     realization:
       surface: rework transition execution
       deployable: manufacturing-simulator
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-simulator/src/manufacturing_simulator/operations/; services/manufacturing-simulator/tests/
   FR-SIM-007:
     meta:
       class: F1
@@ -6211,44 +6216,54 @@ edges:
 - {"from": "FR-SIM-002", "relation": "DERIVED_FROM", "to": "ITEM-68", "applicability": "PLANNED"}
 - {"from": "FR-SIM-002", "relation": "ALLOCATED_TO", "to": "ARCH-SIM-ENGINE", "applicability": "PLANNED"}
 - {"from": "FR-SIM-002", "relation": "EXPOSED_BY", "to": "physical execution events", "applicability": "PLANNED"}
-- {"from": "FR-SIM-002", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-SIM-002", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/src/manufacturing_simulator/operations/", "applicability": "RECORDED"}
+- {"from": "FR-SIM-002", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/tests/", "applicability": "RECORDED"}
 - {"from": "FR-SIM-002", "relation": "EXERCISED_IN", "to": "E2E-01", "applicability": "PLANNED"}
 - {"from": "FR-SIM-002", "relation": "EXERCISED_IN", "to": "AV-SCEN-02", "applicability": "PLANNED"}
 - {"from": "FR-SIM-002", "relation": "VERIFIED_BY", "to": "TEST-SIM-KERNEL", "applicability": "PLANNED"}
 - {"from": "FR-SIM-002", "relation": "VERIFIED_BY", "to": "BENCH-SIMVAL-001", "applicability": "PLANNED"}
+- {"from": "FR-SIM-002", "relation": "EXECUTED_AS", "to": "evidence/WP-SIM-003/runs/run-1-committed", "applicability": "RECORDED"}
 - {"from": "FR-SIM-003", "relation": "DERIVED_FROM", "to": "ITEM-10", "applicability": "PLANNED"}
 - {"from": "FR-SIM-003", "relation": "DERIVED_FROM", "to": "ITEM-57", "applicability": "PLANNED"}
 - {"from": "FR-SIM-003", "relation": "ALLOCATED_TO", "to": "ARCH-SIM-ENGINE", "applicability": "PLANNED"}
-- {"from": "FR-SIM-003", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-SIM-003", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/src/manufacturing_simulator/operations/", "applicability": "RECORDED"}
+- {"from": "FR-SIM-003", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/tests/", "applicability": "RECORDED"}
 - {"from": "FR-SIM-003", "relation": "USES_DATA", "to": "SCENARIO:ScenarioVersion", "applicability": "PLANNED"}
 - {"from": "FR-SIM-003", "relation": "EXERCISED_IN", "to": "AV-SCEN-02", "applicability": "PLANNED"}
 - {"from": "FR-SIM-003", "relation": "VERIFIED_BY", "to": "TEST-SIM-KERNEL", "applicability": "PLANNED"}
 - {"from": "FR-SIM-003", "relation": "VERIFIED_BY", "to": "BENCH-SIMVAL-001", "applicability": "PLANNED"}
+- {"from": "FR-SIM-003", "relation": "EXECUTED_AS", "to": "evidence/WP-SIM-003/runs/run-1-committed", "applicability": "RECORDED"}
 - {"from": "FR-SIM-004", "relation": "DERIVED_FROM", "to": "ITEM-10", "applicability": "PLANNED"}
 - {"from": "FR-SIM-004", "relation": "DERIVED_FROM", "to": "WL-INV-08", "applicability": "PLANNED"}
 - {"from": "FR-SIM-004", "relation": "ALLOCATED_TO", "to": "ARCH-SIM-ENGINE", "applicability": "PLANNED"}
-- {"from": "FR-SIM-004", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-SIM-004", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/src/manufacturing_simulator/operations/", "applicability": "RECORDED"}
+- {"from": "FR-SIM-004", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/tests/", "applicability": "RECORDED"}
 - {"from": "FR-SIM-004", "relation": "USES_DATA", "to": "SCENARIO:failure scenarios", "applicability": "PLANNED"}
 - {"from": "FR-SIM-004", "relation": "EXERCISED_IN", "to": "AV-SCEN-02", "applicability": "PLANNED"}
 - {"from": "FR-SIM-004", "relation": "VERIFIED_BY", "to": "TEST-SIM-KERNEL", "applicability": "PLANNED"}
 - {"from": "FR-SIM-004", "relation": "VERIFIED_BY", "to": "BENCH-RQ2-001", "applicability": "PLANNED"}
+- {"from": "FR-SIM-004", "relation": "EXECUTED_AS", "to": "evidence/WP-SIM-003/runs/run-1-committed", "applicability": "RECORDED"}
 - {"from": "FR-SIM-005", "relation": "DERIVED_FROM", "to": "ITEM-10", "applicability": "PLANNED"}
 - {"from": "FR-SIM-005", "relation": "DERIVED_FROM", "to": "ITEM-57", "applicability": "PLANNED"}
 - {"from": "FR-SIM-005", "relation": "ALLOCATED_TO", "to": "ARCH-SIM-ENGINE", "applicability": "PLANNED"}
-- {"from": "FR-SIM-005", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-SIM-005", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/src/manufacturing_simulator/operations/", "applicability": "RECORDED"}
+- {"from": "FR-SIM-005", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/tests/", "applicability": "RECORDED"}
 - {"from": "FR-SIM-005", "relation": "USES_DATA", "to": "SCENARIO:maintenance scenarios", "applicability": "PLANNED"}
 - {"from": "FR-SIM-005", "relation": "EXERCISED_IN", "to": "AV-SCEN-02", "applicability": "PLANNED"}
 - {"from": "FR-SIM-005", "relation": "VERIFIED_BY", "to": "TEST-SIM-KERNEL", "applicability": "PLANNED"}
 - {"from": "FR-SIM-005", "relation": "VERIFIED_BY", "to": "BENCH-SIMVAL-001", "applicability": "PLANNED"}
 - {"from": "FR-SIM-005", "relation": "VERIFIED_BY", "to": "BENCH-E2E-001", "applicability": "PLANNED"}
+- {"from": "FR-SIM-005", "relation": "EXECUTED_AS", "to": "evidence/WP-SIM-003/runs/run-1-committed", "applicability": "RECORDED"}
 - {"from": "FR-SIM-006", "relation": "DERIVED_FROM", "to": "ITEM-10", "applicability": "PLANNED"}
 - {"from": "FR-SIM-006", "relation": "DERIVED_FROM", "to": "WL-INV-05", "applicability": "PLANNED"}
 - {"from": "FR-SIM-006", "relation": "ALLOCATED_TO", "to": "ARCH-SIM-ENGINE", "applicability": "PLANNED"}
-- {"from": "FR-SIM-006", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-SIM-006", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/src/manufacturing_simulator/operations/", "applicability": "RECORDED"}
+- {"from": "FR-SIM-006", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/tests/", "applicability": "RECORDED"}
 - {"from": "FR-SIM-006", "relation": "USES_DATA", "to": "SCENARIO:inspection/rework scenarios", "applicability": "PLANNED"}
 - {"from": "FR-SIM-006", "relation": "VERIFIED_BY", "to": "TEST-SIM-KERNEL", "applicability": "PLANNED"}
 - {"from": "FR-SIM-006", "relation": "VERIFIED_BY", "to": "BENCH-SIMVAL-001", "applicability": "PLANNED"}
 - {"from": "FR-SIM-006", "relation": "VERIFIED_BY", "to": "BENCH-E2E-001", "applicability": "PLANNED"}
+- {"from": "FR-SIM-006", "relation": "EXECUTED_AS", "to": "evidence/WP-SIM-003/runs/run-1-committed", "applicability": "RECORDED"}
 - {"from": "FR-SIM-007", "relation": "DERIVED_FROM", "to": "ITEM-10", "applicability": "PLANNED"}
 - {"from": "FR-SIM-007", "relation": "DERIVED_FROM", "to": "ITEM-60", "applicability": "PLANNED"}
 - {"from": "FR-SIM-007", "relation": "DERIVED_FROM", "to": "EXP-INV-10", "applicability": "PLANNED"}
