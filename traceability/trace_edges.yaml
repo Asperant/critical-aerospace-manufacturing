@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: 2415cee796f9cb7feaf1630d3cc005f79ce2ad9dfb76c702997d53b50237aded
+  sha256: 34aac551ee0f8f4bff5f5347fcb2e6c754eaadd0bf2f110900931b9c8a21f6bb
 requirements:
   FR-GOV-001:
     meta:
@@ -5376,7 +5376,7 @@ requirements:
     state:
       coverage: EVIDENCE_PENDING
       planning: EVIDENCE_PENDING
-      evidence: NOT_YET_EXECUTED
+      evidence: EVIDENCE_PENDING
     measurement:
       metric: release-required migrations executed outside versioned automated tooling
       threshold: = 0; status inspectable
@@ -8708,6 +8708,7 @@ edges:
 - {"from": "NFR-DEP-004", "relation": "VERIFIED_BY", "to": "TEST-DEP-MIGRATION", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-004", "relation": "VERIFIED_BY", "to": "TEST-CICD-003-001", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-004", "relation": "VERIFIED_BY", "to": "TEST-CICD-003-002", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-004", "relation": "EXECUTED_AS", "to": "RUN-CICD-003-DEV-001", "applicability": "RECORDED"}
 - {"from": "NFR-DEP-005", "relation": "DERIVED_FROM", "to": "ITEM-84", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-005", "relation": "DERIVED_FROM", "to": "NFR-INV-44", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-005", "relation": "DERIVED_FROM", "to": "DX-INV-51", "applicability": "PLANNED"}

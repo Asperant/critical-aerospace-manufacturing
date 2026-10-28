@@ -37,6 +37,19 @@ tests passed, `ruff`, strict `pyright`, the static ratchet, the test-strategy ch
   owner image was released, to keep `SUCCEEDED` possible before migrations ran; now that they run
   it is bound from the declared migration sets.
 
+## Shared-host run
+
+RUN-CICD-003-DEV-001 (REAL, `collect_run.py`) applies the schema target bound by the
+published manifest `REL-088a96bbff80-40724278583` (`manufacturing-core:0007_lot_lineage`) with
+the release tooling of its commit to a disposable PostgreSQL 18 with the two
+non-administrative roles. Result PASSED: an empty database reports pending (exit 1), the
+stage applies 0001..0007 and verifies, the status is CURRENT (exit 0), a replay applies
+nothing, a diverged ledger checksum halts at the pre-check with nothing applied (status
+exit 2), and a wrong password halts with no password or connection string anywhere in the
+recorded text. The database container is removed at the end. This is a DEV run on a
+disposable database, not the INTEGRATION acceptance of NFR-DEP-004 (A1), which stays a later
+gate and is not claimed.
+
 ## Known limitations
 
 - No application image carries Core yet; the migrations run from the release checkout.
