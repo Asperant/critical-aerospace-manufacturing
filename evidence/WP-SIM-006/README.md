@@ -21,16 +21,15 @@ Tests (`TEST-SIM-DECISIONIF`, partly `TEST-SIM-ISOLATION`) use a **test-only fac
 | Directory | Source | Outcome |
 |---|---|---|
 | `runs/run-1-failed-pyright-env/` | `4503fecc0a0b0974df9791c0036a74a4d12afe40`, clean | 7 of 8 commands exit 0; `pyright` exit 1 (31 missing-import errors): started without the locked environment on `PATH`, so Pyright resolved another interpreter. A harness mistake, not a code defect; kept unchanged |
-| `runs/run-2-committed/` | `f05ed063a…` (tree `e05df5f2d2c78f37f0f6d350d5b005df718e95c3`), clean, empty manifest | 8 commands, all exit 0 (final) |
+| `runs/run-2-committed/` | `f05ed063a…`, clean | 8 of 8 exit 0 (137 interface tests, 495 simulator tests). Superseded: the compliance audit then required nine inline suppressions in the new tests to be removed, which changed the test bytes; kept unchanged as history |
+| `runs/run-3-committed/` | `9cd79ceebadcba0e1d2569c65085dc175d947091` (tree `a90b120ede583abc130820d48e487ee844faaf11`), clean, empty manifest | 8 commands, all exit 0 (final) |
 
-`run-2-committed` (2026-10-28T21:58:14Z to 21:58:30Z, Python 3.11.16, numpy 2.4.6, lock digest
-`5caecd37…`): decision-interface tests 137 passed; full simulator suite 495 passed (the 358
-earlier tests unchanged); collector tests 6 passed; Ruff check and format clean; Pyright 0
-errors; `check_contracts.py` PASS; registry and producer-authority tests 133 passed. Simulator
-tree `35fe6fd8885f95e7c1beb1b597d9234f69b45819`. Files: `identity.json` `e6b0063a…`,
-`results.json` `2ba772f0…`. stdout and stderr are the exact bytes with hashes in
-`results.json`. `uv` was not on `PATH`, so `identity.json` holds `uv: null`; a later manual check
-printed `uv 0.12.13`.
+`run-3-committed` (2026-10-28T22:04:30Z to 22:04:46Z, Python 3.11.16, numpy 2.4.6, uv 0.12.13,
+lock digest `5caecd37…`): decision-interface tests 136 passed; full simulator suite 494 passed (the
+358 earlier tests unchanged); collector tests 6 passed; Ruff check and format clean; Pyright 0
+errors; `check_contracts.py` PASS; registry and producer-authority tests 133 passed. Simulator tree
+`992ae4c690a87005a6eb73f07b6cf46fe5f565e7`. Files: `identity.json` `54ba766d…`, `results.json`
+`1e88528c…`. stdout and stderr are the exact bytes with hashes in `results.json`.
 
 ## Limits
 

@@ -1,0 +1,64 @@
+{
+  "kind": "NEW local verification run; not CI, INTEGRATION or EVALUATION evidence",
+  "source": {
+    "head_commit": "9cd79ceebadcba0e1d2569c65085dc175d947091",
+    "head_tree": "a90b120ede583abc130820d48e487ee844faaf11",
+    "branch": "wp/WP-SIM-006-dispatch-interface",
+    "tree_clean": true,
+    "manifest_excludes": [
+      "evidence/WP-SIM-006/runs/",
+      "evidence/WP-SIM-006/README.md"
+    ],
+    "changed_or_untracked_files_sha256": {},
+    "lock_sha256": "5caecd3788f39f1a8c3560cd98492550b52e89456bdae038c2583aa247b8b859"
+  },
+  "runtime": {
+    "python": "3.11.16",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+    "machine": "x86_64",
+    "uv": "uv 0.12.13 (x86_64-unknown-linux-gnu)",
+    "pythonpath": "ci:ci/scripts",
+    "packages": {
+      "numpy": "2.4.6",
+      "hypothesis": "6.168.1",
+      "pytest": "8.3.3",
+      "ruff": "0.7.4",
+      "pyright": "1.1.389",
+      "manufacturing-simulator": "0.1.0"
+    }
+  },
+  "hardware": {
+    "cpu_model": "Intel(R) Core(TM) i7-9700K CPU @ 3.60GHz",
+    "logical_cpus": 8,
+    "mem_total_mib": 30978,
+    "gpu": null
+  },
+  "host_at_start": {
+    "recorded_utc": "2026-10-28T22:04:30+00:00",
+    "loadavg": [
+      0.5908203125,
+      0.6455078125,
+      0.7646484375
+    ]
+  },
+  "host_at_finish": {
+    "recorded_utc": "2026-10-28T22:04:46+00:00",
+    "loadavg": [
+      1.08203125,
+      0.75927734375,
+      0.80078125
+    ]
+  },
+  "workload": {
+    "scenario": "dispatch-toy v1 test-only facility behind FacilityPort (not the operational model of WP-SIM-003, not a ScenarioDefinition)",
+    "matrix": "baseline policies fifo, edd, static priority; seed 20261028 replay",
+    "shared_host": true,
+    "containers_started": false,
+    "commands_sequential": true
+  },
+  "unavailable": [
+    "governed Release identity (ReleaseManifest)",
+    "governed Environment ID and image digest",
+    "governed Hardware ID (HardwareProfile)"
+  ]
+}

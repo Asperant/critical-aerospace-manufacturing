@@ -4055,7 +4055,7 @@ FR-SIM-013:
   EXPOSED_BY: ["IC-SCH-005 DispatchDecision"]
   VERIFIED_BY: [TEST-SIM-DECISIONIF, BENCH-RQ2-001]
   EXERCISED_IN: [AV-SCEN-02]
-  EXECUTED_AS: [evidence/WP-SIM-006/runs/run-2-committed]  # offline interface slice on a test-only facility; REAL/integrated acceptance pending
+  EXECUTED_AS: [evidence/WP-SIM-006/runs/run-3-committed]  # offline interface slice on a test-only facility; REAL/integrated acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "CI + INTEGRATION + EVALUATION", m6_freeze_sensitive: true}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
@@ -4068,7 +4068,7 @@ FR-SIM-014:
   EXPOSED_BY: ["physical execution events", "telemetry stream"]
   VERIFIED_BY: [TEST-SIM-DECISIONIF, TEST-SIM-ISOLATION]
   EXERCISED_IN: [AV-SCEN-01, AV-SCEN-11]
-  EXECUTED_AS: [evidence/WP-SIM-006/runs/run-2-committed]  # allow-list exposure on a test-only facility; REAL/integrated acceptance pending
+  EXECUTED_AS: [evidence/WP-SIM-006/runs/run-3-committed]  # allow-list exposure on a test-only facility; REAL/integrated acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
