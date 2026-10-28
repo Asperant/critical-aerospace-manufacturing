@@ -30,7 +30,7 @@ class FakeHost:
         self.digests_present = True
         self.rollout_fails: list[int] = []  # 1-based rollout call numbers that fail
         self.bad_health: list[str] = []
-        self.smoke_ok = True
+        self.smoke_ok: bool | Exception = True
         self.migrate_error: str | None = None
         self.previous: tuple[dict[str, Any], dict[str, Any]] | None = None
         self.rollouts: list[str] = []
@@ -70,6 +70,8 @@ class FakeHost:
         return self.bad_health
 
     def smoke(self) -> bool:
+        if isinstance(self.smoke_ok, Exception):
+            raise self.smoke_ok
         return self.smoke_ok
 
     def migrate(self, target: str) -> None:
@@ -299,3 +301,13 @@ def test_an_unreadable_ci_gate_is_reported_as_unreadable_not_as_missing(
     assert "could not be read" in detail and "permission denied" in detail
     assert outcome.record["supply_chain_verification"]["ci_gate"] == "unreadable"
     assert outcome.record["result"] == "FAILED" and host.rollouts == []
+
+
+def test_a_failing_smoke_stage_keeps_the_reason_in_the_record(repo: Path) -> None:
+    host = FakeHost(
+        smoke_ok=DeployError("ImportError: No module named pytest_quarantine")
+    )
+    outcome = deploy(make_manifest(repo), load_registry(repo), host)
+    smoke = outcome.record["stages"][4]
+    assert smoke["result"] == "FAILED" and "pytest_quarantine" in smoke["detail"]
+    assert outcome.record["result"] == "FAILED"

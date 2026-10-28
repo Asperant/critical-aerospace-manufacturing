@@ -227,14 +227,17 @@ def deploy(
                 )
             if stages[-1]["result"] == "PASSED":
                 s_start = host.now()
-                ok = host.smoke()
+                try:
+                    ok, note = host.smoke(), ""
+                except DeployError as exc:
+                    ok, note = False, f": {exc}"
                 stages.append(
                     stage(
                         "smoke",
                         "PASSED" if ok else "FAILED",
                         "REAL smoke checks passed"
                         if ok
-                        else "REAL smoke checks failed",
+                        else f"REAL smoke checks failed{note}",
                         s_start,
                         host.now(),
                     )
@@ -392,7 +395,13 @@ class SystemHost:
         return bad
 
     def smoke(self) -> bool:
-        return self._run(["infra/compose/stack.sh", "smoke"]).returncode == 0
+        done = self._run(["infra/compose/stack.sh", "smoke"])
+        if done.returncode != 0:
+            raise DeployError(
+                ((done.stdout or "") + (done.stderr or "")).strip()[-400:]
+                or f"smoke exited {done.returncode}"
+            )
+        return True
 
     def migrate(self, target: str) -> None:
         raise DeployError(f"no migration runner is wired for {target} (WP-CICD-003)")
