@@ -4,13 +4,13 @@
 |---|---|
 | Contract ID / version | `bff.operations-bff.v1` / v1 |
 | Type / semantics | QUERY and COMMAND over HTTP described by OpenAPI 3.1; STREAMING messages as JSON Schema only |
-| Semantic owner / producer | Asrın Dündar / operations-bff (no runtime yet) |
+| Semantic owner / producer | Asrın Dündar / operations-bff (contract and tested read-adapter slices) |
 | Intended consumers | Command Center web application, contract tests, UI fixtures |
 | OpenAPI | `operations-bff.openapi.yaml` |
-| Schemas | `common`, `overview-query`, `command`, `stream-message`, `session` (`*.schema.json`) |
-| Fixtures | `overview-query.normal.json`, `session.normal.json` (SYNTHETIC TEST) |
+| Schemas | `common`, `overview-query`, `facility-state`, `command`, `stream-message`, `session` (`*.schema.json`) |
+| Fixtures | `overview-query.normal.json`, `facility-state.normal.json`, `session.normal.json` (SYNTHETIC TEST) |
 | Authority | Presentation composition only; no MaterialHold, scheduling, approval or lifecycle authority |
-| Status / dependency | Initial v1 draft; not a merged CONTRACT_READY declaration |
+| Status / dependency | Initial v1 draft with tested overview and facility-state read surfaces; not a merged CONTRACT_READY declaration |
 | Security | No credentials, Oracle labels or private schemas; BFF-mediated session cookie plus CSRF token; no tokens reach the browser |
 | Deprecation | None; initial version |
 
@@ -19,6 +19,7 @@
 | Class | Operation | Notes |
 |---|---|---|
 | QUERY | `GET /v1/overview` (`getManufacturingOverview`) | Manufacturing Overview "Needs Attention"; cursor pagination, `world_id` required, optional `as_of` |
+| QUERY | `GET /v1/facility-state` (`getFacilityState`) | Twin-backed equipment and lot state; `world_id` required, optional `as_of` |
 | COMMAND | `POST /v1/commands` (`submitCommand`) | Intent only; receipt is `ACCEPTED`, `REJECTED`, `CONFLICT` or `STALE`, never completion |
 | SESSION | `GET /v1/session/login`, `GET /v1/session/callback`, `GET /v1/session`, `POST /v1/session/logout` | OIDC authorization-code flow run by the BFF; session query; real server-side logout |
 | STREAMING | `StreamMessage` (`x-bff-streaming`) | `DELTA` and `RESYNC_REQUIRED` after the snapshot query; no path |
@@ -30,6 +31,10 @@ cannot express this; `check_composition` in the tests does). Each attention
 item keeps its own epistemic class and source freshness. There is no overall
 status field. `meta.revision` is an opaque equality-only token of the composed
 view, not a domain revision; the stream chains `from_revision` to it.
+
+The facility-state view keeps lot `lifecycle_state`, `execution_state` and
+`hold_state` separate. It is a read-only projection and does not grant the
+browser authority to change any of those dimensions.
 
 ## Authentication and ActorContext
 
@@ -60,7 +65,7 @@ view, not a domain revision; the stream chains `from_revision` to it.
 ## Operational surface (outside the browser contract)
 
 `GET /healthz` reports process and configuration health only (`session` ready,
-`login` and `overview` enabled or disabled); it calls no backend or provider and
+`login`, `overview` and `facility_state` enabled or disabled); it calls no backend or provider and
 needs no session. Every response carries `X-Correlation-Id`; error envelopes and
 overview `meta.correlation_id` reuse it, it is passed to every read port, and it
 is never taken from the browser. Each request writes one JSON access record
@@ -77,6 +82,5 @@ duration, correlation id) and never a query string, cookie, header or body.
   them from the authenticated session and forwards them unchanged.
 - Command `command_type` and `parameters` are backend-owned and forwarded
   unmodified; the BFF interprets none of them.
-- Out of scope so far: runtime, OIDC provider integration, token exchange,
-  routes of the web app, broker consumers, database access, further views, the
-  artifact access API.
+- Out of scope so far: concrete OIDC provider deployment, broker consumers,
+  database access, the artifact access API and live integrated acceptance.

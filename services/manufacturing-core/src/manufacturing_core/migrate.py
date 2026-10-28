@@ -16,7 +16,21 @@ from sqlalchemy.engine import URL
 
 from manufacturing_core.database import connect, require_restricted_role
 
-VERSION = "0004_material_hold"
+VERSION = "0007_lot_lineage"
+REWORK_TABLES = (
+    "rework_history",
+    "rework_directive",
+    "rework_segment",
+    "rework_route_visit",
+    "rework_execution",
+)
+LINEAGE_TABLES = (
+    "lineage_history",
+    "lineage_event",
+    "lineage_lot",
+    "lineage_membership",
+    "lineage_parent",
+)
 TABLES = (
     "equipment",
     "manufacturing_route",
@@ -30,6 +44,10 @@ TABLES = (
     "command_idempotency",
     "command_outcome",
     "material_hold",
+    "lot_event_sequence",
+    "outbox",
+    *REWORK_TABLES,
+    *LINEAGE_TABLES,
 )
 
 
@@ -88,6 +106,9 @@ def migrate(dsn: str, runtime_role: str) -> bool:
             ("0002_command_acceptance", "migrations/0002_command_acceptance.sql"),
             ("0003_lifecycle", "migrations/0003_lifecycle.sql"),
             ("0004_material_hold", "migrations/0004_material_hold.sql"),
+            ("0005_outbox", "migrations/0005_outbox.sql"),
+            ("0006_rework_history", "migrations/0006_rework_history.sql"),
+            ("0007_lot_lineage", "migrations/0007_lot_lineage.sql"),
         )
     )
     expected = [

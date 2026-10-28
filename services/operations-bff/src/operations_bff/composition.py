@@ -19,6 +19,7 @@ from fastapi import FastAPI
 
 from .api import create_app, utc_now
 from .config import CookieSettings, LoginConfig, SessionConfig
+from .facility_state import FacilityStateService
 from .login import InMemoryLoginStore, LoginService
 from .oidc import OidcIdentityProvider, OidcSettings
 from .overview import OverviewService
@@ -125,6 +126,7 @@ def build_app(
     http_client: httpx.Client | None = None,
     clock: Callable[[], datetime] = utc_now,
     overview: OverviewService | None = None,
+    facility_state: FacilityStateService | None = None,
 ) -> FastAPI:
     """Wire settings, OIDC adapter, stores, services and the transport adapter.
 
@@ -159,4 +161,5 @@ def build_app(
         post_login_redirect=settings.post_login_path,
         lifespan=lifespan,
         overview=overview,
+        facility_state=facility_state,
     )

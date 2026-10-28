@@ -25,6 +25,15 @@ from manufacturing_core.commands import (
     ReleaseMaterialHold,
 )
 from manufacturing_core.enforcement import authorize
+from manufacturing_core.events_v1 import (
+    EntityReference,
+    LotDispatchAuthorizedEvent,
+    LotDispatchAuthorizedPayloadV1,
+    UtcOccurrence,
+    new_event_id,
+    new_trace_id,
+)
+from manufacturing_core.events_v2 import LotHeldEventV2, LotHeldPayloadV2
 from manufacturing_core.lifecycle import (
     ExecutionState,
     LotLifecycle,
@@ -33,6 +42,7 @@ from manufacturing_core.lifecycle import (
     SerializedComponentLifecycle,
 )
 from manufacturing_core.observability import record_transition_rejection
+from manufacturing_core.outbox import OutboxRecord
 
 Identity = Annotated[str, StringConstraints(strict=True, pattern=r"^\S+$")]
 
@@ -260,6 +270,24 @@ class TransitionRepository:
         ).fetchone()
         return None if row is None else LotState.model_validate(row)
 
+    def next_lot_event_version(self, lot_id: str) -> int:
+        """Allocate a per-lot event version without changing opaque revisions."""
+        self.connection.execute(
+            "INSERT INTO core.lot_event_sequence (lot_id) VALUES (%s) "
+            "ON CONFLICT (lot_id) DO NOTHING",
+            (lot_id,),
+        )
+        row = self.connection.execute(
+            "UPDATE core.lot_event_sequence SET next_version = next_version + 1 "
+            "WHERE lot_id = %s RETURNING next_version",
+            (lot_id,),
+        ).fetchone()
+        if row is None:
+            raise TransitionRejected(
+                "EVENT_VERSION_UNAVAILABLE", "lot event sequence missing"
+            )
+        return row["next_version"]
+
     def active_hold(
         self, lot_id: str, *, for_update: bool = False
     ) -> MaterialHold | None:
@@ -311,7 +339,7 @@ class TransitionRepository:
         *,
         expected_revision: str | None,
         now: datetime | None = None,
-    ) -> None:
+    ) -> OutboxRecord:
         if command.target.entity_type != "Lot":
             raise TransitionRejected("INVALID_TARGET", "hold target must be a lot")
         lot_id = command.target.entity_id
@@ -342,6 +370,34 @@ class TransitionRepository:
             raise TransitionRejected(
                 "HOLD_ID_CONFLICT", "hold identity is already used"
             ) from error
+        event_version = self.next_lot_event_version(lot_id)
+        event = LotHeldEventV2(
+            event_id=new_event_id(),
+            producer="manufacturing-core",
+            world_id=command.world_id,
+            correlation_id=command.correlation_id,
+            causation_id=str(command.command_id),
+            trace_id=new_trace_id(),
+            occurred_at=UtcOccurrence(clock="UTC", value=timestamp),
+            observed_at=timestamp,
+            entity_refs=(
+                EntityReference(entity_type="Lot", id=lot_id, revision=revision),
+            ),
+            event_type="production.lot-held",
+            schema_version=2,
+            payload=LotHeldPayloadV2(
+                event_type="production.lot-held",
+                schema_version=2,
+                aggregate_type="Lot",
+                aggregate_id=lot_id,
+                aggregate_version=event_version,
+                lot_id=lot_id,
+                lot_revision=revision,
+                material_hold_id=command.material_hold_id,
+                reason=command.hold_reason,
+            ),
+        )
+        return OutboxRecord.new(event, created_at=timestamp)
 
     def release_hold(
         self,
@@ -384,7 +440,8 @@ class TransitionRepository:
         *,
         expected_revision: str | None,
         resource_available: bool,
-    ) -> None:
+        now: datetime | None = None,
+    ) -> OutboxRecord:
         if command.target.entity_type != "Lot":
             raise TransitionRejected("INVALID_TARGET", "dispatch target must be a lot")
         lot_id = command.target.entity_id
@@ -408,6 +465,34 @@ class TransitionRepository:
             "WHERE id = %s AND revision = %s",
             (revision, lot_id, state.revision),
         )
+        event_version = self.next_lot_event_version(lot_id)
+        timestamp = now or datetime.now(UTC)
+        event = LotDispatchAuthorizedEvent(
+            event_id=new_event_id(),
+            producer="manufacturing-core",
+            world_id=command.world_id,
+            correlation_id=command.correlation_id,
+            causation_id=str(command.command_id),
+            trace_id=new_trace_id(),
+            occurred_at=UtcOccurrence(clock="UTC", value=timestamp),
+            observed_at=timestamp,
+            entity_refs=(
+                EntityReference(entity_type="Lot", id=lot_id, revision=revision),
+            ),
+            event_type="production.lot-dispatch-authorized",
+            schema_version=1,
+            payload=LotDispatchAuthorizedPayloadV1(
+                event_type="production.lot-dispatch-authorized",
+                schema_version=1,
+                aggregate_type="Lot",
+                aggregate_id=lot_id,
+                aggregate_version=event_version,
+                lot_id=lot_id,
+                lot_revision=revision,
+                dispatch_id=str(command.command_id),
+            ),
+        )
+        return OutboxRecord.new(event, created_at=timestamp)
 
 
 class CoreTransitionService:
@@ -451,6 +536,7 @@ class CoreTransitionService:
                     expected_revision=command.expected.expected_revision,
                     now=now,
                 ),
+                emit=lambda record: record,
             ),
         )
 
@@ -483,6 +569,7 @@ class CoreTransitionService:
         command: DispatchLot,
         *,
         resource_available: bool,
+        now: datetime | None = None,
         expected_world_id: str | None = None,
     ):
         return self._log_rejection(
@@ -495,6 +582,8 @@ class CoreTransitionService:
                     command,
                     expected_revision=command.expected.expected_revision,
                     resource_available=resource_available,
+                    now=now,
                 ),
+                emit=lambda record: record,
             ),
         )

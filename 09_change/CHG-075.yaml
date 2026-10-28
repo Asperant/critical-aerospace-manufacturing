@@ -1,0 +1,43 @@
+title: Refresh the projectctl precision diagnostic baseline after DEP-023 binding
+trigger: The merged DEP-023 precise requirement removes one canonical PRECISION_MISSING diagnostic from the 166-warning post-CHG-073 baseline while preserving the dependency graph shape
+reason: Keep the deterministic full-regression assertion aligned with the approved current canonical dependency graph without weakening diagnostic identity checks
+class: C1
+review_risk_class: CR-1
+raised_in: S3
+owner: Asrın
+required_human_approvals: 0
+reviewers: []
+decision: APPROVED
+status: APPROVED
+application_control_item: CTRL-HOST-049
+decision_basis: Generic project-control baseline refresh caused by an approved readiness binding; no product scope, dependency semantics or readiness level is changed.
+scope:
+  - Change only the expected PRECISION_MISSING count from 166 to 165.
+  - Preserve graph shape, severity, diagnostic identities and fail-closed assertions.
+invariants_preserved:
+  - projectctl remains a deterministic validation bridge.
+  - UNKNOWN and missing precision remain visible and fail closed.
+  - No product lifecycle or readiness status is written by this control.
+precise_requirement: NONE — control-only diagnostic baseline maintenance.
+affected_requirements: []
+affected_architecture: []
+affected_contracts: []
+affected_work_packages: []
+affected_dependencies: []
+affected_evidence:
+  - evidence/CTRL-HOST-049/PRECISION-BASELINE.md
+evidence_staleness:
+  question_answered: true
+  stale: []
+  unaffected:
+    - Dependency graph shape remains 100 nodes / 217 edges / 208 HARD / 9 SOFT.
+    - This does not certify or deny any product WP or dependency.
+security_authority_impact: NONE
+conditions:
+  - Do not remove or weaken diagnostic identity assertions.
+  - Do not use this housekeeping change to alter product readiness.
+rollout: Merge the control-only baseline refresh after focused projectctl tests and full regression gate.
+rollback: Revert this baseline assertion and control record together.
+required_rerun: [projectctl dependency tests, projectctl validate, projectctl full regression]
+documentation_updates: [docs/09_Change_Control_Process.md, 09_change/change_requests.csv]
+freeze_context: PRE_M6

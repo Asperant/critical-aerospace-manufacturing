@@ -70,7 +70,12 @@ def test_persistence_to_read_only_query(database: Database, scenario: str) -> No
         # Only this test fixture's isolated database; runtime cannot DELETE.
         with psycopg.connect(database.admin_dsn) as admin:
             admin.execute(
-                "TRUNCATE core.material_hold, core.serialized_component_state, core.lot_state, "
+                "TRUNCATE core.lineage_membership, core.lineage_parent, "
+                "core.lineage_lot, core.lineage_event, core.lineage_history, "
+                "core.rework_execution, core.rework_route_visit, "
+                "core.rework_segment, core.rework_directive, core.rework_history, "
+                "core.outbox, core.lot_event_sequence, core.material_hold, "
+                "core.serialized_component_state, core.lot_state, "
                 "core.production_order_state, core.serialized_component, core.lot, "
                 "core.production_order, core.route_visit, core.manufacturing_route, "
                 "core.equipment"

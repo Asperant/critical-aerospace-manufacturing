@@ -1232,3 +1232,98 @@ focused projector suite (7 passed) on current main. This projection only opens
 the local WP-TWIN-002 start gate; it does not claim real NATS delivery,
 PostgreSQL persistence, simulated-world integration or final freshness and
 epistemic semantics.
+
+## CHG-067 — refresh current-main edge evidence after closure merges
+
+CHG-067 / CTRL-HOST-041 is a C1 mechanical evidence refresh. After the S2/S3
+closure-chain merges, the exact current-main revision is rebound in the
+DEP-031, DEP-003, DEP-034 and DEP-105 evidence artifacts. The bounded contract,
+Twin projector, BFF/schema and test-strategy checks were re-run at that SHA.
+No readiness level, work-package status, authority boundary or integration
+claim changes. The Docker socket permission failure, DEP-032/033/035, DEP-004
+and DEP-106 remain explicit downstream or external blockers.
+
+## CHG-068 — bind the existing Core operational-command v1 contract to DEP-026
+
+CHG-068 / CTRL-HOST-042 is a C1 control-plane reconciliation for DEP-026. The
+existing merged `core.operational-command.v1` registry, versioned schema and
+four example fixtures satisfy the edge-specific CONTRACT_READY predicate, and
+the producer/consumer contract checks are green on current main. DEP-026 is
+therefore projected READY. This does not claim WP-CORE-003 completion,
+idempotent command execution, durable command outcomes, real database
+integration, or DEP-027/DEP-028 acceptance.
+
+## CHG-069 — bind the merged typed AI tool contract to DEP-064
+
+CHG-069 / CTRL-HOST-043 is a C1 control-plane reconciliation for DEP-064.
+The merged `ai.tool-interface.v1` registry, typed schema, four fixtures and
+producer-authority registration satisfy the edge-specific CONTRACT_READY
+predicate, with green producer/consumer and authority validation. DEP-064 is
+therefore projected READY. This does not claim WP-AI-002 runtime clients or
+enforcement, WP-AI-001 orchestration, protected-action execution, direct Core
+mutation, runtime integration or DEP-076 acceptance.
+
+## CHG-070 — bind the merged Core command contract to DEP-027
+
+CHG-070 / CTRL-HOST-044 is a C1 control-plane reconciliation for DEP-027.
+The merged `core.operational-command.v1` registry, versioned schema and four
+fixtures satisfy the edge-specific CONTRACT_READY predicate, and current-main
+producer/consumer contract validation is green. DEP-027 is therefore projected
+READY. This does not claim WP-CORE-003 completion, command execution,
+idempotent/durable outcomes, legal transition integration, real PostgreSQL
+acceptance, or DEP-028 acceptance.
+
+## CHG-072 — refresh the projectctl precision diagnostic baseline
+
+CHG-072 / CTRL-HOST-046 is a C1 control-only housekeeping correction. The
+canonical dependency graph remains unchanged; current validation produces 167
+`PRECISION_MISSING` warnings after the approved edge-specific precision
+bindings, while the stale regression assertion expected 173. The correction
+changes only that expected diagnostic count and preserves all graph shape,
+severity, readiness-incompatibility and fixture-diagnostic assertions.
+
+## CHG-071 — introduce versioned LotHeld.v2 and bind the Core outbox slice
+
+CHG-071 / CTRL-HOST-045 is the approved C2/CR-2 change for the WP-CORE-005
+recovery. `core.lot-held.v1` remains unchanged and active; the new
+`core.lot-held.v2` explicitly carries the existing `PlaceLotOnHold.hold_reason`
+text semantics, including reasons containing whitespace. The compatibility
+detector now verifies the valid const-only and `$id` forms used by the existing
+v1 schema, while major-version breaking changes remain fail-closed unless the
+version policy permits them. The owner-local PostgreSQL mutation/outbox and
+rollback evidence is separate from NATS publication, downstream consumer
+adoption and cross-boundary integration acceptance.
+
+## CHG-073 — bind the verified owner-local Core outbox slice to DEP-022
+
+CHG-073 / CTRL-HOST-047 is a C1 control-plane reconciliation for DEP-022.
+The merged WP-CORE-005 implementation and exact real PostgreSQL 18 evidence
+bind the lifecycle-to-outbox owner-local predicate at COMPONENT_READY. The
+precise predicate includes accepted mutation, revision/idempotency outcome,
+per-lot event sequencing, LotHeld.v2 emission, replay/conflict handling and
+rollback on constraint failure. LotHeld.v1 remains unchanged.
+
+This projection does not claim NATS publication, relay delivery, downstream
+consumer adoption, effect verification, DEP-023, DEP-024, DEP-025, global
+DN-CORE-OUTBOX INTEGRATION_READY or WP-CORE-005 DONE.
+
+## CHG-074 — bind the bounded Core event-contract slice to DEP-023
+
+CHG-074 / CTRL-HOST-048 is a C1 control-plane reconciliation for DEP-023.
+The current-main event-envelope contract, Core LotHeld.v1/v2 and
+LotDispatchAuthorized.v1 schemas/fixtures, explicit registry declarations and
+producer/consumer boundary tests satisfy the bounded initial contract predicate
+at CONTRACT_READY. LotHeld.v1 remains unchanged and v2 remains explicitly
+versioned.
+
+This projection does not claim global DN-EVT-CONTRACTS completeness, broker or
+NATS/JetStream delivery, ACL installation, downstream adoption, event-spine
+integration, DEP-024, DEP-025 or any work-package DONE state.
+
+## CHG-075 — refresh the projectctl precision baseline after DEP-023
+
+CHG-075 / CTRL-HOST-049 is a C1 control-only housekeeping correction. The
+approved DEP-023 precise requirement removes one `PRECISION_MISSING` diagnostic,
+so the deterministic projectctl baseline is now 165 instead of 166. Graph
+shape, severity and diagnostic identity assertions remain unchanged; no product
+readiness or lifecycle state is changed.

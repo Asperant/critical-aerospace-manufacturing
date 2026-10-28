@@ -1,0 +1,45 @@
+title: Refresh the projectctl precision diagnostic baseline after approved bindings
+trigger: Full projectctl regression found the canonical dependency graph produces 167 precision warnings while the stale generic test expected 173
+reason: Subsequent approved edge-specific precision bindings reduced the diagnostic set; the project-control baseline must match current canonical documentation without changing product semantics
+class: C1
+review_risk_class: CR-1
+raised_in: S2
+owner: Asrın
+required_human_approvals: 0
+reviewers: []
+decision: APPROVED
+status: APPROVED
+application_control_item: CTRL-HOST-046
+decision_basis: This is a generic project-control housekeeping correction requested by the owner. It changes only the expected diagnostic count; graph shape, diagnostic identity checks, product readiness and dependency semantics remain fail-closed and unchanged.
+scope:
+  - Change the generic PRECISION_MISSING baseline from 173 to the observed canonical count 167.
+  - Preserve graph node/edge counts, severity checks, readiness incompatibility checks and fixture diagnostics.
+invariants_preserved:
+  - No dependency edge, readiness level, work-package status or product requirement changes.
+  - UNKNOWN remains non-passing and diagnostic identities remain checked.
+  - This control change does not authorize or mutate product implementation state.
+precise_requirement: NONE — generic project-control diagnostic baseline correction only; no product requirement semantics.
+affected_requirements: [NONE — control-only scope]
+affected_architecture: [NONE]
+affected_contracts:
+  - id: NONE
+    compatibility: NON_BREAKING
+    consumers_reviewed: [projectctl regression suite]
+affected_work_packages: [NONE — control-only scope]
+affected_dependencies: []
+affected_evidence:
+  - tools/projectctl/tests/test_dependencies.py
+  - evidence/CTRL-HOST-046/PRECISION-BASELINE.md
+evidence_staleness:
+  question_answered: true
+  stale: []
+  unaffected:
+    - All product implementation, contract, PostgreSQL and current-main evidence remains unchanged.
+  rerun_required:
+    - Full projectctl regression and projectctl validate.
+security_authority_impact: NONE
+rollout: Merge the control-only test baseline and run the full projectctl regression once on the merged current main.
+rollback: Revert the baseline-only commit if canonical dependency documentation changes the diagnostic count again.
+required_rerun: [projectctl full regression, projectctl validate]
+documentation_updates: [docs/09_Change_Control_Process.md, 09_change/change_requests.csv]
+freeze_context: PRE_M6

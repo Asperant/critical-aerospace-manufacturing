@@ -164,6 +164,7 @@ def test_health_surface_needs_no_session_and_makes_no_backend_call() -> None:
             "session": "ready",
             "login": "disabled",
             "overview": "enabled",
+            "facility_state": "disabled",
         },
     }
     assert rig.core.queries == [] and rig.twin.queries == []
@@ -175,6 +176,7 @@ def test_health_reports_disabled_capabilities_truthfully() -> None:
         "session": "ready",
         "login": "enabled",
         "overview": "disabled",
+        "facility_state": "disabled",
     }
     bare = Rig(overview=False).client.get("/healthz").json()
     assert bare["capabilities"]["overview"] == "disabled"

@@ -20,6 +20,7 @@ from starlette.types import Lifespan
 from .actor import Authenticated, authenticate_request, derive_actor_context
 from .config import COOKIE_NAME, LOGIN_COOKIE_NAME, CookieSettings
 from .errors import BadRequest, BffError
+from .facility_state import FacilityStateQuery, FacilityStateService
 from .login import LoginService
 from .observability import (
     CORRELATION_HEADER,
@@ -110,6 +111,7 @@ def create_app(
     post_login_redirect: str = "/",
     lifespan: Lifespan[FastAPI] | None = None,
     overview: OverviewService | None = None,
+    facility_state: FacilityStateService | None = None,
 ) -> FastAPI:
     if not post_login_redirect.startswith("/") or post_login_redirect.startswith("//"):
         raise ValueError("post_login_redirect must be a same-origin absolute path")
@@ -161,7 +163,11 @@ def create_app(
     def healthz() -> JSONResponse:  # pyright: ignore[reportUnusedFunction]
         # Operational surface, not part of the browser contract.
         return JSONResponse(
-            health_body(login=login is not None, overview=overview is not None),
+            health_body(
+                login=login is not None,
+                overview=overview is not None,
+                facility_state=facility_state is not None,
+            ),
             headers={"Cache-Control": "no-store"},
         )
 
@@ -193,6 +199,8 @@ def create_app(
         _add_login_routes(app, login, cookie, clock, post_login_redirect)
     if overview is not None:
         _add_overview_route(app, overview, clock)
+    if facility_state is not None:
+        _add_facility_state_route(app, facility_state, clock)
     return app
 
 
@@ -226,6 +234,38 @@ def _add_overview_route(
             query,
             limit=limit,
             cursor=cursor,
+            now=clock(),
+            correlation_id=query.correlation_id,
+        )
+        return JSONResponse(body, headers={"Cache-Control": "no-store"})
+
+
+def _add_facility_state_route(
+    app: FastAPI, facility_state: FacilityStateService, clock: Callable[[], datetime]
+) -> None:
+    @app.get("/v1/facility-state", operation_id="getFacilityState")
+    def get_facility_state(  # pyright: ignore[reportUnusedFunction]
+        request: Request,
+        auth: Session,
+        world_id: Ident,
+        simulation_run_id: OptIdent = None,
+        branch_id: OptIdent = None,
+        as_of: AsOf = None,
+    ) -> JSONResponse:
+        try:
+            when = datetime.fromisoformat(as_of) if as_of else None
+        except ValueError:
+            raise BadRequest("as_of is not a valid instant") from None
+        query = FacilityStateQuery(
+            world_id=world_id,
+            simulation_run_id=simulation_run_id,
+            branch_id=branch_id,
+            as_of=when,
+            actor=derive_actor_context(auth.session, world_id),
+            correlation_id=correlation_id_of(request),
+        )
+        body = facility_state.get(
+            query,
             now=clock(),
             correlation_id=query.correlation_id,
         )

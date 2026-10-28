@@ -730,6 +730,7 @@ Exact names/subjects may be refined (#76) but semantic boundaries cannot disappe
 | PlaceLotOnHold.v1 | DN-CORE-CMDCON (Core semantic owner) | DN-AUTO-EXEC (invoker) | CMD-PlaceLotOnHold-v1 (01/02) | INTEGRATION_READY | RESOLVED — schema/evidence freeze remains implementation work |
 | DispatchLot.v1 | DN-CORE-CMDCON | DN-AUTO-EXEC | DispatchLot.v1 (01 Item71); IC-SCH-005 is decision data, ActivateSchedule is a different action | INTEGRATION_READY | RESOLVED — dispatch execution is distinct from plan activation |
 | LotHeld.v1 | DN-CORE-OUTBOX | DN-TWIN-PROJ, DN-SIM-COREINT, DN-AUTO-VERIFY | Core domain event | CONTRACT_READY | aligned |
+| LotHeld.v2 | DN-CORE-OUTBOX | DN-TWIN-PROJ, DN-SIM-COREINT, DN-AUTO-VERIFY | Core domain event | CONTRACT_READY | aligned; explicit versioned successor; v1 unchanged |
 | LotDispatchAuthorized.v1 | DN-CORE-OUTBOX | DN-SIM-COREINT | Core domain event | CONTRACT_READY | aligned |
 | OperationStarted.v1 | DN-SIM-COREINT | DN-CORE-LIFECYCLE, DN-TWIN-PROJ | physical execution event | CONTRACT_READY | aligned |
 | TwinProjectionAdvanced.v1 | DN-TWIN-PROJ | DN-UI-SHELL, DN-AUTO-VERIFY | Twin revision event | CONTRACT_READY | aligned |
@@ -1560,10 +1561,10 @@ DEP-022:
   need_by: "M1 (S2)"   # sprint 2
   fallback: null
   unblock_evidence: "atomic mutation+outbox test on real PostgreSQL"
-  precise_requirement: null
+  precise_requirement: "The Core lifecycle command path shall persist the accepted material hold mutation, exact revision/idempotency outcome, per-lot event sequence and LotHeld.v2 outbox row atomically on real PostgreSQL 18, with replay, conflicting idempotency and rollback/constraint-failure paths verified."
   risk_class: DR-1
   source: "Item 66 #96"
-  status: NOT_READY
+  status: READY
 DEP-023:
   predecessor: {node: DN-EVT-CONTRACTS, owner: "Asrın"}
   successor: {node: DN-EVT-SPINE, owner: "Asrın"}
@@ -1571,10 +1572,10 @@ DEP-023:
   need_by: "M1 (S2)"   # sprint 2
   fallback: F1
   unblock_evidence: "contract merged + contract tests green + example fixture published"
-  precise_requirement: null
+  precise_requirement: "The bounded initial Core async event family shall publish event-envelope.v1 metadata plus LotHeld.v1, LotHeld.v2 and LotDispatchAuthorized.v1 schemas, fixtures, explicit registry producer/consumer declarations and green producer/consumer boundary validation."
   risk_class: DR-2
   source: "Item 66 spine"
-  status: NOT_READY
+  status: READY
 DEP-024:
   predecessor: {node: DN-CORE-OUTBOX, owner: "Asrın"}
   successor: {node: DN-EVT-SPINE, owner: "Asrın"}
@@ -1604,10 +1605,10 @@ DEP-026:
   need_by: "S2"   # sprint 2
   fallback: F1
   unblock_evidence: "contract merged + contract tests green + example fixture published"
-  precise_requirement: null
+  precise_requirement: "The Core operational-command v1 contract shall be published with stable command/version identity for PlaceLotOnHold, ReleaseMaterialHold, DispatchLot and CreateMaintenanceWorkOrder, compatibility/example fixtures, and green producer/consumer contract validation."
   risk_class: DR-1
   source: "Item 66 #42"
-  status: NOT_READY
+  status: READY
 DEP-027:
   predecessor: {node: DN-CORE-CMDCON, owner: "Asrın"}
   successor: {node: DN-CORE-CMDEXEC, owner: "Asrın"}
@@ -1618,7 +1619,7 @@ DEP-027:
   precise_requirement: "versioned hold/release/dispatch/maintenance-request command schemas + stable command/version identity + compatibility/example fixtures + green producer/consumer contract tests"
   risk_class: DR-2
   source: "Item 66 #42"
-  status: NOT_READY
+  status: READY
 DEP-028:
   predecessor: {node: DN-CORE-TRANSITIONS, owner: "Asrın"}
   successor: {node: DN-CORE-CMDEXEC, owner: "Asrın"}
@@ -2037,10 +2038,10 @@ DEP-064:
   need_by: "S2–S3"   # sprint 3
   fallback: F1
   unblock_evidence: "contract merged + contract tests green + example fixture published"
-  precise_requirement: null
+  precise_requirement: "The AI typed tool interface v1 shall publish versioned typed tools with explicit READ, SIMULATE and PROPOSE authority tags, explicit WorldID/tool identity, compatibility/example fixtures, and green producer/consumer contract validation; no execution or direct Core mutation surface is included."
   risk_class: DR-1
   source: "Item 66 #62"
-  status: NOT_READY
+  status: READY
 DEP-065:
   predecessor: {node: DN-VIS-OBSCON, owner: "Selman"}
   successor: {node: DN-AI-RCA, owner: "Asrın"}
@@ -3800,12 +3801,12 @@ For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §1
 | DEP-019 | DN-CORE-LIFECYCLE at INTEGRATION | DN-RT-PG: PostgreSQL runtime; SKELETON_READY; Core migrations apply on PostgreSQL | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-020 | DN-CORE-TRANSITIONS at START | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; minimal lifecycle component implemented, lifecycle component tests green on current main, and attributable COMPONENT_READY readiness artifact bound to WP-CORE-002 | Producer is WP-CORE-009; the artifact must bind the current-main revision, CI/component-test evidence and DN-CORE-LIFECYCLE readiness to the WP-CORE-002 consumer. Legal transition semantics remain in WP-CORE-002. |
 | DEP-021 | DN-EVT-CONTRACTS at START | DN-CORE-CONTRACTS: Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
-| DEP-022 | DN-CORE-OUTBOX at INTEGRATION | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; atomic mutation+outbox test on real PostgreSQL | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
-| DEP-023 | DN-EVT-SPINE at INTEGRATION | DN-EVT-CONTRACTS: Event contracts (envelope + domain events, IC registry); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-022 | DN-CORE-OUTBOX at INTEGRATION | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; atomic mutation+outbox test on real PostgreSQL 18, including replay/idempotency and rollback paths | Bound by CHG-073 to the merged WP-CORE-005 owner-local transaction/outbox implementation and exact real PostgreSQL 18 CI evidence at product merge SHA `5e9544b`. This does not claim NATS/relay delivery, downstream consumer adoption, DEP-023/024/025 or work-package DONE. |
+| DEP-023 | DN-EVT-SPINE at INTEGRATION | DN-EVT-CONTRACTS: bounded initial Core event contracts (envelope + LotHeld v1/v2 + LotDispatchAuthorized v1 + registry); CONTRACT_READY; merged artifacts, fixtures and producer/consumer tests green | Bound by CHG-074 to the current-main envelope and Core domain-event contract slice. This does not claim global event-contract completeness, broker transport, NATS/JetStream delivery, downstream adoption, DEP-024 or DEP-025. |
 | DEP-024 | DN-EVT-SPINE at INTEGRATION | DN-CORE-OUTBOX: Transactional outbox + relay; INTEGRATION_READY; real cross-boundary integration test green on INTEGRATION (outbox → NATS → consumer) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-025 | DN-EVT-SPINE at INTEGRATION | DN-RT-NATS: NATS JetStream runtime; INTEGRATION_READY; real JetStream in CI + INTEGRATION (no fake bus, CI-INV-07) | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
-| DEP-026 | DN-CORE-CMDCON at START | DN-CORE-CONTRACTS: Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
-| DEP-027 | DN-CORE-CMDEXEC at INTEGRATION | DN-CORE-CMDCON: Core command contracts (hold / release / dispatch / maintenance request); CONTRACT_READY; versioned hold/release/dispatch/maintenance-request command schemas + stable command/version identity + compatibility/example fixtures + green producer/consumer contract tests | Existing CONTRACT planning predicate is explicit; the contract-first producer slice is owned by WP-CORE-003; execution persistence/idempotency remains a later capability slice. |
+| DEP-026 | DN-CORE-CMDCON at START | DN-CORE-CONTRACTS: Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity); CONTRACT_READY; contract merged + contract tests green + example fixture published | Bound by CTRL-HOST-042 to the merged `core.operational-command.v1` registry/schema and four versioned fixtures; producer/consumer contract validation is green. This opens the contract gate only; command execution, durable outcomes and integration remain DEP-027/028 scope. |
+| DEP-027 | DN-CORE-CMDEXEC at INTEGRATION | DN-CORE-CMDCON: Core command contracts (hold / release / dispatch / maintenance request); CONTRACT_READY; versioned hold/release/dispatch/maintenance-request command schemas + stable command/version identity + compatibility/example fixtures + green producer/consumer contract tests | Bound by CTRL-HOST-044 to the merged `core.operational-command.v1` registry/schema and four fixtures; producer/consumer contract validation is green. This opens only the command-contract predicate; execution persistence/idempotency, legal transitions and integration remain DEP-028 and later capability scope. |
 | DEP-029 | DN-CORE-GENEALOGY at INTEGRATION | DN-CORE-LIFECYCLE: Core minimal lifecycle implementation; COMPONENT_READY; genealogy queries over real lineage | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-031 | DN-TWIN-SKELETON at START | DN-EVT-CONTRACTS: Event contracts (envelope + domain events, IC registry); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-032 | DN-TWIN-SKELETON at INTEGRATION | DN-EVT-SPINE: Operational event spine (outbox → NATS → idempotent consumers); INTEGRATION_READY; Twin revision advances from real events | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
@@ -3832,7 +3833,7 @@ For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §1
 | DEP-061 | DN-VIS-OBSCON at START | DN-VIS-ARTCON: Inspection artifact identity contract (ArtifactRef, Lot/SerializedComponent refs, model metadata); CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-062 | DN-VIS-EPISODES at MILESTONE_EXIT | DN-SIM-COREINT: Simulator/Core integration (Core-validated physical commands, events); INTEGRATION_READY; ScenarioEpisodes with genealogy/state generated | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-063 | DN-VIS-EPISODES at MILESTONE_EXIT | DN-CORE-GENEALOGY: Temporal genealogy / exposure queries; INTEGRATION_READY; genealogy linked to episodes | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
-| DEP-064 | DN-AI-ORCH at START | DN-AI-TOOLCON: AI typed tool schemas + fixtures; CONTRACT_READY; contract merged + contract tests green + example fixture published | Existing CONTRACT planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-064 | DN-AI-ORCH at START | DN-AI-TOOLCON: AI typed tool schemas + fixtures; CONTRACT_READY; contract merged + contract tests green + example fixture published | Bound by CTRL-HOST-043 to the merged `ai.tool-interface.v1` registry/schema and four fixtures; producer/consumer contract and authority validation are green. This opens only DN-AI-TOOLCON; WP-AI-002 runtime clients/enforcement and WP-AI-001 orchestration remain separate. |
 | DEP-066 | DN-AI-RCA at START | DN-AI-ORCH: Deterministic AI orchestrator; COMPONENT_READY; orchestrator state machine tests green | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-070 | DN-RAG at START | DN-RAG-CORPUS: Documentary corpus (DocumentVersion/CorpusVersion); COMPONENT_READY; versioned CorpusVersion ingested | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-074 | DN-ML at MILESTONE_EXIT | DN-SIM-SYNTH: Synthetic operational data / generated history (ScenarioInstances); EVALUATION_READY; sufficient historical data/features/labels generated | Existing DATA planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |

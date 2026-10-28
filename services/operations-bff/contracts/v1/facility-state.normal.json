@@ -1,0 +1,73 @@
+{
+  "contract_version": "bff.facility-state.v1",
+  "meta": {
+    "revision": "state-0042",
+    "as_of": "2026-10-23T09:00:00Z",
+    "generated_at": "2026-10-23T09:00:05Z",
+    "freshness": "FRESH",
+    "world": {
+      "world_id": "W-SYNTHETIC-TEST"
+    },
+    "sources": [
+      {
+        "source": "digital-twin-service",
+        "revision": "twin-r118",
+        "as_of": "2026-10-23T09:00:00Z",
+        "freshness": "FRESH"
+      }
+    ],
+    "correlation_id": "C-SYNTHETIC-0002"
+  },
+  "facility": {
+    "equipment": [
+      {
+        "equipment_id": "CNC-5AX-07",
+        "revision": "equipment-r7",
+        "equipment_state": "AVAILABLE",
+        "maintenance_state": "AVAILABLE",
+        "epistemic_class": "OBSERVED",
+        "freshness": "FRESH"
+      },
+      {
+        "equipment_id": "CNC-5AX-08",
+        "revision": "equipment-r3",
+        "equipment_state": "DEGRADED",
+        "maintenance_state": "PLANNED_MAINTENANCE",
+        "epistemic_class": "OBSERVED",
+        "freshness": "FRESH"
+      }
+    ],
+    "lots": [
+      {
+        "lot_id": "LOT-001",
+        "revision": "lot-r11",
+        "lifecycle_state": "IN_PROCESS",
+        "execution_state": "RUNNING",
+        "hold_state": "NOT_HELD",
+        "route_position": {
+          "route_id": "ROUTE-A",
+          "visit_id": "VISIT-02",
+          "position": 1,
+          "operation_class_id": "ROUGH_CNC"
+        },
+        "epistemic_class": "ACTUAL",
+        "freshness": "FRESH"
+      },
+      {
+        "lot_id": "LOT-002",
+        "revision": "lot-r8",
+        "lifecycle_state": "HELD",
+        "execution_state": "WAITING",
+        "hold_state": "MATERIAL_HOLD-004",
+        "route_position": {
+          "route_id": "ROUTE-B",
+          "visit_id": "VISIT-03",
+          "position": 2,
+          "operation_class_id": "METROLOGY"
+        },
+        "epistemic_class": "ACTUAL",
+        "freshness": "FRESH"
+      }
+    ]
+  }
+}

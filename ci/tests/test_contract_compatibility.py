@@ -198,3 +198,19 @@ def test_boolean_and_numeric_constants_are_distinct() -> None:
         {"type": ["boolean", "integer"], "const": 1},
     )
     assert result.breaking
+
+
+def test_const_only_schema_is_verifiable_for_existing_event_contracts() -> None:
+    result = compare_schemas(
+        {"const": "production.lot-held"},
+        {"const": "production.lot-held"},
+    )
+    assert result.compatible
+
+
+def test_schema_identity_change_is_verified_as_a_major_breaking_change() -> None:
+    old = {"$id": "urn:cap:core:lot-held:v1", "type": "object"}
+    new = {"$id": "urn:cap:core:lot-held:v2", "type": "object"}
+    result = compare_schemas(old, new)
+    assert result.breaking
+    assert not result.unverifiable

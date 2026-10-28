@@ -3772,7 +3772,7 @@ FR-CORE-009:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-009 L169857"}
   DERIVED_FROM: [ITEM-09, WL-INV-04, WL-INV-05, KG-INV-04]
   ALLOCATED_TO: [ARCH-CORE-DOMAIN, ARCH-CORE-GENEALOGY]
-  REALIZED_BY: {surface: "ReworkDirective + append-only route-visit history", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "ReworkDirective + append-only route-visit history", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/rework_repository.py"} # history storage only; ExecuteApprovedReworkDirective blocked: missing authoritative approval lookup, lifecycle transition interface, frozen protected-command contract (evidence/WP-CORE-004/CURRENT-MAIN-LOCAL-VALIDATION.md)
   EXPOSED_BY: ["ExecuteApprovedReworkDirective command"]
   VERIFIED_BY: [TEST-CORE-STATEMACHINE, TEST-CORE-GENEALOGY, BENCH-E2E-001]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
@@ -3783,7 +3783,7 @@ FR-CORE-010:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-010 L169858"}
   DERIVED_FROM: [ITEM-09, WL-INV-02, WL-INV-03]
   ALLOCATED_TO: [ARCH-CORE-GENEALOGY]
-  REALIZED_BY: {surface: "lot split relation model", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "lot split relation model", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/genealogy_queries.py"} # persisted split ancestry/exposure reads; real producer integration pending (evidence/WP-CORE-004/CURRENT-MAIN-LOCAL-VALIDATION.md)
   EXPOSED_BY: ["Core Query API (genealogy)"]
   VERIFIED_BY: [TEST-CORE-GENEALOGY]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
@@ -3794,7 +3794,7 @@ FR-CORE-011:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-011 L169859"}
   DERIVED_FROM: [ITEM-09, WL-INV-02, WL-INV-03]
   ALLOCATED_TO: [ARCH-CORE-GENEALOGY]
-  REALIZED_BY: {surface: "lot merge relation model (policy-permitted)", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "lot merge relation model (policy-permitted)", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/genealogy_queries.py"} # persisted merge ancestry/exposure reads; merge eligibility/execution not inferred (evidence/WP-CORE-004/CURRENT-MAIN-LOCAL-VALIDATION.md)
   EXPOSED_BY: ["Core Query API (genealogy)"]
   VERIFIED_BY: [TEST-CORE-GENEALOGY]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
@@ -3805,7 +3805,7 @@ FR-CORE-012:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-012 L169860"}
   DERIVED_FROM: [ITEM-25, KG-INV-05, KG-INV-16, WL-INV-04]
   ALLOCATED_TO: [ARCH-CORE-GENEALOGY, ARCH-CORE-DB]
-  REALIZED_BY: {surface: "relational temporal genealogy (no mandatory graph DB, backfill ADR 12)", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "relational temporal genealogy (no mandatory graph DB, backfill ADR 12)", deployable: "manufacturing-core", ref: "services/manufacturing-core/src/manufacturing_core/genealogy_queries.py"} # stored execution/lineage facts only; full real lineage integration pending (evidence/WP-CORE-004/CURRENT-MAIN-LOCAL-VALIDATION.md)
   EXPOSED_BY: ["Core Query API (genealogy)"]
   DECIDED_BY: ["ADR-0012"]
   VERIFIED_BY: [TEST-CORE-GENEALOGY, BENCH-RQ1-001]
@@ -3862,6 +3862,17 @@ FR-CORE-016:
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
   state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
 ```
+
+#### CHG-073 owner-local evidence binding (not final requirement evidence)
+
+The merged WP-CORE-005 owner-local transaction/outbox implementation and its
+real PostgreSQL 18 validation are bound to `DEP-022` by
+`evidence/readiness/DN-CORE-OUTBOX-DEP-022.json` and
+`evidence/WP-CORE-005/CURRENT-MAIN-VALIDATION-2026-10-27.md`. This is an
+edge-readiness projection only: the FR-CORE-014/015 structured records above
+remain `VERIFY_PLANNED` / `NOT_YET_EXECUTED` for their full EV-L3 scope until
+the later relay, broker, scenario and immutable EvidenceBundle obligations are
+executed. No final RTM EvidenceID is invented.
 
 ### 17.FC FR-SIM
 

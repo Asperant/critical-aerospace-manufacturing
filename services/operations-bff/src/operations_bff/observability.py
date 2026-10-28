@@ -72,7 +72,9 @@ def configure_access_log(stream: TextIO | None = None) -> None:
     logger.propagate = False
 
 
-def health_body(*, login: bool, overview: bool) -> dict[str, Any]:
+def health_body(
+    *, login: bool, overview: bool, facility_state: bool = False
+) -> dict[str, Any]:
     """Process and configuration health. It makes no backend or provider call."""
     return {
         "service": SERVICE,
@@ -81,5 +83,6 @@ def health_body(*, login: bool, overview: bool) -> dict[str, Any]:
             "session": "ready",
             "login": "enabled" if login else "disabled",
             "overview": "enabled" if overview else "disabled",
+            "facility_state": "enabled" if facility_state else "disabled",
         },
     }

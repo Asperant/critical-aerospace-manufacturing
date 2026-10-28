@@ -7,13 +7,14 @@ import {
   within,
 } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { App } from "./App";
 import type { ManufacturingOverviewResponse } from "./contract/generated";
 import { SessionProvider } from "./session/SessionProvider";
 import { envelope, FakeBff, jsonResponse } from "./test/fakeBff";
 import { contractOverview, contractSession } from "./test/fixtures";
+import { contractFacilityState } from "./test/fixtures";
 
 async function renderAt(path: string, bff: FakeBff = new FakeBff().install()) {
   const view = render(
@@ -158,6 +159,75 @@ describe("authenticated shell", () => {
 });
 
 describe("overview", () => {
+  it("renders Twin-backed equipment and lot state for the selected world", async () => {
+    const { bff } = await renderAt("/overview?world_id=W-SYNTHETIC-TEST");
+    const state = contractFacilityState();
+    const equipment = state.facility.equipment[0];
+    const lot = state.facility.lots[0];
+    if (!equipment || !lot) throw new Error("facility fixture is empty");
+    expect(
+      await screen.findByRole("heading", { level: 2, name: "Facility state" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("table", { name: "Facility equipment" }),
+    ).toHaveTextContent(equipment.equipment_id);
+    expect(
+      screen.getByRole("table", { name: "Production lots" }),
+    ).toHaveTextContent(lot.lifecycle_state);
+    const stateCall = bff.calls.find(
+      (call) => call.path === "/v1/facility-state",
+    );
+    expect(stateCall?.query.get("world_id")).toBe("W-SYNTHETIC-TEST");
+  });
+
+  it("keeps facility-state unavailability separate from the overview alert", async () => {
+    const bff = new FakeBff();
+    bff.facilityState = () =>
+      jsonResponse(
+        503,
+        envelope("DEPENDENCY_UNAVAILABLE", "Twin is unavailable", {
+          unavailable_sources: ["digital-twin-service"],
+        }),
+      );
+    bff.install();
+    await renderAt("/overview?world_id=W-SYNTHETIC-TEST", bff);
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      "digital-twin-service",
+    );
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("polls the BFF for the same world at a bounded cadence", async () => {
+    vi.useFakeTimers();
+    try {
+      const bff = new FakeBff();
+      let revision = 0;
+      bff.facilityState = () => {
+        const body = structuredClone(contractFacilityState());
+        body.meta.revision = `state-poll-${revision++}`;
+        return jsonResponse(200, body);
+      };
+      bff.install();
+      await renderAt("/overview?world_id=W-SYNTHETIC-TEST", bff);
+      await act(async () => {
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(3000);
+      });
+      await act(async () => {
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+      expect(
+        bff.calls.filter((call) => call.path === "/v1/facility-state"),
+      ).toHaveLength(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("asks for a world before fetching anything", async () => {
     const { bff } = await renderAt("/overview");
     expect(

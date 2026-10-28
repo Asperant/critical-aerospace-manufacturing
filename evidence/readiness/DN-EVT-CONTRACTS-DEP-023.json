@@ -1,0 +1,33 @@
+{
+  "schema": "edge-contract-readiness-basis-v1",
+  "edge": "DEP-023",
+  "predecessor_node": "DN-EVT-CONTRACTS",
+  "successor_node": "DN-EVT-SPINE",
+  "level": "CONTRACT_READY",
+  "producer_wp": "WP-EVT-001",
+  "producer_pr": 73,
+  "producer_merge_sha": "d8388a7e6c7f5c93ffc3c4343bbe6246a5d0269f",
+  "supporting_pr": 76,
+  "supporting_merge_sha": "9db6a1080b8604a36a4629d85c8f844b57879cd6",
+  "verified_main_sha": "6c85a2cd1ab99884cc05e5160527a266887cd2b7",
+  "precise_requirement": "The bounded initial Core async event family shall publish event-envelope.v1 metadata plus LotHeld.v1, LotHeld.v2 and LotDispatchAuthorized.v1 schemas, fixtures, explicit registry producer/consumer declarations and green producer/consumer boundary validation.",
+  "scope_boundary": "This edge certifies only the bounded CONTRACT_READY contract predicate. It does not generalize global DN-EVT-CONTRACTS, broker transport, NATS/JetStream delivery, ACL installation, downstream consumer adoption, event-spine integration, DEP-024, DEP-025 or any WP DONE state.",
+  "artifacts": [
+    {"path": "packages/contracts/schemas/event-envelope.v1.schema.json", "blob": "50f25d89f08ed4d215db2006987021b0f37954e3", "role": "envelope_schema"},
+    {"path": "packages/contracts/fixtures/event-envelope.utc.json", "blob": "bf3f0656d9cebb6e2518f433acb28e2d769018be", "role": "envelope_fixture"},
+    {"path": "packages/contracts/fixtures/event-envelope.simulation.json", "blob": "83b55eebcd2fc8191ffc30c9a938d2a61af395dc", "role": "simulation_envelope_fixture"},
+    {"path": "packages/contracts/registry/core.lot-held.v1.json", "blob": "272d27e0055f1561d25e7794a655d84314fbe9ce", "role": "v1_event_registry"},
+    {"path": "packages/contracts/registry/core.lot-held.v2.json", "blob": "31d257e3b2d6d40889c82073c8c089ff2d23d046", "role": "v2_event_registry"},
+    {"path": "packages/contracts/registry/core.lot-dispatch-authorized.v1.json", "blob": "e23b953f7f7b7b5189513ad79a7f9a913e46363f", "role": "dispatch_event_registry"},
+    {"path": "ci/tests/test_core_domain_event_contracts.py", "blob": "9038111e4c691ca68459b27734b33face71a2ae5", "role": "event_producer_consumer_tests"},
+    {"path": "ci/tests/test_event_envelope.py", "blob": "05e22643188bc28ebd2ba91e2d2d4d1bb0186951", "role": "envelope_tests"}
+  ],
+  "tests": [
+    {"test_id": "TEST-EVT-SCHEMA", "path": "ci/tests/test_core_domain_event_contracts.py", "result": "Core event producer/consumer boundary tests passed"},
+    {"test_id": "TEST-EVT-ENVELOPE", "path": "ci/tests/test_event_envelope.py", "result": "event envelope and world/time negative-path tests passed"},
+    {"test_id": "CONTRACT-REGISTRY", "path": "ci/tests/test_contract_registry.py + ci/tests/test_contract_compatibility.py + ci/tests/test_contract_schema_references.py", "result": "registry, compatibility and pinned-reference tests passed"},
+    {"test_id": "CONTRACT-SCHEMA-CHECK", "path": "ci/scripts/check_contracts.py", "result": "22 schemas / 8 instances PASS"}
+  ],
+  "verification": "Current-main CI run 40554966348 at 6c85a2cd1ab99884cc05e5160527a266887cd2b7 completed its t1-contract job successfully. The focused current-main contract/envelope/domain-event suite also passed 364 tests locally. The evidence is bounded to contract validation and does not claim runtime transport or downstream acceptance.",
+  "control": "CHG-074 / CTRL-HOST-048"
+}

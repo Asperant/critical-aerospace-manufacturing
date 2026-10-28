@@ -267,8 +267,10 @@ def test_non_object_declaration_is_rejected(value: object) -> None:
 def test_repository_registry_loads_and_verifies() -> None:
     registry = Registry.load(REGISTRY_DIR)
     assert registry.contract_ids() == (
+        "ai.tool-interface.v1",
         "core.lot-dispatch-authorized.v1",
         "core.lot-held.v1",
+        "core.lot-held.v2",
         "core.operational-command.v1",
         EXEMPLAR,
         "core.scheduling-snapshot.v1",

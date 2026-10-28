@@ -4,6 +4,10 @@ import type {
   AttentionItem,
   ManufacturingOverviewResponse,
 } from "../contract/generated";
+import {
+  useFacilityState,
+  type FacilityStateView,
+} from "../facilityState/useFacilityState";
 import { useOverview, type OverviewState } from "../overview/useOverview";
 import { useSession } from "../session/SessionProvider";
 
@@ -235,11 +239,119 @@ function OverviewView({
   }
 }
 
+function FacilityStateViewPanel({
+  state,
+  reload,
+}: {
+  state: FacilityStateView;
+  reload: () => void;
+}) {
+  switch (state.status) {
+    case "idle":
+      return null;
+    case "loading":
+      return <p role="status">Loading facility state…</p>;
+    case "unavailable":
+      return (
+        <div role="status">
+          <p>The Twin facility state is unavailable.</p>
+          {state.sources.length > 0 ? (
+            <p>Unavailable: {state.sources.join(", ")}</p>
+          ) : null}
+          <button type="button" onClick={reload}>
+            Retry facility state
+          </button>
+        </div>
+      );
+    case "invalid":
+      return (
+        <p role="status">Facility state request rejected: {state.message}</p>
+      );
+    case "error":
+      return (
+        <div role="status">
+          <p>The facility state could not be loaded.</p>
+          <button type="button" onClick={reload}>
+            Retry facility state
+          </button>
+        </div>
+      );
+    case "ready": {
+      const { meta, facility } = state.state;
+      return (
+        <section aria-labelledby="facility-state-heading">
+          <h2 id="facility-state-heading">Facility state</h2>
+          <p>
+            World {meta.world.world_id} · revision {meta.revision} · freshness{" "}
+            {meta.freshness}
+          </p>
+          {meta.freshness !== "FRESH" ? (
+            <p role="note">Twin data is {meta.freshness.toLowerCase()}.</p>
+          ) : null}
+          <table aria-label="Facility equipment">
+            <caption>Equipment</caption>
+            <thead>
+              <tr>
+                <th scope="col">Equipment</th>
+                <th scope="col">Equipment state</th>
+                <th scope="col">Maintenance</th>
+                <th scope="col">Freshness</th>
+              </tr>
+            </thead>
+            <tbody>
+              {facility.equipment.map((item) => (
+                <tr key={item.equipment_id}>
+                  <th scope="row">{item.equipment_id}</th>
+                  <td>{item.equipment_state}</td>
+                  <td>{item.maintenance_state}</td>
+                  <td>{item.freshness}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <table aria-label="Production lots">
+            <caption>Lots</caption>
+            <thead>
+              <tr>
+                <th scope="col">Lot</th>
+                <th scope="col">Lifecycle</th>
+                <th scope="col">Execution</th>
+                <th scope="col">Hold</th>
+                <th scope="col">Route visit</th>
+                <th scope="col">Freshness</th>
+              </tr>
+            </thead>
+            <tbody>
+              {facility.lots.map((item) => (
+                <tr key={item.lot_id}>
+                  <th scope="row">{item.lot_id}</th>
+                  <td>{item.lifecycle_state}</td>
+                  <td>{item.execution_state}</td>
+                  <td>{item.hold_state}</td>
+                  <td>
+                    {item.route_position.visit_id} ·{" "}
+                    {item.route_position.operation_class_id}
+                  </td>
+                  <td>{item.freshness}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      );
+    }
+  }
+}
+
 export function OverviewPage() {
   const session = useSession();
   const [params, setParams] = useSearchParams();
   const worldId = params.get("world_id")?.trim() || null;
   const { state, loadMore, reload } = useOverview(
+    worldId,
+    session.status === "authenticated",
+  );
+  const facility = useFacilityState(
     worldId,
     session.status === "authenticated",
   );
@@ -252,6 +364,10 @@ export function OverviewPage() {
           <WorldForm
             worldId={worldId}
             onSelect={(id) => setParams({ world_id: id })}
+          />
+          <FacilityStateViewPanel
+            state={facility.state}
+            reload={facility.reload}
           />
           <OverviewView state={state} loadMore={loadMore} reload={reload} />
         </>

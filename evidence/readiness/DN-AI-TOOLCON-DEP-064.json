@@ -1,0 +1,30 @@
+{
+  "schema": "edge-capability-readiness-basis-v1",
+  "edge": "DEP-064",
+  "predecessor_node": "DN-AI-TOOLCON",
+  "successor_node": "DN-AI-ORCH",
+  "level": "CONTRACT_READY",
+  "producer_wp": "WP-AI-002",
+  "producer_pr": 164,
+  "producer_merge_sha": "7510255ff420971f4694e8bf09b08e4e5213dc4d",
+  "verified_main_sha": "e25139347c4e9630511fac578729da533d042170",
+  "precise_requirement": "The AI typed tool interface v1 shall publish versioned typed tools with explicit READ, SIMULATE and PROPOSE authority tags, explicit WorldID/tool identity, compatibility/example fixtures, and green producer/consumer contract validation; no execution or direct Core mutation surface is included.",
+  "scope_boundary": "This edge certifies only the typed-tool producer contract predicate. It does not claim WP-AI-002 runtime clients or enforcement, WP-AI-001 orchestration, protected-action execution, direct Core mutation, runtime integration or DEP-076 acceptance.",
+  "artifacts": [
+    {"path": "packages/contracts/registry/ai.tool-interface.v1.json", "blob": "fb07b1938b9e68958ea246f1fee38f2f17ee8c3376e1946117ad08e0567e6895", "role": "contract_registry"},
+    {"path": "services/ai-intelligence/contracts/v1/ai-tool-interface.v1.schema.json", "blob": "24b40734647d425f39f567419807de08a60473ec6ed23924d3a90bd47b915848", "role": "versioned_schema"},
+    {"path": "services/ai-intelligence/contracts/v1/ai-tool.core-order-read.json", "blob": "ad3478ad78f5669e9958c922145960515d874d07eb9811410423f37f485768b9", "role": "example_fixture"},
+    {"path": "services/ai-intelligence/contracts/v1/ai-tool.twin-snapshot-read.json", "blob": "73d9cbac666abb522d856b5811474e64e392d9bb88404ccb82836b3578b9dc0e", "role": "example_fixture"},
+    {"path": "services/ai-intelligence/contracts/v1/ai-tool.simulate-recovery.json", "blob": "4ae29e9aeae9149469beaaec266ab6cd523c0dfac88a4bab0403be9842d65e5b", "role": "example_fixture"},
+    {"path": "services/ai-intelligence/contracts/v1/ai-tool.propose-recovery.json", "blob": "312db622d954f1b7990ae2dc250e6d2ece2cea9dae2af91e6432870419a08121", "role": "example_fixture"},
+    {"path": "ci/tests/test_ai_tool_contract.py", "blob": "89bf1e7ee249e95a95b07623909a2f454d9114ba", "role": "producer_consumer_authority_tests"}
+  ],
+  "tests": [
+    {"test_id": "TEST-AI-002-001", "path": "ci/tests/test_ai_tool_contract.py", "result": "7 passed"},
+    {"test_id": "CONTRACT-REGISTRY-PRODUCER-AUTHORITY", "path": "ci/tests/test_contract_registry.py + ci/tests/test_contract_producer_authority.py", "result": "140 passed"},
+    {"test_id": "TEST-STRATEGY", "path": "ci/scripts/check_test_strategy.py", "result": "134 files / 23 suites / 0 violations"},
+    {"test_id": "CONTRACT-GATE", "path": "packages/contracts/src/cap_contracts/ci_gate.py", "result": "5 validated; 0 failures"},
+    {"test_id": "REQUIRED-CI", "path": "GitHub Actions run 40538439477", "result": "all required checks PASS; t1-integration SKIPPED"}
+  ],
+  "verification": "The bounded typed-tool artifacts are present on the current-main product tree at e25139347c4e9630511fac578729da533d042170 and were merged by PR #164 at 7510255ff420971f4694e8bf09b08e4e5213dc4d. Focused contract, registry, producer-authority and contract-gate checks pass. The evidence binds only DEP-064 CONTRACT_READY; runtime clients, orchestration, execution and later integration remain separate gates."
+}

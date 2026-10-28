@@ -11,10 +11,12 @@ const forbiddenPackages =
 const forbiddenSource =
   /XMLHttpRequest|WebSocket|EventSource|localStorage|sessionStorage|indexedDB|document\.cookie|access_token|refresh_token|id_token|Authorization|Bearer/;
 const networkModules = [
+  "src/facilityState/facilityStateClient.ts",
   "src/overview/overviewClient.ts",
   "src/session/sessionClient.ts",
 ];
 const bffPaths = {
+  STATE_URL: "/v1/facility-state",
   SESSION_URL: "/v1/session",
   LOGOUT_URL: "/v1/session/logout",
   OVERVIEW_URL: "/v1/overview",
@@ -79,7 +81,7 @@ describe("browser boundaries", () => {
     expect(offenders.map((file) => file.name)).toEqual([]);
   });
 
-  it("reaches the network only from the two BFF clients", () => {
+  it("reaches the network only from BFF clients", () => {
     const users = applicationCode.filter((file) => /\bfetch\b/.test(file.text));
     expect(users.map((file) => file.name).sort()).toEqual(networkModules);
     expect(
@@ -104,7 +106,9 @@ describe("browser boundaries", () => {
         (body.match(/^\s+credentials:\s*"include",$/gm) ?? []).length,
       ).toBe(requests);
       for (const call of calls)
-        expect(["SESSION_URL", "LOGOUT_URL", "url"]).toContain(call);
+        expect(["SESSION_URL", "LOGOUT_URL", "STATE_URL", "url"]).toContain(
+          call,
+        );
     }
     expect(constants).toEqual(bffPaths);
     expect(text("src/overview/overviewClient.ts")).toContain(
@@ -119,6 +123,7 @@ describe("browser boundaries", () => {
       ["/v1/session/login", "get", "startLogin"],
       ["/v1/session/logout", "post", "logout"],
       ["/v1/overview", "get", "getManufacturingOverview"],
+      ["/v1/facility-state", "get", "getFacilityState"],
     ];
     for (const [path, method, id] of operations) {
       expect(openapi).toMatch(
@@ -153,6 +158,7 @@ describe("browser boundaries", () => {
       "SessionResponse",
       "ErrorEnvelope",
       "ManufacturingOverviewResponse",
+      "FacilityStateResponse",
     ]) {
       expect(generated).toContain(`export interface ${name}`);
     }
