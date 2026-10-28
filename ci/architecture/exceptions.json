@@ -1,0 +1,5 @@
+{
+  "schema": "cap.architecture-exceptions/v1",
+  "note": "Temporary, change-controlled exceptions to architecture rules that allow one (ci/architecture/rules.json). Each entry: id, rule, path (an existing repository file), owner, reason (what is excepted and why), chg (an approved CHG-nnn), expires (ISO date within 90 days). An exception never waives a requirement or changes acceptance. Empty is the normal state.",
+  "exceptions": []
+}

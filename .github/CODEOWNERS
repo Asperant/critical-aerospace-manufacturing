@@ -45,6 +45,12 @@
 /ci/test-strategy.schema.json @Yavuzgmus
 /ci/scripts/check_test_strategy.py @Yavuzgmus
 /evidence/WP-TEST-001/ @Yavuzgmus @Asperant
+
+# WP-TEST-007: architecture rule catalog, exception process and gate wiring; canonical owner Yavuz, supporting owner Asrın (advisory, CHG-018).
+/ci/architecture/ @Yavuzgmus @Asperant
+/ci/tests/test_architecture_rules.py @Yavuzgmus
+/ci/tests/test_required_gates.py @Yavuzgmus
+/evidence/WP-TEST-007/ @Yavuzgmus
 /evidence/WP-HITL-002/ @Asperant @Ejlonn
 /evidence/WP-EVT-001/ @Asperant @selorito
 /packages/contracts/ @Asperant @selorito

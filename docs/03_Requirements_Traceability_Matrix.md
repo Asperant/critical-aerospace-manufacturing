@@ -3595,10 +3595,10 @@ FR-GOV-005:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-GOV-005 L169836"}
   DERIVED_FROM: [ITEM-81, ITEM-83, FRC-INV-07, RTM-INV-08]
   ALLOCATED_TO: [ARCH-PLAT-CICD]
-  REALIZED_BY: {surface: "VERIFIED_BY edge completeness rule in trace linter (TL-08, M5 gate)", deployable: "trace registry", ref: "traceability/trace_edges.yaml; tools/trace/src/cap_trace/rules.py"}
+  REALIZED_BY: {surface: "VERIFIED_BY edge completeness rule in trace linter (TL-08, M5 gate)", deployable: "trace registry", ref: "traceability/trace_edges.yaml; tools/trace/src/cap_trace/rules.py; ci/tests/test_required_gates.py"}
   USES_DATA: ["trace_edges"]
-  VERIFIED_BY: [TEST-GOV-TRACELINT, TEST-GOV-002-003]
-  EXECUTED_AS: [RUN-GOV-002-DEV-001]  # shared-host run; acceptance pending
+  VERIFIED_BY: [TEST-GOV-TRACELINT, TEST-GOV-002-003, TEST-TEST-007-002]
+  EXECUTED_AS: [RUN-GOV-002-DEV-001]  # shared-host run; acceptance pending; the trace linter is a required CI gate (WP-TEST-007)
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
@@ -4258,7 +4258,7 @@ FR-EVT-007:
   ALLOCATED_TO: [ARCH-CTR-API, ARCH-CORE-DB]
   REALIZED_BY: {surface: "architecture boundary rules + DB role separation", deployable: "all bounded services", ref: TBD_BY_IMPLEMENTATION}
   GOVERNED_BY: ["ArchitectureRule set"]
-  VERIFIED_BY: [TEST-ARCH-BOUNDARY, TEST-SEC-SVCID]
+  VERIFIED_BY: [TEST-ARCH-BOUNDARY, TEST-SEC-SVCID, TEST-TEST-007-001]
   MITIGATES: [ARCH-R05, ARCH-R07]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
@@ -7437,6 +7437,20 @@ tests (WP-GOV-002)" step of t1-unit (`validate --base origin/main`, `drift
 --strict`) and, on pull requests, "PR Requirement-Impact (TL-13, WP-GOV-002)".
 INSP-GOV-ACCEPT (EVALUATION, WP-GOV-003) is not executed. EvidenceState is
 EVIDENCE_PENDING.
+### 19.12 WP-TEST-007 concrete implementation and verification assets
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-TEST-007-001 (`ci/tests/test_architecture_rules.py`: rule catalog against the checker and 03 §17, requirement context in violations, the exception process with every accept and reject path) | TEST-ARCH-BOUNDARY | FR-EVT-007 (rules BR-02, BR-03 report the requirements they protect; exceptions never waive them) |
+| TEST-TEST-007-002 (`ci/tests/test_required_gates.py`: the boundary check and the trace linter cannot be skipped, made non-blocking or left out of `ci-gate`) | TEST-ARCH-BOUNDARY, TEST-GOV-TRACELINT | FR-GOV-005 (the trace linter is a required gate), FR-EVT-007 |
+
+Catalog and process: `ci/architecture/` (`rules.json`, `exceptions.json`, README).
+The rule checker is WP-EVT-005's (`ci/scripts/check_architecture_boundaries.py`);
+WP-TEST-007 adds rule identity, reporting and the exception process to it. The
+requirement realization of FR-EVT-007 stays with its owner's record. TEST-SEC-SVCID
+(runtime service identity, WP-SEC-002) is not executed. EvidenceState is
+EVIDENCE_PENDING.
+
 ## 20. Rejected Alternatives
 
 | Alternative | Rejected because |

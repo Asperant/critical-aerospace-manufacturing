@@ -82,6 +82,15 @@ ci/scripts/apply_branch_protection.sh --apply    # owner/admin session only
 
 Record the response under `evidence/WP-CICD-001/`.
 
+## Architecture rules and trace validation as required gates (WP-TEST-007)
+
+Two repository-level invariant checks block a merge: the architecture-boundary rules
+(`static` job) and the trace linter with strict drift (`unit` job, plus the PR
+Requirement-Impact check on pull requests). Both are steps of jobs that `ci-gate`
+requires, and `ci/tests/test_required_gates.py` fails if either could be skipped, made
+non-blocking or dropped from the gate. Rules, requirement context and the exception
+process are in [architecture/README.md](architecture/README.md).
+
 ## Not in this WP
 
 CD to INTEGRATION and DeploymentRecords (WP-CICD-002, TEST-PLAT-CD,
