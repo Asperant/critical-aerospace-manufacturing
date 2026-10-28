@@ -1731,10 +1731,10 @@ DEP-037:
   need_by: "S2"   # sprint 2
   fallback: null
   unblock_evidence: "kernel tests + deterministic replay green"
-  precise_requirement: null
+  precise_requirement: "Consume Kernel(WorldState, handlers), register_handler(kind, EventHandler), schedule(EventSpec), step()/run(until, max_events), ExecutionContext.now/stream()/schedule(), the named streams arrival, processing, failure, repair, quality and inspection (StreamName, STREAM_IDS) and immutable execution records, plus the deterministic replay surface ReplaySpec, replay(spec, handlers), compare, check_determinism, event_sequence_digest, final_state_digest and the format sim-replay-hash/1. These are kernel extension APIs only. Routing, queue, failure, repair, maintenance and rework semantics and any Core transition legality are WP-SIM-003 deliverables or DEP-038 and DEP-039 obligations, not part of this START edge."
   risk_class: DR-1
   source: "Item 66 #47"
-  status: NOT_READY
+  status: READY
 DEP-038:
   predecessor: {node: DN-CORE-CONTRACTS, owner: "Asrın"}
   successor: {node: DN-SIM-OPSEM, owner: "Batu"}
@@ -3813,7 +3813,7 @@ For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §1
 | DEP-033 | DN-TWIN-SKELETON at INTEGRATION | DN-RT-PG: PostgreSQL runtime; INTEGRATION_READY; `twin` schema migrated | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-034 | DN-TWIN-PROJ at START | DN-TWIN-SKELETON: Twin skeleton (projector + query API); COMPONENT_READY; merged current-main projector/query skeleton with explicit scope, idempotency, gap rejection and green focused tests | Edge-specific predicate bound by CHG-066; event-spine, PostgreSQL and later Twin projection semantics remain separate. |
 | DEP-036 | DN-TWIN-VERIFY at INTEGRATION | DN-TWIN-PROJ: Meaningful Twin projection (revision/freshness/epistemic/STALE); INTEGRATION_READY; Twin revision semantics INTEGRATION_READY | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
-| DEP-037 | DN-SIM-OPSEM at START | DN-SIM-KERNEL: DES kernel (event queue, clock, named RNG); COMPONENT_READY; kernel tests + deterministic replay green | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-037 | DN-SIM-OPSEM at START | DN-SIM-KERNEL: DES kernel (event queue, clock, named RNG); COMPONENT_READY; kernel tests + deterministic replay green | Edge-specific predicate bound by CHG-079 (APPROVED_WITH_CONDITIONS, UNDER_REVIEW) to the merged kernel and replay APIs named in the precise requirement. The predicate text is unchanged. Edge status READY records only the kernel START fact, bound to the owner-adopted assessment in evidence/WP-SIM-003/DEP-037-START-READINESS.md. DEP-038 and DEP-039 are separate obligations. |
 | DEP-040 | DN-SIM-COREINT at INTEGRATION | DN-SIM-OPSEM: Operational semantics (reentrant routing, queues, failures, maintenance, rework); COMPONENT_READY; reentrant world runs end-to-end locally | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-041 | DN-SIM-COREINT at INTEGRATION | DN-CORE-CMDEXEC: Core command execution (idempotent, revision-checked, outcome persisted); INTEGRATION_READY; Core-validated physical commands executed by Simulator | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-042 | DN-SIM-COREINT at INTEGRATION | DN-EVT-SPINE: Operational event spine (outbox → NATS → idempotent consumers); INTEGRATION_READY; real cross-boundary integration test green on INTEGRATION | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
