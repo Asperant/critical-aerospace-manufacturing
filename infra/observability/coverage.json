@@ -56,7 +56,19 @@
     {"name": "digital-twin-service", "owner": "Asrın", "runtime": "python", "path": "services/digital-twin-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
     {"name": "vision-service", "owner": "Selman", "runtime": "python", "path": "services/vision-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
     {"name": "ai-intelligence-service", "owner": "Asrın", "runtime": "python", "path": "services/ai-intelligence-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
-    {"name": "scheduler-service", "owner": "Batu", "runtime": "python", "path": "services/scheduler-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
+    {
+      "name": "scheduler-service",
+      "owner": "Batu",
+      "runtime": "python",
+      "path": "services/scheduler-service",
+      "logging": "PENDING",
+      "health": "PENDING",
+      "exemption": {
+        "reason": "Offline scheduling library (WP-SCH-001, WP-SCH-002) with no process, endpoint or log sink; adopting configure() and health_report() follows with a scheduler service runtime. Decision of the platform owner (Yavuz, WP-OBS-001) on 2026-10-28; renewed or closed by 2026-11-20.",
+        "owner": "Yavuz",
+        "expires_on": "2026-11-20"
+      }
+    },
     {"name": "automation-service", "owner": "Batu", "runtime": "python", "path": "services/automation-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"}
   ]
 }
