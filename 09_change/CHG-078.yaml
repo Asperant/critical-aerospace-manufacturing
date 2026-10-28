@@ -1,0 +1,57 @@
+CHG-078:
+  title: Bind DEP-037 to the merged kernel and replay APIs
+  trigger: WP-SIM-003 cannot start. projectctl startability reports HARD_START_DEPENDENCY_UNRESOLVED for DEP-037 and DEP-038. DEP-037 has a kernel-only predicate, "kernel tests + deterministic replay green", but no precise requirement, no edge-specific binding and status NOT_READY, although the DN-SIM-KERNEL work (WP-SIM-001) and the replay work (WP-SIM-002) are merged with green main CI.
+  reason: The predicate is not circular and its meaning is not changed. It only needs the exact APIs WP-SIM-003 consumes to be named and bound to current-main evidence. This record adds that precision and, once the owner adopts the assessment, records the edge READY. Routing, queue, failure, repair, maintenance and rework semantics stay WP-SIM-003 deliverables.
+  class: C1
+  review_risk_class: CR-1
+  raised_in: S4
+  owner: Batuhan
+  required_human_approvals: 0
+  reviewers: []
+  decision: APPROVED_WITH_CONDITIONS
+  status: UNDER_REVIEW
+  application_control_item: WP-SIM-003
+  decision_basis: Proposed by the owner of both DEP-037 nodes (DN-SIM-KERNEL and DN-SIM-OPSEM, Batuhan) under the operator-approved plan DEP037_PLAN.md (SHA-256 15105d57550df75ec37692ff73ed81ad2b0baa03c54606ab17edd8698f6644aa). The owner adopted the edge assessment in a native supervised-conversation statement quoted verbatim in evidence/WP-SIM-003/DEP-037-START-READINESS.md. A binding of an unchanged predicate follows the CHG-066 and CHG-074 precedent and needs no planning-owner disposition; none was requested or received and none is claimed. CHG-018 requires zero development approvals.
+  conditions:
+    - SATISFIED - the owner adopted the assessment (native statement, recorded verbatim without an invented timestamp or URL).
+    - OPEN - the owner adoption has no public durable record yet. An authorized publication (for example a pull request comment) is needed; none is invented here.
+    - OPEN - current-head CI is pending until it runs on the pushed head.
+    - DEP-037's predicate text, kind, strength, blocking stage, required readiness, need-by, fallback, risk class and ownership stay unchanged.
+    - No routing, queue, failure, repair, maintenance or rework behaviour, and no Core transition legality, is claimed for DN-SIM-OPSEM by this change.
+  doctrine:
+    start: a HARD START edge is resolved by facts its producer node can actually provide before the consumer starts
+    done: unchanged; WP-SIM-003 (F0) keeps every DoD obligation and verification family
+  scope:
+    - Set the DEP-037 precise_requirement in docs/05 to the kernel and replay APIs WP-SIM-003 consumes, and update its precise-consumer appendix row.
+    - Record the identities, the clause to API to test mapping and the limits in evidence/WP-SIM-003/DEP-037-START-READINESS.md.
+    - Add a projectctl dependency regression test and update the PRECISION_MISSING baseline (163 to 162); DEP-037 now carries a precise_requirement, the only finding that closes.
+    - Set the DEP-037 status to READY in docs/05, on the owner-adopted assessment, and nowhere else.
+  invariants_preserved:
+    - DEP-038 (DN-CORE-CONTRACTS to DN-SIM-OPSEM, Asrın) keeps its own edge-specific CONTRACT_READY obligation, and DEP-039 stays a MILESTONE_EXIT edge. WP-SIM-003 stays blocked by DEP-038 after this change.
+    - No other edge status or field changes; DEP-038 and DEP-039 stay NOT_READY.
+    - Kernel and replay behaviour is evidenced by the kernel tests, not by this change. Fixture evidence only, replay holds for the locked NumPy 2.4.6, sim-replay-hash/1 is simulator-local, and no governed Release, Environment or Hardware identity exists.
+    - Merged != Done; no WP lifecycle or Plane state is changed by this metadata change.
+  affected_requirements: [FR-SIM-002, FR-SIM-003, FR-SIM-004, FR-SIM-005, FR-SIM-006]
+  affected_architecture: [ARCH-SIM-ENGINE]
+  affected_contracts: []
+  affected_work_packages: [WP-SIM-003]
+  affected_dependencies: [DEP-037]
+  affected_evidence:
+    - evidence/WP-SIM-003/DEP-037-START-READINESS.md
+    - evidence/WP-SIM-002/runs/run-4-committed/
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - WP-SIM-001 run-7 stays historical for the older simulator tree and is not the basis of this edge.
+      - The simulator tree on current main equals the source tree of WP-SIM-002 run-4, so that run applies unchanged.
+    rerun_required:
+      - Refresh the Plane transition policy after the docs/05 change merges (docs/05 is a pinned source).
+      - projectctl startability WP-SIM-003 against the refreshed source, once. Expected result is still BLOCK on DEP-038 only.
+    limitation: Binds the kernel START fact only. It does not start WP-SIM-003 and does not touch DEP-038.
+  security_authority_impact: NONE
+  rollout: Merge the documentation and change-control pull request once current-head CI is green, refresh the Plane transition policy through the supported path with separate installation authorization, then run projectctl startability WP-SIM-003 once.
+  rollback: Revert docs/05, CHG-078, its register row, the regression test and the evidence file together; refresh the policy again if it was deployed. No runtime or Plane state replay is required.
+  required_rerun: [projectctl startability WP-SIM-003]
+  documentation_updates: [docs/05_Dependency_Graph.md, 09_change/CHG-078.yaml, evidence/WP-SIM-003/DEP-037-START-READINESS.md, tools/projectctl/tests/test_dependencies.py]
+  freeze_context: PRE_M6
