@@ -1,0 +1,38 @@
+{
+  "contract_id": "simulator.dispatch-intake.v1",
+  "name": "Simulator dispatch intake",
+  "contract_type": "COMMAND",
+  "version": 1,
+  "semantic_owner": "Batuhan Kaya",
+  "canonical_producer": "manufacturing-simulator",
+  "declared_consumers": [
+    "Scheduler",
+    "Automation",
+    "Core"
+  ],
+  "purpose": "A dispatch decision offered to the Simulator for execution. The answer is the simulator.dispatch-outcome.v1 contract.",
+  "output_schema": {
+    "path": "services/manufacturing-simulator/contracts/v1/dispatch-intake.v1.schema.json",
+    "sha256": "2d9f92a6af9eedc289cbee3606a0d5eea3d976452699d69bb861934b1c8d26b3"
+  },
+  "fixtures": [
+    {
+      "path": "services/manufacturing-simulator/contracts/v1/dispatch-intake.v1.json",
+      "sha256": "cd0f4b93da5d5a3611f9184f5acf9847968813d6db241b1eff82cb557d72e75e"
+    }
+  ],
+  "authority_level": "Simulator validation and physical execution intake; a decision is a proposal and carries no Core, scheduling or approval authority",
+  "sync_semantics": "SYNC",
+  "security_classification": "Internal simulation dispatch metadata; SIMULATION provenance; no credentials and no evaluator-only (Oracle) field",
+  "semantics": {
+    "revalidation": "A decision is rechecked against current simulated state when it arrives and again when its kernel event executes (SCH-INV-02); held material is never dispatched (SCH-INV-05).",
+    "idempotency": "dispatch_id is the idempotency key: identical bytes return the stored answer and run nothing, different bytes under the same id are rejected as DUPLICATE_CONFLICT.",
+    "ordering": "Execution is a kernel event ordered by (time, sequence); decision_time must equal the current simulation time.",
+    "core": "source CORE_AUTHORIZED requires a prior Core LotDispatchAuthorized fact (core.lot-dispatch-authorized.v1) for the same dispatch_id, lot_id and lot_revision; the Simulator holds no Core client and mutates no Core state.",
+    "completeness": "Offline interface slice: not integrated acceptance, not a Scheduler IC-SCH-005 schema (that stays a Scheduler deliverable) and not event-spine publication."
+  },
+  "deprecation": {
+    "status": "ACTIVE",
+    "replacement": null
+  }
+}

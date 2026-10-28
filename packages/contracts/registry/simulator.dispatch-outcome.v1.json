@@ -1,0 +1,40 @@
+{
+  "contract_id": "simulator.dispatch-outcome.v1",
+  "name": "Simulator dispatch outcome",
+  "contract_type": "EVENT",
+  "version": 1,
+  "semantic_owner": "Batuhan Kaya",
+  "canonical_producer": "manufacturing-simulator",
+  "declared_consumers": [
+    "Scheduler",
+    "Automation",
+    "Core"
+  ],
+  "purpose": "The Simulator's ACCEPTED or REJECTED answer to one dispatch intake, with a closed reason code. ACCEPTED means queued as a kernel event, not executed.",
+  "output_schema": {
+    "path": "services/manufacturing-simulator/contracts/v1/dispatch-outcome.v1.schema.json",
+    "sha256": "2503bb5d14e90dff6414996f43a38fed69da300fbc9dd703ba94374c530a1a07"
+  },
+  "fixtures": [
+    {
+      "path": "services/manufacturing-simulator/contracts/v1/dispatch-outcome.v1.json",
+      "sha256": "87fee72167c2807192aaa31495409b66818d0ffd35b89752925097f560c9dbf6"
+    },
+    {
+      "path": "services/manufacturing-simulator/contracts/v1/dispatch-outcome.rejected.json",
+      "sha256": "a5f3ec76d256626939de1af87ff891636305bb44876c7e9739c468ca4d7d1f51"
+    }
+  ],
+  "authority_level": "Simulation operational fact about one intake; not Core canonical state and not an effect-verification result",
+  "sync_semantics": "SYNC",
+  "security_classification": "Internal simulation dispatch metadata; SIMULATION provenance; no credentials and no evaluator-only (Oracle) field",
+  "semantics": {
+    "errors": "Closed reason codes: MALFORMED, UNSUPPORTED_VERSION, ORACLE_FIELD_REJECTED, WRONG_WORLD, DUPLICATE_CONFLICT, STALE_REVISION, DECISION_TIME_MISMATCH, UNKNOWN_LOT, LOT_REVISION_MISMATCH, LOT_HELD, LOT_ALREADY_DISPATCHED, WRONG_ROUTE_STEP, UNKNOWN_MACHINE, MACHINE_INELIGIBLE, MACHINE_UNAVAILABLE, CORE_AUTHORIZATION_MISSING, CORE_AUTHORIZATION_INVALID. Messages never repeat input values.",
+    "acceptance": "HTTP-style acceptance is not execution: ACCEPTED is queued, execution is a later kernel event and may still be rejected on revalidation (DISPATCH_START_REJECTED).",
+    "idempotency": "The same dispatch_id and identical intake bytes return the stored outcome."
+  },
+  "deprecation": {
+    "status": "ACTIVE",
+    "replacement": null
+  }
+}

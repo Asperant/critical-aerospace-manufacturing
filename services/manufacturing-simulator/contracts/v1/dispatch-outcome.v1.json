@@ -1,0 +1,13 @@
+{
+  "contract_version": "simulator.dispatch-outcome.v1",
+  "dispatch_id": "DSP-1",
+  "world_id": "world-1",
+  "status": "ACCEPTED",
+  "reason_code": null,
+  "simulation_time": {
+    "value": 10,
+    "unit": "us"
+  },
+  "state_revision": "rev-1",
+  "provenance": "SIMULATION"
+}

@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cap:simulator:dispatch-outcome:v1",
+  "title": "DispatchOutcome.v1",
+  "description": "The Simulator's answer to one intake. ACCEPTED means queued as a kernel event, not executed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "dispatch_id",
+    "world_id",
+    "status",
+    "reason_code",
+    "simulation_time",
+    "state_revision",
+    "provenance"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "simulator.dispatch-outcome.v1"
+    },
+    "dispatch_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^\\S+$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "world_id": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    },
+    "status": {
+      "enum": [
+        "ACCEPTED",
+        "REJECTED"
+      ]
+    },
+    "reason_code": {
+      "anyOf": [
+        {
+          "enum": [
+            "MALFORMED",
+            "UNSUPPORTED_VERSION",
+            "ORACLE_FIELD_REJECTED",
+            "WRONG_WORLD",
+            "DUPLICATE_CONFLICT",
+            "STALE_REVISION",
+            "DECISION_TIME_MISMATCH",
+            "UNKNOWN_LOT",
+            "LOT_REVISION_MISMATCH",
+            "LOT_HELD",
+            "LOT_ALREADY_DISPATCHED",
+            "WRONG_ROUTE_STEP",
+            "UNKNOWN_MACHINE",
+            "MACHINE_INELIGIBLE",
+            "MACHINE_UNAVAILABLE",
+            "CORE_AUTHORIZATION_MISSING",
+            "CORE_AUTHORIZATION_INVALID"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "simulation_time": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "unit"
+      ],
+      "properties": {
+        "value": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "unit": {
+          "const": "us"
+        }
+      }
+    },
+    "state_revision": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    },
+    "provenance": {
+      "const": "SIMULATION"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "ACCEPTED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "reason_code": {
+            "type": "null"
+          },
+          "dispatch_id": {
+            "type": "string",
+            "pattern": "^\\S+$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "REJECTED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "reason_code": {
+            "enum": [
+              "MALFORMED",
+              "UNSUPPORTED_VERSION",
+              "ORACLE_FIELD_REJECTED",
+              "WRONG_WORLD",
+              "DUPLICATE_CONFLICT",
+              "STALE_REVISION",
+              "DECISION_TIME_MISMATCH",
+              "UNKNOWN_LOT",
+              "LOT_REVISION_MISMATCH",
+              "LOT_HELD",
+              "LOT_ALREADY_DISPATCHED",
+              "WRONG_ROUTE_STEP",
+              "UNKNOWN_MACHINE",
+              "MACHINE_INELIGIBLE",
+              "MACHINE_UNAVAILABLE",
+              "CORE_AUTHORIZATION_MISSING",
+              "CORE_AUTHORIZATION_INVALID"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -20,6 +20,7 @@ from manufacturing_simulator.isolation import find_evaluator_field
 
 REQUEST_CONTRACT = "simulator.decision-request.v1"
 INTAKE_CONTRACT = "simulator.dispatch-intake.v1"
+OUTCOME_CONTRACT = "simulator.dispatch-outcome.v1"
 PROVENANCE = "SIMULATION"
 TIME_UNIT = "us"
 MAX_SAFE = 9007199254740991
@@ -393,8 +394,7 @@ class DispatchOutcome:
 
     def to_document(self) -> dict[str, Any]:
         return {
-            "contract_version": INTAKE_CONTRACT,
-            "kind": "OUTCOME",
+            "contract_version": OUTCOME_CONTRACT,
             "dispatch_id": self.dispatch_id,
             "world_id": self.world_id,
             "status": self.status.value,

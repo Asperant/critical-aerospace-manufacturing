@@ -1,0 +1,29 @@
+{
+  "contract_version": "simulator.decision-request.v1",
+  "world_id": "world-1",
+  "request_id": "REQ-1",
+  "state_revision": "rev-1",
+  "simulation_time": {
+    "value": 10,
+    "unit": "us"
+  },
+  "provenance": "SIMULATION",
+  "decision_point": {
+    "kind": "MACHINE_AVAILABLE",
+    "machine_id": "M1"
+  },
+  "candidates": [
+    {
+      "lot_id": "L1",
+      "lot_revision": "L1-r1",
+      "route_step": "ROUGH-MILL",
+      "priority": 2,
+      "due_at": 90,
+      "ready_at": 5,
+      "eligible_machine_ids": [
+        "M1",
+        "M2"
+      ]
+    }
+  ]
+}

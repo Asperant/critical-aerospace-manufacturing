@@ -275,6 +275,9 @@ def test_repository_registry_loads_and_verifies() -> None:
         EXEMPLAR,
         "core.scheduling-snapshot.v1",
         "scheduler.recovery-plan.v1",
+        "simulator.decision-request.v1",
+        "simulator.dispatch-intake.v1",
+        "simulator.dispatch-outcome.v1",
     )
     registry.verify(REPO)
 
