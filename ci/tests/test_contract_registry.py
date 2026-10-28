@@ -271,6 +271,7 @@ def test_repository_registry_loads_and_verifies() -> None:
         "core.lot-dispatch-authorized.v1",
         "core.lot-held.v1",
         "core.lot-held.v2",
+        "core.lot-operational-semantics.v1",
         "core.operational-command.v1",
         EXEMPLAR,
         "core.scheduling-snapshot.v1",

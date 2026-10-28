@@ -1,0 +1,51 @@
+title: Publish the Core lot operational-semantics contract and bind it to DEP-038
+trigger: DEP-038 remained NOT_READY; DN-CORE-CONTRACTS carried CONTRACT_READY only for DEP-018 and DEP-021, and the re-entrant lifecycle, hold and rework semantics merged in WP-CORE-002/004 had no versioned consumer-facing schema or fixture
+reason: The Simulator operational-semantics consumer needs a published, versioned contract with fixtures and green contract tests; the merged internal rework history had no public contract and existing PR evidence alone is not consumer-facing semantics
+class: C1
+review_risk_class: CR-1
+raised_in: S3
+owner: Asrın
+required_human_approvals: 0
+reviewers: []
+decision: APPROVED
+status: APPROVED
+application_control_item: CTRL-HOST-050
+decision_basis: Additive Core v1 read-only contract over already merged domain, lifecycle, hold and rework values plus an edge-specific readiness binding; no transition, persistence, authority or protected-command change.
+scope:
+  - Add the read-only core.lot-operational-semantics.v1 registry declaration, schema, two synthetic fixtures and a producer-owned view model.
+  - Bind DEP-038 to that contract and the merged WP-CORE-001/002/004 evidence with a DEP-038-specific precise requirement.
+  - Record DEP-038 READY at CONTRACT_READY.
+invariants_preserved:
+  - Core remains the canonical authority for lifecycle, hold and rework state; the view grants no authority.
+  - Lifecycle, execution and material-hold state stay independent dimensions.
+  - Rework history stays append-only; no rework execution or protected-command contract is added.
+  - core.order-query.v1 and the DEP-018/DEP-021 bindings are unchanged and not generalized.
+precise_requirement: The Core lot operational-semantics v1 contract shall publish a versioned schema with normal re-entrant/rework and active-hold fixtures covering distinct re-entrant route visits and execution cycle, independent retained material-hold state that blocks dispatch, and directive-linked append-only rework history, with green producer contract tests bound to the merged Core guards.
+affected_requirements: [FR-CORE-002, FR-CORE-007, FR-CORE-008, FR-CORE-009, FR-CORE-016]
+affected_architecture: [ARCH-CORE-DOMAIN, ARCH-CTR-VERSIONING]
+affected_contracts: [core.lot-operational-semantics.v1]
+affected_work_packages: [WP-CORE-001, WP-SIM-003, WP-SIM-008, WP-PERF-003]
+affected_dependencies: [DEP-038]
+affected_evidence:
+  - evidence/readiness/DN-CORE-CONTRACTS-DEP-038.json
+  - evidence/CTRL-HOST-050/DEP-038-CURRENT-MAIN.md
+  - packages/contracts/registry/core.lot-operational-semantics.v1.json
+  - services/manufacturing-core/contracts/v1/lot-operational-semantics.v1.schema.json
+  - services/manufacturing-core/tests/test_operational_semantics_contract.py
+evidence_staleness:
+  question_answered: true
+  stale: []
+  unaffected:
+    - DN-CORE-CONTRACTS DEP-018 and DEP-021 bindings and the core.order-query.v1 fixtures.
+    - WP-CORE-002 and WP-CORE-004 implementation and evidence, which are consumed unchanged.
+    - DEP-037, DEP-039 and every other dependency remain unresolved by this record.
+    - No work-package DONE claim is made.
+security_authority_impact: NONE
+conditions:
+  - Do not infer protected rework execution, transition commands, route position, persistence or integrated acceptance.
+  - Simulator-side review of the fixtures is a consumer step and is not asserted by this binding.
+rollout: Merge the additive contract, binding and projection together, then re-run projectctl validate and the focused contract tests.
+rollback: Revert the contract artifacts, DEP-038 projection, readiness record and this control record together.
+required_rerun: [projectctl validate, Core operational-semantics contract tests, contract registry and producer-authority tests, contract schema check, contract gate]
+documentation_updates: [docs/05_Dependency_Graph.md, docs/09_Change_Control_Process.md, 09_change/change_requests.csv, services/manufacturing-core/contracts/v1/README.md]
+freeze_context: PRE_M6
