@@ -72,6 +72,11 @@ class DispatchGate:
         return {START_KIND: self._on_start}
 
     @property
+    def pending_machines(self) -> frozenset[str]:
+        """Machines with an accepted dispatch that has not executed yet."""
+        return frozenset(self._pending_machines)
+
+    @property
     def executions(self) -> tuple[tuple[str, RejectReason | None], ...]:
         """``(dispatch_id, None)`` for a started dispatch, else its rejection reason."""
         return tuple(self._executions)
