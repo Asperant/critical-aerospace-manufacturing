@@ -110,6 +110,17 @@ idempotent and rerun with the next `stack.sh up`. `stack.sh up` waits up to 11
 minutes, because Keycloak's first `start-dev` boot builds Quarkus (205 s measured
 on the shared host).
 
+**Observed recovery, not a guarantee.** A simulated reboot (stop, then start all nine
+long-running containers at once) was observed three times on the loaded shared host:
+all healthy after 121 s (an ad hoc check), after 320 s (a diagnostic reproduction,
+`evidence/WP-PLAT-003/reboot-reproduction/`), and **not all healthy within the 926 s
+bound** in the recorded run RUN-PLAT-003-DEV-001, where PostgreSQL stayed `unhealthy`
+and Temporal restarted 29 times while the REAL smoke tests passed straight afterwards,
+so the services worked but Docker's health state lagged. PostgreSQL reports a crash
+recovery after the stop, MLflow exits on "database system is starting up" and is
+restarted. The cause under load is not established; NFR-REL-005 (reboot, healthy or
+known-degraded within 10 minutes) belongs to AV-SCEN-12 and is not claimed here.
+
 ## Run it
 
 ```bash

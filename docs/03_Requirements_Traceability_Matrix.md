@@ -103,9 +103,10 @@
 > per-host API key, MLflow (metadata in PostgreSQL, artifacts in SeaweedFS), the
 > `cap-platform` realm imported as code and a runtime readiness checklist that
 > mirrors every runtime edge out of DN-PLAT-INTEG in 05 (§19.11). Startup follows
-> 02 Sequence I without wait cycles; a simulated reboot is part of the shared-host
-> run under `evidence/WP-PLAT-003/`, which NFR-DEP-001 and NFR-DEP-002 reference as
-> a DEV observation. The mandatory Integration profile with application
+> 02 Sequence I without wait cycles; the shared-host run under `evidence/WP-PLAT-003/`,
+> which NFR-DEP-001 and NFR-DEP-002 reference as a DEV observation, also records a
+> simulated reboot whose recovery varied (not all healthy within 926 s in the recorded
+> run, 320 s in a reproduction) and is not a claim for NFR-REL-005. The mandatory Integration profile with application
 > deployables, BENCH-E2E-001 and E2E-01 remain open; evidence stays
 > EVIDENCE_PENDING and `observed` stays null.
 
@@ -5532,7 +5533,7 @@ FR-PLAT-001:
   DECIDED_BY: ["ADR-0011"]
   VERIFIED_BY: [TEST-PLAT-COMPOSE, TEST-DEP-PLATFORM, BENCH-E2E-001]
   EXERCISED_IN: [E2E-01, AV-SCEN-12]
-  EXECUTED_AS: [RUN-PLAT-001-DEV-001, RUN-PLAT-003-DEV-001]  # infra layer (WP-PLAT-001), then the full profile with Temporal, Qdrant and MLflow and a simulated reboot (WP-PLAT-003) on the shared host and in CI t1-integration; application deployables pending
+  EXECUTED_AS: [RUN-PLAT-001-DEV-001, RUN-PLAT-003-DEV-001]  # infra layer (WP-PLAT-001), then the full profile with Temporal, Qdrant and MLflow and a simulated-reboot observation whose recovery varied (WP-PLAT-003) on the shared host and in CI t1-integration; application deployables pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "CI + INTEGRATION + EVALUATION", m6_freeze_sensitive: true}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
