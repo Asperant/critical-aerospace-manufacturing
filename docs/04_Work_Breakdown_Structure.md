@@ -1562,7 +1562,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-SIM-DISPIF |
 | Size band (indicative, no hour estimates) | M (≈4–7 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `services/manufacturing-simulator/`; `evidence/WP-SIM-006/` |
 
 **Purpose.** Expose the interface through which external deciders (baseline policy, Scheduler, human) drive the world, plus the operational signals consumers observe.
 

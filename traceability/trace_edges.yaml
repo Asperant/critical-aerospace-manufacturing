@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: 43a01a5be7dfcaa21d443fd854f3ebf68060eb933b06055797db823e08b0378f
+  sha256: decabf2b6e38d9f2fc858cd835b9a44f44cefb09f2fa9ef127f03bd728cdfab2
 requirements:
   FR-GOV-001:
     meta:
@@ -708,13 +708,14 @@ requirements:
       env: CI + INTEGRATION + EVALUATION
       m6_freeze_sensitive: true
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: 'Local run of the offline dispatch interface (TEST-SIM-DECISIONIF) on a test-only facility: contracts, intake revalidation, idempotency, standalone baselines. evidence/WP-SIM-006/README.md records limits: no operational model (WP-SIM-003), no real Core integration, no IC-SCH-005 producer, no event-spine publication, AV-SCEN-02 and BENCH-RQ2-001 not executed, no VERIFIED claim.'
     realization:
       surface: external dispatch/planning decision interface (Core-validated physical commands)
       deployable: manufacturing-simulator
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-simulator/src/manufacturing_simulator/; services/manufacturing-simulator/tests/; services/manufacturing-simulator/contracts/
   FR-SIM-014:
     meta:
       class: F1
@@ -726,13 +727,14 @@ requirements:
       env: CI + INTEGRATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: Local allow-list exposure of operational state and events with evaluator-field rejection (TEST-SIM-DECISIONIF, TEST-SIM-ISOLATION); not publication on the event spine, no Oracle plane exists yet (WP-SIM-005). evidence/WP-SIM-006/README.md records the limits.
     realization:
       surface: operational event/telemetry publication without Oracle fields
       deployable: manufacturing-simulator
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-simulator/src/manufacturing_simulator/; services/manufacturing-simulator/tests/; services/manufacturing-simulator/contracts/
   FR-TWIN-001:
     meta:
       class: F0
@@ -6325,10 +6327,13 @@ edges:
 - {"from": "FR-SIM-013", "relation": "ALLOCATED_TO", "to": "ARCH-SIM-ENGINE", "applicability": "PLANNED"}
 - {"from": "FR-SIM-013", "relation": "ALLOCATED_TO", "to": "ARCH-CTR-CMDSCHEMA", "applicability": "PLANNED"}
 - {"from": "FR-SIM-013", "relation": "EXPOSED_BY", "to": "IC-SCH-005 DispatchDecision", "applicability": "PLANNED"}
-- {"from": "FR-SIM-013", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-SIM-013", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/src/manufacturing_simulator/", "applicability": "RECORDED"}
+- {"from": "FR-SIM-013", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/tests/", "applicability": "RECORDED"}
+- {"from": "FR-SIM-013", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/contracts/", "applicability": "RECORDED"}
 - {"from": "FR-SIM-013", "relation": "EXERCISED_IN", "to": "AV-SCEN-02", "applicability": "PLANNED"}
 - {"from": "FR-SIM-013", "relation": "VERIFIED_BY", "to": "TEST-SIM-DECISIONIF", "applicability": "PLANNED"}
 - {"from": "FR-SIM-013", "relation": "VERIFIED_BY", "to": "BENCH-RQ2-001", "applicability": "PLANNED"}
+- {"from": "FR-SIM-013", "relation": "EXECUTED_AS", "to": "evidence/WP-SIM-006/runs/run-2-committed", "applicability": "RECORDED"}
 - {"from": "FR-SIM-014", "relation": "DERIVED_FROM", "to": "ITEM-10", "applicability": "PLANNED"}
 - {"from": "FR-SIM-014", "relation": "DERIVED_FROM", "to": "ITEM-22", "applicability": "PLANNED"}
 - {"from": "FR-SIM-014", "relation": "DERIVED_FROM", "to": "INT-INV-14", "applicability": "PLANNED"}
@@ -6337,11 +6342,14 @@ edges:
 - {"from": "FR-SIM-014", "relation": "ALLOCATED_TO", "to": "ARCH-WORLD-EVALZONE", "applicability": "PLANNED"}
 - {"from": "FR-SIM-014", "relation": "EXPOSED_BY", "to": "physical execution events", "applicability": "PLANNED"}
 - {"from": "FR-SIM-014", "relation": "EXPOSED_BY", "to": "telemetry stream", "applicability": "PLANNED"}
-- {"from": "FR-SIM-014", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-SIM-014", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/src/manufacturing_simulator/", "applicability": "RECORDED"}
+- {"from": "FR-SIM-014", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/tests/", "applicability": "RECORDED"}
+- {"from": "FR-SIM-014", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/contracts/", "applicability": "RECORDED"}
 - {"from": "FR-SIM-014", "relation": "EXERCISED_IN", "to": "AV-SCEN-01", "applicability": "PLANNED"}
 - {"from": "FR-SIM-014", "relation": "EXERCISED_IN", "to": "AV-SCEN-11", "applicability": "PLANNED"}
 - {"from": "FR-SIM-014", "relation": "VERIFIED_BY", "to": "TEST-SIM-DECISIONIF", "applicability": "PLANNED"}
 - {"from": "FR-SIM-014", "relation": "VERIFIED_BY", "to": "TEST-SIM-ISOLATION", "applicability": "PLANNED"}
+- {"from": "FR-SIM-014", "relation": "EXECUTED_AS", "to": "evidence/WP-SIM-006/runs/run-2-committed", "applicability": "RECORDED"}
 - {"from": "FR-TWIN-001", "relation": "DERIVED_FROM", "to": "ITEM-11", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-001", "relation": "DERIVED_FROM", "to": "ITEM-68", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-001", "relation": "DERIVED_FROM", "to": "DT-INV-09", "applicability": "PLANNED"}

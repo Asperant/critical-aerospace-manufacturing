@@ -1,0 +1,182 @@
+[
+  {
+    "id": "decision-interface-tests",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim6-venv/bin/python3",
+      "-m",
+      "pytest",
+      "-c",
+      "services/manufacturing-simulator/pyproject.toml",
+      "services/manufacturing-simulator/tests/test_decision_messages.py",
+      "services/manufacturing-simulator/tests/test_decision_contract.py",
+      "services/manufacturing-simulator/tests/test_dispatch_gate.py",
+      "services/manufacturing-simulator/tests/test_baseline.py",
+      "services/manufacturing-simulator/tests/test_exposure.py",
+      "services/manufacturing-simulator/tests/test_dispatch_replay.py",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "started_utc": "2026-10-28T21:58:14+00:00",
+    "finished_utc": "2026-10-28T21:58:15+00:00",
+    "exit_code": 0,
+    "stdout_file": "decision-interface-tests.stdout",
+    "stdout_bytes": 307,
+    "stdout_sha256": "9eb349fdb778746433805f1579b28b998281d4e8b1fc970dfad1c9b80659128c",
+    "stderr_file": "decision-interface-tests.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "137 passed in 0.68s"
+  },
+  {
+    "id": "simulator-suite",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim6-venv/bin/python3",
+      "-m",
+      "pytest",
+      "-c",
+      "services/manufacturing-simulator/pyproject.toml",
+      "services/manufacturing-simulator/tests",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "started_utc": "2026-10-28T21:58:15+00:00",
+    "finished_utc": "2026-10-28T21:58:23+00:00",
+    "exit_code": 0,
+    "stdout_file": "simulator-suite.stdout",
+    "stdout_bytes": 707,
+    "stdout_sha256": "1c922dcaf4cb3f71e11f63d8de7de1c652d663af5723e928d8c741c9254898fd",
+    "stderr_file": "simulator-suite.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "495 passed in 7.91s"
+  },
+  {
+    "id": "collector-tests",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim6-venv/bin/python3",
+      "-m",
+      "pytest",
+      "evidence/WP-SIM-006/tests",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "started_utc": "2026-10-28T21:58:23+00:00",
+    "finished_utc": "2026-10-28T21:58:24+00:00",
+    "exit_code": 0,
+    "stdout_file": "collector-tests.stdout",
+    "stdout_bytes": 225,
+    "stdout_sha256": "0d3a2fe5f79e4783bf5b76943dcfc3b51143785040eba8b0c1afb05b3135cdfd",
+    "stderr_file": "collector-tests.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "6 passed in 1.34s"
+  },
+  {
+    "id": "ruff-check",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim6-venv/bin/python3",
+      "-m",
+      "ruff",
+      "check",
+      "services/manufacturing-simulator",
+      "evidence/WP-SIM-006/capture_run.py",
+      "evidence/WP-SIM-006/tests/test_capture_run.py"
+    ],
+    "started_utc": "2026-10-28T21:58:24+00:00",
+    "finished_utc": "2026-10-28T21:58:24+00:00",
+    "exit_code": 0,
+    "stdout_file": "ruff-check.stdout",
+    "stdout_bytes": 19,
+    "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "stderr_file": "ruff-check.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "All checks passed!"
+  },
+  {
+    "id": "ruff-format",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim6-venv/bin/python3",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "services/manufacturing-simulator",
+      "evidence/WP-SIM-006/capture_run.py",
+      "evidence/WP-SIM-006/tests/test_capture_run.py"
+    ],
+    "started_utc": "2026-10-28T21:58:24+00:00",
+    "finished_utc": "2026-10-28T21:58:24+00:00",
+    "exit_code": 0,
+    "stdout_file": "ruff-format.stdout",
+    "stdout_bytes": 27,
+    "stdout_sha256": "3cbc764509f46afb88053c5d0216718d29af883ed4a6216db2de94a84f3fa1bc",
+    "stderr_file": "ruff-format.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "39 files already formatted"
+  },
+  {
+    "id": "pyright",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim6-venv/bin/python3",
+      "-m",
+      "pyright",
+      "--project",
+      "services/manufacturing-simulator/pyrightconfig.json"
+    ],
+    "started_utc": "2026-10-28T21:58:24+00:00",
+    "finished_utc": "2026-10-28T21:58:27+00:00",
+    "exit_code": 0,
+    "stdout_file": "pyright.stdout",
+    "stdout_bytes": 192,
+    "stdout_sha256": "db668de51c7ecb37ed0c6e58fdf07c5c520152a4ffa341ff6b86c340877b9413",
+    "stderr_file": "pyright.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "0 errors, 0 warnings, 0 informations"
+  },
+  {
+    "id": "contracts",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim6-venv/bin/python3",
+      "ci/scripts/check_contracts.py"
+    ],
+    "started_utc": "2026-10-28T21:58:27+00:00",
+    "finished_utc": "2026-10-28T21:58:27+00:00",
+    "exit_code": 0,
+    "stdout_file": "contracts.stdout",
+    "stdout_bytes": 2248,
+    "stdout_sha256": "e99b43792e638ceedcee269c4d546161009adddd4073e9061059c9152fb2c149",
+    "stderr_file": "contracts.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "PASS"
+  },
+  {
+    "id": "registry-tests",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim6-venv/bin/python3",
+      "-m",
+      "pytest",
+      "ci/tests/test_contract_registry.py",
+      "ci/tests/test_contract_producer_authority.py",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "started_utc": "2026-10-28T21:58:27+00:00",
+    "finished_utc": "2026-10-28T21:58:30+00:00",
+    "exit_code": 0,
+    "stdout_file": "registry-tests.stdout",
+    "stdout_bytes": 307,
+    "stdout_sha256": "3080119288bbab7a4a2342584d549320143890d30b50829bd88b15e2db7f01aa",
+    "stderr_file": "registry-tests.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "133 passed in 2.40s"
+  }
+]
