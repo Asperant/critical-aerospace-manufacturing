@@ -44,6 +44,18 @@
           "authority_level": "AI may read, simulate and propose; it has no canonical manufacturing mutation or protected-action execution authority."
         }
       ]
+    },
+    {
+      "producer": "vision-service",
+      "semantic_owner": "Selman Özdemir",
+      "source_roots": ["services/vision-service/contracts/"],
+      "contracts": [
+        {
+          "family": "vision.inspection-observation",
+          "contract_type": "EVENT",
+          "authority_level": "Vision perception evidence only; no quality disposition, hold, root-cause or acceptance authority"
+        }
+      ]
     }
   ]
 }

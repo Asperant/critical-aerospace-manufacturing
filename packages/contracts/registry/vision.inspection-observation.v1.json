@@ -1,0 +1,53 @@
+{
+  "contract_id": "vision.inspection-observation.v1",
+  "name": "Vision InspectionObservation event v1 (EVT-InspectionObservation-v1)",
+  "contract_type": "EVENT",
+  "version": 1,
+  "semantic_owner": "Selman Özdemir",
+  "canonical_producer": "vision-service",
+  "declared_consumers": [
+    "AI/RCA evidence intake",
+    "Digital Twin",
+    "Core quality normalization"
+  ],
+  "purpose": "Publish immutable Vision perception evidence for one inspection-image artifact version, with uncertainty and pipeline provenance, for RCA evidence, Twin projection and Core normalization into the separate IC-VIS-002 InspectionResult.",
+  "output_schema": {
+    "path": "services/vision-service/contracts/v1/inspection-observation.v1.schema.json",
+    "sha256": "e4a94e78c5a738f6129b6e8f4bf9215be632e9ec67fc706adb9031e9912276de"
+  },
+  "fixtures": [
+    {
+      "path": "services/vision-service/contracts/v1/inspection-observation.defect-candidates.json",
+      "sha256": "7c18a439a6c5bcf129a4a6351820b6d51a6f429ed6795b25cbe14f13730b815a"
+    },
+    {
+      "path": "services/vision-service/contracts/v1/inspection-observation.no-defect-candidates.json",
+      "sha256": "3ef0ad0d9903f3ac354f80370d1b1aeefcea0902591b29f43fc7d30a500d5b00"
+    },
+    {
+      "path": "services/vision-service/contracts/v1/inspection-observation.not-evaluated.json",
+      "sha256": "9273b03d02bceff047bbfc82a4e4adf8d71027367c4d8d81aaee55466e724a05"
+    },
+    {
+      "path": "services/vision-service/contracts/v1/inspection-observation.degraded-input.json",
+      "sha256": "fcfdbfc5197938d7e6400a0a5d357f3438b86f532f769fc50c25798946d82f73"
+    }
+  ],
+  "authority_level": "Vision perception evidence only; no quality disposition, hold, root-cause or acceptance authority",
+  "sync_semantics": "ASYNC",
+  "security_classification": "Internal inspection metadata; no image bytes, storage keys, signed URLs, credentials or Oracle labels",
+  "semantics": {
+    "event_name": "InspectionObservation.v1",
+    "namespace": "vision",
+    "envelope": "cap event-envelope.v1 from WP-EVT-002",
+    "partition_key": "subject.serialized_component_id",
+    "consumed_identities": "core.order-query.v1 Lot, SerializedComponent and RouteVisit id/revision; cap.artifact-ref/v1 artifact identity and checksum",
+    "immutability": "An observation is never edited; a re-run or human review is a new observation",
+    "replay": "Consumers may replay; replay never executes an action or changes quality state",
+    "compatibility": "Initial version; IC-VIS-002 InspectionResult is a separate Core-owned contract, not an alias"
+  },
+  "deprecation": {
+    "status": "ACTIVE",
+    "replacement": null
+  }
+}
