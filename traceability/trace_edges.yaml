@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: b1e7b0c7c96d4675bf6f8e947d3e08258a8f77cd1e23c78a3a0e2d822037a07c
+  sha256: badde265bcc9ae5e01d16ade443760fe74891bb616921a1d7751d1962ee0726b
 requirements:
   FR-GOV-001:
     meta:
@@ -2077,13 +2077,14 @@ requirements:
       env: CI
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: Local contract-level run (TEST-SCH-PLAN asset on the published snapshot fixture and development RecoveryPlan fixtures); DEP-083 generator and DEP-084 validator are not implemented, TEST-UI-PLAN, AV-SCEN-01/02 and E2E-01 have not run, and no EvidenceID exists. evidence/WP-SCH-002/README.md records the limits.
     realization:
       surface: plan ↔ SchedulingSnapshot revision binding
       deployable: scheduler-service
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/scheduler-service/src/manufacturing_scheduler/; services/scheduler-service/contracts/v1/; packages/contracts/registry/scheduler.recovery-plan.v1.json
   FR-SCH-008:
     meta:
       class: F1
@@ -2095,13 +2096,14 @@ requirements:
       env: CI + INTEGRATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: Local contract-level run (TEST-SCH-PLAN asset on the published snapshot fixture and development RecoveryPlan fixtures); DEP-083 generator and DEP-084 validator are not implemented, TEST-UI-PLAN, AV-SCEN-01/02 and E2E-01 have not run, and no EvidenceID exists. evidence/WP-SCH-002/README.md records the limits.
     realization:
       surface: 'RecoveryPlan schema (Item 83 example: CONTRACT-RecoveryPlan-v1)'
       deployable: scheduler-service
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/scheduler-service/src/manufacturing_scheduler/; services/scheduler-service/contracts/v1/; packages/contracts/registry/scheduler.recovery-plan.v1.json
   FR-SCH-009:
     meta:
       class: F1
@@ -2224,13 +2226,14 @@ requirements:
       env: CI + INTEGRATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: Local contract-level run (TEST-SCH-PLAN asset on the published snapshot fixture and development RecoveryPlan fixtures); DEP-083 generator and DEP-084 validator are not implemented, TEST-UI-PLAN, AV-SCEN-01/02 and E2E-01 have not run, and no EvidenceID exists. evidence/WP-SCH-002/README.md records the limits.
     realization:
       surface: rationale/objective/comparison fields for review
       deployable: scheduler-service → operations-bff
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/scheduler-service/src/manufacturing_scheduler/; services/scheduler-service/contracts/v1/; packages/contracts/registry/scheduler.recovery-plan.v1.json
   FR-AUTO-001:
     meta:
       class: F0
@@ -7181,18 +7184,24 @@ edges:
 - {"from": "FR-SCH-007", "relation": "ALLOCATED_TO", "to": "ARCH-SCH-PLAN", "applicability": "PLANNED"}
 - {"from": "FR-SCH-007", "relation": "ALLOCATED_TO", "to": "ARCH-TWIN-FRESHNESS", "applicability": "PLANNED"}
 - {"from": "FR-SCH-007", "relation": "EXPOSED_BY", "to": "IC-SCH-004 RecoveryPlan (source revision)", "applicability": "PLANNED"}
-- {"from": "FR-SCH-007", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-SCH-007", "relation": "REALIZED_BY", "to": "repo:services/scheduler-service/src/manufacturing_scheduler/", "applicability": "RECORDED"}
+- {"from": "FR-SCH-007", "relation": "REALIZED_BY", "to": "repo:services/scheduler-service/contracts/v1/", "applicability": "RECORDED"}
+- {"from": "FR-SCH-007", "relation": "REALIZED_BY", "to": "repo:packages/contracts/registry/scheduler.recovery-plan.v1.json", "applicability": "RECORDED"}
 - {"from": "FR-SCH-007", "relation": "VERIFIED_BY", "to": "TEST-SCH-PLAN", "applicability": "PLANNED"}
 - {"from": "FR-SCH-007", "relation": "VERIFIED_BY", "to": "TEST-AUTO-FRESHNESS", "applicability": "PLANNED"}
+- {"from": "FR-SCH-007", "relation": "EXECUTED_AS", "to": "evidence/WP-SCH-002/runs/run-4-committed", "applicability": "RECORDED"}
 - {"from": "FR-SCH-008", "relation": "DERIVED_FROM", "to": "ITEM-19", "applicability": "PLANNED"}
 - {"from": "FR-SCH-008", "relation": "DERIVED_FROM", "to": "ITEM-22", "applicability": "PLANNED"}
 - {"from": "FR-SCH-008", "relation": "DERIVED_FROM", "to": "INT-INV-05", "applicability": "PLANNED"}
 - {"from": "FR-SCH-008", "relation": "ALLOCATED_TO", "to": "ARCH-SCH-PLAN", "applicability": "PLANNED"}
 - {"from": "FR-SCH-008", "relation": "ALLOCATED_TO", "to": "ARCH-CTR-EVTSCHEMA", "applicability": "PLANNED"}
 - {"from": "FR-SCH-008", "relation": "EXPOSED_BY", "to": "IC-SCH-004 RecoveryPlan", "applicability": "PLANNED"}
-- {"from": "FR-SCH-008", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-SCH-008", "relation": "REALIZED_BY", "to": "repo:services/scheduler-service/src/manufacturing_scheduler/", "applicability": "RECORDED"}
+- {"from": "FR-SCH-008", "relation": "REALIZED_BY", "to": "repo:services/scheduler-service/contracts/v1/", "applicability": "RECORDED"}
+- {"from": "FR-SCH-008", "relation": "REALIZED_BY", "to": "repo:packages/contracts/registry/scheduler.recovery-plan.v1.json", "applicability": "RECORDED"}
 - {"from": "FR-SCH-008", "relation": "EXERCISED_IN", "to": "AV-SCEN-01", "applicability": "PLANNED"}
 - {"from": "FR-SCH-008", "relation": "VERIFIED_BY", "to": "TEST-SCH-PLAN", "applicability": "PLANNED"}
+- {"from": "FR-SCH-008", "relation": "EXECUTED_AS", "to": "evidence/WP-SCH-002/runs/run-4-committed", "applicability": "RECORDED"}
 - {"from": "FR-SCH-009", "relation": "DERIVED_FROM", "to": "ITEM-19", "applicability": "PLANNED"}
 - {"from": "FR-SCH-009", "relation": "DERIVED_FROM", "to": "ITEM-61", "applicability": "PLANNED"}
 - {"from": "FR-SCH-009", "relation": "DERIVED_FROM", "to": "SCH-INV-08", "applicability": "PLANNED"}
@@ -7266,10 +7275,13 @@ edges:
 - {"from": "FR-SCH-015", "relation": "ALLOCATED_TO", "to": "ARCH-EDGE-BFF", "applicability": "PLANNED"}
 - {"from": "FR-SCH-015", "relation": "EXPOSED_BY", "to": "IC-SCH-003 ScheduleCandidate", "applicability": "PLANNED"}
 - {"from": "FR-SCH-015", "relation": "EXPOSED_BY", "to": "IC-SCH-004 RecoveryPlan", "applicability": "PLANNED"}
-- {"from": "FR-SCH-015", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-SCH-015", "relation": "REALIZED_BY", "to": "repo:services/scheduler-service/src/manufacturing_scheduler/", "applicability": "RECORDED"}
+- {"from": "FR-SCH-015", "relation": "REALIZED_BY", "to": "repo:services/scheduler-service/contracts/v1/", "applicability": "RECORDED"}
+- {"from": "FR-SCH-015", "relation": "REALIZED_BY", "to": "repo:packages/contracts/registry/scheduler.recovery-plan.v1.json", "applicability": "RECORDED"}
 - {"from": "FR-SCH-015", "relation": "EXERCISED_IN", "to": "AV-SCEN-01", "applicability": "PLANNED"}
 - {"from": "FR-SCH-015", "relation": "VERIFIED_BY", "to": "TEST-SCH-PLAN", "applicability": "PLANNED"}
 - {"from": "FR-SCH-015", "relation": "VERIFIED_BY", "to": "TEST-UI-PLAN", "applicability": "PLANNED"}
+- {"from": "FR-SCH-015", "relation": "EXECUTED_AS", "to": "evidence/WP-SCH-002/runs/run-4-committed", "applicability": "RECORDED"}
 - {"from": "FR-AUTO-001", "relation": "DERIVED_FROM", "to": "ITEM-18", "applicability": "PLANNED"}
 - {"from": "FR-AUTO-001", "relation": "DERIVED_FROM", "to": "ITEM-68", "applicability": "PLANNED"}
 - {"from": "FR-AUTO-001", "relation": "DERIVED_FROM", "to": "AUTO-INV-11", "applicability": "PLANNED"}
