@@ -17,10 +17,9 @@ from typing import Any, cast
 
 import jsonschema
 
-from cap_release.registry import ImageRegistry
+from cap_release.registry import ImageRegistry, migration_files
 
 SCHEMA = "cap.release-manifest/v1"
-MIGRATIONS = "services/manufacturing-core/src/manufacturing_core/migrations"
 CONTRACT_REGISTRY = "packages/contracts/registry"
 DIGEST = re.compile(r"^sha256:[0-9a-f]{64}$")
 SECRET_KEY = re.compile(
@@ -62,27 +61,29 @@ def fingerprint(manifest: Mapping[str, Any]) -> str:
     return hashlib.sha256(canonical_bytes(manifest)).hexdigest()
 
 
-SCHEMA_OWNER_IMAGE = "manufacturing-core"
-
-
 def database_schema_target(root: Path, registry: ImageRegistry) -> dict[str, str]:
-    """The Core store's newest migration, bound only when its owner is part of the release.
+    """The newest version of every declared migration set, or an explicit absence.
 
-    A release states the migration state of the deployables it contains. Until
-    manufacturing-core is a release image, that state is explicitly not yet produced,
-    not guessed from a directory the release does not deploy.
+    A release states the migration state of the databases it requires. When the
+    registry declares migration sets, the manifest binds their newest versions and the
+    deploy command runs the migration stage; with none declared the target is
+    explicitly not produced, never guessed from a directory the release does not name.
     """
-    if SCHEMA_OWNER_IMAGE not in {image.name for image in registry.images}:
+    if not registry.migrations:
         return {
             "state": "NOT_YET_PRODUCED",
-            "reason": "manufacturing-core is not a release image yet; its versioned migrations join the release with it",
+            "reason": "the release declares no database migration set",
         }
-    heads = sorted(
-        p.stem for p in (root / MIGRATIONS).glob("[0-9][0-9][0-9][0-9]_*.sql")
-    )
-    if not heads:
-        return {"state": "NOT_YET_PRODUCED", "reason": "no versioned migration exists"}
-    return {"state": "BOUND", "identity": f"{SCHEMA_OWNER_IMAGE}:{heads[-1]}"}
+    heads: list[str] = []
+    for migration in registry.migrations:
+        files = migration_files(root, migration)
+        if not files:
+            return {
+                "state": "NOT_YET_PRODUCED",
+                "reason": f"{migration.component} has no versioned migration",
+            }
+        heads.append(f"{migration.component}:{files[-1].stem}")
+    return {"state": "BOUND", "identity": ";".join(heads)}
 
 
 def contract_catalog_version(root: Path) -> dict[str, Any]:

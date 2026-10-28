@@ -98,6 +98,15 @@
 > recorded under `evidence/WP-GOV-002/`. INSP-GOV-ACCEPT belongs to the
 > EVALUATION gate (WP-GOV-003); evidence stays EVIDENCE_PENDING.
 
+> **WP-CICD-003 implementation delta (2026-10-28).** NFR-DEP-004 now references the
+> migration stage of the deploy path: a release binds the newest version of each
+> declared migration set, and `deploy` runs the Core tooling with pre- and post-checks
+> (a diverged or unreadable database halts before anything is applied, a failed apply
+> halts before the rollout and states where the database was left, the schema is never
+> reverted by a rollback), with `migration-status` as the inspectable surface; REAL
+> PostgreSQL tests cover it (§19.14). The measurement over release deployments is not
+> taken: evidence stays EVIDENCE_PENDING and `observed` stays null.
+
 > **WP-CICD-002 implementation delta (2026-10-28).** FR-PLAT-004, FR-PLAT-005 and
 > NFR-DEP-003 now reference the release path: an image registry, a `release`
 > workflow that publishes digest-identified images with SBOM and provenance
@@ -6970,12 +6979,14 @@ NFR-DEP-004:
   meta: {class: A1, owner: Yavuz, anchor: "01 Item82 NFR-DEP-004 L172299"}
   DERIVED_FROM: [ITEM-35, ITEM-42, CD-INV-08, LOCAL-INV-12]
   ALLOCATED_TO: [ARCH-DATA-PG, ARCH-PLAT-CICD]
+  REALIZED_BY: {surface: "migration stage of the deploy path with pre- and post-checks, an inspectable status surface and halt semantics", deployable: "deploy command", ref: "tools/release/src/cap_release/migrations.py; tools/release/src/cap_release/deploy.py; release/images.json; release/README.md"}
   MEASUREMENT: {metric: "release-required migrations executed outside versioned automated tooling", threshold: "= 0; status inspectable", workload: "release deployments", hardware: "N/A (not hardware-bound)", observed: null}
-  VERIFIED_BY: [TEST-DEP-MIGRATION]
+  VERIFIED_BY: [TEST-DEP-MIGRATION, TEST-CICD-003-001, TEST-CICD-003-002]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: NOT_YET_EXECUTED}
+  note: "a release binds the newest version of each declared migration set and the deploy command migrates through the Core tooling; the measurement over release deployments (observed) is not taken, so observed stays null; no application image carries Core yet."
 NFR-DEP-005:
   meta: {class: H0, owner: Yavuz, anchor: "01 Item82 NFR-DEP-005 L172308"}
   DERIVED_FROM: [ITEM-84, NFR-INV-44, DX-INV-51]
@@ -7510,6 +7521,20 @@ Pipeline: `release/images.json`, `.github/workflows/release.yml`,
 tooling lint and tests (WP-CICD-002)" step of t1-unit and the `release` workflow
 (dry-run build on pull requests, publish and ReleaseManifest on main). The shared-host
 deployment, TEST-PLAT-CD at INTEGRATION and INSP-DEP-HOST remain open.
+EvidenceState is EVIDENCE_PENDING.
+
+### 19.14 WP-CICD-003 concrete implementation and verification assets
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-CICD-003-001 (`tools/release/tests/test_migrations.py`: ledger classification, pre- and post-checks, halt before any apply on a diverged or unreadable database, a failed apply and where it left the database, no connection string in any message, the status surface exit codes) | TEST-DEP-MIGRATION | NFR-DEP-004 |
+| TEST-CICD-003-002 (`tools/release/tests/test_migrations_real.py`, REAL PostgreSQL 18 with a disposable database and two non-administrative roles: an empty database detected, applied, verified and replayed, a tampered ledger halting, an unreadable database, an unprivileged identity failing and leaving nothing, the deploy host's stage) | TEST-DEP-MIGRATION | NFR-DEP-004 |
+
+`release/images.json` declares the migration sets (`database_migrations`); the manifest binds
+their newest versions; `python -m cap_release migration-status` is the status surface.
+CI: the "Release tooling lint and tests (WP-CICD-002)" step of t1-unit and the "Migration
+stage tests (REAL PostgreSQL, WP-CICD-003)" step of t1-integration. TEST-DEP-MIGRATION at
+INTEGRATION on a release deployment, and the NFR-DEP-004 measurement, remain open.
 EvidenceState is EVIDENCE_PENDING.
 
 ## 20. Rejected Alternatives

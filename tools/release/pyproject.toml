@@ -25,3 +25,4 @@ cap_release = ["schemas/*.json"]
 testpaths = ["tests"]
 pythonpath = ["src"]
 addopts = "-p no:cacheprovider"
+markers = ["integration: needs a real PostgreSQL (CI_PG_DSN and CORE_TEST_DISPOSABLE=1)"]

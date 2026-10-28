@@ -36,13 +36,58 @@ PYTHONPATH=tools/release/src python -m cap_release deploy --manifest /tmp/rel/re
 - the release commit is on `main` and `ci-gate` is `success` at it (checked through the GitHub API);
 - every image digest exists in the registry (CD does not trust tags).
 
-Then it runs, in order: migrate (skipped while the release binds no schema target),
+Then it runs, in order: migrate (WP-CICD-003; skipped only when the release binds no schema target),
 rollout (a generated Compose override with `image: <repo>@<digest>` and `build` removed),
 health (every service of the platform project healthy) and smoke (the REAL checks of
 `stack.sh smoke`). A failed rollout, health or smoke stage rolls back to the last
 SUCCEEDED release when there is one. Records and manifests are kept in
 `${CAP_RELEASE_STATE_DIR:-~/.local/state/cap-release}` (`records/`, `releases/`). Exit
 status 0 only for `SUCCEEDED`.
+
+## Database migrations in the deploy path (WP-CICD-003, NFR-DEP-004)
+
+`release/images.json` declares the migration sets a release requires
+(`database_migrations`); the manifest binds each set's newest version as its
+`database_schema_target` (`manufacturing-core:0007_lot_lineage`), and `deploy` runs the
+**migrate** stage for it between preflight and rollout. The stage uses the Core migration
+tooling of the release commit (the checkout is the release), through its Python API.
+
+The operator supplies the migration identity and the restricted runtime role; neither has
+a default and neither is ever printed:
+
+```bash
+export CAP_MIGRATION_DSN=postgresql://<migration role>:<password>@host/<database>
+export CAP_RUNTIME_ROLE=<restricted runtime role>
+```
+
+**Status surface** (read only):
+
+```bash
+PYTHONPATH=tools/release/src python -m cap_release migration-status
+```
+
+prints one JSON line per migration set: `state` (`EMPTY`, `BEHIND`, `CURRENT`, `DIVERGED` or
+`UNREADABLE`), the applied and pending versions and a detail. Exit status 0 `CURRENT`,
+1 `EMPTY` or `BEHIND` (migrations pending), 2 `DIVERGED` or `UNREADABLE`.
+
+**Pre- and post-checks.** Before applying, the ledger must be a prefix of this release's
+scripts, version and SHA-256 checksum per position (the checksum is of the script text, as the
+tooling records it). After applying, the ledger must equal the release's scripts.
+
+**Halt semantics** (forward only; 02 Expand, Migrate, Contract):
+
+| Situation | What happens |
+|---|---|
+| the ledger diverges (other version, other checksum, or a version this release does not know) | halt before anything is applied; stage FAILED, nothing rolled out |
+| the database cannot be read | halt before anything is applied |
+| the manifest target is not this checkout's head | halt before anything is applied |
+| a migration fails | halt before the rollout; each migration runs in its own transaction, so earlier ones stay applied and the failing one leaves no trace; the record says where the database was left |
+| the database is not at the target after the apply | stage FAILED |
+| the database is already at the target | nothing is applied (checksum-verified replay) |
+| a later stage fails and the release is rolled back | the schema is **not** reverted; a migration must be backward compatible with the previous release |
+
+No message contains a connection string or a password; only the tooling's own fixed
+contract messages and exception class names are surfaced.
 
 ## Operating notes
 
@@ -70,7 +115,7 @@ status 0 only for `SUCCEEDED`.
 
 - Application deployable images: none has a Dockerfile yet; each joins `images.json` with its
   own work package.
-- Database migration execution in the deploy path: WP-CICD-003.
+- Reverting a schema: migrations are forward only.
 - Deployment from GitHub Actions: it needs a self-hosted runner on the Integration host
   (DN-PLAT-RUNNER); until then `deploy` runs as a command on the host.
 - Integrated acceptance (TEST-PLAT-CD, INSP-DEP-HOST) and NFR-DEP-003's measurement over

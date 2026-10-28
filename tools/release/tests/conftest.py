@@ -21,6 +21,11 @@ def tiny(tmp_path: Path) -> Path:
     """A minimal repository: one image, its Dockerfile, a Compose file, a VERSION."""
     (tmp_path / "release").mkdir()
     shutil.copy(REPO / "release/images.json", tmp_path / "release/images.json")
+    data = json.loads((tmp_path / "release/images.json").read_text())
+    data.pop(
+        "database_migrations", None
+    )  # the minimal repository declares no migration set
+    (tmp_path / "release/images.json").write_text(json.dumps(data))
     (tmp_path / "release/VERSION").write_text("1.2.3\n")
     (tmp_path / "infra/compose/mlflow").mkdir(parents=True)
     (tmp_path / "infra/compose/mlflow/Dockerfile").write_text("FROM scratch\n")

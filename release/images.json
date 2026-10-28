@@ -2,7 +2,7 @@
   "schema": "cap.release-images/v1",
   "work_package": "WP-CICD-002",
   "owner": "ghcr.io/asperant",
-  "note": "The deployable images the release pipeline builds, publishes and pins by digest. A Dockerfile that is not listed here fails the registry check, and a listed image needs its Dockerfile, build context and Compose services. Application deployables join this list when they have a Dockerfile (their own work packages); none has one yet.",
+  "note": "The deployable images the release pipeline builds, publishes and pins by digest. A Dockerfile that is not listed here fails the registry check, and a listed image needs its Dockerfile, build context and Compose services. Application deployables join this list when they have a Dockerfile (their own work packages); none has one yet. database_migrations lists the versioned migration sets a release requires; a release binds its newest version as the database schema target and the deploy command runs the migration stage for it (WP-CICD-003).",
   "images": [
     {
       "name": "mlflow",
@@ -10,7 +10,16 @@
       "context": "infra/compose/mlflow",
       "dockerfile": "infra/compose/mlflow/Dockerfile",
       "compose_file": "infra/compose/compose.yaml",
-      "compose_services": ["mlflow", "mlflow-init"]
+      "compose_services": [
+        "mlflow",
+        "mlflow-init"
+      ]
+    }
+  ],
+  "database_migrations": [
+    {
+      "component": "manufacturing-core",
+      "directory": "services/manufacturing-core/src/manufacturing_core/migrations"
     }
   ]
 }
