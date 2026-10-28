@@ -23,6 +23,11 @@ set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 COMPOSE=(docker compose -f "${HERE}/compose.yaml")
+# WP-CICD-002: `python -m cap_release deploy` generates a digest-pinned override. With it
+# the released services are pulled by digest and nothing is built on the host (02, CD).
+if [[ -n "${CAP_COMPOSE_OVERRIDE:-}" ]]; then
+  COMPOSE+=(-f "${CAP_COMPOSE_OVERRIDE}")
+fi
 STATE_DIR="${CAP_PLATFORM_STATE_DIR:-${HOME}/.local/state/cap-platform}"
 export CAP_PLATFORM_STATE_DIR="${STATE_DIR}"
 CREDENTIALS="${STATE_DIR}/credentials.env"
@@ -150,7 +155,9 @@ case "${1:-}" in
     mask_in_ci
     mapfile -t args < <(profile_args "${profiles[@]}")
     "${COMPOSE[@]}" "${args[@]}" pull --quiet --ignore-buildable
-    "${COMPOSE[@]}" "${args[@]}" build --quiet
+    if [[ -z "${CAP_COMPOSE_OVERRIDE:-}" ]]; then
+      "${COMPOSE[@]}" "${args[@]}" build --quiet
+    fi
     if [[ ${S3_IDENTITIES_CHANGED} -eq 1 && -n "$("${COMPOSE[@]}" "${args[@]}" ps -q seaweedfs)" ]]; then
       echo "S3 identities changed: restarting seaweedfs" >&2
       "${COMPOSE[@]}" "${args[@]}" restart seaweedfs

@@ -53,6 +53,12 @@
 /ci/tests/test_architecture_rules.py @Yavuzgmus
 /ci/tests/test_required_gates.py @Yavuzgmus
 /evidence/WP-TEST-007/ @Yavuzgmus
+
+# WP-CICD-002: release pipeline (image registry, ReleaseManifest, DeploymentRecord, deploy); canonical owner Yavuz, supporting reviewer Asrın (advisory, CHG-018).
+/release/ @Yavuzgmus @Asperant
+/tools/release/ @Yavuzgmus
+/.github/workflows/release.yml @Yavuzgmus @Asperant
+/evidence/WP-CICD-002/ @Yavuzgmus
 /evidence/WP-HITL-002/ @Asperant @Ejlonn
 /evidence/WP-EVT-001/ @Asperant @selorito
 /packages/contracts/ @Asperant @selorito
