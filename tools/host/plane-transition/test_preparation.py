@@ -517,65 +517,45 @@ class PreparationTests(unittest.TestCase):
         self.assertEqual(result["status"], "READY")
         self.assertEqual(plane.patches, [{"state": "READY"}])
 
-    def test_generated_record_through_actual_transition_evaluator(self):
-        import sys
-
+    def test_ready_evaluator_does_not_consume_a_generated_preparation_record(self):
+        # CHG-054: BACKLOG -> READY uses the canonical start predicate only. A derived
+        # preparation record stays an advisory artifact; the evaluator never reads it.
         wp, policy, plane, _, _ = fixture(
             profile="batuhan", source="BACKLOG", target="READY"
         )
         context = deepcopy(self.context)
         context["work_package"]["id"] = wp
         context["work_package"]["dor_refs"] = list(self.plan["checks"])[12:]
+        context["work_package"]["dod_refs"] = ["DOD-WP-01"]
         context["cycle_ids"] = ["S2"]
         policy["contexts"][wp] = context
         policy["preparation_schema"] = p.SCHEMA
         policy["source_git_blobs"] = {
             name: "b" * 40 for name in policy["source_manifest"]
         }
-        plan = p.derive(context, policy, SHA)
-        names = {v[0]: t.GITHUB[k] for k, v in t.q.PEOPLE.items()}
-        line = p.routing_line(context, names)
         gh = SimpleNamespace(
             main_sha=lambda: SHA,
-            evidence_text=lambda *_: p.encode(plan),
-            artifact=Mock(),
-        )
-        gh._get = Mock(
-            side_effect=lambda route: {"status": "identical"}
-            if "/compare/" in route
-            else source_tree(policy)
-            if "/git/trees/" in route
-            else {"content": base64.b64encode(line.encode()).decode()}
-        )
-        original = t.importlib.util.spec_from_file_location
-
-        def local_spec(name, path):
-            return original(
-                name,
-                HERE / "preparation.py"
-                if str(path).endswith("cap-preparation.py")
-                else path,
-            )
-
-        with (
-            patch.object(
-                t.importlib.util, "spec_from_file_location", side_effect=local_spec
+            evidence_text=Mock(
+                side_effect=AssertionError("preparation must not be read")
             ),
-            patch.dict(sys.modules, {t.__name__: t}),
-        ):
-            result = t.execute(
-                "batuhan",
-                wp,
-                "READY",
-                {"reason": "Derived canonical preparation", "evidence_refs": []},
-                policy,
-                plane,
-                gh,
-                lambda *_: None,
-                SECRET,
-            )
+            artifact=Mock(side_effect=AssertionError("preparation must not be read")),
+            _get=Mock(side_effect=AssertionError("no GitHub read is needed for READY")),
+        )
+        result = t.execute(
+            "batuhan",
+            wp,
+            "READY",
+            {"reason": "Canonical start eligibility", "evidence_refs": []},
+            policy,
+            plane,
+            gh,
+            lambda *_: None,
+            SECRET,
+        )
         self.assertEqual(result["result"], "VERIFIED")
         self.assertEqual(plane.patches, [{"state": "READY"}])
+        gh.evidence_text.assert_not_called()
+        gh.artifact.assert_not_called()
 
     def test_later_stage_evidence_is_deferred_not_promoted_to_start_gate(self):
         self.context["dependency_edges"] = [

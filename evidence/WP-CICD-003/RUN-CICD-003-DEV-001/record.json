@@ -1,0 +1,81 @@
+{
+  "run_id": "RUN-CICD-003-DEV-001",
+  "work_package": "WP-CICD-003",
+  "kind": "DEV run on the shared host: the published manifest's schema target applied by the release tooling to a disposable PostgreSQL",
+  "boundary_mode": "REAL",
+  "code_revision": "a4f231685cd579b6bffec48bd7f981fab597a451",
+  "release_run": "40724278583",
+  "release_id": "REL-088a96bbff80-40724278583",
+  "release_commit": "088a96bbff80d2f331094b06a14667496b4ab6a0",
+  "schema_target": "manufacturing-core:0007_lot_lineage",
+  "recorded_at": "2026-10-28T16:20:27+00:00",
+  "result": "PASSED",
+  "steps": [
+    {
+      "step": "manifest",
+      "exit_code": 0,
+      "note": "REL-088a96bbff80-40724278583 binds manufacturing-core:0007_lot_lineage",
+      "output": "manifest.txt"
+    },
+    {
+      "step": "database",
+      "exit_code": 0,
+      "note": "disposable PostgreSQL 18 and two non-administrative roles",
+      "output": "database.txt"
+    },
+    {
+      "step": "status-empty",
+      "exit_code": 1,
+      "note": "empty database: pending migrations (exit 1)",
+      "output": "status-empty.txt"
+    },
+    {
+      "step": "apply",
+      "exit_code": 0,
+      "note": "the migration stage applies and verifies",
+      "output": "apply.txt"
+    },
+    {
+      "step": "status-current",
+      "exit_code": 0,
+      "note": "database at the target (exit 0)",
+      "output": "status-current.txt"
+    },
+    {
+      "step": "replay",
+      "exit_code": 0,
+      "note": "second run is a checksum-verified replay",
+      "output": "replay.txt"
+    },
+    {
+      "step": "diverged-ledger",
+      "exit_code": 1,
+      "note": "halts at pre-check, nothing applied (exit 1)",
+      "output": "diverged-ledger.txt"
+    },
+    {
+      "step": "status-diverged",
+      "exit_code": 2,
+      "note": "status reports DIVERGED (exit 2)",
+      "output": "status-diverged.txt"
+    },
+    {
+      "step": "wrong-password",
+      "exit_code": 1,
+      "note": "unreadable database halts (exit 1)",
+      "output": "wrong-password.txt"
+    },
+    {
+      "step": "secret-scan",
+      "exit_code": 0,
+      "note": "no password or connection string in any recorded text",
+      "output": "secret-scan.txt"
+    }
+  ],
+  "non_zero_explained": {
+    "status-empty": "expected: an empty database has pending migrations",
+    "diverged-ledger": "expected: the stage halts before applying over a diverged ledger",
+    "status-diverged": "expected: DIVERGED is exit 2",
+    "wrong-password": "expected: an unreadable database halts"
+  }
+}

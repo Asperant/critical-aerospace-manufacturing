@@ -1,0 +1,63 @@
+{
+  "environment": {
+    "class": "INTEGRATION",
+    "id": "integration"
+  },
+  "finished_at": "2026-10-28T15:36:28+00:00",
+  "host_source": {
+    "checked_out_commit": "e1752d90febabc5db09ba61fd6380a2951462bf6",
+    "manual_patches": 1,
+    "release_commit": "e1752d90febabc5db09ba61fd6380a2951462bf6"
+  },
+  "manifest_sha256": "240547325abd5b86b1f4b4116e3baafaaf5d100f41e8fbdfeb17dfd81aa6d463",
+  "previous_release_id": null,
+  "record_id": "DEP-REC-20261028T153625Z-8f1b2b6e",
+  "release_id": "REL-e1752d90feba-40707535295",
+  "result": "FAILED",
+  "rollback": null,
+  "schema": "cap.deployment-record/v1",
+  "stages": [
+    {
+      "detail": "1 manual change(s) in the host source tree (NFR-DEP-003): [' M infra/compose/README.md']",
+      "finished_at": "2026-10-28T15:36:28+00:00",
+      "result": "FAILED",
+      "stage": "preflight",
+      "started_at": "2026-10-28T15:36:25+00:00"
+    },
+    {
+      "detail": "preflight failed; nothing was rolled out",
+      "finished_at": null,
+      "result": "NOT_RUN",
+      "stage": "migrate",
+      "started_at": null
+    },
+    {
+      "detail": "preflight failed; nothing was rolled out",
+      "finished_at": null,
+      "result": "NOT_RUN",
+      "stage": "rollout",
+      "started_at": null
+    },
+    {
+      "detail": "preflight failed; nothing was rolled out",
+      "finished_at": null,
+      "result": "NOT_RUN",
+      "stage": "health",
+      "started_at": null
+    },
+    {
+      "detail": "preflight failed; nothing was rolled out",
+      "finished_at": null,
+      "result": "NOT_RUN",
+      "stage": "smoke",
+      "started_at": null
+    }
+  ],
+  "started_at": "2026-10-28T15:36:25+00:00",
+  "supply_chain_verification": {
+    "ci_gate": "success",
+    "digests_in_registry": true,
+    "main_derived": true,
+    "tags_trusted": false
+  }
+}
