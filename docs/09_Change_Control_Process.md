@@ -1327,3 +1327,15 @@ approved DEP-023 precise requirement removes one `PRECISION_MISSING` diagnostic,
 so the deterministic projectctl baseline is now 165 instead of 166. Graph
 shape, severity and diagnostic identity assertions remain unchanged; no product
 readiness or lifecycle state is changed.
+
+## CHG-078 — publish the Core lot operational-semantics contract and bind it to DEP-038
+
+CHG-078 / CTRL-HOST-050 is a C1 additive Core contract and edge reconciliation
+for DEP-038. The merged WP-CORE-002/004 hold, re-entrant execution and rework
+semantics had no versioned consumer-facing schema or fixture, and PR existence
+alone is not readiness. The change adds the read-only
+`core.lot-operational-semantics.v1` registry declaration, schema, two synthetic
+fixtures and producer tests bound to the merged Core guards, and records DEP-038
+READY at CONTRACT_READY. It does not claim rework execution, transition
+commands, route position, persistence, Simulator-side fixture review,
+DEP-037/DEP-039 or any work-package DONE state.

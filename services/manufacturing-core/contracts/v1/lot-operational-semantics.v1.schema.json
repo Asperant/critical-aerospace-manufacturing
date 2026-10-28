@@ -1,0 +1,481 @@
+{
+  "$defs": {
+    "ComponentExecutionHistory": {
+      "additionalProperties": false,
+      "description": "Immutable history in append order; timestamps retain occurrence time.\n\nNo lifecycle, current route pointer or active lot membership is inferred.\nLot references capture membership at execution time; identity never changes.",
+      "properties": {
+        "component_id": {
+          "pattern": "\\S",
+          "title": "Component Id",
+          "type": "string"
+        },
+        "original": {
+          "$ref": "#/$defs/ExecutionSegment"
+        },
+        "rework": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ReworkExecutionSegment"
+          },
+          "title": "Rework",
+          "type": "array"
+        }
+      },
+      "required": [
+        "component_id",
+        "original"
+      ],
+      "title": "ComponentExecutionHistory",
+      "type": "object"
+    },
+    "ExecutionSegment": {
+      "additionalProperties": false,
+      "properties": {
+        "executions": {
+          "items": {
+            "$ref": "#/$defs/ProcessExecutionRecord"
+          },
+          "minItems": 1,
+          "title": "Executions",
+          "type": "array"
+        },
+        "route": {
+          "$ref": "#/$defs/ManufacturingRoute"
+        }
+      },
+      "required": [
+        "route",
+        "executions"
+      ],
+      "title": "ExecutionSegment",
+      "type": "object"
+    },
+    "ExecutionState": {
+      "enum": [
+        "READY",
+        "QUEUED",
+        "RESERVED",
+        "DISPATCHED",
+        "PROCESSING",
+        "STEP_COMPLETED"
+      ],
+      "title": "ExecutionState",
+      "type": "string"
+    },
+    "HoldStatusV1": {
+      "enum": [
+        "ACTIVE",
+        "RELEASED"
+      ],
+      "title": "HoldStatusV1",
+      "type": "string"
+    },
+    "LotLifecycle": {
+      "enum": [
+        "CREATED",
+        "RELEASED",
+        "IN_PRODUCTION",
+        "COMPLETED",
+        "SCRAPPED",
+        "CANCELLED"
+      ],
+      "title": "LotLifecycle",
+      "type": "string"
+    },
+    "LotOperationalStateV1": {
+      "additionalProperties": false,
+      "description": "Lot identity and revision with independent lifecycle and execution state.",
+      "properties": {
+        "execution_state": {
+          "$ref": "#/$defs/ExecutionState"
+        },
+        "id": {
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "lifecycle_state": {
+          "$ref": "#/$defs/LotLifecycle"
+        },
+        "order_id": {
+          "pattern": "\\S",
+          "title": "Order Id",
+          "type": "string"
+        },
+        "revision": {
+          "pattern": "\\S",
+          "title": "Revision",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "order_id",
+        "lifecycle_state",
+        "execution_state"
+      ],
+      "title": "LotOperationalStateV1",
+      "type": "object"
+    },
+    "ManufacturingRoute": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "pattern": "\\S",
+          "title": "Revision",
+          "type": "string"
+        },
+        "visits": {
+          "items": {
+            "$ref": "#/$defs/RouteVisit"
+          },
+          "title": "Visits",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "visits"
+      ],
+      "title": "ManufacturingRoute",
+      "type": "object"
+    },
+    "MaterialHoldRecordV1": {
+      "additionalProperties": false,
+      "description": "A retained hold; RELEASED rows are history, not deletion tombstones.",
+      "properties": {
+        "id": {
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "lot_id": {
+          "pattern": "\\S",
+          "title": "Lot Id",
+          "type": "string"
+        },
+        "placed_at": {
+          "format": "date-time",
+          "title": "Placed At",
+          "type": "string"
+        },
+        "reason": {
+          "pattern": "\\S",
+          "title": "Reason",
+          "type": "string"
+        },
+        "release_reason": {
+          "anyOf": [
+            {
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Release Reason"
+        },
+        "released_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Released At"
+        },
+        "status": {
+          "$ref": "#/$defs/HoldStatusV1"
+        }
+      },
+      "required": [
+        "id",
+        "lot_id",
+        "reason",
+        "status",
+        "placed_at"
+      ],
+      "title": "MaterialHoldRecordV1",
+      "type": "object"
+    },
+    "ProcessExecutionRecord": {
+      "additionalProperties": false,
+      "description": "A separate historical visit, including a repeat of the same route step.",
+      "properties": {
+        "component_id": {
+          "pattern": "\\S",
+          "title": "Component Id",
+          "type": "string"
+        },
+        "ended_at": {
+          "format": "date-time",
+          "title": "Ended At",
+          "type": "string"
+        },
+        "equipment_id": {
+          "pattern": "\\S",
+          "title": "Equipment Id",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "lot_id": {
+          "pattern": "\\S",
+          "title": "Lot Id",
+          "type": "string"
+        },
+        "revision": {
+          "pattern": "\\S",
+          "title": "Revision",
+          "type": "string"
+        },
+        "route_visit_id": {
+          "pattern": "\\S",
+          "title": "Route Visit Id",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "component_id",
+        "lot_id",
+        "route_visit_id",
+        "equipment_id",
+        "started_at",
+        "ended_at"
+      ],
+      "title": "ProcessExecutionRecord",
+      "type": "object"
+    },
+    "ReworkDirective": {
+      "additionalProperties": false,
+      "description": "Component-scoped directive snapshot, not a protected-action payload.\n\nThe origin execution identifies the prior step and its exact route snapshot.\nThe return visit belongs to the original route. Revisions remain opaque.",
+      "properties": {
+        "approval_state": {
+          "pattern": "\\S",
+          "title": "Approval State",
+          "type": "string"
+        },
+        "component_id": {
+          "pattern": "\\S",
+          "title": "Component Id",
+          "type": "string"
+        },
+        "current_rework_count": {
+          "minimum": 0,
+          "title": "Current Rework Count",
+          "type": "integer"
+        },
+        "id": {
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "origin_execution_id": {
+          "pattern": "\\S",
+          "title": "Origin Execution Id",
+          "type": "string"
+        },
+        "originating_inspection_id": {
+          "pattern": "\\S",
+          "title": "Originating Inspection Id",
+          "type": "string"
+        },
+        "policy_state": {
+          "pattern": "\\S",
+          "title": "Policy State",
+          "type": "string"
+        },
+        "reason": {
+          "pattern": "\\S",
+          "title": "Reason",
+          "type": "string"
+        },
+        "related_defect_id": {
+          "anyOf": [
+            {
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Related Defect Id"
+        },
+        "related_incident_id": {
+          "anyOf": [
+            {
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Related Incident Id"
+        },
+        "return_visit_id": {
+          "pattern": "\\S",
+          "title": "Return Visit Id",
+          "type": "string"
+        },
+        "revision": {
+          "pattern": "\\S",
+          "title": "Revision",
+          "type": "string"
+        },
+        "rework_route_id": {
+          "pattern": "\\S",
+          "title": "Rework Route Id",
+          "type": "string"
+        },
+        "rework_route_revision": {
+          "pattern": "\\S",
+          "title": "Rework Route Revision",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "component_id",
+        "reason",
+        "originating_inspection_id",
+        "origin_execution_id",
+        "return_visit_id",
+        "rework_route_id",
+        "rework_route_revision",
+        "current_rework_count",
+        "approval_state",
+        "policy_state"
+      ],
+      "title": "ReworkDirective",
+      "type": "object"
+    },
+    "ReworkExecutionSegment": {
+      "additionalProperties": false,
+      "properties": {
+        "directive": {
+          "$ref": "#/$defs/ReworkDirective"
+        },
+        "executions": {
+          "items": {
+            "$ref": "#/$defs/ProcessExecutionRecord"
+          },
+          "minItems": 1,
+          "title": "Executions",
+          "type": "array"
+        },
+        "route": {
+          "$ref": "#/$defs/ManufacturingRoute"
+        }
+      },
+      "required": [
+        "route",
+        "executions",
+        "directive"
+      ],
+      "title": "ReworkExecutionSegment",
+      "type": "object"
+    },
+    "RouteVisit": {
+      "additionalProperties": false,
+      "properties": {
+        "equipment_id": {
+          "pattern": "\\S",
+          "title": "Equipment Id",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "\\S",
+          "title": "Id",
+          "type": "string"
+        },
+        "operation_class_id": {
+          "pattern": "\\S",
+          "title": "Operation Class Id",
+          "type": "string"
+        },
+        "revision": {
+          "pattern": "\\S",
+          "title": "Revision",
+          "type": "string"
+        },
+        "route_id": {
+          "pattern": "\\S",
+          "title": "Route Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "route_id",
+        "operation_class_id",
+        "equipment_id"
+      ],
+      "title": "RouteVisit",
+      "type": "object"
+    }
+  },
+  "$id": "urn:cap:core:lot-operational-semantics:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "component_histories": {
+      "items": {
+        "$ref": "#/$defs/ComponentExecutionHistory"
+      },
+      "title": "Component Histories",
+      "type": "array"
+    },
+    "contract_version": {
+      "const": "core.lot-operational-semantics.v1",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "holds": {
+      "items": {
+        "$ref": "#/$defs/MaterialHoldRecordV1"
+      },
+      "title": "Holds",
+      "type": "array"
+    },
+    "lot": {
+      "$ref": "#/$defs/LotOperationalStateV1"
+    }
+  },
+  "required": [
+    "contract_version",
+    "lot",
+    "holds",
+    "component_histories"
+  ],
+  "title": "LotOperationalSemanticsV1",
+  "type": "object"
+}

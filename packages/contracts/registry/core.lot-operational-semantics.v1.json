@@ -1,0 +1,41 @@
+{
+  "contract_id": "core.lot-operational-semantics.v1",
+  "name": "Core lot operational semantics",
+  "contract_type": "SNAPSHOT",
+  "version": 1,
+  "semantic_owner": "Asrın Dündar",
+  "canonical_producer": "manufacturing-core",
+  "declared_consumers": [
+    "Simulator"
+  ],
+  "purpose": "Read-only per-lot view of lifecycle and execution state, retained material-hold history and append-only component execution and rework history, with distinct re-entrant route visits.",
+  "output_schema": {
+    "path": "services/manufacturing-core/contracts/v1/lot-operational-semantics.v1.schema.json",
+    "sha256": "729cc4d3e1519f99133cc343922becb0b0ef5ba858f85b9db46fad873f6e5534"
+  },
+  "fixtures": [
+    {
+      "path": "services/manufacturing-core/contracts/v1/lot-operational-semantics.reentrant-rework.json",
+      "sha256": "e3421a8698d4a99c319d5f08238b6f315fa3a6f0179a60693d6884708ca0e782"
+    },
+    {
+      "path": "services/manufacturing-core/contracts/v1/lot-operational-semantics.held.json",
+      "sha256": "c7341504f44947f8c8d09fde46cdc7383015fb77e86ded27fe68d17ef783402c"
+    }
+  ],
+  "authority_level": "Core domain read; no command, approval, rework execution or physical execution authority",
+  "sync_semantics": "SYNC",
+  "security_classification": "Internal manufacturing-domain metadata; no credentials or Oracle labels",
+  "semantics": {
+    "reentrancy": "A route may revisit an operation class; every visit keeps its own identity and revision and every execution cites exactly one visit. After STEP_COMPLETED a lot returns to READY for its next visit; lifecycle state does not change per visit.",
+    "hold": "Material hold is independent of lifecycle and execution state. At most one hold per lot is ACTIVE; an ACTIVE hold rejects dispatch with ACTIVE_HOLD. Released holds remain as history.",
+    "rework": "Rework is an explicit directive-linked segment appended to immutable history. The directive cites a prior origin execution and a return visit on the original route; scrapped material cannot be reworked and completed material needs a governed reopen.",
+    "ordering": "Holds are ordered by placement time then identity; component histories by component identity; executions keep append order.",
+    "revision": "Revisions are opaque nonblank per-entity strings with no numeric comparison, freshness guarantee or global snapshot.",
+    "scope": "This contract does not define route position (core.scheduling-snapshot.v1), protected rework execution, transition commands or world binding."
+  },
+  "deprecation": {
+    "status": "ACTIVE",
+    "replacement": null
+  }
+}

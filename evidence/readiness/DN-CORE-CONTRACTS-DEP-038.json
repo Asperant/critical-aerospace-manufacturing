@@ -1,0 +1,81 @@
+{
+  "schema": "edge-contract-readiness-basis-v1",
+  "edge": "DEP-038",
+  "predecessor_node": "DN-CORE-CONTRACTS",
+  "successor_node": "DN-SIM-OPSEM",
+  "level": "CONTRACT_READY",
+  "producer_wp": "WP-CORE-001",
+  "producer_pr": 24,
+  "producer_merge_sha": "ad30bc67077bd0fb6009efdc85f8ec20649d99ce",
+  "semantics_sources": [
+    {
+      "wp": "WP-CORE-002",
+      "pr": 149,
+      "merge_sha": "d5d72e01fc0f1d8480d20b7538b59b7b4f0f9b46"
+    },
+    {
+      "wp": "WP-CORE-004",
+      "pr": 178,
+      "merge_sha": "d2753de2d6f142fca822c055a6ff6d3a809a40bf"
+    }
+  ],
+  "verified_main_sha": "db5640a28bbd73390b1002e3c0ae7f4a87b0d7d1",
+  "precise_requirement": "The Core lot operational-semantics v1 contract shall publish a versioned schema with normal re-entrant/rework and active-hold fixtures covering distinct re-entrant route visits and execution cycle, independent retained material-hold state that blocks dispatch, and directive-linked append-only rework history, with green producer contract tests bound to the merged Core guards.",
+  "scope_boundary": "This is an edge-specific DEP-038 binding. It does not generalize the DEP-018 or DEP-021 basis or certify global DN-CORE-CONTRACTS, and it does not claim rework execution or the ExecuteApprovedReworkDirective command contract, transition commands, route position, persistence, Simulator-side fixture review, DEP-037, DEP-039 or integrated acceptance.",
+  "artifacts": [
+    {
+      "path": "packages/contracts/registry/core.lot-operational-semantics.v1.json",
+      "blob": "471c98e966f41753e8ec072487a55f81002ce039",
+      "role": "contract_registry"
+    },
+    {
+      "path": "services/manufacturing-core/contracts/v1/README.md",
+      "blob": "5f52c5de6b65865fdab0791cf7f83fc417518d8e",
+      "role": "contract"
+    },
+    {
+      "path": "services/manufacturing-core/contracts/v1/lot-operational-semantics.v1.schema.json",
+      "blob": "22959febaf426728e180ba0a86d997ae13268592",
+      "role": "schema"
+    },
+    {
+      "path": "services/manufacturing-core/contracts/v1/lot-operational-semantics.reentrant-rework.json",
+      "blob": "d12b849a3b34346080b3214ad89886316c5742e8",
+      "role": "fixture"
+    },
+    {
+      "path": "services/manufacturing-core/contracts/v1/lot-operational-semantics.held.json",
+      "blob": "ef49323e70a372415cb963da81a73ca8817633f0",
+      "role": "fixture"
+    },
+    {
+      "path": "services/manufacturing-core/src/manufacturing_core/operational_semantics_v1.py",
+      "blob": "281c3dee372d52a7e4ae947d822faedc95a7185a",
+      "role": "producer_model"
+    }
+  ],
+  "tests": [
+    {
+      "test_id": "TEST-CORE-CONTRACT",
+      "path": "services/manufacturing-core/tests/test_operational_semantics_contract.py",
+      "blob": "bc27589f65b80e6efd400bd3c6647c88ea76937a",
+      "result": "32 passed"
+    },
+    {
+      "test_id": "CONTRACT-REGISTRY-PRODUCER-AUTHORITY",
+      "path": "ci/tests/test_contract_registry.py + ci/tests/test_contract_producer_authority.py + subject bindings + naming + schema references",
+      "result": "268 passed (with command and event contract tests)"
+    },
+    {
+      "test_id": "CONTRACT-SCHEMA-CHECK",
+      "path": "ci/scripts/check_contracts.py",
+      "result": "26 schemas / 9 instances PASS"
+    },
+    {
+      "test_id": "CORE-SUITE-NOT-INTEGRATION",
+      "path": "services/manufacturing-core/tests",
+      "result": "416 passed, 115 deselected"
+    }
+  ],
+  "verification": "Semantics are asserted against the merged WP-CORE-002 guards (execution cycle, dispatch hold block, rework guard) and the WP-CORE-004 history model on top of origin/main db5640a. PRs #149/#178 existing is not treated as readiness; the consumer-facing schema and fixtures are new. Persistence integration tests need a disposable PostgreSQL DSN and were not run on this host."
+}

@@ -1,0 +1,167 @@
+{
+  "contract_version": "core.lot-operational-semantics.v1",
+  "lot": {
+    "id": "LOT-001",
+    "revision": "lot-rev-9",
+    "order_id": "ORD-001",
+    "lifecycle_state": "IN_PRODUCTION",
+    "execution_state": "READY"
+  },
+  "holds": [
+    {
+      "id": "HOLD-001",
+      "lot_id": "LOT-001",
+      "reason": "incoming material check",
+      "status": "RELEASED",
+      "placed_at": "2026-10-27T08:10:00Z",
+      "released_at": "2026-10-27T08:40:00Z",
+      "release_reason": "check passed"
+    }
+  ],
+  "component_histories": [
+    {
+      "component_id": "COMP-001",
+      "original": {
+        "route": {
+          "id": "ROUTE-A",
+          "revision": "route-a-rev-2",
+          "visits": [
+            {
+              "id": "VISIT-A-01",
+              "revision": "visit-a-01-r1",
+              "route_id": "ROUTE-A",
+              "operation_class_id": "CNC-ROUGH",
+              "equipment_id": "CNC-5AX-07"
+            },
+            {
+              "id": "VISIT-A-02",
+              "revision": "visit-a-02-r1",
+              "route_id": "ROUTE-A",
+              "operation_class_id": "METROLOGY",
+              "equipment_id": "MET-01"
+            },
+            {
+              "id": "VISIT-A-03",
+              "revision": "visit-a-03-r1",
+              "route_id": "ROUTE-A",
+              "operation_class_id": "CNC-ROUGH",
+              "equipment_id": "CNC-5AX-07"
+            }
+          ]
+        },
+        "executions": [
+          {
+            "id": "EXEC-001",
+            "revision": "exec-001-r1",
+            "component_id": "COMP-001",
+            "lot_id": "LOT-001",
+            "route_visit_id": "VISIT-A-01",
+            "equipment_id": "CNC-5AX-07",
+            "started_at": "2026-10-27T09:00:00Z",
+            "ended_at": "2026-10-27T09:30:00Z"
+          },
+          {
+            "id": "EXEC-002",
+            "revision": "exec-002-r1",
+            "component_id": "COMP-001",
+            "lot_id": "LOT-001",
+            "route_visit_id": "VISIT-A-02",
+            "equipment_id": "MET-01",
+            "started_at": "2026-10-27T09:40:00Z",
+            "ended_at": "2026-10-27T09:55:00Z"
+          }
+        ]
+      },
+      "rework": [
+        {
+          "route": {
+            "id": "ROUTE-A-REWORK",
+            "revision": "route-a-rework-rev-1",
+            "visits": [
+              {
+                "id": "VISIT-RW-01",
+                "revision": "visit-rw-01-r1",
+                "route_id": "ROUTE-A-REWORK",
+                "operation_class_id": "CNC-REWORK",
+                "equipment_id": "CNC-5AX-08"
+              }
+            ]
+          },
+          "executions": [
+            {
+              "id": "EXEC-003",
+              "revision": "exec-003-r1",
+              "component_id": "COMP-001",
+              "lot_id": "LOT-001",
+              "route_visit_id": "VISIT-RW-01",
+              "equipment_id": "CNC-5AX-08",
+              "started_at": "2026-10-27T10:20:00Z",
+              "ended_at": "2026-10-27T10:50:00Z"
+            }
+          ],
+          "directive": {
+            "id": "DIR-001",
+            "revision": "dir-001-r1",
+            "component_id": "COMP-001",
+            "reason": "dimension-out-of-tolerance",
+            "originating_inspection_id": "INSP-001",
+            "origin_execution_id": "EXEC-002",
+            "return_visit_id": "VISIT-A-03",
+            "rework_route_id": "ROUTE-A-REWORK",
+            "rework_route_revision": "route-a-rework-rev-1",
+            "related_defect_id": null,
+            "related_incident_id": null,
+            "current_rework_count": 1,
+            "approval_state": "APPROVED",
+            "policy_state": "WITHIN_POLICY"
+          }
+        }
+      ]
+    },
+    {
+      "component_id": "COMP-002",
+      "original": {
+        "route": {
+          "id": "ROUTE-A",
+          "revision": "route-a-rev-2",
+          "visits": [
+            {
+              "id": "VISIT-A-01",
+              "revision": "visit-a-01-r1",
+              "route_id": "ROUTE-A",
+              "operation_class_id": "CNC-ROUGH",
+              "equipment_id": "CNC-5AX-07"
+            },
+            {
+              "id": "VISIT-A-02",
+              "revision": "visit-a-02-r1",
+              "route_id": "ROUTE-A",
+              "operation_class_id": "METROLOGY",
+              "equipment_id": "MET-01"
+            },
+            {
+              "id": "VISIT-A-03",
+              "revision": "visit-a-03-r1",
+              "route_id": "ROUTE-A",
+              "operation_class_id": "CNC-ROUGH",
+              "equipment_id": "CNC-5AX-07"
+            }
+          ]
+        },
+        "executions": [
+          {
+            "id": "EXEC-004",
+            "revision": "exec-004-r1",
+            "component_id": "COMP-002",
+            "lot_id": "LOT-001",
+            "route_visit_id": "VISIT-A-01",
+            "equipment_id": "CNC-5AX-07",
+            "started_at": "2026-10-27T09:30:00Z",
+            "ended_at": "2026-10-27T10:00:00Z"
+          }
+        ]
+      },
+      "rework": []
+    }
+  ]
+}
