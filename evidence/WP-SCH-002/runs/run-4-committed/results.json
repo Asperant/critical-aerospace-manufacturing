@@ -1,0 +1,392 @@
+[
+  {
+    "id": "scheduler-suite",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "-m",
+      "pytest",
+      "-c",
+      "services/scheduler-service/pyproject.toml",
+      "services/scheduler-service/tests",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "started_utc": "2026-10-28T08:50:07+00:00",
+    "finished_utc": "2026-10-28T08:50:08+00:00",
+    "exit_code": 0,
+    "stdout_file": "scheduler-suite.stdout",
+    "stdout_bytes": 467,
+    "stdout_sha256": "40afdb055c1558c77024b616e5f2903b85ca80448a919049ca43e283b654a146",
+    "stderr_file": "scheduler-suite.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "250 passed in 1.34s"
+  },
+  {
+    "id": "contract-job-invocation",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "-m",
+      "pytest",
+      "-c",
+      "services/scheduler-service/pyproject.toml",
+      "services/scheduler-service/tests/test_plan_contract.py",
+      "-q"
+    ],
+    "started_utc": "2026-10-28T08:50:08+00:00",
+    "finished_utc": "2026-10-28T08:50:09+00:00",
+    "exit_code": 0,
+    "stdout_file": "contract-job-invocation.stdout",
+    "stdout_bytes": 99,
+    "stdout_sha256": "7a05c889b50ac050f3c2118b73f77a40abf501f50fbd04cb88e0b5063d0b10c1",
+    "stderr_file": "contract-job-invocation.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "41 passed in 0.68s"
+  },
+  {
+    "id": "registry-regressions",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "-m",
+      "pytest",
+      "ci/tests/test_contract_registry.py",
+      "ci/tests/test_contract_producer_authority.py",
+      "ci/tests/test_contract_naming.py",
+      "ci/tests/test_contract_ci_gate.py",
+      "ci/tests/test_architecture_boundaries.py",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "started_utc": "2026-10-28T08:50:09+00:00",
+    "finished_utc": "2026-10-28T08:50:13+00:00",
+    "exit_code": 0,
+    "stdout_file": "registry-regressions.stdout",
+    "stdout_bytes": 387,
+    "stdout_sha256": "1c96010b2ddcccd3eecc737657510efdad083369e6c16ac7367e97237ffafe78",
+    "stderr_file": "registry-regressions.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "207 passed in 3.10s"
+  },
+  {
+    "id": "collector-tests",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "-m",
+      "pytest",
+      "evidence/WP-SCH-002/tests",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "started_utc": "2026-10-28T08:50:13+00:00",
+    "finished_utc": "2026-10-28T08:50:14+00:00",
+    "exit_code": 0,
+    "stdout_file": "collector-tests.stdout",
+    "stdout_bytes": 225,
+    "stdout_sha256": "9cea88aa3ffd8cff848ed08fa64c0fe22281276704232925f4f2ae3c6b056474",
+    "stderr_file": "collector-tests.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "6 passed in 1.36s"
+  },
+  {
+    "id": "ruff-check",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "-m",
+      "ruff",
+      "check",
+      "services/scheduler-service",
+      "evidence/WP-SCH-002/capture_run.py",
+      "evidence/WP-SCH-002/probe_matrix.py",
+      "evidence/WP-SCH-002/tests/test_capture_run.py"
+    ],
+    "started_utc": "2026-10-28T08:50:14+00:00",
+    "finished_utc": "2026-10-28T08:50:14+00:00",
+    "exit_code": 0,
+    "stdout_file": "ruff-check.stdout",
+    "stdout_bytes": 19,
+    "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "stderr_file": "ruff-check.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "All checks passed!"
+  },
+  {
+    "id": "ruff-format",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "services/scheduler-service",
+      "evidence/WP-SCH-002/capture_run.py",
+      "evidence/WP-SCH-002/probe_matrix.py",
+      "evidence/WP-SCH-002/tests/test_capture_run.py"
+    ],
+    "started_utc": "2026-10-28T08:50:14+00:00",
+    "finished_utc": "2026-10-28T08:50:14+00:00",
+    "exit_code": 0,
+    "stdout_file": "ruff-format.stdout",
+    "stdout_bytes": 27,
+    "stdout_sha256": "04eb0d6e6734823dcd2b2b704729e976f683df7a8f334da7216520ef1cb319bf",
+    "stderr_file": "ruff-format.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "13 files already formatted"
+  },
+  {
+    "id": "pyright",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "-m",
+      "pyright",
+      "--project",
+      "services/scheduler-service/pyrightconfig.json"
+    ],
+    "started_utc": "2026-10-28T08:50:14+00:00",
+    "finished_utc": "2026-10-28T08:50:16+00:00",
+    "exit_code": 0,
+    "stdout_file": "pyright.stdout",
+    "stdout_bytes": 192,
+    "stdout_sha256": "db668de51c7ecb37ed0c6e58fdf07c5c520152a4ffa341ff6b86c340877b9413",
+    "stderr_file": "pyright.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "0 errors, 0 warnings, 0 informations"
+  },
+  {
+    "id": "probe-matrix",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "evidence/WP-SCH-002/probe_matrix.py"
+    ],
+    "started_utc": "2026-10-28T08:50:16+00:00",
+    "finished_utc": "2026-10-28T08:50:16+00:00",
+    "exit_code": 0,
+    "stdout_file": "probe-matrix.stdout",
+    "stdout_bytes": 3670,
+    "stdout_sha256": "1ee30c4d20beab8637aba666c76ddd02c83bc4697d11f138b4e3de07fe47c5d1",
+    "stderr_file": "probe-matrix.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "{\"binding_drift\": {\"drifted_snapshots\": 7, \"rejected\": 7}, \"freshness_rows\": 30, \"freshness_table\": [{\"mode\": \"NORMAL\", \"now\": \"generated-1us\", \"outcome\": \"REJECTED:SNAPSHOT_FROM_FUTURE\", \"status\": \"FRESH\"}, {\"mode\": \"DIAGNOSTIC\", \"now\": \"generated-1us\", \"outcome\": \"REJECTED:SNAPSHOT_FROM_FUTURE\", \"status\": \"FRESH\"}, {\"mode\": \"NORMAL\", \"now\": \"generated\", \"outcome\": \"NORMAL:\", \"status\": \"FRESH\"}, {\"mode\": \"DIAGNOSTIC\", \"now\": \"generated\", \"outcome\": \"NORMAL:\", \"status\": \"FRESH\"}, {\"mode\": \"NORMAL\", \"now\": \"valid_until-1us\", \"outcome\": \"NORMAL:\", \"status\": \"FRESH\"}, {\"mode\": \"DIAGNOSTIC\", \"now\": \"valid_until-1us\", \"outcome\": \"NORMAL:\", \"status\": \"FRESH\"}, {\"mode\": \"NORMAL\", \"now\": \"valid_until\", \"outcome\": \"REJECTED:SNAPSHOT_NOT_USABLE\", \"status\": \"FRESH\"}, {\"mode\": \"DIAGNOSTIC\", \"now\": \"valid_until\", \"outcome\": \"DIAGNOSTIC_ONLY:EXPIRED\", \"status\": \"FRESH\"}, {\"mode\": \"NORMAL\", \"now\": \"valid_until+1h\", \"outcome\": \"REJECTED:SNAPSHOT_NOT_USABLE\", \"status\": \"FRESH\"}, {\"mode\": \"DIAGNOSTIC\", \"now\": \"valid_until+1h\", \"outcome\": \"DIAGNOSTIC_ONLY:EXPIRED\", \"status\": \"FRESH\"}, {\"mode\": \"NORMAL\", \"now\": \"generated-1us\", \"outcome\": \"REJECTED:SNAPSHOT_FROM_FUTURE\", \"status\": \"DEGRADED\"}, {\"mode\": \"DIAGNOSTIC\", \"now\": \"generated-1us\", \"outcome\": \"REJECTED:SNAPSHOT_FROM_FUTURE\", \"status\": \"DEGRADED\"}, {\"mode\": \"NORMAL\", \"now\": \"generated\", \"outcome\": \"REJECTED:SNAPSHOT_NOT_USABLE\", \"status\": \"DEGRADED\"}, {\"mode\": \"DIAGNOSTIC\", \"now\": \"generated\", \"outcome\": \"DIAGNOSTIC_ONLY:STATUS_DEGRADED\", \"status\": \"DEGRADED\"}, {\"mode\": \"NORMAL\", \"now\": \"valid_until-1us\", \"outcome\": \"REJECTED:SNAPSHOT_NOT_USABLE\", \"status\": \"DEGRADED\"}, {\"mode\": \"DIAGNOSTIC\", \"now\": \"valid_until-1us\", \"outcome\": \"DIAGNOSTIC_ONLY:STATUS_DEGRADED\", \"status\": \"DEGRADED\"}, {\"mode\": \"NORMAL\", \"now\": \"valid_until\", \"outcome\": \"REJECTED:SNAPSHOT_NOT_USABLE\", \"status\": \"DEGRADED\"}, {\"mode\": \"DIAGNOSTIC\", \"now\": \"valid_until\", \"outcome\": \"DIAGNOSTIC_ONLY:STATUS_DEGRADED,EXPIRED\", \"status\": \"DEGRADED\"}, {\"mode\": \"NORMAL\", \"now\": \"valid_until+1h\", \"outcome\": \"REJECTED:SNAPSHOT_NOT_USABLE\", \"status\": \"DEGRADED\"}, {\"mode\": \"DIAGNOSTIC\", \"now\": \"valid_until+1h\", \"outcome\": \"DIAGNOSTIC_ONLY:STATUS_DEGRADED,EXPIRED\", \"status\": \"DEGRADED\"}, {\"mode\": \"NORMAL\", \"now\": \"generated-1us\", \"outcome\": \"REJECTED:SNAPSHOT_FROM_FUTURE\", \"status\": \"STALE\"}, {\"mode\": \"DIAGNOSTIC\", \"now\": \"generated-1us\", \"outcome\": \"REJECTED:SNAPSHOT_FROM_FUTURE\", \"status\": \"STALE\"}, {\"mode\": \"NORMAL\", \"now\": \"generated\", \"outcome\": \"REJECTED:SNAPSHOT_NOT_USABLE\", \"status\": \"STALE\"}, {\"mode\": \"DIAGNOSTIC\", \"now\": \"generated\", \"outcome\": \"DIAGNOSTIC_ONLY:STATUS_STALE\", \"status\": \"STALE\"}, {\"mode\": \"NORMAL\", \"now\": \"valid_until-1us\", \"outcome\": \"REJECTED:SNAPSHOT_NOT_USABLE\", \"status\": \"STALE\"}, {\"mode\": \"DIAGNOSTIC\", \"now\": \"valid_until-1us\", \"outcome\": \"DIAGNOSTIC_ONLY:STATUS_STALE\", \"status\": \"STALE\"}, {\"mode\": \"NORMAL\", \"now\": \"valid_until\", \"outcome\": \"REJECTED:SNAPSHOT_NOT_USABLE\", \"status\": \"STALE\"}, {\"mode\": \"DIAGNOSTIC\", \"now\": \"valid_until\", \"outcome\": \"DIAGNOSTIC_ONLY:STATUS_STALE,EXPIRED\", \"status\": \"STALE\"}, {\"mode\": \"NORMAL\", \"now\": \"valid_until+1h\", \"outcome\": \"REJECTED:SNAPSHOT_NOT_USABLE\", \"status\": \"STALE\"}, {\"mode\": \"DIAGNOSTIC\", \"now\": \"valid_until+1h\", \"outcome\": \"DIAGNOSTIC_ONLY:STATUS_STALE,EXPIRED\", \"status\": \"STALE\"}], \"ok\": true, \"plan_leaf_mutations\": {\"recovery-plan.self-reported-valid.json\": {\"leaves\": 139, \"redigested_new_digest\": 80, \"redigested_rejected\": 58, \"redigested_same_digest\": 0, \"tampered_rejected\": 139}, \"recovery-plan.v1.json\": {\"leaves\": 130, \"redigested_new_digest\": 63, \"redigested_rejected\": 66, \"redigested_same_digest\": 0, \"tampered_rejected\": 130}}}"
+  },
+  {
+    "id": "check-contracts",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "ci/scripts/check_contracts.py"
+    ],
+    "started_utc": "2026-10-28T08:50:16+00:00",
+    "finished_utc": "2026-10-28T08:50:16+00:00",
+    "exit_code": 0,
+    "stdout_file": "check-contracts.stdout",
+    "stdout_bytes": 1813,
+    "stdout_sha256": "5f71d13503a59dcf043e6e621af58ff06b469e62d5cdabdaf5aa17479ee5a817",
+    "stderr_file": "check-contracts.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "PASS"
+  },
+  {
+    "id": "contract-ci-gate",
+    "argv": [
+      "env",
+      "PYTHONPATH=packages/contracts/src",
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "-m",
+      "cap_contracts.ci_gate",
+      "--base",
+      "origin/main"
+    ],
+    "started_utc": "2026-10-28T08:50:16+00:00",
+    "finished_utc": "2026-10-28T08:50:18+00:00",
+    "exit_code": 0,
+    "stdout_file": "contract-ci-gate.stdout",
+    "stdout_bytes": 121,
+    "stdout_sha256": "211277ac1713a5ff670e72ed5048dd32e08d0e3f8cded31c051cd105fa20bb9f",
+    "stderr_file": "contract-ci-gate.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "{\"added\":1,\"compared\":0,\"failures\":[],\"schema_version\":\"cap-contract-ci-v1\",\"status\":\"PASS\",\"unchanged\":7,\"validated\":8}"
+  },
+  {
+    "id": "trace-drift",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "-m",
+      "cap_trace",
+      "drift",
+      "--strict"
+    ],
+    "started_utc": "2026-10-28T08:50:18+00:00",
+    "finished_utc": "2026-10-28T08:50:19+00:00",
+    "exit_code": 0,
+    "stdout_file": "trace-drift.stdout",
+    "stdout_bytes": 100,
+    "stdout_sha256": "9eccfdeb8473d2f091728f89fb57304855a343859a7f8e34b0b5fdba93f9cca5",
+    "stderr_file": "trace-drift.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "no drift between traceability/trace_edges.yaml and docs/03_Requirements_Traceability_Matrix.md \u00a717"
+  },
+  {
+    "id": "trace-validate",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "-m",
+      "cap_trace",
+      "validate",
+      "--base",
+      "origin/main"
+    ],
+    "started_utc": "2026-10-28T08:50:19+00:00",
+    "finished_utc": "2026-10-28T08:50:21+00:00",
+    "exit_code": 0,
+    "stdout_file": "trace-validate.stdout",
+    "stdout_bytes": 504,
+    "stdout_sha256": "b0d261dbbb80a50226874c61d0b2afb4e760037c2553bc253e334bfe163f65f6",
+    "stderr_file": "trace-validate.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "trace lint (TL-01, TL-02, TL-03, TL-04, TL-05, TL-06, TL-07, TL-08, TL-09, TL-10, TL-11, TL-12): PASS; 306 requirements, 2964 edges (ALLOCATED_TO 582, DECIDED_BY 5, DERIVED_FROM 1006, EXECUTED_AS 44, EXERCISED_IN 148, EXPOSED_BY 102, GOVERNED_BY 57, MITIGATES 150, REALIZED_BY 265, USES_DATA 53, USES_MODEL 13, VERIFIED_BY 539)"
+  },
+  {
+    "id": "projectctl-validate",
+    "argv": [
+      "sh",
+      "-c",
+      "\"/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3\" -m projectctl validate > /dev/null"
+    ],
+    "started_utc": "2026-10-28T08:50:21+00:00",
+    "finished_utc": "2026-10-28T08:50:24+00:00",
+    "exit_code": 0,
+    "stdout_file": "projectctl-validate.stdout",
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_file": "projectctl-validate.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": ""
+  },
+  {
+    "id": "projectctl-catalog-lint",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "-m",
+      "projectctl",
+      "catalog-lint"
+    ],
+    "started_utc": "2026-10-28T08:50:24+00:00",
+    "finished_utc": "2026-10-28T08:50:24+00:00",
+    "exit_code": 0,
+    "stdout_file": "projectctl-catalog-lint.stdout",
+    "stdout_bytes": 281,
+    "stdout_sha256": "1b067595b28bd923fed81c4f42ac7fdd1246a8b80270a9271e33a7f67626ec6b",
+    "stderr_file": "projectctl-catalog-lint.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "Readiness/evidence: NOT_CERTIFIED"
+  },
+  {
+    "id": "policy-pinning-regressions",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "-m",
+      "pytest",
+      "tools/host/plane-transition/test_recovery.py",
+      "tools/host/plane-transition/test_merged_binding_wait.py",
+      "-q",
+      "-p",
+      "no:cacheprovider"
+    ],
+    "started_utc": "2026-10-28T08:50:24+00:00",
+    "finished_utc": "2026-10-28T08:50:35+00:00",
+    "exit_code": 0,
+    "stdout_file": "policy-pinning-regressions.stdout",
+    "stdout_bytes": 100,
+    "stdout_sha256": "93485daf68293cf1f01c6a179dcbc43db243934f7cdc10105e9056e3590d6c1b",
+    "stderr_file": "policy-pinning-regressions.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "26 passed in 10.22s"
+  },
+  {
+    "id": "check-test-strategy",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "ci/scripts/check_test_strategy.py"
+    ],
+    "started_utc": "2026-10-28T08:50:35+00:00",
+    "finished_utc": "2026-10-28T08:50:35+00:00",
+    "exit_code": 0,
+    "stdout_file": "check-test-strategy.stdout",
+    "stdout_bytes": 71,
+    "stdout_sha256": "e1fa02b8617e1299d43ac3ecd2dff87be4a462d9c3a9a402b883b28b17df6c12",
+    "stderr_file": "check-test-strategy.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "PASS: test strategy covers 147 test files in 28 suites; 0 violation(s)"
+  },
+  {
+    "id": "static-ratchet",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "ci/scripts/static_ratchet.py",
+      "check"
+    ],
+    "started_utc": "2026-10-28T08:50:35+00:00",
+    "finished_utc": "2026-10-28T08:50:42+00:00",
+    "exit_code": 0,
+    "stdout_file": "static-ratchet.stdout",
+    "stdout_bytes": 149,
+    "stdout_sha256": "ee063fc0f7a79d52139d18668784bfd131efbef23f0c998b01497a8215fd081f",
+    "stderr_file": "static-ratchet.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "PASS: no new static findings; baseline is tight."
+  },
+  {
+    "id": "architecture-boundaries",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "ci/scripts/check_architecture_boundaries.py"
+    ],
+    "started_utc": "2026-10-28T08:50:42+00:00",
+    "finished_utc": "2026-10-28T08:50:42+00:00",
+    "exit_code": 0,
+    "stdout_file": "architecture-boundaries.stdout",
+    "stdout_bytes": 93,
+    "stdout_sha256": "cc6961d970f1ba9ee9306562a7418548f90cde2dfab6f407f508e5912a017fbc",
+    "stderr_file": "architecture-boundaries.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "PASS: architecture boundary rules (producer ownership, private imports, literal credentials)"
+  },
+  {
+    "id": "observability-coverage",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch2-venv/bin/python3",
+      "-m",
+      "cap_observability",
+      "check-coverage",
+      "infra/observability/coverage.json"
+    ],
+    "started_utc": "2026-10-28T08:50:42+00:00",
+    "finished_utc": "2026-10-28T08:50:42+00:00",
+    "exit_code": 1,
+    "stdout_file": "observability-coverage.stdout",
+    "stdout_bytes": 441,
+    "stdout_sha256": "30a5a5be860ba867b1d98312c7fa5e3e4f745dc3f75c943d70f4797d905274cd",
+    "stderr_file": "observability-coverage.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "telemetry coverage: 5/9 mandatory deployables exist; logging 0/5 adopted (4 pending); health 0/5 adopted (4 pending); 4 not yet present"
+  }
+]

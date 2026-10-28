@@ -7,11 +7,13 @@ verification runs and what they do not establish.
 
 ## Run of record
 
-`runs/run-3-uncommitted/` — one local run of `capture_run.py` on the **uncommitted** working
-tree: base `3242d1f18f1e4f5bbf857d28b21e6b250fb381b8`, 31 changed or untracked files listed with
-SHA-256 in `identity.json` (`tree_clean` false, because no commit is authorized yet), started
-2026-10-28T08:39:42Z, finished 08:40:17Z, after the Codex review fixes R1 and R2. This is **not** committed-source evidence: a later run on
-the committed candidate must be added and cite the exact tested source SHA.
+`runs/run-4-committed/` — one local run of `capture_run.py` on a **clean committed tree**: tested source
+commit `5478ec4fea2b8d201882cde0bfcaea21d4326114` (tree `b7ebe5f70d9d996f56eb67c8ee0a9046518d3616`,
+`tree_clean` true, empty changed-file manifest), started 2026-10-28T08:50:07Z, finished 08:50:42Z, base
+`3242d1f18f1e4f5bbf857d28b21e6b250fb381b8`. The commit that adds this run and this README changes only files
+under `evidence/WP-SCH-002/`, so every source, test, contract, CI and trace file the run tested is unchanged
+(check with `git diff 5478ec4 <evidence commit> --stat`). The run records the tested SHA, never its own commit.
+It is local evidence, not CI.
 
 | Command | Exit | Result |
 |---|---|---|
@@ -23,6 +25,7 @@ the committed candidate must be added and cite the exact tested source SHA.
 | `pyright` (service config) | 0 | 0 errors |
 | `probe-matrix` | 0 | `ok: true` (below) |
 | `check-contracts` | 0 | PASS, includes `recovery-plan.v1.schema.json (+instance)` |
+| `contract-ci-gate` (committed blobs vs `origin/main`) | 0 | PASS: 1 added, 7 unchanged, 8 validated |
 | `trace-drift`, `trace-validate` | 0, 0 | no drift; lint PASS (306 requirements) |
 | `projectctl-validate`, `projectctl-catalog-lint` | 0, 0 | stdout of validate discarded on purpose |
 | `policy-pinning-regressions` | 0 | 26 passed (builder pins, merged-binding wait) |
@@ -34,7 +37,8 @@ the committed candidate must be added and cite the exact tested source SHA.
 `results.json` has argv, UTC times, exit code and byte counts with SHA-256 for every command; the
 exact stdout/stderr bytes are the `<id>.stdout` / `<id>.stderr` files (marked binary in
 `runs/.gitattributes`). `identity.json` has source, tool, lock, host load at start and finish,
-workload and the identities that are unavailable. The run exits 1 only because of the coverage gate.
+workload and the identities that are unavailable. The run exits 1 only because of the coverage gate. Python 3.11.16, uv 0.12.13, locked CI toolchain (`lock_sha256`
+in `identity.json`), Intel i7-9700K / 8 CPUs / 30978 MiB, shared host, no containers; governed identities are unavailable (below).
 
 `probe-matrix.stdout` (one JSON line, no seeds, no clock) reports separately:
 
@@ -55,7 +59,7 @@ serializer, inputs are already finite).
 
 ## Earlier runs kept as history
 
-Both are byte for byte as captured and describe only the tree they ran on.
+All three are byte for byte as captured and describe only the tree they ran on.
 
 - `runs/run-1-uncommitted/`: taken before the evidence-collector tests were listed in
   `ci/test-strategy.json`, so `check-test-strategy` failed (147 files, 1 violation). The strategy entry and CI
@@ -67,18 +71,20 @@ Both are byte for byte as captured and describe only the tree they ran on.
   (a JSON integer such as `10**400` escaped as `OverflowError` instead of `PlanError`) were reproduced against
   its source. Run-3 supersedes it; the fixes add 50 tests and one scratch-mutation round (R1/R2 guards: 5 of 5
   caught after one extra test for the forged-label guard).
+- `runs/run-3-uncommitted/`: the tree after the R1/R2 fixes that Codex re-reviewed (250 tests), before the first commit.
+  Its input manifest hashes the collector before the `contract-ci-gate` command was added, so it will not match the
+  committed `capture_run.py`; the 31 listed hashes describe that dirty tree only.
 
 ## What this is not
 
 - Fixture and contract-level evidence only. Not TEST-UI-PLAN, AV-SCEN-01/02, E2E-01,
-  BENCH-E2E-001 or BENCH-SCH-001; FR-SCH-001/007/008/015 remain unverified and their RTM states
-  unchanged (`VERIFY_PLANNED`) because no committed-source run exists yet.
+  BENCH-E2E-001 or BENCH-SCH-001; FR-SCH-007/008/015 are `EVIDENCE_PENDING` (a local asset ran; `EXECUTED_AS` cites run-4; no
+  EvidenceID, `VERIFIED` not claimed) and FR-SCH-001 is unchanged because no dispatch or scheduling is realized.
 - The generator (DEP-083) and the production validator (DEP-084) do not exist; DEP-083/084 stay
   `NOT_READY` and their precise consumer fields are proposals (`contracts/v1/README.md`).
   `REPORTED_VALID` is an unattested relay, never validity.
 - The `TwinQueryAPI` test uses a fixture provider, not a live authenticated Twin.
-- `GitHub CI`, the contract-registry CI gate (it reads committed blobs only) and the real Plane
-  helper were not run against this candidate.
+- GitHub CI and the real Plane helper were not run against this candidate.
 - No governed ReleaseManifest, EnvironmentManifest image digest or HardwareProfile exists
   (WP-PLAT-005); the host facts are local labels.
 - Observability: adding `services/scheduler-service` makes the platform coverage gate fail
