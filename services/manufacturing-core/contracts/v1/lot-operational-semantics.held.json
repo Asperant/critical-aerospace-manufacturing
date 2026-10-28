@@ -1,0 +1,31 @@
+{
+  "contract_version": "core.lot-operational-semantics.v1",
+  "lot": {
+    "id": "LOT-002",
+    "revision": "lot-rev-4",
+    "order_id": "ORD-001",
+    "lifecycle_state": "IN_PRODUCTION",
+    "execution_state": "QUEUED"
+  },
+  "holds": [
+    {
+      "id": "HOLD-002",
+      "lot_id": "LOT-002",
+      "reason": "supplier quality alert",
+      "status": "RELEASED",
+      "placed_at": "2026-10-27T07:00:00Z",
+      "released_at": "2026-10-27T07:30:00Z",
+      "release_reason": "alert cleared"
+    },
+    {
+      "id": "HOLD-003",
+      "lot_id": "LOT-002",
+      "reason": "dimensional audit pending",
+      "status": "ACTIVE",
+      "placed_at": "2026-10-27T11:00:00Z",
+      "released_at": null,
+      "release_reason": null
+    }
+  ],
+  "component_histories": []
+}

@@ -70,3 +70,35 @@ This is a contract slice for the later Twin/Scheduler read surface. It does not
 implement Twin export, a scheduler, transport, database assembly, eligibility
 calculation, maintenance mutation, or execution authority. Hidden Simulator
 Oracle state is explicitly outside the schema.
+
+## Lot operational semantics v1
+
+`lot-operational-semantics.v1.schema.json` and the fixtures
+`lot-operational-semantics.reentrant-rework.json` and
+`lot-operational-semantics.held.json` publish `core.lot-operational-semantics.v1`
+(`SNAPSHOT`, read-only, transport independent, declared consumer Simulator),
+bound to DEP-038. The schema is generated from `LotOperationalSemanticsV1` and
+reuses the merged domain, lifecycle and rework values; fixtures are **SYNTHETIC
+TEST** examples, not factory observations.
+
+One view describes one lot and carries three independent dimensions:
+
+- **Re-entrant lifecycle.** `lifecycle_state` and `execution_state` are separate.
+  Revisiting an operation class is a new route visit with its own identity and
+  revision; each execution cites exactly one visit. After `STEP_COMPLETED` the
+  lot returns to `READY` for its next visit and its lifecycle state is unchanged.
+  Visits keep traversal order, never identity order.
+- **Hold.** Holds are retained history. At most one hold per lot is `ACTIVE`;
+  an active hold is independent of lifecycle and execution state and makes
+  dispatch fail with `ACTIVE_HOLD`. `RELEASED` holds carry release time and
+  reason. Command identities are not exposed.
+- **Rework.** Rework is an explicit directive-linked segment appended to the
+  component's immutable execution history. The directive cites a prior origin
+  execution and a return visit on the original route and names the rework route
+  revision. Scrapped material cannot be reworked and completed material needs a
+  governed reopen. The view records facts; it executes and authorizes nothing.
+
+Holds are ordered by placement time then identity; component histories by
+component identity; executions keep append order. Revisions are opaque. Route
+position stays in `core.scheduling-snapshot.v1`; rework execution, transition
+commands, world binding and persistence remain outside this contract.
