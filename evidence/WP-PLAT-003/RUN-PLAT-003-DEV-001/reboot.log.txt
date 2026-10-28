@@ -1,0 +1,12 @@
+started 9 long-running containers at once
+all healthy: False after 926 s
+cap-platform-keycloak-1 healthy restarts=1
+cap-platform-mlflow-1 starting restarts=6
+cap-platform-nats-1 healthy restarts=0
+cap-platform-postgres-1 unhealthy restarts=0
+cap-platform-qdrant-1 healthy restarts=0
+cap-platform-seaweedfs-1 healthy restarts=0
+cap-platform-temporal-1 unhealthy restarts=29
+cap-platform-temporal-namespace-1 starting restarts=29
+cap-platform-valkey-1 healthy restarts=0
+REBOOT_HEALTHY_S=926

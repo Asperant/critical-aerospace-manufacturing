@@ -8,12 +8,12 @@ definitions are the basis of the shared Integration environment (WP-PLAT-003).
 |---|---|---|
 | `infra` | PostgreSQL, event backbone, S3-compatible object storage, cache, identity provider | **defined** |
 | `core` | infra + manufacturing-core, manufacturing-simulator, digital-twin-service, operations-bff | infra only; services join as their container builds land |
-| `vision` | infra + Vision runtime, artifact storage, inspection fixtures | infra only |
-| `ai` | infra + Twin/query interfaces, AI Intelligence, knowledge/RAG dependencies | infra only |
-| `planning` | infra + Simulator, Twin snapshot source, Scheduler, Automation | infra only |
-| `platform` | application services + observability + health + operational tooling | infra only; observability runs from `infra/observability` |
-| `full` | full logical topology under local resource limits (not the daily default) | infra only |
-| `e2e` | deterministic test environment: fresh runtime, known schema/scenario/seed | infra only |
+| `vision` | infra + Vision runtime, artifact storage, inspection fixtures | infra + MLflow (WP-PLAT-003) |
+| `ai` | infra + Twin/query interfaces, AI Intelligence, knowledge/RAG dependencies | infra + Qdrant + MLflow (WP-PLAT-003) |
+| `planning` | infra + Simulator, Twin snapshot source, Scheduler, Automation | infra + Temporal (WP-PLAT-003); application services join as their builds land |
+| `platform` | application services + observability + health + operational tooling | infra + Temporal + Qdrant + MLflow; observability runs from `infra/observability` |
+| `full` | full logical topology under local resource limits (not the daily default) | infra + Temporal + Qdrant + MLflow |
+| `e2e` | deterministic test environment: fresh runtime, known schema/scenario/seed | infra + Temporal + Qdrant + MLflow |
 
 ## infra layer
 
@@ -31,6 +31,95 @@ Host ports stay below 32768, outside the Linux ephemeral port range
 (32768–60999): a fixed host port inside that range can be taken by an outgoing
 client connection, and Docker then fails to bind it (seen on a CI runner in run
 40099708897). A static test enforces this.
+
+## Workflow engine (WP-PLAT-003)
+
+Temporal runs self-hosted on the same PostgreSQL (02: PostgreSQL persistence, no
+Cassandra) in the `planning`, `platform`, `full` and `e2e` profiles.
+
+| Service | Image (exact pin) | Host port (localhost) | Memory limit | Health / role |
+|---|---|---|---|---|
+| `temporal-schema` | `temporalio/admin-tools:1.32.1` | — | 256 MiB | one-shot: creates `temporal` and `temporal_visibility` and applies the versioned schemas; idempotent |
+| `temporal` | `temporalio/server:1.32.1` | 27233 (gRPC), 27243 (HTTP API) | 768 MiB | frontend `/api/v1/system-info`; starts only after the schema job succeeded |
+| `temporal-namespace` | `temporalio/admin-tools:1.32.1` | — | 128 MiB | registers the platform namespace (`CAP_TEMPORAL_NAMESPACE`, default `cap`) and stays up as its probe: healthy only while it is registered |
+
+Workflow definitions, task queues and further namespaces belong to their owners
+(Temporal semantics: Batuhan; runtime: Yavuz, 02). Temporal currently connects as
+the platform PostgreSQL user; a dedicated least-privilege role is a known limitation.
+`stack.sh env` adds `CAP_TEMPORAL_ADDRESS`, `CAP_TEMPORAL_HTTP_URL` and `CAP_TEMPORAL_NAMESPACE`.
+
+## Retrieval and experiment tracking (WP-PLAT-003)
+
+| Service | Image (exact pin) | Host port (localhost) | Memory limit | Health / role |
+|---|---|---|---|---|
+| `qdrant` | `qdrant/qdrant:v1.19.2` | 26333 (HTTP), 26334 (gRPC) | 512 MiB | `/readyz`; every API request needs the per-host key `CAP_QDRANT_API_KEY`; rebuildable RAG projection, never a canonical store (02) |
+| `mlflow-init` | `cap-platform/mlflow:3.16.1-cap1` (built from `mlflow/Dockerfile`) | — | 256 MiB | one-shot: creates the `mlflow` database and the `cap-mlflow-artifacts` bucket; the only holder of the S3 admin identity |
+| `mlflow` | same image | 25000 | 768 MiB | `/health`; metadata in PostgreSQL, artifacts in SeaweedFS served through the server with the bucket-scoped `cap-mlflow` identity; tracking support, never the model-governance authority (02) |
+
+The MLflow image is the upstream `ghcr.io/mlflow/mlflow:v3.16.1` plus exactly two pinned
+wheels (PostgreSQL driver, S3 client), running as a non-root user. Server-side job
+execution is disabled: it is not tracking support and its consumer pool exhausted
+the memory limit. `stack.sh` restarts a running SeaweedFS when the S3 identities
+change, because the gateway reads them only at start. `stack.sh env` adds
+`CAP_QDRANT_URL`, `CAP_QDRANT_API_KEY` and `CAP_MLFLOW_URL`.
+
+## Platform realm (WP-PLAT-003)
+
+Keycloak starts with `--import-realm` and creates the `cap-platform` realm from the
+`keycloak-platform-realm` config in `compose.yaml` when it does not exist yet (an
+existing realm is never overwritten). The realm holds one confidential
+service-account client, `cap-platform-smoke`, that proves the identity provider
+issues real tokens (05 DEP-010); its secret is a placeholder resolved by Keycloak
+from `keycloak.env`, generated per host by `stack.sh`. Roles, users, the BFF/UI OIDC
+clients and TLS belong to WP-SEC-001. `stack.sh env` adds `CAP_KEYCLOAK_REALM`,
+`CAP_KEYCLOAK_SMOKE_CLIENT_ID` and `CAP_KEYCLOAK_SMOKE_CLIENT_SECRET`.
+
+## Runtime readiness checklist (WP-PLAT-003, E2E-01 gate)
+
+`readiness.json` lists every runtime edge out of DN-PLAT-INTEG in 05 (DEP-005,
+DEP-007…015) with 05's own consumer node, strength, stage, required readiness,
+need-by and precise requirement, plus the services that realize it and the REAL
+checks that prove it. A static test fails when the list and 05 disagree, when an
+edge is missing, or when a named service or check does not exist.
+
+```bash
+infra/compose/stack.sh readiness   # OK/WAIT per edge; exit 1 when a HARD edge is not healthy
+```
+
+DEP-011 is served by the observability stack (`infra/observability`, WP-OBS-001), so
+it shows WAIT until that stack runs too. Health is read from Docker's project labels,
+not through a Compose file (the observability file needs credentials just to render);
+its two services have no Docker health check, so they are probed on the HTTP surfaces
+`infra/observability/stack.sh` itself waits for. The list is a checklist and a live health
+view; a readiness claim rests on the recorded run on the shared host.
+
+## Startup order and recovery (WP-PLAT-003, 02 Sequence I)
+
+`compose up` follows 02 Sequence I: identity (Keycloak) → data stores (PostgreSQL,
+SeaweedFS, Valkey, Qdrant, the Temporal and MLflow stores) → event backbone (NATS),
+with application services after them as they land. A service waits only for the
+health or completion of a service in its own or an earlier layer, never with a bare
+start order, and the wait graph has no cycle (static tests). Nothing waits without a
+real runtime need: PostgreSQL does not wait for Keycloak's slow first boot.
+
+After a host reboot Docker restarts containers itself, all at once and without
+`depends_on`. Recovery then rests on health checks plus `restart: unless-stopped`:
+a service that started before its store (Temporal before PostgreSQL) exits and is
+restarted until the store answers. Setup jobs do not run on reboot; they are
+idempotent and rerun with the next `stack.sh up`. `stack.sh up` waits up to 11
+minutes, because Keycloak's first `start-dev` boot builds Quarkus (205 s measured
+on the shared host).
+
+**Observed recovery, not a guarantee.** A simulated reboot (stop, then start all nine
+long-running containers at once) was observed three times on the loaded shared host:
+all healthy after 121 s (an ad hoc check), after 320 s (a diagnostic reproduction,
+`evidence/WP-PLAT-003/reboot-reproduction/`), and **not all healthy within the 926 s
+bound** in the recorded run RUN-PLAT-003-DEV-001, where PostgreSQL stayed `unhealthy`
+and Temporal restarted 29 times while the REAL smoke tests passed straight afterwards,
+so the services worked but Docker's health state lagged. PostgreSQL reports a crash
+recovery after the stop, MLflow exits on "database system is starting up" and is
+restarted. The cause under load is not established; NFR-REL-005 (reboot, healthy or
+known-degraded within 10 minutes) belongs to AV-SCEN-12 and is not claimed here.
 
 ## Run it
 
