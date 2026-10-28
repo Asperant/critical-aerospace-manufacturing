@@ -23,6 +23,7 @@ CHG-076:
     - Set DEP-002 unblock_evidence and precise_requirement to the DN-PLAT-REPO facts: main protected with required status checks ci-gate and projectctl (strict, enforced for everyone) and the tiered CI pipeline (static, unit, contract and integration tiers aggregated by ci-gate).
     - State that the immutable GHCR image build is DN-PLAT-CD's own deliverable, gated by DEP-005 and by the WP-CICD-002 DoD, not by DEP-002.
     - Record DEP-002 as READY on the verified current-main facts in evidence/WP-CICD-002/DEP-002-START-READINESS.md.
+    - Update the projectctl dependency baseline test (PRECISION_MISSING 165 to 164): DEP-002 now carries a precise_requirement, which is the only finding that closes.
   invariants_preserved:
     - DEP-005 (DN-PLAT-INTEG to DN-PLAT-CD) stays HARD at INTEGRATION and is not touched.
     - DN-PLAT-CD readiness is not asserted; WP-CICD-002 stays F0 with integrated acceptance (TEST-PLAT-CD, INSP-DEP-HOST) still open.
@@ -51,5 +52,5 @@ CHG-076:
   rollout: Merge the documentation and change-control pull request, refresh the Plane transition policy, then run projectctl startability for WP-CICD-002 and WP-CICD-003.
   rollback: Revert docs/05, CHG-076, its register row and the evidence file together; no runtime or Plane state replay is required.
   required_rerun: [projectctl startability WP-CICD-002, projectctl startability WP-CICD-003]
-  documentation_updates: [docs/05_Dependency_Graph.md, 09_change/CHG-076.yaml, evidence/WP-CICD-002/DEP-002-START-READINESS.md]
+  documentation_updates: [docs/05_Dependency_Graph.md, 09_change/CHG-076.yaml, evidence/WP-CICD-002/DEP-002-START-READINESS.md, tools/projectctl/tests/test_dependencies.py]
   freeze_context: PRE_M6

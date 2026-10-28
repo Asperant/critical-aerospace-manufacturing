@@ -22,7 +22,7 @@ def test_dependency_baseline_and_findings(graph):
     # CHG-055 and the later approved precision bindings changed the canonical
     # warning set without changing the graph shape. Keep this count as a
     # diagnostic baseline; all diagnostic identities remain fail-closed below.
-    assert len([d for d in findings if d.code == "PRECISION_MISSING"]) == 165
+    assert len([d for d in findings if d.code == "PRECISION_MISSING"]) == 164
     assert {d.record_id for d in findings if d.code == "FIXTURE_SEMANTICS"} == set()
 
 
