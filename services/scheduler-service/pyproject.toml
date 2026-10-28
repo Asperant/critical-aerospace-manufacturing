@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "manufacturing-scheduler"
+version = "0.1.0"
+description = "Scheduling snapshot consumer and RecoveryPlan contract (WP-SCH-002)"
+requires-python = ">=3.11"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [
+  "src",
+  "../../packages/contracts/src",
+  "../../ci/scripts",
+  "../operational-twin/src",
+]
+addopts = "-p no:cacheprovider"

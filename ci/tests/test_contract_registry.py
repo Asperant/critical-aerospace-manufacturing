@@ -274,6 +274,7 @@ def test_repository_registry_loads_and_verifies() -> None:
         "core.operational-command.v1",
         EXEMPLAR,
         "core.scheduling-snapshot.v1",
+        "scheduler.recovery-plan.v1",
     )
     registry.verify(REPO)
 
