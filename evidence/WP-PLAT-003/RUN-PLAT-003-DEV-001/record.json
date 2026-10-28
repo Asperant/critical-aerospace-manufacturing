@@ -1,0 +1,113 @@
+{
+  "run_id": "RUN-PLAT-003-DEV-001",
+  "work_package": "WP-PLAT-003",
+  "kind": "DEV run on the shared host: full profile with the observability stack",
+  "boundary_mode": "REAL",
+  "code_revision": "a949c84c0335a4ae40aef4c444ee5a2b9163620a",
+  "branch": "",
+  "recorded_at": "2026-10-28T10:56:28+00:00",
+  "host": {
+    "machine": "x86_64",
+    "system": "Linux",
+    "cpus": 8,
+    "docker": "29.9.2",
+    "compose": "5.6.1"
+  },
+  "startup_to_healthy_s": {
+    "fresh_start_empty_volumes_images_local": 283,
+    "second_up_idempotent": 51,
+    "simulated_reboot_parallel_start": null,
+    "restart_with_data": 246,
+    "nfr_dep_002_threshold_s": 600
+  },
+  "steps": [
+    {
+      "step": "reset",
+      "exit_code": 0,
+      "wall_s": 0.3,
+      "output": "reset.log.txt"
+    },
+    {
+      "step": "observability-up",
+      "exit_code": 0,
+      "wall_s": 9.8,
+      "output": "observability-up.log.txt"
+    },
+    {
+      "step": "fresh-start",
+      "exit_code": 0,
+      "wall_s": 370.2,
+      "output": "fresh-start.log.txt"
+    },
+    {
+      "step": "smoke",
+      "exit_code": 0,
+      "wall_s": 6.2,
+      "output": "smoke.log.txt"
+    },
+    {
+      "step": "readiness",
+      "exit_code": 0,
+      "wall_s": 0.1,
+      "output": "readiness.log.txt"
+    },
+    {
+      "step": "memory",
+      "exit_code": 0,
+      "wall_s": 2.1,
+      "output": "memory.txt"
+    },
+    {
+      "step": "second-up",
+      "exit_code": 0,
+      "wall_s": 120.3,
+      "output": "second-up.log.txt"
+    },
+    {
+      "step": "reboot",
+      "exit_code": 1,
+      "wall_s": 999.5,
+      "output": "reboot.log.txt"
+    },
+    {
+      "step": "reboot-readiness",
+      "exit_code": 1,
+      "wall_s": 0.1,
+      "output": "reboot-readiness.log.txt"
+    },
+    {
+      "step": "reboot-smoke",
+      "exit_code": 0,
+      "wall_s": 3.8,
+      "output": "reboot-smoke.log.txt"
+    },
+    {
+      "step": "down",
+      "exit_code": 0,
+      "wall_s": 18.0,
+      "output": "down.log.txt"
+    },
+    {
+      "step": "restart",
+      "exit_code": 0,
+      "wall_s": 354.2,
+      "output": "restart.log.txt"
+    },
+    {
+      "step": "final-down",
+      "exit_code": 0,
+      "wall_s": 55.0,
+      "output": "final-down.log.txt"
+    },
+    {
+      "step": "observability-down",
+      "exit_code": 0,
+      "wall_s": 28.2,
+      "output": "observability-down.log.txt"
+    }
+  ],
+  "non_zero_explained": {
+    "reboot": "unexpected: investigate before using this run",
+    "reboot-readiness": "unexpected: investigate before using this run"
+  }
+}

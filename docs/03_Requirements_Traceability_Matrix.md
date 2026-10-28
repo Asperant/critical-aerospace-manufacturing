@@ -98,6 +98,18 @@
 > recorded under `evidence/WP-GOV-002/`. INSP-GOV-ACCEPT belongs to the
 > EVALUATION gate (WP-GOV-003); evidence stays EVIDENCE_PENDING.
 
+> **WP-PLAT-003 implementation delta (2026-10-27).** FR-PLAT-001 now also
+> references Temporal on PostgreSQL with the platform namespace, Qdrant with a
+> per-host API key, MLflow (metadata in PostgreSQL, artifacts in SeaweedFS), the
+> `cap-platform` realm imported as code and a runtime readiness checklist that
+> mirrors every runtime edge out of DN-PLAT-INTEG in 05 (§19.11). Startup follows
+> 02 Sequence I without wait cycles; the shared-host run under `evidence/WP-PLAT-003/`,
+> which NFR-DEP-001 and NFR-DEP-002 reference as a DEV observation, also records a
+> simulated reboot whose recovery varied (not all healthy within 926 s in the recorded
+> run, 320 s in a reproduction) and is not a claim for NFR-REL-005. The mandatory Integration profile with application
+> deployables, BENCH-E2E-001 and E2E-01 remain open; evidence stays
+> EVIDENCE_PENDING and `observed` stays null.
+
 ---
 
 ## Table of Contents
@@ -5516,16 +5528,16 @@ FR-PLAT-001:
   meta: {class: F0, owner: Yavuz, anchor: "01 Item81 FR-PLAT-001 L170079"}
   DERIVED_FROM: [ITEM-39, ITEM-61, ITEM-68, NFR-INV-44, INTEG-INV-20]
   ALLOCATED_TO: [ARCH-PLAT-COMPOSE, ARCH-PLAT-RELEASE]
-  REALIZED_BY: {surface: "Compose-based INTEGRATION composition of 9 deployables + infrastructure (backfill ADR 11)", deployable: "shared Linux host runtime", ref: "infra/compose/compose.yaml; infra/compose/stack.sh"}
+  REALIZED_BY: {surface: "Compose-based INTEGRATION composition of 9 deployables + infrastructure (backfill ADR 11)", deployable: "shared Linux host runtime", ref: "infra/compose/compose.yaml; infra/compose/stack.sh; infra/compose/readiness.json; infra/compose/mlflow/Dockerfile"}
   GOVERNED_BY: ["EnvironmentManifest"]
   DECIDED_BY: ["ADR-0011"]
   VERIFIED_BY: [TEST-PLAT-COMPOSE, TEST-DEP-PLATFORM, BENCH-E2E-001]
   EXERCISED_IN: [E2E-01, AV-SCEN-12]
-  EXECUTED_AS: [RUN-PLAT-001-DEV-001]  # infra layer on the shared host and in CI t1-integration; deployables and Integration profile pending
+  EXECUTED_AS: [RUN-PLAT-001-DEV-001, RUN-PLAT-003-DEV-001]  # infra layer (WP-PLAT-001), then the full profile with Temporal, Qdrant and MLflow and a simulated-reboot observation whose recovery varied (WP-PLAT-003) on the shared host and in CI t1-integration; application deployables pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "CI + INTEGRATION + EVALUATION", m6_freeze_sensitive: true}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
-  note: "infrastructure layer composed; application deployables join the profiles when they are runnable services (manufacturing-core has no service process yet; operations-bff needs an identity client and edge topology)."
+  note: "infrastructure, workflow (Temporal), retrieval (Qdrant) and experiment-tracking (MLflow) runtimes composed in Sequence I order with a 05 readiness checklist (WP-PLAT-003); application deployables join the profiles when they are runnable services (manufacturing-core has no service process yet; operations-bff needs an identity client and edge topology)."
 FR-PLAT-002:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-PLAT-002 L170080"}
   DERIVED_FROM: [ITEM-38, DX-INV-07, DX-INV-08]
@@ -6911,11 +6923,12 @@ NFR-DEP-001:
   DERIVED_FROM: [ITEM-39, ITEM-61, NFR-INV-44]
   ALLOCATED_TO: [ARCH-PLAT-COMPOSE]
   MEASUREMENT: {metric: "mandatory runtime deploys on documented x86-64 Linux + Docker/Compose without VM/K8s", threshold: "PASS", workload: "mandatory Integration profile", hardware: "HP: x86-64 Linux host (distro OD-PLAT-01)", observed: null}
+  REALIZED_BY: {surface: "Docker Compose runtime on x86-64 Linux, no VM or Kubernetes", deployable: "shared Linux host runtime", ref: "infra/compose/compose.yaml; infra/compose/stack.sh"}
   VERIFIED_BY: [TEST-DEP-PLATFORM]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-PLAT-003-DEV-001]  # DEV observation: full profile on the x86-64 Linux shared host with Docker/Compose only; the mandatory Integration profile with application deployables is not yet composed, so observed stays null
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 NFR-DEP-002:
   meta: {class: S2, owner: Yavuz, anchor: "01 Item82 NFR-DEP-002 L172275"}
   DERIVED_FROM: [ITEM-39, ITEM-42]
@@ -6923,7 +6936,7 @@ NFR-DEP-002:
   REALIZED_BY: {surface: "startup-to-healthy measurement (stack.sh up --wait)", deployable: "platform runtime tooling", ref: "infra/compose/stack.sh; evidence/WP-PLAT-001/collect_run.py"}
   MEASUREMENT: {metric: "startup → healthy or explicit known-degraded with images local", threshold: "≤ 10 min", workload: "full mandatory Integration profile", hardware: "HP: accepted 16 GiB shared Linux host (EVALUATION HardwareProfile)", observed: null}
   VERIFIED_BY: [BENCH-DEP-STARTUP]
-  EXECUTED_AS: [RUN-PLAT-001-DEV-001]  # DEV observation of the infra profile only; the full Integration profile is not yet composed
+  EXECUTED_AS: [RUN-PLAT-001-DEV-001, RUN-PLAT-003-DEV-001]  # DEV observations: infra profile (WP-PLAT-001), full profile with Temporal, Qdrant and MLflow (WP-PLAT-003); application deployables are not yet composed
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "INTEGRATION", m6_freeze_sensitive: false}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
@@ -7437,6 +7450,23 @@ tests (WP-GOV-002)" step of t1-unit (`validate --base origin/main`, `drift
 --strict`) and, on pull requests, "PR Requirement-Impact (TL-13, WP-GOV-002)".
 INSP-GOV-ACCEPT (EVALUATION, WP-GOV-003) is not executed. EvidenceState is
 EVIDENCE_PENDING.
+### 19.11 WP-PLAT-003 concrete implementation and verification assets
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-PLAT-003-001 (`infra/compose/tests/test_definitions.py`: setup-job, Sequence I layer, wait-cycle, least-privilege, realm-placeholder and 05 readiness-checklist rules, with negative graphs) | TEST-PLAT-COMPOSE | FR-PLAT-001 |
+| TEST-PLAT-003-002 (`infra/compose/tests/test_runtime_integration.py`: REAL Temporal namespace and PostgreSQL schemas, Qdrant key enforcement and vector round trip, MLflow PostgreSQL tracking and S3 artifacts, platform-realm token and wrong-secret rejection) | TEST-PLAT-COMPOSE | FR-PLAT-001 |
+| RUN-PLAT-003-DEV-001 (`evidence/WP-PLAT-003/collect_run.py`: fresh full profile with the observability stack, smoke, readiness, idempotent second up, simulated reboot, restart with data) | TEST-DEP-PLATFORM, BENCH-DEP-STARTUP instrumentation | FR-PLAT-001, NFR-DEP-001, NFR-DEP-002 |
+
+Readiness checklist: `infra/compose/readiness.json` (`cap.runtime-readiness/v1`)
+mirrors every runtime edge out of DN-PLAT-INTEG in 05 and is checked against 05
+by TEST-PLAT-003-001; `stack.sh readiness` reports live health per edge. CI: the
+"Platform composition definition tests" step of t1-unit and the REAL platform
+steps of t1-integration on the `full` profile. The run is a DEV observation on
+the shared host, not the INTEGRATION acceptance of the mandatory profile with
+application deployables; BENCH-E2E-001, E2E-01, AV-SCEN-12 and INSP-DEP-HOST
+remain open. EvidenceState is EVIDENCE_PENDING.
+
 ### 19.12 WP-TEST-007 concrete implementation and verification assets
 
 | Concrete asset | Family | Source requirements |

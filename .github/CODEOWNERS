@@ -37,6 +37,8 @@
 /infra/compose/ @Yavuzgmus
 /infra/mfgctl/ @Yavuzgmus
 /evidence/WP-PLAT-001/ @Yavuzgmus @Asperant
+# WP-PLAT-003: runtime service bring-up on the shared host; canonical owner Yavuz, supporting reviewer Batuhan (advisory, CHG-018).
+/evidence/WP-PLAT-003/ @Yavuzgmus
 /evidence/WP-SEC-003/ @Asperant @Yavuzgmus
 
 # WP-TEST-001: test strategy, tiers and boundary-mode policy; canonical owner Yavuz (advisory, CHG-018).

@@ -1,0 +1,93 @@
+profiles full healthy in 51 s (images pre-pulled)
+CONTAINER                           REPOSITORY                  TAG                 PLATFORM            IMAGE ID            SIZE                CREATED
+cap-platform-keycloak-1             quay.io/keycloak/keycloak   26.0.5              linux/amd64         089b5898cb0b        689MB               24 months ago
+cap-platform-mlflow-1               cap-platform/mlflow         3.16.1-cap1         linux/amd64         f418689316c4        1.35GB              18 hours ago
+cap-platform-mlflow-init-1          cap-platform/mlflow         3.16.1-cap1         linux/amd64         f418689316c4        1.35GB              18 hours ago
+cap-platform-nats-1                 nats                        2.10.22-alpine      linux/amd64         73b0ba5fec55        36.2MB              2 years ago
+cap-platform-postgres-1             postgres                    18.6-alpine         linux/amd64         10a5c69a8303        433MB               6 days ago
+cap-platform-qdrant-1               qdrant/qdrant               v1.19.2             linux/amd64         b7b0444c4c35        286MB               3 weeks ago
+cap-platform-seaweedfs-1            chrislusf/seaweedfs         3.80                linux/amd64         1055999e08ee        181MB               23 months ago
+cap-platform-temporal-1             temporalio/server           1.32.1              linux/amd64         acecbab5b0b8        217MB               2 weeks ago
+cap-platform-temporal-namespace-1   temporalio/admin-tools      1.32.1              linux/amd64         9ef0dc5b063b        471MB               2 weeks ago
+cap-platform-temporal-schema-1      temporalio/admin-tools      1.32.1              linux/amd64         9ef0dc5b063b        471MB               2 weeks ago
+cap-platform-valkey-1               valkey/valkey               8.0.1-alpine        linux/amd64         75010b6854cb        57.3MB              2 years ago
+ Image cap-platform/mlflow:3.16.1-cap1 Skipped Image can be built
+ Image cap-platform/mlflow:3.16.1-cap1 Skipped Image can be built
+ Image quay.io/keycloak/keycloak:26.0.5 Pulling
+ Image postgres:18.6-alpine Pulling
+ Image temporalio/admin-tools:1.32.1 Pulling
+ Image nats:2.10.22-alpine Pulling
+ Image chrislusf/seaweedfs:3.80 Pulling
+ Image qdrant/qdrant:v1.19.2 Pulling
+ Image valkey/valkey:8.0.1-alpine Pulling
+ Image temporalio/server:1.32.1 Pulling
+ Image temporalio/admin-tools:1.32.1 Pulled
+ Image quay.io/keycloak/keycloak:26.0.5 Pulled
+ Image nats:2.10.22-alpine Pulled
+ Image temporalio/server:1.32.1 Pulled
+ Image valkey/valkey:8.0.1-alpine Pulled
+ Image chrislusf/seaweedfs:3.80 Pulled
+ Image postgres:18.6-alpine Pulled
+ Image qdrant/qdrant:v1.19.2 Pulled
+ Image cap-platform/mlflow:3.16.1-cap1 Building
+ Image cap-platform/mlflow:3.16.1-cap1 Building
+ Image cap-platform/mlflow:3.16.1-cap1 Built
+ Image cap-platform/mlflow:3.16.1-cap1 Built
+ Container cap-platform-keycloak-1 Running
+ Container cap-platform-valkey-1 Running
+ Container cap-platform-temporal-namespace-1 Running
+ Container cap-platform-nats-1 Running
+ Container cap-platform-seaweedfs-1 Running
+ Container cap-platform-temporal-1 Running
+ Container cap-platform-postgres-1 Running
+ Container cap-platform-qdrant-1 Running
+ Container cap-platform-mlflow-init-1 Recreate
+ Container cap-platform-mlflow-init-1 Recreated
+ Container cap-platform-mlflow-1 Recreate
+ Container cap-platform-mlflow-1 Recreated
+ Container cap-platform-postgres-1 Waiting
+ Container cap-platform-seaweedfs-1 Waiting
+ Container cap-platform-postgres-1 Waiting
+ Container cap-platform-postgres-1 Healthy
+ Container cap-platform-temporal-schema-1 Starting
+ Container cap-platform-postgres-1 Healthy
+ Container cap-platform-seaweedfs-1 Healthy
+ Container cap-platform-mlflow-init-1 Starting
+ Container cap-platform-temporal-schema-1 Started
+ Container cap-platform-temporal-schema-1 Waiting
+ Container cap-platform-postgres-1 Waiting
+ Container cap-platform-postgres-1 Healthy
+ Container cap-platform-mlflow-init-1 Started
+ Container cap-platform-seaweedfs-1 Waiting
+ Container cap-platform-mlflow-init-1 Waiting
+ Container cap-platform-postgres-1 Waiting
+ Container cap-platform-postgres-1 Healthy
+ Container cap-platform-seaweedfs-1 Healthy
+ Container cap-platform-temporal-schema-1 Exited
+ Container cap-platform-temporal-1 Waiting
+ Container cap-platform-temporal-1 Healthy
+ Container cap-platform-mlflow-init-1 Exited
+ Container cap-platform-mlflow-1 Starting
+ Container cap-platform-mlflow-1 Started
+ Container cap-platform-postgres-1 Waiting
+ Container cap-platform-mlflow-1 Waiting
+ Container cap-platform-keycloak-1 Waiting
+ Container cap-platform-valkey-1 Waiting
+ Container cap-platform-temporal-schema-1 Waiting
+ Container cap-platform-seaweedfs-1 Waiting
+ Container cap-platform-nats-1 Waiting
+ Container cap-platform-mlflow-init-1 Waiting
+ Container cap-platform-qdrant-1 Waiting
+ Container cap-platform-temporal-namespace-1 Waiting
+ Container cap-platform-temporal-1 Waiting
+ Container cap-platform-temporal-schema-1 Exited
+ Container cap-platform-temporal-namespace-1 Healthy
+ Container cap-platform-valkey-1 Healthy
+ Container cap-platform-nats-1 Healthy
+ Container cap-platform-temporal-1 Healthy
+ Container cap-platform-seaweedfs-1 Healthy
+ Container cap-platform-postgres-1 Healthy
+ Container cap-platform-mlflow-init-1 Exited
+ Container cap-platform-keycloak-1 Healthy
+ Container cap-platform-qdrant-1 Healthy
+ Container cap-platform-mlflow-1 Healthy

@@ -37,7 +37,7 @@
     {"path": "infra/observability/tests", "owner": "Yavuz", "work_package": "WP-OBS-001", "families": ["TEST-OBS-TELEMETRY"], "test_ids": ["TEST-OBS-001-002"],
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Observability standard tests and typing (WP-OBS-001)"},
               {"tier": "integration", "boundary_mode": "REAL", "ci_step": "Telemetry pipeline smoke (boundary mode REAL)"}]},
-    {"path": "infra/compose/tests", "owner": "Yavuz", "work_package": "WP-PLAT-001", "families": ["TEST-PLAT-COMPOSE"], "test_ids": ["TEST-PLAT-001-001", "TEST-PLAT-001-002"],
+    {"path": "infra/compose/tests", "owner": "Yavuz", "work_package": "WP-PLAT-001", "families": ["TEST-PLAT-COMPOSE"], "test_ids": ["TEST-PLAT-001-001", "TEST-PLAT-001-002", "TEST-PLAT-003-001", "TEST-PLAT-003-002"],
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Platform composition definition tests (WP-PLAT-001)"},
               {"tier": "integration", "boundary_mode": "REAL", "ci_step": "Platform runtime tests (boundary mode REAL)"}]},
     {"path": "tools/mfgctl/tests", "owner": "Yavuz", "work_package": "WP-PLAT-002", "families": ["TEST-PLAT-FABCTL"], "test_ids": ["TEST-PLAT-002-001", "TEST-PLAT-002-002", "TEST-PLAT-002-003", "TEST-PLAT-002-004"],
