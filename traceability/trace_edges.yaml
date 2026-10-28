@@ -7701,6 +7701,7 @@ edges:
 - {"from": "FR-PLAT-004", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-001", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-004", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-003", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-004", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-004", "applicability": "PLANNED"}
+- {"from": "FR-PLAT-004", "relation": "EXECUTED_AS", "to": "RUN-CICD-002-DEV-005", "applicability": "RECORDED"}
 - {"from": "FR-PLAT-004", "relation": "MITIGATES", "to": "PLAT-R08", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-005", "relation": "DERIVED_FROM", "to": "ITEM-42", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-005", "relation": "DERIVED_FROM", "to": "CD-INV-03", "applicability": "PLANNED"}
@@ -7716,6 +7717,7 @@ edges:
 - {"from": "FR-PLAT-005", "relation": "VERIFIED_BY", "to": "INSP-DEP-HOST", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-005", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-002", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-005", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-003", "applicability": "PLANNED"}
+- {"from": "FR-PLAT-005", "relation": "EXECUTED_AS", "to": "RUN-CICD-002-DEV-005", "applicability": "RECORDED"}
 - {"from": "FR-PLAT-006", "relation": "DERIVED_FROM", "to": "ITEM-47", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-006", "relation": "DERIVED_FROM", "to": "ITEM-61", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-006", "relation": "DERIVED_FROM", "to": "TECH-INV-14", "applicability": "PLANNED"}
@@ -8686,6 +8688,7 @@ edges:
 - {"from": "NFR-DEP-003", "relation": "VERIFIED_BY", "to": "INSP-DEP-HOST", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-003", "relation": "VERIFIED_BY", "to": "TEST-PLAT-CD", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-003", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-003", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-003", "relation": "EXECUTED_AS", "to": "RUN-CICD-002-DEV-005", "applicability": "RECORDED"}
 - {"from": "NFR-DEP-003", "relation": "MITIGATES", "to": "PLAT-R08", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-004", "relation": "DERIVED_FROM", "to": "ITEM-35", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-004", "relation": "DERIVED_FROM", "to": "ITEM-42", "applicability": "PLANNED"}
