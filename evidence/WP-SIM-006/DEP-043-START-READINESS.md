@@ -1,10 +1,29 @@
-# DEP-043 START readiness assessment (proposed, CHG-077)
+# DEP-043 START readiness assessment (owner-adopted, CHG-077)
 
-Status: **PROPOSED, not an accountable owner assessment and not a readiness certification.**
-Prepared by Claude Code for Batuhan Kaya (owner of DN-SIM-KERNEL and DN-SIM-DISPIF) under supervisor
-run `e3f47591-16a6-4256-92c5-dcd17ca1cf7c`, plan SHA-256 `be43972b…20ec8`. It becomes an assessment only
-when the owner attributes it on the pull request, and it takes effect only with the planning-owner
-disposition required by CHG-077. DEP-043 stays `NOT_READY` in `docs/05`.
+Status: **adopted by the owner as the edge-specific kernel assessment for DEP-043; bound to the planning-owner
+disposition below. Not a product, integration or acceptance record, and not DN-SIM-DISPIF readiness.**
+Prepared by Claude Code for Batuhan Kaya (owner of DN-SIM-KERNEL and DN-SIM-DISPIF) under supervisor runs
+`e3f47591-16a6-4256-92c5-dcd17ca1cf7c` (plan SHA-256 `be43972b…20ec8`) and `e03bdf75-2ab3-4b0e-9587-b996d8d6442d`.
+The content below the next section is the assessment as proposed in commit `495f7ebd`; only the status, the
+two limit statements it affected and the closing section were updated for the adoption.
+
+## Owner adoption and planning-owner disposition
+
+- **Owner adoption (Batuhan).** Native supervised-conversation statement, received after the CI and review of
+  pull request 199 were verified (original wording, Turkish): "WP-SIM-006/DEP-043-START-READINESS.md içindeki
+  kernel kanıtlarını ve belirtilen sınırlarını, DEP-043 için owner değerlendirmem olarak kabul ediyorum."
+  Meaning: the kernel evidence in this file and its stated limits are the owner's assessment for DEP-043. It
+  does not accept any WP-SIM-006 product deliverable, integration evidence or DONE. The statement has no
+  timestamp or public URL, and none is invented; a durable public record (for example a pull request comment)
+  needs an authorized operator publication and is still open.
+- **Planning-owner disposition (Asrın).** Pull request 199 review
+  https://github.com/Asperant/critical-aerospace-manufacturing/pull/199#pullrequestreview-5689282669
+  (state APPROVED, commit `495f7ebd06502ab2d0066f18735a26bbed6b6348`, GitHub login Asperant). Its text accepts
+  the correction: the existing kernel APIs and test evidence are the START condition and the dispatch interface
+  is a WP-SIM-006 deliverable. The GitHub API (`users/Asperant`, read 2026-10-28) returns type User with the profile name
+  Asrın Dündar, so the review is by the planning owner's own GitHub user. The review state is not an approval quota.
+- **Effect.** With both, the DEP-043 `status` is READY in `docs/05` (CHG-077). That is dependency metadata for
+  the kernel START fact. It is not Plane READY and does not implement WP-SIM-006.
 
 ## Edge and question
 
@@ -31,7 +50,7 @@ Question: do the facts DN-SIM-KERNEL can provide, as stated in the corrected pre
 - `evidence/WP-SIM-001/replay_comparison.py` is byte-identical to the run-7 `replay_script_sha256`
   (`7888112e…20a48`). numpy 2.4.6, hypothesis 6.168.1 and pytest 8.3.3 are pinned identically in
   `ci/uv.lock`; the lock file hash differs (`914da9c1…` then, `5caecd37…` now) because later work added
-  scheduler dependencies (97 added lines, none removed).
+  the scheduler, Alembic, SQLAlchemy, Mako and MarkupSafe packages (97 added lines, none removed).
 - Result: the simulator source under test is unchanged, so no kernel test or replay rerun was needed and
   none was made. Run-7 output is reused as is: `suite-output.txt` `ed587fdf…bd12` (202 passed),
   `replay-comparison.json` `e3291575…baec` (six seeds, in-process and fresh processes, four hash seeds,
@@ -62,16 +81,18 @@ Names were read from the source and test files at the identities above; the 2026
 - Run-7 is a local toy-kernel run on the shared development host, not CI, INTEGRATION or EVALUATION. The
   main CI run above only shows the same suite passing on main. The kernel is not an installed or deployed
   service.
-- DN-SIM-KERNEL has no recorded edge-specific COMPONENT_READY binding for DEP-043. SIM-001's own
+- Before this assessment, DN-SIM-KERNEL had no recorded edge-specific COMPONENT_READY binding for DEP-043. SIM-001's own
   `DOD-ASSESSMENT-2026-10-25.md` is a WP assessment, not that binding, and SIM-001's integrated
-  acceptance remains open (its lifecycle state is not asserted here). This file proposes the binding; it does not make it.
+  acceptance remains open (its lifecycle state is not asserted here). This file is the binding, adopted by the owner as described above.
 - DEP-037 (DN-SIM-OPSEM) and DEP-038 (DN-CORE-CONTRACTS, Asrın) are not assessed here; DEP-039 is a
   MILESTONE_EXIT edge. WP-SIM-003 stays blocked by DEP-037 and DEP-038.
 
-## What an accountable conclusion needs
+## Status of the accountable conclusion
 
-1. The planning owner's attributable disposition of the CHG-077 meaning change, or an attributable
-   delegation to the proposer for DEP-043.
-2. The owner's attribution of this assessment as the edge-specific COMPONENT_READY binding.
-3. Only then a separate edit of the DEP-043 `status`, then the supported policy refresh and one
-   `projectctl startability WP-SIM-006` run.
+1. Planning-owner disposition: recorded (review above).
+2. Owner attribution of this assessment: recorded as a native conversation statement; a durable public record
+   is still open and needs an authorized operator publication.
+3. The DEP-043 `status` is READY in `docs/05` under CHG-077. Remaining, each a separate step: current-head CI on
+   the head that carries this adoption, merge, the supported policy refresh, and one
+   `projectctl startability WP-SIM-006` run against the refreshed source. A local run on this worktree is not
+   deployed startability.

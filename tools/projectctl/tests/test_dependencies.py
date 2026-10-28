@@ -139,3 +139,20 @@ def test_dep_043_start_predicate_is_the_kernel_not_the_dispatch_deliverable(grap
         if line.startswith("| DEP-043 | DN-SIM-DISPIF at START |")
     ]
     assert len(appendix) == 1 and edge.unblock_evidence in appendix[0]
+
+
+def test_dep_043_ready_is_bound_to_the_recorded_authority(graph, root):
+    """While DEP-043 is READY, CHG-077 and the evidence must carry its authority."""
+    import yaml
+
+    edge = next(e for e in graph.edges if e.id == "DEP-043")
+    if edge.status == "READY":
+        record = yaml.safe_load((root / "09_change/CHG-077.yaml").read_text("utf-8"))
+        record = record["CHG-077"]
+        assert record["decision"].startswith("APPROVED")
+        review = "pull/199#pullrequestreview-5689282669"
+        assert review in record["decision_basis"]
+        path = root / "evidence/WP-SIM-006/DEP-043-START-READINESS.md"
+        evidence = path.read_text("utf-8")
+        assert review in evidence
+        assert "owner değerlendirmem olarak kabul ediyorum" in evidence
