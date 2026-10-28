@@ -8,10 +8,13 @@ live deployment PASS.
 
 ## Run of record
 
-`runs/run-3-uncommitted/` — one local run of `capture_run.py` on the **uncommitted** tree: base
-`e1752d90febabc5db09ba61fd6380a2951462bf6` (`origin/main`), 11 changed or untracked input files hashed in
-`identity.json` (`tree_clean` false: no commit is authorized in this pass), 2026-10-28T15:33:29Z to 15:34:00Z,
-Python 3.11.16, locked CI toolchain, Intel i7-9700K, shared host. Not committed-source evidence.
+`runs/run-4-committed/` — one local run of `capture_run.py` on a **clean committed tree**: tested source commit
+`e992a82a262d161c5fced8c530edea89bc51d8db` (tree `5dca8557cd8b5c0656757e1440e5b100febc7677`, `tree_clean` true, empty
+changed-file manifest), rebased onto `origin/main` `1b06523ac681fb1689f5f0a8aed640c690bb31be`, started 2026-10-28T18:41:44Z,
+finished 18:42:16Z, Python 3.11.16, uv 0.12.13, locked CI toolchain (`lock_sha256` in `identity.json`), Intel i7-9700K, shared host.
+The commit that adds this run and this README changes only files under `evidence/CTRL-HOST-031/`, so every source, test, CI and
+baseline file the run tested is unchanged (check with `git diff e992a82 <evidence commit> --stat`). The run records the tested
+SHA, never its own commit. Offline fixture evidence, not CI and not an installed or live-runtime PASS.
 
 | Command | Exit | Result |
 |---|---|---|
@@ -22,7 +25,7 @@ Python 3.11.16, locked CI toolchain, Intel i7-9700K, shared host. Not committed-
 | `reproduce-on-original-source` | **1, expected** | **7 failed, 11 passed** (below) |
 | `ruff-check`, `ruff-format --check` on new files and the collector | 0, 0 | clean |
 | `static-ratchet` | 0 | no new findings; baseline tight after `update` |
-| `check-test-strategy` | 0 | PASS (151 files, 27 suites) |
+| `check-test-strategy` | 0 | PASS (153 files, 29 suites, after integrating main) |
 | `git-diff-check` | 0 | clean |
 
 The run exits 1 only because of the reproduction, which is intended.
@@ -51,9 +54,11 @@ Plane write or SCH lifecycle synchronization, no governed Release, Environment o
 
 ## Earlier runs kept as history
 
-Both are byte for byte as captured; neither is committed-source evidence.
+All three are byte for byte as captured; none is committed-source evidence.
 
 - `runs/run-1-uncommitted/`: `check-test-strategy` failed because the collector test file belonged to no declared suite.
   I first removed the test file; Codex review rejected that. The tests are restored, declared in `ci/test-strategy.json`
-  and executed by the existing CI step "Host Plane transition tests (offline)", and run-3 records them passing.
-- `runs/run-2-uncommitted/`: the tree Codex reviewed (no collector tests, 8 input hashes). Superseded by run-3.
+  and executed by the existing CI step "Host Plane transition tests (offline)", and the later runs record them passing.
+- `runs/run-2-uncommitted/`: the tree first reviewed (no collector tests, 8 input hashes).
+- `runs/run-3-uncommitted/`: the tree Codex re-reviewed and approved (11 input hashes, base `e1752d9`), before the commits
+  and the rebase onto main; its manifest hashes the pre-rebase `ci.yml` and `test-strategy.json`.
