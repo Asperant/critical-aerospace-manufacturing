@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: ecb8f2155cd5c87800aaf421ad2125a6be10d3d44ce1e8d4029ad60781314bdc
+  sha256: 9a0d2a82527e3ff23d1fdc151c07c58885feb00c123588609f4d708ac6c8f3b3
 requirements:
   FR-GOV-001:
     meta:
@@ -2933,7 +2933,7 @@ requirements:
     state:
       coverage: EVIDENCE_PENDING
       planning: EVIDENCE_PENDING
-      evidence: NOT_YET_EXECUTED
+      evidence: EVIDENCE_PENDING
     note: build-and-publish workflow, digest-pinned deploy command and host hook implemented (WP-CICD-002); deployment from GitHub Actions needs a self-hosted runner (DN-PLAT-RUNNER), so the deploy runs as a command on the host; no application image exists yet.
     realization:
       surface: main-derived immutable artifact promotion to INTEGRATION
@@ -2952,7 +2952,7 @@ requirements:
     state:
       coverage: EVIDENCE_PENDING
       planning: EVIDENCE_PENDING
-      evidence: NOT_YET_EXECUTED
+      evidence: EVIDENCE_PENDING
     note: OD-CICD-01 is decided as JSON documents validated by JSON Schema (release/README.md); an ADR follows when the ADR index can admit it (WP-DOC-002). Identities without a producer are NOT_YET_PRODUCED.
     realization:
       surface: ReleaseManifest/DeploymentRecord emission (format OD-CICD-01)
@@ -5351,7 +5351,7 @@ requirements:
     state:
       coverage: EVIDENCE_PENDING
       planning: EVIDENCE_PENDING
-      evidence: NOT_YET_EXECUTED
+      evidence: EVIDENCE_PENDING
     measurement:
       metric: manual source-code patches on target host for formal deployment
       threshold: = 0

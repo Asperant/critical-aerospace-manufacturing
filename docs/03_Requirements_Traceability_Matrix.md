@@ -5580,10 +5580,10 @@ FR-PLAT-004:
   GOVERNED_BY: ["deployment workflow"]
   VERIFIED_BY: [TEST-PLAT-CD, INSP-DEP-HOST, TEST-CICD-002-001, TEST-CICD-002-003, TEST-CICD-002-004]
   MITIGATES: [PLAT-R08]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED: the shared-host run follows the first publish from main
+  EXECUTED_AS: [RUN-CICD-002-DEV-005]  # DEV run on the shared host; INTEGRATION acceptance (TEST-PLAT-CD, INSP-DEP-HOST) pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L4, env: "INTEGRATION + EVALUATION", m6_freeze_sensitive: false}
-  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
   note: "build-and-publish workflow, digest-pinned deploy command and host hook implemented (WP-CICD-002); deployment from GitHub Actions needs a self-hosted runner (DN-PLAT-RUNNER), so the deploy runs as a command on the host; no application image exists yet."
 FR-PLAT-005:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-PLAT-005 L170083"}
@@ -5592,10 +5592,10 @@ FR-PLAT-005:
   REALIZED_BY: {surface: "ReleaseManifest/DeploymentRecord emission (format OD-CICD-01)", deployable: "release workflow and deploy command", ref: "tools/release/src/cap_release/manifest.py; tools/release/src/cap_release/record.py; tools/release/src/cap_release/schemas/; release/README.md"}
   USES_DATA: ["ReleaseManifest", "DeploymentRecord"]
   VERIFIED_BY: [TEST-PLAT-CD, INSP-DEP-HOST, TEST-CICD-002-002, TEST-CICD-002-003]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-CICD-002-DEV-005]  # DEV run on the shared host; INTEGRATION acceptance (TEST-PLAT-CD, INSP-DEP-HOST) pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L4, env: "INTEGRATION + EVALUATION", m6_freeze_sensitive: false}
-  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
   note: "OD-CICD-01 is decided as JSON documents validated by JSON Schema (release/README.md); an ADR follows when the ADR index can admit it (WP-DOC-002). Identities without a producer are NOT_YET_PRODUCED."
 FR-PLAT-006:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-PLAT-006 L170084"}
@@ -6961,10 +6961,10 @@ NFR-DEP-003:
   MEASUREMENT: {metric: "manual source-code patches on target host for formal deployment", threshold: "= 0", workload: "formal deployments", hardware: "N/A (not hardware-bound)", observed: null}
   VERIFIED_BY: [INSP-DEP-HOST, TEST-PLAT-CD, TEST-CICD-002-003]
   MITIGATES: [PLAT-R08]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-CICD-002-DEV-005]  # DEV run on the shared host; INTEGRATION acceptance (TEST-PLAT-CD, INSP-DEP-HOST) pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L4, env: "INTEGRATION + EVALUATION", m6_freeze_sensitive: false}
-  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
   note: "enforced and recorded per deployment; the measurement over formal deployments (observed) is not taken, so observed stays null."
 NFR-DEP-004:
   meta: {class: A1, owner: Yavuz, anchor: "01 Item82 NFR-DEP-004 L172299"}
