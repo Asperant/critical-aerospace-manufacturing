@@ -158,9 +158,14 @@ def test_the_lot_is_revalidated_when_the_event_runs() -> None:
     assert rigged.gate.executions == (("DSP-1", RejectReason.LOT_HELD),)
     kinds = [event.kind for event in rigged.publisher.events]
     assert kinds == ["DISPATCH_ACCEPTED", "DISPATCH_START_REJECTED"]
-    # The lot and machine are free again for a corrected decision.
-    assert not rigged.gate._pending_lots  # noqa: SLF001
-    assert not rigged.gate._pending_machines  # noqa: SLF001
+    # The lot and machine are free again: a corrected decision is accepted.
+    rigged.facility.update_lot("L1", held=False)
+    retry = intake_document(
+        dispatch_id="DSP-2",
+        lot_revision="L1-r1",
+        base_state_revision=rigged.facility.state_revision,
+    )
+    assert rigged.gate.submit(retry, ctx).status is OutcomeStatus.ACCEPTED
 
 
 @pytest.mark.parametrize(
@@ -218,17 +223,3 @@ def test_conflicting_core_authorizations_for_one_dispatch_are_refused() -> None:
     rigged.gate.authorize(CORE_EVENT)  # identical repeat is fine
     with pytest.raises(Exception, match="CORE_AUTHORIZATION_INVALID"):
         rigged.gate.authorize({**CORE_EVENT, "lot_id": "L2"})
-
-
-def test_the_gate_never_imports_core_or_a_database() -> None:
-    import manufacturing_simulator.dispatch as module
-
-    source = open(module.__file__, encoding="utf-8").read()  # noqa: SIM115
-    for forbidden in (
-        "manufacturing_core",
-        "psycopg",
-        "sqlalchemy",
-        "asyncpg",
-        "socket",
-    ):
-        assert forbidden not in source

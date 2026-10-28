@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import dataclasses
+from typing import Any
 
 import pytest
 from dispatch_fixtures import FixtureFacility, lot
@@ -42,12 +43,14 @@ def test_operational_field_names_are_not_flagged(name: object) -> None:
 
 def test_detection_is_recursive_and_does_not_exhaust_the_stack() -> None:
     assert find_evaluator_field({"a": [{"b": {"oracle_x": 1}}]}) == "/a/0/b/oracle_x"
-    deep: dict[str, object] = {"leaf": 1}
+    clean: dict[str, Any] = {"leaf": 1}
     for _ in range(5000):
-        deep = {"n": deep}
-    assert find_evaluator_field(deep) is None
-    deep["n"] = {"ground_truth": 1}  # type: ignore[assignment]
-    assert find_evaluator_field(deep) is not None
+        clean = {"n": clean}
+    assert find_evaluator_field(clean) is None
+    flagged: dict[str, Any] = {"ground_truth": 1}
+    for _ in range(5000):
+        flagged = {"n": flagged}
+    assert find_evaluator_field(flagged) is not None
 
 
 def test_events_accept_only_allow_listed_kinds_and_attributes() -> None:
@@ -68,8 +71,9 @@ def test_events_accept_only_allow_listed_kinds_and_attributes() -> None:
     for bad in ("oracle_state", "free_text", "ground_truth", "reason"):
         with pytest.raises(ExposureError):
             make_event("DISPATCH_REJECTED", 0, "w", "c", {bad: "x"})
+    not_text: dict[str, Any] = {"lot_id": 5}
     with pytest.raises(ExposureError):
-        make_event("DISPATCH_REJECTED", 0, "w", "c", {"lot_id": 5})  # type: ignore[dict-item]
+        make_event("DISPATCH_REJECTED", 0, "w", "c", not_text)
     assert "oracle" not in " ".join(sorted(EVENT_KINDS | ALLOWED_ATTRIBUTES)).lower()
 
 

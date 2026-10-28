@@ -8,6 +8,7 @@ from typing import Any
 from hypothesis import given
 from hypothesis import strategies as st
 from manufacturing_simulator import (
+    BaselinePolicy,
     Candidate,
     DecisionRequest,
     IntakeSource,
@@ -33,14 +34,20 @@ def request(*candidates: Candidate, machine: str = "M1") -> DecisionRequest:
     return DecisionRequest("world-1", "REQ-9", "rev-3", 40, machine, tuple(candidates))
 
 
+def chosen(policy: BaselinePolicy, asked: DecisionRequest) -> str:
+    decision = policy.decide(asked)
+    assert decision is not None
+    return decision.lot_id
+
+
 def test_each_rule_picks_by_its_key_and_breaks_ties_by_lot_id() -> None:
     a = candidate("A", ready=5, due=50, priority=1)
     b = candidate("B", ready=1, due=90, priority=1)
     c = candidate("C", ready=1, due=20, priority=3)
     d = candidate("D", ready=1, due=20, priority=3)
-    assert fifo().decide(request(a, b, c, d)).lot_id == "B"  # type: ignore[union-attr]
-    assert edd().decide(request(a, b, c, d)).lot_id == "C"  # type: ignore[union-attr]
-    assert static_priority().decide(request(a, b, c, d)).lot_id == "C"  # type: ignore[union-attr]
+    assert chosen(fifo(), request(a, b, c, d)) == "B"
+    assert chosen(edd(), request(a, b, c, d)) == "C"
+    assert chosen(static_priority(), request(a, b, c, d)) == "C"
 
 
 def test_decisions_are_valid_baseline_intakes_with_a_deterministic_id() -> None:

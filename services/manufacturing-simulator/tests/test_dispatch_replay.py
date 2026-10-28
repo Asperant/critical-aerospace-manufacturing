@@ -5,6 +5,7 @@ from __future__ import annotations
 from dispatch_fixtures import KINDS, lot, rig, run_config
 from manufacturing_simulator import (
     ComparisonOutcome,
+    DecisionProvider,
     Kernel,
     ReplayIdentity,
     ReplaySpec,
@@ -37,8 +38,10 @@ def test_every_baseline_replays_to_equal_digests() -> None:
         assert result.outcome is ComparisonOutcome.MATCH, policy.rule_id
 
 
-def run(policy: object, seed: int = 7) -> tuple[list[tuple[int, str, str]], list[str]]:
-    rigged = rig(LOTS, policy)  # type: ignore[arg-type]
+def run(
+    policy: DecisionProvider, seed: int = 7
+) -> tuple[list[tuple[int, str, str]], list[str]]:
+    rigged = rig(LOTS, policy)
     world = ScenarioEngine(KINDS).initialize(run_config(seed))
     kernel = Kernel(world, rigged.handlers)
     kernel.run_to_horizon(10_000)
