@@ -1,0 +1,132 @@
+[
+  {
+    "id": "suite",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch-venv/bin/python3",
+      "-m",
+      "pytest",
+      "-c",
+      "services/scheduler-service/pyproject.toml",
+      "services/scheduler-service/tests",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "started_utc": "2026-10-27T20:11:23+00:00",
+    "finished_utc": "2026-10-27T20:11:24+00:00",
+    "exit_code": 0,
+    "stdout_file": "suite.stdout",
+    "stdout_bytes": 306,
+    "stdout_sha256": "aeef7af2fcd59892b719714b262fcd6b728bec42c56adfc7e34f47e969c225c3",
+    "stderr_file": "suite.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "99 passed in 1.24s"
+  },
+  {
+    "id": "collector-tests",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch-venv/bin/python3",
+      "-m",
+      "pytest",
+      "evidence/WP-SCH-001/tests",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "started_utc": "2026-10-27T20:11:24+00:00",
+    "finished_utc": "2026-10-27T20:11:26+00:00",
+    "exit_code": 0,
+    "stdout_file": "collector-tests.stdout",
+    "stdout_bytes": 225,
+    "stdout_sha256": "e67742b63008b78a29e1b6f0fb5859b3b6e282c89856cf3d6945f8582a83f414",
+    "stderr_file": "collector-tests.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "5 passed in 1.32s"
+  },
+  {
+    "id": "ruff-check",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch-venv/bin/python3",
+      "-m",
+      "ruff",
+      "check",
+      "services/scheduler-service",
+      "evidence/WP-SCH-001/capture_run.py",
+      "evidence/WP-SCH-001/replay_comparison.py",
+      "evidence/WP-SCH-001/tests/test_capture_run.py"
+    ],
+    "started_utc": "2026-10-27T20:11:26+00:00",
+    "finished_utc": "2026-10-27T20:11:26+00:00",
+    "exit_code": 0,
+    "stdout_file": "ruff-check.stdout",
+    "stdout_bytes": 19,
+    "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "stderr_file": "ruff-check.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "All checks passed!"
+  },
+  {
+    "id": "ruff-format",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch-venv/bin/python3",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "services/scheduler-service",
+      "evidence/WP-SCH-001/capture_run.py",
+      "evidence/WP-SCH-001/replay_comparison.py",
+      "evidence/WP-SCH-001/tests/test_capture_run.py"
+    ],
+    "started_utc": "2026-10-27T20:11:26+00:00",
+    "finished_utc": "2026-10-27T20:11:26+00:00",
+    "exit_code": 0,
+    "stdout_file": "ruff-format.stdout",
+    "stdout_bytes": 27,
+    "stdout_sha256": "c4fd3f494556e5e7cf4355131a1080dbdcf0bbf09664638af9984db197ad88c0",
+    "stderr_file": "ruff-format.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "18 files already formatted"
+  },
+  {
+    "id": "pyright",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch-venv/bin/python3",
+      "-m",
+      "pyright",
+      "--project",
+      "services/scheduler-service/pyrightconfig.json"
+    ],
+    "started_utc": "2026-10-27T20:11:26+00:00",
+    "finished_utc": "2026-10-27T20:11:27+00:00",
+    "exit_code": 0,
+    "stdout_file": "pyright.stdout",
+    "stdout_bytes": 192,
+    "stdout_sha256": "db668de51c7ecb37ed0c6e58fdf07c5c520152a4ffa341ff6b86c340877b9413",
+    "stderr_file": "pyright.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "0 errors, 0 warnings, 0 informations"
+  },
+  {
+    "id": "replay-comparison",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sch-venv/bin/python3",
+      "evidence/WP-SCH-001/replay_comparison.py"
+    ],
+    "started_utc": "2026-10-27T20:11:27+00:00",
+    "finished_utc": "2026-10-27T20:11:30+00:00",
+    "exit_code": 0,
+    "stdout_file": "replay-comparison.stdout",
+    "stdout_bytes": 2038,
+    "stdout_sha256": "6976b641e6ac6aa12931bcda9241c8d63777c0ef2043e12f05b3aa3f91b2d5c3",
+    "stderr_file": "replay-comparison.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "}"
+  }
+]

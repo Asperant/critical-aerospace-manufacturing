@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: 34aac551ee0f8f4bff5f5347fcb2e6c754eaadd0bf2f110900931b9c8a21f6bb
+  sha256: 3f26171d0aaa07cc4ab688e81d7567335616e16a69749f7369bf8048bf54a942
 requirements:
   FR-GOV-001:
     meta:
@@ -2131,15 +2131,15 @@ requirements:
       env: EVALUATION
       m6_freeze_sensitive: true
     state:
-      coverage: ALLOCATED
+      coverage: IMPLEMENTED
       planning: VERIFY_PLANNED
       evidence: NOT_YET_EXECUTED
       flags: []
-    note: ARCH-SCH-EVAL is the dedicated scheduling-evaluation component; ARCH-VIS-EVAL is Vision-specific.
+    note: ARCH-SCH-EVAL is the dedicated scheduling-evaluation component; ARCH-VIS-EVAL is Vision-specific. WP-SCH-001 delivers the five offline dispatch rules, the BaselineDefinition records SCH-B1..SCH-B5 and the synthetic instance generator only. BENCH-SCH-001 and BENCH-RQ2-001 have not run, so evidence stays NOT_YET_EXECUTED; evidence/WP-SCH-001/README.md records the local unit run and its limits. No VERIFIED claim.
     realization:
       surface: FIFO/EDD/CR/SPT/SRPT baseline implementations (BaselineDefinition)
       deployable: scheduling evaluation harness — GAP-RTM-002
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/scheduler-service/src/manufacturing_scheduler/; services/scheduler-service/tests/
   FR-SCH-011:
     meta:
       class: F1
@@ -7228,7 +7228,8 @@ edges:
 - {"from": "FR-SCH-010", "relation": "ALLOCATED_TO", "to": "ARCH-SCH-HEURISTIC", "applicability": "PLANNED"}
 - {"from": "FR-SCH-010", "relation": "ALLOCATED_TO", "to": "ARCH-VIS-EVAL", "applicability": "PLANNED"}
 - {"from": "FR-SCH-010", "relation": "ALLOCATED_TO", "to": "ARCH-SCH-EVAL", "applicability": "PLANNED"}
-- {"from": "FR-SCH-010", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-SCH-010", "relation": "REALIZED_BY", "to": "repo:services/scheduler-service/src/manufacturing_scheduler/", "applicability": "RECORDED"}
+- {"from": "FR-SCH-010", "relation": "REALIZED_BY", "to": "repo:services/scheduler-service/tests/", "applicability": "RECORDED"}
 - {"from": "FR-SCH-010", "relation": "USES_DATA", "to": "BaselineDefinition", "applicability": "PLANNED"}
 - {"from": "FR-SCH-010", "relation": "VERIFIED_BY", "to": "BENCH-SCH-001", "applicability": "PLANNED"}
 - {"from": "FR-SCH-010", "relation": "VERIFIED_BY", "to": "BENCH-RQ2-001", "applicability": "PLANNED"}

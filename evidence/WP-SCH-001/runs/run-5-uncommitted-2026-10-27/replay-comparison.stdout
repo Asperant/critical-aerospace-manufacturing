@@ -1,0 +1,91 @@
+{
+  "kind": "synthetic offline fixture replay; not BENCH-SCH-001 evidence",
+  "numpy": "2.4.6",
+  "config": {
+    "job_count": 40,
+    "horizon_ticks": 300,
+    "min_operation_ticks": 1,
+    "max_operation_ticks": 20,
+    "max_extra_route_ticks": 40,
+    "min_due_offset_ticks": 0,
+    "max_due_offset_ticks": 200,
+    "tick_unit": "tick"
+  },
+  "epochs": [
+    0,
+    50,
+    150,
+    300,
+    600
+  ],
+  "hash_seeds": [
+    "0",
+    "1",
+    "4242",
+    "random"
+  ],
+  "policies": 5,
+  "seeds": [
+    {
+      "seed": 20261027,
+      "trace_sha256": "98668703bf991de2db8ac07bcb2dcfbaac1842d04660442fb7aa95f1ebcc41fc",
+      "equal_to_fresh_process": {
+        "0": true,
+        "1": true,
+        "4242": true,
+        "random": true
+      }
+    },
+    {
+      "seed": 20261028,
+      "trace_sha256": "302764871a0dbd653b969b5b6bf663a22231aaccef3aad4333dff5ae42218146",
+      "equal_to_fresh_process": {
+        "0": true,
+        "1": true,
+        "4242": true,
+        "random": true
+      }
+    },
+    {
+      "seed": 20261029,
+      "trace_sha256": "3c88256bc772e5354f0077d8e9ae58c32efbd414dcb74efcbec5a4a5aeeb995a",
+      "equal_to_fresh_process": {
+        "0": true,
+        "1": true,
+        "4242": true,
+        "random": true
+      }
+    },
+    {
+      "seed": 20261030,
+      "trace_sha256": "09e93436428feedc348d33ffb1d07f87ea8dee7fab9af1d0a4a8800de5c522ee",
+      "equal_to_fresh_process": {
+        "0": true,
+        "1": true,
+        "4242": true,
+        "random": true
+      }
+    },
+    {
+      "seed": 20261031,
+      "trace_sha256": "c65252d237bb4735d07edf79cb71199920c8acf97e99a67fab62cddde26531e9",
+      "equal_to_fresh_process": {
+        "0": true,
+        "1": true,
+        "4242": true,
+        "random": true
+      }
+    },
+    {
+      "seed": 20261032,
+      "trace_sha256": "ac480e4f88aef6279be4a23df15f97cfdee1fa38106c529fe0fc19c783efca07",
+      "equal_to_fresh_process": {
+        "0": true,
+        "1": true,
+        "4242": true,
+        "random": true
+      }
+    }
+  ],
+  "all_equal": true
+}
