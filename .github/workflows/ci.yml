@@ -164,6 +164,11 @@ jobs:
         run: |
           uv run --project ci --locked python -m pytest -c services/manufacturing-simulator/pyproject.toml services/manufacturing-simulator/tests -q -p pytest_quarantine
           uv run --project ci --locked pyright --project services/manufacturing-simulator/pyrightconfig.json
+      - name: Scheduler snapshot consumer and RecoveryPlan contract tests and typing (WP-SCH-002)
+        run: |
+          uv run --project ci --locked python -m pytest -c services/scheduler-service/pyproject.toml services/scheduler-service/tests --ignore=services/scheduler-service/tests/test_plan_contract.py -q -p pytest_quarantine
+          uv run --project ci --locked pyright --project services/scheduler-service/pyrightconfig.json
+          uv run --project ci --locked python -m pytest evidence/WP-SCH-002/tests -q -p pytest_quarantine
       - name: Scheduler dispatch baselines unit/property tests and typing (WP-SCH-001)
         run: |
           uv run --project ci --locked python -m pytest -c services/scheduler-service/pyproject.toml services/scheduler-service/tests -q -p pytest_quarantine
@@ -246,6 +251,8 @@ jobs:
         run: |
           uv run --project ci --locked python -m pytest -c services/operations-bff/pyproject.toml services/operations-bff/tests -q
           uv run --project ci --locked pyright --project services/operations-bff/pyrightconfig.json
+      - name: Scheduler RecoveryPlan contract tests (WP-SCH-002)
+        run: uv run --project ci --locked python -m pytest -c services/scheduler-service/pyproject.toml services/scheduler-service/tests/test_plan_contract.py -q
 
   integration:
     name: t1-integration

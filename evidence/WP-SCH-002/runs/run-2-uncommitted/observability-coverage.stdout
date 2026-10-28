@@ -1,0 +1,3 @@
+VIOLATION scheduler-service: exists at /srv/ailab/workspaces/batuhan/worktrees/WP-SCH-002/services/scheduler-service; declare logging ADOPTED or PENDING
+VIOLATION scheduler-service: exists at /srv/ailab/workspaces/batuhan/worktrees/WP-SCH-002/services/scheduler-service; declare health ADOPTED or PENDING
+telemetry coverage: 5/9 mandatory deployables exist; logging 0/5 adopted (4 pending); health 0/5 adopted (4 pending); 4 not yet present

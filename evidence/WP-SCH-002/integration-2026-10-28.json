@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-28T19:15:53.299896+00:00",
+  "kind": "local dirty-tree integration validation summary; not raw output or benchmark evidence",
+  "base_main": "2e3452cd837067c5d707b60078353ee9110741d6",
+  "premerge_branch_head": "b6c9163dd11d828923cb789b2df9e556ff9ad6b6",
+  "tree_clean": false,
+  "scheduler_files_sha256": {
+    "services/scheduler-service/README.md": "8f7652dba493b7cb5331abd85aee0a164575ad87b1e3a7ea885163add127d6ae",
+    "services/scheduler-service/contracts/v1/README.md": "d87b8da557c30d9bd8f49a97981c0a794404bcff546991117b3e9bd01c714ddd",
+    "services/scheduler-service/contracts/v1/recovery-plan.self-reported-valid.json": "aa047af0f63a35d0ad232c3e37c79aacc0d43d4351a426726b7c6f93218e88bd",
+    "services/scheduler-service/contracts/v1/recovery-plan.v1.json": "c6ff4fe93b45c0c504c85b4831c535f00d75c70f4ff62af691e65be1e03c4374",
+    "services/scheduler-service/contracts/v1/recovery-plan.v1.schema.json": "f792f23c7b94dd843d7af9ac536b58028f8cfac1e953298b3be71a6021add5b6",
+    "services/scheduler-service/pyproject.toml": "fb4bf2fc670a70ddd341e32d1c164897bf892447ce658a928b64ca31af0ce7c9",
+    "services/scheduler-service/pyrightconfig.json": "82b77c88c2acdc252ede8012a4b73fd8b9b8f650decd93f3c914f26b4424a168",
+    "services/scheduler-service/src/manufacturing_scheduler/__init__.py": "74e015b04244686c1b4b8b063a3b23e479f8a3a0ad25e8698d3a27e728d3e17e",
+    "services/scheduler-service/src/manufacturing_scheduler/baselines.py": "d5a947702bb4ba30b4b6724f88fc637303a8b50148bec1184e9953519ca82fe3",
+    "services/scheduler-service/src/manufacturing_scheduler/errors.py": "0597e2d434abde69d6863d350509d460adcc30576675c5343978b712527b942e",
+    "services/scheduler-service/src/manufacturing_scheduler/instances.py": "b2967d263afbb6ff8910ff86f4dc779594bfcdee65563d7f38cc1bc0444954a9",
+    "services/scheduler-service/src/manufacturing_scheduler/models.py": "542c54caf8d3f8f57a55813694ddd466b4ab6b60854c26fac52182fa233820b7",
+    "services/scheduler-service/src/manufacturing_scheduler/plans.py": "ac9893ec09390e35219eff3119ba84baf4c13a5494a4842c5a4c60c7098020d2",
+    "services/scheduler-service/src/manufacturing_scheduler/policies.py": "473a7d4f18fc358d60ab2f2bf867cc9098ce67ea77e129ad32e54868b0c85cca",
+    "services/scheduler-service/src/manufacturing_scheduler/snapshot.py": "c642c8288943a7b8f90b28f53f4cb78bcdbbd56f35572777a042dd4ceec2a9e9",
+    "services/scheduler-service/src/manufacturing_scheduler/validation.py": "ab8b245d27d02c323e1503eeeaeb92b223fcd55fe47f1c15993276a1869dd21d",
+    "services/scheduler-service/src/manufacturing_scheduler/wire.py": "f6f7cb72a7d5a9973a9bacd6ed5488b03c38c7c882f0ac3050f3b161753b2465",
+    "services/scheduler-service/tests/conftest.py": "d5a240394e1071f0bdabc631ced2fed2a5c9044a245ae3ed0aa9a14682670d4d",
+    "services/scheduler-service/tests/plan_helpers.py": "96fba2150c560c42924781f14699b9c4b118d15d7e3885ddccf06dcec78e6ee3",
+    "services/scheduler-service/tests/replay_worker.py": "00838e6afcaa54873b553b1b3398e5949f9f30447aaccb0c5d741bc665011e30",
+    "services/scheduler-service/tests/sch_fixtures.py": "80acf759531c6e2a83b0b2f57267cb1e27049d23a1a06734963a3a4b27d57f60",
+    "services/scheduler-service/tests/test_baselines.py": "8de5e66c5c1379811e8f605f47fd6999341456f907563ecfc148d843f9020ff4",
+    "services/scheduler-service/tests/test_determinism.py": "91621cbc2491f155c205c1d95c60c2ca56cc233ee1e441e6b9dbab138c263952",
+    "services/scheduler-service/tests/test_instances.py": "9f746bc257f8f4f2b92ce45d3b815ebf191ecfa7ad0e1e92bc50fb5c452b4590",
+    "services/scheduler-service/tests/test_plan_contract.py": "16d0bba8f2824f666ef5163274f41b5201455f2844586bcac6c3ec0457d440d7",
+    "services/scheduler-service/tests/test_plans.py": "2297ad6a221451a5cd732e93868c2b44eb32185ba55e0883e9e933a7bb0770a7",
+    "services/scheduler-service/tests/test_policies.py": "abbaf9458443b11882e49e4faf8139d95d0ecbb8a96803a22889b75a6aafda37",
+    "services/scheduler-service/tests/test_snapshot.py": "636c40e670bb39ddf6c3cb10f94a81affd311d1f85cf2c89516bfaee52d54485",
+    "services/scheduler-service/tests/test_snapshot_twin.py": "8671bc3d0b93e66280aa25e883a18b568a7a3ae6c3d9210a7a3a73060de1f351",
+    "services/scheduler-service/tests/test_validation.py": "d980b890efaa4b28151719227c674d09f531d731689e5be0fea7abda56a0940d"
+  },
+  "checks": [
+    {
+      "surface": "scheduler pytest",
+      "result": "PASS",
+      "passed": 349
+    },
+    {
+      "surface": "SCH001 collector pytest separately",
+      "result": "PASS",
+      "passed": 6
+    },
+    {
+      "surface": "SCH002 collector pytest separately",
+      "result": "PASS",
+      "passed": 6
+    },
+    {
+      "surface": "PolicyPinningTests",
+      "result": "PASS",
+      "passed": 1
+    },
+    {
+      "surface": "trace lint against origin/main",
+      "result": "PASS"
+    },
+    {
+      "surface": "test strategy",
+      "result": "PASS",
+      "files": 164,
+      "suites": 36
+    },
+    {
+      "surface": "Ruff check",
+      "result": "PASS"
+    },
+    {
+      "surface": "Ruff format",
+      "result": "PASS",
+      "files": 23
+    },
+    {
+      "surface": "Pyright with explicit ctrl31 interpreter",
+      "result": "PASS",
+      "errors": 0
+    }
+  ],
+  "initial_validation_limitations": [
+    "Combined collector collection had duplicate test_capture_run module names; reran separately as actual CI does.",
+    "First Pyright invocation used wrong search interpreter; explicit recorded environment resolved imports without code or checker changes."
+  ],
+  "integration_resolution": "Preserved all SCH001 public exports, numpy/dev dependency and exception classes; appended SCH002 ContractError/PlanError/SnapshotError/IncompleteInputError under shared unchanged SchedulerError; used superset test/typing paths; retained both CI and strategy declarations. Updated five WBS provenance hashes after scope-preserving merge; real pinning regression passed.",
+  "governed_runtime_identity": null,
+  "real_scheduler_acceptance": "NOT_RUN",
+  "Plane_state": "IN_PROGRESS",
+  "DONE": false,
+  "root_typing_followup": {
+    "reason": "CI root environment lacked contracts/Twin extraPaths after SCH001 package integration",
+    "pyrightconfig_sha256": "ac80fad1befa66280f190b17f37faa35696b1e201dcf5257aea25b7f3c4280aa",
+    "static_ratchet": "PASS",
+    "counts": {
+      "ruff": 287,
+      "pyright": 185,
+      "unformatted": 53
+    },
+    "baseline_weakened": false,
+    "PYTHONPATH_removed_for_final_check": true,
+    "ci_followup": "Explicit ci/scripts path added after CI identified check_contracts import masked by local PYTHONPATH; env-unset static ratchet PASS, no baseline change."
+  }
+}

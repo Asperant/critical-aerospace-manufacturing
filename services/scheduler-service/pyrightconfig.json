@@ -1,6 +1,11 @@
 {
   "include": ["src", "tests"],
-  "extraPaths": ["src"],
+  "extraPaths": [
+    "src",
+    "../../packages/contracts/src",
+    "../../ci/scripts",
+    "../operational-twin/src"
+  ],
   "pythonVersion": "3.11",
   "typeCheckingMode": "standard"
 }

@@ -40,3 +40,28 @@ class InvalidInstanceConfigError(SchedulerError):
 
 class InvalidSeedError(SchedulerError):
     """A generator seed is not an acceptable non-negative integer."""
+
+
+class ContractError(SchedulerError):
+    """A payload violates a consumed or produced contract."""
+
+    def __init__(self, code: str, path: str = "") -> None:
+        self.code = code
+        self.path = path
+        super().__init__(f"{code} at {path or '<root>'}")
+
+
+class SnapshotError(ContractError):
+    """A ``core.scheduling-snapshot.v1`` payload cannot be consumed."""
+
+
+class PlanError(ContractError):
+    """A ``scheduler.recovery-plan.v1`` payload or binding is invalid."""
+
+
+class IncompleteInputError(SchedulerError):
+    """The snapshot lacks inputs a full optimizer instance would need."""
+
+    def __init__(self, missing: tuple[str, ...]) -> None:
+        self.missing = missing
+        super().__init__("snapshot is not a complete optimizer instance")

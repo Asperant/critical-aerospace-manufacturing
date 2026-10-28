@@ -1,0 +1,220 @@
+{
+  "contract_version": "scheduler.recovery-plan.v1",
+  "recovery_plan_id": "FIXTURE-PLAN-001",
+  "incident_id": "FIXTURE-INCIDENT-001",
+  "world_id": "PRIMARY",
+  "source_snapshot": {
+    "snapshot_revision": "twin-rev-184202",
+    "generated_at": "2026-10-27T08:00:00Z"
+  },
+  "base_schedule_version": "schedule-v19",
+  "generated_at": "2026-10-27T08:01:00Z",
+  "valid_until": "2026-10-27T08:05:00Z",
+  "generation": {
+    "kind": "DEVELOPMENT_FIXTURE",
+    "generator_id": "development-fixture",
+    "generator_version": "1"
+  },
+  "affected_material": [
+    {
+      "lot_id": "LOT-001",
+      "lot_revision": "lot-rev-11",
+      "route_id": "ROUTE-A",
+      "visit_id": "VISIT-A-03",
+      "position": 2
+    },
+    {
+      "lot_id": "LOT-002",
+      "lot_revision": "lot-rev-4",
+      "route_id": "ROUTE-B",
+      "visit_id": "VISIT-B-01",
+      "position": 0
+    }
+  ],
+  "affected_equipment": [
+    {
+      "equipment_id": "CNC-5AX-07",
+      "equipment_revision": "equipment-rev-7"
+    }
+  ],
+  "assumptions": [
+    {
+      "assumption_id": "ASSUMP-1",
+      "statement": "Development fixture: assignment intervals are illustrative and are not derived from any processing-time source."
+    }
+  ],
+  "objective_profile": {
+    "profile_id": "FIXTURE-PROFILE",
+    "profile_version": "1",
+    "method": "WEIGHTED_SUM",
+    "terms": [
+      {
+        "metric": "total_tardiness",
+        "unit": "minute",
+        "direction": "MINIMIZE",
+        "weight": 1.0
+      },
+      {
+        "metric": "moved_assignments",
+        "unit": "count",
+        "direction": "MINIMIZE",
+        "weight": 1.0
+      }
+    ]
+  },
+  "candidate_schedules": [
+    {
+      "candidate_id": "FIXTURE-CAND-A",
+      "algorithm": {
+        "algorithm_id": "development-fixture",
+        "algorithm_version": "1"
+      },
+      "horizon": {
+        "start_at": "2026-10-27T08:05:00Z",
+        "end_at": "2026-10-27T20:05:00Z"
+      },
+      "assignments": [
+        {
+          "assignment_id": "A-1",
+          "lot_id": "LOT-001",
+          "lot_revision": "lot-rev-11",
+          "route_id": "ROUTE-A",
+          "visit_id": "VISIT-A-03",
+          "equipment_id": "CNC-5AX-07",
+          "equipment_revision": "equipment-rev-7",
+          "start_at": "2026-10-27T08:05:00Z",
+          "end_at": "2026-10-27T09:05:00Z",
+          "batch_id": null
+        },
+        {
+          "assignment_id": "A-2",
+          "lot_id": "LOT-002",
+          "lot_revision": "lot-rev-4",
+          "route_id": "ROUTE-B",
+          "visit_id": "VISIT-B-01",
+          "equipment_id": "CNC-5AX-07",
+          "equipment_revision": "equipment-rev-7",
+          "start_at": "2026-10-27T09:05:00Z",
+          "end_at": "2026-10-27T11:05:00Z",
+          "batch_id": null
+        }
+      ],
+      "solve": {
+        "status": "NOT_RUN",
+        "wall_time_ms": null
+      },
+      "predicted_objectives": [
+        {
+          "metric": "total_tardiness",
+          "unit": "minute",
+          "status": "NOT_COMPUTED",
+          "value": null
+        },
+        {
+          "metric": "moved_assignments",
+          "unit": "count",
+          "status": "NOT_COMPUTED",
+          "value": null
+        }
+      ],
+      "stability": {
+        "status": "NOT_COMPUTED",
+        "moved_assignment_count": null
+      },
+      "counterfactual": {
+        "status": "NOT_RUN",
+        "result_ref": null,
+        "counterfactual_world_id": null
+      },
+      "validation_result": {
+        "status": "NOT_RUN",
+        "validator": null,
+        "result_ref": null,
+        "violation_refs": [],
+        "bound_to": null
+      }
+    },
+    {
+      "candidate_id": "FIXTURE-CAND-B",
+      "algorithm": {
+        "algorithm_id": "development-fixture",
+        "algorithm_version": "1"
+      },
+      "horizon": {
+        "start_at": "2026-10-27T08:05:00Z",
+        "end_at": "2026-10-27T20:05:00Z"
+      },
+      "assignments": [
+        {
+          "assignment_id": "B-1",
+          "lot_id": "LOT-001",
+          "lot_revision": "lot-rev-11",
+          "route_id": "ROUTE-A",
+          "visit_id": "VISIT-A-03",
+          "equipment_id": "CNC-5AX-07",
+          "equipment_revision": "equipment-rev-7",
+          "start_at": "2026-10-27T08:05:00Z",
+          "end_at": "2026-10-27T09:05:00Z",
+          "batch_id": null
+        },
+        {
+          "assignment_id": "B-2",
+          "lot_id": "LOT-002",
+          "lot_revision": "lot-rev-4",
+          "route_id": "ROUTE-B",
+          "visit_id": "VISIT-B-01",
+          "equipment_id": "CNC-5AX-08",
+          "equipment_revision": "equipment-rev-3",
+          "start_at": "2026-10-27T08:05:00Z",
+          "end_at": "2026-10-27T10:05:00Z",
+          "batch_id": null
+        }
+      ],
+      "solve": {
+        "status": "NOT_RUN",
+        "wall_time_ms": null
+      },
+      "predicted_objectives": [
+        {
+          "metric": "total_tardiness",
+          "unit": "minute",
+          "status": "NOT_COMPUTED",
+          "value": null
+        },
+        {
+          "metric": "moved_assignments",
+          "unit": "count",
+          "status": "NOT_COMPUTED",
+          "value": null
+        }
+      ],
+      "stability": {
+        "status": "NOT_COMPUTED",
+        "moved_assignment_count": null
+      },
+      "counterfactual": {
+        "status": "NOT_RUN",
+        "result_ref": null,
+        "counterfactual_world_id": null
+      },
+      "validation_result": {
+        "status": "NOT_RUN",
+        "validator": null,
+        "result_ref": null,
+        "violation_refs": [],
+        "bound_to": null
+      }
+    }
+  ],
+  "recommended_candidate_id": "FIXTURE-CAND-A",
+  "comparison": {
+    "status": "NOT_COMPUTED",
+    "ranking": []
+  },
+  "rationale": {
+    "status": "NOT_AVAILABLE",
+    "summary": null,
+    "trace_refs": []
+  },
+  "content_digest": "sha256:13e826c0ff3a79bea17c0e79f56170b16226f34df5b8be81c1f607f5fbaf6f79"
+}

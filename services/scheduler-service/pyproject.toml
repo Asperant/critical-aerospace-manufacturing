@@ -17,5 +17,10 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = [
+  "src",
+  "../../packages/contracts/src",
+  "../../ci/scripts",
+  "../operational-twin/src",
+]
 addopts = "-p no:cacheprovider"

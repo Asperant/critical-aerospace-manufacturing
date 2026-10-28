@@ -3477,7 +3477,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-SCH-PLANCON |
 | Size band (indicative, no hour estimates) | M (≈4–7 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `services/scheduler-service/`; `packages/contracts/registry/scheduler.recovery-plan.v1.json` |
 
 **Purpose.** Consume the Twin scheduling snapshot and emit a revision-bound, reviewable RecoveryPlan.
 

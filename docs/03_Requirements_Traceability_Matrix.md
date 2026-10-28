@@ -564,15 +564,15 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 | FR-SCH-004 | F1 | Batu | 01 Item81 FR-SCH-004 L170005 | ITEM-19, SCH-INV-03, SCH-INV-05, SCH-INV-07 | VERIFY_PLANNED | — |
 | FR-SCH-005 | F0 | Batu | 01 Item81 FR-SCH-005 L170006 | ITEM-19, ITEM-23, ITEM-68, SCH-INV-09, E2E-INV-10, BENCH-INV-21 | VERIFY_PLANNED | — |
 | FR-SCH-006 | F1 | Batu | 01 Item81 FR-SCH-006 L170007 | ITEM-19, ITEM-84, SCH-INV-09 | VERIFY_PLANNED | — |
-| FR-SCH-007 | F1 | Batu | 01 Item81 FR-SCH-007 L170008 | ITEM-19, DT-INV-07, INT-INV-07 | VERIFY_PLANNED | — |
-| FR-SCH-008 | F1 | Batu | 01 Item81 FR-SCH-008 L170009 | ITEM-19, ITEM-22, INT-INV-05 | VERIFY_PLANNED | — |
+| FR-SCH-007 | F1 | Batu | 01 Item81 FR-SCH-007 L170008 | ITEM-19, DT-INV-07, INT-INV-07 | EVIDENCE_PENDING | — |
+| FR-SCH-008 | F1 | Batu | 01 Item81 FR-SCH-008 L170009 | ITEM-19, ITEM-22, INT-INV-05 | EVIDENCE_PENDING | — |
 | FR-SCH-009 | F1 | Batu | 01 Item81 FR-SCH-009 L170010 | ITEM-19, ITEM-61, SCH-INV-08 | VERIFY_PLANNED | — |
 | FR-SCH-010 | F1 | Batu | 01 Item81 FR-SCH-010 L170011 | ITEM-59, ITEM-31, BASE-INV-13 | VERIFY_PLANNED (ALLOC-COARSE) | ALLOC-COARSE |
 | FR-SCH-011 | F1 | Batu | 01 Item81 FR-SCH-011 L170012 | ITEM-31, SCH-INV-12 | VERIFY_PLANNED (ALLOC-COARSE) | ALLOC-COARSE |
 | FR-SCH-012 | F1 | Batu | 01 Item81 FR-SCH-012 L170013 | ITEM-19, ITEM-51, PERF-INV-10, RES-INV-11 | VERIFY_PLANNED | — |
 | FR-SCH-013 | F1 | Batu | 01 Item81 FR-SCH-013 L170014 | ITEM-19, ITEM-10, SCH-INV-10, AUTO-INV-08 | VERIFY_PLANNED | — |
 | FR-SCH-014 | F1 | Batu | 01 Item81 FR-SCH-014 L170015 | ITEM-23, AUTH-INV-04, INT-INV-11 | VERIFY_PLANNED | — |
-| FR-SCH-015 | F1 | Batu | 01 Item81 FR-SCH-015 L170016 | ITEM-19, ITEM-33, NFR-INV-53 | VERIFY_PLANNED | — |
+| FR-SCH-015 | F1 | Batu | 01 Item81 FR-SCH-015 L170016 | ITEM-19, ITEM-33, NFR-INV-53 | EVIDENCE_PENDING | — |
 
 ### 6.FK FR-AUTO — Durable Automation (14)
 
@@ -5002,25 +5002,27 @@ FR-SCH-007:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SCH-007 L170008"}
   DERIVED_FROM: [ITEM-19, DT-INV-07, INT-INV-07]
   ALLOCATED_TO: [ARCH-SCH-PLAN, ARCH-TWIN-FRESHNESS]
-  REALIZED_BY: {surface: "plan ↔ SchedulingSnapshot revision binding", deployable: "scheduler-service", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "plan ↔ SchedulingSnapshot revision binding", deployable: "scheduler-service", ref: "services/scheduler-service/src/manufacturing_scheduler/; services/scheduler-service/contracts/v1/; packages/contracts/registry/scheduler.recovery-plan.v1.json"}
   EXPOSED_BY: ["IC-SCH-004 RecoveryPlan (source revision)"]
   VERIFIED_BY: [TEST-SCH-PLAN, TEST-AUTO-FRESHNESS]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [evidence/WP-SCH-002/runs/run-4-committed]  # contract-level local run on fixtures; REAL/integrated acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Local contract-level run (TEST-SCH-PLAN asset on the published snapshot fixture and development RecoveryPlan fixtures); DEP-083 generator and DEP-084 validator are not implemented, TEST-UI-PLAN, AV-SCEN-01/02 and E2E-01 have not run, and no EvidenceID exists. evidence/WP-SCH-002/README.md records the limits."
 FR-SCH-008:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SCH-008 L170009"}
   DERIVED_FROM: [ITEM-19, ITEM-22, INT-INV-05]
   ALLOCATED_TO: [ARCH-SCH-PLAN, ARCH-CTR-EVTSCHEMA]
-  REALIZED_BY: {surface: "RecoveryPlan schema (Item 83 example: CONTRACT-RecoveryPlan-v1)", deployable: "scheduler-service", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "RecoveryPlan schema (Item 83 example: CONTRACT-RecoveryPlan-v1)", deployable: "scheduler-service", ref: "services/scheduler-service/src/manufacturing_scheduler/; services/scheduler-service/contracts/v1/; packages/contracts/registry/scheduler.recovery-plan.v1.json"}
   EXPOSED_BY: ["IC-SCH-004 RecoveryPlan"]
   VERIFIED_BY: [TEST-SCH-PLAN]
   EXERCISED_IN: [AV-SCEN-01]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [evidence/WP-SCH-002/runs/run-4-committed]  # contract-level local run on fixtures; REAL/integrated acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Local contract-level run (TEST-SCH-PLAN asset on the published snapshot fixture and development RecoveryPlan fixtures); DEP-083 generator and DEP-084 validator are not implemented, TEST-UI-PLAN, AV-SCEN-01/02 and E2E-01 have not run, and no EvidenceID exists. evidence/WP-SCH-002/README.md records the limits."
 FR-SCH-009:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SCH-009 L170010"}
   DERIVED_FROM: [ITEM-19, ITEM-61, SCH-INV-08]
@@ -5099,14 +5101,15 @@ FR-SCH-015:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SCH-015 L170016"}
   DERIVED_FROM: [ITEM-19, ITEM-33, NFR-INV-53]
   ALLOCATED_TO: [ARCH-SCH-PLAN, ARCH-EDGE-BFF]
-  REALIZED_BY: {surface: "rationale/objective/comparison fields for review", deployable: "scheduler-service → operations-bff", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "rationale/objective/comparison fields for review", deployable: "scheduler-service → operations-bff", ref: "services/scheduler-service/src/manufacturing_scheduler/; services/scheduler-service/contracts/v1/; packages/contracts/registry/scheduler.recovery-plan.v1.json"}
   EXPOSED_BY: ["IC-SCH-003 ScheduleCandidate", "IC-SCH-004 RecoveryPlan"]
   VERIFIED_BY: [TEST-SCH-PLAN, TEST-UI-PLAN]
   EXERCISED_IN: [AV-SCEN-01]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [evidence/WP-SCH-002/runs/run-4-committed]  # contract-level local run on fixtures; REAL/integrated acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Local contract-level run (TEST-SCH-PLAN asset on the published snapshot fixture and development RecoveryPlan fixtures); DEP-083 generator and DEP-084 validator are not implemented, TEST-UI-PLAN, AV-SCEN-01/02 and E2E-01 have not run, and no EvidenceID exists. evidence/WP-SCH-002/README.md records the limits."
 ```
 
 ### 17.FK FR-AUTO

@@ -44,6 +44,18 @@
           "authority_level": "AI may read, simulate and propose; it has no canonical manufacturing mutation or protected-action execution authority."
         }
       ]
+    },
+    {
+      "producer": "scheduler-service",
+      "semantic_owner": "Batuhan Kaya",
+      "source_roots": ["services/scheduler-service/contracts/"],
+      "contracts": [
+        {
+          "family": "scheduler.recovery-plan",
+          "contract_type": "ARTIFACT",
+          "authority_level": "Scheduler PLAN proposal only; no validation certificate, approval, activation or execution authority"
+        }
+      ]
     }
   ]
 }

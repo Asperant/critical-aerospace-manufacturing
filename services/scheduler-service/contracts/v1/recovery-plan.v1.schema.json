@@ -1,0 +1,338 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cap:scheduler:recovery-plan:v1",
+  "title": "Scheduler RecoveryPlan contract v1 (IC-SCH-004)",
+  "description": "A PLAN: a proposal bound to one world and one source snapshot. It carries no approval, activation or execution authority, and validation_result is the producer's unattested report.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "recovery_plan_id",
+    "incident_id",
+    "world_id",
+    "source_snapshot",
+    "base_schedule_version",
+    "generated_at",
+    "valid_until",
+    "generation",
+    "affected_material",
+    "affected_equipment",
+    "assumptions",
+    "objective_profile",
+    "candidate_schedules",
+    "recommended_candidate_id",
+    "comparison",
+    "rationale",
+    "content_digest"
+  ],
+  "properties": {
+    "contract_version": {"const": "scheduler.recovery-plan.v1"},
+    "recovery_plan_id": {"$ref": "#/$defs/Id"},
+    "incident_id": {"$ref": "#/$defs/Id"},
+    "world_id": {"$ref": "#/$defs/Id"},
+    "source_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["snapshot_revision", "generated_at"],
+      "properties": {
+        "snapshot_revision": {"$ref": "#/$defs/Id"},
+        "generated_at": {"$ref": "#/$defs/Utc"}
+      }
+    },
+    "base_schedule_version": {"$ref": "#/$defs/NullableId"},
+    "generated_at": {"$ref": "#/$defs/Utc"},
+    "valid_until": {"$ref": "#/$defs/Utc"},
+    "generation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "generator_id", "generator_version"],
+      "properties": {
+        "kind": {"enum": ["DEVELOPMENT_FIXTURE", "GENERATOR_OUTPUT"]},
+        "generator_id": {"$ref": "#/$defs/Id"},
+        "generator_version": {"$ref": "#/$defs/Id"}
+      }
+    },
+    "affected_material": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["lot_id", "lot_revision", "route_id", "visit_id", "position"],
+        "properties": {
+          "lot_id": {"$ref": "#/$defs/Id"},
+          "lot_revision": {"$ref": "#/$defs/Id"},
+          "route_id": {"$ref": "#/$defs/Id"},
+          "visit_id": {"$ref": "#/$defs/Id"},
+          "position": {"$ref": "#/$defs/Count"}
+        }
+      }
+    },
+    "affected_equipment": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["equipment_id", "equipment_revision"],
+        "properties": {
+          "equipment_id": {"$ref": "#/$defs/Id"},
+          "equipment_revision": {"$ref": "#/$defs/Id"}
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["assumption_id", "statement"],
+        "properties": {
+          "assumption_id": {"$ref": "#/$defs/Id"},
+          "statement": {"$ref": "#/$defs/Text"}
+        }
+      }
+    },
+    "objective_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_id", "profile_version", "method", "terms"],
+      "properties": {
+        "profile_id": {"$ref": "#/$defs/Id"},
+        "profile_version": {"$ref": "#/$defs/Id"},
+        "method": {"$ref": "#/$defs/Id"},
+        "terms": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["metric", "unit", "direction", "weight"],
+            "properties": {
+              "metric": {"$ref": "#/$defs/Id"},
+              "unit": {"$ref": "#/$defs/Id"},
+              "direction": {"enum": ["MINIMIZE", "MAXIMIZE"]},
+              "weight": {"$ref": "#/$defs/Number", "minimum": 0}
+            }
+          }
+        }
+      }
+    },
+    "candidate_schedules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/Candidate"}
+    },
+    "recommended_candidate_id": {"$ref": "#/$defs/Id"},
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "ranking"],
+      "properties": {
+        "status": {"enum": ["COMPUTED", "NOT_COMPUTED"]},
+        "ranking": {"type": "array", "items": {"$ref": "#/$defs/Id"}}
+      },
+      "if": {"properties": {"status": {"const": "NOT_COMPUTED"}}},
+      "then": {"properties": {"ranking": {"maxItems": 0}}},
+      "else": {"properties": {"ranking": {"minItems": 1}}}
+    },
+    "rationale": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "summary", "trace_refs"],
+      "properties": {
+        "status": {"enum": ["NOT_AVAILABLE", "TRACE_DERIVED"]},
+        "summary": {"oneOf": [{"$ref": "#/$defs/Text"}, {"type": "null"}]},
+        "trace_refs": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/Id"}}
+      },
+      "if": {"properties": {"status": {"const": "TRACE_DERIVED"}}},
+      "then": {"properties": {"summary": {"type": "string"}, "trace_refs": {"minItems": 1}}},
+      "else": {"properties": {"summary": {"type": "null"}, "trace_refs": {"maxItems": 0}}}
+    },
+    "content_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "Id": {"type": "string", "pattern": "^\\S+$"},
+    "NullableId": {"type": ["string", "null"], "pattern": "^\\S+$"},
+    "Text": {"type": "string", "pattern": "^\\S(?:.*\\S)?$"},
+    "Count": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+    "Number": {"type": "number", "minimum": -9007199254740991, "maximum": 9007199254740991},
+    "Utc": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]{0,5}[1-9])?Z$"
+    },
+    "Candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id",
+        "algorithm",
+        "horizon",
+        "assignments",
+        "solve",
+        "predicted_objectives",
+        "stability",
+        "counterfactual",
+        "validation_result"
+      ],
+      "properties": {
+        "candidate_id": {"$ref": "#/$defs/Id"},
+        "algorithm": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["algorithm_id", "algorithm_version"],
+          "properties": {
+            "algorithm_id": {"$ref": "#/$defs/Id"},
+            "algorithm_version": {"$ref": "#/$defs/Id"}
+          }
+        },
+        "horizon": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["start_at", "end_at"],
+          "properties": {
+            "start_at": {"$ref": "#/$defs/Utc"},
+            "end_at": {"$ref": "#/$defs/Utc"}
+          }
+        },
+        "assignments": {"type": "array", "items": {"$ref": "#/$defs/Assignment"}},
+        "solve": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "wall_time_ms"],
+          "properties": {
+            "status": {"enum": ["NOT_RUN", "OPTIMAL", "FEASIBLE", "INFEASIBLE", "TIMEOUT", "ERROR"]},
+            "wall_time_ms": {"oneOf": [{"$ref": "#/$defs/Number", "minimum": 0}, {"type": "null"}]}
+          },
+          "if": {"properties": {"status": {"const": "NOT_RUN"}}},
+          "then": {"properties": {"wall_time_ms": {"type": "null"}}},
+          "else": {"properties": {"wall_time_ms": {"type": "number"}}}
+        },
+        "predicted_objectives": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["metric", "unit", "status", "value"],
+            "properties": {
+              "metric": {"$ref": "#/$defs/Id"},
+              "unit": {"$ref": "#/$defs/Id"},
+              "status": {"enum": ["COMPUTED", "NOT_COMPUTED"]},
+              "value": {"oneOf": [{"$ref": "#/$defs/Number"}, {"type": "null"}]}
+            },
+            "if": {"properties": {"status": {"const": "COMPUTED"}}},
+            "then": {"properties": {"value": {"type": "number"}}},
+            "else": {"properties": {"value": {"type": "null"}}}
+          }
+        },
+        "stability": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "moved_assignment_count"],
+          "properties": {
+            "status": {"enum": ["COMPUTED", "NOT_COMPUTED"]},
+            "moved_assignment_count": {"oneOf": [{"$ref": "#/$defs/Count"}, {"type": "null"}]}
+          },
+          "if": {"properties": {"status": {"const": "COMPUTED"}}},
+          "then": {"properties": {"moved_assignment_count": {"type": "integer"}}},
+          "else": {"properties": {"moved_assignment_count": {"type": "null"}}}
+        },
+        "counterfactual": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "result_ref", "counterfactual_world_id"],
+          "properties": {
+            "status": {"enum": ["NOT_RUN", "AVAILABLE"]},
+            "result_ref": {"$ref": "#/$defs/NullableId"},
+            "counterfactual_world_id": {"$ref": "#/$defs/NullableId"}
+          },
+          "if": {"properties": {"status": {"const": "AVAILABLE"}}},
+          "then": {"properties": {"result_ref": {"type": "string"}, "counterfactual_world_id": {"type": "string"}}},
+          "else": {"properties": {"result_ref": {"type": "null"}, "counterfactual_world_id": {"type": "null"}}}
+        },
+        "validation_result": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "validator", "result_ref", "violation_refs", "bound_to"],
+          "properties": {
+            "status": {"enum": ["NOT_RUN", "REPORTED_VALID", "REPORTED_INVALID"]},
+            "validator": {
+              "oneOf": [
+                {"type": "null"},
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["validator_id", "validator_version"],
+                  "properties": {
+                    "validator_id": {"$ref": "#/$defs/Id"},
+                    "validator_version": {"$ref": "#/$defs/Id"}
+                  }
+                }
+              ]
+            },
+            "result_ref": {"$ref": "#/$defs/NullableId"},
+            "violation_refs": {"type": "array", "items": {"$ref": "#/$defs/Id"}},
+            "bound_to": {
+              "oneOf": [
+                {"type": "null"},
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["world_id", "snapshot_revision", "candidate_id"],
+                  "properties": {
+                    "world_id": {"$ref": "#/$defs/Id"},
+                    "snapshot_revision": {"$ref": "#/$defs/Id"},
+                    "candidate_id": {"$ref": "#/$defs/Id"}
+                  }
+                }
+              ]
+            }
+          },
+          "if": {"properties": {"status": {"const": "NOT_RUN"}}},
+          "then": {
+            "properties": {
+              "validator": {"type": "null"},
+              "result_ref": {"type": "null"},
+              "violation_refs": {"maxItems": 0},
+              "bound_to": {"type": "null"}
+            }
+          },
+          "else": {
+            "properties": {
+              "validator": {"type": "object"},
+              "result_ref": {"type": "string"},
+              "bound_to": {"type": "object"}
+            }
+          }
+        }
+      }
+    },
+    "Assignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assignment_id",
+        "lot_id",
+        "lot_revision",
+        "route_id",
+        "visit_id",
+        "equipment_id",
+        "equipment_revision",
+        "start_at",
+        "end_at",
+        "batch_id"
+      ],
+      "properties": {
+        "assignment_id": {"$ref": "#/$defs/Id"},
+        "lot_id": {"$ref": "#/$defs/Id"},
+        "lot_revision": {"$ref": "#/$defs/Id"},
+        "route_id": {"$ref": "#/$defs/Id"},
+        "visit_id": {"$ref": "#/$defs/Id"},
+        "equipment_id": {"$ref": "#/$defs/Id"},
+        "equipment_revision": {"$ref": "#/$defs/Id"},
+        "start_at": {"$ref": "#/$defs/Utc"},
+        "end_at": {"$ref": "#/$defs/Utc"},
+        "batch_id": {"$ref": "#/$defs/NullableId"}
+      }
+    }
+  }
+}
