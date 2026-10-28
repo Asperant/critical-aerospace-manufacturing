@@ -22,7 +22,7 @@ def test_dependency_baseline_and_findings(graph):
     # CHG-055 and the later approved precision bindings changed the canonical
     # warning set without changing the graph shape. Keep this count as a
     # diagnostic baseline; all diagnostic identities remain fail-closed below.
-    assert len([d for d in findings if d.code == "PRECISION_MISSING"]) == 163
+    assert len([d for d in findings if d.code == "PRECISION_MISSING"]) == 162
     assert {d.record_id for d in findings if d.code == "FIXTURE_SEMANTICS"} == set()
 
 
@@ -156,3 +156,89 @@ def test_dep_043_ready_is_bound_to_the_recorded_authority(graph, root):
         evidence = path.read_text("utf-8")
         assert review in evidence
         assert "owner değerlendirmem olarak kabul ediyorum" in evidence
+
+
+def module_names(root, module):
+    """Top-level function, class and constant names of one simulator module (AST)."""
+    import ast
+
+    tree = ast.parse((root / KERNEL_SOURCE / module).read_text(encoding="utf-8"))
+    names = {}
+    for node in tree.body:
+        if isinstance(node, ast.FunctionDef | ast.ClassDef):
+            names[node.name] = None
+        elif isinstance(node, ast.Assign | ast.AnnAssign):
+            targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+            for target in targets:
+                if isinstance(target, ast.Name) and isinstance(node.value, ast.Constant):
+                    names[target.id] = node.value.value
+    return names
+
+
+def test_dep_037_names_the_kernel_and_replay_surface_it_consumes(graph, root):
+    """CHG-079: the START edge binds kernel and replay APIs, not OPSEM behaviour."""
+    edge = next(e for e in graph.edges if e.id == "DEP-037")
+    assert (edge.predecessor.node, edge.successor.node) == ("DN-SIM-KERNEL", "DN-SIM-OPSEM")
+    semantics = edge.semantics
+    assert (semantics.kind.value, semantics.strength.value) == ("CAPABILITY", "HARD")
+    assert semantics.blocking_stage.value == "START"
+    assert semantics.required_readiness.value == "COMPONENT_READY"
+    assert (edge.need_by, edge.fallback, edge.risk_class) == ("S2", None, "DR-1")
+    assert edge.unblock_evidence == "kernel tests + deterministic replay green"
+
+    text = edge.precise_requirement
+    assert text and "not part of this START edge" in text
+
+    # Every kernel and replay name the requirement relies on exists on current main.
+    members = kernel_members(root)
+    assert {"register_handler", "schedule", "step", "run"} <= members["Kernel"]
+    assert {"now", "stream", "schedule"} <= members["ExecutionContext"]
+    replay = module_names(root, "replay.py")
+    assert {"ReplaySpec", "replay", "compare", "check_determinism"} <= set(replay)
+    serialization = module_names(root, "serialization.py")
+    assert {"event_sequence_digest", "final_state_digest"} <= set(serialization)
+    assert serialization["FORMAT_VERSION"] == "sim-replay-hash/1"
+    for phrase in (
+        "Kernel(WorldState, handlers)",
+        "schedule(EventSpec)",
+        "ReplaySpec",
+        "replay(spec, handlers)",
+        "check_determinism",
+        "event_sequence_digest",
+        "final_state_digest",
+        "sim-replay-hash/1",
+    ):
+        assert phrase in text
+
+    # The named random streams are the registered ones.
+    import ast
+
+    tree = ast.parse((root / KERNEL_SOURCE / "rng.py").read_text(encoding="utf-8"))
+    streams = {
+        node.value.value
+        for cls in tree.body
+        if isinstance(cls, ast.ClassDef) and cls.name == "StreamName"
+        for node in cls.body
+        if isinstance(node, ast.Assign) and isinstance(node.value, ast.Constant)
+    }
+    assert {"arrival", "processing", "failure", "repair", "quality", "inspection"} <= streams
+    assert "arrival, processing, failure, repair, quality and inspection" in text
+
+    # Table row, YAML record and appendix agree and the edge raises no new finding.
+    own = {d.code for d in validate_dependencies(graph) if d.record_id == edge.id}
+    assert own <= {"NEED_BY_AMBIGUOUS"}
+    appendix = [
+        line
+        for line in (root / PATH).read_text(encoding="utf-8").splitlines()
+        if line.startswith("| DEP-037 | DN-SIM-OPSEM at START |")
+    ]
+    assert len(appendix) == 1 and edge.unblock_evidence in appendix[0]
+
+    # While READY, the change record and the evidence must carry the authority.
+    if edge.status == "READY":
+        import yaml
+
+        record = yaml.safe_load((root / "09_change/CHG-079.yaml").read_text("utf-8"))
+        assert record["CHG-079"]["decision"].startswith("APPROVED")
+        path = root / "evidence/WP-SIM-003/DEP-037-START-READINESS.md"
+        assert "## Owner adoption" in path.read_text("utf-8")
