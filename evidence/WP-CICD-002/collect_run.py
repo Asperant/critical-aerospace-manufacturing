@@ -3,7 +3,9 @@
 Run from the repository root on a clean checkout of main, after the `release` workflow
 has published the image of a main commit:
 
-    uv run --project ci --locked python evidence/WP-CICD-002/collect_run.py <release-run-id>
+    uv run --project ci --locked python evidence/WP-CICD-002/collect_run.py <release-run-id> [NNN]
+
+The optional NNN numbers the run (RUN-CICD-002-DEV-NNN); every run is kept, failed ones too.
 
 It downloads that run's ReleaseManifest, checks out the release commit in a throw-away
 worktree and, with `python -m cap_release deploy`:
@@ -32,7 +34,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-RUN_ID = "RUN-CICD-002-DEV-001"
+RUN_ID = "RUN-CICD-002-DEV-" + (sys.argv[2] if len(sys.argv) > 2 else "001")
 ANSI = re.compile(r"\x1b\[[0-9;]*m")
 REPO = "Asperant/critical-aerospace-manufacturing"
 
@@ -46,8 +48,8 @@ def sh(
 
 
 def main() -> int:
-    if len(sys.argv) != 2 or not sys.argv[1].isdigit():
-        print("usage: collect_run.py <release-run-id>", file=sys.stderr)
+    if len(sys.argv) not in {2, 3} or not sys.argv[1].isdigit():
+        print("usage: collect_run.py <release-run-id> [NNN]", file=sys.stderr)
         return 2
     release_run = sys.argv[1]
     root = Path(sh("git", "rev-parse", "--show-toplevel").stdout.strip())

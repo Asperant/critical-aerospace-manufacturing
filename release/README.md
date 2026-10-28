@@ -44,6 +44,13 @@ SUCCEEDED release when there is one. Records and manifests are kept in
 `${CAP_RELEASE_STATE_DIR:-~/.local/state/cap-release}` (`records/`, `releases/`). Exit
 status 0 only for `SUCCEEDED`.
 
+## Operating notes
+
+- The preflight asks GitHub for `ci-gate` through `gh`, which needs a writable cache directory.
+  If `/tmp/gh-cli-cache` belongs to another user, run with `TMPDIR=$HOME/.cache/tmp`. An unreadable
+  check is recorded as `ci-gate could not be read ... <reason>` and nothing is deployed; an absent
+  check is recorded as `missing`.
+
 ## Decisions taken here
 
 - **OD-CICD-01 (02): serialization of ReleaseManifest and DeploymentRecord.** Both are

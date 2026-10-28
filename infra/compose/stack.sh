@@ -235,7 +235,7 @@ case "${1:-}" in
     load_credentials
     eval "$("${HERE}/stack.sh" env | sed 's/^/export /')"
     cd "${HERE}/../.."
-    PYTHONPATH="${PYTHONPATH:-ci:ci/scripts}" uv run --project ci --locked \
+    PYTHONPATH="ci:ci/scripts${PYTHONPATH:+:${PYTHONPATH}}" uv run --project ci --locked \
       python -m pytest infra/compose/tests -m integration -q -p pytest_quarantine
     ;;
   *)

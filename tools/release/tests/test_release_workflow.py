@@ -168,3 +168,12 @@ def test_compose_renders_the_override_without_a_build_key(tmp_path: Path) -> Non
             "@sha256:" in services[name]["image"]
             and ":sha-" not in services[name]["image"]
         )
+
+
+def test_stack_sh_smoke_prepends_to_a_caller_pythonpath_instead_of_replacing_it() -> (
+    None
+):
+    """The first shared-host run failed because a set PYTHONPATH hid the CI plugin path."""
+    script = (REPO / "infra/compose/stack.sh").read_text("utf-8")
+    assert 'PYTHONPATH="ci:ci/scripts${PYTHONPATH:+:${PYTHONPATH}}"' in script
+    assert 'PYTHONPATH="${PYTHONPATH:-ci:ci/scripts}"' not in script

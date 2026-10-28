@@ -1,0 +1,2 @@
+CONTAINER               REPOSITORY            TAG                 PLATFORM            IMAGE ID            SIZE                CREATED
+cap-platform-mlflow-1   cap-platform/mlflow   3.16.1-cap1         linux/amd64         adcf1fc68f19        1.35GB              21 hours ago
