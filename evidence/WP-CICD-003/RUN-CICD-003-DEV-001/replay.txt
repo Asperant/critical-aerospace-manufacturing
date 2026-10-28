@@ -1,0 +1,2 @@
+PASSED database already at 0007_lot_lineage; nothing to apply
+warning: `VIRTUAL_ENV=<home>/wt-cicd003/ci/.venv` does not match the project environment path `ci/.venv` and will be ignored; use `--active` to target the active environment instead

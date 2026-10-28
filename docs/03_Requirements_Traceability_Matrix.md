@@ -6982,10 +6982,10 @@ NFR-DEP-004:
   REALIZED_BY: {surface: "migration stage of the deploy path with pre- and post-checks, an inspectable status surface and halt semantics", deployable: "deploy command", ref: "tools/release/src/cap_release/migrations.py; tools/release/src/cap_release/deploy.py; release/images.json; release/README.md"}
   MEASUREMENT: {metric: "release-required migrations executed outside versioned automated tooling", threshold: "= 0; status inspectable", workload: "release deployments", hardware: "N/A (not hardware-bound)", observed: null}
   VERIFIED_BY: [TEST-DEP-MIGRATION, TEST-CICD-003-001, TEST-CICD-003-002]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-CICD-003-DEV-001]  # DEV run on the shared host against a disposable PostgreSQL; INTEGRATION acceptance (A1) pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
   note: "a release binds the newest version of each declared migration set and the deploy command migrates through the Core tooling; the measurement over release deployments (observed) is not taken, so observed stays null; no application image carries Core yet."
 NFR-DEP-005:
   meta: {class: H0, owner: Yavuz, anchor: "01 Item82 NFR-DEP-005 L172308"}

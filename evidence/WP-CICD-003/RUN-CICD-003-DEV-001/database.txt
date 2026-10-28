@@ -1,0 +1,1 @@
+postgres:18-alpine on loopback, roles cap_migration and cap_runtime
