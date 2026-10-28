@@ -98,6 +98,17 @@
 > recorded under `evidence/WP-GOV-002/`. INSP-GOV-ACCEPT belongs to the
 > EVALUATION gate (WP-GOV-003); evidence stays EVIDENCE_PENDING.
 
+> **WP-CICD-002 implementation delta (2026-10-28).** FR-PLAT-004, FR-PLAT-005 and
+> NFR-DEP-003 now reference the release path: an image registry, a `release`
+> workflow that publishes digest-identified images with SBOM and provenance
+> attestations, ReleaseManifest and DeploymentRecord schemas (OD-CICD-01 decided as
+> JSON Schema, `release/README.md`) and `python -m cap_release deploy`, which refuses a
+> release that is not main-derived, has no green `ci-gate`, has a digest absent from
+> the registry or runs on a host source tree with any change (§19.13). No application
+> image exists yet, deployment from GitHub Actions needs a self-hosted runner, and the
+> shared-host run follows the first publish; evidence stays EVIDENCE_PENDING and
+> `observed` stays null.
+
 > **WP-PLAT-003 implementation delta (2026-10-27).** FR-PLAT-001 now also
 > references Temporal on PostgreSQL with the platform namespace, Qdrant with a
 > per-host API key, MLflow (metadata in PostgreSQL, artifacts in SeaweedFS), the
@@ -5565,25 +5576,27 @@ FR-PLAT-004:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-PLAT-004 L170082"}
   DERIVED_FROM: [ITEM-42, CD-INV-01, PLAT-INV-01, INTEG-INV-03]
   ALLOCATED_TO: [ARCH-PLAT-CICD, ARCH-PLAT-RELEASE]
-  REALIZED_BY: {surface: "main-derived immutable artifact promotion to INTEGRATION", deployable: "GitHub Actions + GHCR + deploy workflow", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "main-derived immutable artifact promotion to INTEGRATION", deployable: "GitHub Actions + GHCR + deploy command", ref: ".github/workflows/release.yml; release/images.json; tools/release/src/cap_release/deploy.py; infra/compose/stack.sh"}
   GOVERNED_BY: ["deployment workflow"]
-  VERIFIED_BY: [TEST-PLAT-CD, INSP-DEP-HOST]
+  VERIFIED_BY: [TEST-PLAT-CD, INSP-DEP-HOST, TEST-CICD-002-001, TEST-CICD-002-003, TEST-CICD-002-004]
   MITIGATES: [PLAT-R08]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: []  # NOT_YET_EXECUTED: the shared-host run follows the first publish from main
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L4, env: "INTEGRATION + EVALUATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: NOT_YET_EXECUTED}
+  note: "build-and-publish workflow, digest-pinned deploy command and host hook implemented (WP-CICD-002); deployment from GitHub Actions needs a self-hosted runner (DN-PLAT-RUNNER), so the deploy runs as a command on the host; no application image exists yet."
 FR-PLAT-005:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-PLAT-005 L170083"}
   DERIVED_FROM: [ITEM-42, CD-INV-03, PLAT-INV-10]
   ALLOCATED_TO: [ARCH-PLAT-RELEASE]
-  REALIZED_BY: {surface: "ReleaseManifest/DeploymentRecord emission (format OD-CICD-01)", deployable: "deploy workflow", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "ReleaseManifest/DeploymentRecord emission (format OD-CICD-01)", deployable: "release workflow and deploy command", ref: "tools/release/src/cap_release/manifest.py; tools/release/src/cap_release/record.py; tools/release/src/cap_release/schemas/; release/README.md"}
   USES_DATA: ["ReleaseManifest", "DeploymentRecord"]
-  VERIFIED_BY: [TEST-PLAT-CD, INSP-DEP-HOST]
+  VERIFIED_BY: [TEST-PLAT-CD, INSP-DEP-HOST, TEST-CICD-002-002, TEST-CICD-002-003]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L4, env: "INTEGRATION + EVALUATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: NOT_YET_EXECUTED}
+  note: "OD-CICD-01 is decided as JSON documents validated by JSON Schema (release/README.md); an ADR follows when the ADR index can admit it (WP-DOC-002). Identities without a producer are NOT_YET_PRODUCED."
 FR-PLAT-006:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-PLAT-006 L170084"}
   DERIVED_FROM: [ITEM-47, ITEM-61, TECH-INV-14]
@@ -6944,13 +6957,15 @@ NFR-DEP-003:
   meta: {class: H0, owner: Yavuz, anchor: "01 Item82 NFR-DEP-003 L172286"}
   DERIVED_FROM: [ITEM-42, INTEG-INV-02, CD-INV-17]
   ALLOCATED_TO: [ARCH-PLAT-CICD, ARCH-PLAT-RELEASE]
+  REALIZED_BY: {surface: "host-source preflight of the deploy command: zero changes in the host source tree and a checkout equal to the release commit, recorded in every DeploymentRecord", deployable: "deploy command", ref: "tools/release/src/cap_release/deploy.py; tools/release/src/cap_release/record.py"}
   MEASUREMENT: {metric: "manual source-code patches on target host for formal deployment", threshold: "= 0", workload: "formal deployments", hardware: "N/A (not hardware-bound)", observed: null}
-  VERIFIED_BY: [INSP-DEP-HOST, TEST-PLAT-CD]
+  VERIFIED_BY: [INSP-DEP-HOST, TEST-PLAT-CD, TEST-CICD-002-003]
   MITIGATES: [PLAT-R08]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L4, env: "INTEGRATION + EVALUATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: NOT_YET_EXECUTED}
+  note: "enforced and recorded per deployment; the measurement over formal deployments (observed) is not taken, so observed stays null."
 NFR-DEP-004:
   meta: {class: A1, owner: Yavuz, anchor: "01 Item82 NFR-DEP-004 L172299"}
   DERIVED_FROM: [ITEM-35, ITEM-42, CD-INV-08, LOCAL-INV-12]
@@ -7480,6 +7495,22 @@ WP-TEST-007 adds rule identity, reporting and the exception process to it. The
 requirement realization of FR-EVT-007 stays with its owner's record. TEST-SEC-SVCID
 (runtime service identity, WP-SEC-002) is not executed. EvidenceState is
 EVIDENCE_PENDING.
+
+### 19.13 WP-CICD-002 concrete implementation and verification assets
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-CICD-002-001 (`tools/release/tests/test_registry.py`: the image registry, an unlisted Dockerfile, broken entries, fail-closed reading) | TEST-PLAT-CD | FR-PLAT-004 |
+| TEST-CICD-002-002 (`tools/release/tests/test_manifest.py`: the ReleaseManifest identities, digest pinning, no tag identity, no secret plaintext, NOT_YET_PRODUCED, fingerprint) | TEST-PLAT-CD | FR-PLAT-005 |
+| TEST-CICD-002-003 (`tools/release/tests/test_record.py`, `test_deploy.py`: every preflight refusal, stage failures, rollback, a record that cannot over-claim, zero host patches) | TEST-PLAT-CD, INSP-DEP-HOST instrumentation | FR-PLAT-004, FR-PLAT-005, NFR-DEP-003 |
+| TEST-CICD-002-004 (`tools/release/tests/test_release_workflow.py`: publish only from main, narrow permissions, no secret beyond the job token, SBOM and provenance, the Compose override without a build key) | TEST-PLAT-CD | FR-PLAT-004 |
+
+Pipeline: `release/images.json`, `.github/workflows/release.yml`,
+`tools/release` (`python -m cap_release`), `release/README.md`. CI: the "Release
+tooling lint and tests (WP-CICD-002)" step of t1-unit and the `release` workflow
+(dry-run build on pull requests, publish and ReleaseManifest on main). The shared-host
+deployment, TEST-PLAT-CD at INTEGRATION and INSP-DEP-HOST remain open.
+EvidenceState is EVIDENCE_PENDING.
 
 ## 20. Rejected Alternatives
 
