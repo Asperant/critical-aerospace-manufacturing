@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: badde265bcc9ae5e01d16ade443760fe74891bb616921a1d7751d1962ee0726b
+  sha256: a7cfc5faa882d062de1dc51eb6fe72ac155cce20b7ec34b4d4ad8101f2b2087f
 requirements:
   FR-GOV-001:
     meta:
@@ -98,7 +98,7 @@ requirements:
     realization:
       surface: VERIFIED_BY edge completeness rule in trace linter (TL-08, M5 gate)
       deployable: trace registry
-      ref: traceability/trace_edges.yaml; tools/trace/src/cap_trace/rules.py
+      ref: traceability/trace_edges.yaml; tools/trace/src/cap_trace/rules.py; ci/tests/test_required_gates.py
   FR-GOV-006:
     meta:
       class: F1
@@ -2881,11 +2881,11 @@ requirements:
       coverage: EVIDENCE_PENDING
       planning: EVIDENCE_PENDING
       evidence: EVIDENCE_PENDING
-    note: infrastructure layer composed; application deployables join the profiles when they are runnable services (manufacturing-core has no service process yet; operations-bff needs an identity client and edge topology).
+    note: infrastructure, workflow (Temporal), retrieval (Qdrant) and experiment-tracking (MLflow) runtimes composed in Sequence I order with a 05 readiness checklist (WP-PLAT-003); application deployables join the profiles when they are runnable services (manufacturing-core has no service process yet; operations-bff needs an identity client and edge topology).
     realization:
       surface: Compose-based INTEGRATION composition of 9 deployables + infrastructure (backfill ADR 11)
       deployable: shared Linux host runtime
-      ref: infra/compose/compose.yaml; infra/compose/stack.sh
+      ref: infra/compose/compose.yaml; infra/compose/stack.sh; infra/compose/readiness.json; infra/compose/mlflow/Dockerfile
   FR-PLAT-002:
     meta:
       class: F1
@@ -5302,15 +5302,19 @@ requirements:
       env: INTEGRATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
     measurement:
       metric: mandatory runtime deploys on documented x86-64 Linux + Docker/Compose without VM/K8s
       threshold: PASS
       workload: mandatory Integration profile
       hardware: 'HP: x86-64 Linux host (distro OD-PLAT-01)'
       observed: null
+    realization:
+      surface: Docker Compose runtime on x86-64 Linux, no VM or Kubernetes
+      deployable: shared Linux host runtime
+      ref: infra/compose/compose.yaml; infra/compose/stack.sh
   NFR-DEP-002:
     meta:
       class: S2
@@ -5931,9 +5935,11 @@ edges:
 - {"from": "FR-GOV-005", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-CICD", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "REALIZED_BY", "to": "repo:traceability/trace_edges.yaml", "applicability": "RECORDED"}
 - {"from": "FR-GOV-005", "relation": "REALIZED_BY", "to": "repo:tools/trace/src/cap_trace/rules.py", "applicability": "RECORDED"}
+- {"from": "FR-GOV-005", "relation": "REALIZED_BY", "to": "repo:ci/tests/test_required_gates.py", "applicability": "RECORDED"}
 - {"from": "FR-GOV-005", "relation": "USES_DATA", "to": "trace_edges", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "VERIFIED_BY", "to": "TEST-GOV-TRACELINT", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "VERIFIED_BY", "to": "TEST-GOV-002-003", "applicability": "PLANNED"}
+- {"from": "FR-GOV-005", "relation": "VERIFIED_BY", "to": "TEST-TEST-007-002", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "EXECUTED_AS", "to": "RUN-GOV-002-DEV-001", "applicability": "RECORDED"}
 - {"from": "FR-GOV-006", "relation": "DERIVED_FROM", "to": "ITEM-81", "applicability": "PLANNED"}
 - {"from": "FR-GOV-006", "relation": "DERIVED_FROM", "to": "ITEM-83", "applicability": "PLANNED"}
@@ -6533,6 +6539,7 @@ edges:
 - {"from": "FR-EVT-007", "relation": "GOVERNED_BY", "to": "ArchitectureRule set", "applicability": "PLANNED"}
 - {"from": "FR-EVT-007", "relation": "VERIFIED_BY", "to": "TEST-ARCH-BOUNDARY", "applicability": "PLANNED"}
 - {"from": "FR-EVT-007", "relation": "VERIFIED_BY", "to": "TEST-SEC-SVCID", "applicability": "PLANNED"}
+- {"from": "FR-EVT-007", "relation": "VERIFIED_BY", "to": "TEST-TEST-007-001", "applicability": "PLANNED"}
 - {"from": "FR-EVT-007", "relation": "MITIGATES", "to": "ARCH-R05", "applicability": "PLANNED"}
 - {"from": "FR-EVT-007", "relation": "MITIGATES", "to": "ARCH-R07", "applicability": "PLANNED"}
 - {"from": "FR-EVT-008", "relation": "DERIVED_FROM", "to": "ITEM-22", "applicability": "PLANNED"}
@@ -7653,6 +7660,8 @@ edges:
 - {"from": "FR-PLAT-001", "relation": "DECIDED_BY", "to": "ADR-0011", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-001", "relation": "REALIZED_BY", "to": "repo:infra/compose/compose.yaml", "applicability": "RECORDED"}
 - {"from": "FR-PLAT-001", "relation": "REALIZED_BY", "to": "repo:infra/compose/stack.sh", "applicability": "RECORDED"}
+- {"from": "FR-PLAT-001", "relation": "REALIZED_BY", "to": "repo:infra/compose/readiness.json", "applicability": "RECORDED"}
+- {"from": "FR-PLAT-001", "relation": "REALIZED_BY", "to": "repo:infra/compose/mlflow/Dockerfile", "applicability": "RECORDED"}
 - {"from": "FR-PLAT-001", "relation": "GOVERNED_BY", "to": "EnvironmentManifest", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-001", "relation": "EXERCISED_IN", "to": "E2E-01", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-001", "relation": "EXERCISED_IN", "to": "AV-SCEN-12", "applicability": "PLANNED"}
@@ -7660,6 +7669,7 @@ edges:
 - {"from": "FR-PLAT-001", "relation": "VERIFIED_BY", "to": "TEST-DEP-PLATFORM", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-001", "relation": "VERIFIED_BY", "to": "BENCH-E2E-001", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-001", "relation": "EXECUTED_AS", "to": "RUN-PLAT-001-DEV-001", "applicability": "RECORDED"}
+- {"from": "FR-PLAT-001", "relation": "EXECUTED_AS", "to": "RUN-PLAT-003-DEV-001", "applicability": "RECORDED"}
 - {"from": "FR-PLAT-002", "relation": "DERIVED_FROM", "to": "ITEM-38", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-002", "relation": "DERIVED_FROM", "to": "DX-INV-07", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-002", "relation": "DERIVED_FROM", "to": "DX-INV-08", "applicability": "PLANNED"}
@@ -8647,7 +8657,10 @@ edges:
 - {"from": "NFR-DEP-001", "relation": "DERIVED_FROM", "to": "ITEM-61", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-001", "relation": "DERIVED_FROM", "to": "NFR-INV-44", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-001", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-COMPOSE", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-001", "relation": "REALIZED_BY", "to": "repo:infra/compose/compose.yaml", "applicability": "RECORDED"}
+- {"from": "NFR-DEP-001", "relation": "REALIZED_BY", "to": "repo:infra/compose/stack.sh", "applicability": "RECORDED"}
 - {"from": "NFR-DEP-001", "relation": "VERIFIED_BY", "to": "TEST-DEP-PLATFORM", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-001", "relation": "EXECUTED_AS", "to": "RUN-PLAT-003-DEV-001", "applicability": "RECORDED"}
 - {"from": "NFR-DEP-002", "relation": "DERIVED_FROM", "to": "ITEM-39", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-002", "relation": "DERIVED_FROM", "to": "ITEM-42", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-002", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-COMPOSE", "applicability": "PLANNED"}
@@ -8656,6 +8669,7 @@ edges:
 - {"from": "NFR-DEP-002", "relation": "REALIZED_BY", "to": "repo:evidence/WP-PLAT-001/collect_run.py", "applicability": "RECORDED"}
 - {"from": "NFR-DEP-002", "relation": "VERIFIED_BY", "to": "BENCH-DEP-STARTUP", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-002", "relation": "EXECUTED_AS", "to": "RUN-PLAT-001-DEV-001", "applicability": "RECORDED"}
+- {"from": "NFR-DEP-002", "relation": "EXECUTED_AS", "to": "RUN-PLAT-003-DEV-001", "applicability": "RECORDED"}
 - {"from": "NFR-DEP-003", "relation": "DERIVED_FROM", "to": "ITEM-42", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-003", "relation": "DERIVED_FROM", "to": "INTEG-INV-02", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-003", "relation": "DERIVED_FROM", "to": "CD-INV-17", "applicability": "PLANNED"}

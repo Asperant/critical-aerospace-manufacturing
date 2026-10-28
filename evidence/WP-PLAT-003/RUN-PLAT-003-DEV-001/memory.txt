@@ -1,0 +1,11 @@
+cap-platform-temporal-namespace-1 9.742MiB / 128MiB 0.00%
+cap-platform-mlflow-1 676.3MiB / 768MiB 0.16%
+cap-platform-temporal-1 81.8MiB / 768MiB 0.65%
+cap-platform-seaweedfs-1 101.8MiB / 512MiB 0.07%
+cap-platform-postgres-1 186.2MiB / 1GiB 0.04%
+cap-platform-qdrant-1 57.86MiB / 512MiB 2.55%
+cap-platform-nats-1 17.7MiB / 256MiB 0.02%
+cap-platform-keycloak-1 734.6MiB / 1GiB 0.13%
+cap-platform-valkey-1 16.98MiB / 256MiB 0.13%
+cap-observability-otel-collector-1 111.8MiB / 256MiB 0.02%
+cap-observability-openobserve-1 216.9MiB / 1GiB 0.10%
