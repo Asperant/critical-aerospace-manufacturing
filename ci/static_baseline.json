@@ -6,8 +6,8 @@
     "pyright": "pyright 1.1.389"
   },
   "totals": {
-    "ruff": 294,
-    "pyright": 186,
+    "ruff": 287,
+    "pyright": 185,
     "unformatted_files": 53
   },
   "ruff": {
@@ -47,8 +47,8 @@
       "I001": 1
     },
     "tools/host/plane-transition/test_transition.py": {
-      "B023": 28,
-      "E701": 74,
+      "B023": 25,
+      "E701": 70,
       "E702": 23,
       "F841": 1,
       "I001": 1
@@ -219,7 +219,7 @@
     "tools/host/plane-transition/transition.py": {
       "reportArgumentType": 1,
       "reportOptionalIterable": 1,
-      "reportOptionalMemberAccess": 41,
+      "reportOptionalMemberAccess": 40,
       "reportOptionalSubscript": 4
     },
     "tools/projectctl/src/projectctl/cli.py": {

@@ -1,0 +1,71 @@
+{
+  "kind": "NEW local verification run; not CI, INTEGRATION or EVALUATION evidence",
+  "source": {
+    "head_commit": "e1752d90febabc5db09ba61fd6380a2951462bf6",
+    "head_tree": "9e6e2590bd2e7644dfdb225126cd5dbac07ff449",
+    "branch": "control/CTRL-HOST-031-start-transition-decoupling",
+    "tree_clean": false,
+    "manifest_excludes": [
+      "evidence/CTRL-HOST-031/runs/",
+      "evidence/CTRL-HOST-031/README.md"
+    ],
+    "changed_or_untracked_files_sha256": {
+      "ci/static_baseline.json": "6806881cd81007ee6a05120bddb24b667b619c8b35245877370faa89c3c96931",
+      "evidence/CTRL-HOST-031/capture_run.py": "340b4bc7e87d7e14334aa0919cdbbc75a506cd4cd74f6fe7a95769d4a2d15d05",
+      "evidence/CTRL-HOST-031/repro_original.py": "2866506eeb208306340019304684acccd31f71cbe24b63ebdded6da0fe63b8cf",
+      "evidence/CTRL-HOST-031/tests/test_capture_run.py": "b712b1ababe0bea3860a9e968894c7bd09d9d7b1e0eab1b31c28216ac03d1e4e",
+      "tools/host/plane-transition/README.md": "91cd87914dff107d773ac625bda685faf21ef0a9200429e6c43505fc1896996a",
+      "tools/host/plane-transition/test_chg054_start_transitions.py": "ee582ef16087ccf42c7c5ebde2afbc81ebe5b61323b729e817f3835b991b149a",
+      "tools/host/plane-transition/test_preparation.py": "10fdc8daad9280ba560353b90441fff69706785ba5da300548343168dbcbed2e",
+      "tools/host/plane-transition/test_transition.py": "39e87cdb5dc5a21f1fc238c810a820e2419f4017f849519be57efa5d6df22f49",
+      "tools/host/plane-transition/transition.py": "94363b3b7f83ae1d8071ea9d348e8715bdedb858a0e51fe0c5aab575a7f3deb3"
+    },
+    "lock_sha256": "430cd33dfe6e6f3ca96dccdf831a0624b255843a16d9f6cf7856f443f3ab5c84"
+  },
+  "runtime": {
+    "python": "3.11.16",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+    "machine": "x86_64",
+    "uv": "uv 0.12.13 (x86_64-unknown-linux-gnu)",
+    "pythonpath": "ci:ci/scripts",
+    "packages": {
+      "pytest": "8.3.3",
+      "ruff": "0.7.4",
+      "pyright": "1.1.389"
+    }
+  },
+  "hardware": {
+    "cpu_model": "Intel(R) Core(TM) i7-9700K CPU @ 3.60GHz",
+    "logical_cpus": 8,
+    "mem_total_mib": 30978,
+    "gpu": null
+  },
+  "host_at_start": {
+    "recorded_utc": "2026-10-28T15:24:27+00:00",
+    "loadavg": [
+      1.626953125,
+      1.11181640625,
+      1.73193359375
+    ]
+  },
+  "host_at_finish": {
+    "recorded_utc": "2026-10-28T15:24:56+00:00",
+    "loadavg": [
+      1.630859375,
+      1.16455078125,
+      1.728515625
+    ]
+  },
+  "workload": {
+    "scenario": "offline fixture harness of test_transition.py (fake Plane and GitHub objects); no credential, network, Plane or GitHub call",
+    "matrix": "the corrected-source run and the original-source reproduction are listed in results.json; no seeds are used",
+    "shared_host": true,
+    "containers_started": false,
+    "commands_sequential": true
+  },
+  "unavailable": [
+    "governed Release identity (ReleaseManifest)",
+    "governed Environment ID and image digest",
+    "governed Hardware ID (HardwareProfile)"
+  ]
+}

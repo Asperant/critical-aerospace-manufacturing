@@ -99,6 +99,7 @@ class FakeGH:
                        'status':'in_progress' if target=='VALIDATING' else 'completed','conclusion':'success','updated_at':'2026-01-02T00:00:00+00:00'}
         self.check_data=([{'name':'projectctl','status':'completed','conclusion':'success'}],[])
         self.artifacts=[]
+        self.known_commits={HEAD,MERGE}
         self.missing_artifact=False
         self.documents={}
         self.repo_files={}
@@ -113,7 +114,14 @@ class FakeGH:
     def main_sha(self): return HEAD
     def pr(self,number): return deepcopy(self.pr_data)
     def fresh_pr(self,number): return deepcopy(self.pr_data)
-    def comment(self,number): return deepcopy(self.comments[number])
+    def comment(self,number):
+        if number not in self.comments:
+            raise t.Denied('GITHUB_READ_UNAVAILABLE')
+        return deepcopy(self.comments[number])
+    def commit(self,sha):
+        if sha not in self.known_commits:
+            raise t.Denied('GITHUB_READ_UNAVAILABLE')
+        return {'sha':sha}
     def run(self,number): return deepcopy(self.run_data)
     def fresh_run(self,number): return deepcopy(self.run_data)
     def checks(self,sha): return deepcopy(self.check_data)
@@ -183,20 +191,13 @@ def run_case(profile='asrin',source='READY',target='IN_PROGRESS',mutate=None):
 
 
 class TransitionTests(unittest.TestCase):
-    def test_ready_transition_consumes_check_ready_canonical_assessment(self):
-        def canonical_ready(policy, plane, gh, envelope):
-            wp=plane.item['external_id']
-            rows='\n'.join(f'| DOR-TASK-{number:02d} | PASS | Canonical scope evidence. |'
-                           for number in range(1,12))
-            rows+='\n| DOR-WP-01 | PASS | Canonical scope evidence. |'
-            gh.repo_files[f'evidence/{wp}/READY.md']=(
-                f'Accountable owner: Asrın Dündar (Asperant)\n\n{rows}\n'.encode(),
-                'c'*40)
+    def test_ready_records_canonical_start_eligibility_without_ready_md(self):
+        def only_pr(policy, plane, gh, envelope):
             envelope['evidence_refs']=['pr:1']
-        result,plane,_,gh=run_case(source='BACKLOG',target='READY',mutate=canonical_ready)
+        result,plane,_,gh=run_case(source='BACKLOG',target='READY',mutate=only_pr)
         self.assertEqual(result['result'],'VERIFIED')
-        self.assertEqual(plane.item['state'],'READY')
-        self.assertIn(('repo:evidence/'+plane.item['external_id']+'/READY.md',HEAD),gh.artifacts)
+        self.assertEqual(plane.patches,[{'state':'READY'}])
+        self.assertEqual(gh.artifacts,[])  # no READY.md or other assessment file was read
 
     def automatic_fixture(self):
         wp,policy,plane,gh,envelope=fixture()
@@ -366,7 +367,10 @@ class TransitionTests(unittest.TestCase):
             with self.subTest(source=source,target=target):
                 result,plane,logs,gh=run_case(source=source,target=target)
                 self.assertEqual(result['result'],'VERIFIED')
-                if target in {'READY','DONE'}: self.assertTrue(gh.artifacts)
+                if target=='DONE':
+                    self.assertTrue(gh.artifacts)
+                if target=='READY':
+                    self.assertFalse(gh.artifacts)  # CHG-054: no READY.md or DoR read
 
     def test_mechanical_forward_transitions_need_no_confirmation_comment(self):
         for source,target in [('READY','IN_PROGRESS'),('IN_PROGRESS','IN_REVIEW'),
@@ -478,7 +482,7 @@ class TransitionTests(unittest.TestCase):
     def test_native_dependency_producer_assessment_without_policy_json(self):
         def native(policy,plane,gh,envelope):
             wp=plane.item['external_id']
-            policy['contexts'][wp]['dependency_edges']=[{'id':'DEP-001','predecessor':{'node':'DN-ONE'},
+            policy['contexts'][wp]['dependency_edges']=[{'id':'DEP-001','predecessor':{'node':'DN-ONE'},'status':'READY',
                 'semantics':{'strength':'HARD','blocking_stage':'START','required_readiness':'CONTRACT_READY'}}]
             policy['node_owners']['DN-ONE']='selman';policy['node_levels']['DN-ONE']=['DEFINED','CONTRACT_READY']
             gh.comments[3].update(body=wp+' '+HEAD+'\n| DEP-001 | CONTRACT_READY | Command fields [contract](contracts/command.json) |',
@@ -507,16 +511,29 @@ class TransitionTests(unittest.TestCase):
                 self.assertEqual(result['result'],'VERIFIED')
 
     def test_semantic_native_evidence_wrong_author_revision_missing_or_ambiguous_denied(self):
-        for what in ['author','revision','coverage','duplicate']:
-            def bad(policy,plane,gh,envelope):
+        # DONE still consumes native owner assessments (READY no longer does, CHG-054).
+        for what in ['none','author','revision','coverage','duplicate']:
+            def mutate(policy,plane,gh,envelope,what=what):
                 wp=plane.item['external_id']
-                text=wp+' '+(HEAD if what!='revision' else 'f'*40)+'\n| DOR-TASK-01 | PASS | Real evidence repo:evidence/result.md |'
-                if what=='duplicate': text+='\n| DOR-TASK-01 | PASS | Conflicting second assessment repo:evidence/other.md |'
-                gh.comments[2].update(body=text,issue_url='https://api.github.com/'+t.REPO+'/issues/1')
-                if what=='author': gh.comments[2]['user']['login']='Ejlonn'
-                envelope['evidence_refs']=['pr:1','comment:2']
+                for comment in gh.comments.values():
+                    old=json.loads(comment['body'])['cap_plane_transition']
+                    rows=['- [x] '+identity+': '+check['reason']+' '+check['evidence_refs'][0]
+                          for identity,check in old['checks'].items()]
+                    if what=='coverage':
+                        rows=rows[:1]
+                    if what=='duplicate':
+                        rows.append(rows[0].replace('Observed','Conflicting'))
+                    sha='f'*40 if what=='revision' else MERGE
+                    comment['body']=wp+' '+sha+'\n'+'\n'.join(rows)
+                    comment['issue_url']='https://api.github.com/'+t.REPO+'/issues/1'
+                if what=='author':
+                    gh.comments[2]['user']['login']='Ejlonn'
+            if what=='none':
+                result,*_=run_case(source='VALIDATING',target='DONE',mutate=mutate)
+                self.assertEqual(result['result'],'VERIFIED')  # positive control
+                continue
             with self.subTest(what=what),self.assertRaises(t.Denied):
-                run_case(source='BACKLOG',target='READY',mutate=bad)
+                run_case(source='VALIDATING',target='DONE',mutate=mutate)
 
     def test_review_risk_metadata_is_not_a_workflow_input(self):
         for risk in ['CR-0','CR-1','CR-2','CR-3','CR-4','UNKNOWN ADVISORY CLASSIFICATION']:
@@ -618,8 +635,8 @@ class TransitionTests(unittest.TestCase):
         with self.assertRaises(t.Denied): run_case(source='BACKLOG',target='CANCELED',mutate=not_owner)
 
     def test_no_gate_pass_from_caller_boolean_or_missing_artifact(self):
-        def absent(policy,plane,gh,envelope): envelope['evidence_refs']=['pr:1']
-        with self.assertRaises(t.Denied): run_case(source='BACKLOG',target='READY',mutate=absent)
+        def fabricated(policy,plane,gh,envelope): envelope['evidence_refs']=['pr:1','comment:99']
+        with self.assertRaises(t.Denied): run_case(source='BACKLOG',target='READY',mutate=fabricated)
         def missing(policy,plane,gh,envelope): gh.missing_artifact=True
         with self.assertRaises(t.Denied): run_case(source='VALIDATING',target='DONE',mutate=missing)
         def na(policy,plane,gh,envelope):
@@ -985,9 +1002,7 @@ class TransitionTests(unittest.TestCase):
         result,*_=run_case(mutate=actual_small_band)
         self.assertEqual(result['result'],'VERIFIED')
 
-    def test_unscheduled_missing_ci_and_missing_actual_done_evidence_fail_closed(self):
-        def unscheduled(policy,plane,gh,envelope): policy['contexts'][plane.item['external_id']]['cycle_ids']=[]
-        with self.assertRaises(t.Denied): run_case(source='BACKLOG',target='READY',mutate=unscheduled)
+    def test_missing_ci_and_missing_actual_done_evidence_fail_closed(self):
         def missing_ci(policy,plane,gh,envelope): gh.check_data=([],[])
         with self.assertRaises(t.Denied): run_case(source='IN_PROGRESS',target='IN_REVIEW',mutate=missing_ci)
         def no_assessment(policy,plane,gh,envelope): envelope['evidence_refs']=['pr:1','run:4']

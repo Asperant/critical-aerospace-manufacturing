@@ -1,0 +1,213 @@
+[
+  {
+    "id": "focused-transition-artifact-chg054",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/ctrl31-venv/bin/python3",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "tools/host/plane-transition/test_transition.py",
+      "tools/host/plane-transition/test_artifact_refs.py",
+      "tools/host/plane-transition/test_chg054_start_transitions.py"
+    ],
+    "started_utc": "2026-10-28T18:41:44+00:00",
+    "finished_utc": "2026-10-28T18:41:45+00:00",
+    "exit_code": 0,
+    "stdout_file": "focused-transition-artifact-chg054.stdout",
+    "stdout_bytes": 180,
+    "stdout_sha256": "84c03494c0e85a136b9df6cbcf9ab2400f4d19094f6a32b18cc56ecf742ea293",
+    "stderr_file": "focused-transition-artifact-chg054.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "102 passed in 0.29s"
+  },
+  {
+    "id": "collector-tests",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/ctrl31-venv/bin/python3",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "pytest_quarantine",
+      "evidence/CTRL-HOST-031/tests"
+    ],
+    "started_utc": "2026-10-28T18:41:45+00:00",
+    "finished_utc": "2026-10-28T18:41:46+00:00",
+    "exit_code": 0,
+    "stdout_file": "collector-tests.stdout",
+    "stdout_bytes": 225,
+    "stdout_sha256": "762ccafa27771e41d9853e94b55a29941979415138f373d461570b48c6f8a35a",
+    "stderr_file": "collector-tests.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "6 passed in 1.37s"
+  },
+  {
+    "id": "focused-recovery-install",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/ctrl31-venv/bin/python3",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "tools/host/plane-transition/test_recovery.py",
+      "tools/host/plane-transition/test_install_reconcile.py"
+    ],
+    "started_utc": "2026-10-28T18:41:46+00:00",
+    "finished_utc": "2026-10-28T18:41:57+00:00",
+    "exit_code": 0,
+    "stdout_file": "focused-recovery-install.stdout",
+    "stdout_bytes": 100,
+    "stdout_sha256": "0335f25a7468ff30e23e0afbb44da32fd64aba3ddb888f0c973be754e96a3af3",
+    "stderr_file": "focused-recovery-install.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "19 passed in 10.27s"
+  },
+  {
+    "id": "ci-style-unittest-discover",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/ctrl31-venv/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/host/plane-transition",
+      "-p",
+      "test_*.py"
+    ],
+    "started_utc": "2026-10-28T18:41:57+00:00",
+    "finished_utc": "2026-10-28T18:42:08+00:00",
+    "exit_code": 0,
+    "stdout_file": "ci-style-unittest-discover.stdout",
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_file": "ci-style-unittest-discover.stderr",
+    "stderr_bytes": 407,
+    "stderr_sha256": "d60e9fe22bef2707f99d8e3571fad30dcbaa373a0e1157c4d3f4d52ab972d42f",
+    "display_result_line": ""
+  },
+  {
+    "id": "reproduce-on-original-source",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/ctrl31-venv/bin/python3",
+      "evidence/CTRL-HOST-031/repro_original.py"
+    ],
+    "started_utc": "2026-10-28T18:42:08+00:00",
+    "finished_utc": "2026-10-28T18:42:08+00:00",
+    "exit_code": 1,
+    "stdout_file": "reproduce-on-original-source.stdout",
+    "stdout_bytes": 12569,
+    "stdout_sha256": "b9fa135762cc4fb3cf07f657de86b919ebc8a5ca59ecfc09e2e6ac504b0184c6",
+    "stderr_file": "reproduce-on-original-source.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "7 failed, 11 passed in 0.39s"
+  },
+  {
+    "id": "ruff-check-new-and-evidence",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/ctrl31-venv/bin/python3",
+      "-m",
+      "ruff",
+      "check",
+      "tools/host/plane-transition/test_chg054_start_transitions.py",
+      "tools/host/plane-transition/test_preparation.py",
+      "evidence/CTRL-HOST-031/capture_run.py",
+      "evidence/CTRL-HOST-031/repro_original.py",
+      "evidence/CTRL-HOST-031/tests/test_capture_run.py"
+    ],
+    "started_utc": "2026-10-28T18:42:08+00:00",
+    "finished_utc": "2026-10-28T18:42:08+00:00",
+    "exit_code": 0,
+    "stdout_file": "ruff-check-new-and-evidence.stdout",
+    "stdout_bytes": 19,
+    "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "stderr_file": "ruff-check-new-and-evidence.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "All checks passed!"
+  },
+  {
+    "id": "ruff-format-new-and-evidence",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/ctrl31-venv/bin/python3",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "tools/host/plane-transition/test_chg054_start_transitions.py",
+      "tools/host/plane-transition/test_preparation.py",
+      "evidence/CTRL-HOST-031/capture_run.py",
+      "evidence/CTRL-HOST-031/repro_original.py",
+      "evidence/CTRL-HOST-031/tests/test_capture_run.py"
+    ],
+    "started_utc": "2026-10-28T18:42:08+00:00",
+    "finished_utc": "2026-10-28T18:42:08+00:00",
+    "exit_code": 0,
+    "stdout_file": "ruff-format-new-and-evidence.stdout",
+    "stdout_bytes": 26,
+    "stdout_sha256": "f114d83b30c5c657ee43a847a45bafccaea255d82673feb87c26d252c61e29c1",
+    "stderr_file": "ruff-format-new-and-evidence.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "5 files already formatted"
+  },
+  {
+    "id": "static-ratchet",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/ctrl31-venv/bin/python3",
+      "ci/scripts/static_ratchet.py",
+      "check"
+    ],
+    "started_utc": "2026-10-28T18:42:08+00:00",
+    "finished_utc": "2026-10-28T18:42:15+00:00",
+    "exit_code": 0,
+    "stdout_file": "static-ratchet.stdout",
+    "stdout_bytes": 149,
+    "stdout_sha256": "be15165780f46bf2c57dbb27a35c0d80ace402e021b9c3ed81af2246640583a0",
+    "stderr_file": "static-ratchet.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "PASS: no new static findings; baseline is tight."
+  },
+  {
+    "id": "check-test-strategy",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/ctrl31-venv/bin/python3",
+      "ci/scripts/check_test_strategy.py"
+    ],
+    "started_utc": "2026-10-28T18:42:15+00:00",
+    "finished_utc": "2026-10-28T18:42:16+00:00",
+    "exit_code": 0,
+    "stdout_file": "check-test-strategy.stdout",
+    "stdout_bytes": 71,
+    "stdout_sha256": "e011289ae7749900a06d0415f6c2a421b7d3851ce4ab78ba7af62626b1c1b277",
+    "stderr_file": "check-test-strategy.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "PASS: test strategy covers 153 test files in 29 suites; 0 violation(s)"
+  },
+  {
+    "id": "git-diff-check",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "started_utc": "2026-10-28T18:42:16+00:00",
+    "finished_utc": "2026-10-28T18:42:16+00:00",
+    "exit_code": 0,
+    "stdout_file": "git-diff-check.stdout",
+    "stdout_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_file": "git-diff-check.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": ""
+  }
+]

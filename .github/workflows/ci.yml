@@ -201,7 +201,9 @@ jobs:
       - name: Host Plane queue tests (offline)
         run: uv run --project ci --locked python -m unittest discover -s tools/host/plane-queue -p 'test_*.py'
       - name: Host Plane transition tests (offline)
-        run: uv run --project ci --locked python -m unittest discover -s tools/host/plane-transition -p 'test_*.py'
+        run: |
+          uv run --project ci --locked python -m unittest discover -s tools/host/plane-transition -p 'test_*.py'
+          uv run --project ci --locked python -m pytest evidence/CTRL-HOST-031/tests -q -p pytest_quarantine
       - name: Set up Node (version pinned in .node-version)
         uses: actions/setup-node@v4
         with:
