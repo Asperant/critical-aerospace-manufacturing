@@ -177,8 +177,8 @@ jobs:
           uv run --project ci --locked pyright --project packages/artifacts/pyrightconfig.json
       - name: Release tooling lint and tests (WP-CICD-002)
         run: |
-          PYTHONPATH=tools/release/src uv run --project ci --locked python -m cap_release registry-check
-          PYTHONPATH=tools/release/src:tools/release/tests uv run --project ci --locked python -m pytest -c tools/release/pyproject.toml tools/release/tests -q -p pytest_quarantine
+          PYTHONPATH="tools/release/src:${PYTHONPATH}" uv run --project ci --locked python -m cap_release registry-check
+          PYTHONPATH="tools/release/src:tools/release/tests:${PYTHONPATH}" uv run --project ci --locked python -m pytest -c tools/release/pyproject.toml tools/release/tests -q -p pytest_quarantine
           uv run --project ci --locked pyright --project tools/release/pyrightconfig.json
       - name: Trace registry lint and tests (WP-GOV-002)
         env:
