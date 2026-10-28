@@ -1104,7 +1104,7 @@ Operational guidance derived from the overlay: avoid unrelated architecture migr
 | DEP | Dependency (capability terms) | Required by | Required state | Delivering owner | Consuming capability (owner) | Status |
 |---|---|---|---|---|---|---|
 | DEP-018 | Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity) → Core minimal lifecycle implementation | S1–S2 | CONTRACT_READY | Asrın | DN-CORE-LIFECYCLE (Asrın) | READY |
-| DEP-038 | Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity) → Operational semantics (reentrant routing, queues, failures, maintenance, rework) | S2 | CONTRACT_READY | Asrın | DN-SIM-OPSEM (Batu) | NOT_READY |
+| DEP-038 | Core domain contracts (Lot, SerializedComponent, Route, Operation, Equipment refs, state/revision identity) → Operational semantics (reentrant routing, queues, failures, maintenance, rework) | S2 | CONTRACT_READY | Asrın | DN-SIM-OPSEM (Batu) | READY |
 | DEP-008 | Integration runtime (shared Linux host bootstrap) → NATS JetStream runtime | M1 (S2) | INTEGRATION_READY | Yavuz | DN-RT-NATS (Yavuz) | NOT_READY |
 | DEP-007 | Integration runtime (shared Linux host bootstrap) → PostgreSQL runtime | M1 (S2) | INTEGRATION_READY | Yavuz | DN-RT-PG (Yavuz) | NOT_READY |
 | DEP-065 | InspectionObservation contract + fixtures (EVT-InspectionObservation-v1, distinct from IC-VIS-002) → Structured evidence-grounded RCA on real operational evidence | E2E-01 readiness (end S4) | CONTRACT_READY | Selman | DN-AI-RCA (Asrın) | NOT_READY |
@@ -1742,10 +1742,10 @@ DEP-038:
   need_by: "S2"   # sprint 2
   fallback: F1
   unblock_evidence: "contract merged + contract tests green + example fixture published (reviewed by Batu)"
-  precise_requirement: "reentrant lifecycle, hold/rework semantics"
+  precise_requirement: "The Core lot operational-semantics v1 contract shall publish a versioned schema with normal re-entrant/rework and active-hold fixtures covering distinct re-entrant route visits and execution cycle, independent retained material-hold state that blocks dispatch, and directive-linked append-only rework history, with green producer contract tests bound to the merged Core guards."
   risk_class: DR-1
   source: "Item 66 #40, #48, #116"
-  status: NOT_READY
+  status: READY
 DEP-039:
   predecessor: {node: DN-CORE-TRANSITIONS, owner: "Asrın"}
   successor: {node: DN-SIM-OPSEM, owner: "Batu"}
@@ -3813,7 +3813,7 @@ For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §1
 | DEP-033 | DN-TWIN-SKELETON at INTEGRATION | DN-RT-PG: PostgreSQL runtime; INTEGRATION_READY; `twin` schema migrated | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-034 | DN-TWIN-PROJ at START | DN-TWIN-SKELETON: Twin skeleton (projector + query API); COMPONENT_READY; merged current-main projector/query skeleton with explicit scope, idempotency, gap rejection and green focused tests | Edge-specific predicate bound by CHG-066; event-spine, PostgreSQL and later Twin projection semantics remain separate. |
 | DEP-036 | DN-TWIN-VERIFY at INTEGRATION | DN-TWIN-PROJ: Meaningful Twin projection (revision/freshness/epistemic/STALE); INTEGRATION_READY; Twin revision semantics INTEGRATION_READY | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
-| DEP-037 | DN-SIM-OPSEM at START | DN-SIM-KERNEL: DES kernel (event queue, clock, named RNG); COMPONENT_READY; kernel tests + deterministic replay green | Edge-specific predicate bound by CHG-078 (APPROVED_WITH_CONDITIONS, UNDER_REVIEW) to the merged kernel and replay APIs named in the precise requirement. The predicate text is unchanged. Edge status READY records only the kernel START fact, bound to the owner-adopted assessment in evidence/WP-SIM-003/DEP-037-START-READINESS.md. DEP-038 and DEP-039 are separate obligations. |
+| DEP-037 | DN-SIM-OPSEM at START | DN-SIM-KERNEL: DES kernel (event queue, clock, named RNG); COMPONENT_READY; kernel tests + deterministic replay green | Edge-specific predicate bound by CHG-079 (APPROVED_WITH_CONDITIONS, UNDER_REVIEW) to the merged kernel and replay APIs named in the precise requirement. The predicate text is unchanged. Edge status READY records only the kernel START fact, bound to the owner-adopted assessment in evidence/WP-SIM-003/DEP-037-START-READINESS.md. DEP-038 and DEP-039 are separate obligations. |
 | DEP-040 | DN-SIM-COREINT at INTEGRATION | DN-SIM-OPSEM: Operational semantics (reentrant routing, queues, failures, maintenance, rework); COMPONENT_READY; reentrant world runs end-to-end locally | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-041 | DN-SIM-COREINT at INTEGRATION | DN-CORE-CMDEXEC: Core command execution (idempotent, revision-checked, outcome persisted); INTEGRATION_READY; Core-validated physical commands executed by Simulator | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-042 | DN-SIM-COREINT at INTEGRATION | DN-EVT-SPINE: Operational event spine (outbox → NATS → idempotent consumers); INTEGRATION_READY; real cross-boundary integration test green on INTEGRATION | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |

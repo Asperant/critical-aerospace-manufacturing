@@ -1,57 +1,51 @@
-CHG-078:
-  title: Bind DEP-037 to the merged kernel and replay APIs
-  trigger: WP-SIM-003 cannot start. projectctl startability reports HARD_START_DEPENDENCY_UNRESOLVED for DEP-037 and DEP-038. DEP-037 has a kernel-only predicate, "kernel tests + deterministic replay green", but no precise requirement, no edge-specific binding and status NOT_READY, although the DN-SIM-KERNEL work (WP-SIM-001) and the replay work (WP-SIM-002) are merged with green main CI.
-  reason: The predicate is not circular and its meaning is not changed. It only needs the exact APIs WP-SIM-003 consumes to be named and bound to current-main evidence. This record adds that precision and, once the owner adopts the assessment, records the edge READY. Routing, queue, failure, repair, maintenance and rework semantics stay WP-SIM-003 deliverables.
-  class: C1
-  review_risk_class: CR-1
-  raised_in: S4
-  owner: Batuhan
-  required_human_approvals: 0
-  reviewers: []
-  decision: APPROVED_WITH_CONDITIONS
-  status: UNDER_REVIEW
-  application_control_item: WP-SIM-003
-  decision_basis: Proposed by the owner of both DEP-037 nodes (DN-SIM-KERNEL and DN-SIM-OPSEM, Batuhan) under the operator-approved plan DEP037_PLAN.md (SHA-256 15105d57550df75ec37692ff73ed81ad2b0baa03c54606ab17edd8698f6644aa). The owner adopted the edge assessment in a native supervised-conversation statement quoted verbatim in evidence/WP-SIM-003/DEP-037-START-READINESS.md. A binding of an unchanged predicate follows the CHG-066 and CHG-074 precedent and needs no planning-owner disposition; none was requested or received and none is claimed. CHG-018 requires zero development approvals.
-  conditions:
-    - SATISFIED - the owner adopted the assessment (native statement, recorded verbatim without an invented timestamp or URL).
-    - OPEN - the owner adoption has no public durable record yet. An authorized publication (for example a pull request comment) is needed; none is invented here.
-    - OPEN - current-head CI is pending until it runs on the pushed head.
-    - DEP-037's predicate text, kind, strength, blocking stage, required readiness, need-by, fallback, risk class and ownership stay unchanged.
-    - No routing, queue, failure, repair, maintenance or rework behaviour, and no Core transition legality, is claimed for DN-SIM-OPSEM by this change.
-  doctrine:
-    start: a HARD START edge is resolved by facts its producer node can actually provide before the consumer starts
-    done: unchanged; WP-SIM-003 (F0) keeps every DoD obligation and verification family
-  scope:
-    - Set the DEP-037 precise_requirement in docs/05 to the kernel and replay APIs WP-SIM-003 consumes, and update its precise-consumer appendix row.
-    - Record the identities, the clause to API to test mapping and the limits in evidence/WP-SIM-003/DEP-037-START-READINESS.md.
-    - Add a projectctl dependency regression test and update the PRECISION_MISSING baseline (163 to 162); DEP-037 now carries a precise_requirement, the only finding that closes.
-    - Set the DEP-037 status to READY in docs/05, on the owner-adopted assessment, and nowhere else.
-  invariants_preserved:
-    - DEP-038 (DN-CORE-CONTRACTS to DN-SIM-OPSEM, Asrın) keeps its own edge-specific CONTRACT_READY obligation, and DEP-039 stays a MILESTONE_EXIT edge. WP-SIM-003 stays blocked by DEP-038 after this change.
-    - No other edge status or field changes; DEP-038 and DEP-039 stay NOT_READY.
-    - Kernel and replay behaviour is evidenced by the kernel tests, not by this change. Fixture evidence only, replay holds for the locked NumPy 2.4.6, sim-replay-hash/1 is simulator-local, and no governed Release, Environment or Hardware identity exists.
-    - Merged != Done; no WP lifecycle or Plane state is changed by this metadata change.
-  affected_requirements: [FR-SIM-002, FR-SIM-003, FR-SIM-004, FR-SIM-005, FR-SIM-006]
-  affected_architecture: [ARCH-SIM-ENGINE]
-  affected_contracts: []
-  affected_work_packages: [WP-SIM-003]
-  affected_dependencies: [DEP-037]
-  affected_evidence:
-    - evidence/WP-SIM-003/DEP-037-START-READINESS.md
-    - evidence/WP-SIM-002/runs/run-4-committed/
-  evidence_staleness:
-    question_answered: true
-    stale: []
-    unaffected:
-      - WP-SIM-001 run-7 stays historical for the older simulator tree and is not the basis of this edge.
-      - The simulator tree on current main equals the source tree of WP-SIM-002 run-4, so that run applies unchanged.
-    rerun_required:
-      - Refresh the Plane transition policy after the docs/05 change merges (docs/05 is a pinned source).
-      - projectctl startability WP-SIM-003 against the refreshed source, once. Expected result is still BLOCK on DEP-038 only.
-    limitation: Binds the kernel START fact only. It does not start WP-SIM-003 and does not touch DEP-038.
-  security_authority_impact: NONE
-  rollout: Merge the documentation and change-control pull request once current-head CI is green, refresh the Plane transition policy through the supported path with separate installation authorization, then run projectctl startability WP-SIM-003 once.
-  rollback: Revert docs/05, CHG-078, its register row, the regression test and the evidence file together; refresh the policy again if it was deployed. No runtime or Plane state replay is required.
-  required_rerun: [projectctl startability WP-SIM-003]
-  documentation_updates: [docs/05_Dependency_Graph.md, 09_change/CHG-078.yaml, evidence/WP-SIM-003/DEP-037-START-READINESS.md, tools/projectctl/tests/test_dependencies.py]
-  freeze_context: PRE_M6
+title: Publish the Core lot operational-semantics contract and bind it to DEP-038
+trigger: DEP-038 remained NOT_READY; DN-CORE-CONTRACTS carried CONTRACT_READY only for DEP-018 and DEP-021, and the re-entrant lifecycle, hold and rework semantics merged in WP-CORE-002/004 had no versioned consumer-facing schema or fixture
+reason: The Simulator operational-semantics consumer needs a published, versioned contract with fixtures and green contract tests; the merged internal rework history had no public contract and existing PR evidence alone is not consumer-facing semantics
+class: C1
+review_risk_class: CR-1
+raised_in: S3
+owner: Asrın
+required_human_approvals: 0
+reviewers: []
+decision: APPROVED
+status: APPROVED
+application_control_item: CTRL-HOST-050
+decision_basis: Additive Core v1 read-only contract over already merged domain, lifecycle, hold and rework values plus an edge-specific readiness binding; no transition, persistence, authority or protected-command change.
+scope:
+  - Add the read-only core.lot-operational-semantics.v1 registry declaration, schema, two synthetic fixtures and a producer-owned view model.
+  - Bind DEP-038 to that contract and the merged WP-CORE-001/002/004 evidence with a DEP-038-specific precise requirement.
+  - Record DEP-038 READY at CONTRACT_READY.
+invariants_preserved:
+  - Core remains the canonical authority for lifecycle, hold and rework state; the view grants no authority.
+  - Lifecycle, execution and material-hold state stay independent dimensions.
+  - Rework history stays append-only; no rework execution or protected-command contract is added.
+  - core.order-query.v1 and the DEP-018/DEP-021 bindings are unchanged and not generalized.
+precise_requirement: The Core lot operational-semantics v1 contract shall publish a versioned schema with normal re-entrant/rework and active-hold fixtures covering distinct re-entrant route visits and execution cycle, independent retained material-hold state that blocks dispatch, and directive-linked append-only rework history, with green producer contract tests bound to the merged Core guards.
+affected_requirements: [FR-CORE-002, FR-CORE-007, FR-CORE-008, FR-CORE-009, FR-CORE-016]
+affected_architecture: [ARCH-CORE-DOMAIN, ARCH-CTR-VERSIONING]
+affected_contracts: [core.lot-operational-semantics.v1]
+affected_work_packages: [WP-CORE-001, WP-SIM-003, WP-SIM-008, WP-PERF-003]
+affected_dependencies: [DEP-038]
+affected_evidence:
+  - evidence/readiness/DN-CORE-CONTRACTS-DEP-038.json
+  - evidence/CTRL-HOST-050/DEP-038-CURRENT-MAIN.md
+  - packages/contracts/registry/core.lot-operational-semantics.v1.json
+  - services/manufacturing-core/contracts/v1/lot-operational-semantics.v1.schema.json
+  - services/manufacturing-core/tests/test_operational_semantics_contract.py
+evidence_staleness:
+  question_answered: true
+  stale: []
+  unaffected:
+    - DN-CORE-CONTRACTS DEP-018 and DEP-021 bindings and the core.order-query.v1 fixtures.
+    - WP-CORE-002 and WP-CORE-004 implementation and evidence, which are consumed unchanged.
+    - DEP-037, DEP-039 and every other dependency remain unresolved by this record.
+    - No work-package DONE claim is made.
+security_authority_impact: NONE
+conditions:
+  - Do not infer protected rework execution, transition commands, route position, persistence or integrated acceptance.
+  - Simulator-side review of the fixtures is a consumer step and is not asserted by this binding.
+rollout: Merge the additive contract, binding and projection together, then re-run projectctl validate and the focused contract tests.
+rollback: Revert the contract artifacts, DEP-038 projection, readiness record and this control record together.
+required_rerun: [projectctl validate, Core operational-semantics contract tests, contract registry and producer-authority tests, contract schema check, contract gate]
+documentation_updates: [docs/05_Dependency_Graph.md, docs/09_Change_Control_Process.md, 09_change/change_requests.csv, services/manufacturing-core/contracts/v1/README.md]
+freeze_context: PRE_M6

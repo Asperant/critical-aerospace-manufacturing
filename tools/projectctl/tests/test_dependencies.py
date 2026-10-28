@@ -176,7 +176,7 @@ def module_names(root, module):
 
 
 def test_dep_037_names_the_kernel_and_replay_surface_it_consumes(graph, root):
-    """CHG-078: the START edge binds kernel and replay APIs, not OPSEM behaviour."""
+    """CHG-079: the START edge binds kernel and replay APIs, not OPSEM behaviour."""
     edge = next(e for e in graph.edges if e.id == "DEP-037")
     assert (edge.predecessor.node, edge.successor.node) == ("DN-SIM-KERNEL", "DN-SIM-OPSEM")
     semantics = edge.semantics
@@ -238,7 +238,7 @@ def test_dep_037_names_the_kernel_and_replay_surface_it_consumes(graph, root):
     if edge.status == "READY":
         import yaml
 
-        record = yaml.safe_load((root / "09_change/CHG-078.yaml").read_text("utf-8"))
-        assert record["CHG-078"]["decision"].startswith("APPROVED")
+        record = yaml.safe_load((root / "09_change/CHG-079.yaml").read_text("utf-8"))
+        assert record["CHG-079"]["decision"].startswith("APPROVED")
         path = root / "evidence/WP-SIM-003/DEP-037-START-READINESS.md"
         assert "## Owner adoption" in path.read_text("utf-8")

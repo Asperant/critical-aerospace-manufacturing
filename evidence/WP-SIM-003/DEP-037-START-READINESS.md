@@ -1,4 +1,4 @@
-# DEP-037 START readiness assessment (owner-adopted, CHG-078)
+# DEP-037 START readiness assessment (owner-adopted, CHG-079)
 
 Status: **adopted by the owner as the edge-specific kernel assessment for DEP-037.** It is not a product,
 integration or acceptance record and not DN-SIM-OPSEM readiness. Prepared by Claude Code for Batuhan Kaya (owner of
@@ -57,12 +57,12 @@ for this proposal. SIM-001 run-7 belongs to the older tree `0e93c717…` (before
   identity. BENCH-SIMVAL-001 and REPRO-NONOWNER-001 are not executed.
 - Nothing here implements routing, queues, failure, repair, maintenance, rework or Core transition legality.
   Those are WP-SIM-003 deliverables. DEP-038 (Asrın, CONTRACT_READY, reentrant lifecycle and hold/rework
-  contract) and DEP-039 (MILESTONE_EXIT) are separate; WP-SIM-003 stays blocked by DEP-038.
+  contract) was bound separately by CHG-078 (CTRL-HOST-050) and DEP-039 (MILESTONE_EXIT) is a later gate; neither is assessed here.
 
 ## Status
 
 1. Owner adoption: recorded above (native statement; public record open).
-2. The DEP-037 `status` is READY in `docs/05` under CHG-078, the kernel START fact only.
+2. The DEP-037 `status` is READY in `docs/05` under CHG-079, the kernel START fact only.
 3. Remaining, each a separate step: current-head CI on the head that carries this, merge, the supported policy
-   refresh and one `projectctl startability WP-SIM-003` run (expected: BLOCK on DEP-038 only). A local run on a
+   refresh and one `projectctl startability WP-SIM-003` run (expected: STARTABLE once the CHG-078 binding of DEP-038 is refreshed too). A local run on a
    worktree is not deployed startability.
