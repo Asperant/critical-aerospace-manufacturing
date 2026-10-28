@@ -1,0 +1,161 @@
+[
+  {
+    "id": "operational-model-tests",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim6-venv/bin/python3",
+      "-m",
+      "pytest",
+      "-c",
+      "services/manufacturing-simulator/pyproject.toml",
+      "services/manufacturing-simulator/tests/test_ops_states.py",
+      "services/manufacturing-simulator/tests/test_ops_config.py",
+      "services/manufacturing-simulator/tests/test_ops_routing.py",
+      "services/manufacturing-simulator/tests/test_ops_failures.py",
+      "services/manufacturing-simulator/tests/test_ops_rework.py",
+      "services/manufacturing-simulator/tests/test_ops_replay.py",
+      "services/manufacturing-simulator/tests/test_ops_contract.py",
+      "services/manufacturing-simulator/tests/test_ops_properties.py",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "started_utc": "2026-10-28T22:51:28+00:00",
+    "finished_utc": "2026-10-28T22:51:31+00:00",
+    "exit_code": 0,
+    "stdout_file": "operational-model-tests.stdout",
+    "stdout_bytes": 226,
+    "stdout_sha256": "f52259d5be5b643ec007b11f17a464ecf8e440c15db40299a5bd35a7e105f279",
+    "stderr_file": "operational-model-tests.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "56 passed in 3.00s"
+  },
+  {
+    "id": "simulator-suite",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim6-venv/bin/python3",
+      "-m",
+      "pytest",
+      "-c",
+      "services/manufacturing-simulator/pyproject.toml",
+      "services/manufacturing-simulator/tests",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "started_utc": "2026-10-28T22:51:31+00:00",
+    "finished_utc": "2026-10-28T22:51:42+00:00",
+    "exit_code": 0,
+    "stdout_file": "simulator-suite.stdout",
+    "stdout_bytes": 788,
+    "stdout_sha256": "b7f8845586aed0ca609b4c76fc9b57f98547ce969b9321fdbd65698017a93d27",
+    "stderr_file": "simulator-suite.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "550 passed in 10.87s"
+  },
+  {
+    "id": "collector-tests",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim6-venv/bin/python3",
+      "-m",
+      "pytest",
+      "evidence/WP-SIM-003/tests",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "started_utc": "2026-10-28T22:51:42+00:00",
+    "finished_utc": "2026-10-28T22:51:44+00:00",
+    "exit_code": 0,
+    "stdout_file": "collector-tests.stdout",
+    "stdout_bytes": 225,
+    "stdout_sha256": "9cea88aa3ffd8cff848ed08fa64c0fe22281276704232925f4f2ae3c6b056474",
+    "stderr_file": "collector-tests.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "6 passed in 1.36s"
+  },
+  {
+    "id": "ruff-check",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim6-venv/bin/python3",
+      "-m",
+      "ruff",
+      "check",
+      "services/manufacturing-simulator",
+      "evidence/WP-SIM-003/capture_run.py",
+      "evidence/WP-SIM-003/tests/test_capture_run.py"
+    ],
+    "started_utc": "2026-10-28T22:51:44+00:00",
+    "finished_utc": "2026-10-28T22:51:44+00:00",
+    "exit_code": 0,
+    "stdout_file": "ruff-check.stdout",
+    "stdout_bytes": 19,
+    "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "stderr_file": "ruff-check.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "All checks passed!"
+  },
+  {
+    "id": "ruff-format",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim6-venv/bin/python3",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "services/manufacturing-simulator",
+      "evidence/WP-SIM-003/capture_run.py",
+      "evidence/WP-SIM-003/tests/test_capture_run.py"
+    ],
+    "started_utc": "2026-10-28T22:51:44+00:00",
+    "finished_utc": "2026-10-28T22:51:44+00:00",
+    "exit_code": 0,
+    "stdout_file": "ruff-format.stdout",
+    "stdout_bytes": 27,
+    "stdout_sha256": "aec51819fa2b338a1a7896d7f3fa3a16c30fdb3b01d724c485d984ae83b87a06",
+    "stderr_file": "ruff-format.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "52 files already formatted"
+  },
+  {
+    "id": "pyright",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim6-venv/bin/python3",
+      "-m",
+      "pyright",
+      "--project",
+      "services/manufacturing-simulator/pyrightconfig.json"
+    ],
+    "started_utc": "2026-10-28T22:51:44+00:00",
+    "finished_utc": "2026-10-28T22:51:46+00:00",
+    "exit_code": 0,
+    "stdout_file": "pyright.stdout",
+    "stdout_bytes": 192,
+    "stdout_sha256": "db668de51c7ecb37ed0c6e58fdf07c5c520152a4ffa341ff6b86c340877b9413",
+    "stderr_file": "pyright.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "0 errors, 0 warnings, 0 informations"
+  },
+  {
+    "id": "architecture",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim6-venv/bin/python3",
+      "ci/scripts/check_architecture_boundaries.py"
+    ],
+    "started_utc": "2026-10-28T22:51:46+00:00",
+    "finished_utc": "2026-10-28T22:51:46+00:00",
+    "exit_code": 0,
+    "stdout_file": "architecture.stdout",
+    "stdout_bytes": 105,
+    "stdout_sha256": "6c0c98ecd9c2e69cfbd9d0b59582f5e9f02ac7b6fc0cc994d2d98b6bdcbde1d0",
+    "stderr_file": "architecture.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "PASS: architecture boundary rules (producer ownership, private imports, literal credentials, exceptions)"
+  }
+]

@@ -22,6 +22,25 @@ EVENT_KINDS = frozenset(
         "DISPATCH_REJECTED",
         "DISPATCH_STARTED",
         "DISPATCH_START_REJECTED",
+        "LOT_RELEASED",
+        "LOT_QUEUED",
+        "PROCESS_COMPLETED",
+        "LOT_COMPLETED",
+        "LOT_SCRAPPED",
+        "LOT_SCRAP_REJECTED",
+        "INSPECTION_FAILED",
+        "REWORK_REQUESTED",
+        "REWORK_STARTED",
+        "REWORK_REJECTED",
+        "HOLD_PLACED",
+        "HOLD_RELEASED",
+        "EQUIPMENT_FAILED",
+        "EQUIPMENT_REPAIRED",
+        "EQUIPMENT_AVAILABLE",
+        "EQUIPMENT_DEGRADED",
+        "MAINTENANCE_STARTED",
+        "MAINTENANCE_COMPLETED",
+        "MAINTENANCE_SKIPPED",
     }
 )
 ALLOWED_ATTRIBUTES = frozenset(
@@ -34,6 +53,9 @@ ALLOWED_ATTRIBUTES = frozenset(
         "rule_id",
         "reason_code",
         "state_revision",
+        "directive_id",
+        "from_state",
+        "to_state",
     }
 )
 

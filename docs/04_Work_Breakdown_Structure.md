@@ -1429,7 +1429,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-SIM-OPSEM |
 | Size band (indicative, no hour estimates) | L (≈7–12 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `services/manufacturing-simulator/`; `evidence/WP-SIM-003/` |
 
 **Purpose.** Make the simulated manufacturing facility behave like a reentrant multi-tool environment with the disruption classes the research needs.
 
