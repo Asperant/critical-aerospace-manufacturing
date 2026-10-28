@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: 9a0d2a82527e3ff23d1fdc151c07c58885feb00c123588609f4d708ac6c8f3b3
+  sha256: 2415cee796f9cb7feaf1630d3cc005f79ce2ad9dfb76c702997d53b50237aded
 requirements:
   FR-GOV-001:
     meta:
@@ -5374,8 +5374,8 @@ requirements:
       env: INTEGRATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
       evidence: NOT_YET_EXECUTED
     measurement:
       metric: release-required migrations executed outside versioned automated tooling
@@ -5383,6 +5383,11 @@ requirements:
       workload: release deployments
       hardware: N/A (not hardware-bound)
       observed: null
+    note: a release binds the newest version of each declared migration set and the deploy command migrates through the Core tooling; the measurement over release deployments (observed) is not taken, so observed stays null; no application image carries Core yet.
+    realization:
+      surface: migration stage of the deploy path with pre- and post-checks, an inspectable status surface and halt semantics
+      deployable: deploy command
+      ref: tools/release/src/cap_release/migrations.py; tools/release/src/cap_release/deploy.py; release/images.json; release/README.md
   NFR-DEP-005:
     meta:
       class: H0
@@ -8696,7 +8701,13 @@ edges:
 - {"from": "NFR-DEP-004", "relation": "DERIVED_FROM", "to": "LOCAL-INV-12", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-004", "relation": "ALLOCATED_TO", "to": "ARCH-DATA-PG", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-004", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-CICD", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-004", "relation": "REALIZED_BY", "to": "repo:tools/release/src/cap_release/migrations.py", "applicability": "RECORDED"}
+- {"from": "NFR-DEP-004", "relation": "REALIZED_BY", "to": "repo:tools/release/src/cap_release/deploy.py", "applicability": "RECORDED"}
+- {"from": "NFR-DEP-004", "relation": "REALIZED_BY", "to": "repo:release/images.json", "applicability": "RECORDED"}
+- {"from": "NFR-DEP-004", "relation": "REALIZED_BY", "to": "repo:release/README.md", "applicability": "RECORDED"}
 - {"from": "NFR-DEP-004", "relation": "VERIFIED_BY", "to": "TEST-DEP-MIGRATION", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-004", "relation": "VERIFIED_BY", "to": "TEST-CICD-003-001", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-004", "relation": "VERIFIED_BY", "to": "TEST-CICD-003-002", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-005", "relation": "DERIVED_FROM", "to": "ITEM-84", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-005", "relation": "DERIVED_FROM", "to": "NFR-INV-44", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-005", "relation": "DERIVED_FROM", "to": "DX-INV-51", "applicability": "PLANNED"}

@@ -74,10 +74,11 @@ class FakeHost:
             raise self.smoke_ok
         return self.smoke_ok
 
-    def migrate(self, target: str) -> None:
+    def migrate(self, target: str) -> str:
         self.migrations.append(target)
         if self.migrate_error:
             raise DeployError(self.migrate_error)
+        return f"database at {target}"
 
     def last_succeeded(self) -> tuple[dict[str, Any], dict[str, Any]] | None:
         return self.previous
@@ -131,12 +132,13 @@ def test_a_clean_main_derived_release_is_deployed_and_recorded(repo: Path) -> No
     assert outcome.exit_code == 0 and outcome.record["result"] == "SUCCEEDED"
     assert results(outcome.record) == {
         "preflight": "PASSED",
-        "migrate": "SKIPPED",
+        "migrate": "PASSED",
         "rollout": "PASSED",
         "health": "PASSED",
         "smoke": "PASSED",
     }
-    assert len(host.rollouts) == 1 and host.migrations == []
+    assert len(host.rollouts) == 1 and len(host.migrations) == 1
+    assert host.migrations[0].startswith("manufacturing-core:0")
     saved_manifest, saved_record = host.saved[0]
     assert (
         saved_record["manifest_sha256"]

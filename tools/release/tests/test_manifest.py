@@ -15,7 +15,7 @@ from cap_release.manifest import (
     fingerprint,
     validate_manifest,
 )
-from cap_release.registry import Image, ImageRegistry, load_registry
+from cap_release.registry import load_registry
 
 DIGEST = "sha256:" + "a" * 64
 COMMIT = "b" * 40
@@ -54,24 +54,25 @@ def test_identities_without_a_producer_say_so_instead_of_guessing(repo: Path) ->
         "prompt_tool_routing_versions",
         "knowledge_index_version",
         "configuration_schema_version",
-        "database_schema_target",
     ):
         assert built[field]["state"] == "NOT_YET_PRODUCED", field
         assert built[field]["reason"]
     assert built["contract_catalog_version"]["contracts"] > 0
 
 
-def test_the_database_target_is_bound_only_when_its_owner_is_released(
+def test_the_database_target_is_bound_to_the_declared_migration_sets(
     repo: Path,
 ) -> None:
-    core = Image(
-        "manufacturing-core", "cap-core", "s/c", "s/c/Dockerfile", "c.yaml", ("core",)
-    )
-    registry = ImageRegistry("ghcr.io/asperant", (*load_registry(repo).images, core))
+    target = manifest(repo)["database_schema_target"]
+    assert target["state"] == "BOUND"
+    assert target["identity"].startswith("manufacturing-core:0")
+
+
+def test_a_release_without_a_migration_set_states_it_has_no_target(tiny: Path) -> None:
     built = build_manifest(
-        repo,
-        registry,
-        {"mlflow": DIGEST, "manufacturing-core": "sha256:" + "c" * 64},
+        tiny,
+        load_registry(tiny),
+        {"mlflow": DIGEST},
         commit=COMMIT,
         run_id=1,
         run_attempt=1,
@@ -79,8 +80,9 @@ def test_the_database_target_is_bound_only_when_its_owner_is_released(
         created_at=WHEN,
     )
     target = built["database_schema_target"]
-    assert target["state"] == "BOUND" and target["identity"].startswith(
-        "manufacturing-core:0"
+    assert (
+        target["state"] == "NOT_YET_PRODUCED"
+        and "no database migration set" in target["reason"]
     )
     assert validate_manifest(built) == []
 

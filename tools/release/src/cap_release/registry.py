@@ -32,9 +32,22 @@ class Image:
 
 
 @dataclass(frozen=True)
+class Migration:
+    """A versioned migration set a release requires (WP-CICD-003)."""
+
+    component: str
+    directory: str
+
+
+MIGRATION_FILE = re.compile(r"^(\d{4})_[a-z0-9_]+\.sql$")
+MIGRATION_RUNNERS = {"manufacturing-core"}
+
+
+@dataclass(frozen=True)
 class ImageRegistry:
     owner: str
     images: tuple[Image, ...]
+    migrations: tuple[Migration, ...] = ()
 
     def repository(self, image: Image) -> str:
         return f"{self.owner}/{image.repository}"
@@ -95,7 +108,29 @@ def load_registry(root: Path) -> ImageRegistry:
                 ),
             )
         )
-    return ImageRegistry(owner=owner, images=tuple(images))
+    migrations: list[Migration] = []
+    raw_migrations = data.get("database_migrations", [])
+    if not isinstance(raw_migrations, list):
+        raise RegistryError(f"{REGISTRY_PATH}: database_migrations must be a list")
+    for index, item in enumerate(cast("list[Any]", raw_migrations)):
+        if not isinstance(item, dict):
+            raise RegistryError(
+                f"{REGISTRY_PATH}: database_migrations[{index}] is not an object"
+            )
+        entry = cast("dict[str, Any]", item)
+        migrations.append(
+            Migration(
+                component=_text(
+                    entry.get("component"), f"database_migrations[{index}].component"
+                ),
+                directory=_text(
+                    entry.get("directory"), f"database_migrations[{index}].directory"
+                ),
+            )
+        )
+    return ImageRegistry(
+        owner=owner, images=tuple(images), migrations=tuple(migrations)
+    )
 
 
 def repository_dockerfiles(root: Path) -> list[str]:
@@ -113,6 +148,40 @@ def compose_services(root: Path, compose_file: str) -> dict[str, Any]:
         "dict[str, Any]", yaml.safe_load((root / compose_file).read_text("utf-8"))
     )
     return cast("dict[str, Any]", document["services"])
+
+
+def migration_files(root: Path, migration: Migration) -> list[Path]:
+    """The migration scripts of a set, in version order."""
+    return sorted(p for p in (root / migration.directory).glob("*.sql"))
+
+
+def check_migrations(root: Path, registry: ImageRegistry) -> list[str]:
+    """Problems with the declared migration sets: unknown runner, gaps, odd file names."""
+    problems: list[str] = []
+    components: set[str] = set()
+    for migration in registry.migrations:
+        where = f"database_migrations[{migration.component}]"
+        if migration.component in components:
+            problems.append(f"{where}: declared twice")
+        components.add(migration.component)
+        if migration.component not in MIGRATION_RUNNERS:
+            problems.append(f"{where}: no migration runner exists for this component")
+        if not (root / migration.directory).is_dir():
+            problems.append(f"{where}: directory {migration.directory} does not exist")
+            continue
+        files = migration_files(root, migration)
+        if not files:
+            problems.append(f"{where}: {migration.directory} holds no migration")
+        numbers: list[int] = []
+        for path in files:
+            match = MIGRATION_FILE.fullmatch(path.name)
+            if match is None:
+                problems.append(f"{where}: {path.name} is not NNNN_name.sql")
+            else:
+                numbers.append(int(match[1]))
+        if numbers and numbers != list(range(1, len(numbers) + 1)):
+            problems.append(f"{where}: versions {numbers} are not contiguous from 0001")
+    return problems
 
 
 def check_registry(root: Path) -> list[str]:
@@ -159,6 +228,7 @@ def check_registry(root: Path) -> list[str]:
                 problems.append(
                     f"{image.name}: Compose service {service} is not in {image.compose_file}"
                 )
+    problems.extend(check_migrations(root, registry))
     listed = {image.dockerfile for image in registry.images}
     for path in repository_dockerfiles(root):
         if path not in listed:

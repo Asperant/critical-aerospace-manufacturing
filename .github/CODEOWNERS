@@ -59,6 +59,7 @@
 /tools/release/ @Yavuzgmus
 /.github/workflows/release.yml @Yavuzgmus @Asperant
 /evidence/WP-CICD-002/ @Yavuzgmus
+/evidence/WP-CICD-003/ @Yavuzgmus
 /evidence/WP-HITL-002/ @Asperant @Ejlonn
 /evidence/WP-EVT-001/ @Asperant @selorito
 /packages/contracts/ @Asperant @selorito

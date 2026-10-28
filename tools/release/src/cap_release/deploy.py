@@ -21,6 +21,12 @@ from pathlib import Path
 from typing import Any, Protocol, cast
 
 from cap_release.manifest import canonical_bytes, fingerprint, validate_manifest
+from cap_release.migrations import (
+    MigrationError,
+    backend_from_environment,
+    migration_for,
+    run_stage,
+)
 from cap_release.record import (
     STAGES,
     new_record_id,
@@ -29,7 +35,7 @@ from cap_release.record import (
     timestamp,
     validate_record,
 )
-from cap_release.registry import ImageRegistry
+from cap_release.registry import ImageRegistry, load_registry
 
 REPOSITORY = "Asperant/critical-aerospace-manufacturing"
 
@@ -48,7 +54,7 @@ class Host(Protocol):
     def rollout(self, override: str) -> None: ...
     def unhealthy(self) -> list[str]: ...
     def smoke(self) -> bool: ...
-    def migrate(self, target: str) -> None: ...
+    def migrate(self, target: str) -> str: ...
     def last_succeeded(self) -> tuple[dict[str, Any], dict[str, Any]] | None: ...
     def save(self, manifest: Mapping[str, Any], record: Mapping[str, Any]) -> None: ...
 
@@ -183,12 +189,12 @@ def deploy(
             )
         else:
             try:
-                host.migrate(target)
+                detail = host.migrate(target)
                 stages.append(
                     stage(
                         "migrate",
                         "PASSED",
-                        f"database at {target}",
+                        detail,
                         m_start,
                         host.now(),
                     )
@@ -403,8 +409,17 @@ class SystemHost:
             )
         return True
 
-    def migrate(self, target: str) -> None:
-        raise DeployError(f"no migration runner is wired for {target} (WP-CICD-003)")
+    def migrate(self, target: str) -> str:
+        registry = load_registry(self.root)
+        details: list[str] = []
+        for part in target.split(";"):
+            try:
+                migration = migration_for(registry, part)
+                backend = backend_from_environment(self.root)
+                details.append(run_stage(self.root, migration, part, backend))
+            except MigrationError as exc:
+                raise DeployError(str(exc)) from exc
+        return "; ".join(details)
 
     def last_succeeded(self) -> tuple[dict[str, Any], dict[str, Any]] | None:
         records = (
