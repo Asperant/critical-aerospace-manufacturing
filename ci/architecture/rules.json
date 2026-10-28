@@ -1,0 +1,79 @@
+{
+  "schema": "cap.architecture-rules/v1",
+  "work_package": "WP-TEST-007",
+  "checker": "ci/scripts/check_architecture_boundaries.py",
+  "note": "Identity and requirement context of the repository-level architecture rules checked in CI. A rule id is local to this file. `requirements` names the requirements the rule protects, as worded in 01; `architecture` repeats their ALLOCATED_TO from 03 §17 (checked by ci/tests/test_architecture_rules.py); `exception_allowed` says whether ci/architecture/exceptions.json may carry a temporary, change-controlled exception for it. A rule that fails is reported with these fields. Adding a rule needs its checker, a negative test and an entry here (checked by ci/tests/test_architecture_rules.py).",
+  "rules": [
+    {
+      "id": "BR-01",
+      "summary": "Every contract declares one registered canonical producer, and contract ids are unique",
+      "requirements": [
+        "FR-EVT-008"
+      ],
+      "architecture": [
+        "ARCH-CTR-VERSIONING",
+        "ARCH-EVT-SCHEMA"
+      ],
+      "owner": "Asrın",
+      "exception_allowed": false,
+      "why_no_exception": "Producer authority is the registry's integrity; a contract without one canonical producer has no authority to test against."
+    },
+    {
+      "id": "BR-02",
+      "summary": "A service other than manufacturing-core does not import a database driver or ORM",
+      "requirements": [
+        "FR-EVT-007",
+        "FR-CORE-013"
+      ],
+      "architecture": [
+        "ARCH-CTR-API",
+        "ARCH-CORE-DB",
+        "ARCH-CORE-CMD"
+      ],
+      "owner": "Asrın",
+      "exception_allowed": true
+    },
+    {
+      "id": "BR-03",
+      "summary": "A service other than manufacturing-core does not import manufacturing_core directly",
+      "requirements": [
+        "FR-EVT-001",
+        "FR-CORE-013"
+      ],
+      "architecture": [
+        "ARCH-CTR-API",
+        "ARCH-CORE-DB",
+        "ARCH-CORE-CMD",
+        "ARCH-CTR-CMDSCHEMA",
+        "ARCH-CTR-EVTSCHEMA",
+        "ARCH-CTR-VERSIONING"
+      ],
+      "owner": "Asrın",
+      "exception_allowed": true
+    },
+    {
+      "id": "BR-04",
+      "summary": "Service source does not assign a literal credential",
+      "requirements": [
+        "FR-SEC-002"
+      ],
+      "architecture": [
+        "ARCH-SEC-IDP",
+        "ARCH-SEC-AUTHZ",
+        "ARCH-SEC-SECRET"
+      ],
+      "owner": "Yavuz",
+      "exception_allowed": false,
+      "why_no_exception": "A committed secret is never made acceptable by a record; it is removed and rotated."
+    },
+    {
+      "id": "BR-05",
+      "summary": "Architecture exceptions are well-formed, approved, unexpired, within the time limit and still needed",
+      "requirements": [],
+      "architecture": [],
+      "owner": "Yavuz",
+      "exception_allowed": false,
+      "why_no_exception": "This is the exception process itself. It has no requirement of its own: it keeps the requirements of the excepted rule from being waived informally (01, Requirement Waivers)."
+    }
+  ]
+}

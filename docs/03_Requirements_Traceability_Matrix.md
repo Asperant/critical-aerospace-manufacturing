@@ -98,6 +98,38 @@
 > recorded under `evidence/WP-GOV-002/`. INSP-GOV-ACCEPT belongs to the
 > EVALUATION gate (WP-GOV-003); evidence stays EVIDENCE_PENDING.
 
+> **WP-CICD-003 implementation delta (2026-10-28).** NFR-DEP-004 now references the
+> migration stage of the deploy path: a release binds the newest version of each
+> declared migration set, and `deploy` runs the Core tooling with pre- and post-checks
+> (a diverged or unreadable database halts before anything is applied, a failed apply
+> halts before the rollout and states where the database was left, the schema is never
+> reverted by a rollback), with `migration-status` as the inspectable surface; REAL
+> PostgreSQL tests cover it (§19.14). The measurement over release deployments is not
+> taken: evidence stays EVIDENCE_PENDING and `observed` stays null.
+
+> **WP-CICD-002 implementation delta (2026-10-28).** FR-PLAT-004, FR-PLAT-005 and
+> NFR-DEP-003 now reference the release path: an image registry, a `release`
+> workflow that publishes digest-identified images with SBOM and provenance
+> attestations, ReleaseManifest and DeploymentRecord schemas (OD-CICD-01 decided as
+> JSON Schema, `release/README.md`) and `python -m cap_release deploy`, which refuses a
+> release that is not main-derived, has no green `ci-gate`, has a digest absent from
+> the registry or runs on a host source tree with any change (§19.13). No application
+> image exists yet, deployment from GitHub Actions needs a self-hosted runner, and the
+> shared-host run follows the first publish; evidence stays EVIDENCE_PENDING and
+> `observed` stays null.
+
+> **WP-PLAT-003 implementation delta (2026-10-27).** FR-PLAT-001 now also
+> references Temporal on PostgreSQL with the platform namespace, Qdrant with a
+> per-host API key, MLflow (metadata in PostgreSQL, artifacts in SeaweedFS), the
+> `cap-platform` realm imported as code and a runtime readiness checklist that
+> mirrors every runtime edge out of DN-PLAT-INTEG in 05 (§19.11). Startup follows
+> 02 Sequence I without wait cycles; the shared-host run under `evidence/WP-PLAT-003/`,
+> which NFR-DEP-001 and NFR-DEP-002 reference as a DEV observation, also records a
+> simulated reboot whose recovery varied (not all healthy within 926 s in the recorded
+> run, 320 s in a reproduction) and is not a claim for NFR-REL-005. The mandatory Integration profile with application
+> deployables, BENCH-E2E-001 and E2E-01 remain open; evidence stays
+> EVIDENCE_PENDING and `observed` stays null.
+
 ---
 
 ## Table of Contents
@@ -532,15 +564,15 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 | FR-SCH-004 | F1 | Batu | 01 Item81 FR-SCH-004 L170005 | ITEM-19, SCH-INV-03, SCH-INV-05, SCH-INV-07 | VERIFY_PLANNED | — |
 | FR-SCH-005 | F0 | Batu | 01 Item81 FR-SCH-005 L170006 | ITEM-19, ITEM-23, ITEM-68, SCH-INV-09, E2E-INV-10, BENCH-INV-21 | VERIFY_PLANNED | — |
 | FR-SCH-006 | F1 | Batu | 01 Item81 FR-SCH-006 L170007 | ITEM-19, ITEM-84, SCH-INV-09 | VERIFY_PLANNED | — |
-| FR-SCH-007 | F1 | Batu | 01 Item81 FR-SCH-007 L170008 | ITEM-19, DT-INV-07, INT-INV-07 | VERIFY_PLANNED | — |
-| FR-SCH-008 | F1 | Batu | 01 Item81 FR-SCH-008 L170009 | ITEM-19, ITEM-22, INT-INV-05 | VERIFY_PLANNED | — |
+| FR-SCH-007 | F1 | Batu | 01 Item81 FR-SCH-007 L170008 | ITEM-19, DT-INV-07, INT-INV-07 | EVIDENCE_PENDING | — |
+| FR-SCH-008 | F1 | Batu | 01 Item81 FR-SCH-008 L170009 | ITEM-19, ITEM-22, INT-INV-05 | EVIDENCE_PENDING | — |
 | FR-SCH-009 | F1 | Batu | 01 Item81 FR-SCH-009 L170010 | ITEM-19, ITEM-61, SCH-INV-08 | VERIFY_PLANNED | — |
 | FR-SCH-010 | F1 | Batu | 01 Item81 FR-SCH-010 L170011 | ITEM-59, ITEM-31, BASE-INV-13 | VERIFY_PLANNED (ALLOC-COARSE) | ALLOC-COARSE |
 | FR-SCH-011 | F1 | Batu | 01 Item81 FR-SCH-011 L170012 | ITEM-31, SCH-INV-12 | VERIFY_PLANNED (ALLOC-COARSE) | ALLOC-COARSE |
 | FR-SCH-012 | F1 | Batu | 01 Item81 FR-SCH-012 L170013 | ITEM-19, ITEM-51, PERF-INV-10, RES-INV-11 | VERIFY_PLANNED | — |
 | FR-SCH-013 | F1 | Batu | 01 Item81 FR-SCH-013 L170014 | ITEM-19, ITEM-10, SCH-INV-10, AUTO-INV-08 | VERIFY_PLANNED | — |
 | FR-SCH-014 | F1 | Batu | 01 Item81 FR-SCH-014 L170015 | ITEM-23, AUTH-INV-04, INT-INV-11 | VERIFY_PLANNED | — |
-| FR-SCH-015 | F1 | Batu | 01 Item81 FR-SCH-015 L170016 | ITEM-19, ITEM-33, NFR-INV-53 | VERIFY_PLANNED | — |
+| FR-SCH-015 | F1 | Batu | 01 Item81 FR-SCH-015 L170016 | ITEM-19, ITEM-33, NFR-INV-53 | EVIDENCE_PENDING | — |
 
 ### 6.FK FR-AUTO — Durable Automation (14)
 
@@ -3595,10 +3627,10 @@ FR-GOV-005:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-GOV-005 L169836"}
   DERIVED_FROM: [ITEM-81, ITEM-83, FRC-INV-07, RTM-INV-08]
   ALLOCATED_TO: [ARCH-PLAT-CICD]
-  REALIZED_BY: {surface: "VERIFIED_BY edge completeness rule in trace linter (TL-08, M5 gate)", deployable: "trace registry", ref: "traceability/trace_edges.yaml; tools/trace/src/cap_trace/rules.py"}
+  REALIZED_BY: {surface: "VERIFIED_BY edge completeness rule in trace linter (TL-08, M5 gate)", deployable: "trace registry", ref: "traceability/trace_edges.yaml; tools/trace/src/cap_trace/rules.py; ci/tests/test_required_gates.py"}
   USES_DATA: ["trace_edges"]
-  VERIFIED_BY: [TEST-GOV-TRACELINT, TEST-GOV-002-003]
-  EXECUTED_AS: [RUN-GOV-002-DEV-001]  # shared-host run; acceptance pending
+  VERIFIED_BY: [TEST-GOV-TRACELINT, TEST-GOV-002-003, TEST-TEST-007-002]
+  EXECUTED_AS: [RUN-GOV-002-DEV-001]  # shared-host run; acceptance pending; the trace linter is a required CI gate (WP-TEST-007)
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
@@ -4259,7 +4291,7 @@ FR-EVT-007:
   ALLOCATED_TO: [ARCH-CTR-API, ARCH-CORE-DB]
   REALIZED_BY: {surface: "architecture boundary rules + DB role separation", deployable: "all bounded services", ref: TBD_BY_IMPLEMENTATION}
   GOVERNED_BY: ["ArchitectureRule set"]
-  VERIFIED_BY: [TEST-ARCH-BOUNDARY, TEST-SEC-SVCID]
+  VERIFIED_BY: [TEST-ARCH-BOUNDARY, TEST-SEC-SVCID, TEST-TEST-007-001]
   MITIGATES: [ARCH-R05, ARCH-R07]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
@@ -4971,25 +5003,27 @@ FR-SCH-007:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SCH-007 L170008"}
   DERIVED_FROM: [ITEM-19, DT-INV-07, INT-INV-07]
   ALLOCATED_TO: [ARCH-SCH-PLAN, ARCH-TWIN-FRESHNESS]
-  REALIZED_BY: {surface: "plan ↔ SchedulingSnapshot revision binding", deployable: "scheduler-service", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "plan ↔ SchedulingSnapshot revision binding", deployable: "scheduler-service", ref: "services/scheduler-service/src/manufacturing_scheduler/; services/scheduler-service/contracts/v1/; packages/contracts/registry/scheduler.recovery-plan.v1.json"}
   EXPOSED_BY: ["IC-SCH-004 RecoveryPlan (source revision)"]
   VERIFIED_BY: [TEST-SCH-PLAN, TEST-AUTO-FRESHNESS]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [evidence/WP-SCH-002/runs/run-4-committed]  # contract-level local run on fixtures; REAL/integrated acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Local contract-level run (TEST-SCH-PLAN asset on the published snapshot fixture and development RecoveryPlan fixtures); DEP-083 generator and DEP-084 validator are not implemented, TEST-UI-PLAN, AV-SCEN-01/02 and E2E-01 have not run, and no EvidenceID exists. evidence/WP-SCH-002/README.md records the limits."
 FR-SCH-008:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SCH-008 L170009"}
   DERIVED_FROM: [ITEM-19, ITEM-22, INT-INV-05]
   ALLOCATED_TO: [ARCH-SCH-PLAN, ARCH-CTR-EVTSCHEMA]
-  REALIZED_BY: {surface: "RecoveryPlan schema (Item 83 example: CONTRACT-RecoveryPlan-v1)", deployable: "scheduler-service", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "RecoveryPlan schema (Item 83 example: CONTRACT-RecoveryPlan-v1)", deployable: "scheduler-service", ref: "services/scheduler-service/src/manufacturing_scheduler/; services/scheduler-service/contracts/v1/; packages/contracts/registry/scheduler.recovery-plan.v1.json"}
   EXPOSED_BY: ["IC-SCH-004 RecoveryPlan"]
   VERIFIED_BY: [TEST-SCH-PLAN]
   EXERCISED_IN: [AV-SCEN-01]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [evidence/WP-SCH-002/runs/run-4-committed]  # contract-level local run on fixtures; REAL/integrated acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Local contract-level run (TEST-SCH-PLAN asset on the published snapshot fixture and development RecoveryPlan fixtures); DEP-083 generator and DEP-084 validator are not implemented, TEST-UI-PLAN, AV-SCEN-01/02 and E2E-01 have not run, and no EvidenceID exists. evidence/WP-SCH-002/README.md records the limits."
 FR-SCH-009:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SCH-009 L170010"}
   DERIVED_FROM: [ITEM-19, ITEM-61, SCH-INV-08]
@@ -5006,15 +5040,15 @@ FR-SCH-010:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SCH-010 L170011"}
   DERIVED_FROM: [ITEM-59, ITEM-31, BASE-INV-13]
   ALLOCATED_TO: [ARCH-SCH-HEURISTIC, ARCH-VIS-EVAL, ARCH-SCH-EVAL]
-  REALIZED_BY: {surface: "FIFO/EDD/CR/SPT/SRPT baseline implementations (BaselineDefinition)", deployable: "scheduling evaluation harness — GAP-RTM-002", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "FIFO/EDD/CR/SPT/SRPT baseline implementations (BaselineDefinition)", deployable: "scheduling evaluation harness — GAP-RTM-002", ref: "services/scheduler-service/src/manufacturing_scheduler/; services/scheduler-service/tests/"}
   USES_DATA: ["BaselineDefinition"]
   VERIFIED_BY: [BENCH-SCH-001, BENCH-RQ2-001]
   MITIGATES: [SCH-R06]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
-  note: "ARCH-SCH-EVAL is the dedicated scheduling-evaluation component; ARCH-VIS-EVAL is Vision-specific."
+  state: {coverage: IMPLEMENTED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED, flags: []}
+  note: "ARCH-SCH-EVAL is the dedicated scheduling-evaluation component; ARCH-VIS-EVAL is Vision-specific. WP-SCH-001 delivers the five offline dispatch rules, the BaselineDefinition records SCH-B1..SCH-B5 and the synthetic instance generator only. BENCH-SCH-001 and BENCH-RQ2-001 have not run, so evidence stays NOT_YET_EXECUTED; evidence/WP-SCH-001/README.md records the local unit run and its limits. No VERIFIED claim."
 FR-SCH-011:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SCH-011 L170012"}
   DERIVED_FROM: [ITEM-31, SCH-INV-12]
@@ -5068,14 +5102,15 @@ FR-SCH-015:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SCH-015 L170016"}
   DERIVED_FROM: [ITEM-19, ITEM-33, NFR-INV-53]
   ALLOCATED_TO: [ARCH-SCH-PLAN, ARCH-EDGE-BFF]
-  REALIZED_BY: {surface: "rationale/objective/comparison fields for review", deployable: "scheduler-service → operations-bff", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "rationale/objective/comparison fields for review", deployable: "scheduler-service → operations-bff", ref: "services/scheduler-service/src/manufacturing_scheduler/; services/scheduler-service/contracts/v1/; packages/contracts/registry/scheduler.recovery-plan.v1.json"}
   EXPOSED_BY: ["IC-SCH-003 ScheduleCandidate", "IC-SCH-004 RecoveryPlan"]
   VERIFIED_BY: [TEST-SCH-PLAN, TEST-UI-PLAN]
   EXERCISED_IN: [AV-SCEN-01]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [evidence/WP-SCH-002/runs/run-4-committed]  # contract-level local run on fixtures; REAL/integrated acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Local contract-level run (TEST-SCH-PLAN asset on the published snapshot fixture and development RecoveryPlan fixtures); DEP-083 generator and DEP-084 validator are not implemented, TEST-UI-PLAN, AV-SCEN-01/02 and E2E-01 have not run, and no EvidenceID exists. evidence/WP-SCH-002/README.md records the limits."
 ```
 
 ### 17.FK FR-AUTO
@@ -5517,16 +5552,16 @@ FR-PLAT-001:
   meta: {class: F0, owner: Yavuz, anchor: "01 Item81 FR-PLAT-001 L170079"}
   DERIVED_FROM: [ITEM-39, ITEM-61, ITEM-68, NFR-INV-44, INTEG-INV-20]
   ALLOCATED_TO: [ARCH-PLAT-COMPOSE, ARCH-PLAT-RELEASE]
-  REALIZED_BY: {surface: "Compose-based INTEGRATION composition of 9 deployables + infrastructure (backfill ADR 11)", deployable: "shared Linux host runtime", ref: "infra/compose/compose.yaml; infra/compose/stack.sh"}
+  REALIZED_BY: {surface: "Compose-based INTEGRATION composition of 9 deployables + infrastructure (backfill ADR 11)", deployable: "shared Linux host runtime", ref: "infra/compose/compose.yaml; infra/compose/stack.sh; infra/compose/readiness.json; infra/compose/mlflow/Dockerfile"}
   GOVERNED_BY: ["EnvironmentManifest"]
   DECIDED_BY: ["ADR-0011"]
   VERIFIED_BY: [TEST-PLAT-COMPOSE, TEST-DEP-PLATFORM, BENCH-E2E-001]
   EXERCISED_IN: [E2E-01, AV-SCEN-12]
-  EXECUTED_AS: [RUN-PLAT-001-DEV-001]  # infra layer on the shared host and in CI t1-integration; deployables and Integration profile pending
+  EXECUTED_AS: [RUN-PLAT-001-DEV-001, RUN-PLAT-003-DEV-001]  # infra layer (WP-PLAT-001), then the full profile with Temporal, Qdrant and MLflow and a simulated-reboot observation whose recovery varied (WP-PLAT-003) on the shared host and in CI t1-integration; application deployables pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "CI + INTEGRATION + EVALUATION", m6_freeze_sensitive: true}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
-  note: "infrastructure layer composed; application deployables join the profiles when they are runnable services (manufacturing-core has no service process yet; operations-bff needs an identity client and edge topology)."
+  note: "infrastructure, workflow (Temporal), retrieval (Qdrant) and experiment-tracking (MLflow) runtimes composed in Sequence I order with a 05 readiness checklist (WP-PLAT-003); application deployables join the profiles when they are runnable services (manufacturing-core has no service process yet; operations-bff needs an identity client and edge topology)."
 FR-PLAT-002:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-PLAT-002 L170080"}
   DERIVED_FROM: [ITEM-38, DX-INV-07, DX-INV-08]
@@ -5554,25 +5589,27 @@ FR-PLAT-004:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-PLAT-004 L170082"}
   DERIVED_FROM: [ITEM-42, CD-INV-01, PLAT-INV-01, INTEG-INV-03]
   ALLOCATED_TO: [ARCH-PLAT-CICD, ARCH-PLAT-RELEASE]
-  REALIZED_BY: {surface: "main-derived immutable artifact promotion to INTEGRATION", deployable: "GitHub Actions + GHCR + deploy workflow", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "main-derived immutable artifact promotion to INTEGRATION", deployable: "GitHub Actions + GHCR + deploy command", ref: ".github/workflows/release.yml; release/images.json; tools/release/src/cap_release/deploy.py; infra/compose/stack.sh"}
   GOVERNED_BY: ["deployment workflow"]
-  VERIFIED_BY: [TEST-PLAT-CD, INSP-DEP-HOST]
+  VERIFIED_BY: [TEST-PLAT-CD, INSP-DEP-HOST, TEST-CICD-002-001, TEST-CICD-002-003, TEST-CICD-002-004]
   MITIGATES: [PLAT-R08]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-CICD-002-DEV-005]  # DEV run on the shared host; INTEGRATION acceptance (TEST-PLAT-CD, INSP-DEP-HOST) pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L4, env: "INTEGRATION + EVALUATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "build-and-publish workflow, digest-pinned deploy command and host hook implemented (WP-CICD-002); deployment from GitHub Actions needs a self-hosted runner (DN-PLAT-RUNNER), so the deploy runs as a command on the host; no application image exists yet."
 FR-PLAT-005:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-PLAT-005 L170083"}
   DERIVED_FROM: [ITEM-42, CD-INV-03, PLAT-INV-10]
   ALLOCATED_TO: [ARCH-PLAT-RELEASE]
-  REALIZED_BY: {surface: "ReleaseManifest/DeploymentRecord emission (format OD-CICD-01)", deployable: "deploy workflow", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "ReleaseManifest/DeploymentRecord emission (format OD-CICD-01)", deployable: "release workflow and deploy command", ref: "tools/release/src/cap_release/manifest.py; tools/release/src/cap_release/record.py; tools/release/src/cap_release/schemas/; release/README.md"}
   USES_DATA: ["ReleaseManifest", "DeploymentRecord"]
-  VERIFIED_BY: [TEST-PLAT-CD, INSP-DEP-HOST]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  VERIFIED_BY: [TEST-PLAT-CD, INSP-DEP-HOST, TEST-CICD-002-002, TEST-CICD-002-003]
+  EXECUTED_AS: [RUN-CICD-002-DEV-005]  # DEV run on the shared host; INTEGRATION acceptance (TEST-PLAT-CD, INSP-DEP-HOST) pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L4, env: "INTEGRATION + EVALUATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "OD-CICD-01 is decided as JSON documents validated by JSON Schema (release/README.md); an ADR follows when the ADR index can admit it (WP-DOC-002). Identities without a producer are NOT_YET_PRODUCED."
 FR-PLAT-006:
   meta: {class: F1, owner: Yavuz, anchor: "01 Item81 FR-PLAT-006 L170084"}
   DERIVED_FROM: [ITEM-47, ITEM-61, TECH-INV-14]
@@ -6913,11 +6950,12 @@ NFR-DEP-001:
   DERIVED_FROM: [ITEM-39, ITEM-61, NFR-INV-44]
   ALLOCATED_TO: [ARCH-PLAT-COMPOSE]
   MEASUREMENT: {metric: "mandatory runtime deploys on documented x86-64 Linux + Docker/Compose without VM/K8s", threshold: "PASS", workload: "mandatory Integration profile", hardware: "HP: x86-64 Linux host (distro OD-PLAT-01)", observed: null}
+  REALIZED_BY: {surface: "Docker Compose runtime on x86-64 Linux, no VM or Kubernetes", deployable: "shared Linux host runtime", ref: "infra/compose/compose.yaml; infra/compose/stack.sh"}
   VERIFIED_BY: [TEST-DEP-PLATFORM]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-PLAT-003-DEV-001]  # DEV observation: full profile on the x86-64 Linux shared host with Docker/Compose only; the mandatory Integration profile with application deployables is not yet composed, so observed stays null
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
 NFR-DEP-002:
   meta: {class: S2, owner: Yavuz, anchor: "01 Item82 NFR-DEP-002 L172275"}
   DERIVED_FROM: [ITEM-39, ITEM-42]
@@ -6925,7 +6963,7 @@ NFR-DEP-002:
   REALIZED_BY: {surface: "startup-to-healthy measurement (stack.sh up --wait)", deployable: "platform runtime tooling", ref: "infra/compose/stack.sh; evidence/WP-PLAT-001/collect_run.py"}
   MEASUREMENT: {metric: "startup → healthy or explicit known-degraded with images local", threshold: "≤ 10 min", workload: "full mandatory Integration profile", hardware: "HP: accepted 16 GiB shared Linux host (EVALUATION HardwareProfile)", observed: null}
   VERIFIED_BY: [BENCH-DEP-STARTUP]
-  EXECUTED_AS: [RUN-PLAT-001-DEV-001]  # DEV observation of the infra profile only; the full Integration profile is not yet composed
+  EXECUTED_AS: [RUN-PLAT-001-DEV-001, RUN-PLAT-003-DEV-001]  # DEV observations: infra profile (WP-PLAT-001), full profile with Temporal, Qdrant and MLflow (WP-PLAT-003); application deployables are not yet composed
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "INTEGRATION", m6_freeze_sensitive: false}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
@@ -6933,23 +6971,27 @@ NFR-DEP-003:
   meta: {class: H0, owner: Yavuz, anchor: "01 Item82 NFR-DEP-003 L172286"}
   DERIVED_FROM: [ITEM-42, INTEG-INV-02, CD-INV-17]
   ALLOCATED_TO: [ARCH-PLAT-CICD, ARCH-PLAT-RELEASE]
+  REALIZED_BY: {surface: "host-source preflight of the deploy command: zero changes in the host source tree and a checkout equal to the release commit, recorded in every DeploymentRecord", deployable: "deploy command", ref: "tools/release/src/cap_release/deploy.py; tools/release/src/cap_release/record.py"}
   MEASUREMENT: {metric: "manual source-code patches on target host for formal deployment", threshold: "= 0", workload: "formal deployments", hardware: "N/A (not hardware-bound)", observed: null}
-  VERIFIED_BY: [INSP-DEP-HOST, TEST-PLAT-CD]
+  VERIFIED_BY: [INSP-DEP-HOST, TEST-PLAT-CD, TEST-CICD-002-003]
   MITIGATES: [PLAT-R08]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [RUN-CICD-002-DEV-005]  # DEV run on the shared host; INTEGRATION acceptance (TEST-PLAT-CD, INSP-DEP-HOST) pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L4, env: "INTEGRATION + EVALUATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "enforced and recorded per deployment; the measurement over formal deployments (observed) is not taken, so observed stays null."
 NFR-DEP-004:
   meta: {class: A1, owner: Yavuz, anchor: "01 Item82 NFR-DEP-004 L172299"}
   DERIVED_FROM: [ITEM-35, ITEM-42, CD-INV-08, LOCAL-INV-12]
   ALLOCATED_TO: [ARCH-DATA-PG, ARCH-PLAT-CICD]
+  REALIZED_BY: {surface: "migration stage of the deploy path with pre- and post-checks, an inspectable status surface and halt semantics", deployable: "deploy command", ref: "tools/release/src/cap_release/migrations.py; tools/release/src/cap_release/deploy.py; release/images.json; release/README.md"}
   MEASUREMENT: {metric: "release-required migrations executed outside versioned automated tooling", threshold: "= 0; status inspectable", workload: "release deployments", hardware: "N/A (not hardware-bound)", observed: null}
-  VERIFIED_BY: [TEST-DEP-MIGRATION]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  VERIFIED_BY: [TEST-DEP-MIGRATION, TEST-CICD-003-001, TEST-CICD-003-002]
+  EXECUTED_AS: [RUN-CICD-003-DEV-001]  # DEV run on the shared host against a disposable PostgreSQL; INTEGRATION acceptance (A1) pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "a release binds the newest version of each declared migration set and the deploy command migrates through the Core tooling; the measurement over release deployments (observed) is not taken, so observed stays null; no application image carries Core yet."
 NFR-DEP-005:
   meta: {class: H0, owner: Yavuz, anchor: "01 Item82 NFR-DEP-005 L172308"}
   DERIVED_FROM: [ITEM-84, NFR-INV-44, DX-INV-51]
@@ -7439,6 +7481,67 @@ tests (WP-GOV-002)" step of t1-unit (`validate --base origin/main`, `drift
 --strict`) and, on pull requests, "PR Requirement-Impact (TL-13, WP-GOV-002)".
 INSP-GOV-ACCEPT (EVALUATION, WP-GOV-003) is not executed. EvidenceState is
 EVIDENCE_PENDING.
+### 19.11 WP-PLAT-003 concrete implementation and verification assets
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-PLAT-003-001 (`infra/compose/tests/test_definitions.py`: setup-job, Sequence I layer, wait-cycle, least-privilege, realm-placeholder and 05 readiness-checklist rules, with negative graphs) | TEST-PLAT-COMPOSE | FR-PLAT-001 |
+| TEST-PLAT-003-002 (`infra/compose/tests/test_runtime_integration.py`: REAL Temporal namespace and PostgreSQL schemas, Qdrant key enforcement and vector round trip, MLflow PostgreSQL tracking and S3 artifacts, platform-realm token and wrong-secret rejection) | TEST-PLAT-COMPOSE | FR-PLAT-001 |
+| RUN-PLAT-003-DEV-001 (`evidence/WP-PLAT-003/collect_run.py`: fresh full profile with the observability stack, smoke, readiness, idempotent second up, simulated reboot, restart with data) | TEST-DEP-PLATFORM, BENCH-DEP-STARTUP instrumentation | FR-PLAT-001, NFR-DEP-001, NFR-DEP-002 |
+
+Readiness checklist: `infra/compose/readiness.json` (`cap.runtime-readiness/v1`)
+mirrors every runtime edge out of DN-PLAT-INTEG in 05 and is checked against 05
+by TEST-PLAT-003-001; `stack.sh readiness` reports live health per edge. CI: the
+"Platform composition definition tests" step of t1-unit and the REAL platform
+steps of t1-integration on the `full` profile. The run is a DEV observation on
+the shared host, not the INTEGRATION acceptance of the mandatory profile with
+application deployables; BENCH-E2E-001, E2E-01, AV-SCEN-12 and INSP-DEP-HOST
+remain open. EvidenceState is EVIDENCE_PENDING.
+
+### 19.12 WP-TEST-007 concrete implementation and verification assets
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-TEST-007-001 (`ci/tests/test_architecture_rules.py`: rule catalog against the checker and 03 §17, requirement context in violations, the exception process with every accept and reject path) | TEST-ARCH-BOUNDARY | FR-EVT-007 (rules BR-02, BR-03 report the requirements they protect; exceptions never waive them) |
+| TEST-TEST-007-002 (`ci/tests/test_required_gates.py`: the boundary check and the trace linter cannot be skipped, made non-blocking or left out of `ci-gate`) | TEST-ARCH-BOUNDARY, TEST-GOV-TRACELINT | FR-GOV-005 (the trace linter is a required gate), FR-EVT-007 |
+
+Catalog and process: `ci/architecture/` (`rules.json`, `exceptions.json`, README).
+The rule checker is WP-EVT-005's (`ci/scripts/check_architecture_boundaries.py`);
+WP-TEST-007 adds rule identity, reporting and the exception process to it. The
+requirement realization of FR-EVT-007 stays with its owner's record. TEST-SEC-SVCID
+(runtime service identity, WP-SEC-002) is not executed. EvidenceState is
+EVIDENCE_PENDING.
+
+### 19.13 WP-CICD-002 concrete implementation and verification assets
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-CICD-002-001 (`tools/release/tests/test_registry.py`: the image registry, an unlisted Dockerfile, broken entries, fail-closed reading) | TEST-PLAT-CD | FR-PLAT-004 |
+| TEST-CICD-002-002 (`tools/release/tests/test_manifest.py`: the ReleaseManifest identities, digest pinning, no tag identity, no secret plaintext, NOT_YET_PRODUCED, fingerprint) | TEST-PLAT-CD | FR-PLAT-005 |
+| TEST-CICD-002-003 (`tools/release/tests/test_record.py`, `test_deploy.py`: every preflight refusal, stage failures, rollback, a record that cannot over-claim, zero host patches) | TEST-PLAT-CD, INSP-DEP-HOST instrumentation | FR-PLAT-004, FR-PLAT-005, NFR-DEP-003 |
+| TEST-CICD-002-004 (`tools/release/tests/test_release_workflow.py`: publish only from main, narrow permissions, no secret beyond the job token, SBOM and provenance, the Compose override without a build key) | TEST-PLAT-CD | FR-PLAT-004 |
+
+Pipeline: `release/images.json`, `.github/workflows/release.yml`,
+`tools/release` (`python -m cap_release`), `release/README.md`. CI: the "Release
+tooling lint and tests (WP-CICD-002)" step of t1-unit and the `release` workflow
+(dry-run build on pull requests, publish and ReleaseManifest on main). The shared-host
+deployment, TEST-PLAT-CD at INTEGRATION and INSP-DEP-HOST remain open.
+EvidenceState is EVIDENCE_PENDING.
+
+### 19.14 WP-CICD-003 concrete implementation and verification assets
+
+| Concrete asset | Family | Source requirements |
+|---|---|---|
+| TEST-CICD-003-001 (`tools/release/tests/test_migrations.py`: ledger classification, pre- and post-checks, halt before any apply on a diverged or unreadable database, a failed apply and where it left the database, no connection string in any message, the status surface exit codes) | TEST-DEP-MIGRATION | NFR-DEP-004 |
+| TEST-CICD-003-002 (`tools/release/tests/test_migrations_real.py`, REAL PostgreSQL 18 with a disposable database and two non-administrative roles: an empty database detected, applied, verified and replayed, a tampered ledger halting, an unreadable database, an unprivileged identity failing and leaving nothing, the deploy host's stage) | TEST-DEP-MIGRATION | NFR-DEP-004 |
+
+`release/images.json` declares the migration sets (`database_migrations`); the manifest binds
+their newest versions; `python -m cap_release migration-status` is the status surface.
+CI: the "Release tooling lint and tests (WP-CICD-002)" step of t1-unit and the "Migration
+stage tests (REAL PostgreSQL, WP-CICD-003)" step of t1-integration. TEST-DEP-MIGRATION at
+INTEGRATION on a release deployment, and the NFR-DEP-004 measurement, remain open.
+EvidenceState is EVIDENCE_PENDING.
+
 ## 20. Rejected Alternatives
 
 | Alternative | Rejected because |

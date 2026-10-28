@@ -1,0 +1,2 @@
+Current: ruff=294 pyright=186 unformatted=53 ({'ruff': 'ruff 0.7.4', 'pyright': 'pyright 1.1.389'})
+PASS: no new static findings; baseline is tight.

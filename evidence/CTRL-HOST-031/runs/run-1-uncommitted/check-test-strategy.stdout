@@ -1,0 +1,2 @@
+VIOLATION evidence/CTRL-HOST-031/tests/test_capture_run.py: test file belongs to no declared suite
+FAIL: test strategy covers 151 test files in 26 suites; 1 violation(s)

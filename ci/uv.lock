@@ -68,6 +68,7 @@ dependencies = [
     { name = "httpx" },
     { name = "hypothesis" },
     { name = "jsonschema" },
+    { name = "manufacturing-scheduler", extra = ["dev"] },
     { name = "manufacturing-simulator", extra = ["dev"] },
     { name = "mfgctl", extra = ["dev"] },
     { name = "nats-py" },
@@ -92,6 +93,7 @@ requires-dist = [
     { name = "httpx", specifier = "==0.28.1" },
     { name = "hypothesis", specifier = "==6.168.1" },
     { name = "jsonschema", specifier = "==4.23.0" },
+    { name = "manufacturing-scheduler", extras = ["dev"], editable = "../services/scheduler-service" },
     { name = "manufacturing-simulator", extras = ["dev"], editable = "../services/manufacturing-simulator" },
     { name = "mfgctl", extras = ["dev"], editable = "../tools/mfgctl" },
     { name = "nats-py", specifier = "==2.9.0" },
@@ -461,6 +463,28 @@ sdist = { url = "https://files.pythonhosted.org/packages/5a/09/e07c4b5579a79f4b1
 wheels = [
     { url = "https://files.pythonhosted.org/packages/6d/a0/053d6af3e8f871e0073b4a36732d9e65be77a72e5434c31b94f6af78a6bb/mako-1.4.3-py3-none-any.whl", hash = "sha256:723296007c870bfd6b3f0c3230dba7198096e5269297ebf5e4eff9e7ffa39d4f", size = 80164, upload-time = "2026-09-22T20:54:33.128Z" },
 ]
+
+[[package]]
+name = "manufacturing-scheduler"
+version = "0.1.0"
+source = { editable = "../services/scheduler-service" }
+dependencies = [
+    { name = "numpy" },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "hypothesis" },
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6.168,<7" },
+    { name = "numpy", specifier = ">=2.4,<2.5" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8,<10" },
+]
+provides-extras = ["dev"]
 
 [[package]]
 name = "manufacturing-simulator"

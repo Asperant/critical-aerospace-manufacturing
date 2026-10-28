@@ -1,0 +1,63 @@
+{
+  "environment": {
+    "class": "INTEGRATION",
+    "id": "integration"
+  },
+  "finished_at": "2026-10-28T15:40:51+00:00",
+  "host_source": {
+    "checked_out_commit": "e1752d90febabc5db09ba61fd6380a2951462bf6",
+    "manual_patches": 0,
+    "release_commit": "e1752d90febabc5db09ba61fd6380a2951462bf6"
+  },
+  "manifest_sha256": "240547325abd5b86b1f4b4116e3baafaaf5d100f41e8fbdfeb17dfd81aa6d463",
+  "previous_release_id": null,
+  "record_id": "DEP-REC-20261028T153631Z-30ddea83",
+  "release_id": "REL-e1752d90feba-40707535295",
+  "result": "SUCCEEDED",
+  "rollback": null,
+  "schema": "cap.deployment-record/v1",
+  "stages": [
+    {
+      "detail": "main-derived, ci-gate green, digests present, host source clean",
+      "finished_at": "2026-10-28T15:36:33+00:00",
+      "result": "PASSED",
+      "stage": "preflight",
+      "started_at": "2026-10-28T15:36:31+00:00"
+    },
+    {
+      "detail": "the release binds no database schema target",
+      "finished_at": "2026-10-28T15:36:33+00:00",
+      "result": "SKIPPED",
+      "stage": "migrate",
+      "started_at": "2026-10-28T15:36:33+00:00"
+    },
+    {
+      "detail": "released services started from their digests",
+      "finished_at": "2026-10-28T15:40:43+00:00",
+      "result": "PASSED",
+      "stage": "rollout",
+      "started_at": "2026-10-28T15:36:33+00:00"
+    },
+    {
+      "detail": "every service healthy",
+      "finished_at": "2026-10-28T15:40:43+00:00",
+      "result": "PASSED",
+      "stage": "health",
+      "started_at": "2026-10-28T15:40:43+00:00"
+    },
+    {
+      "detail": "REAL smoke checks passed",
+      "finished_at": "2026-10-28T15:40:51+00:00",
+      "result": "PASSED",
+      "stage": "smoke",
+      "started_at": "2026-10-28T15:40:43+00:00"
+    }
+  ],
+  "started_at": "2026-10-28T15:36:31+00:00",
+  "supply_chain_verification": {
+    "ci_gate": "success",
+    "digests_in_registry": true,
+    "main_derived": true,
+    "tags_trusted": false
+  }
+}

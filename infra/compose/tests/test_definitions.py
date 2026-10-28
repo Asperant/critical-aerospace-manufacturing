@@ -72,11 +72,28 @@ def test_ports_bind_localhost_only(name: str) -> None:
         assert str(port).startswith("127.0.0.1:"), f"{name}: {port}"
 
 
+def one_shot(service: dict[str, Any]) -> bool:
+    """A setup job (WP-PLAT-003): runs to completion, never restarted."""
+    return service.get("restart") == "no"
+
+
 @pytest.mark.parametrize("name", sorted(SERVICES))
 def test_every_service_has_health_check_and_memory_limit(name: str) -> None:
     service = SERVICES[name]
-    assert service.get("healthcheck", {}).get("test"), f"{name}: health check"
     mebibytes(service["deploy"]["resources"]["limits"]["memory"])
+    if not one_shot(service):
+        assert service.get("healthcheck", {}).get("test"), f"{name}: health check"
+        return
+    # A one-shot job has no running state to probe: it publishes no port and
+    # starts only once everything it needs is healthy or has completed.
+    assert not service.get("ports"), f"{name}: a setup job publishes no port"
+    needs = service.get("depends_on")
+    assert isinstance(needs, dict) and needs, f"{name}: a setup job declares its needs"
+    for dependency, condition in needs.items():
+        assert condition.get("condition") in {
+            "service_healthy",
+            "service_completed_successfully",
+        }, f"{name} -> {dependency}: wait for health or completion"
 
 
 def test_infra_memory_budget() -> None:
@@ -126,7 +143,15 @@ def test_registry_matches_the_composition() -> None:
 def test_credentials_never_in_the_definition() -> None:
     text = (HERE / "compose.yaml").read_text("utf-8")
     assert not re.search(r"(PASSWORD|SECRET|TOKEN)\s*:", text)
-    for name in ("postgres", "keycloak"):
+    for name in (
+        "postgres",
+        "keycloak",
+        "temporal-schema",
+        "temporal",
+        "qdrant",
+        "mlflow-init",
+        "mlflow",
+    ):
         (entry,) = SERVICES[name]["env_file"]
         assert entry["path"].startswith("${CAP_PLATFORM_STATE_DIR:-${HOME}/"), entry
 
@@ -150,3 +175,204 @@ def test_stack_script_defaults_match_the_definition() -> None:
     compose = (HERE / "compose.yaml").read_text("utf-8")
     declared = dict(re.findall(r"\$\{(CAP_[A-Z_]+_PORT):-(\d+)\}", compose))
     assert defaults == declared and declared
+
+
+def test_mlflow_server_never_holds_the_s3_admin_identity() -> None:
+    """WP-PLAT-003: only the one-shot init job creates the bucket; the server is bucket-scoped."""
+    script = (HERE / "stack.sh").read_text("utf-8")
+    (server_env,) = re.findall(
+        r"printf 'MLFLOW_BACKEND_STORE_URI=[^\n]*\n[^\n]*mlflow\.env\"", script
+    )
+    assert "S3_ADMIN" not in server_env and "S3_MLFLOW_KEY" in server_env
+    assert SERVICES["mlflow"]["env_file"][0]["path"].endswith("/mlflow.env")
+    assert SERVICES["mlflow-init"]["env_file"][0]["path"].endswith("/mlflow-init.env")
+
+
+# ------------------------------- WP-PLAT-003: dependency-ordered startup ---
+
+# 02 Sequence I (host reboot / platform recovery): identity -> data stores (with the
+# workflow-engine and artifact stores) -> event backbone -> application services.
+STARTUP_LAYERS = {
+    "keycloak": 0,
+    "postgres": 1,
+    "seaweedfs": 1,
+    "valkey": 1,
+    "qdrant": 1,
+    "temporal-schema": 1,
+    "temporal": 1,
+    "temporal-namespace": 1,
+    "mlflow-init": 1,
+    "mlflow": 1,
+    "nats": 2,
+}
+
+
+def layer_violations(services: dict[str, Any], layers: dict[str, int]) -> list[str]:
+    """Waits that are not readiness, or that point to a later Sequence I layer."""
+    found = []
+    for name, service in services.items():
+        for dependency, condition in (service.get("depends_on") or {}).items():
+            if condition.get("condition") not in {
+                "service_healthy",
+                "service_completed_successfully",
+            }:
+                found.append(
+                    f"{name} -> {dependency}: bare start order is not readiness"
+                )
+            elif layers[dependency] > layers[name]:
+                found.append(
+                    f"{name} (layer {layers[name]}) waits for {dependency} "
+                    f"(layer {layers[dependency]}): against 02 Sequence I"
+                )
+    return found
+
+
+def startup_cycle(services: dict[str, Any]) -> list[str] | None:
+    """The first wait cycle found, as a path, or None."""
+    state: dict[str, int] = {}
+
+    def visit(name: str, path: list[str]) -> list[str] | None:
+        if state.get(name) == 2:
+            return None
+        if state.get(name) == 1:
+            return path + [name]
+        state[name] = 1
+        for dependency in services[name].get("depends_on") or {}:
+            if cycle := visit(dependency, path + [name]):
+                return cycle
+        state[name] = 2
+        return None
+
+    for name in services:
+        if cycle := visit(name, []):
+            return cycle
+    return None
+
+
+def test_every_service_has_a_startup_layer() -> None:
+    assert set(STARTUP_LAYERS) == set(SERVICES)
+
+
+def test_dependencies_follow_sequence_i() -> None:
+    """A service waits only for the health or completion of its own or an earlier layer."""
+    assert layer_violations(SERVICES, STARTUP_LAYERS) == []
+
+
+def test_startup_graph_has_no_cycle() -> None:
+    """No health check can wait, directly or transitively, on a service that waits on it."""
+    assert startup_cycle(SERVICES) is None
+
+
+def test_ordering_checks_reject_broken_graphs() -> None:
+    healthy = {"condition": "service_healthy"}
+    later = {"keycloak": {"depends_on": {"nats": healthy}}, "nats": {}}
+    assert layer_violations(later, {"keycloak": 0, "nats": 2})
+    bare = {
+        "temporal": {"depends_on": {"postgres": {"condition": "service_started"}}},
+        "postgres": {},
+    }
+    assert layer_violations(bare, {"temporal": 1, "postgres": 1})
+    loop = {"a": {"depends_on": {"b": healthy}}, "b": {"depends_on": {"a": healthy}}}
+    assert startup_cycle(loop) == ["a", "b", "a"]
+
+
+def test_platform_realm_carries_no_secret() -> None:
+    """WP-PLAT-003: the realm is code; its client secret comes from the host's keycloak.env."""
+    import json
+
+    realm = json.loads(COMPOSE["configs"]["keycloak-platform-realm"]["content"])
+    (client,) = realm["clients"]
+    assert client["secret"] == "$${CAP_KEYCLOAK_SMOKE_CLIENT_SECRET}"
+    assert client["serviceAccountsEnabled"] and not client["publicClient"]
+    assert not client["directAccessGrantsEnabled"] and not client["standardFlowEnabled"]
+    script = (HERE / "stack.sh").read_text("utf-8")
+    assert (
+        "CAP_KEYCLOAK_SMOKE_CLIENT_SECRET"
+        in script.split("SECRET_VARS=(", 1)[1].split(")")[0]
+    )
+
+
+# ------------------------------ WP-PLAT-003: runtime readiness checklist ---
+
+READINESS = __import__("json").loads((HERE / "readiness.json").read_text("utf-8"))
+DEP_ROW = re.compile(
+    r"^\| (DEP-\d{3}) \| DN-PLAT-INTEG → (\S+) \| RUNTIME \| (HARD|SOFT) \| (\S+) \| (\S+) \| "
+    r"([^|]+?) \| [^|]+ \| [^|]+ \| [^|]+ \| ([^|]+?) \|",
+    re.M,
+)
+
+
+def canonical_edges() -> dict[str, dict[str, str]]:
+    text = (REPO / "docs/05_Dependency_Graph.md").read_text("utf-8")
+    return {
+        m[1]: {
+            "consumer_node": m[2],
+            "strength": m[3],
+            "stage": m[4],
+            "required_readiness": m[5],
+            "need_by": m[6],
+            "precise_requirement": m[7],
+        }
+        for m in DEP_ROW.finditer(text)
+    }
+
+
+def test_readiness_checklist_matches_05_exactly() -> None:
+    """Every runtime edge out of DN-PLAT-INTEG is listed once, with 05's own values."""
+    edges = canonical_edges()
+    assert edges, "no DN-PLAT-INTEG runtime edge parsed from 05"
+    items = {item["dep"]: item for item in READINESS["items"]}
+    assert len(items) == len(READINESS["items"]), "duplicate checklist entry"
+    assert set(items) == set(edges)
+    for dep, edge in edges.items():
+        assert {key: items[dep][key] for key in edge} == edge, dep
+
+
+def test_readiness_checklist_points_to_real_services_and_checks() -> None:
+    stacks = {"infra/compose": SERVICES}
+    other = yaml.safe_load(
+        (REPO / "infra/observability/compose.yaml").read_text("utf-8")
+    )
+    stacks["infra/observability"] = other["services"]
+    for item in READINESS["items"]:
+        services = stacks[item["stack"]]
+        for name in item["services"]:
+            assert name in services and not one_shot(services[name]), (
+                item["dep"],
+                name,
+            )
+        assert item["checks"], item["dep"]
+        for check in item["checks"]:
+            path, _, test = check.partition("::")
+            text = (REPO / path).read_text("utf-8")
+            assert not test or f"def {test}(" in text, (item["dep"], check)
+
+
+def test_readiness_stacks_and_probes_match_the_compose_files() -> None:
+    """The project names are the ones Docker labels containers with; probes name real services."""
+    stacks = READINESS["stacks"]
+    for stack, project in stacks.items():
+        compose = yaml.safe_load((REPO / stack / "compose.yaml").read_text("utf-8"))
+        assert compose["name"] == project, (stack, project)
+    assert {item["stack"] for item in READINESS["items"]} <= set(stacks)
+    observed = yaml.safe_load(
+        (REPO / "infra/observability/compose.yaml").read_text("utf-8")
+    )
+    for service, spec in READINESS["probes"].items():
+        assert service in observed["services"], service
+        assert (
+            "healthcheck" not in observed["services"][service]
+        ), f"{service} has a Docker health check: drop its probe"
+        assert spec["url"].startswith("http://127.0.0.1:"), service
+
+
+def test_readiness_view_never_reports_a_missing_service_healthy() -> None:
+    """A stack that is not running must give WAIT for its items, never OK."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("readiness", HERE / "readiness.py")
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert module.service_health("cap-no-such-project") == {}
+    assert module.probe("http://127.0.0.1:1/") == "unreachable"

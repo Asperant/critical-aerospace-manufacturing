@@ -4,7 +4,9 @@
     "ci",
     "packages/contracts/src",
     "services/manufacturing-simulator/src",
-    "services/manufacturing-simulator/tests"
+    "services/manufacturing-simulator/tests",
+    "services/scheduler-service/src",
+    "services/scheduler-service/tests"
   ],
   "exclude": ["**/.venv", "**/__pycache__"],
   "pythonVersion": "3.11",
@@ -14,11 +16,22 @@
   "executionEnvironments": [
     {"root": "ci", "extraPaths": ["ci", "ci/scripts", "ci/tests", "packages/contracts/src"]},
     {"root": "tools/trace", "extraPaths": ["tools/trace/src"]},
+    {"root": "tools/release", "extraPaths": ["tools/release/src", "tools/release/tests"]},
     {
       "root": "services/manufacturing-simulator",
       "extraPaths": [
         "services/manufacturing-simulator/src",
         "services/manufacturing-simulator/tests"
+      ]
+    },
+    {
+      "root": "services/scheduler-service",
+      "extraPaths": [
+        "services/scheduler-service/src",
+        "services/scheduler-service/tests",
+        "packages/contracts/src",
+        "ci/scripts",
+        "services/operational-twin/src"
       ]
     }
   ]

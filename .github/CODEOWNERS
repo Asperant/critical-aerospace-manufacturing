@@ -37,6 +37,8 @@
 /infra/compose/ @Yavuzgmus
 /infra/mfgctl/ @Yavuzgmus
 /evidence/WP-PLAT-001/ @Yavuzgmus @Asperant
+# WP-PLAT-003: runtime service bring-up on the shared host; canonical owner Yavuz, supporting reviewer Batuhan (advisory, CHG-018).
+/evidence/WP-PLAT-003/ @Yavuzgmus
 /evidence/WP-SEC-003/ @Asperant @Yavuzgmus
 
 # WP-TEST-001: test strategy, tiers and boundary-mode policy; canonical owner Yavuz (advisory, CHG-018).
@@ -45,6 +47,19 @@
 /ci/test-strategy.schema.json @Yavuzgmus
 /ci/scripts/check_test_strategy.py @Yavuzgmus
 /evidence/WP-TEST-001/ @Yavuzgmus @Asperant
+
+# WP-TEST-007: architecture rule catalog, exception process and gate wiring; canonical owner Yavuz, supporting owner Asrın (advisory, CHG-018).
+/ci/architecture/ @Yavuzgmus @Asperant
+/ci/tests/test_architecture_rules.py @Yavuzgmus
+/ci/tests/test_required_gates.py @Yavuzgmus
+/evidence/WP-TEST-007/ @Yavuzgmus
+
+# WP-CICD-002: release pipeline (image registry, ReleaseManifest, DeploymentRecord, deploy); canonical owner Yavuz, supporting reviewer Asrın (advisory, CHG-018).
+/release/ @Yavuzgmus @Asperant
+/tools/release/ @Yavuzgmus
+/.github/workflows/release.yml @Yavuzgmus @Asperant
+/evidence/WP-CICD-002/ @Yavuzgmus
+/evidence/WP-CICD-003/ @Yavuzgmus
 /evidence/WP-HITL-002/ @Asperant @Ejlonn
 /evidence/WP-EVT-001/ @Asperant @selorito
 /packages/contracts/ @Asperant @selorito

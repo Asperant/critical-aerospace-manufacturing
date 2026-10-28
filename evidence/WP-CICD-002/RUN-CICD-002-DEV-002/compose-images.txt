@@ -1,0 +1,2 @@
+CONTAINER               REPOSITORY                    TAG                 PLATFORM            IMAGE ID            SIZE                CREATED
+cap-platform-mlflow-1   ghcr.io/asperant/cap-mlflow   <none>              linux/amd64         f565307a684f        1.35GB              34 minutes ago

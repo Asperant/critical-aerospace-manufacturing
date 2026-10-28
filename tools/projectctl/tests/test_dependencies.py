@@ -22,7 +22,7 @@ def test_dependency_baseline_and_findings(graph):
     # CHG-055 and the later approved precision bindings changed the canonical
     # warning set without changing the graph shape. Keep this count as a
     # diagnostic baseline; all diagnostic identities remain fail-closed below.
-    assert len([d for d in findings if d.code == "PRECISION_MISSING"]) == 165
+    assert len([d for d in findings if d.code == "PRECISION_MISSING"]) == 163
     assert {d.record_id for d in findings if d.code == "FIXTURE_SEMANTICS"} == set()
 
 
@@ -68,3 +68,91 @@ def test_reintroduced_readiness_and_fixture_findings_are_detected(graph):
     findings = validate_dependencies(graph)
     assert {d.record_id for d in findings if d.code == "READINESS_INCOMPATIBLE"} == {"DEP-060", "DEP-194"}
     assert {d.record_id for d in findings if d.code == "FIXTURE_SEMANTICS"} == fixture_ids
+
+
+KERNEL_SOURCE = "services/manufacturing-simulator/src/manufacturing_simulator"
+
+
+def kernel_members(root):
+    """Method and field names of each kernel class, read from the AST (no import)."""
+    import ast
+
+    members = {}
+    for module in ("kernel.py", "events.py"):
+        tree = ast.parse((root / KERNEL_SOURCE / module).read_text(encoding="utf-8"))
+        for node in tree.body:
+            if not isinstance(node, ast.ClassDef):
+                continue
+            names = members.setdefault(node.name, set())
+            for item in node.body:
+                if isinstance(item, ast.FunctionDef):
+                    names.add(item.name)
+                elif isinstance(item, ast.AnnAssign) and isinstance(item.target, ast.Name):
+                    names.add(item.target.id)
+    return members
+
+
+def test_dep_043_start_predicate_is_the_kernel_not_the_dispatch_deliverable(graph, root):
+    """CHG-077: the START edge asks DN-SIM-KERNEL for kernel facts only."""
+    edge = next(e for e in graph.edges if e.id == "DEP-043")
+    # Only the predicate wording moved; every approved field of the edge is unchanged.
+    assert (edge.predecessor.node, edge.predecessor.owner) == ("DN-SIM-KERNEL", "Batu")
+    assert (edge.successor.node, edge.successor.owner) == ("DN-SIM-DISPIF", "Batu")
+    semantics = edge.semantics
+    assert (semantics.kind.value, semantics.strength.value) == ("CAPABILITY", "HARD")
+    assert semantics.blocking_stage.value == "START"
+    assert semantics.required_readiness.value == "COMPONENT_READY"
+    assert (edge.need_by, edge.fallback, edge.risk_class) == ("S2", None, "DR-1")
+
+    # The dispatch interface and baseline are the consumer's own deliverable.
+    assert "baseline dispatch interface callable" not in edge.unblock_evidence
+    assert "produced and verified by WP-SIM-006" in edge.unblock_evidence
+    assert "not a DispatchDecision wire contract" in edge.precise_requirement
+
+    # Every kernel API the precise requirement names exists on current main.
+    members = kernel_members(root)
+    named = {
+        "Kernel": {"register_handler", "schedule", "step", "run"},
+        "ExecutionContext": {"now", "stream", "schedule"},
+        "EventSpec": {"time", "kind", "payload", "event_id"},
+        "ScheduledEvent": {"sequence"},
+    }
+    for cls, names in named.items():
+        assert names <= members[cls], cls
+        assert cls in edge.precise_requirement
+    for phrase in (
+        "register_handler(kind, EventHandler)",
+        "schedule(EventSpec)",
+        "step()/run(until, max_events)",
+        "ExecutionContext.now/stream()/schedule()",
+        "immutable execution records",
+    ):
+        assert phrase in edge.precise_requirement
+
+    # Table row, YAML record and precise-consumer appendix agree.
+    findings = validate_dependencies(graph)
+    own = {d.code for d in findings if d.record_id == edge.id}
+    assert own <= {"NEED_BY_AMBIGUOUS"} and "EDGE_REGISTRY_CONFLICT" not in own
+    appendix = [
+        line
+        for line in (root / PATH).read_text(encoding="utf-8").splitlines()
+        if line.startswith("| DEP-043 | DN-SIM-DISPIF at START |")
+    ]
+    assert len(appendix) == 1 and edge.unblock_evidence in appendix[0]
+
+
+def test_dep_043_ready_is_bound_to_the_recorded_authority(graph, root):
+    """While DEP-043 is READY, CHG-077 and the evidence must carry its authority."""
+    import yaml
+
+    edge = next(e for e in graph.edges if e.id == "DEP-043")
+    if edge.status == "READY":
+        record = yaml.safe_load((root / "09_change/CHG-077.yaml").read_text("utf-8"))
+        record = record["CHG-077"]
+        assert record["decision"].startswith("APPROVED")
+        review = "pull/199#pullrequestreview-5689282669"
+        assert review in record["decision_basis"]
+        path = root / "evidence/WP-SIM-006/DEP-043-START-READINESS.md"
+        evidence = path.read_text("utf-8")
+        assert review in evidence
+        assert "owner değerlendirmem olarak kabul ediyorum" in evidence

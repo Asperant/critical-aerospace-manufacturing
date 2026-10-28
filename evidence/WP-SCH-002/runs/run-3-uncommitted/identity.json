@@ -1,0 +1,95 @@
+{
+  "kind": "NEW local verification run; not CI, INTEGRATION or EVALUATION evidence",
+  "source": {
+    "head_commit": "3242d1f18f1e4f5bbf857d28b21e6b250fb381b8",
+    "head_tree": "a6d2efa26a95de42fc758fe398dfefc0a00966a7",
+    "branch": "wp/WP-SCH-002-snapshot-recovery-plan",
+    "tree_clean": false,
+    "manifest_excludes": [
+      "evidence/WP-SCH-002/runs/",
+      "evidence/WP-SCH-002/README.md"
+    ],
+    "changed_or_untracked_files_sha256": {
+      ".github/workflows/ci.yml": "15f4f92c9179eaa933882678b6d042e017bc54fe00cba37416fe69a72b469203",
+      "ci/test-strategy.json": "325c271d7c0a30b5c9544d15e3e8700778faa21e7bc69cddbeb687d6824c96d2",
+      "ci/tests/test_contract_registry.py": "04e24def06342c0ce366d3d34d41b36aaab90af609adcfe2736a1a44fdf9bff5",
+      "docs/03_Requirements_Traceability_Matrix.md": "7fbb2c6db84d6d1fb6d0ef2603a7a7fbb63e3de3b13d4820eeaba08267e9ebe3",
+      "docs/04_Work_Breakdown_Structure.md": "c2ce9bb017f88cc1288309a2ac5cc5dac77c1e7fe3dc0f8005c6abe7a2eac9a3",
+      "evidence/WP-SCH-002/capture_run.py": "50a5c38cb4f9f3d8b4ef638c2668d845ef392bc59bc72693084ff0575bb83406",
+      "evidence/WP-SCH-002/probe_matrix.py": "c94652758d69327f3f88a4861e15a53621b5621e7569024c07c680e5f4fa7c76",
+      "evidence/WP-SCH-002/tests/test_capture_run.py": "9dc8c127b3175fb8b48fff9d6bef8cbdc244b343e62f6fbf80aeaea48b6d3e88",
+      "packages/contracts/producer-authorities.json": "c6eff3d047a8ab650cd977a80d650c96e8a1176c8a5768e0f8d469777d2351a0",
+      "packages/contracts/registry/scheduler.recovery-plan.v1.json": "434e3ce014229bfd2dd3672044e9346cb1c6fcec7acb8cad3c646a571c1dd589",
+      "project_control/merged_external_bindings.yaml": "022b77d624f708c67af3458875edfa95fe2bba94d8a632bed5760d5347346d1f",
+      "services/scheduler-service/README.md": "f4919a3335d2de5649bf71e49e2c13824a8d3c49340d451be2d97785aad90879",
+      "services/scheduler-service/contracts/v1/README.md": "d87b8da557c30d9bd8f49a97981c0a794404bcff546991117b3e9bd01c714ddd",
+      "services/scheduler-service/contracts/v1/recovery-plan.self-reported-valid.json": "aa047af0f63a35d0ad232c3e37c79aacc0d43d4351a426726b7c6f93218e88bd",
+      "services/scheduler-service/contracts/v1/recovery-plan.v1.json": "c6ff4fe93b45c0c504c85b4831c535f00d75c70f4ff62af691e65be1e03c4374",
+      "services/scheduler-service/contracts/v1/recovery-plan.v1.schema.json": "f792f23c7b94dd843d7af9ac536b58028f8cfac1e953298b3be71a6021add5b6",
+      "services/scheduler-service/pyproject.toml": "17646292264008de729ece8a51448ce55b8e068bcb628e8cd9c38d3bb92d2438",
+      "services/scheduler-service/pyrightconfig.json": "82b77c88c2acdc252ede8012a4b73fd8b9b8f650decd93f3c914f26b4424a168",
+      "services/scheduler-service/src/manufacturing_scheduler/__init__.py": "27bbc9a6c4a9cd2d38455e7e522d31eacab33f85e7fc6718f9a9aa504f0ceb80",
+      "services/scheduler-service/src/manufacturing_scheduler/errors.py": "2e74c76aa3113ead0948703de25962a7c61379f5ba4d6a97869f5b686a4e2123",
+      "services/scheduler-service/src/manufacturing_scheduler/plans.py": "ac9893ec09390e35219eff3119ba84baf4c13a5494a4842c5a4c60c7098020d2",
+      "services/scheduler-service/src/manufacturing_scheduler/snapshot.py": "c642c8288943a7b8f90b28f53f4cb78bcdbbd56f35572777a042dd4ceec2a9e9",
+      "services/scheduler-service/src/manufacturing_scheduler/wire.py": "f6f7cb72a7d5a9973a9bacd6ed5488b03c38c7c882f0ac3050f3b161753b2465",
+      "services/scheduler-service/tests/plan_helpers.py": "96fba2150c560c42924781f14699b9c4b118d15d7e3885ddccf06dcec78e6ee3",
+      "services/scheduler-service/tests/test_plan_contract.py": "16d0bba8f2824f666ef5163274f41b5201455f2844586bcac6c3ec0457d440d7",
+      "services/scheduler-service/tests/test_plans.py": "2297ad6a221451a5cd732e93868c2b44eb32185ba55e0883e9e933a7bb0770a7",
+      "services/scheduler-service/tests/test_snapshot.py": "636c40e670bb39ddf6c3cb10f94a81affd311d1f85cf2c89516bfaee52d54485",
+      "services/scheduler-service/tests/test_snapshot_twin.py": "8671bc3d0b93e66280aa25e883a18b568a7a3ae6c3d9210a7a3a73060de1f351",
+      "traceability/generated/orphan_report.json": "936330b8a042e200b70ce543d192f00e03e87db736bebe783e51dd6b552ddb6b",
+      "traceability/generated/requirements.csv": "dadc3fc5a238ebe2fc5c22258f0c33e98ff20fbdc91a70ff4c2b6d947d514f1e",
+      "traceability/trace_edges.yaml": "d6169cd6d4ca4a580d5ded3a319fef620a77893323aa65199563e0b96e7b38ae"
+    },
+    "lock_sha256": "430cd33dfe6e6f3ca96dccdf831a0624b255843a16d9f6cf7856f443f3ab5c84"
+  },
+  "runtime": {
+    "python": "3.11.16",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+    "machine": "x86_64",
+    "uv": "uv 0.12.13 (x86_64-unknown-linux-gnu)",
+    "pythonpath": "ci:ci/scripts:tools/trace/src",
+    "packages": {
+      "jsonschema": "4.23.0",
+      "hypothesis": "6.168.1",
+      "pytest": "8.3.3",
+      "ruff": "0.7.4",
+      "pyright": "1.1.389"
+    }
+  },
+  "hardware": {
+    "cpu_model": "Intel(R) Core(TM) i7-9700K CPU @ 3.60GHz",
+    "logical_cpus": 8,
+    "mem_total_mib": 30978,
+    "gpu": null
+  },
+  "host_at_start": {
+    "recorded_utc": "2026-10-28T08:39:42+00:00",
+    "loadavg": [
+      0.48828125,
+      0.27978515625,
+      0.33740234375
+    ]
+  },
+  "host_at_finish": {
+    "recorded_utc": "2026-10-28T08:40:17+00:00",
+    "loadavg": [
+      1.01025390625,
+      0.42626953125,
+      0.38525390625
+    ]
+  },
+  "workload": {
+    "scenario": "published core.scheduling-snapshot.v1 normal fixture and two hand-written DEVELOPMENT_FIXTURE RecoveryPlans (no canonical scenario)",
+    "matrix": "fixed clock instants and mutation corpora are listed in probe-matrix.stdout; no seeds are used",
+    "shared_host": true,
+    "containers_started": false,
+    "commands_sequential": true
+  },
+  "unavailable": [
+    "governed Release identity (ReleaseManifest)",
+    "governed Environment ID and image digest",
+    "governed Hardware ID (HardwareProfile)"
+  ]
+}

@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "manufacturing-scheduler"
+version = "0.1.0"
+description = "Offline dispatch baselines and scheduling instance generator (WP-SCH-001)"
+requires-python = ">=3.11"
+dependencies = ["numpy>=2.4,<2.5"]
+
+[project.optional-dependencies]
+dev = ["hypothesis>=6.168,<7", "pytest>=8,<10"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [
+  "src",
+  "../../packages/contracts/src",
+  "../../ci/scripts",
+  "../operational-twin/src",
+]
+addopts = "-p no:cacheprovider"

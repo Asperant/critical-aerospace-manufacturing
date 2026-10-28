@@ -1,0 +1,10 @@
+WAIT DEP-005 DN-PLAT-CD      HARD INTEGRATION_READY by M1 (S2)  [postgres=unhealthy, temporal=restarting, temporal-namespace=starting, mlflow=starting]
+WAIT DEP-007 DN-RT-PG        HARD INTEGRATION_READY by M1 (S2)  [postgres=unhealthy]
+OK   DEP-008 DN-RT-NATS      HARD INTEGRATION_READY by M1 (S2)
+OK   DEP-009 DN-RT-OBJ       HARD INTEGRATION_READY by E2E-01 readiness (end S4)
+OK   DEP-010 DN-RT-IDP       HARD INTEGRATION_READY by E2E-01 readiness (end S4)
+OK   DEP-011 DN-RT-OBS       HARD SKELETON_READY    by M1 (S2)
+WAIT DEP-012 DN-RT-TEMPORAL  HARD INTEGRATION_READY by E2E-01 formal run (end S5)  [temporal=restarting, temporal-namespace=starting]
+OK   DEP-013 DN-RT-QDRANT    HARD INTEGRATION_READY by M4 (S8)
+WAIT DEP-014 DN-RT-MLFLOW    HARD INTEGRATION_READY by M4/M5  [mlflow=starting]
+OK   DEP-015 DN-RT-VALKEY    SOFT SKELETON_READY    by — (R2/S)

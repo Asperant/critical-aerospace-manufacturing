@@ -1,0 +1,15 @@
+warning: `VIRTUAL_ENV=<repo>/ci/.venv` does not match the project environment path `ci/.venv` and will be ignored; use `--active` to target the active environment instead
+Using CPython 3.11.16
+Creating virtual environment at: ci/.venv
+   Building cap-observability @ file://<tmp>/host-checkout/packages/observability
+   Building manufacturing-simulator @ file://<tmp>/host-checkout/services/manufacturing-simulator
+   Building mfgctl @ file://<tmp>/host-checkout/tools/mfgctl
+   Building projectctl @ file://<tmp>/host-checkout/tools/projectctl
+      Built mfgctl @ file://<tmp>/host-checkout/tools/mfgctl
+      Built manufacturing-simulator @ file://<tmp>/host-checkout/services/manufacturing-simulator
+      Built projectctl @ file://<tmp>/host-checkout/tools/projectctl
+      Built cap-observability @ file://<tmp>/host-checkout/packages/observability
+warning: Failed to hardlink files; falling back to full copy. This may lead to degraded performance.
+         If the cache and target directories are on different filesystems, hardlinking may not be supported.
+         If this is intentional, set `export UV_LINK_MODE=copy` or use `--link-mode=copy` to suppress this warning.
+Installed 66 packages in 5.08s

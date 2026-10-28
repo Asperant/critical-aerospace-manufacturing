@@ -1,0 +1,97 @@
+{
+  "kind": "NEW local verification run; not CI, INTEGRATION or EVALUATION evidence",
+  "source": {
+    "head_commit": "3ab912deaeadf478b7f535470fcfedfb9c8e96da",
+    "head_tree": "4d0c2cee49620466f342d6d112326b4c1433881b",
+    "branch": "wp/WP-SCH-001-dispatch-baselines",
+    "tree_clean": false,
+    "manifest_excludes": [
+      "evidence/WP-SCH-001/runs/",
+      "evidence/WP-SCH-001/README.md"
+    ],
+    "changed_or_untracked_files_sha256": {
+      ".github/workflows/ci.yml": "506d76ff6fc49565612b66f6377b9e014b0d30592dd273b0479ce5ab89a14e5a",
+      "ci/pyproject.toml": "57184957cef6a65a1322ba7c96fbab4b8aaca384bdea006a4cba1fc35550841f",
+      "ci/test-strategy.json": "0ed43c510e28d818dc5f08377aae8de43938aa193dba8b4ffb05712b3a881874",
+      "ci/uv.lock": "5caecd3788f39f1a8c3560cd98492550b52e89456bdae038c2583aa247b8b859",
+      "docs/03_Requirements_Traceability_Matrix.md": "211745c5d5a488f960609a14165777e20da3f85448b5af1250309e0670144d40",
+      "docs/04_Work_Breakdown_Structure.md": "5119907cac4f4321bcf1bd8c489b86ae838b05cd018d886b28a2bd961fee9454",
+      "evidence/WP-SCH-001/OBSERVABILITY-DECISION-PENDING.md": "25e8f87d97ba5ba5d4092e69d3e77d4435e5880ea02a3bcc64653366a48adf53",
+      "evidence/WP-SCH-001/capture_run.py": "08487df304648d27ced29a5b2525995d1cc8cc27932055f4267be85de2d9661f",
+      "evidence/WP-SCH-001/replay_comparison.py": "d7377959917ed4b09e7d03f39d067d3dc5b9fd0699d67e2051b0932c321234e9",
+      "evidence/WP-SCH-001/tests/test_capture_run.py": "76bbb0f80013cb40adf908bf03f1176583f109925ffb7ace070d7d0a00e1e982",
+      "pyrightconfig.json": "ebceb688f1be99ab37390fd588a5e0ad224e9125faf13153216586aa970c0dbc",
+      "services/scheduler-service/README.md": "63a98c04219a8f00cbc637018d7e79210967343bf6e3fdd8eeac07c8c833ebf8",
+      "services/scheduler-service/pyproject.toml": "27c42c0a95245e40e7ba903d219fd50b4f1d84fd494f7bea8fd9023ca4b19e64",
+      "services/scheduler-service/pyrightconfig.json": "ba97f81efb14bdeb8933af303e6a379c5853e631e3557d641fc85a2852b82d41",
+      "services/scheduler-service/src/manufacturing_scheduler/__init__.py": "74e015b04244686c1b4b8b063a3b23e479f8a3a0ad25e8698d3a27e728d3e17e",
+      "services/scheduler-service/src/manufacturing_scheduler/baselines.py": "d5a947702bb4ba30b4b6724f88fc637303a8b50148bec1184e9953519ca82fe3",
+      "services/scheduler-service/src/manufacturing_scheduler/errors.py": "354e150749a6d4f43900b59a5f1f6ac0a33a808bf8ecb8e7267e5c318abd033c",
+      "services/scheduler-service/src/manufacturing_scheduler/instances.py": "b2967d263afbb6ff8910ff86f4dc779594bfcdee65563d7f38cc1bc0444954a9",
+      "services/scheduler-service/src/manufacturing_scheduler/models.py": "542c54caf8d3f8f57a55813694ddd466b4ab6b60854c26fac52182fa233820b7",
+      "services/scheduler-service/src/manufacturing_scheduler/policies.py": "473a7d4f18fc358d60ab2f2bf867cc9098ce67ea77e129ad32e54868b0c85cca",
+      "services/scheduler-service/src/manufacturing_scheduler/validation.py": "ab8b245d27d02c323e1503eeeaeb92b223fcd55fe47f1c15993276a1869dd21d",
+      "services/scheduler-service/tests/conftest.py": "d5a240394e1071f0bdabc631ced2fed2a5c9044a245ae3ed0aa9a14682670d4d",
+      "services/scheduler-service/tests/replay_worker.py": "00838e6afcaa54873b553b1b3398e5949f9f30447aaccb0c5d741bc665011e30",
+      "services/scheduler-service/tests/sch_fixtures.py": "80acf759531c6e2a83b0b2f57267cb1e27049d23a1a06734963a3a4b27d57f60",
+      "services/scheduler-service/tests/test_baselines.py": "8de5e66c5c1379811e8f605f47fd6999341456f907563ecfc148d843f9020ff4",
+      "services/scheduler-service/tests/test_determinism.py": "91621cbc2491f155c205c1d95c60c2ca56cc233ee1e441e6b9dbab138c263952",
+      "services/scheduler-service/tests/test_instances.py": "9f746bc257f8f4f2b92ce45d3b815ebf191ecfa7ad0e1e92bc50fb5c452b4590",
+      "services/scheduler-service/tests/test_policies.py": "abbaf9458443b11882e49e4faf8139d95d0ecbb8a96803a22889b75a6aafda37",
+      "services/scheduler-service/tests/test_validation.py": "d980b890efaa4b28151719227c674d09f531d731689e5be0fea7abda56a0940d",
+      "traceability/generated/orphan_report.json": "bdeac366f0d6b10ed594aa734f666555f65ce12897f8cacc0308a7e3bb2ad8a3",
+      "traceability/generated/requirements.csv": "5078bf44f2503d2505a4ab069d86d228d66e3982c92ea973c655a4b83968e7ad",
+      "traceability/trace_edges.yaml": "c13b746618f64de592f874b48119c68edf1e37e1f4c5895d090d0645362d880a"
+    },
+    "lock_sha256": "5caecd3788f39f1a8c3560cd98492550b52e89456bdae038c2583aa247b8b859"
+  },
+  "runtime": {
+    "python": "3.11.16",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+    "machine": "x86_64",
+    "uv": "uv 0.12.13 (x86_64-unknown-linux-gnu)",
+    "pythonpath": "ci:ci/scripts",
+    "packages": {
+      "numpy": "2.4.6",
+      "hypothesis": "6.168.1",
+      "pytest": "8.3.3",
+      "ruff": "0.7.4",
+      "pyright": "1.1.389",
+      "manufacturing-scheduler": "0.1.0"
+    }
+  },
+  "hardware": {
+    "cpu_model": "Intel(R) Core(TM) i7-9700K CPU @ 3.60GHz",
+    "logical_cpus": 8,
+    "mem_total_mib": 30978,
+    "gpu": null
+  },
+  "host_at_start": {
+    "recorded_utc": "2026-10-27T20:11:23+00:00",
+    "loadavg": [
+      0.8740234375,
+      1.0546875,
+      1.31982421875
+    ]
+  },
+  "host_at_finish": {
+    "recorded_utc": "2026-10-27T20:11:30+00:00",
+    "loadavg": [
+      0.8037109375,
+      1.037109375,
+      1.3125
+    ]
+  },
+  "workload": {
+    "scenario": "synthetic offline fixtures (OfflineInstanceConfig), no simulator, no Core",
+    "master_seed": 20261027,
+    "shared_host": true,
+    "containers_started": false,
+    "commands_sequential": true
+  },
+  "unavailable": [
+    "governed Release identity (ReleaseManifest)",
+    "governed Environment ID and image digest",
+    "governed Hardware ID (HardwareProfile)"
+  ]
+}

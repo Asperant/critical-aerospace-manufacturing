@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: 950528685ec3a97e27a60b3b0e29744b139dfe1296519c00c4cec0cf4249fe48
+  sha256: 43a01a5be7dfcaa21d443fd854f3ebf68060eb933b06055797db823e08b0378f
 requirements:
   FR-GOV-001:
     meta:
@@ -98,7 +98,7 @@ requirements:
     realization:
       surface: VERIFIED_BY edge completeness rule in trace linter (TL-08, M5 gate)
       deployable: trace registry
-      ref: traceability/trace_edges.yaml; tools/trace/src/cap_trace/rules.py
+      ref: traceability/trace_edges.yaml; tools/trace/src/cap_trace/rules.py; ci/tests/test_required_gates.py
   FR-GOV-006:
     meta:
       class: F1
@@ -2078,13 +2078,14 @@ requirements:
       env: CI
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: Local contract-level run (TEST-SCH-PLAN asset on the published snapshot fixture and development RecoveryPlan fixtures); DEP-083 generator and DEP-084 validator are not implemented, TEST-UI-PLAN, AV-SCEN-01/02 and E2E-01 have not run, and no EvidenceID exists. evidence/WP-SCH-002/README.md records the limits.
     realization:
       surface: plan ↔ SchedulingSnapshot revision binding
       deployable: scheduler-service
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/scheduler-service/src/manufacturing_scheduler/; services/scheduler-service/contracts/v1/; packages/contracts/registry/scheduler.recovery-plan.v1.json
   FR-SCH-008:
     meta:
       class: F1
@@ -2096,13 +2097,14 @@ requirements:
       env: CI + INTEGRATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: Local contract-level run (TEST-SCH-PLAN asset on the published snapshot fixture and development RecoveryPlan fixtures); DEP-083 generator and DEP-084 validator are not implemented, TEST-UI-PLAN, AV-SCEN-01/02 and E2E-01 have not run, and no EvidenceID exists. evidence/WP-SCH-002/README.md records the limits.
     realization:
       surface: 'RecoveryPlan schema (Item 83 example: CONTRACT-RecoveryPlan-v1)'
       deployable: scheduler-service
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/scheduler-service/src/manufacturing_scheduler/; services/scheduler-service/contracts/v1/; packages/contracts/registry/scheduler.recovery-plan.v1.json
   FR-SCH-009:
     meta:
       class: F1
@@ -2132,15 +2134,15 @@ requirements:
       env: EVALUATION
       m6_freeze_sensitive: true
     state:
-      coverage: ALLOCATED
+      coverage: IMPLEMENTED
       planning: VERIFY_PLANNED
       evidence: NOT_YET_EXECUTED
       flags: []
-    note: ARCH-SCH-EVAL is the dedicated scheduling-evaluation component; ARCH-VIS-EVAL is Vision-specific.
+    note: ARCH-SCH-EVAL is the dedicated scheduling-evaluation component; ARCH-VIS-EVAL is Vision-specific. WP-SCH-001 delivers the five offline dispatch rules, the BaselineDefinition records SCH-B1..SCH-B5 and the synthetic instance generator only. BENCH-SCH-001 and BENCH-RQ2-001 have not run, so evidence stays NOT_YET_EXECUTED; evidence/WP-SCH-001/README.md records the local unit run and its limits. No VERIFIED claim.
     realization:
       surface: FIFO/EDD/CR/SPT/SRPT baseline implementations (BaselineDefinition)
       deployable: scheduling evaluation harness — GAP-RTM-002
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/scheduler-service/src/manufacturing_scheduler/; services/scheduler-service/tests/
   FR-SCH-011:
     meta:
       class: F1
@@ -2225,13 +2227,14 @@ requirements:
       env: CI + INTEGRATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: Local contract-level run (TEST-SCH-PLAN asset on the published snapshot fixture and development RecoveryPlan fixtures); DEP-083 generator and DEP-084 validator are not implemented, TEST-UI-PLAN, AV-SCEN-01/02 and E2E-01 have not run, and no EvidenceID exists. evidence/WP-SCH-002/README.md records the limits.
     realization:
       surface: rationale/objective/comparison fields for review
       deployable: scheduler-service → operations-bff
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/scheduler-service/src/manufacturing_scheduler/; services/scheduler-service/contracts/v1/; packages/contracts/registry/scheduler.recovery-plan.v1.json
   FR-AUTO-001:
     meta:
       class: F0
@@ -2879,11 +2882,11 @@ requirements:
       coverage: EVIDENCE_PENDING
       planning: EVIDENCE_PENDING
       evidence: EVIDENCE_PENDING
-    note: infrastructure layer composed; application deployables join the profiles when they are runnable services (manufacturing-core has no service process yet; operations-bff needs an identity client and edge topology).
+    note: infrastructure, workflow (Temporal), retrieval (Qdrant) and experiment-tracking (MLflow) runtimes composed in Sequence I order with a 05 readiness checklist (WP-PLAT-003); application deployables join the profiles when they are runnable services (manufacturing-core has no service process yet; operations-bff needs an identity client and edge topology).
     realization:
       surface: Compose-based INTEGRATION composition of 9 deployables + infrastructure (backfill ADR 11)
       deployable: shared Linux host runtime
-      ref: infra/compose/compose.yaml; infra/compose/stack.sh
+      ref: infra/compose/compose.yaml; infra/compose/stack.sh; infra/compose/readiness.json; infra/compose/mlflow/Dockerfile
   FR-PLAT-002:
     meta:
       class: F1
@@ -2932,13 +2935,14 @@ requirements:
       env: INTEGRATION + EVALUATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: build-and-publish workflow, digest-pinned deploy command and host hook implemented (WP-CICD-002); deployment from GitHub Actions needs a self-hosted runner (DN-PLAT-RUNNER), so the deploy runs as a command on the host; no application image exists yet.
     realization:
       surface: main-derived immutable artifact promotion to INTEGRATION
-      deployable: GitHub Actions + GHCR + deploy workflow
-      ref: TBD_BY_IMPLEMENTATION
+      deployable: GitHub Actions + GHCR + deploy command
+      ref: .github/workflows/release.yml; release/images.json; tools/release/src/cap_release/deploy.py; infra/compose/stack.sh
   FR-PLAT-005:
     meta:
       class: F1
@@ -2950,13 +2954,14 @@ requirements:
       env: INTEGRATION + EVALUATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: OD-CICD-01 is decided as JSON documents validated by JSON Schema (release/README.md); an ADR follows when the ADR index can admit it (WP-DOC-002). Identities without a producer are NOT_YET_PRODUCED.
     realization:
       surface: ReleaseManifest/DeploymentRecord emission (format OD-CICD-01)
-      deployable: deploy workflow
-      ref: TBD_BY_IMPLEMENTATION
+      deployable: release workflow and deploy command
+      ref: tools/release/src/cap_release/manifest.py; tools/release/src/cap_release/record.py; tools/release/src/cap_release/schemas/; release/README.md
   FR-PLAT-006:
     meta:
       class: F1
@@ -5301,15 +5306,19 @@ requirements:
       env: INTEGRATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
     measurement:
       metric: mandatory runtime deploys on documented x86-64 Linux + Docker/Compose without VM/K8s
       threshold: PASS
       workload: mandatory Integration profile
       hardware: 'HP: x86-64 Linux host (distro OD-PLAT-01)'
       observed: null
+    realization:
+      surface: Docker Compose runtime on x86-64 Linux, no VM or Kubernetes
+      deployable: shared Linux host runtime
+      ref: infra/compose/compose.yaml; infra/compose/stack.sh
   NFR-DEP-002:
     meta:
       class: S2
@@ -5345,15 +5354,20 @@ requirements:
       env: INTEGRATION + EVALUATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
     measurement:
       metric: manual source-code patches on target host for formal deployment
       threshold: = 0
       workload: formal deployments
       hardware: N/A (not hardware-bound)
       observed: null
+    note: enforced and recorded per deployment; the measurement over formal deployments (observed) is not taken, so observed stays null.
+    realization:
+      surface: 'host-source preflight of the deploy command: zero changes in the host source tree and a checkout equal to the release commit, recorded in every DeploymentRecord'
+      deployable: deploy command
+      ref: tools/release/src/cap_release/deploy.py; tools/release/src/cap_release/record.py
   NFR-DEP-004:
     meta:
       class: A1
@@ -5365,15 +5379,20 @@ requirements:
       env: INTEGRATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
     measurement:
       metric: release-required migrations executed outside versioned automated tooling
       threshold: = 0; status inspectable
       workload: release deployments
       hardware: N/A (not hardware-bound)
       observed: null
+    note: a release binds the newest version of each declared migration set and the deploy command migrates through the Core tooling; the measurement over release deployments (observed) is not taken, so observed stays null; no application image carries Core yet.
+    realization:
+      surface: migration stage of the deploy path with pre- and post-checks, an inspectable status surface and halt semantics
+      deployable: deploy command
+      ref: tools/release/src/cap_release/migrations.py; tools/release/src/cap_release/deploy.py; release/images.json; release/README.md
   NFR-DEP-005:
     meta:
       class: H0
@@ -5930,9 +5949,11 @@ edges:
 - {"from": "FR-GOV-005", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-CICD", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "REALIZED_BY", "to": "repo:traceability/trace_edges.yaml", "applicability": "RECORDED"}
 - {"from": "FR-GOV-005", "relation": "REALIZED_BY", "to": "repo:tools/trace/src/cap_trace/rules.py", "applicability": "RECORDED"}
+- {"from": "FR-GOV-005", "relation": "REALIZED_BY", "to": "repo:ci/tests/test_required_gates.py", "applicability": "RECORDED"}
 - {"from": "FR-GOV-005", "relation": "USES_DATA", "to": "trace_edges", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "VERIFIED_BY", "to": "TEST-GOV-TRACELINT", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "VERIFIED_BY", "to": "TEST-GOV-002-003", "applicability": "PLANNED"}
+- {"from": "FR-GOV-005", "relation": "VERIFIED_BY", "to": "TEST-TEST-007-002", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "EXECUTED_AS", "to": "RUN-GOV-002-DEV-001", "applicability": "RECORDED"}
 - {"from": "FR-GOV-006", "relation": "DERIVED_FROM", "to": "ITEM-81", "applicability": "PLANNED"}
 - {"from": "FR-GOV-006", "relation": "DERIVED_FROM", "to": "ITEM-83", "applicability": "PLANNED"}
@@ -6534,6 +6555,7 @@ edges:
 - {"from": "FR-EVT-007", "relation": "GOVERNED_BY", "to": "ArchitectureRule set", "applicability": "PLANNED"}
 - {"from": "FR-EVT-007", "relation": "VERIFIED_BY", "to": "TEST-ARCH-BOUNDARY", "applicability": "PLANNED"}
 - {"from": "FR-EVT-007", "relation": "VERIFIED_BY", "to": "TEST-SEC-SVCID", "applicability": "PLANNED"}
+- {"from": "FR-EVT-007", "relation": "VERIFIED_BY", "to": "TEST-TEST-007-001", "applicability": "PLANNED"}
 - {"from": "FR-EVT-007", "relation": "MITIGATES", "to": "ARCH-R05", "applicability": "PLANNED"}
 - {"from": "FR-EVT-007", "relation": "MITIGATES", "to": "ARCH-R07", "applicability": "PLANNED"}
 - {"from": "FR-EVT-008", "relation": "DERIVED_FROM", "to": "ITEM-22", "applicability": "PLANNED"}
@@ -7185,18 +7207,24 @@ edges:
 - {"from": "FR-SCH-007", "relation": "ALLOCATED_TO", "to": "ARCH-SCH-PLAN", "applicability": "PLANNED"}
 - {"from": "FR-SCH-007", "relation": "ALLOCATED_TO", "to": "ARCH-TWIN-FRESHNESS", "applicability": "PLANNED"}
 - {"from": "FR-SCH-007", "relation": "EXPOSED_BY", "to": "IC-SCH-004 RecoveryPlan (source revision)", "applicability": "PLANNED"}
-- {"from": "FR-SCH-007", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-SCH-007", "relation": "REALIZED_BY", "to": "repo:services/scheduler-service/src/manufacturing_scheduler/", "applicability": "RECORDED"}
+- {"from": "FR-SCH-007", "relation": "REALIZED_BY", "to": "repo:services/scheduler-service/contracts/v1/", "applicability": "RECORDED"}
+- {"from": "FR-SCH-007", "relation": "REALIZED_BY", "to": "repo:packages/contracts/registry/scheduler.recovery-plan.v1.json", "applicability": "RECORDED"}
 - {"from": "FR-SCH-007", "relation": "VERIFIED_BY", "to": "TEST-SCH-PLAN", "applicability": "PLANNED"}
 - {"from": "FR-SCH-007", "relation": "VERIFIED_BY", "to": "TEST-AUTO-FRESHNESS", "applicability": "PLANNED"}
+- {"from": "FR-SCH-007", "relation": "EXECUTED_AS", "to": "evidence/WP-SCH-002/runs/run-4-committed", "applicability": "RECORDED"}
 - {"from": "FR-SCH-008", "relation": "DERIVED_FROM", "to": "ITEM-19", "applicability": "PLANNED"}
 - {"from": "FR-SCH-008", "relation": "DERIVED_FROM", "to": "ITEM-22", "applicability": "PLANNED"}
 - {"from": "FR-SCH-008", "relation": "DERIVED_FROM", "to": "INT-INV-05", "applicability": "PLANNED"}
 - {"from": "FR-SCH-008", "relation": "ALLOCATED_TO", "to": "ARCH-SCH-PLAN", "applicability": "PLANNED"}
 - {"from": "FR-SCH-008", "relation": "ALLOCATED_TO", "to": "ARCH-CTR-EVTSCHEMA", "applicability": "PLANNED"}
 - {"from": "FR-SCH-008", "relation": "EXPOSED_BY", "to": "IC-SCH-004 RecoveryPlan", "applicability": "PLANNED"}
-- {"from": "FR-SCH-008", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-SCH-008", "relation": "REALIZED_BY", "to": "repo:services/scheduler-service/src/manufacturing_scheduler/", "applicability": "RECORDED"}
+- {"from": "FR-SCH-008", "relation": "REALIZED_BY", "to": "repo:services/scheduler-service/contracts/v1/", "applicability": "RECORDED"}
+- {"from": "FR-SCH-008", "relation": "REALIZED_BY", "to": "repo:packages/contracts/registry/scheduler.recovery-plan.v1.json", "applicability": "RECORDED"}
 - {"from": "FR-SCH-008", "relation": "EXERCISED_IN", "to": "AV-SCEN-01", "applicability": "PLANNED"}
 - {"from": "FR-SCH-008", "relation": "VERIFIED_BY", "to": "TEST-SCH-PLAN", "applicability": "PLANNED"}
+- {"from": "FR-SCH-008", "relation": "EXECUTED_AS", "to": "evidence/WP-SCH-002/runs/run-4-committed", "applicability": "RECORDED"}
 - {"from": "FR-SCH-009", "relation": "DERIVED_FROM", "to": "ITEM-19", "applicability": "PLANNED"}
 - {"from": "FR-SCH-009", "relation": "DERIVED_FROM", "to": "ITEM-61", "applicability": "PLANNED"}
 - {"from": "FR-SCH-009", "relation": "DERIVED_FROM", "to": "SCH-INV-08", "applicability": "PLANNED"}
@@ -7213,7 +7241,8 @@ edges:
 - {"from": "FR-SCH-010", "relation": "ALLOCATED_TO", "to": "ARCH-SCH-HEURISTIC", "applicability": "PLANNED"}
 - {"from": "FR-SCH-010", "relation": "ALLOCATED_TO", "to": "ARCH-VIS-EVAL", "applicability": "PLANNED"}
 - {"from": "FR-SCH-010", "relation": "ALLOCATED_TO", "to": "ARCH-SCH-EVAL", "applicability": "PLANNED"}
-- {"from": "FR-SCH-010", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-SCH-010", "relation": "REALIZED_BY", "to": "repo:services/scheduler-service/src/manufacturing_scheduler/", "applicability": "RECORDED"}
+- {"from": "FR-SCH-010", "relation": "REALIZED_BY", "to": "repo:services/scheduler-service/tests/", "applicability": "RECORDED"}
 - {"from": "FR-SCH-010", "relation": "USES_DATA", "to": "BaselineDefinition", "applicability": "PLANNED"}
 - {"from": "FR-SCH-010", "relation": "VERIFIED_BY", "to": "BENCH-SCH-001", "applicability": "PLANNED"}
 - {"from": "FR-SCH-010", "relation": "VERIFIED_BY", "to": "BENCH-RQ2-001", "applicability": "PLANNED"}
@@ -7270,10 +7299,13 @@ edges:
 - {"from": "FR-SCH-015", "relation": "ALLOCATED_TO", "to": "ARCH-EDGE-BFF", "applicability": "PLANNED"}
 - {"from": "FR-SCH-015", "relation": "EXPOSED_BY", "to": "IC-SCH-003 ScheduleCandidate", "applicability": "PLANNED"}
 - {"from": "FR-SCH-015", "relation": "EXPOSED_BY", "to": "IC-SCH-004 RecoveryPlan", "applicability": "PLANNED"}
-- {"from": "FR-SCH-015", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-SCH-015", "relation": "REALIZED_BY", "to": "repo:services/scheduler-service/src/manufacturing_scheduler/", "applicability": "RECORDED"}
+- {"from": "FR-SCH-015", "relation": "REALIZED_BY", "to": "repo:services/scheduler-service/contracts/v1/", "applicability": "RECORDED"}
+- {"from": "FR-SCH-015", "relation": "REALIZED_BY", "to": "repo:packages/contracts/registry/scheduler.recovery-plan.v1.json", "applicability": "RECORDED"}
 - {"from": "FR-SCH-015", "relation": "EXERCISED_IN", "to": "AV-SCEN-01", "applicability": "PLANNED"}
 - {"from": "FR-SCH-015", "relation": "VERIFIED_BY", "to": "TEST-SCH-PLAN", "applicability": "PLANNED"}
 - {"from": "FR-SCH-015", "relation": "VERIFIED_BY", "to": "TEST-UI-PLAN", "applicability": "PLANNED"}
+- {"from": "FR-SCH-015", "relation": "EXECUTED_AS", "to": "evidence/WP-SCH-002/runs/run-4-committed", "applicability": "RECORDED"}
 - {"from": "FR-AUTO-001", "relation": "DERIVED_FROM", "to": "ITEM-18", "applicability": "PLANNED"}
 - {"from": "FR-AUTO-001", "relation": "DERIVED_FROM", "to": "ITEM-68", "applicability": "PLANNED"}
 - {"from": "FR-AUTO-001", "relation": "DERIVED_FROM", "to": "AUTO-INV-11", "applicability": "PLANNED"}
@@ -7645,6 +7677,8 @@ edges:
 - {"from": "FR-PLAT-001", "relation": "DECIDED_BY", "to": "ADR-0011", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-001", "relation": "REALIZED_BY", "to": "repo:infra/compose/compose.yaml", "applicability": "RECORDED"}
 - {"from": "FR-PLAT-001", "relation": "REALIZED_BY", "to": "repo:infra/compose/stack.sh", "applicability": "RECORDED"}
+- {"from": "FR-PLAT-001", "relation": "REALIZED_BY", "to": "repo:infra/compose/readiness.json", "applicability": "RECORDED"}
+- {"from": "FR-PLAT-001", "relation": "REALIZED_BY", "to": "repo:infra/compose/mlflow/Dockerfile", "applicability": "RECORDED"}
 - {"from": "FR-PLAT-001", "relation": "GOVERNED_BY", "to": "EnvironmentManifest", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-001", "relation": "EXERCISED_IN", "to": "E2E-01", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-001", "relation": "EXERCISED_IN", "to": "AV-SCEN-12", "applicability": "PLANNED"}
@@ -7652,6 +7686,7 @@ edges:
 - {"from": "FR-PLAT-001", "relation": "VERIFIED_BY", "to": "TEST-DEP-PLATFORM", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-001", "relation": "VERIFIED_BY", "to": "BENCH-E2E-001", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-001", "relation": "EXECUTED_AS", "to": "RUN-PLAT-001-DEV-001", "applicability": "RECORDED"}
+- {"from": "FR-PLAT-001", "relation": "EXECUTED_AS", "to": "RUN-PLAT-003-DEV-001", "applicability": "RECORDED"}
 - {"from": "FR-PLAT-002", "relation": "DERIVED_FROM", "to": "ITEM-38", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-002", "relation": "DERIVED_FROM", "to": "DX-INV-07", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-002", "relation": "DERIVED_FROM", "to": "DX-INV-08", "applicability": "PLANNED"}
@@ -7678,20 +7713,33 @@ edges:
 - {"from": "FR-PLAT-004", "relation": "DERIVED_FROM", "to": "INTEG-INV-03", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-004", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-CICD", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-004", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-RELEASE", "applicability": "PLANNED"}
-- {"from": "FR-PLAT-004", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-PLAT-004", "relation": "REALIZED_BY", "to": "repo:.github/workflows/release.yml", "applicability": "RECORDED"}
+- {"from": "FR-PLAT-004", "relation": "REALIZED_BY", "to": "repo:release/images.json", "applicability": "RECORDED"}
+- {"from": "FR-PLAT-004", "relation": "REALIZED_BY", "to": "repo:tools/release/src/cap_release/deploy.py", "applicability": "RECORDED"}
+- {"from": "FR-PLAT-004", "relation": "REALIZED_BY", "to": "repo:infra/compose/stack.sh", "applicability": "RECORDED"}
 - {"from": "FR-PLAT-004", "relation": "GOVERNED_BY", "to": "deployment workflow", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-004", "relation": "VERIFIED_BY", "to": "TEST-PLAT-CD", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-004", "relation": "VERIFIED_BY", "to": "INSP-DEP-HOST", "applicability": "PLANNED"}
+- {"from": "FR-PLAT-004", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-001", "applicability": "PLANNED"}
+- {"from": "FR-PLAT-004", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-003", "applicability": "PLANNED"}
+- {"from": "FR-PLAT-004", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-004", "applicability": "PLANNED"}
+- {"from": "FR-PLAT-004", "relation": "EXECUTED_AS", "to": "RUN-CICD-002-DEV-005", "applicability": "RECORDED"}
 - {"from": "FR-PLAT-004", "relation": "MITIGATES", "to": "PLAT-R08", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-005", "relation": "DERIVED_FROM", "to": "ITEM-42", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-005", "relation": "DERIVED_FROM", "to": "CD-INV-03", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-005", "relation": "DERIVED_FROM", "to": "PLAT-INV-10", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-005", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-RELEASE", "applicability": "PLANNED"}
-- {"from": "FR-PLAT-005", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-PLAT-005", "relation": "REALIZED_BY", "to": "repo:tools/release/src/cap_release/manifest.py", "applicability": "RECORDED"}
+- {"from": "FR-PLAT-005", "relation": "REALIZED_BY", "to": "repo:tools/release/src/cap_release/record.py", "applicability": "RECORDED"}
+- {"from": "FR-PLAT-005", "relation": "REALIZED_BY", "to": "repo:tools/release/src/cap_release/schemas/", "applicability": "RECORDED"}
+- {"from": "FR-PLAT-005", "relation": "REALIZED_BY", "to": "repo:release/README.md", "applicability": "RECORDED"}
 - {"from": "FR-PLAT-005", "relation": "USES_DATA", "to": "ReleaseManifest", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-005", "relation": "USES_DATA", "to": "DeploymentRecord", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-005", "relation": "VERIFIED_BY", "to": "TEST-PLAT-CD", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-005", "relation": "VERIFIED_BY", "to": "INSP-DEP-HOST", "applicability": "PLANNED"}
+- {"from": "FR-PLAT-005", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-002", "applicability": "PLANNED"}
+- {"from": "FR-PLAT-005", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-003", "applicability": "PLANNED"}
+- {"from": "FR-PLAT-005", "relation": "EXECUTED_AS", "to": "RUN-CICD-002-DEV-005", "applicability": "RECORDED"}
 - {"from": "FR-PLAT-006", "relation": "DERIVED_FROM", "to": "ITEM-47", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-006", "relation": "DERIVED_FROM", "to": "ITEM-61", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-006", "relation": "DERIVED_FROM", "to": "TECH-INV-14", "applicability": "PLANNED"}
@@ -8640,7 +8688,10 @@ edges:
 - {"from": "NFR-DEP-001", "relation": "DERIVED_FROM", "to": "ITEM-61", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-001", "relation": "DERIVED_FROM", "to": "NFR-INV-44", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-001", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-COMPOSE", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-001", "relation": "REALIZED_BY", "to": "repo:infra/compose/compose.yaml", "applicability": "RECORDED"}
+- {"from": "NFR-DEP-001", "relation": "REALIZED_BY", "to": "repo:infra/compose/stack.sh", "applicability": "RECORDED"}
 - {"from": "NFR-DEP-001", "relation": "VERIFIED_BY", "to": "TEST-DEP-PLATFORM", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-001", "relation": "EXECUTED_AS", "to": "RUN-PLAT-003-DEV-001", "applicability": "RECORDED"}
 - {"from": "NFR-DEP-002", "relation": "DERIVED_FROM", "to": "ITEM-39", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-002", "relation": "DERIVED_FROM", "to": "ITEM-42", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-002", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-COMPOSE", "applicability": "PLANNED"}
@@ -8649,13 +8700,18 @@ edges:
 - {"from": "NFR-DEP-002", "relation": "REALIZED_BY", "to": "repo:evidence/WP-PLAT-001/collect_run.py", "applicability": "RECORDED"}
 - {"from": "NFR-DEP-002", "relation": "VERIFIED_BY", "to": "BENCH-DEP-STARTUP", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-002", "relation": "EXECUTED_AS", "to": "RUN-PLAT-001-DEV-001", "applicability": "RECORDED"}
+- {"from": "NFR-DEP-002", "relation": "EXECUTED_AS", "to": "RUN-PLAT-003-DEV-001", "applicability": "RECORDED"}
 - {"from": "NFR-DEP-003", "relation": "DERIVED_FROM", "to": "ITEM-42", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-003", "relation": "DERIVED_FROM", "to": "INTEG-INV-02", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-003", "relation": "DERIVED_FROM", "to": "CD-INV-17", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-003", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-CICD", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-003", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-RELEASE", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-003", "relation": "REALIZED_BY", "to": "repo:tools/release/src/cap_release/deploy.py", "applicability": "RECORDED"}
+- {"from": "NFR-DEP-003", "relation": "REALIZED_BY", "to": "repo:tools/release/src/cap_release/record.py", "applicability": "RECORDED"}
 - {"from": "NFR-DEP-003", "relation": "VERIFIED_BY", "to": "INSP-DEP-HOST", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-003", "relation": "VERIFIED_BY", "to": "TEST-PLAT-CD", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-003", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-003", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-003", "relation": "EXECUTED_AS", "to": "RUN-CICD-002-DEV-005", "applicability": "RECORDED"}
 - {"from": "NFR-DEP-003", "relation": "MITIGATES", "to": "PLAT-R08", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-004", "relation": "DERIVED_FROM", "to": "ITEM-35", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-004", "relation": "DERIVED_FROM", "to": "ITEM-42", "applicability": "PLANNED"}
@@ -8663,7 +8719,14 @@ edges:
 - {"from": "NFR-DEP-004", "relation": "DERIVED_FROM", "to": "LOCAL-INV-12", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-004", "relation": "ALLOCATED_TO", "to": "ARCH-DATA-PG", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-004", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-CICD", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-004", "relation": "REALIZED_BY", "to": "repo:tools/release/src/cap_release/migrations.py", "applicability": "RECORDED"}
+- {"from": "NFR-DEP-004", "relation": "REALIZED_BY", "to": "repo:tools/release/src/cap_release/deploy.py", "applicability": "RECORDED"}
+- {"from": "NFR-DEP-004", "relation": "REALIZED_BY", "to": "repo:release/images.json", "applicability": "RECORDED"}
+- {"from": "NFR-DEP-004", "relation": "REALIZED_BY", "to": "repo:release/README.md", "applicability": "RECORDED"}
 - {"from": "NFR-DEP-004", "relation": "VERIFIED_BY", "to": "TEST-DEP-MIGRATION", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-004", "relation": "VERIFIED_BY", "to": "TEST-CICD-003-001", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-004", "relation": "VERIFIED_BY", "to": "TEST-CICD-003-002", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-004", "relation": "EXECUTED_AS", "to": "RUN-CICD-003-DEV-001", "applicability": "RECORDED"}
 - {"from": "NFR-DEP-005", "relation": "DERIVED_FROM", "to": "ITEM-84", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-005", "relation": "DERIVED_FROM", "to": "NFR-INV-44", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-005", "relation": "DERIVED_FROM", "to": "DX-INV-51", "applicability": "PLANNED"}

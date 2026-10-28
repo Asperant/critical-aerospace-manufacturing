@@ -1,0 +1,38 @@
+{
+  "contract_id": "scheduler.recovery-plan.v1",
+  "name": "Scheduler RecoveryPlan proposal (IC-SCH-004)",
+  "contract_type": "ARTIFACT",
+  "version": 1,
+  "semantic_owner": "Batuhan Kaya",
+  "canonical_producer": "scheduler-service",
+  "declared_consumers": ["Automation", "HITL", "Command Center"],
+  "purpose": "Versioned PLAN proposal bound to one world, one source snapshot revision and one base schedule version, carrying candidate schedules, ObjectiveProfile, comparison, counterfactual references and rationale.",
+  "output_schema": {
+    "path": "services/scheduler-service/contracts/v1/recovery-plan.v1.schema.json",
+    "sha256": "f792f23c7b94dd843d7af9ac536b58028f8cfac1e953298b3be71a6021add5b6"
+  },
+  "fixtures": [
+    {
+      "path": "services/scheduler-service/contracts/v1/recovery-plan.v1.json",
+      "sha256": "c6ff4fe93b45c0c504c85b4831c535f00d75c70f4ff62af691e65be1e03c4374"
+    },
+    {
+      "path": "services/scheduler-service/contracts/v1/recovery-plan.self-reported-valid.json",
+      "sha256": "aa047af0f63a35d0ad232c3e37c79aacc0d43d4351a426726b7c6f93218e88bd"
+    }
+  ],
+  "authority_level": "Scheduler PLAN proposal only; no validation certificate, approval, activation or execution authority",
+  "sync_semantics": "ASYNC",
+  "security_classification": "Internal manufacturing planning proposal; no credentials or hidden Simulator Oracle state",
+  "semantics": {
+    "identity": "recovery_plan_id, incident_id, world_id, source_snapshot.snapshot_revision and base_schedule_version are opaque and compared unchanged; content_digest binds the exact proposal content, it is not a signature or a validator certificate.",
+    "world": "world_id is explicit; a plan, its candidates and every validation_result binding must carry the same world and snapshot revision as the snapshot it cites.",
+    "authority": "PLAN only: assignments are PLANNED, never ACTUAL; a payload cannot activate, approve or execute itself.",
+    "validation": "validation_result is the producer's unattested report. Eligibility needs an independent validation bound to world, snapshot revision and candidate at the execution boundary (planner is not validator).",
+    "completeness": "Predicted objectives, solve timing, stability, counterfactual and rationale are NOT_COMPUTED, NOT_RUN or NOT_AVAILABLE unless a real producer computed them; fixtures carry DEVELOPMENT_FIXTURE provenance."
+  },
+  "deprecation": {
+    "status": "ACTIVE",
+    "replacement": null
+  }
+}

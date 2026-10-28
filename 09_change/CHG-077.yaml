@@ -1,0 +1,63 @@
+CHG-077:
+  title: Clarify the DEP-043 START requirement for the Simulator dispatch interface
+  trigger: WP-SIM-006 cannot start (projectctl startability reports HARD_START_DEPENDENCY_UNRESOLVED:DEP-043). DEP-043's approved unblock evidence, "baseline dispatch interface callable", is the deliverable of WP-SIM-006 itself ("dispatch decision contract + baseline policy implementation", 04) and of no work package that produces DN-SIM-KERNEL (WP-SIM-001 delivers generic event, clock, RNG and handler APIs, not an external dispatch contract). The evidence could never exist before the package it gates.
+  reason: A START gate that requires the output of the gated package is circular and leaves WP-SIM-006 unstartable. The dispatch interface and deterministic baseline are not dropped; they remain DN-SIM-DISPIF's own definition (05 node table) and WP-SIM-006's deliverables and DoD. What DN-SIM-KERNEL can provide before the consumer starts is the callable event scheduling, handler execution, monotonic clock and named seeded RNG that the interface will be built on.
+  class: C2
+  review_risk_class: CR-2
+  raised_in: S4
+  owner: Batuhan
+  required_human_approvals: 0
+  reviewers: []
+  decision: APPROVED_WITH_CONDITIONS
+  status: UNDER_REVIEW
+  application_control_item: WP-SIM-006
+  decision_basis: Proposed by the owner of both DEP-043 nodes (DN-SIM-KERNEL and DN-SIM-DISPIF, Batuhan) after the operator approved the exact preparation plan (supervisor run e3f47591-16a6-4256-92c5-dcd17ca1cf7c, plan SHA-256 be43972b1ba325203a17d2c2a38bc23dcde51c7bf51b1076f05f5de56c320ec8). Planning-owner disposition (Asrın) is the pull request review at https://github.com/Asperant/critical-aerospace-manufacturing/pull/199#pullrequestreview-5689282669 (state APPROVED, bound to commit 495f7ebd06502ab2d0066f18735a26bbed6b6348, GitHub login Asperant) accepts the correction, namely that the existing kernel APIs and test evidence are the START condition and the dispatch interface remains a WP-SIM-006 deliverable. The review state is not an approval quota; its text is the disposition. CHG-076's delegation is specific to DEP-002 and is not inherited. CHG-018 requires zero development approvals.
+  conditions:
+    - SATISFIED (bound to the review above) - the planning owner's attributable disposition of this meaning change on the pull request that carries it.
+    - OPEN - the owner's adoption of the evidence assessment (Batuhan, native supervised-conversation statement, quoted in evidence/WP-SIM-006/DEP-043-START-READINESS.md) has no public durable record yet. An authorized operator publication (for example a pull request comment) is needed; none is invented here.
+    - OPEN - current-head CI is pending until it runs on the head that carries this follow-up.
+    - DEP-043's kind, strength, blocking stage, required readiness, need-by, fallback, risk class and ownership stay unchanged; only its status moves, NOT_READY to READY.
+    - No dispatch contract, baseline policy, operational publication or Core command acceptance is claimed for DN-SIM-DISPIF by this change.
+    - READY on DEP-043 is dependency metadata for the kernel START fact only. It is not Plane READY, not DN-SIM-DISPIF readiness and not WP-SIM-006 implementation.
+  doctrine:
+    start: a HARD START edge is resolved by facts its producer node can actually provide before the consumer starts
+    done: unchanged; WP-SIM-006 (F0) keeps every DoD obligation, including the dispatch decision contract, deterministic baseline, Oracle isolation and Simulator-Core acceptance evidence
+  scope:
+    - Set DEP-043 unblock_evidence (docs/05 table row and YAML record) and precise_requirement to the DN-SIM-KERNEL facts: event scheduling and handler execution, monotonic simulated clock and named seeded RNG APIs are callable, and kernel unit/property tests and deterministic replay pass on an identified compatible source.
+    - State that the external dispatch request/response interface and the deterministic standalone baseline are produced and verified by WP-SIM-006, not by DEP-043.
+    - Update the precise-consumer appendix row of DEP-043 to the same predicate.
+    - Record the source, API and evidence identities and their limits in evidence/WP-SIM-006/DEP-043-START-READINESS.md, and the owner's adoption of it.
+    - Set the DEP-043 status to READY in docs/05, on the disposition and the owner-adopted assessment above, and nowhere else.
+    - Add a projectctl dependency regression test for the corrected predicate and update the PRECISION_MISSING baseline (164 to 163); DEP-043 now carries a precise_requirement, which is the only finding that closes.
+  invariants_preserved:
+    - No other edge status or field changes; DEP-037 and DEP-038 stay unresolved.
+    - The Scheduler stays outside the Simulator (docs/02): integrated mode uses an external Scheduler, standalone mode a pluggable baseline. CYC-03 and its edges DEP-087 and DEP-088 are untouched.
+    - No ScheduleCandidate, RecoveryPlan or DispatchDecision production or activation authority moves into the Simulator.
+    - DEP-037 (DN-SIM-OPSEM) is not certified and DEP-038 (DN-CORE-CONTRACTS, Asrın) keeps its own edge-specific CONTRACT_READY obligation; DEP-039 is a MILESTONE_EXIT edge and not a START gate. WP-SIM-003 stays blocked by DEP-037 and DEP-038.
+    - DN-SIM-DISPIF readiness (CONTRACT_READY, INTEGRATION_READY) is not asserted; WP-SIM-006 stays F0 with its verification families open.
+    - FR-SIM-013 and FR-SIM-014 acceptance obligations are unchanged.
+    - Merged != Done; no WP lifecycle or Plane state is changed by this metadata change.
+  affected_requirements: [FR-SIM-013, FR-SIM-014]
+  affected_architecture: [ARCH-SIM-ENGINE, ARCH-CTR-CMDSCHEMA, ARCH-WORLD-EVALZONE]
+  affected_contracts: []
+  affected_work_packages: [WP-SIM-006]
+  affected_dependencies: [DEP-043]
+  affected_evidence:
+    - evidence/WP-SIM-006/DEP-043-START-READINESS.md
+    - evidence/WP-SIM-001/runs/run-7-identity-2026-10-25/
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - WP-SIM-001 run-7 evidence stays historical and unchanged; the services/manufacturing-simulator tree on current main is identical to the run-7 source tree.
+      - No dispatch-interface, baseline-policy or Core-acceptance evidence exists or is claimed.
+    rerun_required:
+      - Refresh the Plane transition policy after the docs/05 change merges (docs/05 is a pinned source).
+      - projectctl startability WP-SIM-006 against the refreshed current main, once.
+    limitation: Binds the START predicate only. It does not make DN-SIM-DISPIF CONTRACT_READY or INTEGRATION_READY and does not implement WP-SIM-006. Startability on a deployed policy needs the supported refresh.
+  security_authority_impact: NONE
+  rollout: Merge the documentation and change-control pull request once the open conditions are recorded and current-head CI is green, then refresh the Plane transition policy through the supported path with separate installation authorization, then run projectctl startability WP-SIM-006 once.
+  rollback: Revert docs/05, CHG-077, its register row, the regression test and the evidence file together; no runtime or Plane state replay is required. If the policy was already refreshed, refresh it again through the supported path.
+  required_rerun: [projectctl startability WP-SIM-006]
+  documentation_updates: [docs/05_Dependency_Graph.md, 09_change/CHG-077.yaml, evidence/WP-SIM-006/DEP-043-START-READINESS.md, tools/projectctl/tests/test_dependencies.py]
+  freeze_context: PRE_M6

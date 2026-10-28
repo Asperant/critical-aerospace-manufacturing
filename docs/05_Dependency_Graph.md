@@ -369,7 +369,7 @@ All 217 edges. Columns follow Item 66 "Dependency Registry" fields. *Pred owner*
 | DEP | Predecessor → Successor | Kind | Strength | Stage | Required readiness | Need-by | Pred owner | Consumer owner | Fallback | Unblock evidence | DR |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | DEP-001 | DN-PLAT-REPO → DN-PLAT-TOOLING | CAPABILITY | HARD | START | INTEGRATION_READY | M0 (S1) | Yavuz | Yavuz | — | protected main + required CI checks active | DR-3 |
-| DEP-002 | DN-PLAT-REPO → DN-PLAT-CD | CAPABILITY | HARD | START | INTEGRATION_READY | M0→M1 | Yavuz | Yavuz | — | CI builds immutable images to GHCR | DR-3 |
+| DEP-002 | DN-PLAT-REPO → DN-PLAT-CD | CAPABILITY | HARD | START | INTEGRATION_READY | M0→M1 | Yavuz | Yavuz | — | protected main + required CI checks + tiered CI pipeline active (CHG-076) | DR-3 |
 | DEP-003 | DN-PLAT-TOOLING → DN-PLAT-COMPOSE | CAPABILITY | HARD | START | SKELETON_READY | M0 (S1) | Yavuz | Yavuz | — | `mfgctl bootstrap/doctor` runs on dev host | DR-3 |
 | DEP-004 | DN-PLAT-COMPOSE → DN-PLAT-INTEG | RUNTIME | HARD | MILESTONE_EXIT | SKELETON_READY | M0 (S1) | Yavuz | Yavuz | — | Integration bootstrap from same Compose definitions | DR-3 |
 | DEP-005 | DN-PLAT-INTEG → DN-PLAT-CD | RUNTIME | HARD | INTEGRATION | INTEGRATION_READY | M1 (S2) | Yavuz | Yavuz | — | runtime healthy on shared host + smoke check in CI/INTEGRATION | DR-3 |
@@ -431,7 +431,7 @@ All 217 edges. Columns follow Item 66 "Dependency Registry" fields. *Pred owner*
 | DEP-040 | DN-SIM-OPSEM → DN-SIM-COREINT | CAPABILITY | HARD | INTEGRATION | COMPONENT_READY | M2 (S4) | Batu | Batu | — | reentrant world runs end-to-end locally | DR-1 |
 | DEP-041 | DN-CORE-CMDEXEC → DN-SIM-COREINT | CAPABILITY | HARD | INTEGRATION | INTEGRATION_READY | M2 (S4) | Asrın | Batu | — | Core-validated physical commands executed by Simulator | DR-1 |
 | DEP-042 | DN-EVT-SPINE → DN-SIM-COREINT | CAPABILITY | HARD | INTEGRATION | INTEGRATION_READY | M2 (S4) | Asrın | Batu | — | real cross-boundary integration test green on INTEGRATION | DR-1 |
-| DEP-043 | DN-SIM-KERNEL → DN-SIM-DISPIF | CAPABILITY | HARD | START | COMPONENT_READY | S2 | Batu | Batu | — | baseline dispatch interface callable | DR-1 |
+| DEP-043 | DN-SIM-KERNEL → DN-SIM-DISPIF | CAPABILITY | HARD | START | COMPONENT_READY | S2 | Batu | Batu | — | DN-SIM-KERNEL event scheduling/handler execution, monotonic simulated clock and named seeded RNG APIs are callable; kernel unit/property tests and deterministic replay pass on an identified compatible source. The external dispatch request/response interface and deterministic standalone baseline are produced and verified by WP-SIM-006. | DR-1 |
 | DEP-044 | DN-SIM-KERNEL → DN-SIM-SNAPFORK | CAPABILITY | HARD | START | COMPONENT_READY | S3 | Batu | Batu | — | snapshot/restore tests green | DR-1 |
 | DEP-045 | DN-RT-OBJ → DN-SIM-SNAPFORK | RUNTIME | SOFT | INTEGRATION | INTEGRATION_READY | M2 (S4) | Yavuz | Batu | — | snapshot checkpoints stored as object artifacts | DR-3 |
 | DEP-046 | DN-SIM-KERNEL → DN-SIM-ORACLE | CAPABILITY | HARD | START | COMPONENT_READY | S3 | Batu | Batu | F0 | Oracle stream namespace separated | DR-1 |
@@ -1214,11 +1214,11 @@ DEP-002:
   semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: INTEGRATION_READY}
   need_by: "M0→M1"   # sprint 1
   fallback: null
-  unblock_evidence: "CI builds immutable images to GHCR"
-  precise_requirement: null
+  unblock_evidence: "protected main + required CI checks + tiered CI pipeline active (CHG-076)"
+  precise_requirement: "main protected with required status checks ci-gate and projectctl (strict, enforced for everyone) and the tiered CI pipeline (static, unit, contract and integration tiers aggregated by ci-gate)"
   risk_class: DR-3
   source: "Item 66 #94, #96"
-  status: NOT_READY
+  status: READY
 DEP-003:
   predecessor: {node: DN-PLAT-TOOLING, owner: "Yavuz"}
   successor: {node: DN-PLAT-COMPOSE, owner: "Yavuz"}
@@ -1796,11 +1796,11 @@ DEP-043:
   semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: COMPONENT_READY}
   need_by: "S2"   # sprint 2
   fallback: null
-  unblock_evidence: "baseline dispatch interface callable"
-  precise_requirement: null
+  unblock_evidence: "DN-SIM-KERNEL event scheduling/handler execution, monotonic simulated clock and named seeded RNG APIs are callable; kernel unit/property tests and deterministic replay pass on an identified compatible source. The external dispatch request/response interface and deterministic standalone baseline are produced and verified by WP-SIM-006."
+  precise_requirement: "Consume Kernel(WorldState, handlers), register_handler(kind, EventHandler), schedule(EventSpec), step()/run(until, max_events), ExecutionContext.now/stream()/schedule(), and immutable execution records. EventSpec carries time, kind, frozen payload and optional event_id; ScheduledEvent adds insertion sequence. Required semantics: stable (time, sequence) execution, no backwards simulated time, deterministic named RNG and explicit rejection/failure. These are kernel extension APIs, not a DispatchDecision wire contract or Core command authorization."
   risk_class: DR-1
   source: "Item 66 #118"
-  status: NOT_READY
+  status: READY
 DEP-044:
   predecessor: {node: DN-SIM-KERNEL, owner: "Batu"}
   successor: {node: DN-SIM-SNAPFORK, owner: "Batu"}
@@ -3785,7 +3785,7 @@ For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §1
 
 | HARD edge with unknown field-level precision | Declared consumer | Required producer artifact/readiness and existing evidence predicate | Null justification / remaining DoR |
 |---|---|---|---|
-| DEP-002 | DN-PLAT-CD at START | DN-PLAT-REPO: Repository, protected main, CI baseline; INTEGRATION_READY; CI builds immutable images to GHCR | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-002 | DN-PLAT-CD at START | DN-PLAT-REPO: Repository, protected main, CI baseline; INTEGRATION_READY; protected main + required CI checks + tiered CI pipeline active | CHG-076 clarified the predicate: the immutable GHCR image build is DN-PLAT-CD's own deliverable, not a precondition of its START. Bound to the verified facts in evidence/WP-CICD-002/DEP-002-START-READINESS.md. |
 | DEP-003 | DN-PLAT-COMPOSE at START | DN-PLAT-TOOLING: Runtime language/tooling baseline + mfgctl; SKELETON_READY; current-main `mfgctl bootstrap` succeeds and `mfgctl doctor` emits structured diagnostics on the dev host; Docker permission remains external runtime evidence | Edge-specific predicate bound by CHG-065; Docker/Compose/Integration readiness is not inferred. |
 | DEP-005 | DN-PLAT-CD at INTEGRATION | DN-PLAT-INTEG: Integration runtime (shared Linux host bootstrap); INTEGRATION_READY; runtime healthy on shared host + smoke check in CI/INTEGRATION | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-007 | DN-RT-PG at INTEGRATION | DN-PLAT-INTEG: Integration runtime (shared Linux host bootstrap); INTEGRATION_READY; runtime healthy on shared host + smoke check in CI/INTEGRATION | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
@@ -3817,7 +3817,7 @@ For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §1
 | DEP-040 | DN-SIM-COREINT at INTEGRATION | DN-SIM-OPSEM: Operational semantics (reentrant routing, queues, failures, maintenance, rework); COMPONENT_READY; reentrant world runs end-to-end locally | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-041 | DN-SIM-COREINT at INTEGRATION | DN-CORE-CMDEXEC: Core command execution (idempotent, revision-checked, outcome persisted); INTEGRATION_READY; Core-validated physical commands executed by Simulator | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-042 | DN-SIM-COREINT at INTEGRATION | DN-EVT-SPINE: Operational event spine (outbox → NATS → idempotent consumers); INTEGRATION_READY; real cross-boundary integration test green on INTEGRATION | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
-| DEP-043 | DN-SIM-DISPIF at START | DN-SIM-KERNEL: DES kernel (event queue, clock, named RNG); COMPONENT_READY; baseline dispatch interface callable | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-043 | DN-SIM-DISPIF at START | DN-SIM-KERNEL: DES kernel (event queue, clock, named RNG); COMPONENT_READY; DN-SIM-KERNEL event scheduling/handler execution, monotonic simulated clock and named seeded RNG APIs are callable; kernel unit/property tests and deterministic replay pass on an identified compatible source. The external dispatch request/response interface and deterministic standalone baseline are produced and verified by WP-SIM-006. | Edge-specific predicate bound by CHG-077 (APPROVED_WITH_CONDITIONS, UNDER_REVIEW): the dispatch interface and baseline are DN-SIM-DISPIF's own deliverables (WP-SIM-006), not a precondition of its START. Edge status READY records only the kernel START fact, bound to the owner-adopted assessment in evidence/WP-SIM-006/DEP-043-START-READINESS.md and the planning-owner disposition in CHG-077; DN-SIM-DISPIF readiness is not asserted. |
 | DEP-044 | DN-SIM-SNAPFORK at START | DN-SIM-KERNEL: DES kernel (event queue, clock, named RNG); COMPONENT_READY; snapshot/restore tests green | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-046 | DN-SIM-ORACLE at START | DN-SIM-KERNEL: DES kernel (event queue, clock, named RNG); COMPONENT_READY; Oracle stream namespace separated | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-047 | DN-SIM-ORACLE at MILESTONE_EXIT | DN-SEC-BASE: Security baseline: service identities, secrets sourcing, backend authz enforcement points; INTEGRATION_READY; normal runtime credentials denied Oracle access (negative test) | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |

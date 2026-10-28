@@ -28,7 +28,8 @@ DENIED/UNAVAILABLE/unconfirmed mutation.
 
 | Transition | Actual evidence required |
 |---|---|
-| READY → IN_PROGRESS | Changed open canonical WP PR, or verified caller-authored commit at exactly one canonical WP branch head with actual changes ahead of main; owner/assignee, WIP and START HARD dependency checks |
+| BACKLOG → READY | CHG-054 canonical start eligibility only: exact owner/assignee, known scope, no unresolved HARD + START dependency (status must be READY; a missing status is unresolved), no real BLOCKED. Cited commit, comment and run evidence must be real GitHub objects. No READY.md, DoR comment, preparation artifact, cycle scheduling or free-slot check, and READY is never a DoR PASS |
+| READY → IN_PROGRESS | The same start predicate, plus a changed open canonical WP PR, or a verified caller-authored commit at exactly one canonical WP branch head with actual changes ahead of main. BACKLOG → IN_PROGRESS stays invalid |
 | IN_PROGRESS → IN_REVIEW | Real open non-draft WP PR, required and observed current-head CI green; all development review requests optional |
 | IN_REVIEW → MERGE_READY | Current-head CI, mergeable/clean, no real BLOCKED condition; native scope/DoR-PR/applicable pre-merge PR DoD and evidence checks; all development approvals 0 |
 | MERGE_READY → MERGED | Actually merged to main, squash-compatible single-parent commit, deleted work branch, actual head CI/technical evidence |
@@ -42,9 +43,9 @@ Review is advisory for every development risk class. The helper does not query G
 
 ## Semantic evidence remains necessary
 
-- BACKLOG → READY: scheduled own WP, no other READY for the profile, actual owner
-  DoR assessment covering canonical DOR-TASK and selected DOR-WP criteria; producer
-  evidence for applicable HARD readiness and precise consumer artifacts.
+- BACKLOG → READY needs no semantic assessment under CHG-054 (see the table above). The
+  owner's DoR assessment, a free slot and scheduling remain advisory diagnostics, and
+  later HARD INTEGRATION, MILESTONE_EXIT and FREEZE edges keep their later gates.
 - VALIDATING → DONE: actual accountable-owner assessment of all
   applicable WP/scope/research DoD, accepted trace/evidence, successful actual
   merge-revision validation, actual CI/technical checks and applicable dependency gates.
@@ -73,8 +74,13 @@ spans (including multi-backtick spans) and Markdown link destinations are litera
 use those forms for a filename that itself ends in a dot. There is no filesystem
 fallback or fuzzy matching: the resulting exact path must exist at the assessed
 SHA, and traversal, missing/empty artifacts and unreadable evidence still fail
-closed. A punctuation-induced HTTP 404 previously surfaced as
-`GITHUB_READ_UNAVAILABLE`; see the CTRL-HOST-003 GitHub-read regression evidence.
+closed. A repository-contents lookup that GitHub reports as absent (HTTP 404) is the typed
+missing artifact `ARTIFACT_NOT_FOUND`, never an outage and never acceptable evidence. Other
+reads stay distinct and fail closed: `GITHUB_AUTH_HTTP_401`, `GITHUB_FORBIDDEN_HTTP_403`,
+`GITHUB_SERVICE_ERROR` (5xx), `GITHUB_READ_TIMEOUT`, `GITHUB_RESPONSE_TOO_LARGE`,
+`GITHUB_RESPONSE_MALFORMED`, and `GITHUB_READ_UNAVAILABLE` for any other failure (including
+a 404 of a PR, run or comment). Denial codes never carry GitHub's stderr. See the
+CTRL-HOST-003 GitHub-read regression evidence for the original punctuation case.
 
 Comments must identify the WP and exact revision (and the actual PR when present).
 PR evidence inherits GitHub attribution and actual revision. Ordinary

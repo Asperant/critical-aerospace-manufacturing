@@ -168,6 +168,16 @@ jobs:
         run: |
           uv run --project ci --locked python -m pytest -c services/manufacturing-simulator/pyproject.toml services/manufacturing-simulator/tests/test_serialization.py services/manufacturing-simulator/tests/test_replay.py services/manufacturing-simulator/tests/test_replay_validation.py -q -p pytest_quarantine
           uv run --project ci --locked python -m pytest evidence/WP-SIM-002/tests -q -p pytest_quarantine
+      - name: Scheduler snapshot consumer and RecoveryPlan contract tests and typing (WP-SCH-002)
+        run: |
+          uv run --project ci --locked python -m pytest -c services/scheduler-service/pyproject.toml services/scheduler-service/tests --ignore=services/scheduler-service/tests/test_plan_contract.py -q -p pytest_quarantine
+          uv run --project ci --locked pyright --project services/scheduler-service/pyrightconfig.json
+          uv run --project ci --locked python -m pytest evidence/WP-SCH-002/tests -q -p pytest_quarantine
+      - name: Scheduler dispatch baselines unit/property tests and typing (WP-SCH-001)
+        run: |
+          uv run --project ci --locked python -m pytest -c services/scheduler-service/pyproject.toml services/scheduler-service/tests -q -p pytest_quarantine
+          uv run --project ci --locked python -m pytest evidence/WP-SCH-001/tests -q -p pytest_quarantine
+          uv run --project ci --locked pyright --project services/scheduler-service/pyrightconfig.json
       - name: mfgctl tests (quarantine-aware)
         run: uv run --project ci --locked python -m pytest tools/mfgctl/tests -q -p pytest_quarantine
       - name: Observability standard tests and typing (WP-OBS-001)
@@ -179,6 +189,11 @@ jobs:
         run: |
           uv run --project ci --locked python -m pytest -c packages/artifacts/pyproject.toml packages/artifacts/tests -m 'not integration' -q -p pytest_quarantine
           uv run --project ci --locked pyright --project packages/artifacts/pyrightconfig.json
+      - name: Release tooling lint and tests (WP-CICD-002)
+        run: |
+          PYTHONPATH="tools/release/src:${PYTHONPATH}" uv run --project ci --locked python -m cap_release registry-check
+          PYTHONPATH="tools/release/src:tools/release/tests:${PYTHONPATH}" uv run --project ci --locked python -m pytest -c tools/release/pyproject.toml tools/release/tests -m 'not integration' -q -p pytest_quarantine
+          uv run --project ci --locked pyright --project tools/release/pyrightconfig.json
       - name: Trace registry lint and tests (WP-GOV-002)
         env:
           PYTHONPATH: ci:ci/scripts:tools/trace/src
@@ -200,7 +215,9 @@ jobs:
       - name: Host Plane queue tests (offline)
         run: uv run --project ci --locked python -m unittest discover -s tools/host/plane-queue -p 'test_*.py'
       - name: Host Plane transition tests (offline)
-        run: uv run --project ci --locked python -m unittest discover -s tools/host/plane-transition -p 'test_*.py'
+        run: |
+          uv run --project ci --locked python -m unittest discover -s tools/host/plane-transition -p 'test_*.py'
+          uv run --project ci --locked python -m pytest evidence/CTRL-HOST-031/tests -q -p pytest_quarantine
       - name: Set up Node (version pinned in .node-version)
         uses: actions/setup-node@v4
         with:
@@ -238,6 +255,8 @@ jobs:
         run: |
           uv run --project ci --locked python -m pytest -c services/operations-bff/pyproject.toml services/operations-bff/tests -q
           uv run --project ci --locked pyright --project services/operations-bff/pyrightconfig.json
+      - name: Scheduler RecoveryPlan contract tests (WP-SCH-002)
+        run: uv run --project ci --locked python -m pytest -c services/scheduler-service/pyproject.toml services/scheduler-service/tests/test_plan_contract.py -q
 
   integration:
     name: t1-integration
@@ -285,12 +304,14 @@ jobs:
           infra/observability/stack.sh dashboards
       - name: Telemetry pipeline smoke (boundary mode REAL)
         run: uv run --project ci --locked python -m pytest infra/observability/tests -m integration -q -p pytest_quarantine
-      - name: Start REAL platform infra profile (WP-PLAT-001)
+      - name: Start REAL platform full profile (WP-PLAT-001, WP-PLAT-003)
         run: |
-          infra/compose/stack.sh up infra
+          infra/compose/stack.sh up full
           infra/compose/stack.sh env >> "$GITHUB_ENV"
       - name: Platform runtime tests (boundary mode REAL)
         run: uv run --project ci --locked python -m pytest infra/compose/tests -m integration -q -p pytest_quarantine
+      - name: Migration stage tests (REAL PostgreSQL, WP-CICD-003)
+        run: PYTHONPATH="tools/release/src:tools/release/tests:${PYTHONPATH}" uv run --project ci --locked python -m pytest -c tools/release/pyproject.toml tools/release/tests/test_migrations_real.py -m integration -q -p pytest_quarantine
       - name: Artifact store tests (REAL SeaweedFS, WP-OBJ-001)
         env:
           CAP_ARTIFACT_TEST_DISPOSABLE: "1"

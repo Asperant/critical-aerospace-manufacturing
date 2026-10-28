@@ -1,0 +1,57 @@
+[
+  {
+    "id": "suite",
+    "command": "python -m pytest -c services/scheduler-service/pyproject.toml services/scheduler-service/tests -q -p pytest_quarantine",
+    "started_utc": "2026-10-27T19:56:17+00:00",
+    "finished_utc": "2026-10-27T19:56:19+00:00",
+    "exit_code": 0,
+    "result_line": "99 passed in 1.21s",
+    "output_file": "suite-output.txt",
+    "output_sha256": "953e4a9c45407fb02b42d6e8a1505d4286dc857a7f6e3299b87aa788da9dd97a",
+    "stderr_tail": []
+  },
+  {
+    "id": "ruff-check",
+    "command": "python -m ruff check services/scheduler-service",
+    "started_utc": "2026-10-27T19:56:19+00:00",
+    "finished_utc": "2026-10-27T19:56:19+00:00",
+    "exit_code": 0,
+    "result_line": "All checks passed!",
+    "output_file": "ruff-check.txt",
+    "output_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "stderr_tail": []
+  },
+  {
+    "id": "ruff-format",
+    "command": "python -m ruff format --check services/scheduler-service",
+    "started_utc": "2026-10-27T19:56:19+00:00",
+    "finished_utc": "2026-10-27T19:56:19+00:00",
+    "exit_code": 0,
+    "result_line": "15 files already formatted",
+    "output_file": "ruff-format.txt",
+    "output_sha256": "d41ae50829b47e318b0787bc39d2a2ea2d52b518cfc7900d2efd569e6d26ab88",
+    "stderr_tail": []
+  },
+  {
+    "id": "pyright",
+    "command": "python -m pyright --project services/scheduler-service/pyrightconfig.json",
+    "started_utc": "2026-10-27T19:56:19+00:00",
+    "finished_utc": "2026-10-27T19:56:20+00:00",
+    "exit_code": 0,
+    "result_line": "0 errors, 0 warnings, 0 informations",
+    "output_file": "pyright.txt",
+    "output_sha256": "6886f538109228fb00e968d89f5ccf370b4440f061bdb10237a14d99da608dfb",
+    "stderr_tail": []
+  },
+  {
+    "id": "replay-comparison",
+    "command": "python evidence/WP-SCH-001/replay_comparison.py",
+    "started_utc": "2026-10-27T19:56:20+00:00",
+    "finished_utc": "2026-10-27T19:56:22+00:00",
+    "exit_code": 0,
+    "result_line": "",
+    "output_file": "replay-comparison.json",
+    "output_sha256": "6976b641e6ac6aa12931bcda9241c8d63777c0ef2043e12f05b3aa3f91b2d5c3",
+    "stderr_tail": []
+  }
+]
