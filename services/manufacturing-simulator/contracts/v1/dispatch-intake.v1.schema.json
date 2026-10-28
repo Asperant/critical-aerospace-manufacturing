@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cap:simulator:dispatch-intake:v1",
+  "title": "DispatchIntake.v1",
+  "description": "A dispatch decision the Simulator is asked to execute. A proposal: the Simulator revalidates it against current simulated state on arrival and again when it executes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "dispatch_id",
+    "world_id",
+    "request_id",
+    "lot_id",
+    "lot_revision",
+    "route_step",
+    "machine_id",
+    "decision_time",
+    "rule",
+    "schedule_version",
+    "base_state_revision",
+    "source",
+    "reason"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "simulator.dispatch-intake.v1"
+    },
+    "dispatch_id": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    },
+    "world_id": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    },
+    "request_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^\\S+$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "lot_id": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    },
+    "lot_revision": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    },
+    "route_step": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    },
+    "machine_id": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    },
+    "decision_time": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "unit"
+      ],
+      "properties": {
+        "value": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "unit": {
+          "const": "us"
+        }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^\\S+$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\S+$"
+        }
+      }
+    },
+    "schedule_version": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^\\S+$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "base_state_revision": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    },
+    "source": {
+      "enum": [
+        "BASELINE",
+        "EXTERNAL_DECIDER",
+        "CORE_AUTHORIZED"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^\\S(.*\\S)?$"
+    }
+  }
+}

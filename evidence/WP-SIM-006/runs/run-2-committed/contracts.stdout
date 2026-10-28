@@ -1,0 +1,31 @@
+OK    ci/test-strategy.schema.json (+instance)
+OK    infra/observability/coverage.schema.json (+instance)
+OK    packages/artifacts/src/cap_artifacts/schemas/artifact-reference.schema.json (+instance)
+OK    packages/contracts/schemas/event-envelope.v1.schema.json
+OK    packages/observability/src/cap_observability/schemas/health.schema.json (+instance)
+OK    packages/observability/src/cap_observability/schemas/log-record.schema.json (+instance)
+OK    packages/observability/src/cap_observability/schemas/resource.schema.json (+instance)
+OK    requirements/catalog.schema.json (+instance)
+OK    services/ai-intelligence/contracts/v1/ai-tool-interface.v1.schema.json
+OK    services/manufacturing-core/contracts/v1/lot-dispatch-authorized.v1.schema.json
+OK    services/manufacturing-core/contracts/v1/lot-held.v1.schema.json
+OK    services/manufacturing-core/contracts/v1/lot-held.v2.schema.json
+OK    services/manufacturing-core/contracts/v1/operational-command.v1.schema.json
+OK    services/manufacturing-core/contracts/v1/order-query-request.schema.json
+OK    services/manufacturing-core/contracts/v1/order-query.schema.json
+OK    services/manufacturing-core/contracts/v1/scheduling-snapshot.v1.schema.json
+OK    services/manufacturing-simulator/contracts/v1/decision-request.v1.schema.json (+instance)
+OK    services/manufacturing-simulator/contracts/v1/dispatch-intake.v1.schema.json (+instance)
+OK    services/manufacturing-simulator/contracts/v1/dispatch-outcome.v1.schema.json (+instance)
+OK    services/operations-bff/contracts/v1/command.schema.json
+OK    services/operations-bff/contracts/v1/common.schema.json
+OK    services/operations-bff/contracts/v1/facility-state.schema.json
+OK    services/operations-bff/contracts/v1/overview-query.schema.json
+OK    services/operations-bff/contracts/v1/session.schema.json
+OK    services/operations-bff/contracts/v1/stream-message.schema.json
+OK    services/scheduler-service/contracts/v1/recovery-plan.v1.schema.json (+instance)
+OK    tools/mfgctl/schemas/capabilities.schema.json (+instance)
+OK    tools/release/src/cap_release/schemas/deployment-record.schema.json
+OK    tools/release/src/cap_release/schemas/release-manifest.schema.json
+Contracts: 29 schema(s), 12 instance(s) validated.
+PASS

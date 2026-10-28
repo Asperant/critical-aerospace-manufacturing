@@ -1,0 +1,37 @@
+{
+  "contract_id": "simulator.decision-request.v1",
+  "name": "Simulator DecisionRequest operational state",
+  "contract_type": "SNAPSHOT",
+  "version": 1,
+  "semantic_owner": "Batuhan Kaya",
+  "canonical_producer": "manufacturing-simulator",
+  "declared_consumers": [
+    "Scheduler",
+    "Automation"
+  ],
+  "purpose": "Read-only operational state shown to an external decider (baseline policy, Scheduler or human) when a machine becomes available, bound to one world and one state revision.",
+  "output_schema": {
+    "path": "services/manufacturing-simulator/contracts/v1/decision-request.v1.schema.json",
+    "sha256": "f28c1a42d8e0efbc48eac86257e85189985b32a30cd6d0303a6505b9d59f4406"
+  },
+  "fixtures": [
+    {
+      "path": "services/manufacturing-simulator/contracts/v1/decision-request.v1.json",
+      "sha256": "d6b182ec4e91eb0b2427cf600ebc31209e9786012b33169871b1ee886b8c54fd"
+    }
+  ],
+  "authority_level": "Simulation operational state read model only; no command, approval or execution authority",
+  "sync_semantics": "SYNC",
+  "security_classification": "Internal simulation operational state; SIMULATION provenance; no credentials and no evaluator-only (Oracle) field",
+  "semantics": {
+    "identity": "world_id, request_id and state_revision are opaque and compared unchanged.",
+    "world": "world_id is explicit; a decision answering this request must name the same world and base_state_revision.",
+    "provenance": "Every document is simulator output labelled SIMULATION and is never real factory data.",
+    "exposure": "Positive allow-list: only listed fields are exposed; held, not-ready and ineligible lots are never offered; a field that names evaluator-only truth is rejected.",
+    "completeness": "Offline interface slice: candidates come from a FacilityPort. The operational model of WP-SIM-003 is not part of this contract."
+  },
+  "deprecation": {
+    "status": "ACTIVE",
+    "replacement": null
+  }
+}

@@ -4,7 +4,26 @@ Simulated execution only: output is simulation data and is never real-factory
 data. The kernel has no Core mutation path, persistence, broker or endpoint.
 """
 
+from manufacturing_simulator.baseline import (
+    BaselinePolicy,
+    edd,
+    fifo,
+    static_priority,
+)
 from manufacturing_simulator.clock import SimulationClock, TimeUnit
+from manufacturing_simulator.decision import (
+    Candidate,
+    DecisionContractError,
+    DecisionRequest,
+    DispatchIntake,
+    DispatchOutcome,
+    IntakeSource,
+    OutcomeStatus,
+    RejectReason,
+    decode_intake,
+    decode_request,
+)
+from manufacturing_simulator.dispatch import START_KIND, DispatchGate
 from manufacturing_simulator.errors import (
     CanonicalizationError,
     DuplicateHandlerError,
@@ -29,6 +48,16 @@ from manufacturing_simulator.events import (
     freeze_payload,
     make_payload,
 )
+from manufacturing_simulator.exposure import (
+    ExposureError,
+    ListPublisher,
+    OperationalEvent,
+    OperationalSnapshot,
+    build_request,
+    make_event,
+    operational_snapshot,
+)
+from manufacturing_simulator.isolation import find_evaluator_field, is_evaluator_field
 from manufacturing_simulator.kernel import (
     PROVENANCE,
     EventHandler,
@@ -42,6 +71,12 @@ from manufacturing_simulator.kernel import (
     StepOutcome,
     StepResult,
     TerminationReason,
+)
+from manufacturing_simulator.ports import (
+    DecisionProvider,
+    FacilityPort,
+    LotView,
+    OperationalPublisher,
 )
 from manufacturing_simulator.replay import (
     RNG_ALGORITHM,
@@ -79,6 +114,35 @@ from manufacturing_simulator.serialization import (
 )
 
 __all__ = [
+    "BaselinePolicy",
+    "edd",
+    "fifo",
+    "static_priority",
+    "Candidate",
+    "DecisionContractError",
+    "DecisionRequest",
+    "DispatchIntake",
+    "DispatchOutcome",
+    "IntakeSource",
+    "OutcomeStatus",
+    "RejectReason",
+    "decode_intake",
+    "decode_request",
+    "START_KIND",
+    "DispatchGate",
+    "ExposureError",
+    "ListPublisher",
+    "OperationalEvent",
+    "OperationalSnapshot",
+    "build_request",
+    "make_event",
+    "operational_snapshot",
+    "find_evaluator_field",
+    "is_evaluator_field",
+    "DecisionProvider",
+    "FacilityPort",
+    "LotView",
+    "OperationalPublisher",
     "FORMAT_VERSION",
     "MAX_SEED",
     "PROVENANCE",

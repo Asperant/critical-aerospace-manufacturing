@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cap:simulator:decision-request:v1",
+  "title": "DecisionRequest.v1",
+  "description": "Simulator-owned operational state offered to a decider at one decision point. Simulation output only; carries no evaluator-only (Oracle) field.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "world_id",
+    "request_id",
+    "state_revision",
+    "simulation_time",
+    "provenance",
+    "decision_point",
+    "candidates"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "simulator.decision-request.v1"
+    },
+    "world_id": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    },
+    "state_revision": {
+      "type": "string",
+      "pattern": "^\\S+$"
+    },
+    "simulation_time": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "unit"
+      ],
+      "properties": {
+        "value": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "unit": {
+          "const": "us"
+        }
+      }
+    },
+    "provenance": {
+      "const": "SIMULATION"
+    },
+    "decision_point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "machine_id"
+      ],
+      "properties": {
+        "kind": {
+          "const": "MACHINE_AVAILABLE"
+        },
+        "machine_id": {
+          "type": "string",
+          "pattern": "^\\S+$"
+        }
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "lot_id",
+          "lot_revision",
+          "route_step",
+          "priority",
+          "due_at",
+          "ready_at",
+          "eligible_machine_ids"
+        ],
+        "properties": {
+          "lot_id": {
+            "type": "string",
+            "pattern": "^\\S+$"
+          },
+          "lot_revision": {
+            "type": "string",
+            "pattern": "^\\S+$"
+          },
+          "route_step": {
+            "type": "string",
+            "pattern": "^\\S+$"
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "due_at": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "ready_at": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "eligible_machine_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^\\S+$"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -61,6 +61,28 @@
           "authority_level": "Scheduler PLAN proposal only; no validation certificate, approval, activation or execution authority"
         }
       ]
+    },
+    {
+      "producer": "manufacturing-simulator",
+      "semantic_owner": "Batuhan Kaya",
+      "source_roots": ["services/manufacturing-simulator/contracts/"],
+      "contracts": [
+        {
+          "family": "simulator.decision-request",
+          "contract_type": "SNAPSHOT",
+          "authority_level": "Simulation operational state read model only; no command, approval or execution authority"
+        },
+        {
+          "family": "simulator.dispatch-intake",
+          "contract_type": "COMMAND",
+          "authority_level": "Simulator validation and physical execution intake; a decision is a proposal and carries no Core, scheduling or approval authority"
+        },
+        {
+          "family": "simulator.dispatch-outcome",
+          "contract_type": "EVENT",
+          "authority_level": "Simulation operational fact about one intake; not Core canonical state and not an effect-verification result"
+        }
+      ]
     }
   ]
 }

@@ -454,8 +454,8 @@ Columns: **Catalog anchor** = location of canonical wording (open it; wording is
 | FR-SIM-010 | F1 | Batu | 01 Item81 FR-SIM-010 L169881 | ITEM-10, ITEM-19, SCH-INV-10 | VERIFY_PLANNED | — |
 | FR-SIM-011 | F1 | Batu | 01 Item81 FR-SIM-011 L169882 | ITEM-10, EV-INV-05, AUTO-INV-08, SEC-INV-20 | VERIFY_PLANNED | — |
 | FR-SIM-012 | F1 | Batu | 01 Item81 FR-SIM-012 L169883 | ITEM-10, ITEM-36, EVTINF-INV-03, SEC-INV-18, DA-INV-04 | VERIFY_PLANNED | — |
-| FR-SIM-013 | F1 | Batu | 01 Item81 FR-SIM-013 L169884 | ITEM-10, ITEM-19, ITEM-22, SCH-INV-02 | VERIFY_PLANNED | — |
-| FR-SIM-014 | F1 | Batu | 01 Item81 FR-SIM-014 L169885 | ITEM-10, ITEM-22, INT-INV-14, SRE-INV-11 | VERIFY_PLANNED | — |
+| FR-SIM-013 | F1 | Batu | 01 Item81 FR-SIM-013 L169884 | ITEM-10, ITEM-19, ITEM-22, SCH-INV-02 | EVIDENCE_PENDING | — |
+| FR-SIM-014 | F1 | Batu | 01 Item81 FR-SIM-014 L169885 | ITEM-10, ITEM-22, INT-INV-14, SRE-INV-11 | EVIDENCE_PENDING | — |
 
 ### 6.FD FR-TWIN — Operational Digital Twin (10)
 
@@ -4051,26 +4051,28 @@ FR-SIM-013:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SIM-013 L169884"}
   DERIVED_FROM: [ITEM-10, ITEM-19, ITEM-22, SCH-INV-02]
   ALLOCATED_TO: [ARCH-SIM-ENGINE, ARCH-CTR-CMDSCHEMA]
-  REALIZED_BY: {surface: "external dispatch/planning decision interface (Core-validated physical commands)", deployable: "manufacturing-simulator", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "external dispatch/planning decision interface (Core-validated physical commands)", deployable: "manufacturing-simulator", ref: "services/manufacturing-simulator/src/manufacturing_simulator/; services/manufacturing-simulator/tests/; services/manufacturing-simulator/contracts/"}
   EXPOSED_BY: ["IC-SCH-005 DispatchDecision"]
   VERIFIED_BY: [TEST-SIM-DECISIONIF, BENCH-RQ2-001]
   EXERCISED_IN: [AV-SCEN-02]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [evidence/WP-SIM-006/runs/run-3-committed]  # offline interface slice on a test-only facility; REAL/integrated acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "CI + INTEGRATION + EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Local run of the offline dispatch interface (TEST-SIM-DECISIONIF) on a test-only facility: contracts, intake revalidation, idempotency, standalone baselines. evidence/WP-SIM-006/README.md records limits: no operational model (WP-SIM-003), no real Core integration, no IC-SCH-005 producer, no event-spine publication, AV-SCEN-02 and BENCH-RQ2-001 not executed, no VERIFIED claim."
 FR-SIM-014:
   meta: {class: F1, owner: Batu, anchor: "01 Item81 FR-SIM-014 L169885"}
   DERIVED_FROM: [ITEM-10, ITEM-22, INT-INV-14, SRE-INV-11]
   ALLOCATED_TO: [ARCH-SIM-ENGINE, ARCH-WORLD-EVALZONE]
-  REALIZED_BY: {surface: "operational event/telemetry publication without Oracle fields", deployable: "manufacturing-simulator", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "operational event/telemetry publication without Oracle fields", deployable: "manufacturing-simulator", ref: "services/manufacturing-simulator/src/manufacturing_simulator/; services/manufacturing-simulator/tests/; services/manufacturing-simulator/contracts/"}
   EXPOSED_BY: ["physical execution events", "telemetry stream"]
   VERIFIED_BY: [TEST-SIM-DECISIONIF, TEST-SIM-ISOLATION]
   EXERCISED_IN: [AV-SCEN-01, AV-SCEN-11]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
+  EXECUTED_AS: [evidence/WP-SIM-006/runs/run-3-committed]  # allow-list exposure on a test-only facility; REAL/integrated acceptance pending
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Local allow-list exposure of operational state and events with evaluator-field rejection (TEST-SIM-DECISIONIF, TEST-SIM-ISOLATION); not publication on the event spine, no Oracle plane exists yet (WP-SIM-005). evidence/WP-SIM-006/README.md records the limits."
 ```
 
 ### 17.FD FR-TWIN

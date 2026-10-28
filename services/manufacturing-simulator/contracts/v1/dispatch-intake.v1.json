@@ -1,0 +1,22 @@
+{
+  "contract_version": "simulator.dispatch-intake.v1",
+  "dispatch_id": "DSP-1",
+  "world_id": "world-1",
+  "request_id": "REQ-1",
+  "lot_id": "L1",
+  "lot_revision": "L1-r1",
+  "route_step": "ROUGH-MILL",
+  "machine_id": "M1",
+  "decision_time": {
+    "value": 10,
+    "unit": "us"
+  },
+  "rule": {
+    "id": "EXT-RULE",
+    "version": "1"
+  },
+  "schedule_version": null,
+  "base_state_revision": "rev-1",
+  "source": "EXTERNAL_DECIDER",
+  "reason": "L1 is the earliest due lot"
+}
