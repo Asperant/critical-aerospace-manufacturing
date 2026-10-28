@@ -168,6 +168,8 @@ jobs:
         run: |
           uv run --project ci --locked python -m pytest -c services/manufacturing-simulator/pyproject.toml services/manufacturing-simulator/tests/test_serialization.py services/manufacturing-simulator/tests/test_replay.py services/manufacturing-simulator/tests/test_replay_validation.py -q -p pytest_quarantine
           uv run --project ci --locked python -m pytest evidence/WP-SIM-002/tests -q -p pytest_quarantine
+      - name: Simulator operational model evidence collector tests (WP-SIM-003)
+        run: uv run --project ci --locked python -m pytest evidence/WP-SIM-003/tests -q -p pytest_quarantine
       - name: Simulator dispatch interface evidence collector tests (WP-SIM-006)
         run: uv run --project ci --locked python -m pytest evidence/WP-SIM-006/tests -q -p pytest_quarantine
       - name: Scheduler snapshot consumer and RecoveryPlan contract tests and typing (WP-SCH-002)
