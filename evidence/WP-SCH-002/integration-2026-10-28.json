@@ -94,13 +94,15 @@
   "DONE": false,
   "root_typing_followup": {
     "reason": "CI root environment lacked contracts/Twin extraPaths after SCH001 package integration",
-    "pyrightconfig_sha256": "e3113550915c764467cebcb5cad365d7c73e08fab4f9a34aaabbdd7f85f54888",
+    "pyrightconfig_sha256": "ac80fad1befa66280f190b17f37faa35696b1e201dcf5257aea25b7f3c4280aa",
     "static_ratchet": "PASS",
     "counts": {
       "ruff": 287,
       "pyright": 185,
       "unformatted": 53
     },
-    "baseline_weakened": false
+    "baseline_weakened": false,
+    "PYTHONPATH_removed_for_final_check": true,
+    "ci_followup": "Explicit ci/scripts path added after CI identified check_contracts import masked by local PYTHONPATH; env-unset static ratchet PASS, no baseline change."
   }
 }
