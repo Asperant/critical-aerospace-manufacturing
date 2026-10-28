@@ -1,0 +1,53 @@
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/src/manufacturing_simulator/kernel.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/src/manufacturing_simulator/kernel.py:20:8 - error: Import "numpy" could not be resolved (reportMissingImports)
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/src/manufacturing_simulator/replay.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/src/manufacturing_simulator/replay.py:40:8 - error: Import "numpy" could not be resolved (reportMissingImports)
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/src/manufacturing_simulator/rng.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/src/manufacturing_simulator/rng.py:18:8 - error: Import "numpy" could not be resolved (reportMissingImports)
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/conftest.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/conftest.py:8:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_baseline.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_baseline.py:8:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_baseline.py:9:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_decision_contract.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_decision_contract.py:14:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_decision_contract.py:16:6 - warning: Import "jsonschema" could not be resolved from source (reportMissingModuleSource)
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_decision_messages.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_decision_messages.py:9:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_decision_messages.py:11:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_decision_messages.py:12:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_determinism.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_determinism.py:14:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_determinism.py:15:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_determinism.py:16:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_dispatch_gate.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_dispatch_gate.py:12:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_exposure.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_exposure.py:7:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_kernel.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_kernel.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_kernel.py:9:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_kernel.py:10:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_queue_clock.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_queue_clock.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_queue_clock.py:9:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_queue_clock.py:10:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_replay.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_replay.py:18:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_replay.py:19:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_replay.py:20:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_replay_validation.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_replay_validation.py:17:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_rng.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_rng.py:8:8 - error: Import "numpy" could not be resolved (reportMissingImports)
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_rng.py:9:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_rng.py:10:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_rng.py:11:6 - error: Import "hypothesis" could not be resolved (reportMissingImports)
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_scenario.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_scenario.py:8:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+/srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_serialization.py
+  /srv/ailab/workspaces/batuhan/worktrees/WP-SIM-006-impl/services/manufacturing-simulator/tests/test_serialization.py:14:8 - error: Import "pytest" could not be resolved (reportMissingImports)
+31 errors, 1 warning, 0 informations 
+WARNING: there is a new pyright version available (v1.1.389 -> v1.1.414).
+Please install the new version or set PYRIGHT_PYTHON_FORCE_VERSION to `latest`
+
