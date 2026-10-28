@@ -1,0 +1,63 @@
+{
+  "environment": {
+    "class": "INTEGRATION",
+    "id": "integration"
+  },
+  "finished_at": "2026-10-28T13:27:53+00:00",
+  "host_source": {
+    "checked_out_commit": "2e1428d4954b77993985c1759caff50e67df1cdf",
+    "manual_patches": 0,
+    "release_commit": "2e1428d4954b77993985c1759caff50e67df1cdf"
+  },
+  "manifest_sha256": "6738be741fc21ef519b4d230225824828c4de93bc65253a10ca02030abc67c56",
+  "previous_release_id": null,
+  "record_id": "DEP-REC-20261028T132751Z-76b35b50",
+  "release_id": "REL-2e1428d4954b-40696269604",
+  "result": "FAILED",
+  "rollback": null,
+  "schema": "cap.deployment-record/v1",
+  "stages": [
+    {
+      "detail": "ci-gate at the release commit is missing, not success",
+      "finished_at": "2026-10-28T13:27:53+00:00",
+      "result": "FAILED",
+      "stage": "preflight",
+      "started_at": "2026-10-28T13:27:51+00:00"
+    },
+    {
+      "detail": "preflight failed; nothing was rolled out",
+      "finished_at": null,
+      "result": "NOT_RUN",
+      "stage": "migrate",
+      "started_at": null
+    },
+    {
+      "detail": "preflight failed; nothing was rolled out",
+      "finished_at": null,
+      "result": "NOT_RUN",
+      "stage": "rollout",
+      "started_at": null
+    },
+    {
+      "detail": "preflight failed; nothing was rolled out",
+      "finished_at": null,
+      "result": "NOT_RUN",
+      "stage": "health",
+      "started_at": null
+    },
+    {
+      "detail": "preflight failed; nothing was rolled out",
+      "finished_at": null,
+      "result": "NOT_RUN",
+      "stage": "smoke",
+      "started_at": null
+    }
+  ],
+  "started_at": "2026-10-28T13:27:51+00:00",
+  "supply_chain_verification": {
+    "ci_gate": "missing",
+    "digests_in_registry": true,
+    "main_derived": true,
+    "tags_trusted": false
+  }
+}

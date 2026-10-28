@@ -127,11 +127,17 @@ def deploy(
     chain["main_derived"] = host.commit_on_main(commit)
     if not chain["main_derived"]:
         failures.append("the release commit is not on main")
-    chain["ci_gate"] = host.ci_gate_conclusion(commit) or "missing"
-    if chain["ci_gate"] != "success":
-        failures.append(
-            f"ci-gate at the release commit is {chain['ci_gate']}, not success"
-        )
+    try:
+        chain["ci_gate"] = host.ci_gate_conclusion(commit) or "missing"
+    except DeployError as exc:
+        # An unreadable check is not an absent one: say which, so the operator can fix it.
+        chain["ci_gate"] = "unreadable"
+        failures.append(f"ci-gate could not be read from GitHub: {exc}")
+    else:
+        if chain["ci_gate"] != "success":
+            failures.append(
+                f"ci-gate at the release commit is {chain['ci_gate']}, not success"
+            )
     references = [
         str(i["reference"])
         for i in cast("list[dict[str, Any]]", manifest.get("service_images", []))
@@ -335,6 +341,11 @@ class SystemHost:
                 '[.check_runs[]|select(.name=="ci-gate")|.conclusion]|first // empty',
             ]
         )
+        if done.returncode != 0:
+            raise DeployError(
+                (done.stderr or done.stdout).strip()[-300:]
+                or f"gh exited {done.returncode}"
+            )
         return done.stdout.strip() or None
 
     def digest_in_registry(self, reference: str) -> bool:

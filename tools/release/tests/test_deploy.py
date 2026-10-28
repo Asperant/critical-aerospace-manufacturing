@@ -26,7 +26,7 @@ class FakeHost:
         self.commit = COMMIT
         self.changes: list[str] = []
         self.on_main = True
-        self.gate: str | None = "success"
+        self.gate: str | Exception | None = "success"
         self.digests_present = True
         self.rollout_fails: list[int] = []  # 1-based rollout call numbers that fail
         self.bad_health: list[str] = []
@@ -54,6 +54,8 @@ class FakeHost:
         return self.on_main
 
     def ci_gate_conclusion(self, commit: str) -> str | None:
+        if isinstance(self.gate, Exception):
+            raise self.gate
         return self.gate
 
     def digest_in_registry(self, reference: str) -> bool:
@@ -284,4 +286,16 @@ def test_the_registry_is_not_trusted_without_images(repo: Path) -> None:
     manifest = make_manifest(repo)
     manifest["service_images"] = []
     outcome = deploy(manifest, ImageRegistry("ghcr.io/asperant", ()), host)
+    assert outcome.record["result"] == "FAILED" and host.rollouts == []
+
+
+def test_an_unreadable_ci_gate_is_reported_as_unreadable_not_as_missing(
+    repo: Path,
+) -> None:
+    """A gh failure (for example an unwritable cache directory) must say so, and still deploy nothing."""
+    host = FakeHost(gate=DeployError("mkdir /tmp/gh-cli-cache: permission denied"))
+    outcome = deploy(make_manifest(repo), load_registry(repo), host)
+    detail = outcome.record["stages"][0]["detail"]
+    assert "could not be read" in detail and "permission denied" in detail
+    assert outcome.record["supply_chain_verification"]["ci_gate"] == "unreadable"
     assert outcome.record["result"] == "FAILED" and host.rollouts == []
