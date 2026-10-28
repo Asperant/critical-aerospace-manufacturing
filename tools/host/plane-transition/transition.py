@@ -56,6 +56,7 @@ FORWARD = dict(zip(['BACKLOG','READY','IN_PROGRESS','IN_REVIEW','MERGE_READY','M
                    ['READY','IN_PROGRESS','IN_REVIEW','MERGE_READY','MERGED','VALIDATING','DONE']))
 # Edges alone never authorize anything: actual facts and semantic evidence below do.
 REWORK = {('IN_REVIEW','IN_PROGRESS'), ('MERGE_READY','IN_REVIEW'), ('DONE','VALIDATING')}
+MISSING_ARTIFACT = {'ARTIFACT_NOT_A_FILE', 'ARTIFACT_NOT_FOUND', 'ARTIFACT_CONTENT_UNAVAILABLE'}
 FILE_PAGE = 100          # GitHub's per-page maximum for the pull-request files route
 FILE_PAGE_CEILING = 10   # bounded inventory: at most 1000 files (10 pages); larger PRs are rejected
 PR_FILE_STATUSES = {'added','removed','modified','renamed','copied','changed','unchanged'}
@@ -95,6 +96,27 @@ def parse_input(raw):
     return {'reason':reason, 'evidence_refs':refs}
 
 
+def read_failure_code(route, stderr):
+    """Classify a failed GitHub read into a typed code without echoing stderr.
+
+    Only a repository-contents lookup that GitHub reports as absent is a missing
+    artifact (a fact about the evidence, never an outage). Authentication,
+    permission, rate and service failures stay distinct and fail closed; any other
+    404 (a PR, run or comment) and every unrecognized failure stay unavailable.
+    """
+    match = re.search(rb'HTTP ([0-9]{3})', stderr or b'')
+    status = int(match[1]) if match else None
+    if status == 401:
+        return 'GITHUB_AUTH_HTTP_401'
+    if status == 403:
+        return 'GITHUB_FORBIDDEN_HTTP_403'
+    if status == 404 and route.startswith(REPO + '/contents/'):
+        return 'ARTIFACT_NOT_FOUND'
+    if status is not None and 500 <= status <= 599:
+        return 'GITHUB_SERVICE_ERROR'
+    return 'GITHUB_READ_UNAVAILABLE'
+
+
 class GitHub:
     """Fixed GET API via existing per-profile gh login, always as the matching unprivileged Linux account.
 
@@ -127,13 +149,20 @@ class GitHub:
             deadline = getattr(self, 'deadline', None)
             if deadline is not None:
                 timeout = min(timeout, max(0.01, deadline - time.monotonic()))
-            result = subprocess.run(['/usr/bin/gh','api','--hostname','github.com','--method','GET',route],
-                                    env=self.env, cwd='/', user=self.uid, group=self.gid, extra_groups=(),
-                                    umask=0o077, capture_output=True,
-                                    timeout=timeout)
-            need(result.returncode == 0 or b'HTTP 401' not in result.stderr, 'GITHUB_AUTH_HTTP_401')
-            need(result.returncode == 0 and len(result.stdout) <= 8_000_000, 'GITHUB_READ_UNAVAILABLE')
-            self.cache[route] = json.loads(result.stdout, object_pairs_hook=q.unique)
+            try:
+                result = subprocess.run(['/usr/bin/gh','api','--hostname','github.com','--method','GET',route],
+                                        env=self.env, cwd='/', user=self.uid, group=self.gid, extra_groups=(),
+                                        umask=0o077, capture_output=True,
+                                        timeout=timeout)
+            except subprocess.TimeoutExpired:
+                raise Denied('GITHUB_READ_TIMEOUT') from None
+            if result.returncode != 0:
+                raise Denied(read_failure_code(route, result.stderr))
+            need(len(result.stdout) <= 8_000_000, 'GITHUB_RESPONSE_TOO_LARGE')
+            try:
+                self.cache[route] = json.loads(result.stdout, object_pairs_hook=q.unique)
+            except Exception:  # invalid JSON, duplicate fields or hostile nesting
+                raise Denied('GITHUB_RESPONSE_MALFORMED') from None
         return self.cache[route]
 
     def main_sha(self):
@@ -473,9 +502,7 @@ def _automatic_runtime_readiness_attestation(gh, context, edge, sha, policy):
         raw, basis_blob = gh.repository_file(basis_path, sha)
         basis = json.loads(raw.decode("utf-8"), object_pairs_hook=q.unique)
     except Denied as exc:
-        reject("RUNTIME_READINESS_BASIS_MISSING" if exc.code in {
-            "ARTIFACT_NOT_A_FILE", "ARTIFACT_CONTENT_UNAVAILABLE"
-        } else exc.code)
+        reject("RUNTIME_READINESS_BASIS_MISSING" if exc.code in MISSING_ARTIFACT else exc.code)
     except (ValueError, UnicodeDecodeError, TypeError):
         reject("RUNTIME_READINESS_BASIS_INVALID")
 
@@ -654,11 +681,7 @@ def automatic_readiness_attestation(gh, context, edge, sha, policy):
         raw, basis_blob = gh.repository_file(basis_path, sha)
         basis = json.loads(raw.decode("utf-8"), object_pairs_hook=q.unique)
     except Denied as exc:
-        reject(
-            "SEMANTIC_BASIS_MISSING"
-            if exc.code in {"ARTIFACT_NOT_A_FILE", "ARTIFACT_CONTENT_UNAVAILABLE"}
-            else exc.code
-        )
+        reject("SEMANTIC_BASIS_MISSING" if exc.code in MISSING_ARTIFACT else exc.code)
     except (ValueError, UnicodeDecodeError, TypeError):
         reject("SEMANTIC_BASIS_INVALID")
     if not isinstance(basis, dict):
@@ -882,77 +905,6 @@ def existing_assessment(gh,text,wp,sha):
                 need(not record.get(key), 'AMBIGUOUS_SEMANTIC_EVIDENCE')
                 record[key]=linked[key]
     return record
-
-
-def ready_assessment_record(gh, context, policy, sha):
-    """Consume the same bound READY.md model as projectctl check-ready."""
-    wp = context['work_package']
-    path = f"evidence/{wp['id']}/READY.md"
-    raw, _blob = gh.repository_file(path, sha)
-    try:
-        text = raw.decode('utf-8')
-    except UnicodeDecodeError:
-        raise Denied('READY_ASSESSMENT_UNREADABLE') from None
-    need(len(text) <= 65536, 'EVIDENCE_TOO_LARGE')
-    owner_match = re.search(r"(?im)^\s*Accountable owner\s*:\s*(.+?)\s*$", text)
-    canonical_owner = wp.get('primary_owner', {}).get('canonical_name')
-    need(owner_match and owner_match.group(1).split('(', 1)[0].strip() == canonical_owner,
-         'ACCOUNTABLE_OWNER_EVIDENCE_MISSING')
-    rows = {}
-    dependency_rows = {}
-    for line in text.splitlines():
-        if not line.strip().startswith('|'):
-            continue
-        cells = [cell.strip() for cell in line.strip().strip('|').split('|')]
-        if len(cells) < 3 or all(set(cell) <= {'-', ':', ' '} for cell in cells):
-            continue
-        identity = cells[0].strip(' `')
-        result = cells[1].upper().strip()
-        detail = ' | '.join(cells[2:]).strip()
-        if re.fullmatch(r'DOR-(?:TASK|WP)-[0-9]{2}', identity):
-            need(identity not in rows, 'AMBIGUOUS_READY_CRITERION')
-            need(result.startswith('PASS') or result.startswith('N/A'),
-                 'UNSUPPORTED_READY_CRITERION_RESULT')
-            rows[identity] = (result, detail)
-        elif re.fullmatch(r'DEP-[0-9]+', identity):
-            need(identity not in dependency_rows, 'AMBIGUOUS_READY_DEPENDENCY')
-            dependency_rows[identity] = (result, detail)
-    task_ids = [f'DOR-TASK-{number:02d}' for number in range(1, 13)
-                if wp.get('scope_class') == 'R1' or number != 12]
-    ids = task_ids + list(wp.get('dor_refs') or [])
-    allow_na = {'DOR-TASK-04', 'DOR-TASK-12', 'DOR-WP-04', 'DOR-WP-08'}
-    checks = {}
-    for identity in ids:
-        result_detail = rows.get(identity)
-        if result_detail is None:
-            raise Denied('READY_CRITERION_MISSING')
-        result, detail = result_detail
-        if result.startswith('PASS'):
-            need(detail, 'READY_CRITERION_UNEXPLAINED')
-        else:
-            need(identity in allow_na and detail, 'READY_CRITERION_NA_INVALID')
-        checks[identity] = {'result': 'PASS' if result.startswith('PASS') else 'N/A',
-                            'reason': detail, 'evidence_refs': [f'repo:{path}']}
-    start_edges = [edge for edge in context.get('dependency_edges', [])
-                   if edge.get('semantics', {}).get('strength') == 'HARD'
-                   and edge.get('semantics', {}).get('blocking_stage') == 'START']
-    dependency_readiness = {}
-    reference = re.compile(r'(?:`([^`]+)`|((?:docs|evidence|project_control|requirements|tools)/[^\s,;)]+))')
-    for edge in start_edges:
-        value = dependency_rows.get(edge['id'])
-        if value is None:
-            raise Denied('START_DEPENDENCY_EVIDENCE_MISSING')
-        readiness, detail = value
-        need(readiness not in {'NOT_APPLICABLE', 'N/A', 'UNKNOWN', ''} and detail
-             and reference.search(detail), 'START_DEPENDENCY_EVIDENCE_MISSING')
-        dependency_readiness[edge['id']] = {'readiness': readiness,
-                                            'precise_consumer_requirement': detail,
-                                            'evidence_refs': [f'repo:{path}']}
-    gh.artifact(f'repo:{path}', sha)
-    return {'wp_id': wp['id'], 'head_sha': sha, 'reason': 'Canonical READY.md assessment',
-            '_native': True, '_ready_canonical': True, '_artifact_refs': [f'repo:{path}'],
-            'checks': checks, 'dependency_readiness': dependency_readiness,
-            'dependency_stage_dispositions': {}}
 
 
 def native_record(text, wp, sha):
@@ -1241,6 +1193,18 @@ def policy_checks(policy):
          and data.get('product_hitl_unchanged') is True, 'REVIEW_POLICY_CONFLICT')
 
 
+def existing_refs(gh,refs):
+    """Every revision, comment and run named as evidence must be a real GitHub object."""
+    for ref in refs:
+        kind,value=ref.split(':')
+        if kind=='commit':
+            gh.commit(value)
+        elif kind=='comment':
+            gh.comment(int(value))
+        elif kind=='run':
+            gh.run(int(value))
+
+
 def product_startability(context):
     """CHG-054: the only implementation-start blockers are canonical facts."""
     work_package = context.get('work_package', {})
@@ -1257,13 +1221,12 @@ def product_startability(context):
     )
     for edge in context.get('dependency_edges', []):
         semantics = edge.get('semantics', {})
-        if (semantics.get('strength') == 'HARD'
-                and semantics.get('blocking_stage') == 'START'
-                and 'status' in edge):
-            # Canonical execution snapshots may carry an explicit resolver
-            # status.  Older transition policy records intentionally omit it;
-            # their evidence-backed READY gate remains authoritative.
-            need(edge.get('status') == 'READY', 'HARD_START_DEPENDENCY_UNRESOLVED:' + edge.get('id', 'UNKNOWN'))
+        if semantics.get('strength') == 'HARD' and semantics.get('blocking_stage') == 'START':
+            # Same rule as projectctl startability: a HARD + START edge blocks until its
+            # recorded readiness status is READY. A missing status is unresolved, never
+            # proof; later-stage HARD edges (INTEGRATION, MILESTONE_EXIT, FREEZE) are
+            # not start blockers.
+            need(edge.get('status') == 'READY', 'HARD_START_DEPENDENCY_UNRESOLVED:' + str(edge.get('id', 'UNKNOWN')))
 
 
 def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=None,projection=None):
@@ -1291,7 +1254,7 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
     if post and pr: need(pr.get('merged') is True, 'PR_NOT_ACTUALLY_MERGED')
     owner=GITHUB[profile]
     # Only semantic operations/readiness actually consume assessment records.
-    rows=records(gh,refs,wp,sha,pr) if target in {'READY','BLOCKED','UNBLOCKED','CANCELED','DONE'} or source=='DONE' else []
+    rows=records(gh,refs,wp,sha,pr) if target in {'BLOCKED','UNBLOCKED','CANCELED','DONE'} or source=='DONE' else []
     if target=='CANCELED':
         decision=confirmation(rows,['Asperant'],wp,source,target,sha,policy)
         need(decision.get('owner_decision')=='CANCEL', 'EXPLICIT_OWNER_CANCELLATION_REQUIRED')
@@ -1331,24 +1294,11 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
         blocker_evidence(gh,record,'BLOCKER-RESOLVED',sha)
         return {'resolves_audit_id':previous['audit_id']}
     if target=='READY':
-        need(context['cycle_ids'], 'UNSCHEDULED_WORK_NEEDS_PLANNING_DECISION')
-        need(not any(r['id']!=item['id'] and r.get('assignees')==[q.PEOPLE[profile][1]] and
-                     r.get('state')==plane.states['READY'] for r in plane.items), 'ANOTHER_READY_WP_EXISTS')
-        if not rows and policy.get('preparation_schema') == 'cap-preparation-v1':
-            spec=importlib.util.spec_from_file_location('cap_preparation_ready','/usr/local/libexec/cap-preparation.py')
-            assert spec is not None and spec.loader is not None
-            prep=importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(prep)
-            record=prep.verified_record(sys.modules[__name__],gh,wp,sha,policy)
-        else:
-            try:
-                record=ready_assessment_record(gh,context,policy,sha)
-            except Denied as exc:
-                if exc.code != 'ARTIFACT_NOT_A_FILE' or not rows:
-                    raise
-                record=confirmation(rows,[owner],wp,source,target,sha,policy)
-        criteria(gh,record,sorted(record['checks']) if record.get('_ready_canonical')
-                 else policy['dor_task']+card['dor_refs'],sha)
+        # CHG-054: READY records present canonical start eligibility, never a DoR PASS.
+        # Owner DoR comments, READY.md, preparation artifacts, cycle scheduling and other
+        # READY items are advisory diagnostics, not start authorization.
+        product_startability(context)
+        existing_refs(gh,refs)
     elif target=='IN_PROGRESS':
         product_startability(context)
         if starting_commit: gh.started_commit(wp,sha,profile)
