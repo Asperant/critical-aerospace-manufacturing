@@ -1,0 +1,12 @@
+warning: `VIRTUAL_ENV=<repo>/ci/.venv` does not match the project environment path `ci/.venv` and will be ignored; use `--active` to target the active environment instead
+Using CPython 3.11.16
+Creating virtual environment at: ci/.venv
+   Building cap-observability @ file://<home>/.cache/tmp/cicd002-elrmo1yj/host-checkout/packages/observability
+   Building manufacturing-simulator @ file://<home>/.cache/tmp/cicd002-elrmo1yj/host-checkout/services/manufacturing-simulator
+   Building mfgctl @ file://<home>/.cache/tmp/cicd002-elrmo1yj/host-checkout/tools/mfgctl
+   Building projectctl @ file://<home>/.cache/tmp/cicd002-elrmo1yj/host-checkout/tools/projectctl
+      Built cap-observability @ file://<home>/.cache/tmp/cicd002-elrmo1yj/host-checkout/packages/observability
+      Built manufacturing-simulator @ file://<home>/.cache/tmp/cicd002-elrmo1yj/host-checkout/services/manufacturing-simulator
+      Built mfgctl @ file://<home>/.cache/tmp/cicd002-elrmo1yj/host-checkout/tools/mfgctl
+      Built projectctl @ file://<home>/.cache/tmp/cicd002-elrmo1yj/host-checkout/tools/projectctl
+Installed 66 packages in 134ms

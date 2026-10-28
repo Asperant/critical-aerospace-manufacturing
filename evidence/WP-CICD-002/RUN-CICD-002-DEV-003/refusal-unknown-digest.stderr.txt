@@ -1,0 +1,1 @@
+warning: `VIRTUAL_ENV=<repo>/ci/.venv` does not match the project environment path `ci/.venv` and will be ignored; use `--active` to target the active environment instead

@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: b21a4c36917f90cc300cd09273ed48ab3394a63fe6eccfc6f12610b2d3fab7a5
+  sha256: 2415cee796f9cb7feaf1630d3cc005f79ce2ad9dfb76c702997d53b50237aded
 requirements:
   FR-GOV-001:
     meta:
@@ -2933,7 +2933,7 @@ requirements:
     state:
       coverage: EVIDENCE_PENDING
       planning: EVIDENCE_PENDING
-      evidence: NOT_YET_EXECUTED
+      evidence: EVIDENCE_PENDING
     note: build-and-publish workflow, digest-pinned deploy command and host hook implemented (WP-CICD-002); deployment from GitHub Actions needs a self-hosted runner (DN-PLAT-RUNNER), so the deploy runs as a command on the host; no application image exists yet.
     realization:
       surface: main-derived immutable artifact promotion to INTEGRATION
@@ -2952,7 +2952,7 @@ requirements:
     state:
       coverage: EVIDENCE_PENDING
       planning: EVIDENCE_PENDING
-      evidence: NOT_YET_EXECUTED
+      evidence: EVIDENCE_PENDING
     note: OD-CICD-01 is decided as JSON documents validated by JSON Schema (release/README.md); an ADR follows when the ADR index can admit it (WP-DOC-002). Identities without a producer are NOT_YET_PRODUCED.
     realization:
       surface: ReleaseManifest/DeploymentRecord emission (format OD-CICD-01)
@@ -5351,7 +5351,7 @@ requirements:
     state:
       coverage: EVIDENCE_PENDING
       planning: EVIDENCE_PENDING
-      evidence: NOT_YET_EXECUTED
+      evidence: EVIDENCE_PENDING
     measurement:
       metric: manual source-code patches on target host for formal deployment
       threshold: = 0
@@ -7706,6 +7706,7 @@ edges:
 - {"from": "FR-PLAT-004", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-001", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-004", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-003", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-004", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-004", "applicability": "PLANNED"}
+- {"from": "FR-PLAT-004", "relation": "EXECUTED_AS", "to": "RUN-CICD-002-DEV-005", "applicability": "RECORDED"}
 - {"from": "FR-PLAT-004", "relation": "MITIGATES", "to": "PLAT-R08", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-005", "relation": "DERIVED_FROM", "to": "ITEM-42", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-005", "relation": "DERIVED_FROM", "to": "CD-INV-03", "applicability": "PLANNED"}
@@ -7721,6 +7722,7 @@ edges:
 - {"from": "FR-PLAT-005", "relation": "VERIFIED_BY", "to": "INSP-DEP-HOST", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-005", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-002", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-005", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-003", "applicability": "PLANNED"}
+- {"from": "FR-PLAT-005", "relation": "EXECUTED_AS", "to": "RUN-CICD-002-DEV-005", "applicability": "RECORDED"}
 - {"from": "FR-PLAT-006", "relation": "DERIVED_FROM", "to": "ITEM-47", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-006", "relation": "DERIVED_FROM", "to": "ITEM-61", "applicability": "PLANNED"}
 - {"from": "FR-PLAT-006", "relation": "DERIVED_FROM", "to": "TECH-INV-14", "applicability": "PLANNED"}
@@ -8691,6 +8693,7 @@ edges:
 - {"from": "NFR-DEP-003", "relation": "VERIFIED_BY", "to": "INSP-DEP-HOST", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-003", "relation": "VERIFIED_BY", "to": "TEST-PLAT-CD", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-003", "relation": "VERIFIED_BY", "to": "TEST-CICD-002-003", "applicability": "PLANNED"}
+- {"from": "NFR-DEP-003", "relation": "EXECUTED_AS", "to": "RUN-CICD-002-DEV-005", "applicability": "RECORDED"}
 - {"from": "NFR-DEP-003", "relation": "MITIGATES", "to": "PLAT-R08", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-004", "relation": "DERIVED_FROM", "to": "ITEM-35", "applicability": "PLANNED"}
 - {"from": "NFR-DEP-004", "relation": "DERIVED_FROM", "to": "ITEM-42", "applicability": "PLANNED"}

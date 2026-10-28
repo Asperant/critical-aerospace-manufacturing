@@ -13,7 +13,7 @@ DEP-002 (the START edge) was clarified and recorded READY by CHG-076
 | 1 | `release/images.json` (the image registry) and the registry check; `cap.release-manifest/v1` and `cap.deployment-record/v1`; the manifest builder and validator; the digest-pinned deploy decisions with their record and rollback |
 | 2 | `.github/workflows/release.yml` (build once on main, GHCR, SBOM, provenance, attestation, ReleaseManifest), the `CAP_COMPOSE_OVERRIDE` hook of `stack.sh`, CI wiring |
 | 3 | `release/README.md` (operator guide and the OD-CICD-01 decision) and `collect_run.py` |
-| 4 | the shared-host run (RUN-CICD-002-DEV-001), recorded after the first publish from main |
+| 4 | the shared-host runs RUN-CICD-002-DEV-003…005, deployed from the published image of a main commit (001/002 were not kept: the harness was still being fixed) |
 
 ## Verification
 
@@ -21,12 +21,25 @@ DEP-002 (the START edge) was clarified and recorded READY by CHG-076
 |---|---|---|---|
 | `tools/release/tests/` (TEST-CICD-002-001…004, 98 tests) | TEST-PLAT-CD | FIXTURE_ALLOWED (a fake host); the Compose override test calls the real `docker compose config` | CI t1-unit |
 | the `release` workflow dry-run build | TEST-PLAT-CD | REAL image build, nothing pushed | CI, pull requests |
-| RUN-CICD-002-DEV-001 | TEST-PLAT-CD, INSP-DEP-HOST instrumentation | REAL | shared host (DEV), after the first publish |
+| RUN-CICD-002-DEV-005 | TEST-PLAT-CD, INSP-DEP-HOST instrumentation | REAL | shared host (DEV), after the first publish |
 
 Local at the branch head: 98 release tests passed, `ruff` and strict `pyright` clean on
 the package, the static ratchet, `check_test_strategy.py`, `projectctl validate` and the
 trace lint pass. On the pull request the `release` workflow's plan and dry-run build
 (`release-build (mlflow)`, SBOM and provenance on, nothing pushed) passed.
+
+## Shared-host runs (all kept, failed ones too)
+
+| Run | Result | Why |
+|---|---|---|
+| RUN-CICD-002-DEV-003 | FAILED at preflight | started before the main `ci` run of the commit had finished, so `ci-gate` did not exist yet; the refusal is correct |
+| RUN-CICD-002-DEV-004 | FAILED at smoke | image pulled and running by digest, rollout and health passed; the smoke `TimeoutError` happened under host load (probable cause, not proven) |
+| RUN-CICD-002-DEV-005 | **SUCCEEDED** | idle host: preflight, rollout, health, smoke PASSED; migrate SKIPPED (the release binds no schema target); the running container's image is the manifest digest |
+
+Run 005 also records the two refusals (a manual change on the host tree; a digest the
+registry does not hold), both FAILED at preflight with nothing rolled out. Host paths and
+the host name are redacted. This is a DEV run on the shared host: it is not the INTEGRATION
+acceptance (TEST-PLAT-CD / INSP-DEP-HOST) of the requirements.
 
 ## What the deploy command decides
 
