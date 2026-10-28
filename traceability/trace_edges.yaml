@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: 7c64f9ddb029e0594484898b95be14edbfa0b5c433463d2da9a2cf93e086bebb
+  sha256: 43a01a5be7dfcaa21d443fd854f3ebf68060eb933b06055797db823e08b0378f
 requirements:
   FR-GOV-001:
     meta:
@@ -617,13 +617,14 @@ requirements:
       env: CI + EVALUATION
       m6_freeze_sensitive: true
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: 'The local run is an uncommitted-tree run of the toy kernel fixture (TEST-SIM-DETERMINISM): versioned canonical hash, replay API, controlled negative matrix. evidence/WP-SIM-002/README.md records limits: BENCH-SIMVAL-001 and REPRO-NONOWNER-001 not executed, no governed Release/Environment/Hardware identity, no VERIFIED claim.'
     realization:
       surface: deterministic replay + event-sequence hash
       deployable: manufacturing-simulator
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/manufacturing-simulator/src/manufacturing_simulator/; services/manufacturing-simulator/tests/
   FR-SIM-009:
     meta:
       class: F1
@@ -4964,15 +4965,16 @@ requirements:
       env: CI + EVALUATION
       m6_freeze_sensitive: true
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
     measurement:
       metric: final state + deterministic event sequence/hash equality for same release/scenario/state/seed
       threshold: identical
       workload: deterministic scenarios
       hardware: N/A (not hardware-bound)
       observed: null
+    note: Local kernel-level regression only (toy fixture); MEASUREMENT observed stays null. H0 acceptance still needs BENCH-SIMVAL-001 and a real non-owner reproduction (REPRO-NONOWNER-001), neither executed. evidence/WP-SIM-002/README.md records the limits.
   NFR-REP-002:
     meta:
       class: H0
@@ -6261,12 +6263,14 @@ edges:
 - {"from": "FR-SIM-008", "relation": "DERIVED_FROM", "to": "TEST-INV-06", "applicability": "PLANNED"}
 - {"from": "FR-SIM-008", "relation": "ALLOCATED_TO", "to": "ARCH-SIM-ENGINE", "applicability": "PLANNED"}
 - {"from": "FR-SIM-008", "relation": "ALLOCATED_TO", "to": "ARCH-SIM-SCENARIO", "applicability": "PLANNED"}
-- {"from": "FR-SIM-008", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-SIM-008", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/src/manufacturing_simulator/", "applicability": "RECORDED"}
+- {"from": "FR-SIM-008", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-simulator/tests/", "applicability": "RECORDED"}
 - {"from": "FR-SIM-008", "relation": "USES_DATA", "to": "SeedSet", "applicability": "PLANNED"}
 - {"from": "FR-SIM-008", "relation": "USES_DATA", "to": "SCENARIO:ScenarioVersion", "applicability": "PLANNED"}
 - {"from": "FR-SIM-008", "relation": "VERIFIED_BY", "to": "TEST-SIM-DETERMINISM", "applicability": "PLANNED"}
 - {"from": "FR-SIM-008", "relation": "VERIFIED_BY", "to": "BENCH-SIMVAL-001", "applicability": "PLANNED"}
 - {"from": "FR-SIM-008", "relation": "VERIFIED_BY", "to": "REPRO-NONOWNER-001", "applicability": "PLANNED"}
+- {"from": "FR-SIM-008", "relation": "EXECUTED_AS", "to": "evidence/WP-SIM-002/runs/run-4-committed", "applicability": "RECORDED"}
 - {"from": "FR-SIM-008", "relation": "MITIGATES", "to": "SIM-R06", "applicability": "PLANNED"}
 - {"from": "FR-SIM-009", "relation": "DERIVED_FROM", "to": "ITEM-10", "applicability": "PLANNED"}
 - {"from": "FR-SIM-009", "relation": "DERIVED_FROM", "to": "ITEM-37", "applicability": "PLANNED"}
@@ -8574,6 +8578,7 @@ edges:
 - {"from": "NFR-REP-001", "relation": "VERIFIED_BY", "to": "TEST-SIM-DETERMINISM", "applicability": "PLANNED"}
 - {"from": "NFR-REP-001", "relation": "VERIFIED_BY", "to": "BENCH-SIMVAL-001", "applicability": "PLANNED"}
 - {"from": "NFR-REP-001", "relation": "VERIFIED_BY", "to": "REPRO-NONOWNER-001", "applicability": "PLANNED"}
+- {"from": "NFR-REP-001", "relation": "EXECUTED_AS", "to": "evidence/WP-SIM-002/runs/run-4-committed", "applicability": "RECORDED"}
 - {"from": "NFR-REP-001", "relation": "MITIGATES", "to": "SIM-R06", "applicability": "PLANNED"}
 - {"from": "NFR-REP-002", "relation": "DERIVED_FROM", "to": "ITEM-60", "applicability": "PLANNED"}
 - {"from": "NFR-REP-002", "relation": "DERIVED_FROM", "to": "ITEM-79", "applicability": "PLANNED"}

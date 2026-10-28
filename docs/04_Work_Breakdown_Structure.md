@@ -1386,7 +1386,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-SIM-KERNEL |
 | Size band (indicative, no hour estimates) | M (≈4–7 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `services/manufacturing-simulator/`; `evidence/WP-SIM-002/` |
 
 **Purpose.** Guarantee that the same release, scenario, state and seed reproduce the same world — the basis of paired experiments.
 

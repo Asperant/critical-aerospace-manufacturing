@@ -1,0 +1,157 @@
+[
+  {
+    "id": "determinism-regression",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim2-venv/bin/python3",
+      "-m",
+      "pytest",
+      "-c",
+      "services/manufacturing-simulator/pyproject.toml",
+      "services/manufacturing-simulator/tests/test_serialization.py",
+      "services/manufacturing-simulator/tests/test_replay.py",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "started_utc": "2026-10-27T21:27:41+00:00",
+    "finished_utc": "2026-10-27T21:27:45+00:00",
+    "exit_code": 0,
+    "stdout_file": "determinism-regression.stdout",
+    "stdout_bytes": 306,
+    "stdout_sha256": "cdc2dd076515b34ecd80c18cce6d35d0f30f907b2eb743102a224b8f0bbbb482",
+    "stderr_file": "determinism-regression.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "89 passed in 4.44s"
+  },
+  {
+    "id": "simulator-suite",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim2-venv/bin/python3",
+      "-m",
+      "pytest",
+      "-c",
+      "services/manufacturing-simulator/pyproject.toml",
+      "services/manufacturing-simulator/tests",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "started_utc": "2026-10-27T21:27:45+00:00",
+    "finished_utc": "2026-10-27T21:27:52+00:00",
+    "exit_code": 0,
+    "stdout_file": "simulator-suite.stdout",
+    "stdout_bytes": 547,
+    "stdout_sha256": "cb665b6eec234e63a6f7b2e11f31621607fe62846d61a964567bec4ea4d4c791",
+    "stderr_file": "simulator-suite.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "291 passed in 6.37s"
+  },
+  {
+    "id": "collector-tests",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim2-venv/bin/python3",
+      "-m",
+      "pytest",
+      "evidence/WP-SIM-002/tests",
+      "-q",
+      "-p",
+      "pytest_quarantine"
+    ],
+    "started_utc": "2026-10-27T21:27:52+00:00",
+    "finished_utc": "2026-10-27T21:27:54+00:00",
+    "exit_code": 0,
+    "stdout_file": "collector-tests.stdout",
+    "stdout_bytes": 225,
+    "stdout_sha256": "9cea88aa3ffd8cff848ed08fa64c0fe22281276704232925f4f2ae3c6b056474",
+    "stderr_file": "collector-tests.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "6 passed in 1.36s"
+  },
+  {
+    "id": "ruff-check",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim2-venv/bin/python3",
+      "-m",
+      "ruff",
+      "check",
+      "services/manufacturing-simulator",
+      "evidence/WP-SIM-002/capture_run.py",
+      "evidence/WP-SIM-002/replay_matrix.py",
+      "evidence/WP-SIM-002/tests/test_capture_run.py"
+    ],
+    "started_utc": "2026-10-27T21:27:54+00:00",
+    "finished_utc": "2026-10-27T21:27:54+00:00",
+    "exit_code": 0,
+    "stdout_file": "ruff-check.stdout",
+    "stdout_bytes": 19,
+    "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "stderr_file": "ruff-check.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "All checks passed!"
+  },
+  {
+    "id": "ruff-format",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim2-venv/bin/python3",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "services/manufacturing-simulator",
+      "evidence/WP-SIM-002/capture_run.py",
+      "evidence/WP-SIM-002/replay_matrix.py",
+      "evidence/WP-SIM-002/tests/test_capture_run.py"
+    ],
+    "started_utc": "2026-10-27T21:27:54+00:00",
+    "finished_utc": "2026-10-27T21:27:54+00:00",
+    "exit_code": 0,
+    "stdout_file": "ruff-format.stdout",
+    "stdout_bytes": 27,
+    "stdout_sha256": "7715b02781372f8741fb309aee97a6483e689c9039f0d78081dd910f70b0256e",
+    "stderr_file": "ruff-format.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "25 files already formatted"
+  },
+  {
+    "id": "pyright",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim2-venv/bin/python3",
+      "-m",
+      "pyright",
+      "--project",
+      "services/manufacturing-simulator/pyrightconfig.json"
+    ],
+    "started_utc": "2026-10-27T21:27:54+00:00",
+    "finished_utc": "2026-10-27T21:27:56+00:00",
+    "exit_code": 0,
+    "stdout_file": "pyright.stdout",
+    "stdout_bytes": 192,
+    "stdout_sha256": "db668de51c7ecb37ed0c6e58fdf07c5c520152a4ffa341ff6b86c340877b9413",
+    "stderr_file": "pyright.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "0 errors, 0 warnings, 0 informations"
+  },
+  {
+    "id": "replay-matrix",
+    "argv": [
+      "/tmp/claude-1003/-srv-ailab-workspaces-batuhan-project/972d7aa6-74e7-498a-9883-399e159a99cf/scratchpad/sim2-venv/bin/python3",
+      "evidence/WP-SIM-002/replay_matrix.py"
+    ],
+    "started_utc": "2026-10-27T21:27:56+00:00",
+    "finished_utc": "2026-10-27T21:27:59+00:00",
+    "exit_code": 0,
+    "stdout_file": "replay-matrix.stdout",
+    "stdout_bytes": 4603,
+    "stdout_sha256": "ea26511422001ba62e9f59592b3612af58ed686610f75da91fd9983ab06a6494",
+    "stderr_file": "replay-matrix.stderr",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "display_result_line": "{\"development_seeds\": [1, 7, 20261028, 424242], \"equality\": {\"cases\": 32, \"matches\": 32, \"rows\": [{\"hash_seed\": \"0\", \"outcome\": \"MATCH\", \"seed\": 1, \"variant\": \"plain\"}, {\"hash_seed\": \"1\", \"outcome\": \"MATCH\", \"seed\": 1, \"variant\": \"plain\"}, {\"hash_seed\": \"424242\", \"outcome\": \"MATCH\", \"seed\": 1, \"variant\": \"plain\"}, {\"hash_seed\": \"random\", \"outcome\": \"MATCH\", \"seed\": 1, \"variant\": \"plain\"}, {\"hash_seed\": \"0\", \"outcome\": \"MATCH\", \"seed\": 1, \"variant\": \"shuffled\"}, {\"hash_seed\": \"1\", \"outcome\": \"MATCH\", \"seed\": 1, \"variant\": \"shuffled\"}, {\"hash_seed\": \"424242\", \"outcome\": \"MATCH\", \"seed\": 1, \"variant\": \"shuffled\"}, {\"hash_seed\": \"random\", \"outcome\": \"MATCH\", \"seed\": 1, \"variant\": \"shuffled\"}, {\"hash_seed\": \"0\", \"outcome\": \"MATCH\", \"seed\": 7, \"variant\": \"plain\"}, {\"hash_seed\": \"1\", \"outcome\": \"MATCH\", \"seed\": 7, \"variant\": \"plain\"}, {\"hash_seed\": \"424242\", \"outcome\": \"MATCH\", \"seed\": 7, \"variant\": \"plain\"}, {\"hash_seed\": \"random\", \"outcome\": \"MATCH\", \"seed\": 7, \"variant\": \"plain\"}, {\"hash_seed\": \"0\", \"outcome\": \"MATCH\", \"seed\": 7, \"variant\": \"shuffled\"}, {\"hash_seed\": \"1\", \"outcome\": \"MATCH\", \"seed\": 7, \"variant\": \"shuffled\"}, {\"hash_seed\": \"424242\", \"outcome\": \"MATCH\", \"seed\": 7, \"variant\": \"shuffled\"}, {\"hash_seed\": \"random\", \"outcome\": \"MATCH\", \"seed\": 7, \"variant\": \"shuffled\"}, {\"hash_seed\": \"0\", \"outcome\": \"MATCH\", \"seed\": 20261028, \"variant\": \"plain\"}, {\"hash_seed\": \"1\", \"outcome\": \"MATCH\", \"seed\": 20261028, \"variant\": \"plain\"}, {\"hash_seed\": \"424242\", \"outcome\": \"MATCH\", \"seed\": 20261028, \"variant\": \"plain\"}, {\"hash_seed\": \"random\", \"outcome\": \"MATCH\", \"seed\": 20261028, \"variant\": \"plain\"}, {\"hash_seed\": \"0\", \"outcome\": \"MATCH\", \"seed\": 20261028, \"variant\": \"shuffled\"}, {\"hash_seed\": \"1\", \"outcome\": \"MATCH\", \"seed\": 20261028, \"variant\": \"shuffled\"}, {\"hash_seed\": \"424242\", \"outcome\": \"MATCH\", \"seed\": 20261028, \"variant\": \"shuffled\"}, {\"hash_seed\": \"random\", \"outcome\": \"MATCH\", \"seed\": 20261028, \"variant\": \"shuffled\"}, {\"hash_seed\": \"0\", \"outcome\": \"MATCH\", \"seed\": 424242, \"variant\": \"plain\"}, {\"hash_seed\": \"1\", \"outcome\": \"MATCH\", \"seed\": 424242, \"variant\": \"plain\"}, {\"hash_seed\": \"424242\", \"outcome\": \"MATCH\", \"seed\": 424242, \"variant\": \"plain\"}, {\"hash_seed\": \"random\", \"outcome\": \"MATCH\", \"seed\": 424242, \"variant\": \"plain\"}, {\"hash_seed\": \"0\", \"outcome\": \"MATCH\", \"seed\": 424242, \"variant\": \"shuffled\"}, {\"hash_seed\": \"1\", \"outcome\": \"MATCH\", \"seed\": 424242, \"variant\": \"shuffled\"}, {\"hash_seed\": \"424242\", \"outcome\": \"MATCH\", \"seed\": 424242, \"variant\": \"shuffled\"}, {\"hash_seed\": \"random\", \"outcome\": \"MATCH\", \"seed\": 424242, \"variant\": \"shuffled\"}]}, \"format_version\": \"sim-replay-hash/1\", \"hash_seeds\": [\"0\", \"1\", \"424242\", \"random\"], \"injected_hash_dependence\": {\"different_hash_seeds\": \"EVENT_MISMATCH\", \"same_hash_seed\": \"MATCH\"}, \"kind\": \"toy-kernel development matrix; not BENCH-SIMVAL-001 or REPRO-NONOWNER-001\", \"negative_matrix\": {\"cases\": 15, \"false_matches\": [], \"outcomes\": {\"dropped last event\": \"EVENT_MISMATCH\", \"event id\": \"EVENT_MISMATCH\", \"event kind\": \"EVENT_MISMATCH\", \"event sequence\": \"EVENT_MISMATCH\", \"event time\": \"EVENT_MISMATCH\", \"extra event\": \"EVENT_MISMATCH\", \"payload type only\": \"EVENT_MISMATCH\", \"payload value\": \"EVENT_MISMATCH\", \"pending content, same depth\": \"STATE_MISMATCH\", \"state clock\": \"STATE_MISMATCH\", \"state next sequence\": \"STATE_MISMATCH\", \"state type only\": \"STATE_MISMATCH\", \"state value\": \"STATE_MISMATCH\", \"swapped events\": \"EVENT_MISMATCH\", \"termination\": \"STATE_MISMATCH\"}}, \"ok\": true, \"reference_results\": {\"1\": {\"event_digest\": \"edfd8470d12b0a0c0077996996db7d0042a298ed1228115fad65db0f7eb00081\", \"events\": 63, \"state_digest\": \"88d946cab5ec83f581d6c4815122d4056a31388c5d10751efce3771ab070bbf4\", \"termination\": \"QUEUE_EMPTY\"}, \"20261028\": {\"event_digest\": \"494af727298c690d5e229d77a3c82c817d0f0081ba7bf1e248429be05eb154d2\", \"events\": 63, \"state_digest\": \"33f32ddaaf46ad8bc248b0872db8b3ac4feb5e428678c5a38c6e9acc182080c5\", \"termination\": \"QUEUE_EMPTY\"}, \"424242\": {\"event_digest\": \"91b4f0faa4cfc48da90121e834b5dc0384b752f921f52960960c8eca7b7a72fb\", \"events\": 63, \"state_digest\": \"cb485f40ecbc003ab0ce83058b5c63859555375475084e3a5453a21bfc9a6b17\", \"termination\": \"QUEUE_EMPTY\"}, \"7\": {\"event_digest\": \"1b28923a9bef301b6242d277c52d64f36564d34e6ba5a4af326426051025c957\", \"events\": 63, \"state_digest\": \"aa6ffa723844718ddf3d45f121c0950712bb86cf1208138b0805fda0654bd0cc\", \"termination\": \"QUEUE_EMPTY\"}}, \"rng_algorithm\": \"numpy.PCG64/SeedSequence(master_seed, spawn_key=(stream_id,)); arrival=1,processing=2,failure=3,repair=4,quality=5,inspection=6,telemetry=7,transport=8\", \"variants\": [\"plain\", \"shuffled\"]}"
+  }
+]

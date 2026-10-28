@@ -164,6 +164,10 @@ jobs:
         run: |
           uv run --project ci --locked python -m pytest -c services/manufacturing-simulator/pyproject.toml services/manufacturing-simulator/tests -q -p pytest_quarantine
           uv run --project ci --locked pyright --project services/manufacturing-simulator/pyrightconfig.json
+      - name: Simulator replay and hash determinism regression (WP-SIM-002)
+        run: |
+          uv run --project ci --locked python -m pytest -c services/manufacturing-simulator/pyproject.toml services/manufacturing-simulator/tests/test_serialization.py services/manufacturing-simulator/tests/test_replay.py services/manufacturing-simulator/tests/test_replay_validation.py -q -p pytest_quarantine
+          uv run --project ci --locked python -m pytest evidence/WP-SIM-002/tests -q -p pytest_quarantine
       - name: Scheduler snapshot consumer and RecoveryPlan contract tests and typing (WP-SCH-002)
         run: |
           uv run --project ci --locked python -m pytest -c services/scheduler-service/pyproject.toml services/scheduler-service/tests --ignore=services/scheduler-service/tests/test_plan_contract.py -q -p pytest_quarantine
