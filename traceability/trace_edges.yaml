@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: b1e7b0c7c96d4675bf6f8e947d3e08258a8f77cd1e23c78a3a0e2d822037a07c
+  sha256: 12b65ef926d35782a7ff15d9dd2cb502e4307f577765b966870293491fedf766
 requirements:
   FR-GOV-001:
     meta:
@@ -98,7 +98,7 @@ requirements:
     realization:
       surface: VERIFIED_BY edge completeness rule in trace linter (TL-08, M5 gate)
       deployable: trace registry
-      ref: traceability/trace_edges.yaml; tools/trace/src/cap_trace/rules.py
+      ref: traceability/trace_edges.yaml; tools/trace/src/cap_trace/rules.py; ci/tests/test_required_gates.py
   FR-GOV-006:
     meta:
       class: F1
@@ -5928,9 +5928,11 @@ edges:
 - {"from": "FR-GOV-005", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-CICD", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "REALIZED_BY", "to": "repo:traceability/trace_edges.yaml", "applicability": "RECORDED"}
 - {"from": "FR-GOV-005", "relation": "REALIZED_BY", "to": "repo:tools/trace/src/cap_trace/rules.py", "applicability": "RECORDED"}
+- {"from": "FR-GOV-005", "relation": "REALIZED_BY", "to": "repo:ci/tests/test_required_gates.py", "applicability": "RECORDED"}
 - {"from": "FR-GOV-005", "relation": "USES_DATA", "to": "trace_edges", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "VERIFIED_BY", "to": "TEST-GOV-TRACELINT", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "VERIFIED_BY", "to": "TEST-GOV-002-003", "applicability": "PLANNED"}
+- {"from": "FR-GOV-005", "relation": "VERIFIED_BY", "to": "TEST-TEST-007-002", "applicability": "PLANNED"}
 - {"from": "FR-GOV-005", "relation": "EXECUTED_AS", "to": "RUN-GOV-002-DEV-001", "applicability": "RECORDED"}
 - {"from": "FR-GOV-006", "relation": "DERIVED_FROM", "to": "ITEM-81", "applicability": "PLANNED"}
 - {"from": "FR-GOV-006", "relation": "DERIVED_FROM", "to": "ITEM-83", "applicability": "PLANNED"}
@@ -6530,6 +6532,7 @@ edges:
 - {"from": "FR-EVT-007", "relation": "GOVERNED_BY", "to": "ArchitectureRule set", "applicability": "PLANNED"}
 - {"from": "FR-EVT-007", "relation": "VERIFIED_BY", "to": "TEST-ARCH-BOUNDARY", "applicability": "PLANNED"}
 - {"from": "FR-EVT-007", "relation": "VERIFIED_BY", "to": "TEST-SEC-SVCID", "applicability": "PLANNED"}
+- {"from": "FR-EVT-007", "relation": "VERIFIED_BY", "to": "TEST-TEST-007-001", "applicability": "PLANNED"}
 - {"from": "FR-EVT-007", "relation": "MITIGATES", "to": "ARCH-R05", "applicability": "PLANNED"}
 - {"from": "FR-EVT-007", "relation": "MITIGATES", "to": "ARCH-R07", "applicability": "PLANNED"}
 - {"from": "FR-EVT-008", "relation": "DERIVED_FROM", "to": "ITEM-22", "applicability": "PLANNED"}
