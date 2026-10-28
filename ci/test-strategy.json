@@ -56,6 +56,8 @@
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Host Plane queue tests (offline)"}]},
     {"path": "tools/host/plane-transition", "owner": "Asrın", "work_package": null, "families": [], "family_note": "host control items (CTRL-HOST), no product requirement", "test_ids": [],
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Host Plane transition tests (offline)"}]},
+    {"path": "evidence/CTRL-HOST-031/tests", "owner": "Asrın", "work_package": null, "families": [], "family_note": "tests of the CTRL-HOST-031 evidence collector (host control item, no product requirement)", "test_ids": [],
+     "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Host Plane transition tests (offline)"}]},
     {"path": "packages/event-consumer/tests", "owner": "Asrın", "work_package": "WP-EVT-003", "families": [], "family_note": "family allocation by the owning work package", "test_ids": [],
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Consumer framework pure checks (WP-EVT-003)"},
               {"tier": "integration", "boundary_mode": "REAL", "ci_step": "Consumer idempotency acceptance (REAL PostgreSQL and JetStream, WP-EVT-003)"}]},
