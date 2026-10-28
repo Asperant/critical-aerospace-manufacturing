@@ -369,7 +369,7 @@ All 217 edges. Columns follow Item 66 "Dependency Registry" fields. *Pred owner*
 | DEP | Predecessor → Successor | Kind | Strength | Stage | Required readiness | Need-by | Pred owner | Consumer owner | Fallback | Unblock evidence | DR |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | DEP-001 | DN-PLAT-REPO → DN-PLAT-TOOLING | CAPABILITY | HARD | START | INTEGRATION_READY | M0 (S1) | Yavuz | Yavuz | — | protected main + required CI checks active | DR-3 |
-| DEP-002 | DN-PLAT-REPO → DN-PLAT-CD | CAPABILITY | HARD | START | INTEGRATION_READY | M0→M1 | Yavuz | Yavuz | — | CI builds immutable images to GHCR | DR-3 |
+| DEP-002 | DN-PLAT-REPO → DN-PLAT-CD | CAPABILITY | HARD | START | INTEGRATION_READY | M0→M1 | Yavuz | Yavuz | — | protected main + required CI checks + tiered CI pipeline active (CHG-076) | DR-3 |
 | DEP-003 | DN-PLAT-TOOLING → DN-PLAT-COMPOSE | CAPABILITY | HARD | START | SKELETON_READY | M0 (S1) | Yavuz | Yavuz | — | `mfgctl bootstrap/doctor` runs on dev host | DR-3 |
 | DEP-004 | DN-PLAT-COMPOSE → DN-PLAT-INTEG | RUNTIME | HARD | MILESTONE_EXIT | SKELETON_READY | M0 (S1) | Yavuz | Yavuz | — | Integration bootstrap from same Compose definitions | DR-3 |
 | DEP-005 | DN-PLAT-INTEG → DN-PLAT-CD | RUNTIME | HARD | INTEGRATION | INTEGRATION_READY | M1 (S2) | Yavuz | Yavuz | — | runtime healthy on shared host + smoke check in CI/INTEGRATION | DR-3 |
@@ -1214,11 +1214,11 @@ DEP-002:
   semantics: {kind: CAPABILITY, strength: HARD, blocking_stage: START, required_readiness: INTEGRATION_READY}
   need_by: "M0→M1"   # sprint 1
   fallback: null
-  unblock_evidence: "CI builds immutable images to GHCR"
-  precise_requirement: null
+  unblock_evidence: "protected main + required CI checks + tiered CI pipeline active (CHG-076)"
+  precise_requirement: "main protected with required status checks ci-gate and projectctl (strict, enforced for everyone) and the tiered CI pipeline (static, unit, contract and integration tiers aggregated by ci-gate)"
   risk_class: DR-3
   source: "Item 66 #94, #96"
-  status: NOT_READY
+  status: READY
 DEP-003:
   predecessor: {node: DN-PLAT-TOOLING, owner: "Yavuz"}
   successor: {node: DN-PLAT-COMPOSE, owner: "Yavuz"}
@@ -3785,7 +3785,7 @@ For original window labels Sx–Sy, Mx/My and Mx→My, the already-published §1
 
 | HARD edge with unknown field-level precision | Declared consumer | Required producer artifact/readiness and existing evidence predicate | Null justification / remaining DoR |
 |---|---|---|---|
-| DEP-002 | DN-PLAT-CD at START | DN-PLAT-REPO: Repository, protected main, CI baseline; INTEGRATION_READY; CI builds immutable images to GHCR | Existing CAPABILITY planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
+| DEP-002 | DN-PLAT-CD at START | DN-PLAT-REPO: Repository, protected main, CI baseline; INTEGRATION_READY; protected main + required CI checks + tiered CI pipeline active | CHG-076 clarified the predicate: the immutable GHCR image build is DN-PLAT-CD's own deliverable, not a precondition of its START. Bound to the verified facts in evidence/WP-CICD-002/DEP-002-START-READINESS.md. |
 | DEP-003 | DN-PLAT-COMPOSE at START | DN-PLAT-TOOLING: Runtime language/tooling baseline + mfgctl; SKELETON_READY; current-main `mfgctl bootstrap` succeeds and `mfgctl doctor` emits structured diagnostics on the dev host; Docker permission remains external runtime evidence | Edge-specific predicate bound by CHG-065; Docker/Compose/Integration readiness is not inferred. |
 | DEP-005 | DN-PLAT-CD at INTEGRATION | DN-PLAT-INTEG: Integration runtime (shared Linux host bootstrap); INTEGRATION_READY; runtime healthy on shared host + smoke check in CI/INTEGRATION | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |
 | DEP-007 | DN-RT-PG at INTEGRATION | DN-PLAT-INTEG: Integration runtime (shared Linux host bootstrap); INTEGRATION_READY; runtime healthy on shared host + smoke check in CI/INTEGRATION | Existing RUNTIME planning predicate is explicit; exact implementation version/fields are not yet produced. Consumer must bind them before READY (DOR-WP-04); null is not satisfied evidence. |

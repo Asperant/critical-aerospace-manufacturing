@@ -1,0 +1,11 @@
+PASSED applied 0001_domain, 0002_command_acceptance, 0003_lifecycle, 0004_material_hold, 0005_outbox, 0006_rework_history, 0007_lot_lineage; database at 0007_lot_lineage
+warning: `VIRTUAL_ENV=<home>/wt-cicd003/ci/.venv` does not match the project environment path `ci/.venv` and will be ignored; use `--active` to target the active environment instead
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_domain, Create the initial Core schema and record the migration ledger.
+INFO  [alembic.runtime.migration] Running upgrade 0001_domain -> 0002_command_acceptance, WP-CORE-003 command idempotency and durable outcomes.
+INFO  [alembic.runtime.migration] Running upgrade 0002_command_acceptance -> 0003_lifecycle, WP-CORE-009 canonical lifecycle and execution-state persistence.
+INFO  [alembic.runtime.migration] Running upgrade 0003_lifecycle -> 0004_material_hold, WP-CORE-002 first-class material hold persistence.
+INFO  [alembic.runtime.migration] Running upgrade 0004_material_hold -> 0005_outbox, WP-CORE-005 transactional outbox and lot event sequence.
+INFO  [alembic.runtime.migration] Running upgrade 0005_outbox -> 0006_rework_history, WP-CORE-004 append-only rework history persistence.
+INFO  [alembic.runtime.migration] Running upgrade 0006_rework_history -> 0007_lot_lineage, WP-CORE-004 append-only split/merge lineage persistence.

@@ -1,0 +1,56 @@
+CHG-076:
+  title: Clarify the DEP-002 START requirement and record its current-main readiness
+  trigger: WP-CICD-002 and WP-CICD-003 could not start because DEP-002's approved unblock evidence, "CI builds immutable images to GHCR", is the deliverable of WP-CICD-002 itself ("build-and-publish workflow to GHCR", 04) and of no work package that produces DN-PLAT-REPO (WP-CICD-001 has no GHCR image build). The evidence could never exist before the package it gates.
+  reason: A START gate that requires the output of the gated package is circular and leaves two F0/F1 packages unstartable, although DN-PLAT-REPO's own INTEGRATION_READY facts (protected main, required checks, the tiered CI pipeline) are verified. The immutable-image obligation is not dropped; it is DN-PLAT-CD's own definition (05 node table, "immutable GHCR artifacts, DeploymentRecord") and WP-CICD-002's DoD.
+  class: C2
+  review_risk_class: CR-2
+  raised_in: S4
+  owner: Yavuz
+  required_human_approvals: 0
+  reviewers: []
+  decision: APPROVED_WITH_CONDITIONS
+  status: UNDER_REVIEW
+  application_control_item: WP-CICD-002
+  decision_basis: Raised and applied by the owner of both DEP-002 nodes (DN-PLAT-REPO and DN-PLAT-CD, Yavuz) under authority delegated by the planning owner (Asrın), as reported by Yavuz on 2026-10-28. CHG-018 requires zero development approvals.
+  conditions:
+    - The planning owner confirms the delegation in a comment on the pull request that carries this change; without that confirmation the change is to be reverted (rollback below).
+    - DEP-002's kind, strength, blocking stage, required readiness, need-by, fallback and ownership stay unchanged.
+    - No GHCR, image-digest or DeploymentRecord evidence is claimed for DN-PLAT-REPO or DN-PLAT-CD by this change.
+  doctrine:
+    start: a HARD START edge is resolved by facts its producer node can actually provide before the consumer starts
+    done: unchanged; WP-CICD-002 (F0) and WP-CICD-003 keep every DoD obligation, including the immutable-image build and deploy evidence
+  scope:
+    - Set DEP-002 unblock_evidence and precise_requirement to the DN-PLAT-REPO facts: main protected with required status checks ci-gate and projectctl (strict, enforced for everyone) and the tiered CI pipeline (static, unit, contract and integration tiers aggregated by ci-gate).
+    - State that the immutable GHCR image build is DN-PLAT-CD's own deliverable, gated by DEP-005 and by the WP-CICD-002 DoD, not by DEP-002.
+    - Record DEP-002 as READY on the verified current-main facts in evidence/WP-CICD-002/DEP-002-START-READINESS.md.
+    - Update the projectctl dependency baseline test (PRECISION_MISSING 165 to 164): DEP-002 now carries a precise_requirement, which is the only finding that closes.
+  invariants_preserved:
+    - DEP-005 (DN-PLAT-INTEG to DN-PLAT-CD) stays HARD at INTEGRATION and is not touched.
+    - DN-PLAT-CD readiness is not asserted; WP-CICD-002 stays F0 with integrated acceptance (TEST-PLAT-CD, INSP-DEP-HOST) still open.
+    - NFR-DEP-003 (H0) and NFR-DEP-004 (A1) acceptance obligations are unchanged.
+    - Merged != Done; no WP lifecycle or Plane state is changed by this metadata change.
+  affected_requirements: [FR-PLAT-004, FR-PLAT-005, NFR-DEP-003, NFR-DEP-004]
+  affected_architecture: [ARCH-PLAT-CICD, ARCH-PLAT-RELEASE]
+  affected_contracts: []
+  affected_work_packages: [WP-CICD-002, WP-CICD-003]
+  affected_dependencies: [DEP-002]
+  affected_evidence:
+    - evidence/WP-CICD-002/DEP-002-START-READINESS.md
+    - evidence/WP-CICD-001/branch-protection-readback.json
+    - ci/required_checks.json
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - WP-CICD-001 evidence remains current and is the basis of the readiness fact.
+      - No immutable-image, digest or DeploymentRecord evidence exists or is claimed.
+    rerun_required:
+      - Refresh the Plane transition policy after this docs/05 change (docs/05 is a pinned source).
+      - projectctl startability WP-CICD-002 and WP-CICD-003 against current main.
+    limitation: Satisfies the START gate only. It does not make DN-PLAT-CD SKELETON_READY or INTEGRATION_READY.
+  security_authority_impact: NONE
+  rollout: Merge the documentation and change-control pull request, refresh the Plane transition policy, then run projectctl startability for WP-CICD-002 and WP-CICD-003.
+  rollback: Revert docs/05, CHG-076, its register row and the evidence file together; no runtime or Plane state replay is required.
+  required_rerun: [projectctl startability WP-CICD-002, projectctl startability WP-CICD-003]
+  documentation_updates: [docs/05_Dependency_Graph.md, 09_change/CHG-076.yaml, evidence/WP-CICD-002/DEP-002-START-READINESS.md, tools/projectctl/tests/test_dependencies.py]
+  freeze_context: PRE_M6

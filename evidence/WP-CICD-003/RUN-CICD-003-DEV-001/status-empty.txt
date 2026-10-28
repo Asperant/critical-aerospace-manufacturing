@@ -1,0 +1,13 @@
+{"applied": [], "component": "manufacturing-core", "detail": "", "head": "0007_lot_lineage", "pending": ["0001_domain", "0002_command_acceptance", "0003_lifecycle", "0004_material_hold", "0005_outbox", "0006_rework_history", "0007_lot_lineage"], "state": "EMPTY"}
+warning: `VIRTUAL_ENV=<home>/wt-cicd003/ci/.venv` does not match the project environment path `ci/.venv` and will be ignored; use `--active` to target the active environment instead
+Using CPython 3.11.16
+Creating virtual environment at: ci/.venv
+   Building cap-observability @ file://<home>/.cache/tmp/cicd003-jbvcftja/release-checkout/packages/observability
+   Building manufacturing-simulator @ file://<home>/.cache/tmp/cicd003-jbvcftja/release-checkout/services/manufacturing-simulator
+   Building mfgctl @ file://<home>/.cache/tmp/cicd003-jbvcftja/release-checkout/tools/mfgctl
+   Building projectctl @ file://<home>/.cache/tmp/cicd003-jbvcftja/release-checkout/tools/projectctl
+      Built manufacturing-simulator @ file://<home>/.cache/tmp/cicd003-jbvcftja/release-checkout/services/manufacturing-simulator
+      Built mfgctl @ file://<home>/.cache/tmp/cicd003-jbvcftja/release-checkout/tools/mfgctl
+      Built cap-observability @ file://<home>/.cache/tmp/cicd003-jbvcftja/release-checkout/packages/observability
+      Built projectctl @ file://<home>/.cache/tmp/cicd003-jbvcftja/release-checkout/tools/projectctl
+Installed 66 packages in 16ms

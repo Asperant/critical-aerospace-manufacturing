@@ -11,6 +11,7 @@ dependencies = [
     "mfgctl[dev]",
     "cap-observability[dev]",
     "manufacturing-simulator[dev]",
+    "manufacturing-scheduler[dev]",
     "ruff==0.7.4",
     "pyright==1.1.389",
     "pytest==8.3.3",
@@ -37,6 +38,7 @@ projectctl = { path = "../tools/projectctl", editable = true }
 mfgctl = { path = "../tools/mfgctl", editable = true }
 cap-observability = { path = "../packages/observability", editable = true }
 manufacturing-simulator = { path = "../services/manufacturing-simulator", editable = true }
+manufacturing-scheduler = { path = "../services/scheduler-service", editable = true }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,0 +1,61 @@
+{
+  "build_provenance": {
+    "run_attempt": 1,
+    "run_id": 40696269604,
+    "run_url": "https://github.com/Asperant/critical-aerospace-manufacturing/actions/runs/40696269604",
+    "workflow": "release"
+  },
+  "configuration_schema_version": {
+    "reason": "no configuration schema exists yet",
+    "state": "NOT_YET_PRODUCED"
+  },
+  "contract_catalog_version": {
+    "contracts": 7,
+    "digest": "sha256:ccd938f4250687cf4918fea2d19a9858d8725e86d919de7f72f5248d0eba77cb"
+  },
+  "created_at": "2026-10-28T13:27:00+00:00",
+  "database_schema_target": {
+    "reason": "manufacturing-core is not a release image yet; its versioned migrations join the release with it",
+    "state": "NOT_YET_PRODUCED"
+  },
+  "knowledge_index_version": {
+    "reason": "no KnowledgeIndexVersion exists yet",
+    "state": "NOT_YET_PRODUCED"
+  },
+  "model_versions": {
+    "reason": "no ModelPackage exists yet",
+    "state": "NOT_YET_PRODUCED"
+  },
+  "product_version": "0.1.0",
+  "prompt_tool_routing_versions": {
+    "reason": "no prompt, tool or model-routing version exists yet",
+    "state": "NOT_YET_PRODUCED"
+  },
+  "release_id": "REL-2e1428d4954b-40696269604",
+  "schema": "cap.release-manifest/v1",
+  "service_images": [
+    {
+      "digest": "sha256:f565307a684f2f09244f03f2c0e83877899958400a3721060ec1346a6a0a6679",
+      "name": "mlflow",
+      "provenance_attestation": {
+        "location": "https://github.com/Asperant/critical-aerospace-manufacturing/attestations/60828836",
+        "state": "PUBLISHED"
+      },
+      "reference": "ghcr.io/asperant/cap-mlflow@sha256:f565307a684f2f09244f03f2c0e83877899958400a3721060ec1346a6a0a6679",
+      "repository": "ghcr.io/asperant/cap-mlflow",
+      "sbom": {
+        "location": "BuildKit SBOM attestation attached to the image index sha256:f565307a684f2f09244f03f2c0e83877899958400a3721060ec1346a6a0a6679",
+        "state": "PUBLISHED"
+      }
+    }
+  ],
+  "source": {
+    "commit": "2e1428d4954b77993985c1759caff50e67df1cdf",
+    "ref": "refs/heads/main",
+    "tag": null
+  },
+  "workflow_definition_versions": {
+    "reason": "no Automation workflow definition exists yet",
+    "state": "NOT_YET_PRODUCED"
+  }
+}

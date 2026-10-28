@@ -1,0 +1,182 @@
+# WP-CICD-002 — build-and-publish workflow (FR-PLAT-004, FR-PLAT-005, NFR-DEP-003).
+#
+# 02 canonical release path: Protected Source -> Trusted Build -> Digest -> SBOM ->
+# Provenance -> Attestation -> ReleaseManifest. Images are built once, on the exact
+# main revision, published to GHCR and identified by digest; a tag is only a name.
+# Deployment never rebuilds: `python -m cap_release deploy` pulls these digests.
+#
+# Pull requests only dry-run the build (nothing is pushed), so a broken Dockerfile or
+# registry entry is caught before main. Publishing happens only for refs/heads/main.
+name: release
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - 'release/**'
+      - 'tools/release/**'
+      - 'infra/compose/mlflow/**'
+      - '.github/workflows/release.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+env:
+  UV_VERSION: "0.12.13"
+  UV_PYTHON: "3.11.16"
+  UV_PYTHON_PREFERENCE: only-managed
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  plan:
+    name: release-plan
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install pinned uv and CI toolchain
+        run: |
+          pipx install "uv==${UV_VERSION}"
+          uv sync --project ci --locked
+      - name: Image registry check
+        run: PYTHONPATH=tools/release/src uv run --project ci --locked python -m cap_release registry-check
+      - name: Matrix from the image registry
+        id: matrix
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          data = json.load(open("release/images.json"))
+          rows = [{"owner": data["owner"], **{k: i[k] for k in ("name", "repository", "context", "dockerfile")}} for i in data["images"]]
+          print("matrix=" + json.dumps(rows))
+          PY
+
+  build:
+    name: release-build (${{ matrix.image.name }})
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJson(needs.plan.outputs.matrix) }}
+    env:
+      PUBLISH: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+      IMAGE: ${{ matrix.image.owner }}/${{ matrix.image.repository }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@v3
+      - name: Log in to GHCR
+        if: env.PUBLISH == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build (and, on main, publish) the image
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.image.context }}
+          file: ${{ matrix.image.dockerfile }}
+          push: ${{ env.PUBLISH == 'true' }}
+          tags: ${{ env.IMAGE }}:sha-${{ github.sha }}
+          # SBOM and SLSA provenance attestations are attached to the image index.
+          sbom: true
+          provenance: mode=max
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+      - name: Sign the build provenance (attestation)
+        id: attest
+        if: env.PUBLISH == 'true'
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.IMAGE }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
+      - name: Record the digest
+        if: env.PUBLISH == 'true'
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+          ATTESTATION: ${{ steps.attest.outputs.attestation-url }}
+          NAME: ${{ matrix.image.name }}
+        run: |
+          mkdir -p digests
+          python3 - <<'PY'
+          import json, os
+          name = os.environ["NAME"]
+          digest = os.environ["DIGEST"]
+          assert digest.startswith("sha256:") and len(digest) == 71, digest
+          json.dump(
+              {
+                  "digest": digest,
+                  "sbom": "BuildKit SBOM attestation attached to the image index " + digest,
+                  "attestation": os.environ["ATTESTATION"],
+              },
+              open(f"digests/digest-{name}.json", "w"),
+          )
+          PY
+      - uses: actions/upload-artifact@v4
+        if: env.PUBLISH == 'true'
+        with:
+          name: digest-${{ matrix.image.name }}
+          path: digests/digest-${{ matrix.image.name }}.json
+          if-no-files-found: error
+
+  manifest:
+    name: release-manifest
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install pinned uv and CI toolchain
+        run: |
+          pipx install "uv==${UV_VERSION}"
+          uv sync --project ci --locked
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: digest-*
+          path: digests
+          merge-multiple: true
+      - name: Build and validate the ReleaseManifest
+        env:
+          PYTHONPATH: tools/release/src
+        run: |
+          uv run --project ci --locked python -m cap_release manifest \
+            --digests-dir digests --commit "${GITHUB_SHA}" \
+            --run-id "${GITHUB_RUN_ID}" --run-attempt "${GITHUB_RUN_ATTEMPT}" \
+            --run-url "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
+            --out release-manifest.json
+          uv run --project ci --locked python -m cap_release validate release-manifest.json
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          m = json.load(open("release-manifest.json"))
+          print(f"### {m['release_id']} (product {m['product_version']})")
+          for i in m["service_images"]:
+              print(f"- `{i['reference']}`")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-manifest-${{ github.sha }}
+          path: release-manifest.json
+          retention-days: 90
+          if-no-files-found: error

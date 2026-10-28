@@ -1,0 +1,2 @@
+{"applied": ["0001_domain", "0002_command_acceptance", "0003_lifecycle", "0004_material_hold", "0005_outbox", "0006_rework_history", "0007_lot_lineage"], "component": "manufacturing-core", "detail": "", "head": "0007_lot_lineage", "pending": [], "state": "CURRENT"}
+warning: `VIRTUAL_ENV=<home>/wt-cicd003/ci/.venv` does not match the project environment path `ci/.venv` and will be ignored; use `--active` to target the active environment instead

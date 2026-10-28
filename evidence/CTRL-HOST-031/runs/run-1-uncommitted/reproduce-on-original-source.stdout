@@ -1,0 +1,231 @@
+F.F....F....FFF..F                                                       [100%]
+=================================== FAILURES ===================================
+_ ReadyIsCanonicalStartEligibility.test_ready_evidence_must_name_real_github_objects _
+
+self = <test_chg054_start_transitions.ReadyIsCanonicalStartEligibility testMethod=test_ready_evidence_must_name_real_github_objects>
+
+    def test_ready_evidence_must_name_real_github_objects(self):
+        for refs in (
+            ["comment:99"],  # absent comment
+            ["commit:" + "9" * 40],  # absent revision
+            ["pr:1", "comment:99"],
+        ):
+            with self.subTest(refs=refs), self.assertRaises(t.Denied):
+                run_case(source="BACKLOG", target="READY", mutate=ready_refs(*refs))
+        for refs in (
+            ["commit:" + HEAD],
+            ["comment:2"],
+            ["run:4"],
+            ["pr:1", "comment:2"],
+        ):
+            with self.subTest(refs=refs):
+>               result, *_ = run_case(
+                    source="BACKLOG", target="READY", mutate=ready_refs(*refs)
+                )
+
+tools/host/plane-transition/test_chg054_start_transitions.py:102: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/host/plane-transition/test_transition.py:187: in run_case
+    result=t.execute(profile,wp,target,envelope,policy,plane,gh,audit,SECRET,
+tools/host/plane-transition/transition.py:1486: in execute
+    operation_data=evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous,projection)
+tools/host/plane-transition/transition.py:1345: in evaluate
+    record=ready_assessment_record(gh,context,policy,sha)
+tools/host/plane-transition/transition.py:891: in ready_assessment_record
+    raw, _blob = gh.repository_file(path, sha)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_transition.FakeGH object at 0x7cac11662e50>
+path = 'evidence/WP-TEST-001/READY.md'
+sha = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', limit = 65536
+
+    def repository_file(self,path,sha,limit=65536):
+        if path not in self.repo_files:
+>           raise t.Denied('ARTIFACT_NOT_A_FILE')
+E           transition.Denied: ARTIFACT_NOT_A_FILE
+
+tools/host/plane-transition/test_transition.py:143: Denied
+_ ReadyIsCanonicalStartEligibility.test_ready_needs_no_assessment_file_comment_preparation_slot_or_schedule _
+
+self = <test_chg054_start_transitions.ReadyIsCanonicalStartEligibility testMethod=test_ready_needs_no_assessment_file_comment_preparation_slot_or_schedule>
+
+    def test_ready_needs_no_assessment_file_comment_preparation_slot_or_schedule(self):
+        def advisory_only(policy, plane, gh, envelope):
+            envelope["evidence_refs"] = ["pr:1"]
+            gh.comments = {}  # no owner DoR comment
+            policy["contexts"][plane.item["external_id"]][
+                "cycle_ids"
+            ] = []  # unscheduled
+            policy["preparation_schema"] = (
+                "cap-preparation-v1"  # stale/absent preparation
+            )
+            other = deepcopy(plane.item)
+            other.update(
+                id="other-ready",
+                external_id="WP-TEST-099",
+                state="READY",
+                name="[WP-TEST-099] Other READY work",
+            )
+            plane.items.append(other)  # another READY item of the same owner
+    
+            def forbidden(*args, **kwargs):
+                raise AssertionError("READY must not read READY.md or any assessment")
+    
+            gh.repository_file = forbidden
+            gh.evidence_text = forbidden
+    
+>       result, plane, logs, gh = run_case(
+            source="BACKLOG", target="READY", mutate=advisory_only
+        )
+
+tools/host/plane-transition/test_chg054_start_transitions.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/host/plane-transition/test_transition.py:187: in run_case
+    result=t.execute(profile,wp,target,envelope,policy,plane,gh,audit,SECRET,
+tools/host/plane-transition/transition.py:1486: in execute
+    operation_data=evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous,projection)
+tools/host/plane-transition/transition.py:1334: in evaluate
+    need(context['cycle_ids'], 'UNSCHEDULED_WORK_NEEDS_PLANNING_DECISION')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = [], code = 'UNSCHEDULED_WORK_NEEDS_PLANNING_DECISION'
+
+    def need(value, code):
+        if not value:
+>           raise Denied(code)
+E           transition.Denied: UNSCHEDULED_WORK_NEEDS_PLANNING_DECISION
+
+tools/host/plane-transition/transition.py:73: Denied
+_ OneStartPredicateForBothStartTransitions.test_unresolved_real_hard_start_dependency_stops_both_transitions _
+
+self = <test_chg054_start_transitions.OneStartPredicateForBothStartTransitions testMethod=test_unresolved_real_hard_start_dependency_stops_both_transitions>
+
+    def test_unresolved_real_hard_start_dependency_stops_both_transitions(self):
+        for name, (edges, code) in self.EDGES.items():
+            for source, target in (("BACKLOG", "READY"), ("READY", "IN_PROGRESS")):
+                with self.subTest(case=name, target=target):
+>                   with self.assertRaises(t.Denied) as denied:
+E                   AssertionError: Denied not raised
+
+tools/host/plane-transition/test_chg054_start_transitions.py:132: AssertionError
+_ TypedGitHubReadFailures.test_a_missing_basis_file_is_rejected_as_missing_other_failures_are_not_relabelled _
+
+self = <test_chg054_start_transitions.TypedGitHubReadFailures testMethod=test_a_missing_basis_file_is_rejected_as_missing_other_failures_are_not_relabelled>
+
+    def test_a_missing_basis_file_is_rejected_as_missing_other_failures_are_not_relabelled(
+        self,
+    ):
+        for code, reason in (
+            ("ARTIFACT_NOT_FOUND", "RUNTIME_READINESS_BASIS_MISSING"),
+            ("ARTIFACT_NOT_A_FILE", "RUNTIME_READINESS_BASIS_MISSING"),
+            ("GITHUB_FORBIDDEN_HTTP_403", "GITHUB_FORBIDDEN_HTTP_403"),
+            ("GITHUB_SERVICE_ERROR", "GITHUB_SERVICE_ERROR"),
+        ):
+            helper = base.TransitionTests(
+                "test_automatic_runtime_skeleton_readiness_is_accepted"
+            )
+            context, edge, policy, gh, _ = helper.runtime_fixture()
+            real = gh.repository_file
+    
+            def read(path, sha, limit=65536, _real=real, _code=code):
+                if path == "evidence/readiness/DN-PLAT-COMPOSE.json":
+                    raise t.Denied(_code)
+                return _real(path, sha, limit)
+    
+            gh.repository_file = read
+            with self.subTest(code=code):
+                result = t.automatic_readiness_attestation(
+                    gh, context, edge, HEAD, policy
+                )
+                self.assertEqual(result["status"], "UNKNOWN")  # never a PASS
+>               self.assertIn(reason, result["reasons"])
+E               AssertionError: 'RUNTIME_READINESS_BASIS_MISSING' not found in ['ARTIFACT_NOT_FOUND', 'RUNTIME_READINESS_BASIS_INVALID']
+
+tools/host/plane-transition/test_chg054_start_transitions.py:438: AssertionError
+_ TypedGitHubReadFailures.test_auth_permission_service_and_unknown_failures_stay_distinct_and_fail_closed _
+
+self = <test_chg054_start_transitions.TypedGitHubReadFailures testMethod=test_auth_permission_service_and_unknown_failures_stay_distinct_and_fail_closed>
+
+    def test_auth_permission_service_and_unknown_failures_stay_distinct_and_fail_closed(
+        self,
+    ):
+        cases = {
+            b"gh: Bad credentials (HTTP 401)": "GITHUB_AUTH_HTTP_401",
+            b"gh: Resource not accessible (HTTP 403)": "GITHUB_FORBIDDEN_HTTP_403",
+            b"gh: API rate limit exceeded (HTTP 403)": "GITHUB_FORBIDDEN_HTTP_403",
+            b"gh: Server Error (HTTP 500)": "GITHUB_SERVICE_ERROR",
+            b"gh: Bad Gateway (HTTP 502)": "GITHUB_SERVICE_ERROR",
+            b"gh: Service Unavailable (HTTP 503)": "GITHUB_SERVICE_ERROR",
+            b"error connecting to api.github.com": "GITHUB_READ_UNAVAILABLE",
+            b"": "GITHUB_READ_UNAVAILABLE",
+            b"gh: Conflict (HTTP 409)": "GITHUB_READ_UNAVAILABLE",
+        }
+        for stderr, code in cases.items():
+            for route in (
+                self.CONTENTS,
+                self.PULL,
+            ):  # a file route never turns 4xx/5xx into "missing"
+                with self.subTest(stderr=stderr, route=route.rsplit("/", 2)[-2]):
+>                   self.assertEqual(self.failed(route, stderr), code)
+E                   AssertionError: 'GITHUB_READ_UNAVAILABLE' != 'GITHUB_FORBIDDEN_HTTP_403'
+E                   - GITHUB_READ_UNAVAILABLE
+E                   + GITHUB_FORBIDDEN_HTTP_403
+
+tools/host/plane-transition/test_chg054_start_transitions.py:365: AssertionError
+_ TypedGitHubReadFailures.test_missing_repository_file_is_a_missing_artifact_not_an_outage _
+
+self = <test_chg054_start_transitions.TypedGitHubReadFailures testMethod=test_missing_repository_file_is_a_missing_artifact_not_an_outage>
+
+    def test_missing_repository_file_is_a_missing_artifact_not_an_outage(self):
+>       self.assertEqual(
+            self.failed(self.CONTENTS, b"gh: Not Found (HTTP 404)"),
+            "ARTIFACT_NOT_FOUND",
+        )
+E       AssertionError: 'GITHUB_READ_UNAVAILABLE' != 'ARTIFACT_NOT_FOUND'
+E       - GITHUB_READ_UNAVAILABLE
+E       + ARTIFACT_NOT_FOUND
+
+tools/host/plane-transition/test_chg054_start_transitions.py:314: AssertionError
+_ TypedGitHubReadFailures.test_timeout_oversize_and_malformed_responses_are_typed _
+
+self = <test_chg054_start_transitions.TypedGitHubReadFailures testMethod=test_timeout_oversize_and_malformed_responses_are_typed>
+
+    def test_timeout_oversize_and_malformed_responses_are_typed(self):
+        with (
+            patch.object(
+                t.subprocess, "run", side_effect=subprocess.TimeoutExpired("gh", 30)
+            ),
+            self.assertRaises(t.Denied) as denied,
+        ):
+>           self.client()._get(self.PULL)
+
+tools/host/plane-transition/test_chg054_start_transitions.py:374: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/host/plane-transition/transition.py:130: in _get
+    result = subprocess.run(['/usr/bin/gh','api','--hostname','github.com','--method','GET',route],
+/home/batuhan/.local/share/uv/python/cpython-3.11.16-linux-x86_64-gnu/lib/python3.11/unittest/mock.py:1124: in __call__
+    return self._mock_call(*args, **kwargs)
+/home/batuhan/.local/share/uv/python/cpython-3.11.16-linux-x86_64-gnu/lib/python3.11/unittest/mock.py:1128: in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _execute_mock_call(self, /, *args, **kwargs):
+        # separate from _increment_mock_call so that awaited functions are
+        # executed separately from their call, also AsyncMock overrides this method
+    
+        effect = self.side_effect
+        if effect is not None:
+            if _is_exception(effect):
+>               raise effect
+E               subprocess.TimeoutExpired: Command 'gh' timed out after 30 seconds
+
+/home/batuhan/.local/share/uv/python/cpython-3.11.16-linux-x86_64-gnu/lib/python3.11/unittest/mock.py:1183: TimeoutExpired
+=========================== short test summary info ============================
+FAILED tools/host/plane-transition/test_chg054_start_transitions.py::ReadyIsCanonicalStartEligibility::test_ready_evidence_must_name_real_github_objects
+FAILED tools/host/plane-transition/test_chg054_start_transitions.py::ReadyIsCanonicalStartEligibility::test_ready_needs_no_assessment_file_comment_preparation_slot_or_schedule
+FAILED tools/host/plane-transition/test_chg054_start_transitions.py::OneStartPredicateForBothStartTransitions::test_unresolved_real_hard_start_dependency_stops_both_transitions
+FAILED tools/host/plane-transition/test_chg054_start_transitions.py::TypedGitHubReadFailures::test_a_missing_basis_file_is_rejected_as_missing_other_failures_are_not_relabelled
+FAILED tools/host/plane-transition/test_chg054_start_transitions.py::TypedGitHubReadFailures::test_auth_permission_service_and_unknown_failures_stay_distinct_and_fail_closed
+FAILED tools/host/plane-transition/test_chg054_start_transitions.py::TypedGitHubReadFailures::test_missing_repository_file_is_a_missing_artifact_not_an_outage
+FAILED tools/host/plane-transition/test_chg054_start_transitions.py::TypedGitHubReadFailures::test_timeout_oversize_and_malformed_responses_are_typed
+7 failed, 11 passed in 0.39s
