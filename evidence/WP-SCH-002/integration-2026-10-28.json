@@ -91,5 +91,16 @@
   "governed_runtime_identity": null,
   "real_scheduler_acceptance": "NOT_RUN",
   "Plane_state": "IN_PROGRESS",
-  "DONE": false
+  "DONE": false,
+  "root_typing_followup": {
+    "reason": "CI root environment lacked contracts/Twin extraPaths after SCH001 package integration",
+    "pyrightconfig_sha256": "e3113550915c764467cebcb5cad365d7c73e08fab4f9a34aaabbdd7f85f54888",
+    "static_ratchet": "PASS",
+    "counts": {
+      "ruff": 287,
+      "pyright": 185,
+      "unformatted": 53
+    },
+    "baseline_weakened": false
+  }
 }

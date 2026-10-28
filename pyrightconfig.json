@@ -28,7 +28,9 @@
       "root": "services/scheduler-service",
       "extraPaths": [
         "services/scheduler-service/src",
-        "services/scheduler-service/tests"
+        "services/scheduler-service/tests",
+        "packages/contracts/src",
+        "services/operational-twin/src"
       ]
     }
   ]
