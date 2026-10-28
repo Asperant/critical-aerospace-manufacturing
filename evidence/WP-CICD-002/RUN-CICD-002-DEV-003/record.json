@@ -1,0 +1,68 @@
+{
+  "run_id": "RUN-CICD-002-DEV-003",
+  "work_package": "WP-CICD-002",
+  "kind": "DEV run on the shared host: the first published image, deployed from a clean checkout of its commit",
+  "boundary_mode": "REAL",
+  "code_revision": "e1752d90febabc5db09ba61fd6380a2951462bf6",
+  "release_run": "40707535295",
+  "release_id": "REL-e1752d90feba-40707535295",
+  "release_commit": "e1752d90febabc5db09ba61fd6380a2951462bf6",
+  "recorded_at": "2026-10-28T14:38:04+00:00",
+  "outcomes": {
+    "refusal_dirty_tree": {
+      "result": "FAILED",
+      "preflight": "1 manual change(s) in the host source tree (NFR-DEP-003): [' M infra/compose/README.md']; ci-gate at the release commit is missing, not success"
+    },
+    "refusal_unknown_digest": {
+      "result": "FAILED",
+      "preflight": "ci-gate at the release commit is missing, not success; digest not found in the registry: ['ghcr.io/asperant/cap-mlflow@sha256:0000000000000000000000000000000000000000000000000000000000000000']"
+    },
+    "deploy": {
+      "result": "FAILED",
+      "stages": {
+        "preflight": "FAILED",
+        "migrate": "NOT_RUN",
+        "rollout": "NOT_RUN",
+        "health": "NOT_RUN",
+        "smoke": "NOT_RUN"
+      },
+      "record_id": "DEP-REC-20261028T143801Z-80a6892b"
+    }
+  },
+  "steps": [
+    {
+      "step": "manifest",
+      "exit_code": 0,
+      "note": "REL-e1752d90feba-40707535295 at e1752d90feba",
+      "output": "release-manifest.json"
+    },
+    {
+      "step": "refusal-dirty-tree",
+      "exit_code": 1,
+      "note": "result FAILED",
+      "output": "refusal-dirty-tree.record.json"
+    },
+    {
+      "step": "refusal-unknown-digest",
+      "exit_code": 1,
+      "note": "result FAILED",
+      "output": "refusal-unknown-digest.record.json"
+    },
+    {
+      "step": "deploy",
+      "exit_code": 1,
+      "note": "result FAILED",
+      "output": "deploy.record.json"
+    },
+    {
+      "step": "container-image",
+      "exit_code": 1,
+      "note": "the running container's image reference",
+      "output": "mlflow-container-image.txt"
+    }
+  ],
+  "non_zero_explained": {
+    "refusal-dirty-tree": "expected: the host source tree carried a manual change",
+    "refusal-unknown-digest": "expected: the forged digest is not in the registry"
+  }
+}
