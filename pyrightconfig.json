@@ -14,6 +14,7 @@
   "executionEnvironments": [
     {"root": "ci", "extraPaths": ["ci", "ci/scripts", "ci/tests", "packages/contracts/src"]},
     {"root": "tools/trace", "extraPaths": ["tools/trace/src"]},
+    {"root": "tools/release", "extraPaths": ["tools/release/src", "tools/release/tests"]},
     {
       "root": "services/manufacturing-simulator",
       "extraPaths": [

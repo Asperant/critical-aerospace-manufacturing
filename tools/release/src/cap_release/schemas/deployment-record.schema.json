@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cap.deployment-record/v1",
+  "title": "DeploymentRecord",
+  "description": "What one environment operation did and with what result (02, Release Manifest; Item 42 §14-16). SUCCEEDED requires every stage to have passed: a running container is not evidence of success (INTEG-INV-14, CD-INV-20).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "record_id", "release_id", "manifest_sha256", "environment",
+    "host_source", "supply_chain_verification", "stages", "result",
+    "previous_release_id", "rollback", "started_at", "finished_at"
+  ],
+  "properties": {
+    "schema": {"const": "cap.deployment-record/v1"},
+    "record_id": {"type": "string", "pattern": "^DEP-REC-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$"},
+    "release_id": {"type": "string", "pattern": "^REL-[0-9a-f]{12}-[0-9]+$"},
+    "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "environment": {
+      "type": "object", "additionalProperties": false, "required": ["id", "class"],
+      "properties": {"id": {"type": "string", "minLength": 1}, "class": {"enum": ["INTEGRATION", "EVALUATION", "DEMO"]}}
+    },
+    "host_source": {
+      "description": "The deployment host's source checkout, which must equal the release commit and carry zero manual patches (NFR-DEP-003).",
+      "type": "object", "additionalProperties": false,
+      "required": ["checked_out_commit", "release_commit", "manual_patches"],
+      "properties": {
+        "checked_out_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "release_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "manual_patches": {"type": "integer", "minimum": 0}
+      }
+    },
+    "supply_chain_verification": {
+      "type": "object", "additionalProperties": false,
+      "required": ["main_derived", "ci_gate", "digests_in_registry", "tags_trusted"],
+      "properties": {
+        "main_derived": {"type": "boolean"},
+        "ci_gate": {"type": "string"},
+        "digests_in_registry": {"type": "boolean"},
+        "tags_trusted": {"const": false}
+      }
+    },
+    "stages": {
+      "type": "array", "minItems": 5, "maxItems": 5,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["stage", "result", "started_at", "finished_at", "detail"],
+        "properties": {
+          "stage": {"enum": ["preflight", "migrate", "rollout", "health", "smoke"]},
+          "result": {"enum": ["PASSED", "FAILED", "SKIPPED", "NOT_RUN"]},
+          "started_at": {"type": ["string", "null"]},
+          "finished_at": {"type": ["string", "null"]},
+          "detail": {"type": "string"}
+        }
+      }
+    },
+    "result": {"enum": ["SUCCEEDED", "FAILED", "ROLLED_BACK"]},
+    "previous_release_id": {"type": ["string", "null"]},
+    "rollback": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object", "additionalProperties": false, "required": ["to_release_id", "result"],
+          "properties": {"to_release_id": {"type": "string"}, "result": {"enum": ["SUCCEEDED", "FAILED"]}}
+        }
+      ]
+    },
+    "started_at": {"type": "string"},
+    "finished_at": {"type": "string"}
+  }
+}

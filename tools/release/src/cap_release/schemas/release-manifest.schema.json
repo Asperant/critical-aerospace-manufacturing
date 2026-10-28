@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cap.release-manifest/v1",
+  "title": "ReleaseManifest",
+  "description": "Immutable identity of one runnable composition (02, Release Manifest; Item 42 §9-13). A different composition is always a new manifest. It carries secret references at most, never secret plaintext.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "release_id", "product_version", "source", "service_images",
+    "database_schema_target", "contract_catalog_version", "model_versions",
+    "workflow_definition_versions", "prompt_tool_routing_versions",
+    "knowledge_index_version", "configuration_schema_version",
+    "build_provenance", "created_at"
+  ],
+  "properties": {
+    "schema": {"const": "cap.release-manifest/v1"},
+    "release_id": {"type": "string", "pattern": "^REL-[0-9a-f]{12}-[0-9]+$"},
+    "product_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.]+)?(\\+[0-9A-Za-z.]+)?$"},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit", "ref", "tag"],
+      "properties": {
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "ref": {"type": "string", "pattern": "^refs/heads/[^\\s]+$"},
+        "tag": {"type": ["string", "null"]}
+      }
+    },
+    "service_images": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "repository", "digest", "reference", "sbom", "provenance_attestation"],
+        "properties": {
+          "name": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+          "repository": {"type": "string", "pattern": "^ghcr\\.io/[a-z0-9._-]+/[a-z0-9._/-]+$"},
+          "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "reference": {"type": "string", "pattern": "^ghcr\\.io/[a-z0-9._-]+/[a-z0-9._/-]+@sha256:[0-9a-f]{64}$"},
+          "sbom": {"$ref": "#/$defs/evidence"},
+          "provenance_attestation": {"$ref": "#/$defs/evidence"}
+        }
+      }
+    },
+    "database_schema_target": {"$ref": "#/$defs/bound_or_not_yet"},
+    "contract_catalog_version": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["digest", "contracts"],
+      "properties": {
+        "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "contracts": {"type": "integer", "minimum": 0}
+      }
+    },
+    "model_versions": {"$ref": "#/$defs/bound_or_not_yet"},
+    "workflow_definition_versions": {"$ref": "#/$defs/bound_or_not_yet"},
+    "prompt_tool_routing_versions": {"$ref": "#/$defs/bound_or_not_yet"},
+    "knowledge_index_version": {"$ref": "#/$defs/bound_or_not_yet"},
+    "configuration_schema_version": {"$ref": "#/$defs/bound_or_not_yet"},
+    "build_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workflow", "run_id", "run_url", "run_attempt"],
+      "properties": {
+        "workflow": {"type": "string", "minLength": 1},
+        "run_id": {"type": "integer", "minimum": 1},
+        "run_url": {"type": "string", "pattern": "^https://github\\.com/"},
+        "run_attempt": {"type": "integer", "minimum": 1}
+      }
+    },
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "$defs": {
+    "evidence": {
+      "description": "Where the supply-chain evidence for one image is, or that it is not produced.",
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false, "required": ["state", "location"],
+          "properties": {"state": {"const": "PUBLISHED"}, "location": {"type": "string", "minLength": 1}}
+        },
+        {
+          "type": "object", "additionalProperties": false, "required": ["state", "reason"],
+          "properties": {"state": {"const": "NOT_PRODUCED"}, "reason": {"type": "string", "minLength": 1}}
+        }
+      ]
+    },
+    "bound_or_not_yet": {
+      "description": "A bound identity, or the explicit statement that its producer does not exist yet. Never null, never a guess.",
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false, "required": ["state", "identity"],
+          "properties": {"state": {"const": "BOUND"}, "identity": {"type": "string", "minLength": 1}}
+        },
+        {
+          "type": "object", "additionalProperties": false, "required": ["state", "reason"],
+          "properties": {"state": {"const": "NOT_YET_PRODUCED"}, "reason": {"type": "string", "minLength": 1}}
+        }
+      ]
+    }
+  }
+}
