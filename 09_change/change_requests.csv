@@ -63,3 +63,4 @@ CHG-073,Bind the verified owner-local Core outbox slice to DEP-022,C1,CR-1,Asrı
 CHG-074,Bind the bounded Core event-contract slice to DEP-023,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-048
 CHG-075,Refresh the projectctl precision baseline after DEP-023 binding,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-049
 CHG-076,Clarify the DEP-002 START requirement and record its current-main readiness,C2,CR-2,Yavuz,APPROVED_WITH_CONDITIONS,UNDER_REVIEW,WP-CICD-002
+CHG-077,Clarify the DEP-043 START requirement for the Simulator dispatch interface,C2,CR-2,Batuhan,DRAFT,UNDER_REVIEW,WP-SIM-006
