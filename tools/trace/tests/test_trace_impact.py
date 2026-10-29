@@ -59,6 +59,15 @@ def test_declared_ids_pass_and_name_their_owners() -> None:
     assert "owner Asrın (@Asperant): FR-GOV-004" in notes
 
 
+def test_canonical_requirements_field_with_annotation_passes() -> None:
+    text = (
+        "Requirements (stable IDs, or NONE — reason / control-only scope; "
+        "checked by TL-13): FR-GOV-004, FR-GOV-005, NFR-GOV-009"
+    )
+    findings, _ = check(text, CODE, INDEX, OWNERS)
+    assert findings == []
+
+
 @pytest.mark.parametrize(
     ("value", "expected"),
     [
