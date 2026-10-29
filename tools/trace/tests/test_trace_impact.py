@@ -61,8 +61,10 @@ def test_declared_ids_pass_and_name_their_owners() -> None:
 
 def test_canonical_requirements_field_with_annotation_passes() -> None:
     text = (
+        "## Identity and scope\n\nWP/control ID: WP-GOV-002\n"
         "Requirements (stable IDs, or NONE — reason / control-only scope; "
-        "checked by TL-13): FR-GOV-004, FR-GOV-005, NFR-GOV-009"
+        "checked by TL-13): FR-GOV-004, FR-GOV-005, NFR-GOV-009\n"
+        "Architecture surfaces and authority boundaries: ARCH-PLAT-CICD\n"
     )
     findings, _ = check(text, CODE, INDEX, OWNERS)
     assert findings == []
