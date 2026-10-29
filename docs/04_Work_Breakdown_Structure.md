@@ -750,7 +750,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-SIM-COREINT |
 | Size band (indicative, no hour estimates) | M (≈4–7 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | `tools/demo-runtime/src/cap_demo_runtime/av_scenarios.py`; `tools/demo-runtime/scripts/av_scen.py`; `tools/demo-runtime/scripts/check_consistency.py`; `evidence/WP-CORE-008/` |
+| Repository reference | TBD_BY_IMPLEMENTATION |
 
 **Purpose.** Prove the Core–Simulator–Twin triangle on real infrastructure: authorized commands produce simulated effects, events project into Twin, and Core/Twin remain semantically consistent.
 
@@ -775,7 +775,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 
 **Integration checkpoint.** AV-SCEN-01, AV-SCEN-03, E2E-01
 
-**Expected evidence artifact.** Real runtime AV-SCEN-01/03 slice manifests and consistency outputs under `evidence/WP-CORE-008/`; wider AV portfolio and final EV-L5 evaluation remain separately pending.
+**Expected evidence artifact.** CI/integration test evidence; for F0 also integrated scenario evidence — `NOT_YET_EXECUTED`.
 
 **Risk hooks (Item 69).** —
 
