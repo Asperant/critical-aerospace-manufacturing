@@ -73,7 +73,9 @@ def test_every_registered_fixture_is_valid_at_both_boundaries(contract_id: str) 
             boundary.validate(payload, role=role)
 
 
-def test_dep021_request_is_valid_for_producer_and_consumer_and_rejects_negatives() -> None:
+def test_dep021_request_is_valid_for_producer_and_consumer_and_rejects_negatives() -> (
+    None
+):
     boundary = validator()
     valid = {"contract_version": CONTRACT_ID, "order_id": "ORD-TEST-002"}
     for role in ("producer", "consumer"):
@@ -84,7 +86,9 @@ def test_dep021_request_is_valid_for_producer_and_consumer_and_rejects_negatives
             boundary.validate_request({**valid, "unexpected": True}, role=role)
 
 
-def test_registered_contract_versions_are_self_compatible_after_hash_verification() -> None:
+def test_registered_contract_versions_are_self_compatible_after_hash_verification() -> (
+    None
+):
     registry = repository_registry()
     declaration = registry.get(CONTRACT_ID)
     output = load_schema(declaration.output_schema, ROOT)
