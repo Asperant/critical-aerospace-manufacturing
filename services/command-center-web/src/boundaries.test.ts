@@ -14,12 +14,14 @@ const networkModules = [
   "src/facilityState/facilityStateClient.ts",
   "src/overview/overviewClient.ts",
   "src/session/sessionClient.ts",
+  "src/showcase/showcaseClient.ts",
 ];
 const bffPaths = {
   STATE_URL: "/v1/facility-state",
   SESSION_URL: "/v1/session",
   LOGOUT_URL: "/v1/session/logout",
   OVERVIEW_URL: "/v1/overview",
+  SHOWCASE_URL: "/v1/showcase",
 };
 
 interface Manifest {

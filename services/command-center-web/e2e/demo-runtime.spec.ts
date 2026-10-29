@@ -62,9 +62,12 @@ test("real Keycloak login and held lot are visible in the demo UI", async ({
   await expect(lots).toContainText(lot);
   if (stage === "initial") {
     await expect(lots).not.toContainText("HELD");
-    await expect(page.getByText("Nothing needs attention in the reported sources.")).toBeVisible();
+    await expect(
+      page.getByText("Nothing needs attention in the reported sources."),
+    ).toBeVisible();
     const directory =
-      process.env["CAP_DEMO_ARTIFACT_DIR"] ?? "../../evidence/demo-presentation";
+      process.env["CAP_DEMO_ARTIFACT_DIR"] ??
+      "../../evidence/demo-presentation";
     const screenshot = join(directory, "browser-initial.png");
     await page.screenshot({ path: screenshot, fullPage: true });
     record({
@@ -118,7 +121,10 @@ test("real Keycloak login and held lot are visible in the demo UI", async ({
     process.env["CAP_DEMO_ARTIFACT_DIR"] ?? "../../evidence/demo-presentation";
   const screenshot = join(directory, "browser-final.png");
   await page.screenshot({ path: screenshot, fullPage: true });
-  await page.screenshot({ path: join(directory, "browser-anomaly.png"), fullPage: true });
+  await page.screenshot({
+    path: join(directory, "browser-anomaly.png"),
+    fullPage: true,
+  });
   record({
     status: "PASS",
     stage,

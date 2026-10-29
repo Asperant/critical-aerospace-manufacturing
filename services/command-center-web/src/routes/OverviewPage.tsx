@@ -541,9 +541,14 @@ function ShowcaseTimeline({ state }: { state: ShowcaseState }) {
   const { timeline, dispatch } = state.showcase;
   if (timeline.length === 0) {
     return (
-      <section className="card timeline-panel" aria-label="Operational timeline">
+      <section
+        className="card timeline-panel"
+        aria-label="Operational timeline"
+      >
         <SectionHeading eyebrow="Live evidence" title="Operational timeline" />
-        <p className="empty-copy">No persisted showcase events have reached this lot yet.</p>
+        <p className="empty-copy">
+          No persisted showcase events have reached this lot yet.
+        </p>
       </section>
     );
   }
@@ -564,9 +569,11 @@ function ShowcaseTimeline({ state }: { state: ShowcaseState }) {
           </li>
         ))}
       </ol>
-      {dispatch?.status === "REJECTED" && dispatch.error_code === "ACTIVE_HOLD" ? (
+      {dispatch?.status === "REJECTED" &&
+      dispatch.error_code === "ACTIVE_HOLD" ? (
         <p className="dispatch-blocked" role="status">
-          Dispatch blocked — active quality hold <span>{dispatch.error_code}</span>
+          Dispatch blocked — active quality hold{" "}
+          <span>{dispatch.error_code}</span>
         </p>
       ) : null}
     </section>
@@ -868,7 +875,7 @@ export function OverviewPage() {
   );
   const showcaseLotId =
     facility.state.status === "ready"
-      ? facility.state.state.facility.lots[0]?.lot_id ?? "DEMO-LOT-001"
+      ? (facility.state.state.facility.lots[0]?.lot_id ?? "DEMO-LOT-001")
       : "DEMO-LOT-001";
   const showcase = useShowcase(
     worldId,
