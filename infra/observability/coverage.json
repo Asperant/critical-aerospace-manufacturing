@@ -59,13 +59,9 @@
       "owner": "Selman",
       "runtime": "python",
       "path": "services/vision-service",
-      "logging": "PENDING",
-      "health": "PENDING",
-      "exemption": {
-        "reason": "Contract-only directory (WP-VIS-001 slice 1) with no process, endpoint or log sink; configure() and health_report() follow with the inference worker slice. Platform-owner (Yavuz, WP-OBS-001) confirmation requested on the PR; renewed or closed by 2026-11-20.",
-        "owner": "Selman",
-        "expires_on": "2026-11-20"
-      }
+      "logging": "ADOPTED",
+      "health": "ADOPTED",
+      "evidence": "services/vision-service/src/vision_service/__main__.py and worker.py"
     },
     {"name": "ai-intelligence-service", "owner": "Asrın", "runtime": "python", "path": "services/ai-intelligence-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
     {
