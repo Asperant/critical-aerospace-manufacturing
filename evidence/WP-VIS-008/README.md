@@ -12,7 +12,7 @@ Verification families: TEST-VIS-CPUSMOKE, TEST-RES-CPUONLY.
 |---|---|---|
 | CPU smoke model package, distinct from promoted final models | `services/vision-service/model-packages/vision-baseline-local-deviation/1.0.0/package.json` is a non-promoted, CPU-only package manifest loaded and identity-checked by `vision_service.smoke` | done for the bounded smoke package; promoted final ModelPackages remain outside this WP |
 | `mfgctl smoke vision` path | `infra/mfgctl/capabilities.json` capability `vision` → `services/vision-service/smoke.sh` → `python -m vision_service.smoke` | done |
-| documented CPU baseline timing | `RUN-VIS-008-LOCAL-001.json` (this directory) | recorded on the primary shared host; synthetic sample |
+| documented CPU baseline timing | `RUN-VIS-008-LOCAL-001.json`, `RUN-VIS-008-LOCAL-002.json`, and `RUN-VIS-008-LOCAL-003.json` (this directory) | recorded on the primary shared host; synthetic sample |
 
 The smoke path needs only the locked CI toolchain (`numpy`, standard library): no GPU
 library, accelerator runtime, container or platform service (NFR-RES-007). It reads
