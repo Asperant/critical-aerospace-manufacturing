@@ -1,0 +1,25 @@
+{
+  "schema": "edge-capability-readiness-basis-v1",
+  "edge": "DEP-032",
+  "predecessor_node": "DN-EVT-SPINE",
+  "successor_node": "DN-TWIN-SKELETON",
+  "level": "INTEGRATION_READY",
+  "producer_wp": "WP-CORE-008",
+  "producer_pr": 207,
+  "producer_merge_sha": "6a7c17215223af56c981f6d8cbf9a560fb0d4911",
+  "verified_main_sha": "6a7c17215223af56c981f6d8cbf9a560fb0d4911",
+  "precise_requirement": "At INTEGRATION, a canonical EVT-002 event crosses the approved EVT-003 consumer boundary and advances the Twin projection with matching source EventID, WorldID, and branch admission.",
+  "scope_boundary": "This certifies the real event-to-Twin projection boundary for the observed Lot events. It does not claim full Twin DoD, protected rework, or the complete E2E-01.",
+  "artifacts": [
+    {"path": "tools/demo-runtime/src/cap_demo_runtime/twin_worker.py", "role": "real_event_consumer"},
+    {"path": "evidence/WP-CORE-008/RUNTIME-E2E-2026-10-29.md", "role": "merged_event_to_twin_evidence"},
+    {"path": "evidence/WP-CORE-008/DEP-028-DISPATCH-2026-10-29.md", "role": "dispatch_event_to_twin_evidence"}
+  ],
+  "tests": [
+    {"test_id": "CORE-008-REAL-TWIN-PROJECTION", "path": "evidence/WP-CORE-008/RUNTIME-E2E-2026-10-29.md", "result": "real LotHeld event projected with matching EventID/WorldID/PRIMARY branch"},
+    {"test_id": "CORE-008-DISPATCH-TWIN", "path": "evidence/WP-CORE-008/DEP-028-DISPATCH-2026-10-29.md", "result": "dispatch EventID persisted in applied_event and projection revision FRESH"},
+    {"test_id": "TEST-TWIN-PROJECTOR", "path": "services/operational-twin/tests", "result": "14 focused operational-twin tests passed after the consumer fix"}
+  ],
+  "verification": "The real Twin consumer acknowledged the canonical events and persisted the legal dispatch event with source_event_id/source_revision equal to bf474e5c-e4ed-4e64-bfe2-df26e280743c, world DEMO-WORLD, branch PRIMARY, and FRESH projection status.",
+  "control": "The one-line state-column fix is carried by the dispatch closure PR; this record binds the already-merged demo evidence only to the existing path and does not claim WP-CORE-008 DONE."
+}

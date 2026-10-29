@@ -1,0 +1,25 @@
+{
+  "schema": "edge-capability-readiness-basis-v1",
+  "edge": "DEP-106",
+  "predecessor_node": "DN-TWIN-SKELETON",
+  "successor_node": "DN-UI-SHELL",
+  "level": "INTEGRATION_READY",
+  "producer_wp": "WP-CORE-008",
+  "producer_pr": 207,
+  "producer_merge_sha": "6a7c17215223af56c981f6d8cbf9a560fb0d4911",
+  "verified_main_sha": "6a7c17215223af56c981f6d8cbf9a560fb0d4911",
+  "precise_requirement": "An authenticated UI shows real Twin state through the BFF.",
+  "scope_boundary": "This certifies the demo/integration UI read path only. It does not make a production security acceptance claim; local Keycloak demo settings remain explicitly non-production.",
+  "artifacts": [
+    {"path": "services/operations-bff/src/operations_bff", "role": "BFF_read_path"},
+    {"path": "apps/command-center-web", "role": "browser_UI"},
+    {"path": "evidence/WP-CORE-008/RUNTIME-E2E-2026-10-29.md", "role": "authenticated_browser_evidence"}
+  ],
+  "tests": [
+    {"test_id": "BFF-AUTH-RUNTIME", "path": "evidence/WP-CORE-008/RUNTIME-E2E-2026-10-29.md", "result": "anonymous request 401; real Keycloak-authenticated request returned Twin-backed state"},
+    {"test_id": "UI-BROWSER-ACCEPTANCE", "path": "GitHub Actions run 40909586750", "result": "Playwright browser acceptance passed"},
+    {"test_id": "UI-VISIBLE-TWIN-STATE", "path": "evidence/WP-CORE-008/RUNTIME-E2E-2026-10-29.md", "result": "Demo Operator saw DEMO-LOT-001 HELD with source digital-twin-service and FRESH revision"}
+  ],
+  "verification": "The merged current-main runtime used Keycloak, BFF, and the command-center UI. The browser result displayed the real Twin state and source revision after authenticated login.",
+  "control": "Demo-only HTTP/Keycloak settings do not support production security acceptance."
+}

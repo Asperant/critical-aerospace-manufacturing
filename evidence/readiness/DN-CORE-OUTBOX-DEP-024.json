@@ -1,0 +1,26 @@
+{
+  "schema": "edge-capability-readiness-basis-v1",
+  "edge": "DEP-024",
+  "predecessor_node": "DN-CORE-OUTBOX",
+  "successor_node": "DN-EVT-SPINE",
+  "level": "INTEGRATION_READY",
+  "producer_wp": "WP-CORE-008",
+  "producer_pr": 207,
+  "producer_merge_sha": "6a7c17215223af56c981f6d8cbf9a560fb0d4911",
+  "verified_main_sha": "6a7c17215223af56c981f6d8cbf9a560fb0d4911",
+  "precise_requirement": "Real cross-boundary integration from a Core transactional outbox through NATS/JetStream to a real consumer is green on INTEGRATION.",
+  "scope_boundary": "This edge-specific artifact certifies the exercised Core outbox-to-spine path only. It does not certify WP-CORE-008 DONE, production security, protected rework, or the complete E2E-01.",
+  "artifacts": [
+    {"path": "services/manufacturing-core/src/manufacturing_core/command_persistence.py", "role": "transactional_command_and_outbox_persistence"},
+    {"path": "tools/demo-runtime/src/cap_demo_runtime/relay.py", "role": "real_outbox_relay"},
+    {"path": "evidence/WP-CORE-008/RUNTIME-E2E-2026-10-29.md", "role": "merged_runtime_outbox_spine_evidence"},
+    {"path": "evidence/WP-CORE-008/DEP-028-DISPATCH-2026-10-29.md", "role": "dispatch_outbox_spine_evidence"}
+  ],
+  "tests": [
+    {"test_id": "CORE-008-REAL-RUNTIME-E2E", "path": "evidence/WP-CORE-008/RUNTIME-E2E-2026-10-29.md", "result": "Core mutation, transactional outbox, relay, NATS, and real consumer observed"},
+    {"test_id": "CORE-008-DISPATCH", "path": "evidence/WP-CORE-008/DEP-028-DISPATCH-2026-10-29.md", "result": "both accepted dispatch/hold outbox rows reached PUBLISHED"},
+    {"test_id": "CI-REAL-POSTGRES-NATS", "path": "GitHub Actions run 40909586750", "result": "required real integration lane passed"}
+  ],
+  "verification": "PR #207 merged at 6a7c17215223af56c981f6d8cbf9a560fb0d4911. The local runtime observed committed Core mutations, durable outbox rows, PUBLISHED relay status, and downstream JetStream delivery. The dispatch follow-up records the second independent accepted transition and the rejected guard path.",
+  "control": "This is an edge-specific readiness record; it does not transition WP-CORE-008."
+}
