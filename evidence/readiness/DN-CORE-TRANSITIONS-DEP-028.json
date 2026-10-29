@@ -1,0 +1,23 @@
+{
+  "schema": "edge-capability-readiness-basis-v1",
+  "edge": "DEP-028",
+  "predecessor_node": "DN-CORE-TRANSITIONS",
+  "successor_node": "DN-CORE-CMDEXEC",
+  "level": "INTEGRATION_READY",
+  "producer_wp": "WP-CORE-008",
+  "producer_pr": 208,
+  "producer_merge_sha": "ec8955b9f9f41eb78e9d1384ef155387be5fe6a8",
+  "verified_main_sha": "ec8955b9f9f41eb78e9d1384ef155387be5fe6a8",
+  "precise_requirement": "At INTEGRATION, hold and dispatch commands have a green legal/illegal transition scenario including the active-hold negative guard.",
+  "scope_boundary": "This edge certifies only the hold/dispatch transition predicate. CORE-004 protected rework semantics, WP-CORE-008 full DoD, effect verification, and production security acceptance remain outside scope.",
+  "artifacts": [
+    {"path": "services/manufacturing-core/src/manufacturing_core/transitions.py", "role": "canonical_hold_dispatch_transition_service"},
+    {"path": "evidence/WP-CORE-008/DEP-028-CURRENT-MAIN-2026-10-29.md", "role": "merged_current_main_dispatch_scenario"}
+  ],
+  "tests": [
+    {"test_id": "DEP-028-CURRENT-MAIN", "path": "evidence/WP-CORE-008/DEP-028-CURRENT-MAIN-2026-10-29.md", "result": "accepted hold, rejected held dispatch ACTIVE_HOLD, accepted legal dispatch; durable outcomes and outbox evidence"},
+    {"test_id": "CORE-008-DISPATCH-TWIN", "path": "evidence/WP-CORE-008/DEP-028-CURRENT-MAIN-2026-10-29.md", "result": "accepted dispatch crossed real JetStream and reached FRESH Twin projection"}
+  ],
+  "verification": "PR #208 merged at ec8955b9f9f41eb78e9d1384ef155387be5fe6a8. The deterministic scenario was rerun against origin/main at that exact SHA using the healthy real PostgreSQL/NATS/Twin runtime. The held command was rejected before mutation/outbox emission; the legal command persisted, published, and projected.",
+  "control": "This edge-specific record does not transition WP-CORE-008 to DONE."
+}
