@@ -20,13 +20,19 @@ from cap_release.registry import load_registry
 DIGEST = "sha256:" + "a" * 64
 COMMIT = "b" * 40
 WHEN = dt.datetime(2026, 10, 28, 12, 0, tzinfo=dt.UTC)
+ALL_DIGESTS = {
+    "mlflow": DIGEST,
+    "demo-runtime": DIGEST,
+    "command-center-web": DIGEST,
+}
 
 
 def manifest(repo: Path, **kwargs: Any) -> dict[str, Any]:
+    registry = load_registry(repo)
     return build_manifest(
         repo,
-        load_registry(repo),
-        {"mlflow": DIGEST},
+        registry,
+        {image.name: DIGEST for image in registry.images},
         commit=COMMIT,
         run_id=77,
         run_attempt=1,
@@ -112,9 +118,9 @@ def test_the_fingerprint_is_stable_and_any_change_gives_a_new_one(repo: Path) ->
     "digests",
     [
         {},
-        {"mlflow": DIGEST, "ghost": DIGEST},
-        {"mlflow": "sha256:short"},
-        {"mlflow": "latest"},
+        {**ALL_DIGESTS, "ghost": DIGEST},
+        {**ALL_DIGESTS, "mlflow": "sha256:short"},
+        {**ALL_DIGESTS, "mlflow": "latest"},
     ],
 )
 def test_the_builder_rejects_digests_that_do_not_match_the_registry(

@@ -2,7 +2,7 @@
   "schema": "cap.release-images/v1",
   "work_package": "WP-CICD-002",
   "owner": "ghcr.io/asperant",
-  "note": "The deployable images the release pipeline builds, publishes and pins by digest. A Dockerfile that is not listed here fails the registry check, and a listed image needs its Dockerfile, build context and Compose services. Application deployables join this list when they have a Dockerfile (their own work packages); none has one yet. database_migrations lists the versioned migration sets a release requires; a release binds its newest version as the database schema target and the deploy command runs the migration stage for it (WP-CICD-003).",
+  "note": "The deployable images the release pipeline builds, publishes and pins by digest. A Dockerfile that is not listed here fails the registry check, and a listed image needs its Dockerfile, build context and Compose services. database_migrations lists the versioned migration sets a release requires; a release binds its newest version as the database schema target and the deploy command runs the migration stage for it (WP-CICD-003).",
   "images": [
     {
       "name": "mlflow",
@@ -14,6 +14,29 @@
         "mlflow",
         "mlflow-init"
       ]
+    },
+    {
+      "name": "demo-runtime",
+      "repository": "cap-demo-runtime",
+      "context": ".",
+      "dockerfile": "infra/compose/demo-runtime/Dockerfile",
+      "compose_file": "infra/compose/compose.yaml",
+      "compose_services": [
+        "demo-migrate",
+        "demo-seed",
+        "demo-core",
+        "demo-relay",
+        "demo-twin",
+        "demo-bff"
+      ]
+    },
+    {
+      "name": "command-center-web",
+      "repository": "cap-command-center-web",
+      "context": ".",
+      "dockerfile": "services/command-center-web/Dockerfile",
+      "compose_file": "infra/compose/compose.yaml",
+      "compose_services": ["demo-ui"]
     }
   ],
   "database_migrations": [

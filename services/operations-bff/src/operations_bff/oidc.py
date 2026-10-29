@@ -31,11 +31,16 @@ CALLBACK_PATH = "/v1/session/callback"
 ALLOWED_ALGORITHMS = frozenset({"RS256", "RS384", "RS512", "PS256", "ES256", "ES384"})
 REQUIRED_CLAIMS = ["exp", "iat", "iss", "aud", "sub"]
 MIN_JWKS_REFRESH = timedelta(seconds=30)
+INSECURE_DEMO_HOSTS = frozenset({"localhost", "127.0.0.1", "keycloak"})
 
 
-def _require_https(value: str, name: str) -> None:
+def _require_https(value: str, name: str, *, allow_insecure_http: bool = False) -> None:
     parsed = urlparse(value)
-    if parsed.scheme != "https" or not parsed.netloc:
+    if not parsed.netloc or parsed.scheme not in {"https", "http"}:
+        raise ValueError(f"{name} must be an absolute URL")
+    if parsed.scheme == "http" and not (
+        allow_insecure_http and parsed.hostname in INSECURE_DEMO_HOSTS
+    ):
         raise ValueError(f"{name} must be an https URL")
 
 
@@ -54,10 +59,24 @@ class OidcSettings:
     clock_skew: timedelta = timedelta(seconds=30)
     metadata_ttl: timedelta = timedelta(hours=1)
     http_timeout: float = 5.0
+    allow_insecure_http: bool = False
+    browser_issuer: str | None = None
 
     def __post_init__(self) -> None:
-        _require_https(self.issuer, "issuer")
-        _require_https(self.redirect_uri, "redirect_uri")
+        _require_https(
+            self.issuer, "issuer", allow_insecure_http=self.allow_insecure_http
+        )
+        _require_https(
+            self.redirect_uri,
+            "redirect_uri",
+            allow_insecure_http=self.allow_insecure_http,
+        )
+        if self.browser_issuer is not None:
+            _require_https(
+                self.browser_issuer,
+                "browser_issuer",
+                allow_insecure_http=self.allow_insecure_http,
+            )
         if not urlparse(self.redirect_uri).path.endswith(CALLBACK_PATH):
             raise ValueError(f"redirect_uri must end with {CALLBACK_PATH}")
         for name in ("client_id", "environment_id"):
@@ -85,6 +104,8 @@ class OidcSettings:
         scopes = get("SCOPES")
         roles = get("ROLES_CLAIM")
         algorithms = get("ALGORITHMS")
+        allow_insecure = get("ALLOW_INSECURE_HTTP") == "1"
+        browser_issuer = get("BROWSER_ISSUER")
         return cls(
             issuer=get("ISSUER") or "",
             client_id=get("CLIENT_ID") or "",
@@ -94,6 +115,8 @@ class OidcSettings:
             scopes=tuple(scopes.split()) if scopes else ("openid",),
             roles_claim=tuple(roles.split(".")) if roles else ("realm_access", "roles"),
             algorithms=tuple(algorithms.split()) if algorithms else ("RS256",),
+            allow_insecure_http=allow_insecure,
+            browser_issuer=browser_issuer,
         )
 
 
@@ -142,7 +165,17 @@ class OidcIdentityProvider:
                 "nonce": request.nonce,
             }
         )
-        return f"{metadata.authorization_endpoint}?{query}"
+        authorization_endpoint = metadata.authorization_endpoint
+        browser_issuer = self._settings.browser_issuer
+        if browser_issuer is not None:
+            internal_issuer = self._settings.issuer.rstrip("/")
+            if not authorization_endpoint.startswith(internal_issuer + "/"):
+                raise IdentityProviderUnavailable
+            authorization_endpoint = (
+                browser_issuer.rstrip("/")
+                + authorization_endpoint[len(internal_issuer) :]
+            )
+        return f"{authorization_endpoint}?{query}"
 
     def complete(
         self, *, code: str, code_verifier: str, nonce: str
@@ -185,10 +218,17 @@ class OidcIdentityProvider:
             if methods is not None and "S256" not in methods:
                 raise IdentityProviderUnavailable
             endpoints: list[str] = []
+            s = self._settings
             for name in ("authorization_endpoint", "token_endpoint", "jwks_uri"):
                 value = doc.get(name)
-                if not isinstance(value, str) or urlparse(value).scheme != "https":
+                if not isinstance(value, str):
                     raise IdentityProviderUnavailable
+                try:
+                    _require_https(
+                        value, name, allow_insecure_http=s.allow_insecure_http
+                    )
+                except ValueError:
+                    raise IdentityProviderUnavailable from None
                 endpoints.append(value)
             self._metadata = _Metadata(*endpoints, fetched_at=self._clock())
             return self._metadata
@@ -265,12 +305,17 @@ class OidcIdentityProvider:
             if header.get("alg") not in s.algorithms or not isinstance(kid, str):
                 raise IdentityProviderError
             key = self._signing_key(kid)
+            issuers = (
+                (s.issuer, s.browser_issuer)
+                if s.browser_issuer is not None
+                else s.issuer
+            )
             claims: dict[str, Any] = jwt.decode(
                 id_token,
                 key=key,
                 algorithms=list(s.algorithms),
                 audience=s.client_id,
-                issuer=s.issuer,
+                issuer=issuers,
                 leeway=s.clock_skew,
                 options={"require": REQUIRED_CLAIMS},
             )

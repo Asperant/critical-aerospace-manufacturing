@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cap-demo-runtime"
+version = "0.1.0"
+description = "Real Core to JetStream to Twin to BFF demo runtime adapters"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.142,<1",
+    "alembic>=1.14,<2",
+    "nats-py>=2.9,<3",
+    "psycopg[binary]>=3.2,<4",
+    "sqlalchemy>=2.0,<3",
+    "uvicorn>=0.35,<1",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

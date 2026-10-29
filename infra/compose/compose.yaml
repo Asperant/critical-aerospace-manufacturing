@@ -52,6 +52,15 @@ x-mlflow-env: &mlflow-env
   MLFLOW_S3_ENDPOINT_URL: http://seaweedfs:8333
   CAP_MLFLOW_BUCKET: cap-mlflow-artifacts
 
+# WP-CORE-008 demo path. These services are adapters around the existing Core,
+# event-consumer, Twin and BFF primitives; they do not introduce a second
+# orchestration system or a second canonical state store.
+x-demo-profiles: &demo-profiles
+  - core
+  - platform
+  - full
+  - e2e
+
 x-temporal-sql: &temporal-sql
   SQL_PLUGIN: postgres12
   SQL_HOST: postgres
@@ -398,6 +407,193 @@ services:
           memory: 768m
     restart: unless-stopped
 
+  demo-migrate:
+    image: cap-platform/demo-runtime:0.1.0
+    build:
+      context: ../..
+      dockerfile: infra/compose/demo-runtime/Dockerfile
+    profiles: *demo-profiles
+    env_file:
+      - path: ${CAP_PLATFORM_STATE_DIR:-${HOME}/.local/state/cap-platform}/demo-migrate.env
+        required: false
+    environment:
+      CAP_MIGRATION_ROLE: cap_migrator
+      CAP_CORE_RUNTIME_ROLE: cap_core_runtime
+      CAP_TWIN_RUNTIME_ROLE: cap_twin_runtime
+    command: ["python", "-m", "cap_demo_runtime.migrate"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /tmp/cap-demo-migrate.done"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+    deploy:
+      resources:
+        limits:
+          memory: 384m
+    restart: "no"
+
+  demo-seed:
+    image: cap-platform/demo-runtime:0.1.0
+    build:
+      context: ../..
+      dockerfile: infra/compose/demo-runtime/Dockerfile
+    profiles: *demo-profiles
+    env_file:
+      - path: ${CAP_PLATFORM_STATE_DIR:-${HOME}/.local/state/cap-platform}/demo-seed.env
+        required: false
+    command: ["python", "-m", "cap_demo_runtime.seed"]
+    depends_on:
+      demo-migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /tmp/cap-demo-seed.done"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+    deploy:
+      resources:
+        limits:
+          memory: 384m
+    restart: "no"
+
+  demo-core:
+    image: cap-platform/demo-runtime:0.1.0
+    build:
+      context: ../..
+      dockerfile: infra/compose/demo-runtime/Dockerfile
+    profiles: *demo-profiles
+    env_file:
+      - path: ${CAP_PLATFORM_STATE_DIR:-${HOME}/.local/state/cap-platform}/demo-core.env
+        required: false
+    command: ["uvicorn", "cap_demo_runtime.core_api:create_app", "--factory", "--host", "0.0.0.0", "--port", "8081"]
+    ports:
+      - "127.0.0.1:${CAP_CORE_PORT:-28081}:8081"
+    depends_on:
+      demo-seed:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8081/healthz', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 24
+    deploy:
+      resources:
+        limits:
+          memory: 384m
+    restart: unless-stopped
+
+  demo-relay:
+    image: cap-platform/demo-runtime:0.1.0
+    build:
+      context: ../..
+      dockerfile: infra/compose/demo-runtime/Dockerfile
+    profiles: *demo-profiles
+    env_file:
+      - path: ${CAP_PLATFORM_STATE_DIR:-${HOME}/.local/state/cap-platform}/demo-relay.env
+        required: false
+    command: ["python", "-m", "cap_demo_runtime.relay"]
+    depends_on:
+      demo-seed:
+        condition: service_completed_successfully
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /tmp/cap-demo-relay.ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 24
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+    restart: unless-stopped
+
+  demo-twin:
+    image: cap-platform/demo-runtime:0.1.0
+    build:
+      context: ../..
+      dockerfile: infra/compose/demo-runtime/Dockerfile
+    profiles: *demo-profiles
+    env_file:
+      - path: ${CAP_PLATFORM_STATE_DIR:-${HOME}/.local/state/cap-platform}/demo-twin.env
+        required: false
+    command: ["python", "-m", "cap_demo_runtime.twin_worker"]
+    depends_on:
+      demo-migrate:
+        condition: service_completed_successfully
+      demo-relay:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /tmp/cap-demo-twin.ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 24
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+    restart: unless-stopped
+
+  demo-bff:
+    image: cap-platform/demo-runtime:0.1.0
+    build:
+      context: ../..
+      dockerfile: infra/compose/demo-runtime/Dockerfile
+    profiles: *demo-profiles
+    env_file:
+      - path: ${CAP_PLATFORM_STATE_DIR:-${HOME}/.local/state/cap-platform}/demo-bff.env
+        required: false
+    environment:
+      OPERATIONS_BFF_OIDC_ISSUER: http://keycloak:8080/realms/cap-platform
+      OPERATIONS_BFF_OIDC_BROWSER_ISSUER: http://localhost:${CAP_KEYCLOAK_PORT:-28080}/realms/cap-platform
+      OPERATIONS_BFF_OIDC_CLIENT_ID: command-center-web
+      OPERATIONS_BFF_OIDC_REDIRECT_URI: http://localhost:${CAP_UI_PORT:-29080}/v1/session/callback
+      OPERATIONS_BFF_OIDC_ALLOW_INSECURE_HTTP: "1"
+      OPERATIONS_BFF_COOKIE_SECURE: "0"
+    command: ["uvicorn", "cap_demo_runtime.bff:create_app", "--factory", "--host", "0.0.0.0", "--port", "8082"]
+    depends_on:
+      demo-twin:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8082/healthz', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 24
+    deploy:
+      resources:
+        limits:
+          memory: 384m
+    restart: unless-stopped
+
+  demo-ui:
+    image: cap-platform/command-center-web:0.1.0
+    build:
+      context: ../..
+      dockerfile: services/command-center-web/Dockerfile
+    profiles: *demo-profiles
+    ports:
+      - "127.0.0.1:${CAP_UI_PORT:-29080}:8080"
+    depends_on:
+      demo-bff:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/"]
+      interval: 5s
+      timeout: 3s
+      retries: 24
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+    restart: unless-stopped
+
 volumes:
   postgres-data:
   nats-data:
@@ -421,7 +617,7 @@ configs:
       {
         "realm": "cap-platform",
         "enabled": true,
-        "sslRequired": "external",
+        "sslRequired": "none",
         "registrationAllowed": false,
         "accessTokenLifespan": 300,
         "clients": [
@@ -438,6 +634,33 @@ configs:
             "implicitFlowEnabled": false,
             "directAccessGrantsEnabled": false,
             "redirectUris": []
+          },
+          {
+            "clientId": "command-center-web",
+            "name": "Command Center demo browser client",
+            "enabled": true,
+            "protocol": "openid-connect",
+            "publicClient": true,
+            "standardFlowEnabled": true,
+            "directAccessGrantsEnabled": false,
+            "redirectUris": ["http://localhost:29080/v1/session/callback"],
+            "webOrigins": ["http://localhost:29080"]
+          }
+        ],
+        "roles": {
+          "realm": [
+            {"name": "demo-operator", "description": "Demo operator"}
+          ]
+        },
+        "users": [
+          {
+            "username": "demo.operator",
+            "enabled": true,
+            "firstName": "Demo",
+            "lastName": "Operator",
+            "email": "demo.operator@localhost",
+            "credentials": [{"type": "password", "value": "$${CAP_DEMO_USER_PASSWORD}", "temporary": false}],
+            "realmRoles": ["demo-operator"]
           }
         ]
       }

@@ -33,6 +33,17 @@
         "ci/scripts",
         "services/operational-twin/src"
       ]
+    },
+    {
+      "root": "tools/demo-runtime",
+      "extraPaths": [
+        "tools/demo-runtime/src",
+        "services/operations-bff/src",
+        "services/manufacturing-core/src",
+        "services/operational-twin/src",
+        "packages/contracts/src",
+        "packages/event-consumer/src"
+      ]
     }
   ]
 }
