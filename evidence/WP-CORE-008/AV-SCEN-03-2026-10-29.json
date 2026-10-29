@@ -1,0 +1,166 @@
+{
+  "branch_id": "PRIMARY",
+  "checks": [
+    {
+      "detail": "dispatch completed without active hold",
+      "name": "normal_production_state",
+      "passed": true
+    },
+    {
+      "detail": "legal dispatch outcome remains accepted",
+      "name": "accepted_dispatch",
+      "passed": true
+    },
+    {
+      "detail": "dispatch event is the observed effect",
+      "name": "dispatch_event",
+      "passed": true
+    },
+    {
+      "detail": "normal path has no hold/recovery event",
+      "name": "no_false_recovery",
+      "passed": true
+    },
+    {
+      "detail": "Twin reflects normal dispatch",
+      "name": "twin_projection",
+      "passed": true
+    },
+    {
+      "detail": "Twin consumer ledger records dispatch delivery",
+      "name": "nats_delivery",
+      "passed": true
+    },
+    {
+      "detail": "Keycloak health and UI HTTP surface",
+      "name": "keycloak_and_ui",
+      "passed": true
+    },
+    {
+      "detail": "authenticated BFF facility response is bound",
+      "name": "bff_response",
+      "passed": true
+    },
+    {
+      "detail": "real authenticated browser evidence is bound",
+      "name": "browser_acceptance_reference",
+      "passed": true
+    }
+  ],
+  "command": {
+    "id": "55555555-5555-4555-8555-555555555563",
+    "outcome": {
+      "command_id": "55555555-5555-4555-8555-555555555563",
+      "correlation_id": "wp-core-008-dep028-current-main",
+      "effect_verification": "NOT_VERIFIED",
+      "error_code": null,
+      "outcome_id": "de0d0b2f-a59f-409a-87fd-bf0bbfc0b3c2",
+      "status": "ACCEPTED",
+      "world_id": "DEMO-WORLD"
+    }
+  },
+  "core_after": {
+    "execution_state": "DISPATCHED",
+    "held": false,
+    "id": "DEMO-LOT-DISPATCH-OPEN-002",
+    "lifecycle_state": "CREATED",
+    "revision": "b43d21235ba44eb9bc4473ba0d36a178",
+    "state_revision": "b43d21235ba44eb9bc4473ba0d36a178"
+  },
+  "event": {
+    "causation_id": "55555555-5555-4555-8555-555555555563",
+    "correlation_id": "wp-core-008-dep028-current-main",
+    "event_id": "e93172fd-41ba-441e-aeb1-ecde5d0a33cd",
+    "event_type": "production.lot-dispatch-authorized",
+    "trace_id": "a647782a-4b33-45c8-a861-984dda01daf4",
+    "world_id": "DEMO-WORLD"
+  },
+  "mocked_boundaries": [],
+  "nats": {
+    "ack_policy": "explicit",
+    "consumer_sequence": 18,
+    "deliver_policy": "all",
+    "durable": "twin-primary",
+    "messages": 8,
+    "num_ack_pending": 0,
+    "num_redelivered": 1,
+    "stream": "CAP_EVENTS",
+    "stream_sequence": 8,
+    "subjects": [
+      "cap.core.events"
+    ],
+    "url": "nats://127.0.0.1:24222"
+  },
+  "observed_only": true,
+  "outbox": {
+    "aggregate_id": "DEMO-LOT-DISPATCH-OPEN-002",
+    "aggregate_version": 1,
+    "causation_id": "55555555-5555-4555-8555-555555555563",
+    "correlation_id": "wp-core-008-dep028-current-main",
+    "event_id": "e93172fd-41ba-441e-aeb1-ecde5d0a33cd",
+    "event_type": "production.lot-dispatch-authorized",
+    "outbox_id": "446961d8-ecad-4e33-98ec-4dacda8d9e98",
+    "publication_status": "PUBLISHED",
+    "world_id": "DEMO-WORLD"
+  },
+  "run_id": "current-main-dispatch-20261029",
+  "runtime_mode": "REAL",
+  "scenario_id": "AV-SCEN-03",
+  "schema": "cap.wp-core-008.av-scenario/v1",
+  "scope": "WP-CORE-008 normal-production/no-false-recovery observation over the merged dispatch runtime; not the full architecture portfolio",
+  "source_evidence": "evidence/WP-CORE-008/DEP-028-CURRENT-MAIN-2026-10-29.md",
+  "source_main_sha": "ee060997b611fae16d6c4f13c0d85cebafaf17e7",
+  "status": "PASS",
+  "surfaces": {
+    "bff": {
+      "authenticated_facility_evidence": true,
+      "freshness": "FRESH",
+      "source": "digital-twin-service",
+      "world_id": "DEMO-WORLD"
+    },
+    "browser_evidence": {
+      "markers": {
+        "authenticated_bff_facility": true,
+        "playwright_result": true,
+        "real_keycloak_login": true,
+        "visible_ui": true
+      },
+      "path": "evidence/WP-CORE-008/RUNTIME-E2E-2026-10-29.md"
+    },
+    "keycloak": {
+      "health_status": 200
+    },
+    "ui": {
+      "http_status": 200
+    }
+  },
+  "twin": {
+    "applied_event": {
+      "aggregate_id": "DEMO-LOT-DISPATCH-OPEN-002",
+      "aggregate_version": 1,
+      "branch_id": "PRIMARY",
+      "consumer_scope": "twin-primary",
+      "event_id": "e93172fd-41ba-441e-aeb1-ecde5d0a33cd",
+      "world_id": "DEMO-WORLD"
+    },
+    "projection": {
+      "aggregate_id": "DEMO-LOT-DISPATCH-OPEN-002",
+      "aggregate_version": 1,
+      "branch_id": "PRIMARY",
+      "source_event_id": "e93172fd-41ba-441e-aeb1-ecde5d0a33cd",
+      "source_revision": "e93172fd-41ba-441e-aeb1-ecde5d0a33cd",
+      "state": {
+        "aggregate_id": "DEMO-LOT-DISPATCH-OPEN-002",
+        "aggregate_type": "Lot",
+        "aggregate_version": 1,
+        "dispatch_id": "55555555-5555-4555-8555-555555555563",
+        "dispatchable": true,
+        "epistemic_class": "OBSERVED",
+        "source_event_id": "e93172fd-41ba-441e-aeb1-ecde5d0a33cd",
+        "source_revision": "e93172fd-41ba-441e-aeb1-ecde5d0a33cd"
+      },
+      "world_id": "DEMO-WORLD"
+    }
+  },
+  "world_id": "DEMO-WORLD"
+}

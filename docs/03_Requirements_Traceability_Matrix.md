@@ -13,7 +13,7 @@
 | Semantic owner of requirement semantics / architecture trace coherence | Asrın (Item 83 #120) |
 | Owner of trace registry tooling, CI validation, report generation | Yavuz (Item 83 #121) — not universal RTM secretary (#123) |
 | Owners of per-requirement mapping correctness | Each requirement PrimaryOwner (Item 83 #122) |
-| Evidence posture | No TestRun, BenchmarkRun, EvidenceID, observed metric or VERIFIED state exists or is claimed in this document |
+| Evidence posture | Baseline rows remain planned; recorded technical EvidenceBundles are explicitly marked EVIDENCE_PENDING and no VERIFIED state is claimed |
 | Machine-readable companion | `03_traceability/` (schema, planned edges, CSV/JSON exports) — generated from the same model as this file |
 
 > **Reading rule.** This document is a *traceability index*, not a second requirement catalog. It references RequirementIDs and never restates SHALL text (Item 81 §163, Item 83 #2, RTM-INV-02). For wording, open the catalog anchor given in View A.
@@ -117,6 +117,15 @@
 > image exists yet, deployment from GitHub Actions needs a self-hosted runner, and the
 > shared-host run follows the first publish; evidence stays EVIDENCE_PENDING and
 > `observed` stays null.
+
+> **WP-CORE-008 technical closure delta (2026-10-29).** The real merged runtime
+> acceptance slice is now executable through `tools/demo-runtime/scripts/av_scen.py`
+> and `check_consistency.py`. The current-main run records are bound in
+> `EVID-WP-CORE-008-TECH-20261029` and update the four WP-CORE-008 source rows
+> in §17 in the same closure PR. The records remain `EVIDENCE_PENDING`: this is
+> not a claim that the wider Vision/RCA/Scheduler/Automation AV portfolio or
+> final EV-L5 evaluation has been completed, and no accountable owner DoD
+> certification is asserted.
 
 > **WP-PLAT-003 implementation delta (2026-10-27).** FR-PLAT-001 now also
 > references Temporal on PostgreSQL with the platform namespace, Qdrant with a
@@ -2449,7 +2458,7 @@ Backward trace (Item 83 #44): every acceptance-relevant family maps to ≥1 requ
 
 ## 10. View E — Evidence Coverage
 
-No evidence exists. The table fixes, per requirement, **what kind of evidence will be acceptable** so that later evidence cannot be down-scoped silently. Evidence codes for FRs are the Item 81 catalog codes (TE, EE, BE, RE, DE, AE, LE, PE); NFR codes are derived from the mechanism families. `EvidenceID` stays empty until an immutable EvidenceBundle exists (RTM-INV-68); `Applicability` becomes CURRENT/STALE/SUPERSEDED/NOT_APPLICABLE only then.
+The table fixes, per requirement, **what kind of evidence will be acceptable** so that later evidence cannot be down-scoped silently. Evidence codes for FRs are the Item 81 catalog codes (TE, EE, BE, RE, DE, AE, LE, PE); NFR codes are derived from the mechanism families. Baseline rows remain empty until an immutable EvidenceBundle exists (RTM-INV-68); the WP-CORE-008 technical rows are the explicit recorded exception and remain `EVIDENCE_PENDING`, with `Applicability` marked as a technical slice rather than final acceptance.
 
 ### 10.FA FR-GOV — Requirement Governance
 
@@ -2472,10 +2481,10 @@ No evidence exists. The table fixes, per requirement, **what kind of evidence wi
 |---|---|---|---|---|---|---|---|
 | FR-CORE-001 | F0 | TE/EE | CI + INTEGRATION + EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
 | FR-CORE-002 | F0 | TE/EE | CI + INTEGRATION + EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
-| FR-CORE-003 | F1 | TE/EE | CI + INTEGRATION | EV-L3 | — | — | NOT_YET_EXECUTED |
+| FR-CORE-003 | F1 | TE/EE | CI + INTEGRATION | EV-L3 | EVID-WP-CORE-008-TECH-20261029 | CURRENT (technical slice) | EVIDENCE_PENDING |
 | FR-CORE-004 | F1 | TE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
 | FR-CORE-005 | F1 | TE/EE | CI + INTEGRATION + EVALUATION | EV-L4 | — | — | NOT_YET_EXECUTED |
-| FR-CORE-006 | F1 | TE/EE | CI + INTEGRATION | EV-L3 | — | — | NOT_YET_EXECUTED |
+| FR-CORE-006 | F1 | TE/EE | CI + INTEGRATION | EV-L3 | EVID-WP-CORE-008-TECH-20261029 | CURRENT (technical slice) | EVIDENCE_PENDING |
 | FR-CORE-007 | F1 | TE/EE | CI + INTEGRATION | EV-L3 | — | — | NOT_YET_EXECUTED |
 | FR-CORE-008 | F1 | TE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
 | FR-CORE-009 | F1 | TE/EE | CI + EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
@@ -2519,7 +2528,7 @@ No evidence exists. The table fixes, per requirement, **what kind of evidence wi
 | FR-TWIN-007 | F1 | TE | CI + INTEGRATION | EV-L3 | — | — | NOT_YET_EXECUTED |
 | FR-TWIN-008 | F1 | TE/EE | CI + INTEGRATION | EV-L3 | — | — | NOT_YET_EXECUTED |
 | FR-TWIN-009 | F1 | TE/PE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
-| FR-TWIN-010 | F1 | EE | INTEGRATION + EVALUATION + DEMO | EV-L5 | — | — | NOT_YET_EXECUTED |
+| FR-TWIN-010 | F1 | EE | INTEGRATION + EVALUATION + DEMO | EV-L5 | EVID-WP-CORE-008-TECH-20261029 | CURRENT (technical slice) | EVIDENCE_PENDING |
 
 ### 10.FE FR-EVT — Event & Integration Contracts
 
@@ -2779,7 +2788,7 @@ No evidence exists. The table fixes, per requirement, **what kind of evidence wi
 | NFR-REL-007 | A1 | RE | EVALUATION | EV-L4 | — | — | NOT_YET_EXECUTED |
 | NFR-REL-008 | A1 | RE/BE | EVALUATION | EV-L4 | — | — | NOT_YET_EXECUTED |
 | NFR-REL-009 | A1 | RE | INTEGRATION | EV-L3 | — | — | NOT_YET_EXECUTED |
-| NFR-REL-010 | H0 | EE/BE/RE | INTEGRATION + EVALUATION | EV-L5 | — | — | NOT_YET_EXECUTED |
+| NFR-REL-010 | H0 | EE/BE/RE | INTEGRATION + EVALUATION | EV-L5 | EVID-WP-CORE-008-TECH-20261029 | CURRENT (technical slice) | EVIDENCE_PENDING |
 
 ### 10.NE NFR-REC — Recoverability / Durability
 
@@ -3573,7 +3582,7 @@ Each role owns ≥1 F0 in a distinct capability family; no F0 is shared. RoleCri
 
 ## 17. Requirement Trace Records (Edge-Level Projection)
 
-One record per requirement, in the controlled relation vocabulary. These records are the human-readable mirror of `03_traceability/trace_edges.yaml` (same generator). `EXECUTED_AS`, `EVIDENCED_BY`, `SUPPORTS_CLAIM` are intentionally empty.
+One record per requirement, in the controlled relation vocabulary. These records are the human-readable mirror of `traceability/trace_edges.yaml` (same generator). `EXECUTED_AS`, `EVIDENCED_BY`, and `SUPPORTS_CLAIM` remain empty for unexecuted baseline records; recorded technical edges are added only when the corresponding run/bundle exists.
 
 ### 17.FA FR-GOV
 
@@ -3726,10 +3735,11 @@ FR-CORE-003:
   EXPOSED_BY: ["Core Command Acceptance API"]
   VERIFIED_BY: [TEST-CORE-STATEMACHINE]
   EXERCISED_IN: [AV-SCEN-01]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
-  EVIDENCED_BY: []  # no EvidenceID may be invented
+  EXECUTED_AS: [RUN-CORE-008-AV-20261029]
+  EVIDENCED_BY: [EVID-WP-CORE-008-TECH-20261029]
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Real AV-SCEN-01 Core/outbox/JetStream/Twin acceptance slice; wider inspection-triggered recovery portfolio remains outside this WP slice."
 FR-CORE-004:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-004 L169852"}
   DERIVED_FROM: [ITEM-15, ITEM-22, BE-INV-07, INT-INV-07]
@@ -3762,10 +3772,11 @@ FR-CORE-006:
   EXPOSED_BY: ["Core Command Acceptance API"]
   VERIFIED_BY: [TEST-CORE-IDEMP, TEST-AUTO-OUTCOME]
   EXERCISED_IN: [AV-SCEN-01]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
-  EVIDENCED_BY: []  # no EvidenceID may be invented
+  EXECUTED_AS: [RUN-CORE-008-AV-20261029]
+  EVIDENCED_BY: [EVID-WP-CORE-008-TECH-20261029]
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Durable accepted outcome and real rejection/acceptance identifiers are in the current-main runtime bundle; final package acceptance remains pending."
 FR-CORE-007:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-007 L169855"}
   DERIVED_FROM: [ITEM-09, ITEM-15, ITEM-23, WL-INV-06]
@@ -4200,14 +4211,15 @@ FR-TWIN-010:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-TWIN-010 L169902"}
   DERIVED_FROM: [ITEM-07, ITEM-18, ITEM-84, RES-INV-15]
   ALLOCATED_TO: [ARCH-TWIN-API, ARCH-AUTO-VERIFY]
-  REALIZED_BY: {surface: "post-condition verification query used by workflows", deployable: "digital-twin-service + automation-service", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "post-condition verification query used by workflows", deployable: "digital-twin-service + automation-service", ref: "tools/demo-runtime/src/cap_demo_runtime/av_scenarios.py; tools/demo-runtime/scripts/check_consistency.py"}
   EXPOSED_BY: ["Twin Query API (verification view)"]
   VERIFIED_BY: [BENCH-E2E-001]
   EXERCISED_IN: [AV-SCEN-01, E2E-01, DEMO-GS01-001]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
-  EVIDENCED_BY: []  # no EvidenceID may be invented
+  EXECUTED_AS: [RUN-CORE-008-AV-20261029]
+  EVIDENCED_BY: [EVID-WP-CORE-008-TECH-20261029]
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "INTEGRATION + EVALUATION + DEMO", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Real Twin post-condition consistency checks passed for the WP-CORE-008 runtime slice; final EV-L5 benchmark evidence remains pending."
 ```
 
 ### 17.FE FR-EVT
@@ -6404,10 +6416,11 @@ NFR-REL-010:
   MEASUREMENT: {metric: "unresolved semantic mismatch between verified Core effect and Twin state at run end", threshold: "= 0 per valid closed-loop run", workload: "closed-loop runs (E2E matrix, AV-SCEN-01/02)", hardware: "N/A (not hardware-bound)", observed: null}
   VERIFIED_BY: [BENCH-E2E-001, RES-TWINREBUILD-001]
   EXERCISED_IN: [AV-SCEN-01]
-  EXECUTED_AS: []  # NOT_YET_EXECUTED
-  EVIDENCED_BY: []  # no EvidenceID may be invented
+  EXECUTED_AS: [RUN-CORE-008-AV-20261029]
+  EVIDENCED_BY: [EVID-WP-CORE-008-TECH-20261029]
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L5, env: "INTEGRATION + EVALUATION", m6_freeze_sensitive: true}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Observed semantic mismatch count was zero in the two focused runtime slices; this is technical evidence, not the final EV-L5 measurement disposition."
 ```
 
 ### 17.NE NFR-REC

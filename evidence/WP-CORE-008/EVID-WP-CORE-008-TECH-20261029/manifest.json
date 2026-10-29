@@ -1,0 +1,41 @@
+{
+  "schema": "cap.evidence-bundle/v1",
+  "evidence_id": "EVID-WP-CORE-008-TECH-20261029",
+  "work_package": "WP-CORE-008",
+  "run_id": "RUN-CORE-008-AV-20261029",
+  "source_main_sha": "ee060997b611fae16d6c4f13c0d85cebafaf17e7",
+  "boundary_mode": "REAL",
+  "environment": "INTEGRATION + DEMO",
+  "status": "TECHNICAL_EVIDENCE_PENDING_ACCOUNTABLE_ACCEPTANCE",
+  "claim_boundary": "Core/outbox/JetStream/Twin/BFF/UI acceptance slice only; not the full AV-SCEN portfolio, final EV-L5 evaluation, or production security acceptance",
+  "artifacts": [
+    {
+      "path": "evidence/WP-CORE-008/AV-SCEN-01-2026-10-29.json",
+      "sha256": "a5ce533b6cc46badcc01ecfb50ea44b41b242c4682eb9c4b2928593945e276aa"
+    },
+    {
+      "path": "evidence/WP-CORE-008/AV-SCEN-01-CONSISTENCY-2026-10-29.json",
+      "sha256": "23edbab3fe5ef16b09052bb0b34d74c76ff48f64105727acc407fc297f14a060"
+    },
+    {
+      "path": "evidence/WP-CORE-008/AV-SCEN-03-2026-10-29.json",
+      "sha256": "797b32e08152ec6360d09f66c824c6f17bce21d5e22beb24d28d5644e36a62b7"
+    },
+    {
+      "path": "evidence/WP-CORE-008/AV-SCEN-03-CONSISTENCY-2026-10-29.json",
+      "sha256": "9c1c8f94e1ed4739403fc5f06b70a1c38701d513c5b820a932daf7f26ed29203"
+    },
+    {
+      "path": "evidence/WP-CORE-008/RUNTIME-E2E-2026-10-29.md",
+      "sha256": "3369bda73fadb0d52b8de0701224274c1ce9fcbec7001b1dcfec2c05611dc707"
+    },
+    {
+      "path": "evidence/WP-CORE-008/DEP-028-CURRENT-MAIN-2026-10-29.md",
+      "sha256": "f780d81670d22a02a212f928d8be5faaa8ba5513712ba4f25cadebb6eae4a7f0"
+    }
+  ],
+  "integrity": {
+    "algorithm": "sha256",
+    "artifact_list_sha256": "9332096f1c9155a9fcaf12cb05b5e1fbe3e56df06c053506950c6e5486150934"
+  }
+}
