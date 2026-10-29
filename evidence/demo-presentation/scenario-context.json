@@ -1,0 +1,200 @@
+{
+  "branch_id": "PRIMARY",
+  "checks": [
+    {
+      "detail": "false -> true hold state",
+      "name": "core_mutation",
+      "passed": true
+    },
+    {
+      "detail": "durable accepted Core outcome",
+      "name": "command_outcome",
+      "passed": true
+    },
+    {
+      "detail": "published outbox row",
+      "name": "transactional_outbox",
+      "passed": true
+    },
+    {
+      "detail": "EventID and causation bind to CommandID",
+      "name": "event_identity",
+      "passed": true
+    },
+    {
+      "detail": "Twin source EventID matches",
+      "name": "twin_projection",
+      "passed": true
+    },
+    {
+      "detail": "Twin ledger contains EventID",
+      "name": "nats_delivery",
+      "passed": true
+    },
+    {
+      "detail": "Twin projection revision is FRESH",
+      "name": "twin_fresh",
+      "passed": true
+    }
+  ],
+  "command": {
+    "id": "391a4c22-bdae-522b-b75d-8d3f391548b2",
+    "outcome": {
+      "command_id": "391a4c22-bdae-522b-b75d-8d3f391548b2",
+      "correlation_id": "wp-doc-004-demo-hold",
+      "effect_verification": "NOT_VERIFIED",
+      "error_code": null,
+      "outcome_id": "e0457cab-17cb-4f35-818d-5c3a59976ca4",
+      "status": "ACCEPTED",
+      "world_id": "DEMO-WORLD"
+    },
+    "response": {
+      "command_id": "391a4c22-bdae-522b-b75d-8d3f391548b2",
+      "correlation_id": "wp-doc-004-demo-hold",
+      "detail": null,
+      "effect_verification": "NOT_VERIFIED",
+      "error_code": null,
+      "event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
+      "outcome_id": "e0457cab-17cb-4f35-818d-5c3a59976ca4",
+      "status": "ACCEPTED",
+      "world_id": "DEMO-WORLD"
+    }
+  },
+  "consumer_scope": "twin-primary",
+  "core_after": {
+    "execution_state": "DISPATCHED",
+    "held": true,
+    "id": "DEMO-LOT-001",
+    "lifecycle_state": "CREATED",
+    "revision": "b94aae2725fe4003a79944c35be072da",
+    "state_revision": "b94aae2725fe4003a79944c35be072da"
+  },
+  "core_before": {
+    "execution_state": "DISPATCHED",
+    "held": false,
+    "id": "DEMO-LOT-001",
+    "lifecycle_state": "CREATED",
+    "revision": "b94aae2725fe4003a79944c35be072da",
+    "state_revision": "b94aae2725fe4003a79944c35be072da"
+  },
+  "event": {
+    "causation_id": "391a4c22-bdae-522b-b75d-8d3f391548b2",
+    "correlation_id": "wp-doc-004-demo-hold",
+    "event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
+    "event_type": "production.lot-held",
+    "trace_id": "2e8d35b0-93e4-4658-9116-fa55f3658e5b",
+    "world_id": "DEMO-WORLD"
+  },
+  "lot_id": "DEMO-LOT-001",
+  "nats": {
+    "ack_policy": "explicit",
+    "consumer_sequence": 2,
+    "deliver_policy": "all",
+    "durable": "twin-primary",
+    "messages": 2,
+    "num_ack_pending": 0,
+    "num_redelivered": 0,
+    "stream": "CAP_EVENTS",
+    "stream_sequence": 2,
+    "subjects": [
+      "cap.core.events"
+    ],
+    "url": "nats://127.0.0.1:24242"
+  },
+  "outbox": {
+    "aggregate_id": "DEMO-LOT-001",
+    "aggregate_version": 2,
+    "causation_id": "391a4c22-bdae-522b-b75d-8d3f391548b2",
+    "correlation_id": "wp-doc-004-demo-hold",
+    "event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
+    "event_type": "production.lot-held",
+    "outbox_id": "cc5c03ef-4dd0-4b4e-b3c5-040a9bca599e",
+    "publication_status": "PUBLISHED",
+    "world_id": "DEMO-WORLD"
+  },
+  "runtime_mode": "REAL",
+  "schema": "cap.wp-doc-004.demo-context/v1",
+  "source_main_sha": "a185a9392d2ed3111703923afc406c78ae11f8dc",
+  "status": "PASS",
+  "twin": {
+    "outbox": {
+      "aggregate_id": "DEMO-LOT-001",
+      "aggregate_version": 2,
+      "causation_id": "391a4c22-bdae-522b-b75d-8d3f391548b2",
+      "correlation_id": "wp-doc-004-demo-hold",
+      "event": {
+        "causation_id": "391a4c22-bdae-522b-b75d-8d3f391548b2",
+        "correlation_id": "wp-doc-004-demo-hold",
+        "entity_refs": [
+          {
+            "entity_type": "Lot",
+            "id": "DEMO-LOT-001",
+            "revision": "b94aae2725fe4003a79944c35be072da"
+          }
+        ],
+        "event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
+        "event_type": "production.lot-held",
+        "observed_at": "2026-10-29T19:28:13.825817Z",
+        "occurred_at": {
+          "clock": "UTC",
+          "value": "2026-10-29T19:28:13.825817Z"
+        },
+        "payload": {
+          "aggregate_id": "DEMO-LOT-001",
+          "aggregate_type": "Lot",
+          "aggregate_version": 2,
+          "event_type": "production.lot-held",
+          "lot_id": "DEMO-LOT-001",
+          "lot_revision": "b94aae2725fe4003a79944c35be072da",
+          "material_hold_id": "6165d05b-1544-5a01-9543-0b025aac4b65",
+          "reason": "inspection-triggered controlled recovery acceptance slice",
+          "schema_version": 2
+        },
+        "producer": "manufacturing-core",
+        "schema_version": 2,
+        "trace_id": "2e8d35b0-93e4-4658-9116-fa55f3658e5b",
+        "world_id": "DEMO-WORLD"
+      },
+      "event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
+      "event_type": "production.lot-held",
+      "outbox_id": "cc5c03ef-4dd0-4b4e-b3c5-040a9bca599e",
+      "publication_status": "PUBLISHED",
+      "world_id": "DEMO-WORLD"
+    },
+    "twin_applied_event": {
+      "aggregate_id": "DEMO-LOT-001",
+      "aggregate_type": "Lot",
+      "aggregate_version": 2,
+      "branch_id": "PRIMARY",
+      "consumer_scope": "twin-primary",
+      "event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
+      "world_id": "DEMO-WORLD"
+    },
+    "twin_projection": {
+      "aggregate_id": "DEMO-LOT-001",
+      "aggregate_version": 2,
+      "branch_id": "PRIMARY",
+      "source_event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
+      "source_revision": "863002ae-8b0b-415f-8934-d5ae097178e0",
+      "state": {
+        "aggregate_id": "DEMO-LOT-001",
+        "aggregate_type": "Lot",
+        "aggregate_version": 2,
+        "dispatch_id": "9932e298-c5b3-5412-89dd-7ea2e8f4d78e",
+        "dispatchable": true,
+        "epistemic_class": "OBSERVED",
+        "hold_id": "6165d05b-1544-5a01-9543-0b025aac4b65",
+        "hold_reason": "inspection-triggered controlled recovery acceptance slice",
+        "lifecycle": "HELD",
+        "source_event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
+        "source_revision": "863002ae-8b0b-415f-8934-d5ae097178e0"
+      },
+      "world_id": "DEMO-WORLD"
+    },
+    "twin_revision": {
+      "source_event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
+      "status": "FRESH"
+    }
+  },
+  "world_id": "DEMO-WORLD"
+}

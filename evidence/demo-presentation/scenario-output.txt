@@ -1,0 +1,7 @@
+PASS  core_mutation: false -> true hold state
+PASS  command_outcome: durable accepted Core outcome
+PASS  transactional_outbox: published outbox row
+PASS  event_identity: EventID and causation bind to CommandID
+PASS  twin_projection: Twin source EventID matches
+PASS  nats_delivery: Twin ledger contains EventID
+PASS  twin_fresh: Twin projection revision is FRESH

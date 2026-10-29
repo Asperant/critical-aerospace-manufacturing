@@ -22,7 +22,14 @@
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-COMPOSE=(docker compose -f "${HERE}/compose.yaml")
+COMPOSE=(docker compose)
+# A caller may isolate the same canonical composition under a separate Compose
+# project.  The normal platform path remains `cap-platform`; the demo wrapper
+# uses `cap-demo` so its `reset` cannot remove another developer's volumes.
+if [[ -n "${CAP_COMPOSE_PROJECT_NAME:-}" ]]; then
+  COMPOSE+=(-p "${CAP_COMPOSE_PROJECT_NAME}")
+fi
+COMPOSE+=(-f "${HERE}/compose.yaml")
 # WP-CICD-002: `python -m cap_release deploy` generates a digest-pinned override. With it
 # the released services are pulled by digest and nothing is built on the host (02, CD).
 if [[ -n "${CAP_COMPOSE_OVERRIDE:-}" ]]; then

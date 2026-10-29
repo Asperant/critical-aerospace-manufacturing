@@ -1,0 +1,16 @@
+Demo preflight (cap-demo)
+PASS  Docker daemon
+PASS  Compose definition
+PASS  PostgreSQL health
+PASS  NATS/JetStream health
+PASS  NATS stream/consumer
+PASS  Keycloak health
+PASS  Keycloak demo realm
+PASS  Migrations
+PASS  Seed scenario
+PASS  Core health
+PASS  Outbox relay
+PASS  Twin consumer
+PASS  BFF health
+PASS  UI availability
+PASS  demo runtime is ready

@@ -2,8 +2,14 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from uuid import NAMESPACE_URL, uuid5
 
 import psycopg
+from manufacturing_core.commands import (
+    CommandTarget,
+    DispatchLot,
+    FreshnessPrecondition,
+)
 from manufacturing_core.domain import (
     Equipment,
     Lot,
@@ -12,6 +18,7 @@ from manufacturing_core.domain import (
     RouteVisit,
 )
 from manufacturing_core.repository import CoreRepository
+from manufacturing_core.transitions import CoreTransitionService
 from psycopg.rows import DictRow, dict_row
 
 
@@ -55,6 +62,33 @@ def main() -> None:
                         revision="lot-rev-1",
                         order_id="DEMO-ORDER-001",
                     )
+                )
+                # Provision one normal, visible Twin state before the presenter
+                # runs the hold command.  The queued state is fixture setup; the
+                # dispatch itself uses the real Core transition service and
+                # transactional outbox, so the first Twin projection is still a
+                # genuine Core event rather than a hand-written Twin row.
+                connection.execute(
+                    "UPDATE core.lot_state SET execution_state='QUEUED' "
+                    "WHERE id='DEMO-LOT-001'"
+                )
+                dispatch = DispatchLot(
+                    command_id=uuid5(
+                        NAMESPACE_URL, "cap-demo/WP-DOC-004/DEMO-LOT-001/dispatch"
+                    ),
+                    idempotency_key="wp-doc-004-demo-dispatch",
+                    world_id="DEMO-WORLD",
+                    correlation_id="wp-doc-004-demo-dispatch",
+                    target=CommandTarget(entity_type="Lot", entity_id="DEMO-LOT-001"),
+                    expected=FreshnessPrecondition(expected_revision="lot-rev-1"),
+                    operation_id="DEMO-VISIT-1",
+                    resource_id="DEMO-CNC-01",
+                )
+                CoreTransitionService(connection).dispatch_lot(
+                    (),
+                    dispatch,
+                    resource_available=True,
+                    expected_world_id="DEMO-WORLD",
                 )
     print("seeded DEMO-WORLD / DEMO-LOT-001 through Core repository")
     Path("/tmp/cap-demo-seed.done").touch()

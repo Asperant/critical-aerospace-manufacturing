@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "url": "http://localhost:29090/overview?world_id=DEMO-WORLD",
+  "world_id": "DEMO-WORLD",
+  "lot_id": "DEMO-LOT-001",
+  "has_authenticated_actor": true,
+  "has_lot": true,
+  "has_held_state": true,
+  "has_active_hold": true,
+  "has_quality_excursion": true,
+  "bff_authenticated": true,
+  "screenshot": "/artifacts/browser-final.png"
+}
