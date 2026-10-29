@@ -1,0 +1,25 @@
+{
+  "schema": "edge-runtime-readiness-basis-v1",
+  "edge": "DEP-033",
+  "predecessor_node": "DN-RT-PG",
+  "successor_node": "DN-TWIN-SKELETON",
+  "level": "INTEGRATION_READY",
+  "producer_wp": "WP-CORE-008",
+  "producer_pr": 207,
+  "producer_merge_sha": "6a7c17215223af56c981f6d8cbf9a560fb0d4911",
+  "verified_main_sha": "6a7c17215223af56c981f6d8cbf9a560fb0d4911",
+  "precise_requirement": "The canonical Twin PostgreSQL migration is applied at INTEGRATION and projection revision/source-event ledger persistence survives the real runtime catch-up/restart path.",
+  "scope_boundary": "This certifies the observed Twin schema and persistence path only. It does not certify all rebuild, stale-order, or recovery semantics of the Twin WP.",
+  "artifacts": [
+    {"path": "services/operational-twin/migrations/0001_twin.sql", "role": "canonical_twin_migration"},
+    {"path": "evidence/WP-CORE-008/RUNTIME-E2E-2026-10-29.md", "role": "real_postgresql_twin_evidence"},
+    {"path": "evidence/WP-CORE-008/DEP-028-DISPATCH-2026-10-29.md", "role": "real_source_ledger_and_revision_evidence"}
+  ],
+  "tests": [
+    {"test_id": "TWIN-MIGRATION-RUNTIME", "path": "evidence/WP-CORE-008/RUNTIME-E2E-2026-10-29.md", "result": "migration container completed and private Twin schema was present"},
+    {"test_id": "TWIN-POSTGRES-PERSISTENCE", "path": "evidence/WP-CORE-008/DEP-028-DISPATCH-2026-10-29.md", "result": "projection_entity, applied_event, and projection_revision rows persisted in real PostgreSQL"},
+    {"test_id": "TWIN-CATCHUP", "path": "evidence/WP-CORE-008/DEP-028-DISPATCH-2026-10-29.md", "result": "consumer recovered, caught up, and ended with zero pending acknowledgements"}
+  ],
+  "verification": "The runtime used PostgreSQL 18 and the canonical twin schema. The accepted dispatch source event and projection revision were queried after Twin recreation/catch-up from PostgreSQL, not from an in-memory substitute.",
+  "control": "This is an edge-specific readiness record; it does not transition WP-CORE-008."
+}

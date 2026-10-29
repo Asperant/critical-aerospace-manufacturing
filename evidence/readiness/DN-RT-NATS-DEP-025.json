@@ -1,0 +1,24 @@
+{
+  "schema": "edge-runtime-readiness-basis-v1",
+  "edge": "DEP-025",
+  "predecessor_node": "DN-RT-NATS",
+  "successor_node": "DN-EVT-SPINE",
+  "level": "INTEGRATION_READY",
+  "producer_wp": "WP-CORE-008",
+  "producer_pr": 207,
+  "producer_merge_sha": "6a7c17215223af56c981f6d8cbf9a560fb0d4911",
+  "verified_main_sha": "6a7c17215223af56c981f6d8cbf9a560fb0d4911",
+  "precise_requirement": "Real JetStream is used in CI and INTEGRATION with no fake bus, satisfying CI-INV-07.",
+  "scope_boundary": "This certifies the NATS/JetStream runtime predicate exercised by the Core-to-Twin path. It does not certify broker production hardening or unrelated consumers.",
+  "artifacts": [
+    {"path": "infra/compose/compose.yaml", "role": "NATS runtime"},
+    {"path": "evidence/WP-CORE-008/RUNTIME-E2E-2026-10-29.md", "role": "real_stream_and_consumer_evidence"},
+    {"path": "evidence/WP-CORE-008/DEP-028-DISPATCH-2026-10-29.md", "role": "real_dispatch_delivery_evidence"}
+  ],
+  "tests": [
+    {"test_id": "CI-REAL-NATS-JETSTREAM", "path": "GitHub Actions run 40909586750", "result": "real PostgreSQL/NATS integration passed"},
+    {"test_id": "NATS-CAP-EVENTS", "path": "evidence/WP-CORE-008/DEP-028-DISPATCH-2026-10-29.md", "result": "CAP_EVENTS stream, cap.core.events subject, twin-primary durable consumer observed with explicit ack"}
+  ],
+  "verification": "The merged current-main runtime and required CI used NATS 2.10 JetStream. The observed stream was CAP_EVENTS with subject cap.core.events and consumer twin-primary; no fake bus was used.",
+  "control": "This is an edge-specific readiness record; it does not transition WP-CORE-008."
+}

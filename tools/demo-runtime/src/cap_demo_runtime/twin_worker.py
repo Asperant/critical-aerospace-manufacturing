@@ -35,7 +35,7 @@ def _apply(
         data, expected_world_id=settings.world_id, expected_branch_id=settings.branch_id
     )
     rows = connection.execute(
-        "SELECT aggregate_type, aggregate_id, aggregate_version FROM twin.projection_entity "
+        "SELECT aggregate_type, aggregate_id, aggregate_version, state FROM twin.projection_entity "
         "WHERE world_id=%s AND branch_id=%s",
         (settings.world_id, settings.branch_id),
     ).fetchall()

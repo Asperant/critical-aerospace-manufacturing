@@ -1586,7 +1586,7 @@ DEP-024:
   precise_requirement: null
   risk_class: DR-1
   source: "Item 66 spine; #96"
-  status: NOT_READY
+  status: READY
 DEP-025:
   predecessor: {node: DN-RT-NATS, owner: "Yavuz"}
   successor: {node: DN-EVT-SPINE, owner: "Asrın"}
@@ -1597,7 +1597,7 @@ DEP-025:
   precise_requirement: null
   risk_class: DR-3
   source: "Item 66 #32"
-  status: NOT_READY
+  status: READY
 DEP-026:
   predecessor: {node: DN-CORE-CONTRACTS, owner: "Asrın"}
   successor: {node: DN-CORE-CMDCON, owner: "Asrın"}
@@ -1674,7 +1674,7 @@ DEP-032:
   precise_requirement: "At INTEGRATION, consume canonical EVT-002 events through the approved EVT-003 consumer boundary and prove that a real event advances the Twin projection revision with matching source EventID, WorldID, and branch admission; fixture-only evidence is insufficient."
   risk_class: DR-1
   source: "Item 66 #96, #188"
-  status: NOT_READY
+  status: READY
 DEP-033:
   predecessor: {node: DN-RT-PG, owner: "Yavuz"}
   successor: {node: DN-TWIN-SKELETON, owner: "Asrın"}
@@ -1685,7 +1685,7 @@ DEP-033:
   precise_requirement: "At INTEGRATION, apply the canonical PostgreSQL runtime migration for the twin schema and verify projection revision and source-event ledger persistence across restart and catch-up against real PostgreSQL; an in-memory substitute is insufficient."
   risk_class: DR-3
   source: "Item 66 #31"
-  status: NOT_READY
+  status: READY
 DEP-034:
   predecessor: {node: DN-TWIN-SKELETON, owner: "Asrın"}
   successor: {node: DN-TWIN-PROJ, owner: "Asrın"}
@@ -2518,7 +2518,7 @@ DEP-106:
   precise_requirement: null
   risk_class: DR-1
   source: "Item 66 #96 (frontend shell); Item 65 M1 “real Core/event/Twin/UI path”"
-  status: NOT_READY
+  status: READY
 DEP-107:
   predecessor: {node: DN-UI-SHELL, owner: "Asrın"}
   successor: {node: DN-UI-APPROVAL, owner: "Asrın"}
