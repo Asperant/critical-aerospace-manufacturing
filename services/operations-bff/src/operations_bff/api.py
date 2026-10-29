@@ -7,6 +7,7 @@ Queries and commands are not wired.
 
 from __future__ import annotations
 
+import os
 import time
 from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime
@@ -64,6 +65,11 @@ def utc_now() -> datetime:
     return datetime.now(UTC)
 
 
+def secure_cookies() -> bool:
+    """HTTP cookies are disabled only by an explicit local demo setting."""
+    return os.environ.get("OPERATIONS_BFF_COOKIE_SECURE", "1") != "0"
+
+
 def correlation_id_of(request: Request) -> str:
     """The id the access middleware assigned to this request."""
     value = getattr(request.state, "correlation_id", None)
@@ -86,7 +92,7 @@ def write_session_cookie(
         value=record.session_id,
         max_age=remaining,
         path="/",
-        secure=True,
+        secure=secure_cookies(),
         httponly=True,
         samesite=cookie.same_site,
     )
@@ -96,7 +102,7 @@ def clear_session_cookie(response: Response, cookie: CookieSettings) -> None:
     response.delete_cookie(
         key=COOKIE_NAME,
         path="/",
-        secure=True,
+        secure=secure_cookies(),
         httponly=True,
         samesite=cookie.same_site,
     )
@@ -272,11 +278,11 @@ def _add_facility_state_route(
         return JSONResponse(body, headers={"Cache-Control": "no-store"})
 
 
-def _clear_login_cookie(response: Response) -> None:
+def _clear_login_cookie(response: Response, cookie: CookieSettings) -> None:
     response.delete_cookie(
         key=LOGIN_COOKIE_NAME,
         path="/v1/session",
-        secure=True,
+        secure=secure_cookies(),
         httponly=True,
         samesite="lax",
     )
@@ -302,7 +308,7 @@ def _add_login_routes(
             value=started.binding,
             max_age=started.max_age_seconds,
             path="/v1/session",
-            secure=True,
+            secure=secure_cookies(),
             httponly=True,
             samesite="lax",
         )
@@ -322,12 +328,12 @@ def _add_login_routes(
         except BffError as exc:
             # The transaction is spent whatever the outcome; drop its cookie.
             failure = error_response(exc, correlation_id_of(request))
-            _clear_login_cookie(failure)
+            _clear_login_cookie(failure, cookie)
             return failure
         response = Response(
             status_code=302,
             headers={"Location": landing, "Cache-Control": "no-store"},
         )
         write_session_cookie(response, record, cookie, now)
-        _clear_login_cookie(response)
+        _clear_login_cookie(response, cookie)
         return response

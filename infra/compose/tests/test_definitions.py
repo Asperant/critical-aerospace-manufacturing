@@ -204,6 +204,13 @@ STARTUP_LAYERS = {
     "mlflow-init": 1,
     "mlflow": 1,
     "nats": 2,
+    "demo-migrate": 3,
+    "demo-seed": 3,
+    "demo-relay": 3,
+    "demo-twin": 3,
+    "demo-core": 4,
+    "demo-bff": 4,
+    "demo-ui": 4,
 }
 
 
@@ -281,10 +288,12 @@ def test_platform_realm_carries_no_secret() -> None:
     import json
 
     realm = json.loads(COMPOSE["configs"]["keycloak-platform-realm"]["content"])
-    (client,) = realm["clients"]
-    assert client["secret"] == "$${CAP_KEYCLOAK_SMOKE_CLIENT_SECRET}"
-    assert client["serviceAccountsEnabled"] and not client["publicClient"]
-    assert not client["directAccessGrantsEnabled"] and not client["standardFlowEnabled"]
+    smoke = next(client for client in realm["clients"] if client["clientId"] == "cap-platform-smoke")
+    assert smoke["secret"] == "$${CAP_KEYCLOAK_SMOKE_CLIENT_SECRET}"
+    assert smoke["serviceAccountsEnabled"] and not smoke["publicClient"]
+    assert not smoke["directAccessGrantsEnabled"] and not smoke["standardFlowEnabled"]
+    browser = next(client for client in realm["clients"] if client["clientId"] == "command-center-web")
+    assert browser["publicClient"] and browser["standardFlowEnabled"]
     script = (HERE / "stack.sh").read_text("utf-8")
     assert (
         "CAP_KEYCLOAK_SMOKE_CLIENT_SECRET"
