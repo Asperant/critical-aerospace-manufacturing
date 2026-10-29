@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Literal
 
 from .enums import Severity
+from .post_merge_evidence import evaluate_post_merge_evidence
 from .queries import context
 
 _DOR = re.compile(r"^DOR-(TASK|WP)-\d{2}$")
@@ -146,7 +147,6 @@ def evaluate(project, wp_id: str, gate: Literal["ready", "done"], root: Path) ->
         evidence = _ready_evidence(canonical, root)
         payload.update(evidence, transition_authorized=evidence["result"] == "PASS")
         return payload
-    payload.update(reason="Required post-merge verification and accountable owner DoD evidence are unavailable",
-                   missing_evidence=["actual deliverables and requirement verification at required boundaries", "required CI and canonical validation", "post-merge target-environment validation", "trace dispositions and identity-bound accepted evidence", "applicable WP/capability/research/scope DoD confirmations"],
-                   limitation="Done certification remains fail-closed until post-merge evidence is assessed")
+    evidence = evaluate_post_merge_evidence(project, canonical, root)
+    payload.update(evidence, transition_authorized=evidence["result"] == "PASS")
     return payload

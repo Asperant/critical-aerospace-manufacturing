@@ -137,7 +137,7 @@ readiness or completion.
 
 ## Fail-closed governance checks
 
-`projectctl check-ready <WP-ID>` and `projectctl check-done <WP-ID>` emit deterministic JSON to stdout. PASS exits 0; FAIL and UNKNOWN exit 1; input-loading failures exit 2. `check-ready` can produce PASS only from the supported bound Markdown assessment format; invalid, missing or ambiguous evidence remains UNKNOWN. `check-done` remains fail-closed pending its post-merge evidence adapter. No Plane calls, state writes, automatic transitions or local execution database are introduced.
+`projectctl check-ready <WP-ID>` and `projectctl check-done <WP-ID>` emit deterministic JSON to stdout. PASS exits 0; FAIL and UNKNOWN exit 1; input-loading failures exit 2. `check-ready` can produce PASS only from the supported bound Markdown assessment format; invalid, missing or ambiguous evidence remains UNKNOWN. `check-done` consumes one structured `cap.post-merge-evidence/v1` record under `evidence/<WP-ID>/`. The record binds a `cap.run-record/v1`, accountable owner certification, verified current-main provenance, successful post-merge CI, structured DoD dispositions, trace-registry/evidence-coverage rows and a hashed `cap.evidence-bundle/v1`. Missing, stale, malformed, ambiguous or mismatched records remain UNKNOWN. Historical execution and closure SHAs may be ancestors of current main; they are never treated as current main, and a non-ancestor post-merge record is stale. No Plane calls, state writes, automatic transitions or local execution database are introduced.
 
 ## CHG-054 / CTRL-HOST-031 — startability
 
