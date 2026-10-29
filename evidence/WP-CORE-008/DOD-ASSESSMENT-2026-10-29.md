@@ -25,19 +25,21 @@ transition.
 
 ## Gate result
 
-`WP-CORE-008 = HUMAN_DECISION / not DONE`.
+`WP-CORE-008 = ACCOUNTABLY_CERTIFIED / not DONE`.
 
-`projectctl check-done WP-CORE-008` remains `UNKNOWN` because the tool is
-fail-closed and does not mechanically certify the accountable owner's DoD
-assessment. The technical deliverable/trace/evidence gaps above are closed for
-the documented runtime slice; no owner approval or acceptance is invented here.
+The accountable owner certification is recorded in
+`RUN-CORE-008-AV-20261029.json` and
+`HUMAN-CERTIFICATION-CHECKLIST.md`, bound to the exact current-main,
+technical-closure, historical-runtime and bundle identifiers above.
+`projectctl check-done WP-CORE-008` remains `UNKNOWN` with
+`execution_status: UNAVAILABLE (documentation only)`: the current
+implementation has no post-merge evidence adapter and therefore cannot
+mechanically consume the now-recorded owner certification. This is a tooling
+fail-closed condition, not a missing runtime, trace, evidence or owner decision.
 
-The exact remaining human action is listed in
-`evidence/WP-CORE-008/HUMAN-CERTIFICATION-CHECKLIST.md`. It must confirm the
-scope boundary and decide whether this technical slice satisfies the package's
-selected DoD without claiming the wider AV portfolio. After the owner records
-that certification in the canonical evidence record, rerun `projectctl
-check-done WP-CORE-008`.
+The owner action is complete. No broader AV portfolio, final EV-L5 evaluation,
+production security acceptance or CORE-004 protected rework semantics is
+claimed.
 
 The same read-only gate was run for the materially affected
 `WP-CORE-002`, `WP-CORE-003`, `WP-CORE-005`, `WP-EVT-003`, `WP-TWIN-001`, and

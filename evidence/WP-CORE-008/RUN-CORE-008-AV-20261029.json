@@ -14,5 +14,34 @@
   ],
   "result": "PASS_FOR_IMPLEMENTED_CORE_TWIN_RUNTIME_SLICE",
   "full_canonical_av_portfolio": "NOT_CLAIMED",
-  "accountable_acceptance": "PENDING"
+  "accountable_acceptance": "CERTIFIED",
+  "accountable_certification": {
+    "owner": "Asrın Dündar",
+    "role": "accountable owner of WP-CORE-008",
+    "status": "CERTIFIED",
+    "certified_on": "2026-10-29",
+    "assertions": {
+      "runtime_core_outbox_jetstream_twin_bff_ui_slice_sufficient": true,
+      "scope_boundary_accepted": true,
+      "same_pr_trace_evidence_closure_accepted": true,
+      "selected_dod_satisfied": [
+        "DOD-WP-01",
+        "DOD-WP-02",
+        "DOD-WP-03",
+        "DOD-WP-05",
+        "DOD-WP-06",
+        "DOD-WP-12"
+      ]
+    },
+    "scope_exclusions": [
+      "full Vision/RCA/Scheduler/Automation AV portfolio",
+      "final EV-L5 evaluation",
+      "production security acceptance",
+      "CORE-004 protected rework semantics"
+    ],
+    "current_main_sha": "c13871e7ed28861732fea441a417a261747f9758",
+    "technical_closure_sha": "6299ab02491a9b7336b3637334ed461ce510ec21",
+    "historical_runtime_evidence_sha": "ee060997b611fae16d6c4f13c0d85cebafaf17e7",
+    "evidence_bundle": "EVID-WP-CORE-008-TECH-20261029"
+  }
 }

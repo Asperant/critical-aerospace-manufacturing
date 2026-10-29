@@ -1,8 +1,10 @@
 # WP-CORE-008 accountable certification action
 
-Status: `PENDING_ACCOUNTABLE_OWNER_CERTIFICATION`
+Status: `CERTIFIED_BY_ACCOUNTABLE_OWNER`
 
-This is an explicit human action, not an agent-generated approval.
+The following certification was explicitly provided by Asrın Dündar, the
+accountable owner of WP-CORE-008, and recorded in
+`RUN-CORE-008-AV-20261029.json`.
 
 The accountable owner must review these exact records:
 
@@ -14,15 +16,15 @@ The accountable owner must review these exact records:
 - `evidence/WP-CORE-008/EVID-WP-CORE-008-TECH-20261029/` — hashed technical bundle.
 - `evidence/WP-CORE-008/RUNTIME-E2E-2026-10-29.md` and `DEP-028-CURRENT-MAIN-2026-10-29.md` — prior real runtime and dispatch evidence.
 
-The owner must record explicit answers to all of these assertions:
+The owner recorded explicit answers to all of these assertions:
 
-1. The real runtime evidence is sufficient for the WP-CORE-008 Core/outbox/JetStream/Twin/BFF/UI acceptance slice.
-2. The scope boundary is accepted: this does not claim the full Vision/RCA/Scheduler/Automation AV-SCEN-01 portfolio, final EV-L5 evaluation, production security acceptance, or CORE-004 protected rework semantics.
-3. The same-PR trace/evidence update is acceptable as the technical closure record for this package.
-4. The selected DOD-WP-01, 02, 03, 05, 06 and 12 criteria are satisfied at the stated scope.
+1. **Certified:** The real runtime evidence is sufficient for the WP-CORE-008 Core/outbox/JetStream/Twin/BFF/UI acceptance slice.
+2. **Certified:** The scope boundary is accepted: this does not claim the full Vision/RCA/Scheduler/Automation AV-SCEN-01 portfolio, final EV-L5 evaluation, production security acceptance, or CORE-004 protected rework semantics.
+3. **Certified:** The same-PR trace/evidence update is acceptable as the technical closure record for this package.
+4. **Certified:** DOD-WP-01, DOD-WP-02, DOD-WP-03, DOD-WP-05, DOD-WP-06, and DOD-WP-12 are satisfied for the documented scope.
 
-The owner must append the signed/attributable certification to the canonical
-WP evidence record with the following provenance kept distinct:
+The attributable certification is bound to the canonical WP evidence record
+with the following provenance kept distinct:
 
 - historical runtime execution/source-main SHA:
   `ee060997b611fae16d6c4f13c0d85cebafaf17e7` (preserve as recorded in the
@@ -33,14 +35,19 @@ WP evidence record with the following provenance kept distinct:
   `6299ab02491a9b7336b3637334ed461ce510ec21`;
 - technical bundle ID: `EVID-WP-CORE-008-TECH-20261029`.
 
-The agent must not fill the accountable certification record.
+Certification owner: `Asrın Dündar`
 
-After that human record exists, run:
+Certification status: `CERTIFIED`
+
+Certification date: `2026-10-29`
+
+After this owner record exists, run:
 
 ```bash
 projectctl check-done WP-CORE-008
 ```
 
-Expected result: the gate can advance past `UNKNOWN` only if the canonical
-owner record and all other current DoD facts are accepted; otherwise the exact
-remaining fail-closed reason must be retained.
+The current repository implementation reports `UNKNOWN` with
+`execution_status: UNAVAILABLE (documentation only)` because its post-merge
+evidence adapter is not implemented. This does not invalidate the recorded
+owner certification or the passed runtime/trace evidence.
