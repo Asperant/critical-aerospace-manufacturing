@@ -288,11 +288,19 @@ def test_platform_realm_carries_no_secret() -> None:
     import json
 
     realm = json.loads(COMPOSE["configs"]["keycloak-platform-realm"]["content"])
-    smoke = next(client for client in realm["clients"] if client["clientId"] == "cap-platform-smoke")
+    smoke = next(
+        client
+        for client in realm["clients"]
+        if client["clientId"] == "cap-platform-smoke"
+    )
     assert smoke["secret"] == "$${CAP_KEYCLOAK_SMOKE_CLIENT_SECRET}"
     assert smoke["serviceAccountsEnabled"] and not smoke["publicClient"]
     assert not smoke["directAccessGrantsEnabled"] and not smoke["standardFlowEnabled"]
-    browser = next(client for client in realm["clients"] if client["clientId"] == "command-center-web")
+    browser = next(
+        client
+        for client in realm["clients"]
+        if client["clientId"] == "command-center-web"
+    )
     assert browser["publicClient"] and browser["standardFlowEnabled"]
     script = (HERE / "stack.sh").read_text("utf-8")
     assert (

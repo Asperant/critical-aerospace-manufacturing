@@ -1,43 +1,46 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime
 import os
+from datetime import UTC, datetime
 from typing import Any
 
 import psycopg
-from psycopg.rows import dict_row
-
 from operations_bff.composition import RuntimeSettings, build_app
 from operations_bff.config import CookieSettings, LoginConfig, SessionConfig
 from operations_bff.facility_state import (
-    FacilityStateService,
+    TWIN_SOURCE,
+    EquipmentState,
     FacilityStateReader,
+    FacilityStateService,
     FacilityStateSnapshot,
     LotState,
     RoutePosition,
-    TWIN_SOURCE,
 )
+from operations_bff.oidc import OidcSettings
 from operations_bff.overview import (
     AttentionFact,
-    AttentionReader,
     OverviewQuery,
     OverviewService,
     SourceSnapshot,
 )
-from operations_bff.oidc import OidcSettings
+from psycopg.rows import DictRow, dict_row
 
 from .config import Settings
 
 
-def _connection(settings: Settings) -> psycopg.Connection[Any]:
-    return psycopg.connect(settings.pg_dsn, row_factory=dict_row, connect_timeout=10)
+def _connection(settings: Settings) -> psycopg.Connection[DictRow]:
+    return psycopg.Connection[DictRow].connect(
+        settings.pg_dsn, row_factory=dict_row, connect_timeout=10
+    )
 
 
-class TwinReader(FacilityStateReader, AttentionReader):
-    name = TWIN_SOURCE
-
+class TwinReader(FacilityStateReader):
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
+
+    @property
+    def name(self) -> str:
+        return TWIN_SOURCE
 
     def _rows(self) -> tuple[dict[str, Any], ...]:
         with _connection(self.settings) as connection:
@@ -137,7 +140,8 @@ def create_app():
         redirect_uri=os.environ["OPERATIONS_BFF_OIDC_REDIRECT_URI"],
         environment_id=environment,
         client_secret=os.environ.get("OPERATIONS_BFF_OIDC_CLIENT_SECRET") or None,
-        allow_insecure_http=os.environ.get("OPERATIONS_BFF_OIDC_ALLOW_INSECURE_HTTP") == "1",
+        allow_insecure_http=os.environ.get("OPERATIONS_BFF_OIDC_ALLOW_INSECURE_HTTP")
+        == "1",
         browser_issuer=os.environ.get("OPERATIONS_BFF_OIDC_BROWSER_ISSUER") or None,
     )
     runtime = RuntimeSettings(
@@ -157,6 +161,9 @@ def create_app():
 
 if __name__ == "__main__":
     import os
+
     import uvicorn
 
-    uvicorn.run("cap_demo_runtime.bff:create_app", host="0.0.0.0", port=8082, factory=True)
+    uvicorn.run(
+        "cap_demo_runtime.bff:create_app", host="0.0.0.0", port=8082, factory=True
+    )

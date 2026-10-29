@@ -2,15 +2,13 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from typing import LiteralString, cast
 
 import psycopg
-from psycopg import sql
-from psycopg.rows import dict_row
-
 from cap_event_consumer.migrate import migrate as migrate_consumer
 from manufacturing_core.migrate import migrate as migrate_core
-
-
+from psycopg import sql
+from psycopg.rows import DictRow, dict_row
 
 
 def _twin_sql() -> str:
@@ -71,14 +69,23 @@ def main() -> None:
             )
         )
 
-    migration_dsn = _dsn("CAP_MIGRATION", host=host, database=database, password=migrator_password)
+    migration_dsn = _dsn(
+        "CAP_MIGRATION", host=host, database=database, password=migrator_password
+    )
     migrate_core(migration_dsn, core_runtime)
-    with psycopg.connect(migration_dsn, row_factory=dict_row) as connection, connection.transaction():
+    with (
+        psycopg.Connection[DictRow].connect(
+            migration_dsn, row_factory=dict_row
+        ) as connection,
+        connection.transaction(),
+    ):
         for statement in twin_sql.split(";\n"):
             if statement.strip():
-                connection.execute(statement)
+                connection.execute(sql.SQL(cast(LiteralString, statement)))
         connection.execute(
-            sql.SQL("GRANT USAGE ON SCHEMA twin TO {}").format(sql.Identifier(twin_runtime))
+            sql.SQL("GRANT USAGE ON SCHEMA twin TO {}").format(
+                sql.Identifier(twin_runtime)
+            )
         )
         for table in ("projection_entity", "applied_event", "projection_revision"):
             connection.execute(

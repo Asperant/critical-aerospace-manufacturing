@@ -6,17 +6,18 @@ from typing import Any
 
 import psycopg
 from fastapi import FastAPI, HTTPException
-from pydantic import TypeAdapter, ValidationError
-from psycopg.rows import dict_row
-
 from manufacturing_core.commands import OperationalCommandV1, PlaceLotOnHold
 from manufacturing_core.transitions import CoreTransitionService
+from psycopg.rows import DictRow, dict_row
+from pydantic import TypeAdapter, ValidationError
 
 from .config import Settings
 
 
-def _connect(settings: Settings) -> psycopg.Connection[Any]:
-    return psycopg.connect(settings.pg_dsn, row_factory=dict_row, connect_timeout=10)
+def _connect(settings: Settings) -> psycopg.Connection[DictRow]:
+    return psycopg.Connection[DictRow].connect(
+        settings.pg_dsn, row_factory=dict_row, connect_timeout=10
+    )
 
 
 def _event_id(connection: psycopg.Connection[Any], command_id: str) -> str | None:
@@ -32,7 +33,9 @@ def create_app() -> FastAPI:
     settings = Settings.from_env()
     permissions = tuple(
         value.strip()
-        for value in os.environ.get("CAP_CORE_PERMISSIONS", "core.lot.place_hold").split(",")
+        for value in os.environ.get(
+            "CAP_CORE_PERMISSIONS", "core.lot.place_hold"
+        ).split(",")
         if value.strip()
     )
 
@@ -46,16 +49,26 @@ def create_app() -> FastAPI:
     def healthz() -> dict[str, object]:
         with _connect(settings) as connection:
             connection.execute("SELECT 1")
-        return {"status": "UP", "service": "manufacturing-core", "world_id": settings.world_id}
+        return {
+            "status": "UP",
+            "service": "manufacturing-core",
+            "world_id": settings.world_id,
+        }
 
     @app.post("/v1/commands")
     def command(body: dict[str, object]) -> dict[str, object]:
         try:
-            parsed = TypeAdapter(OperationalCommandV1).validate_python(body)
+            parsed = TypeAdapter(OperationalCommandV1).validate_python(  # pyright: ignore[reportArgumentType]
+                body
+            )
         except ValidationError as exc:
-            raise HTTPException(status_code=400, detail="command contract rejected") from exc
+            raise HTTPException(
+                status_code=400, detail="command contract rejected"
+            ) from exc
         if not isinstance(parsed, PlaceLotOnHold):
-            raise HTTPException(status_code=501, detail="demo supports PlaceLotOnHold only")
+            raise HTTPException(
+                status_code=501, detail="demo supports PlaceLotOnHold only"
+            )
         if parsed.world_id != settings.world_id:
             raise HTTPException(status_code=409, detail="world scope rejected")
         try:
@@ -67,9 +80,13 @@ def create_app() -> FastAPI:
                 )
                 event_id = _event_id(connection, str(parsed.command_id))
         except PermissionError as exc:
-            raise HTTPException(status_code=403, detail="Core authorization denied") from exc
+            raise HTTPException(
+                status_code=403, detail="Core authorization denied"
+            ) from exc
         except Exception as exc:
-            raise HTTPException(status_code=503, detail="Core database unavailable") from exc
+            raise HTTPException(
+                status_code=503, detail="Core database unavailable"
+            ) from exc
         return {
             "command_id": str(outcome.command_id),
             "outcome_id": str(outcome.outcome_id),
@@ -101,4 +118,6 @@ def create_app() -> FastAPI:
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("cap_demo_runtime.core_api:create_app", host="0.0.0.0", port=8081, factory=True)
+    uvicorn.run(
+        "cap_demo_runtime.core_api:create_app", host="0.0.0.0", port=8081, factory=True
+    )

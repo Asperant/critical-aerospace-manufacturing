@@ -38,7 +38,9 @@ def _require_https(value: str, name: str, *, allow_insecure_http: bool = False) 
     parsed = urlparse(value)
     if not parsed.netloc or parsed.scheme not in {"https", "http"}:
         raise ValueError(f"{name} must be an absolute URL")
-    if parsed.scheme == "http" and not (allow_insecure_http and parsed.hostname in INSECURE_DEMO_HOSTS):
+    if parsed.scheme == "http" and not (
+        allow_insecure_http and parsed.hostname in INSECURE_DEMO_HOSTS
+    ):
         raise ValueError(f"{name} must be an https URL")
 
 
@@ -61,8 +63,14 @@ class OidcSettings:
     browser_issuer: str | None = None
 
     def __post_init__(self) -> None:
-        _require_https(self.issuer, "issuer", allow_insecure_http=self.allow_insecure_http)
-        _require_https(self.redirect_uri, "redirect_uri", allow_insecure_http=self.allow_insecure_http)
+        _require_https(
+            self.issuer, "issuer", allow_insecure_http=self.allow_insecure_http
+        )
+        _require_https(
+            self.redirect_uri,
+            "redirect_uri",
+            allow_insecure_http=self.allow_insecure_http,
+        )
         if self.browser_issuer is not None:
             _require_https(
                 self.browser_issuer,
@@ -163,9 +171,10 @@ class OidcIdentityProvider:
             internal_issuer = self._settings.issuer.rstrip("/")
             if not authorization_endpoint.startswith(internal_issuer + "/"):
                 raise IdentityProviderUnavailable
-            authorization_endpoint = browser_issuer.rstrip("/") + authorization_endpoint[
-                len(internal_issuer) :
-            ]
+            authorization_endpoint = (
+                browser_issuer.rstrip("/")
+                + authorization_endpoint[len(internal_issuer) :]
+            )
         return f"{authorization_endpoint}?{query}"
 
     def complete(
@@ -215,7 +224,9 @@ class OidcIdentityProvider:
                 if not isinstance(value, str):
                     raise IdentityProviderUnavailable
                 try:
-                    _require_https(value, name, allow_insecure_http=s.allow_insecure_http)
+                    _require_https(
+                        value, name, allow_insecure_http=s.allow_insecure_http
+                    )
                 except ValueError:
                     raise IdentityProviderUnavailable from None
                 endpoints.append(value)

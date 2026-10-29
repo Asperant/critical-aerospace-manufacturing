@@ -16,7 +16,7 @@ class Settings:
     consumer_scope: str = "twin-primary"
 
     @classmethod
-    def from_env(cls) -> "Settings":
+    def from_env(cls) -> Settings:
         dsn = os.environ.get("CAP_PG_DSN", "").strip()
         if not dsn:
             host = os.environ.get("CAP_PG_HOST", "postgres").strip()
@@ -33,10 +33,10 @@ class Settings:
             "stream": os.environ.get("CAP_EVENT_STREAM", "CAP_EVENTS"),
             "subject": os.environ.get("CAP_EVENT_SUBJECT", "cap.core.events"),
             "durable": os.environ.get("CAP_TWIN_DURABLE", "twin-primary"),
-            "consumer_scope": os.environ.get(
-                "CAP_TWIN_CONSUMER_SCOPE", "twin-primary"
-            ),
+            "consumer_scope": os.environ.get("CAP_TWIN_CONSUMER_SCOPE", "twin-primary"),
         }
-        if not all(isinstance(value, str) and value.strip() for value in values.values()):
+        if not all(
+            isinstance(value, str) and value.strip() for value in values.values()
+        ):
             raise ValueError("runtime identity and transport settings must be nonblank")
         return cls(pg_dsn=dsn, **values)
