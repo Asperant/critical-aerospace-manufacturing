@@ -9,7 +9,7 @@
   "current_main_sha_at_refresh": "6299ab02491a9b7336b3637334ed461ce510ec21",
   "boundary_mode": "REAL",
   "environment": "INTEGRATION + DEMO",
-  "status": "TECHNICAL_EVIDENCE_PENDING_ACCOUNTABLE_ACCEPTANCE",
+  "status": "TECHNICAL_EVIDENCE_ACCOUNTABLY_CERTIFIED",
   "claim_boundary": "Core/outbox/JetStream/Twin/BFF/UI acceptance slice only; not the full AV-SCEN portfolio, final EV-L5 evaluation, or production security acceptance",
   "artifacts": [
     {
