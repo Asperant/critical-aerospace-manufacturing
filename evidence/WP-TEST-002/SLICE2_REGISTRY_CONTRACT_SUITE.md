@@ -1,5 +1,8 @@
 # WP-TEST-002 slice 2 — registered contract suite
 
+Canonical requirements: FR-EVT-006, NFR-DATA-005, TEST-EVT-SCHEMA,
+TEST-DATA-CONTRACTVALID.
+
 The WP-TEST-002 suite now exercises the current registry as a whole. Every
 registered producer-owned fixture is validated at both producer and consumer
 boundaries, producer-authority bindings are re-verified against repository
