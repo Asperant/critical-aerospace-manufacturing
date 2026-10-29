@@ -62,6 +62,10 @@ Negative paths: threshold breach and functional mismatch both make the smoke FAI
 Acceptance classification: implementation complete for the bounded CPU smoke
 scope; accepted-sample and promoted-model acceptance remain separate.
 
+Verification boundary: the checked-in run proves the runnable CPU package, CLI,
+sample handling, contract validation and negative paths on the shared host; it
+does not substitute a governed accepted inspection sample or promoted model.
+
 NFR-PERF-009 is **not** accepted: it names "the accepted small inspection sample",
 and no accepted sample exists until dataset governance (WP-VDATA-001) selects one;
 the sample here is synthetic. The baseline is not a trained model and has no
