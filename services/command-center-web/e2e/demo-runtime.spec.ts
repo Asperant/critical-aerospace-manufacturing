@@ -51,9 +51,7 @@ test("real Keycloak login and held lot are visible in the demo UI", async ({
     meta?: { freshness?: string; sources?: Array<{ source?: string }> };
   };
   expect(facilityBody.meta?.freshness).toBe("FRESH");
-  expect(facilityBody.meta?.sources?.[0]?.source).toBe(
-    "digital-twin-service",
-  );
+  expect(facilityBody.meta?.sources?.[0]?.source).toBe("digital-twin-service");
 
   const lots = page.getByRole("table", { name: "Production lots" });
   await expect(lots).toContainText(lot);
