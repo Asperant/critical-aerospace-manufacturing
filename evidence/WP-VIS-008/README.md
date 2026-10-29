@@ -8,7 +8,7 @@ Builds on the WP-VIS-001 pipeline (branch `wp/WP-VIS-001-inspection-pipeline`).
 
 | Deliverable | Where | State |
 |---|---|---|
-| CPU smoke model package, distinct from promoted final models | `vision_service.smoke` runs the F2 baseline detector `vision-baseline-local-deviation` 1.0.0; no promoted ModelPackage exists yet | partial: a governed smoke ModelPackage needs WP-VDATA-004 |
+| CPU smoke model package, distinct from promoted final models | `services/vision-service/model-packages/vision-baseline-local-deviation/1.0.0/package.json` is a non-promoted, CPU-only package manifest loaded and identity-checked by `vision_service.smoke` | done for the bounded smoke package; promoted final ModelPackages remain outside this WP |
 | `mfgctl smoke vision` path | `infra/mfgctl/capabilities.json` capability `vision` → `services/vision-service/smoke.sh` → `python -m vision_service.smoke` | done |
 | documented CPU baseline timing | `RUN-VIS-008-LOCAL-001.json` (this directory) | recorded on the primary shared host; synthetic sample |
 
@@ -18,6 +18,14 @@ every image through the real `ArtifactStore.read` verification path over an
 in-memory S3 client and validates every observation against the registered
 `vision.inspection-observation.v1` contract. It fails when any image exceeds
 15 s or when a planted-defect image and a clean image are not told apart.
+
+## Accepted sample input
+
+`--sample-manifest PATH` accepts an explicit `vision.smoke-sample/v1` manifest
+with labelled PNG paths. The loader rejects missing labels, malformed entries,
+and paths outside the manifest directory. No accepted sample is checked into
+this repository; the default run therefore remains synthetic and cannot satisfy
+NFR-PERF-009 acceptance.
 
 ## RUN-VIS-008-LOCAL-001
 
@@ -39,7 +47,7 @@ a single run, not a benchmark campaign.
 | Check | Result |
 |---|---|
 | `uv run --project ci --locked mfgctl smoke vision` | PASS, exit 0 |
-| `services/vision-service/tests/test_smoke.py` (TEST-VIS-008-001, TEST-VIS-CPUSMOKE / TEST-RES-CPUONLY) | 6 passed, within 62 vision-service unit tests |
+| `services/vision-service/tests/test_smoke.py` (TEST-VIS-008-001, TEST-VIS-CPUSMOKE / TEST-RES-CPUONLY) | 8 passed, within 70 vision-service non-integration tests |
 | `infra/compose/tests` (registry conforms, smoke script exists) | 32 passed |
 | `tools/mfgctl/tests` | 113 passed |
 | ruff, pyright strict (vision-service), static ratchet, architecture boundaries, test strategy | clean / PASS |

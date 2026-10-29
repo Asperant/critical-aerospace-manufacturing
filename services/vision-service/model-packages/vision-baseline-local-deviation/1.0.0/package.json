@@ -1,0 +1,10 @@
+{
+  "schema": "vision.cpu-smoke-package/v1",
+  "package_id": "vision-baseline-local-deviation",
+  "version": "1.0.0",
+  "algorithm": "robust-local-deviation-f2",
+  "preprocessing_version": "vision-prep-gray-unit/1",
+  "output_schema_version": "vision.inspection-observation.v1",
+  "execution": "CPU_ONLY",
+  "promoted": false
+}

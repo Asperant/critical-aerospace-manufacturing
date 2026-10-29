@@ -49,6 +49,14 @@ LIMITATION = (
     "SYNTHETIC smoke sample, not the accepted small inspection sample: "
     "smoke/characterization result, not NFR-PERF-009 acceptance"
 )
+PACKAGE_SCHEMA = "vision.cpu-smoke-package/v1"
+PACKAGE_RELATIVE = Path(
+    "services/vision-service/model-packages/vision-baseline-local-deviation/1.0.0/package.json"
+)
+
+
+class SmokeInputError(ValueError):
+    """The smoke package or accepted sample manifest is not trustworthy."""
 
 
 def _cpu_model() -> str | None:
@@ -95,6 +103,115 @@ class SampleImage:
     name: str
     png: bytes
     expects_candidates: bool
+
+
+@dataclass(frozen=True)
+class SmokePackage:
+    package_id: str
+    version: str
+    algorithm: str
+    preprocessing_version: str
+    output_schema_version: str
+    execution: str
+    promoted: bool
+
+
+def load_package(path: Path) -> SmokePackage:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        raise SmokeInputError("CPU smoke package is unreadable") from None
+    required = {
+        "schema",
+        "package_id",
+        "version",
+        "algorithm",
+        "preprocessing_version",
+        "output_schema_version",
+        "execution",
+        "promoted",
+    }
+    if not isinstance(value, dict):
+        raise SmokeInputError("CPU smoke package manifest fields are invalid")
+    manifest = cast(dict[str, object], value)
+    if set(manifest) != required:
+        raise SmokeInputError("CPU smoke package manifest fields are invalid")
+    if manifest["schema"] != PACKAGE_SCHEMA or manifest["execution"] != "CPU_ONLY":
+        raise SmokeInputError("CPU smoke package schema or execution is invalid")
+    identity_fields = (
+        "package_id",
+        "version",
+        "algorithm",
+        "preprocessing_version",
+        "output_schema_version",
+    )
+    if manifest["promoted"] is not False or not all(
+        isinstance(manifest[field], str) and cast(str, manifest[field]).strip()
+        for field in identity_fields
+    ):
+        raise SmokeInputError("CPU smoke package identity is invalid")
+    return SmokePackage(
+        package_id=cast(str, manifest["package_id"]),
+        version=cast(str, manifest["version"]),
+        algorithm=cast(str, manifest["algorithm"]),
+        preprocessing_version=cast(str, manifest["preprocessing_version"]),
+        output_schema_version=cast(str, manifest["output_schema_version"]),
+        execution=cast(str, manifest["execution"]),
+        promoted=cast(bool, manifest["promoted"]),
+    )
+
+
+def load_sample_manifest(path: Path) -> list[SampleImage]:
+    """Load an explicitly labelled sample set without guessing labels."""
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        raise SmokeInputError("sample manifest is unreadable") from None
+    if not isinstance(value, dict):
+        raise SmokeInputError("sample manifest fields are invalid")
+    manifest = cast(dict[str, object], value)
+    if set(manifest) != {"schema", "provenance", "images"}:
+        raise SmokeInputError("sample manifest fields are invalid")
+    if manifest["schema"] != "vision.smoke-sample/v1" or not isinstance(
+        manifest["provenance"], str
+    ):
+        raise SmokeInputError("sample manifest schema or provenance is invalid")
+    images = manifest["images"]
+    if not isinstance(images, list) or not images:
+        raise SmokeInputError("sample manifest needs at least one image")
+    images = cast(list[object], images)
+    root = path.parent.resolve()
+    result: list[SampleImage] = []
+    for raw_item in images:
+        if not isinstance(raw_item, dict):
+            raise SmokeInputError("sample manifest image entry is invalid")
+        item = cast(dict[str, object], raw_item)
+        if set(item) != {
+            "name",
+            "path",
+            "expects_candidates",
+        }:
+            raise SmokeInputError("sample manifest image entry is invalid")
+        name, relative = item["name"], item["path"]
+        if (
+            not isinstance(name, str)
+            or not name.strip()
+            or not isinstance(relative, str)
+            or not relative.strip()
+            or type(item["expects_candidates"]) is not bool
+        ):
+            raise SmokeInputError("sample manifest image identity is invalid")
+        image_path = (root / relative).resolve()
+        if root not in image_path.parents:
+            raise SmokeInputError("sample manifest path escapes its directory")
+        try:
+            data = image_path.read_bytes()
+        except OSError:
+            raise SmokeInputError("sample manifest image is unreadable") from None
+        result.append(
+            SampleImage(name, data, item["expects_candidates"])
+        )
+    return result
 
 
 def encode_gray_png(image: NDArray[np.float64]) -> bytes:
@@ -200,16 +317,30 @@ def _validator(root: Path) -> Any:
     return BoundaryValidator(registry.get(CONTRACT_ID), root)
 
 
-def run(count: int = 8, size: int = 512, root: Path | None = None) -> dict[str, Any]:
+def run(
+    count: int = 8,
+    size: int = 512,
+    root: Path | None = None,
+    *,
+    package_path: Path | None = None,
+    sample_manifest: Path | None = None,
+) -> dict[str, Any]:
     root = root or Path.cwd()
+    package = load_package(package_path or root / PACKAGE_RELATIVE)
     validator = _validator(root)
     client = _MemoryS3()
     store = ArtifactStore(cast(S3Client, client))
-    if count < 1:
-        raise ValueError("the smoke sample needs at least one image")
+    if sample_manifest is None:
+        if count < 1:
+            raise ValueError("the smoke sample needs at least one image")
+        images = sample(count, size)
+        provenance = "SYNTHETIC"
+    else:
+        images = load_sample_manifest(sample_manifest)
+        provenance = "EXTERNAL_MANIFEST"
     results: list[dict[str, Any]] = []
     pipeline: dict[str, Any] = {}
-    for image in sample(count, size):
+    for image in images:
         work = parse_request(_request(image, _reference(image, client)))
         started = time.perf_counter()
         observation = inspect(
@@ -234,14 +365,29 @@ def run(count: int = 8, size: int = 512, root: Path | None = None) -> dict[str, 
     seconds = [item["seconds"] for item in results]
     within = max(seconds) <= THRESHOLD_S
     functional = all(item["functional_ok"] for item in results)
+    if not pipeline["models"] or pipeline["models"][0]["model_package_id"] != package.package_id:
+        raise SmokeInputError("smoke package does not match pipeline model identity")
+    if pipeline["models"][0]["model_version"] != package.version:
+        raise SmokeInputError("smoke package version does not match pipeline identity")
+    sample_report: dict[str, Any] = {
+        "version": SAMPLE_VERSION,
+        "images": len(images),
+        "size_px": [size, size],
+        "provenance": provenance,
+    }
+    if sample_manifest is not None:
+        sample_report["manifest"] = str(sample_manifest)
     return {
         "schema": "vision.smoke/v1",
         "result": "PASS" if within and functional else "FAIL",
-        "sample": {
-            "version": SAMPLE_VERSION,
-            "images": count,
-            "size_px": [size, size],
-            "provenance": "SYNTHETIC",
+        "sample": sample_report,
+        "package": {
+            "schema": PACKAGE_SCHEMA,
+            "package_id": package.package_id,
+            "version": package.version,
+            "algorithm": package.algorithm,
+            "execution": package.execution,
+            "promoted": package.promoted,
         },
         "pipeline": pipeline,
         "threshold_s_per_image": THRESHOLD_S,
@@ -259,11 +405,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="mfgctl smoke vision", description=__doc__)
     parser.add_argument("--images", type=int, default=8)
     parser.add_argument("--size", type=int, default=512)
+    parser.add_argument("--sample-manifest", type=Path)
     parser.add_argument("--json", action="store_true", help="print the full report")
     args = parser.parse_args(argv)
     if args.images < 1 or not 16 <= args.size <= 4096:
         parser.error("--images must be >= 1 and --size between 16 and 4096")
-    report = run(args.images, args.size)
+    report = run(args.images, args.size, sample_manifest=args.sample_manifest)
     if args.json:
         print(json.dumps(report, indent=2))
     else:

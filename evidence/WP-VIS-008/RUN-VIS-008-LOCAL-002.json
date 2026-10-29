@@ -1,0 +1,35 @@
+{
+  "schema": "vision.smoke/v1",
+  "run_id": "RUN-VIS-008-LOCAL-002",
+  "observed_at": "2026-10-29",
+  "command": "uv run --project ci --locked mfgctl smoke vision",
+  "result": "PASS",
+  "sample": {
+    "version": "vision-smoke-synthetic/1",
+    "images": 8,
+    "size_px": [512, 512],
+    "provenance": "SYNTHETIC"
+  },
+  "package": {
+    "schema": "vision.cpu-smoke-package/v1",
+    "package_id": "vision-baseline-local-deviation",
+    "version": "1.0.0",
+    "algorithm": "robust-local-deviation-f2",
+    "execution": "CPU_ONLY",
+    "promoted": false
+  },
+  "timing": {
+    "threshold_s_per_image": 15.0,
+    "max_s_per_image": 0.0425,
+    "mean_s_per_image": 0.0124,
+    "functional_ok": true
+  },
+  "host": {
+    "cpu_model": "Intel(R) Core(TM) i7-9700K CPU @ 3.60GHz",
+    "logical_cpus": 8,
+    "memory_gib": 30.3,
+    "machine": "x86_64",
+    "hardware_profile": "PRIMARY_SHARED_HOST (01 Final Human Reconciliation)"
+  },
+  "limitation": "Synthetic smoke/characterization only; not NFR-PERF-009 acceptance because the accepted inspection sample is not available."
+}

@@ -64,6 +64,51 @@ def test_functional_mismatch_fails_the_smoke(monkeypatch: pytest.MonkeyPatch) ->
     assert report["result"] == "FAIL"
 
 
+def test_smoke_loads_explicit_cpu_package_and_rejects_invalid_manifest(
+    tmp_path: Path,
+) -> None:
+    package = REPO / smoke.PACKAGE_RELATIVE
+    loaded = smoke.load_package(package)
+    assert loaded.package_id == "vision-baseline-local-deviation"
+    assert loaded.promoted is False
+    invalid = tmp_path / "package.json"
+    invalid.write_text("{}", encoding="utf-8")
+    with pytest.raises(smoke.SmokeInputError):
+        smoke.load_package(invalid)
+
+
+def test_sample_manifest_requires_explicit_labels_and_safe_paths(tmp_path: Path) -> None:
+    image = smoke.sample(1, 32)[0]
+    image_path = tmp_path / "sample.png"
+    image_path.write_bytes(image.png)
+    manifest = tmp_path / "sample.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "schema": "vision.smoke-sample/v1",
+                "provenance": "ACCEPTED",
+                "images": [
+                    {
+                        "name": "accepted-1",
+                        "path": "sample.png",
+                        "expects_candidates": True,
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    assert smoke.load_sample_manifest(manifest)[0].name == "accepted-1"
+    manifest.write_text(
+        manifest.read_text(encoding="utf-8").replace(
+            '"sample.png"', '"../sample.png"'
+        ),
+        encoding="utf-8",
+    )
+    with pytest.raises(smoke.SmokeInputError):
+        smoke.load_sample_manifest(manifest)
+
+
 def test_cli_exit_codes_and_json(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
