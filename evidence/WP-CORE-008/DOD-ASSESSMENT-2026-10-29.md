@@ -26,3 +26,9 @@ confirmations. The accountable owner must decide how the declared missing
 deliverables and same-PR trace requirement are to be closed or explicitly
 accepted under canonical change control. No owner approval or acceptance is
 invented here.
+
+The same read-only gate was run for the materially affected
+`WP-CORE-002`, `WP-CORE-003`, `WP-CORE-005`, `WP-EVT-003`, `WP-TWIN-001`, and
+`WP-UI-002`; each returned `UNKNOWN` for the same unavailable accountable DoD
+and trace assessment. This prevents the integration evidence from being
+misreported as DONE for those packages.
