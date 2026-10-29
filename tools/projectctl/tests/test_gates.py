@@ -4,12 +4,11 @@ import socket
 from pathlib import Path
 
 import pytest
-from typer.testing import CliRunner
-
 from projectctl.cli import app
 from projectctl.gates import evaluate, parse_assessment
 from projectctl.post_merge_evidence import evaluate_post_merge_evidence
 from projectctl.project import load_project
+from typer.testing import CliRunner
 
 
 @pytest.fixture(scope="module")
@@ -47,7 +46,9 @@ def test_assessment_parser_rejects_duplicate_rows(tmp_path):
     assert "duplicate criterion: DOR-TASK-01" in parse_assessment(path)["errors"]
 
 
-@pytest.mark.parametrize("identity", ["WP-AI-999", "CAP-42", "CTRL-PM-013", "WP-AI-007 extra"])
+@pytest.mark.parametrize(
+    "identity", ["WP-AI-999", "CAP-42", "CTRL-PM-013", "WP-AI-007 extra"]
+)
 def test_unknown_or_noncanonical_identity_fails(project, root, identity):
     assert evaluate(project, identity, "ready", root)["result"] == "FAIL"
 
@@ -61,22 +62,30 @@ def test_missing_governance_is_unknown(project, tmp_path):
 def test_invalid_baseline_fails(tmp_path, sample):
     (tmp_path / "docs").mkdir()
     (tmp_path / "docs/04_Work_Breakdown_Structure.md").write_text(sample)
-    assert evaluate(load_project(tmp_path), "WP-SIM-001", "done", tmp_path)["result"] == "FAIL"
+    assert (
+        evaluate(load_project(tmp_path), "WP-SIM-001", "done", tmp_path)["result"]
+        == "FAIL"
+    )
 
 
 @pytest.mark.parametrize("gate", ["ready", "done"])
 def test_cli_unknown_nonzero_without_network_or_writes(root, monkeypatch, gate):
     def forbidden(*args, **kwargs):
         raise AssertionError("Network or write attempted")
+
     monkeypatch.setattr(socket, "create_connection", forbidden)
     monkeypatch.setattr(socket.socket, "connect", forbidden)
     original = Path.open
+
     def guarded(self, mode="r", *args, **kwargs):
         if any(flag in mode for flag in "wax+"):
             forbidden()
         return original(self, mode, *args, **kwargs)
+
     monkeypatch.setattr(Path, "open", guarded)
-    result = CliRunner().invoke(app, [f"check-{gate}", "WP-AI-007", "--root", str(root)])
+    result = CliRunner().invoke(
+        app, [f"check-{gate}", "WP-AI-007", "--root", str(root)]
+    )
     assert result.exit_code == 1, result.output
     assert json.loads(result.output)["result"] == "UNKNOWN"
 
@@ -120,16 +129,24 @@ MAIN_SHA = "359dbfd176925de4e9fbec0edeed21a1545deb53"
 
 @pytest.fixture
 def post_merge_fixture(tmp_path, root, monkeypatch):
-    shutil.copytree(root / "evidence" / "WP-CORE-008", tmp_path / "evidence/WP-CORE-008")
+    shutil.copytree(
+        root / "evidence" / "WP-CORE-008", tmp_path / "evidence/WP-CORE-008"
+    )
     shutil.copytree(root / "traceability", tmp_path / "traceability")
-    monkeypatch.setattr("projectctl.post_merge_evidence._is_ancestor", lambda *_args: True)
+    monkeypatch.setattr(
+        "projectctl.post_merge_evidence._is_ancestor", lambda *_args: True
+    )
     return tmp_path
 
 
 def _post_merge_result(project, fixture_root):
-    canonical = project.catalog.work_packages[[wp.id for wp in project.catalog.work_packages].index("WP-CORE-008")]
+    canonical = project.catalog.work_packages[
+        [wp.id for wp in project.catalog.work_packages].index("WP-CORE-008")
+    ]
     context = {"work_package": canonical.model_dump(mode="json")}
-    return evaluate_post_merge_evidence(project, context, fixture_root, current_main_sha=MAIN_SHA)
+    return evaluate_post_merge_evidence(
+        project, context, fixture_root, current_main_sha=MAIN_SHA
+    )
 
 
 def _json_record(fixture_root, relative):
@@ -138,37 +155,52 @@ def _json_record(fixture_root, relative):
     return path, value
 
 
-def test_post_merge_adapter_accepts_structured_certified_evidence(project, post_merge_fixture):
+def test_post_merge_adapter_accepts_structured_certified_evidence(
+    project, post_merge_fixture
+):
     result = _post_merge_result(project, post_merge_fixture)
     assert result["result"] == "PASS"
     assert result["bundle_id"] == "EVID-WP-CORE-008-TECH-20261029"
 
 
 def test_post_merge_adapter_requires_owner_certification(project, post_merge_fixture):
-    path, run = _json_record(post_merge_fixture, "evidence/WP-CORE-008/RUN-CORE-008-AV-20261029.json")
+    path, run = _json_record(
+        post_merge_fixture, "evidence/WP-CORE-008/RUN-CORE-008-AV-20261029.json"
+    )
     run.pop("accountable_certification")
     run["accountable_acceptance"] = "NOT_CERTIFIED"
     path.write_text(json.dumps(run), encoding="utf-8")
     result = _post_merge_result(project, post_merge_fixture)
     assert result["result"] == "UNKNOWN"
-    assert any("accountable owner certification" in item for item in result["missing_evidence"])
+    assert any(
+        "accountable owner certification" in item for item in result["missing_evidence"]
+    )
 
 
-def test_post_merge_adapter_rejects_wrong_sha_and_stale_main(project, post_merge_fixture, monkeypatch):
-    path, post = _json_record(post_merge_fixture, "evidence/WP-CORE-008/POST-MERGE-2026-10-29.json")
+def test_post_merge_adapter_rejects_wrong_sha_and_stale_main(
+    project, post_merge_fixture, monkeypatch
+):
+    path, post = _json_record(
+        post_merge_fixture, "evidence/WP-CORE-008/POST-MERGE-2026-10-29.json"
+    )
     post["main_sha"] = "6299ab02491a9b7336b3637334ed461ce510ec21"
     post["trace"]["validated_main_sha"] = post["main_sha"]
     for ci in post["required_ci"]:
         ci["main_sha"] = post["main_sha"]
     path.write_text(json.dumps(post), encoding="utf-8")
-    monkeypatch.setattr("projectctl.post_merge_evidence._is_ancestor", lambda _root, ancestor, _descendant: ancestor != post["main_sha"])
+    monkeypatch.setattr(
+        "projectctl.post_merge_evidence._is_ancestor",
+        lambda _root, ancestor, _descendant: ancestor != post["main_sha"],
+    )
     result = _post_merge_result(project, post_merge_fixture)
     assert result["result"] == "UNKNOWN"
     assert any("stale" in item for item in result["missing_evidence"])
 
 
 def test_post_merge_adapter_rejects_wrong_bundle(project, post_merge_fixture):
-    path, post = _json_record(post_merge_fixture, "evidence/WP-CORE-008/POST-MERGE-2026-10-29.json")
+    path, post = _json_record(
+        post_merge_fixture, "evidence/WP-CORE-008/POST-MERGE-2026-10-29.json"
+    )
     post["evidence_bundle"] = "EVID-NOT-THE-BUNDLE"
     path.write_text(json.dumps(post), encoding="utf-8")
     result = _post_merge_result(project, post_merge_fixture)
@@ -177,7 +209,9 @@ def test_post_merge_adapter_rejects_wrong_bundle(project, post_merge_fixture):
 
 
 def test_post_merge_adapter_rejects_missing_bundle(project, post_merge_fixture):
-    path, post = _json_record(post_merge_fixture, "evidence/WP-CORE-008/POST-MERGE-2026-10-29.json")
+    path, post = _json_record(
+        post_merge_fixture, "evidence/WP-CORE-008/POST-MERGE-2026-10-29.json"
+    )
     post.pop("evidence_bundle")
     path.write_text(json.dumps(post), encoding="utf-8")
     result = _post_merge_result(project, post_merge_fixture)
@@ -185,7 +219,9 @@ def test_post_merge_adapter_rejects_missing_bundle(project, post_merge_fixture):
     assert any("evidence_bundle" in item for item in result["missing_evidence"])
 
 
-def test_post_merge_adapter_fails_closed_on_malformed_record(project, post_merge_fixture):
+def test_post_merge_adapter_fails_closed_on_malformed_record(
+    project, post_merge_fixture
+):
     path = post_merge_fixture / "evidence/WP-CORE-008/POST-MERGE-BROKEN.json"
     path.write_text('{"schema":"cap.post-merge-evidence/v1"', encoding="utf-8")
     result = _post_merge_result(project, post_merge_fixture)
@@ -194,7 +230,9 @@ def test_post_merge_adapter_fails_closed_on_malformed_record(project, post_merge
 
 
 def test_post_merge_adapter_rejects_incomplete_ci_evidence(project, post_merge_fixture):
-    path, post = _json_record(post_merge_fixture, "evidence/WP-CORE-008/POST-MERGE-2026-10-29.json")
+    path, post = _json_record(
+        post_merge_fixture, "evidence/WP-CORE-008/POST-MERGE-2026-10-29.json"
+    )
     post.pop("required_ci")
     path.write_text(json.dumps(post), encoding="utf-8")
     result = _post_merge_result(project, post_merge_fixture)
@@ -203,6 +241,13 @@ def test_post_merge_adapter_rejects_incomplete_ci_evidence(project, post_merge_f
 
 
 def test_wp_core_008_real_current_records_are_consumed(project, root):
-    canonical = project.catalog.work_packages[[wp.id for wp in project.catalog.work_packages].index("WP-CORE-008")]
-    result = evaluate_post_merge_evidence(project, {"work_package": canonical.model_dump(mode="json")}, root, current_main_sha=MAIN_SHA)
+    canonical = project.catalog.work_packages[
+        [wp.id for wp in project.catalog.work_packages].index("WP-CORE-008")
+    ]
+    result = evaluate_post_merge_evidence(
+        project,
+        {"work_package": canonical.model_dump(mode="json")},
+        root,
+        current_main_sha=MAIN_SHA,
+    )
     assert result["result"] == "PASS"

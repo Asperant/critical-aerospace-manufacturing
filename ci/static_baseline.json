@@ -6,9 +6,9 @@
     "pyright": "pyright 1.1.389"
   },
   "totals": {
-    "ruff": 287,
+    "ruff": 286,
     "pyright": 185,
-    "unformatted_files": 53
+    "unformatted_files": 52
   },
   "ruff": {
     "project_control/documentation-reconciliation/audit.py": {
@@ -148,9 +148,6 @@
       "I001": 1
     },
     "tools/projectctl/tests/test_dependencies.py": {
-      "I001": 1
-    },
-    "tools/projectctl/tests/test_gates.py": {
       "I001": 1
     },
     "tools/projectctl/tests/test_governance.py": {
@@ -332,7 +329,6 @@
     "tools/projectctl/tests/test_control_plane.py",
     "tools/projectctl/tests/test_dependencies.py",
     "tools/projectctl/tests/test_developer_workspace.py",
-    "tools/projectctl/tests/test_gates.py",
     "tools/projectctl/tests/test_governance.py",
     "tools/projectctl/tests/test_parser.py",
     "tools/projectctl/tests/test_plane.py",
