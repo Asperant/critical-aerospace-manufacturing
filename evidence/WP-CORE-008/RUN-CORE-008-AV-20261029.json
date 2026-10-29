@@ -1,0 +1,18 @@
+{
+  "schema": "cap.run-record/v1",
+  "run_id": "RUN-CORE-008-AV-20261029",
+  "work_package": "WP-CORE-008",
+  "source_main_sha": "ee060997b611fae16d6c4f13c0d85cebafaf17e7",
+  "boundary_mode": "REAL",
+  "scenario_manifests": [
+    "evidence/WP-CORE-008/AV-SCEN-01-2026-10-29.json",
+    "evidence/WP-CORE-008/AV-SCEN-03-2026-10-29.json"
+  ],
+  "consistency_outputs": [
+    "evidence/WP-CORE-008/AV-SCEN-01-CONSISTENCY-2026-10-29.json",
+    "evidence/WP-CORE-008/AV-SCEN-03-CONSISTENCY-2026-10-29.json"
+  ],
+  "result": "PASS_FOR_IMPLEMENTED_CORE_TWIN_RUNTIME_SLICE",
+  "full_canonical_av_portfolio": "NOT_CLAIMED",
+  "accountable_acceptance": "PENDING"
+}

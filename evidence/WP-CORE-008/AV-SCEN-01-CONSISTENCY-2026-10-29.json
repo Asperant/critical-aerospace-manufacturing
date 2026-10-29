@@ -1,0 +1,74 @@
+{
+  "checks": [
+    {
+      "detail": "WorldID is stable across manifest, outbox, event and Twin",
+      "name": "world_identity",
+      "passed": true
+    },
+    {
+      "detail": "CommandID binds response and durable outcome",
+      "name": "command_identity",
+      "passed": true
+    },
+    {
+      "detail": "EventID binds outbox, delivery ledger and projection",
+      "name": "event_identity",
+      "passed": true
+    },
+    {
+      "detail": "causation points to CommandID",
+      "name": "causation",
+      "passed": true
+    },
+    {
+      "detail": "correlation is preserved",
+      "name": "correlation",
+      "passed": true
+    },
+    {
+      "detail": "aggregate and source revisions are present",
+      "name": "revisions",
+      "passed": true
+    },
+    {
+      "detail": "transactional outbox was published",
+      "name": "outbox_published",
+      "passed": true
+    },
+    {
+      "detail": "JetStream stream/durable consumer delivered without pending ACK",
+      "name": "nats_consumer",
+      "passed": true
+    },
+    {
+      "detail": "real Twin consumer ledger contains EventID",
+      "name": "twin_applied",
+      "passed": true
+    },
+    {
+      "detail": "Twin projection is fresh for the event",
+      "name": "twin_fresh",
+      "passed": true
+    },
+    {
+      "detail": "Keycloak health and UI HTTP result are successful",
+      "name": "keycloak_ui",
+      "passed": true
+    },
+    {
+      "detail": "authenticated BFF facility result is bound",
+      "name": "bff_response",
+      "passed": true
+    },
+    {
+      "detail": "authenticated browser/UI acceptance is referenced",
+      "name": "browser_visible",
+      "passed": true
+    }
+  ],
+  "run_id": "closure-20261029-04",
+  "scenario_id": "AV-SCEN-01",
+  "schema": "cap.wp-core-008.consistency/v1",
+  "source_main_sha": "ee060997b611fae16d6c4f13c0d85cebafaf17e7",
+  "status": "PASS"
+}

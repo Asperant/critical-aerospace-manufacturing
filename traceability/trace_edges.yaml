@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: ac3056f9a8d6d2f7b3a15729402bea42dbd267f8a5f88e3cfc8e02da4b459792
+  sha256: 39ecd2156f818f08a69c11f42684c6a378ccc0bc419af1d58e2a5d55bf437c04
 requirements:
   FR-GOV-001:
     meta:
@@ -236,9 +236,10 @@ requirements:
       env: CI + INTEGRATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: Real AV-SCEN-01 Core/outbox/JetStream/Twin acceptance slice; wider inspection-triggered recovery portfolio remains outside this WP slice.
     realization:
       surface: manufacturing state machine / transition guard module
       deployable: manufacturing-core
@@ -290,9 +291,10 @@ requirements:
       env: CI + INTEGRATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: Durable accepted outcome and real rejection/acceptance identifiers are in the current-main runtime bundle; final package acceptance remains pending.
     realization:
       surface: durable CommandOutcome record (completed/rejected/unresolved)
       deployable: manufacturing-core
@@ -916,13 +918,14 @@ requirements:
       env: INTEGRATION + EVALUATION + DEMO
       m6_freeze_sensitive: true
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: Real Twin post-condition consistency checks passed for the WP-CORE-008 runtime slice; final EV-L5 benchmark evidence remains pending.
     realization:
       surface: post-condition verification query used by workflows
       deployable: digital-twin-service + automation-service
-      ref: TBD_BY_IMPLEMENTATION
+      ref: tools/demo-runtime/src/cap_demo_runtime/av_scenarios.py; tools/demo-runtime/scripts/check_consistency.py
   FR-EVT-001:
     meta:
       class: F0
@@ -4321,15 +4324,16 @@ requirements:
       env: INTEGRATION + EVALUATION
       m6_freeze_sensitive: true
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
     measurement:
       metric: unresolved semantic mismatch between verified Core effect and Twin state at run end
       threshold: = 0 per valid closed-loop run
       workload: closed-loop runs (E2E matrix, AV-SCEN-01/02)
       hardware: N/A (not hardware-bound)
       observed: null
+    note: Observed semantic mismatch count was zero in the two focused runtime slices; this is technical evidence, not the final EV-L5 measurement disposition.
   NFR-REC-001:
     meta:
       class: A1
@@ -6055,6 +6059,8 @@ edges:
 - {"from": "FR-CORE-003", "relation": "REALIZED_BY", "to": "repo:services/manufacturing-core/src/manufacturing_core/transitions.py", "applicability": "RECORDED"}
 - {"from": "FR-CORE-003", "relation": "EXERCISED_IN", "to": "AV-SCEN-01", "applicability": "PLANNED"}
 - {"from": "FR-CORE-003", "relation": "VERIFIED_BY", "to": "TEST-CORE-STATEMACHINE", "applicability": "PLANNED"}
+- {"from": "FR-CORE-003", "relation": "EXECUTED_AS", "to": "RUN-CORE-008-AV-20261029", "applicability": "RECORDED"}
+- {"from": "FR-CORE-003", "relation": "EVIDENCED_BY", "to": "EVID-WP-CORE-008-TECH-20261029", "applicability": "RECORDED"}
 - {"from": "FR-CORE-004", "relation": "DERIVED_FROM", "to": "ITEM-15", "applicability": "PLANNED"}
 - {"from": "FR-CORE-004", "relation": "DERIVED_FROM", "to": "ITEM-22", "applicability": "PLANNED"}
 - {"from": "FR-CORE-004", "relation": "DERIVED_FROM", "to": "BE-INV-07", "applicability": "PLANNED"}
@@ -6087,6 +6093,8 @@ edges:
 - {"from": "FR-CORE-006", "relation": "EXERCISED_IN", "to": "AV-SCEN-01", "applicability": "PLANNED"}
 - {"from": "FR-CORE-006", "relation": "VERIFIED_BY", "to": "TEST-CORE-IDEMP", "applicability": "PLANNED"}
 - {"from": "FR-CORE-006", "relation": "VERIFIED_BY", "to": "TEST-AUTO-OUTCOME", "applicability": "PLANNED"}
+- {"from": "FR-CORE-006", "relation": "EXECUTED_AS", "to": "RUN-CORE-008-AV-20261029", "applicability": "RECORDED"}
+- {"from": "FR-CORE-006", "relation": "EVIDENCED_BY", "to": "EVID-WP-CORE-008-TECH-20261029", "applicability": "RECORDED"}
 - {"from": "FR-CORE-007", "relation": "DERIVED_FROM", "to": "ITEM-09", "applicability": "PLANNED"}
 - {"from": "FR-CORE-007", "relation": "DERIVED_FROM", "to": "ITEM-15", "applicability": "PLANNED"}
 - {"from": "FR-CORE-007", "relation": "DERIVED_FROM", "to": "ITEM-23", "applicability": "PLANNED"}
@@ -6466,11 +6474,14 @@ edges:
 - {"from": "FR-TWIN-010", "relation": "ALLOCATED_TO", "to": "ARCH-TWIN-API", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-010", "relation": "ALLOCATED_TO", "to": "ARCH-AUTO-VERIFY", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-010", "relation": "EXPOSED_BY", "to": "Twin Query API (verification view)", "applicability": "PLANNED"}
-- {"from": "FR-TWIN-010", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-TWIN-010", "relation": "REALIZED_BY", "to": "repo:tools/demo-runtime/src/cap_demo_runtime/av_scenarios.py", "applicability": "RECORDED"}
+- {"from": "FR-TWIN-010", "relation": "REALIZED_BY", "to": "repo:tools/demo-runtime/scripts/check_consistency.py", "applicability": "RECORDED"}
 - {"from": "FR-TWIN-010", "relation": "EXERCISED_IN", "to": "AV-SCEN-01", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-010", "relation": "EXERCISED_IN", "to": "E2E-01", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-010", "relation": "EXERCISED_IN", "to": "DEMO-GS01-001", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-010", "relation": "VERIFIED_BY", "to": "BENCH-E2E-001", "applicability": "PLANNED"}
+- {"from": "FR-TWIN-010", "relation": "EXECUTED_AS", "to": "RUN-CORE-008-AV-20261029", "applicability": "RECORDED"}
+- {"from": "FR-TWIN-010", "relation": "EVIDENCED_BY", "to": "EVID-WP-CORE-008-TECH-20261029", "applicability": "RECORDED"}
 - {"from": "FR-EVT-001", "relation": "DERIVED_FROM", "to": "ITEM-22", "applicability": "PLANNED"}
 - {"from": "FR-EVT-001", "relation": "DERIVED_FROM", "to": "ITEM-68", "applicability": "PLANNED"}
 - {"from": "FR-EVT-001", "relation": "DERIVED_FROM", "to": "INT-INV-02", "applicability": "PLANNED"}
@@ -8373,6 +8384,8 @@ edges:
 - {"from": "NFR-REL-010", "relation": "EXERCISED_IN", "to": "AV-SCEN-01", "applicability": "PLANNED"}
 - {"from": "NFR-REL-010", "relation": "VERIFIED_BY", "to": "BENCH-E2E-001", "applicability": "PLANNED"}
 - {"from": "NFR-REL-010", "relation": "VERIFIED_BY", "to": "RES-TWINREBUILD-001", "applicability": "PLANNED"}
+- {"from": "NFR-REL-010", "relation": "EXECUTED_AS", "to": "RUN-CORE-008-AV-20261029", "applicability": "RECORDED"}
+- {"from": "NFR-REL-010", "relation": "EVIDENCED_BY", "to": "EVID-WP-CORE-008-TECH-20261029", "applicability": "RECORDED"}
 - {"from": "NFR-REC-001", "relation": "DERIVED_FROM", "to": "ITEM-53", "applicability": "PLANNED"}
 - {"from": "NFR-REC-001", "relation": "DERIVED_FROM", "to": "DR-INV-03", "applicability": "PLANNED"}
 - {"from": "NFR-REC-001", "relation": "ALLOCATED_TO", "to": "ARCH-PLAT-BACKUP", "applicability": "PLANNED"}

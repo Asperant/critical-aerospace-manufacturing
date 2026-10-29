@@ -1,0 +1,239 @@
+{
+  "branch_id": "PRIMARY",
+  "checks": [
+    {
+      "detail": "lot hold changed false -> true",
+      "name": "core_mutation",
+      "passed": true
+    },
+    {
+      "detail": "durable accepted command outcome",
+      "name": "command_outcome",
+      "passed": true
+    },
+    {
+      "detail": "published outbox row",
+      "name": "transactional_outbox",
+      "passed": true
+    },
+    {
+      "detail": "EventID and causation bind to command",
+      "name": "event_identity",
+      "passed": true
+    },
+    {
+      "detail": "correlation propagated to outbox",
+      "name": "correlation",
+      "passed": true
+    },
+    {
+      "detail": "Twin source EventID matches outbox",
+      "name": "twin_projection",
+      "passed": true
+    },
+    {
+      "detail": "Twin consumer ledger records delivery",
+      "name": "nats_delivery",
+      "passed": true
+    },
+    {
+      "detail": "Keycloak health and UI HTTP surface",
+      "name": "keycloak_and_ui",
+      "passed": true
+    },
+    {
+      "detail": "authenticated BFF facility response is bound",
+      "name": "bff_response",
+      "passed": true
+    },
+    {
+      "detail": "real authenticated browser evidence is bound",
+      "name": "browser_acceptance_reference",
+      "passed": true
+    }
+  ],
+  "command": {
+    "id": "daef5cf5-bd61-5ad6-8f51-6c1850dd3ff6",
+    "outcome": {
+      "command_id": "daef5cf5-bd61-5ad6-8f51-6c1850dd3ff6",
+      "correlation_id": "wp-core-008-av01-closure-20261029-04",
+      "effect_verification": "NOT_VERIFIED",
+      "error_code": null,
+      "outcome_id": "92e7b884-03f0-4b36-afc1-88fc6864004c",
+      "status": "ACCEPTED",
+      "world_id": "DEMO-WORLD"
+    },
+    "response": {
+      "command_id": "daef5cf5-bd61-5ad6-8f51-6c1850dd3ff6",
+      "correlation_id": "wp-core-008-av01-closure-20261029-04",
+      "detail": null,
+      "effect_verification": "NOT_VERIFIED",
+      "error_code": null,
+      "event_id": "c3e99c1b-c87b-42e0-9143-9027e096112a",
+      "outcome_id": "92e7b884-03f0-4b36-afc1-88fc6864004c",
+      "status": "ACCEPTED",
+      "world_id": "DEMO-WORLD"
+    }
+  },
+  "core_after": {
+    "execution_state": "READY",
+    "held": true,
+    "id": "AV-SCEN-01-closure-20261029-04",
+    "lifecycle_state": "CREATED",
+    "revision": "av01-closure-20261029-04-initial",
+    "state_revision": "av01-closure-20261029-04-initial"
+  },
+  "core_before": {
+    "execution_state": "READY",
+    "held": false,
+    "id": "AV-SCEN-01-closure-20261029-04",
+    "lifecycle_state": "CREATED",
+    "revision": "av01-closure-20261029-04-initial",
+    "state_revision": "av01-closure-20261029-04-initial"
+  },
+  "event": {
+    "causation_id": "daef5cf5-bd61-5ad6-8f51-6c1850dd3ff6",
+    "correlation_id": "wp-core-008-av01-closure-20261029-04",
+    "event_id": "c3e99c1b-c87b-42e0-9143-9027e096112a",
+    "event_type": "production.lot-held",
+    "trace_id": "620c3c84-564b-4452-8154-666be62246ba",
+    "world_id": "DEMO-WORLD"
+  },
+  "mocked_boundaries": [],
+  "nats": {
+    "ack_policy": "explicit",
+    "consumer_sequence": 19,
+    "deliver_policy": "all",
+    "durable": "twin-primary",
+    "messages": 9,
+    "num_ack_pending": 0,
+    "num_redelivered": 1,
+    "stream": "CAP_EVENTS",
+    "stream_sequence": 9,
+    "subjects": [
+      "cap.core.events"
+    ],
+    "url": "nats://127.0.0.1:24222"
+  },
+  "outbox": {
+    "aggregate_id": "AV-SCEN-01-closure-20261029-04",
+    "aggregate_version": 1,
+    "causation_id": "daef5cf5-bd61-5ad6-8f51-6c1850dd3ff6",
+    "correlation_id": "wp-core-008-av01-closure-20261029-04",
+    "event_id": "c3e99c1b-c87b-42e0-9143-9027e096112a",
+    "event_type": "production.lot-held",
+    "outbox_id": "0f24a638-d319-4658-980d-d8029a65ad81",
+    "publication_status": "PUBLISHED",
+    "world_id": "DEMO-WORLD"
+  },
+  "run_id": "closure-20261029-04",
+  "runtime_mode": "REAL",
+  "scenario_id": "AV-SCEN-01",
+  "schema": "cap.wp-core-008.av-scenario/v1",
+  "scope": "WP-CORE-008 Core/outbox/JetStream/Twin/BFF/UI acceptance slice; not the full Vision/RCA/Scheduler/Automation portfolio",
+  "source_main_sha": "ee060997b611fae16d6c4f13c0d85cebafaf17e7",
+  "status": "PASS",
+  "surfaces": {
+    "bff": {
+      "authenticated_facility_evidence": true,
+      "freshness": "FRESH",
+      "source": "digital-twin-service",
+      "world_id": "DEMO-WORLD"
+    },
+    "browser_evidence": {
+      "markers": {
+        "authenticated_bff_facility": true,
+        "playwright_result": true,
+        "real_keycloak_login": true,
+        "visible_ui": true
+      },
+      "path": "evidence/WP-CORE-008/RUNTIME-E2E-2026-10-29.md"
+    },
+    "keycloak": {
+      "health_status": 200
+    },
+    "ui": {
+      "http_status": 200
+    }
+  },
+  "trigger_boundary": "Core PlaceLotOnHold acceptance slice; no Vision/RCA claim",
+  "twin": {
+    "outbox": {
+      "aggregate_id": "AV-SCEN-01-closure-20261029-04",
+      "aggregate_version": 1,
+      "causation_id": "daef5cf5-bd61-5ad6-8f51-6c1850dd3ff6",
+      "correlation_id": "wp-core-008-av01-closure-20261029-04",
+      "event": {
+        "causation_id": "daef5cf5-bd61-5ad6-8f51-6c1850dd3ff6",
+        "correlation_id": "wp-core-008-av01-closure-20261029-04",
+        "entity_refs": [
+          {
+            "entity_type": "Lot",
+            "id": "AV-SCEN-01-closure-20261029-04",
+            "revision": "av01-closure-20261029-04-initial"
+          }
+        ],
+        "event_id": "c3e99c1b-c87b-42e0-9143-9027e096112a",
+        "event_type": "production.lot-held",
+        "observed_at": "2026-10-29T17:03:31.893153Z",
+        "occurred_at": {
+          "clock": "UTC",
+          "value": "2026-10-29T17:03:31.893153Z"
+        },
+        "payload": {
+          "aggregate_id": "AV-SCEN-01-closure-20261029-04",
+          "aggregate_type": "Lot",
+          "aggregate_version": 1,
+          "event_type": "production.lot-held",
+          "lot_id": "AV-SCEN-01-closure-20261029-04",
+          "lot_revision": "av01-closure-20261029-04-initial",
+          "material_hold_id": "ae415014-d14b-5aa5-b6fb-6703e1bd3ff8",
+          "reason": "inspection-triggered controlled recovery acceptance slice",
+          "schema_version": 2
+        },
+        "producer": "manufacturing-core",
+        "schema_version": 2,
+        "trace_id": "620c3c84-564b-4452-8154-666be62246ba",
+        "world_id": "DEMO-WORLD"
+      },
+      "event_id": "c3e99c1b-c87b-42e0-9143-9027e096112a",
+      "event_type": "production.lot-held",
+      "outbox_id": "0f24a638-d319-4658-980d-d8029a65ad81",
+      "publication_status": "PUBLISHED",
+      "world_id": "DEMO-WORLD"
+    },
+    "twin_applied_event": {
+      "aggregate_id": "AV-SCEN-01-closure-20261029-04",
+      "aggregate_type": "Lot",
+      "aggregate_version": 1,
+      "branch_id": "PRIMARY",
+      "consumer_scope": "twin-primary",
+      "event_id": "c3e99c1b-c87b-42e0-9143-9027e096112a",
+      "world_id": "DEMO-WORLD"
+    },
+    "twin_projection": {
+      "aggregate_id": "AV-SCEN-01-closure-20261029-04",
+      "aggregate_version": 1,
+      "branch_id": "PRIMARY",
+      "source_event_id": "c3e99c1b-c87b-42e0-9143-9027e096112a",
+      "source_revision": "c3e99c1b-c87b-42e0-9143-9027e096112a",
+      "state": {
+        "aggregate_id": "AV-SCEN-01-closure-20261029-04",
+        "aggregate_type": "Lot",
+        "aggregate_version": 1,
+        "epistemic_class": "OBSERVED",
+        "hold_id": "ae415014-d14b-5aa5-b6fb-6703e1bd3ff8",
+        "hold_reason": "inspection-triggered controlled recovery acceptance slice",
+        "lifecycle": "HELD",
+        "source_event_id": "c3e99c1b-c87b-42e0-9143-9027e096112a",
+        "source_revision": "c3e99c1b-c87b-42e0-9143-9027e096112a"
+      },
+      "world_id": "DEMO-WORLD"
+    },
+    "twin_revision": {
+      "source_event_id": "c3e99c1b-c87b-42e0-9143-9027e096112a",
+      "status": "FRESH"
+    }
+  },
+  "world_id": "DEMO-WORLD"
+}
