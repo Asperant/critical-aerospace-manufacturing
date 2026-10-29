@@ -538,7 +538,7 @@ function QualityExcursion({ items }: { items: AttentionItem[] }) {
 function EquipmentTables({ state }: { state: FacilityStateResponse }) {
   const { facility } = state;
   return (
-    <details className="equipment-details">
+    <details className="equipment-details" open>
       <summary>Equipment state ({facility.equipment.length})</summary>
       <div className="table-scroll">
         <table aria-label="Facility equipment">
