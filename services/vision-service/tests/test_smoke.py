@@ -77,7 +77,9 @@ def test_smoke_loads_explicit_cpu_package_and_rejects_invalid_manifest(
         smoke.load_package(invalid)
 
 
-def test_sample_manifest_requires_explicit_labels_and_safe_paths(tmp_path: Path) -> None:
+def test_sample_manifest_requires_explicit_labels_and_safe_paths(
+    tmp_path: Path,
+) -> None:
     image = smoke.sample(1, 32)[0]
     image_path = tmp_path / "sample.png"
     image_path.write_bytes(image.png)
@@ -100,9 +102,7 @@ def test_sample_manifest_requires_explicit_labels_and_safe_paths(tmp_path: Path)
     )
     assert smoke.load_sample_manifest(manifest)[0].name == "accepted-1"
     manifest.write_text(
-        manifest.read_text(encoding="utf-8").replace(
-            '"sample.png"', '"../sample.png"'
-        ),
+        manifest.read_text(encoding="utf-8").replace('"sample.png"', '"../sample.png"'),
         encoding="utf-8",
     )
     with pytest.raises(smoke.SmokeInputError):

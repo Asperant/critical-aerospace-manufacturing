@@ -208,9 +208,7 @@ def load_sample_manifest(path: Path) -> list[SampleImage]:
             data = image_path.read_bytes()
         except OSError:
             raise SmokeInputError("sample manifest image is unreadable") from None
-        result.append(
-            SampleImage(name, data, item["expects_candidates"])
-        )
+        result.append(SampleImage(name, data, item["expects_candidates"]))
     return result
 
 
@@ -365,7 +363,10 @@ def run(
     seconds = [item["seconds"] for item in results]
     within = max(seconds) <= THRESHOLD_S
     functional = all(item["functional_ok"] for item in results)
-    if not pipeline["models"] or pipeline["models"][0]["model_package_id"] != package.package_id:
+    if (
+        not pipeline["models"]
+        or pipeline["models"][0]["model_package_id"] != package.package_id
+    ):
         raise SmokeInputError("smoke package does not match pipeline model identity")
     if pipeline["models"][0]["model_version"] != package.version:
         raise SmokeInputError("smoke package version does not match pipeline identity")
