@@ -57,7 +57,8 @@ test("real Keycloak login and held lot are visible in the demo UI", async ({
   await expect(lots).toContainText(lot);
   await expect(lots).toContainText("HELD");
   await expect(lots).toContainText("ACTIVE");
-  await expect(page.getByText("QUALITY_EXCURSION")).toBeVisible();
+  const quality = page.getByRole("region", { name: "Quality excursion" });
+  await expect(quality).toContainText("QUALITY_EXCURSION");
   await expect(
     page.getByText("inspection-triggered controlled recovery acceptance slice"),
   ).toBeVisible();
