@@ -9,7 +9,9 @@ const python =
 
 export default defineConfig({
   testDir: "e2e",
-  testMatch: bench ? /bench\.spec\.ts$/ : /^(?!.*bench).*\.spec\.ts$/,
+  testMatch: bench
+    ? /bench\.spec\.ts$/
+    : /^(?!.*bench)(?!.*demo-runtime).*\.spec\.ts$/,
   fullyParallel: false,
   workers: 1,
   retries: 0,

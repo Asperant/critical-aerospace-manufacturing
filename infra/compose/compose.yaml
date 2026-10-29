@@ -643,8 +643,8 @@ configs:
             "publicClient": true,
             "standardFlowEnabled": true,
             "directAccessGrantsEnabled": false,
-            "redirectUris": ["http://localhost:29080/v1/session/callback"],
-            "webOrigins": ["http://localhost:29080"]
+            "redirectUris": ["http://localhost:${CAP_UI_PORT:-29080}/v1/session/callback"],
+            "webOrigins": ["http://localhost:${CAP_UI_PORT:-29080}"]
           }
         ],
         "roles": {

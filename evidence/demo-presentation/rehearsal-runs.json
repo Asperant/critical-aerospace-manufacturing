@@ -1,0 +1,37 @@
+{
+  "schema": "cap.wp-doc-004.demo-rehearsals/v1",
+  "runtime_mode": "REAL",
+  "world_id": "DEMO-WORLD",
+  "lot_id": "DEMO-LOT-001",
+  "browser": {
+    "real_keycloak_login": true,
+    "visible_ui": true,
+    "runner": "mcr.microsoft.com/playwright:v1.64.0-noble"
+  },
+  "runs": [
+    {
+      "run": 1,
+      "status": "PASS",
+      "command_id": "391a4c22-bdae-522b-b75d-8d3f391548b2",
+      "outcome_id": "203a26da-fe0c-4668-b32c-c3a6ac0dbb5c",
+      "event_id": "1ad7c52f-3cd6-4a9c-b081-4373de76bf3b",
+      "outbox_id": "4a06eb74-4af1-4b26-8571-e70c1dd29bd4",
+      "nats_stream": "CAP_EVENTS",
+      "nats_consumer": "twin-primary",
+      "twin_fresh": true,
+      "bff_source": "digital-twin-service"
+    },
+    {
+      "run": 2,
+      "status": "PASS",
+      "command_id": "391a4c22-bdae-522b-b75d-8d3f391548b2",
+      "outcome_id": "e0457cab-17cb-4f35-818d-5c3a59976ca4",
+      "event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
+      "outbox_id": "cc5c03ef-4dd0-4b4e-b3c5-040a9bca599e",
+      "nats_stream": "CAP_EVENTS",
+      "nats_consumer": "twin-primary",
+      "twin_fresh": true,
+      "bff_source": "digital-twin-service"
+    }
+  ]
+}
