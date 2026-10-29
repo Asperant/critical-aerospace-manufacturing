@@ -18,6 +18,13 @@
       "profile": "infra",
       "smoke": ["infra/compose/stack.sh", "smoke"],
       "timeout_s": 300
+    },
+    {
+      "name": "vision",
+      "owner": "Selman",
+      "profile": "vision",
+      "smoke": ["services/vision-service/smoke.sh"],
+      "timeout_s": 300
     }
   ],
   "scenarios": []
