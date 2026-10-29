@@ -31,6 +31,10 @@ Node is available. On this shared host it automatically uses the pinned
 are installed only inside that disposable container, and the repository is
 not modified by the browser step.
 
+The demo browser spec is intentionally excluded from the generic CI harness;
+the dedicated demo config is the authoritative runner for this isolated live
+runtime.
+
 ## Live demo
 
 1. Open `http://localhost:29090/overview`.
