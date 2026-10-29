@@ -1,5 +1,8 @@
 # WP-VIS-001 slice 3 — serving worker
 
+Canonical requirements: FR-VIS-001, FR-VIS-009, TEST-VIS-PIPELINE,
+TEST-EVT-SCHEMA.
+
 The serving slice adds a fail-closed asynchronous worker. It accepts the
 canonical `InspectionRequested`/`RunInspection` envelope only from the
 configured Core/Simulator producer allowlist and exact world scope, parses the
