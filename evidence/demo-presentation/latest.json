@@ -54,7 +54,7 @@
       "correlation_id": "wp-doc-004-demo-hold",
       "effect_verification": "NOT_VERIFIED",
       "error_code": null,
-      "outcome_id": "e0457cab-17cb-4f35-818d-5c3a59976ca4",
+      "outcome_id": "004cb6d9-398c-4a61-8a8a-2907e7e4458e",
       "status": "ACCEPTED",
       "world_id": "DEMO-WORLD"
     },
@@ -64,8 +64,8 @@
       "detail": null,
       "effect_verification": "NOT_VERIFIED",
       "error_code": null,
-      "event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
-      "outcome_id": "e0457cab-17cb-4f35-818d-5c3a59976ca4",
+      "event_id": "9353564e-3dc7-4702-b5e4-7bbf349e3be9",
+      "outcome_id": "004cb6d9-398c-4a61-8a8a-2907e7e4458e",
       "status": "ACCEPTED",
       "world_id": "DEMO-WORLD"
     }
@@ -75,23 +75,23 @@
     "held": true,
     "id": "DEMO-LOT-001",
     "lifecycle_state": "CREATED",
-    "revision": "b94aae2725fe4003a79944c35be072da",
-    "state_revision": "b94aae2725fe4003a79944c35be072da"
+    "revision": "17b81c06a5ee469cb85a650ac73d7ba0",
+    "state_revision": "17b81c06a5ee469cb85a650ac73d7ba0"
   },
   "core_before": {
     "execution_state": "DISPATCHED",
     "held": false,
     "id": "DEMO-LOT-001",
     "lifecycle_state": "CREATED",
-    "revision": "b94aae2725fe4003a79944c35be072da",
-    "state_revision": "b94aae2725fe4003a79944c35be072da"
+    "revision": "17b81c06a5ee469cb85a650ac73d7ba0",
+    "state_revision": "17b81c06a5ee469cb85a650ac73d7ba0"
   },
   "event": {
     "causation_id": "391a4c22-bdae-522b-b75d-8d3f391548b2",
     "correlation_id": "wp-doc-004-demo-hold",
-    "event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
+    "event_id": "9353564e-3dc7-4702-b5e4-7bbf349e3be9",
     "event_type": "production.lot-held",
-    "trace_id": "2e8d35b0-93e4-4658-9116-fa55f3658e5b",
+    "trace_id": "96a5bc10-fc1c-4dbc-84ce-71bff559406e",
     "world_id": "DEMO-WORLD"
   },
   "lot_id": "DEMO-LOT-001",
@@ -116,15 +116,15 @@
     "aggregate_version": 2,
     "causation_id": "391a4c22-bdae-522b-b75d-8d3f391548b2",
     "correlation_id": "wp-doc-004-demo-hold",
-    "event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
+    "event_id": "9353564e-3dc7-4702-b5e4-7bbf349e3be9",
     "event_type": "production.lot-held",
-    "outbox_id": "cc5c03ef-4dd0-4b4e-b3c5-040a9bca599e",
+    "outbox_id": "611cefd9-b537-4147-abf6-f1297789ef62",
     "publication_status": "PUBLISHED",
     "world_id": "DEMO-WORLD"
   },
   "runtime_mode": "REAL",
   "schema": "cap.wp-doc-004.demo-verification/v1",
-  "source_main_sha": "a185a9392d2ed3111703923afc406c78ae11f8dc",
+  "source_main_sha": "a42fed2d74b999d2956ed4a158b8bd5923269f29",
   "status": "PASS",
   "surfaces": {
     "bff": {
@@ -155,15 +155,15 @@
       "aggregate_version": 2,
       "branch_id": "PRIMARY",
       "consumer_scope": "twin-primary",
-      "event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
+      "event_id": "9353564e-3dc7-4702-b5e4-7bbf349e3be9",
       "world_id": "DEMO-WORLD"
     },
     "projection": {
       "aggregate_id": "DEMO-LOT-001",
       "aggregate_version": 2,
       "branch_id": "PRIMARY",
-      "source_event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
-      "source_revision": "863002ae-8b0b-415f-8934-d5ae097178e0",
+      "source_event_id": "9353564e-3dc7-4702-b5e4-7bbf349e3be9",
+      "source_revision": "9353564e-3dc7-4702-b5e4-7bbf349e3be9",
       "state": {
         "aggregate_id": "DEMO-LOT-001",
         "aggregate_type": "Lot",
@@ -174,13 +174,13 @@
         "hold_id": "6165d05b-1544-5a01-9543-0b025aac4b65",
         "hold_reason": "inspection-triggered controlled recovery acceptance slice",
         "lifecycle": "HELD",
-        "source_event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
-        "source_revision": "863002ae-8b0b-415f-8934-d5ae097178e0"
+        "source_event_id": "9353564e-3dc7-4702-b5e4-7bbf349e3be9",
+        "source_revision": "9353564e-3dc7-4702-b5e4-7bbf349e3be9"
       },
       "world_id": "DEMO-WORLD"
     },
     "projection_revision": {
-      "source_event_id": "863002ae-8b0b-415f-8934-d5ae097178e0",
+      "source_event_id": "9353564e-3dc7-4702-b5e4-7bbf349e3be9",
       "status": "FRESH"
     }
   },
