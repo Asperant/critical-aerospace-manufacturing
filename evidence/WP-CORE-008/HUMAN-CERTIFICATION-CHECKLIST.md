@@ -22,9 +22,18 @@ The owner must record explicit answers to all of these assertions:
 4. The selected DOD-WP-01, 02, 03, 05, 06 and 12 criteria are satisfied at the stated scope.
 
 The owner must append the signed/attributable certification to the canonical
-WP evidence record, preserving the exact current-main SHA
-`ee060997b611fae16d6c4f13c0d85cebafaf17e7` and the technical bundle ID
-`EVID-WP-CORE-008-TECH-20261029`. The agent must not fill this record.
+WP evidence record with the following provenance kept distinct:
+
+- historical runtime execution/source-main SHA:
+  `ee060997b611fae16d6c4f13c0d85cebafaf17e7` (preserve as recorded in the
+  runtime manifests and technical bundle; it is not the current main SHA);
+- PR #210 technical closure merge SHA:
+  `6299ab02491a9b7336b3637334ed461ce510ec21`;
+- current GitHub `main` SHA at this checklist refresh:
+  `6299ab02491a9b7336b3637334ed461ce510ec21`;
+- technical bundle ID: `EVID-WP-CORE-008-TECH-20261029`.
+
+The agent must not fill the accountable certification record.
 
 After that human record exists, run:
 
