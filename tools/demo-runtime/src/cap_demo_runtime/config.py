@@ -7,6 +7,7 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class Settings:
     pg_dsn: str
+    core_url: str = "http://demo-core:8081"
     nats_url: str = "nats://nats:4222"
     world_id: str = "DEMO-WORLD"
     branch_id: str = "PRIMARY"
@@ -27,6 +28,7 @@ class Settings:
                 raise ValueError("CAP_PG_DSN or complete CAP_PG_* settings required")
             dsn = f"postgresql://{user}:{password}@{host}:5432/{database}"
         values = {
+            "core_url": os.environ.get("CAP_CORE_URL", "http://demo-core:8081"),
             "nats_url": os.environ.get("CAP_NATS_URL", "nats://nats:4222"),
             "world_id": os.environ.get("CAP_WORLD_ID", "DEMO-WORLD"),
             "branch_id": os.environ.get("CAP_BRANCH_ID", "PRIMARY"),

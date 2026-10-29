@@ -92,8 +92,13 @@ def verify(artifact_dir: Path) -> dict[str, Any]:
             "has_active_hold",
             "has_quality_excursion",
             "bff_authenticated",
+            "showcase_authenticated",
+            "has_timeline",
+            "has_dispatch_blocked",
         )
     }
+    simulator = context.get("simulator", {})
+    dispatch = context.get("dispatch", {}).get("response", {})
     checks = [
         _check(
             "world_identity",
@@ -112,6 +117,13 @@ def verify(artifact_dir: Path) -> dict[str, Any]:
                 and outcome.get("command_id") == command["id"]
             ),
             "CommandID binds response and durable outcome",
+        ),
+        _check(
+            "simulator_trigger",
+            simulator.get("event", {}).get("event_type") == "INSPECTION_FAILED"
+            and simulator.get("event", {}).get("provenance") == "SIMULATION"
+            and bool(simulator.get("event_sequence_digest")),
+            "deterministic simulator trigger and replay identity are present",
         ),
         _check(
             "postgres_state",
@@ -150,6 +162,12 @@ def verify(artifact_dir: Path) -> dict[str, Any]:
             "Twin projection revision is FRESH",
         ),
         _check(
+            "dispatch_active_hold",
+            dispatch.get("status") == "REJECTED"
+            and dispatch.get("error_code") == "ACTIVE_HOLD",
+            "dispatch attempt is durably rejected with ACTIVE_HOLD",
+        ),
+        _check(
             "keycloak_ui",
             keycloak == 200 and ui == 200,
             "Keycloak realm and UI answer HTTP 200",
@@ -174,6 +192,8 @@ def verify(artifact_dir: Path) -> dict[str, Any]:
         "core_after": None if core_state is None else dict(core_state),
         "outbox": outbox_dict,
         "event": context.get("event"),
+        "simulator": simulator,
+        "dispatch": context.get("dispatch"),
         "twin": {
             "projection": projection_dict,
             "applied_event": applied_dict,

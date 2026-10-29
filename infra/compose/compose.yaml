@@ -549,6 +549,7 @@ services:
       - path: ${CAP_PLATFORM_STATE_DIR:-${HOME}/.local/state/cap-platform}/demo-bff.env
         required: false
     environment:
+      CAP_CORE_URL: http://demo-core:8081
       OPERATIONS_BFF_OIDC_ISSUER: http://keycloak:8080/realms/cap-platform
       OPERATIONS_BFF_OIDC_BROWSER_ISSUER: http://localhost:${CAP_KEYCLOAK_PORT:-28080}/realms/cap-platform
       OPERATIONS_BFF_OIDC_CLIENT_ID: command-center-web

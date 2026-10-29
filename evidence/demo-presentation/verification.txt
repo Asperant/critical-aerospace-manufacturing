@@ -3,11 +3,13 @@ DEMO VERIFICATION
 CHECK                       RESULT  DETAIL
 world_identity              PASS    WorldID is stable
 command_identity            PASS    CommandID binds response and durable outcome
+simulator_trigger           PASS    deterministic simulator trigger and replay identity are present
 postgres_state              PASS    Core PostgreSQL lot is HELD
 outbox_published            PASS    outbox row is PUBLISHED
 event_identity              PASS    EventID binds outbox, ledger and projection
 nats_consumer               PASS    JetStream consumer has no pending ACK
 twin_fresh                  PASS    Twin projection revision is FRESH
+dispatch_active_hold        PASS    dispatch attempt is durably rejected with ACTIVE_HOLD
 keycloak_ui                 PASS    Keycloak realm and UI answer HTTP 200
 browser_visible             PASS    authenticated browser result is present
 OVERALL                     PASS

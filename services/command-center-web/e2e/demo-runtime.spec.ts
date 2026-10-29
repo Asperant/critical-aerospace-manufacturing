@@ -9,8 +9,12 @@ function record(result: Record<string, unknown>): void {
   const directory =
     process.env["CAP_DEMO_ARTIFACT_DIR"] ?? "../../evidence/demo-presentation";
   mkdirSync(directory, { recursive: true });
+  const filename =
+    process.env["CAP_DEMO_BROWSER_STAGE"] === "initial"
+      ? "browser-initial-result.json"
+      : "browser-result.json";
   writeFileSync(
-    join(directory, "browser-result.json"),
+    join(directory, filename),
     `${JSON.stringify(result, null, 2)}\n`,
     "utf8",
   );
@@ -19,6 +23,7 @@ function record(result: Record<string, unknown>): void {
 test("real Keycloak login and held lot are visible in the demo UI", async ({
   page,
 }) => {
+  const stage = process.env["CAP_DEMO_BROWSER_STAGE"] ?? "final";
   const stateDirectory =
     process.env["CAP_PLATFORM_STATE_DIR"] ??
     `${process.env["HOME"]}/.local/state/cap-demo`;
@@ -55,23 +60,74 @@ test("real Keycloak login and held lot are visible in the demo UI", async ({
 
   const lots = page.getByRole("table", { name: "Production lots" });
   await expect(lots).toContainText(lot);
+  if (stage === "initial") {
+    await expect(lots).not.toContainText("HELD");
+    await expect(
+      page.getByText("Nothing needs attention in the reported sources."),
+    ).toBeVisible();
+    const directory =
+      process.env["CAP_DEMO_ARTIFACT_DIR"] ??
+      "../../evidence/demo-presentation";
+    const screenshot = join(directory, "browser-initial.png");
+    await page.screenshot({ path: screenshot, fullPage: true });
+    record({
+      status: "PASS",
+      stage,
+      url: page.url(),
+      world_id: world,
+      lot_id: lot,
+      has_authenticated_actor: true,
+      has_lot: true,
+      has_healthy_state: true,
+      bff_authenticated: true,
+      screenshot,
+    });
+    return;
+  }
   await expect(lots).toContainText("HELD");
   await expect(lots).toContainText("ACTIVE");
   const quality = page.getByRole("region", { name: "Quality excursion" });
   await expect(quality).toContainText("QUALITY_EXCURSION");
   await expect(
     quality.getByText(
-      "inspection-triggered controlled recovery acceptance slice",
+      "Simulator inspection anomaly — inspection-triggered controlled recovery",
     ),
   ).toBeVisible();
   await expect(page.getByText("freshness FRESH")).toBeVisible();
+  const showcase = await page.request.get(
+    `/v1/showcase?world_id=${world}&lot_id=${lot}`,
+  );
+  expect(showcase.status()).toBe(200);
+  const showcaseBody = (await showcase.json()) as {
+    timeline?: Array<{ kind?: string; status?: string }>;
+    dispatch?: { status?: string; error_code?: string };
+  };
+  expect(showcaseBody.timeline?.map((item) => item.kind)).toEqual(
+    expect.arrayContaining([
+      "SIMULATOR_TRIGGER",
+      "COMMAND_ACCEPTED",
+      "EVENT_PUBLISHED",
+      "TWIN_UPDATED",
+      "DISPATCH_BLOCKED",
+    ]),
+  );
+  expect(showcaseBody.dispatch?.status).toBe("REJECTED");
+  expect(showcaseBody.dispatch?.error_code).toBe("ACTIVE_HOLD");
+  await expect(
+    page.getByRole("region", { name: "Operational timeline" }),
+  ).toContainText("Dispatch blocked");
 
   const directory =
     process.env["CAP_DEMO_ARTIFACT_DIR"] ?? "../../evidence/demo-presentation";
   const screenshot = join(directory, "browser-final.png");
   await page.screenshot({ path: screenshot, fullPage: true });
+  await page.screenshot({
+    path: join(directory, "browser-anomaly.png"),
+    fullPage: true,
+  });
   record({
     status: "PASS",
+    stage,
     url: page.url(),
     world_id: world,
     lot_id: lot,
@@ -80,7 +136,10 @@ test("real Keycloak login and held lot are visible in the demo UI", async ({
     has_held_state: true,
     has_active_hold: true,
     has_quality_excursion: true,
+    has_dispatch_blocked: true,
     bff_authenticated: true,
+    showcase_authenticated: true,
+    has_timeline: true,
     screenshot,
   });
 });

@@ -1,5 +1,6 @@
 {
   "status": "PASS",
+  "stage": "final",
   "url": "http://localhost:29090/overview?world_id=DEMO-WORLD",
   "world_id": "DEMO-WORLD",
   "lot_id": "DEMO-LOT-001",
@@ -8,6 +9,9 @@
   "has_held_state": true,
   "has_active_hold": true,
   "has_quality_excursion": true,
+  "has_dispatch_blocked": true,
   "bff_authenticated": true,
+  "showcase_authenticated": true,
+  "has_timeline": true,
   "screenshot": "/artifacts/browser-final.png"
 }

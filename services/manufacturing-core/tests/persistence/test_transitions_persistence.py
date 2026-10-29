@@ -171,10 +171,10 @@ def test_hold_dispatch_and_authorization_negative_paths(
             "resource_id": "E-1",
         }
     )
-    # The fixture's initial execution is READY, so this exercises the guard
-    # before physical dispatch and confirms a hold never mutates lifecycle.
+    # The active material hold is the primary dispatch safety gate, even when
+    # the execution state is not yet QUEUED.
     outcome = service.dispatch_lot(set(), dispatch, resource_available=True)
     assert outcome.status is OutcomeStatus.REJECTED
-    assert outcome.error_code == "DISPATCH_REQUIRES_QUEUED"
+    assert outcome.error_code == "ACTIVE_HOLD"
     replay = service.dispatch_lot(set(), dispatch, resource_available=True)
     assert replay == outcome
