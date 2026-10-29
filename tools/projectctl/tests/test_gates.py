@@ -240,6 +240,19 @@ def test_post_merge_adapter_rejects_incomplete_ci_evidence(project, post_merge_f
     assert any("CI evidence" in item for item in result["missing_evidence"])
 
 
+def test_post_merge_adapter_rejects_ci_from_another_main_revision(
+    project, post_merge_fixture
+):
+    path, post = _json_record(
+        post_merge_fixture, "evidence/WP-CORE-008/POST-MERGE-2026-10-29.json"
+    )
+    post["required_ci"][0]["main_sha"] = "6299ab02491a9b7336b3637334ed461ce510ec21"
+    path.write_text(json.dumps(post), encoding="utf-8")
+    result = _post_merge_result(project, post_merge_fixture)
+    assert result["result"] == "UNKNOWN"
+    assert any("CI entry" in item for item in result["missing_evidence"])
+
+
 def test_wp_core_008_real_current_records_are_consumed(project, root):
     canonical = project.catalog.work_packages[
         [wp.id for wp in project.catalog.work_packages].index("WP-CORE-008")
