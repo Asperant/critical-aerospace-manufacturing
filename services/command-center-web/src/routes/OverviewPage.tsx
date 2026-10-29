@@ -530,7 +530,6 @@ function QualityExcursion({ items }: { items: AttentionItem[] }) {
           <strong>{item.source}</strong>
         </div>
       </div>
-      <p className="sr-only">Freshness {item.freshness}</p>
     </section>
   );
 }
