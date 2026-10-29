@@ -82,9 +82,10 @@ class WorkerConfig:
             return value
 
         raw_events = values.get("CAP_VISION_INPUT_EVENT_TYPES", "")
-        events = tuple(
-            item.strip() for item in raw_events.split(",") if item.strip()
-        ) or DEFAULT_INPUT_EVENTS
+        events = (
+            tuple(item.strip() for item in raw_events.split(",") if item.strip())
+            or DEFAULT_INPUT_EVENTS
+        )
         if len(set(events)) != len(events):
             raise WorkerError("CAP_VISION_INPUT_EVENT_TYPES must be unique")
         return cls(
@@ -92,7 +93,9 @@ class WorkerConfig:
             input_stream=required("CAP_VISION_INPUT_STREAM"),
             input_subject=values.get("CAP_VISION_INPUT_SUBJECT", DEFAULT_INPUT_SUBJECT),
             input_durable=required("CAP_VISION_INPUT_DURABLE"),
-            output_subject=values.get("CAP_VISION_OUTPUT_SUBJECT", DEFAULT_OUTPUT_SUBJECT),
+            output_subject=values.get(
+                "CAP_VISION_OUTPUT_SUBJECT", DEFAULT_OUTPUT_SUBJECT
+            ),
             world_id=required("CAP_VISION_WORLD_ID"),
             input_event_types=events,
             ack_wait_seconds=float(values.get("CAP_VISION_ACK_WAIT_SECONDS", "30")),
@@ -118,7 +121,9 @@ class WorkerConfig:
             raise WorkerError("ack wait and max deliver must be positive")
 
 
-def _decode(data: bytes, config: WorkerConfig) -> tuple[EventEnvelope, Mapping[str, object]]:
+def _decode(
+    data: bytes, config: WorkerConfig
+) -> tuple[EventEnvelope, Mapping[str, object]]:
     try:
         value = json.loads(data)
     except (TypeError, ValueError):
@@ -231,7 +236,9 @@ class VisionWorker:
             await delivery.nak()
             raise
 
-    def health(self, *, nats_connected: bool, artifact_store_ready: bool) -> dict[str, Any]:
+    def health(
+        self, *, nats_connected: bool, artifact_store_ready: bool
+    ) -> dict[str, Any]:
         return health_report(
             "vision-service",
             "runtime",

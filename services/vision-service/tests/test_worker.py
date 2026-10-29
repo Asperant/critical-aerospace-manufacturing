@@ -82,15 +82,22 @@ def message(request: dict[str, Any], event: EventEnvelope | None = None) -> byte
 
 
 def worker(publisher: Publisher, store: Any) -> VisionWorker:
-    now = iter(
-        datetime(2026, 10, 29, 10, 0, n, tzinfo=UTC) for n in range(10)
-    )
+    now = iter(datetime(2026, 10, 29, 10, 0, n, tzinfo=UTC) for n in range(10))
     return VisionWorker(store, publisher, config(), clock=lambda: next(now))
 
 
 def request_and_store() -> tuple[dict[str, Any], Any]:
     image = encode_png(gray(textured(seed=3)))
-    ref = reference_for(image, **{"context": {"world_id": "world-production", "simulation_run_id": None, "branch_id": None}})
+    ref = reference_for(
+        image,
+        **{
+            "context": {
+                "world_id": "world-production",
+                "simulation_run_id": None,
+                "branch_id": None,
+            }
+        },
+    )
     return request_for(ref, world_id="world-production"), store_with(ref, image)
 
 
