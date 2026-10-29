@@ -185,7 +185,12 @@ reset() {
     "${ARTIFACT_DIR}/verify-output.txt" \
     "${ARTIFACT_DIR}/preflight.txt" \
     "${ARTIFACT_DIR}/scenario-output.txt" \
-    "${ARTIFACT_DIR}/browser-output.txt"
+    "${ARTIFACT_DIR}/browser-output.txt" \
+    "${ARTIFACT_DIR}/browser-initial-output.txt" \
+    "${ARTIFACT_DIR}/browser-initial-result.json" \
+    "${ARTIFACT_DIR}/browser-initial.png" \
+    "${ARTIFACT_DIR}/browser-anomaly.png" \
+    "${ARTIFACT_DIR}/browser-final.png"
   echo "PASS: isolated demo state reset (${PROJECT}; ${STATE_DIR})"
 }
 
@@ -194,6 +199,7 @@ browser_test() {
     [[ -x "${ROOT}/services/command-center-web/node_modules/.bin/playwright" ]]; then
     ( cd "${ROOT}/services/command-center-web" && \
       CAP_DEMO_ARTIFACT_DIR="${ARTIFACT_DIR}" \
+      CAP_DEMO_BROWSER_STAGE="${CAP_DEMO_BROWSER_STAGE:-final}" \
       ./node_modules/.bin/playwright test e2e/demo-runtime.spec.ts \
         --config=playwright.demo.config.ts )
     return
@@ -204,6 +210,7 @@ browser_test() {
   docker run --rm --network host --user "$(id -u):$(id -g)" \
     -e CAP_PLATFORM_STATE_DIR=/state \
     -e CAP_DEMO_ARTIFACT_DIR=/artifacts \
+    -e CAP_DEMO_BROWSER_STAGE="${CAP_DEMO_BROWSER_STAGE:-final}" \
     -e CAP_UI_PORT="${CAP_UI_PORT}" \
     -v "${ROOT}/services/command-center-web:/source:ro" \
     -v "${STATE_DIR}:/state:ro" \
@@ -224,6 +231,16 @@ browser_test() {
 
 scenario() {
   preflight_capture
+  run_flow
+  if [[ "${CAP_DEMO_SKIP_BROWSER:-0}" != 1 ]]; then
+    browser_test 2>&1 | tee "${ARTIFACT_DIR}/browser-output.txt"
+  else
+    echo "WARN: browser step skipped by CAP_DEMO_SKIP_BROWSER=1; verify will fail closed"
+  fi
+  verify
+}
+
+run_flow() {
   mkdir -p "${ARTIFACT_DIR}"
   require_command uv
   PYTHONPATH="${ROOT}/tools/demo-runtime/src${PYTHONPATH:+:${PYTHONPATH}}" \
@@ -231,11 +248,13 @@ scenario() {
     uv run --project "${ROOT}/ci" --locked python \
       "${HERE}/scripts/demo_flow.py" --output "${ARTIFACT_DIR}/scenario-context.json" \
       2>&1 | tee "${ARTIFACT_DIR}/scenario-output.txt"
-  if [[ "${CAP_DEMO_SKIP_BROWSER:-0}" != 1 ]]; then
-    browser_test 2>&1 | tee "${ARTIFACT_DIR}/browser-output.txt"
-  else
-    echo "WARN: browser step skipped by CAP_DEMO_SKIP_BROWSER=1; verify will fail closed"
-  fi
+}
+
+showcase() {
+  preflight_capture
+  CAP_DEMO_BROWSER_STAGE=initial browser_test 2>&1 | tee "${ARTIFACT_DIR}/browser-initial-output.txt"
+  run_flow
+  CAP_DEMO_BROWSER_STAGE=final browser_test 2>&1 | tee "${ARTIFACT_DIR}/browser-output.txt"
   verify
 }
 
@@ -264,7 +283,7 @@ stop() {
 
 usage() {
   cat >&2 <<EOF
-Usage: $0 {start|preflight|reset|scenario|verify|status|stop}
+Usage: $0 {start|preflight|reset|scenario|showcase|verify|status|stop}
 
 State: ${STATE_DIR}
 Compose project: ${PROJECT}
@@ -278,6 +297,7 @@ case "${1:-}" in
   preflight) preflight_capture ;;
   reset) reset ;;
   scenario) scenario ;;
+  showcase) showcase ;;
   verify) verify ;;
   status) status ;;
   stop) stop ;;

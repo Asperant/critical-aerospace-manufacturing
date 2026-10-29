@@ -14,6 +14,7 @@ import {
 } from "../facilityState/useFacilityState";
 import { useOverview, type OverviewState } from "../overview/useOverview";
 import { useSession } from "../session/SessionProvider";
+import { useShowcase, type ShowcaseState } from "../showcase/useShowcase";
 
 const DEFAULT_WORLD_ID = "DEMO-WORLD";
 
@@ -534,6 +535,44 @@ function QualityExcursion({ items }: { items: AttentionItem[] }) {
   );
 }
 
+function ShowcaseTimeline({ state }: { state: ShowcaseState }) {
+  if (state.status === "idle" || state.status === "loading") return null;
+  if (state.status !== "ready") return null;
+  const { timeline, dispatch } = state.showcase;
+  if (timeline.length === 0) {
+    return (
+      <section className="card timeline-panel" aria-label="Operational timeline">
+        <SectionHeading eyebrow="Live evidence" title="Operational timeline" />
+        <p className="empty-copy">No persisted showcase events have reached this lot yet.</p>
+      </section>
+    );
+  }
+  return (
+    <section className="card timeline-panel" aria-label="Operational timeline">
+      <SectionHeading eyebrow="Live evidence" title="Operational timeline" />
+      <ol className="timeline-list">
+        {timeline.map((item) => (
+          <li className="timeline-item" key={item.id}>
+            <span className="timeline-marker" aria-hidden="true" />
+            <div>
+              <strong>{item.label}</strong>
+              <span className="timeline-detail">
+                {item.source} · {item.status}
+                {item.error_code ? ` · ${item.error_code}` : ""}
+              </span>
+            </div>
+          </li>
+        ))}
+      </ol>
+      {dispatch?.status === "REJECTED" && dispatch.error_code === "ACTIVE_HOLD" ? (
+        <p className="dispatch-blocked" role="status">
+          Dispatch blocked — active quality hold <span>{dispatch.error_code}</span>
+        </p>
+      ) : null}
+    </section>
+  );
+}
+
 function EquipmentTables({ state }: { state: FacilityStateResponse }) {
   const { facility } = state;
   return (
@@ -598,10 +637,12 @@ function FacilityStateViewPanel({
   state,
   reload,
   overview,
+  showcase,
 }: {
   state: FacilityStateView;
   reload: () => void;
   overview: OverviewState;
+  showcase: ShowcaseState;
 }) {
   switch (state.status) {
     case "idle":
@@ -709,6 +750,7 @@ function FacilityStateViewPanel({
             <EquipmentTables state={state.state} />
           </section>
           <QualityExcursion items={overviewValue?.needs_attention ?? []} />
+          <ShowcaseTimeline state={showcase} />
           <MetaSummary overview={overviewValue} facility={state.state} />
         </>
       );
@@ -824,6 +866,15 @@ export function OverviewPage() {
     worldId,
     session.status === "authenticated",
   );
+  const showcaseLotId =
+    facility.state.status === "ready"
+      ? facility.state.state.facility.lots[0]?.lot_id ?? "DEMO-LOT-001"
+      : "DEMO-LOT-001";
+  const showcase = useShowcase(
+    worldId,
+    showcaseLotId,
+    session.status === "authenticated",
+  );
   return (
     <section className="overview-page" aria-labelledby="overview-heading">
       <div className="page-heading">
@@ -847,6 +898,7 @@ export function OverviewPage() {
             state={worldId ? facility.state : { status: "idle" }}
             reload={facility.reload}
             overview={state}
+            showcase={showcase.state}
           />
           {facility.state.status !== "ready" ? (
             <OverviewView state={state} loadMore={loadMore} reload={reload} />

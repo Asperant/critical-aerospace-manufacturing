@@ -5,8 +5,12 @@ from contextlib import asynccontextmanager
 from typing import Any
 
 import psycopg
-from fastapi import FastAPI, HTTPException
-from manufacturing_core.commands import OperationalCommandV1, PlaceLotOnHold
+from fastapi import FastAPI, HTTPException, Query
+from manufacturing_core.commands import (
+    DispatchLot,
+    OperationalCommandV1,
+    PlaceLotOnHold,
+)
 from manufacturing_core.transitions import CoreTransitionService
 from psycopg.rows import DictRow, dict_row
 from pydantic import TypeAdapter, ValidationError
@@ -65,19 +69,28 @@ def create_app() -> FastAPI:
             raise HTTPException(
                 status_code=400, detail="command contract rejected"
             ) from exc
-        if not isinstance(parsed, PlaceLotOnHold):
+        if not isinstance(parsed, PlaceLotOnHold | DispatchLot):
             raise HTTPException(
-                status_code=501, detail="demo supports PlaceLotOnHold only"
+                status_code=501, detail="demo supports hold and dispatch commands only"
             )
         if parsed.world_id != settings.world_id:
             raise HTTPException(status_code=409, detail="world scope rejected")
         try:
             with _connect(settings) as connection:
-                outcome = CoreTransitionService(connection).place_lot_on_hold(
-                    permissions,
-                    parsed,
-                    expected_world_id=settings.world_id,
-                )
+                service = CoreTransitionService(connection)
+                if isinstance(parsed, PlaceLotOnHold):
+                    outcome = service.place_lot_on_hold(
+                        permissions,
+                        parsed,
+                        expected_world_id=settings.world_id,
+                    )
+                else:
+                    outcome = service.dispatch_lot(
+                        permissions,
+                        parsed,
+                        resource_available=True,
+                        expected_world_id=settings.world_id,
+                    )
                 event_id = _event_id(connection, str(parsed.command_id))
         except PermissionError as exc:
             raise HTTPException(
@@ -111,6 +124,52 @@ def create_app() -> FastAPI:
         if row is None:
             raise HTTPException(status_code=404, detail="lot not found")
         return {"world_id": settings.world_id, **dict(row)}
+
+    @app.get("/v1/showcase/{lot_id}")
+    def showcase(
+        lot_id: str,
+        world_id: str = Query(settings.world_id, min_length=1, pattern=r"\S"),
+    ) -> dict[str, object]:
+        """Internal demo read boundary for persisted Core facts only."""
+        if world_id != settings.world_id:
+            raise HTTPException(status_code=409, detail="world scope rejected")
+        with _connect(settings) as connection:
+            hold = connection.execute(
+                "SELECT o.outcome_id, o.command_id, o.command_type, o.status, "
+                "o.world_id, o.correlation_id, i.causation_id, o.error_code, "
+                "o.detail, o.created_at "
+                "FROM core.command_outcome o "
+                "JOIN core.command_idempotency i ON i.command_id=o.command_id "
+                "WHERE i.target_type='Lot' AND i.target_id=%s "
+                "AND i.world_id=%s AND o.command_type='PlaceLotOnHold' "
+                "ORDER BY o.created_at DESC LIMIT 1",
+                (lot_id, world_id),
+            ).fetchone()
+            dispatch = connection.execute(
+                "SELECT o.outcome_id, o.command_id, o.command_type, o.status, "
+                "o.world_id, o.correlation_id, i.causation_id, o.error_code, "
+                "o.detail, o.created_at "
+                "FROM core.command_outcome o "
+                "JOIN core.command_idempotency i ON i.command_id=o.command_id "
+                "WHERE i.target_type='Lot' AND i.target_id=%s "
+                "AND i.world_id=%s AND o.command_type='DispatchLot' "
+                "ORDER BY o.created_at DESC LIMIT 1",
+                (lot_id, world_id),
+            ).fetchone()
+            outbox = connection.execute(
+                "SELECT outbox_id, event_id, event_type, publication_status, "
+                "aggregate_version, occurred_at, created_at "
+                "FROM core.outbox WHERE aggregate_id=%s AND world_id=%s "
+                "ORDER BY created_at DESC LIMIT 1",
+                (lot_id, world_id),
+            ).fetchone()
+        return {
+            "world_id": world_id,
+            "lot_id": lot_id,
+            "hold_command": None if hold is None else dict(hold),
+            "dispatch_attempt": None if dispatch is None else dict(dispatch),
+            "outbox": None if outbox is None else dict(outbox),
+        }
 
     return app
 

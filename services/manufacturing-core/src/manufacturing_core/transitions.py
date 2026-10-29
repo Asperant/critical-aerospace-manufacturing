@@ -206,10 +206,13 @@ def validate_dispatch(
     active_hold: bool,
     resource_available: bool,
 ) -> None:
-    if execution is not ExecutionState.QUEUED:
-        raise TransitionRejected("DISPATCH_REQUIRES_QUEUED", "lot is not queued")
+    # A material hold is the primary safety gate.  Surface it even when the
+    # caller's cached execution state is no longer QUEUED; dispatch protection
+    # must remain attributable to the active canonical hold.
     if active_hold:
         raise TransitionRejected("ACTIVE_HOLD", "active material hold blocks dispatch")
+    if execution is not ExecutionState.QUEUED:
+        raise TransitionRejected("DISPATCH_REQUIRES_QUEUED", "lot is not queued")
     if not resource_available:
         raise TransitionRejected("RESOURCE_UNAVAILABLE", "resource is not available")
 
