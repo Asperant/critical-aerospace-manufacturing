@@ -22,6 +22,7 @@ def tiny(tmp_path: Path) -> Path:
     (tmp_path / "release").mkdir()
     shutil.copy(REPO / "release/images.json", tmp_path / "release/images.json")
     data = json.loads((tmp_path / "release/images.json").read_text())
+    data["images"] = [data["images"][0]]
     data.pop(
         "database_migrations", None
     )  # the minimal repository declares no migration set

@@ -90,10 +90,11 @@ class FakeHost:
 def make_manifest(
     repo: Path, digest: str = DIGEST, commit: str = COMMIT, run: int = 5
 ) -> dict[str, Any]:
+    registry = load_registry(repo)
     return build_manifest(
         repo,
-        load_registry(repo),
-        {"mlflow": digest},
+        registry,
+        {image.name: digest for image in registry.images},
         commit=commit,
         run_id=run,
         run_attempt=1,
@@ -113,7 +114,7 @@ def test_the_override_pins_every_service_to_its_digest_and_never_builds(
     assert (
         text.count(f"ghcr.io/asperant/cap-mlflow@{DIGEST}") == 2
     )  # mlflow and mlflow-init
-    assert text.count("build: !reset null") == 2
+    assert text.count("build: !reset null") == 9
     assert ":latest" not in text and "sha-" not in text
 
 

@@ -214,7 +214,11 @@ def check_registry(root: Path) -> list[str]:
             problems.append(
                 f"{image.name}: build context {image.context} does not exist"
             )
-        if not image.dockerfile.startswith(image.context.rstrip("/") + "/"):
+        try:
+            (root / image.dockerfile).resolve().relative_to(
+                (root / image.context).resolve()
+            )
+        except ValueError:
             problems.append(
                 f"{image.name}: the Dockerfile is outside its build context"
             )

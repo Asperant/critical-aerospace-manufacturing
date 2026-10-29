@@ -14,7 +14,11 @@ def test_the_real_repository_registry_is_consistent(repo: Path) -> None:
     assert check_registry(repo) == []
     registry = load_registry(repo)
     assert registry.owner == "ghcr.io/asperant"
-    assert [i.name for i in registry.images] == ["mlflow"]
+    assert [i.name for i in registry.images] == [
+        "mlflow",
+        "demo-runtime",
+        "command-center-web",
+    ]
     assert registry.reference(registry.images[0], "sha256:" + "0" * 64).startswith(
         "ghcr.io/asperant/cap-mlflow@sha256:"
     )
