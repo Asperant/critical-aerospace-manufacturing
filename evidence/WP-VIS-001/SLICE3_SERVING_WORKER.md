@@ -17,6 +17,7 @@ failures NAK the delivery and publish no fabricated result. The worker does not
 mutate Core state; Core remains the authority for normalized InspectionResult
 and quality/manufacturing transitions.
 
-The runtime binding verifies an existing stream and durable consumer but does
+Acceptance classification: implementation complete for the serving-worker
+scope; deployment/runtime acceptance remains separate. The runtime binding verifies an existing stream and durable consumer but does
 not provision broker topology. SeaweedFS, NATS, promoted model packages, and
 real end-to-end scenario acceptance remain deployment/evidence gates.
