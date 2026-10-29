@@ -60,8 +60,7 @@
       "runtime": "python",
       "path": "services/vision-service",
       "logging": "ADOPTED",
-      "health": "ADOPTED",
-      "evidence": "services/vision-service/src/vision_service/__main__.py and worker.py"
+      "health": "ADOPTED"
     },
     {"name": "ai-intelligence-service", "owner": "Asrın", "runtime": "python", "path": "services/ai-intelligence-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
     {
