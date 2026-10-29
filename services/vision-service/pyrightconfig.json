@@ -1,0 +1,12 @@
+{
+  "include": ["src", "tests"],
+  "extraPaths": [
+    "src",
+    "../../packages/artifacts/src",
+    "../../packages/contracts/src",
+    "../../packages/observability/src"
+  ],
+  "pythonVersion": "3.11",
+  "typeCheckingMode": "standard",
+  "strict": ["src"]
+}

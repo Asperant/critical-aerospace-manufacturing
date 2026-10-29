@@ -1,0 +1,84 @@
+{
+  "event_type": "vision.inspection-observation",
+  "schema_version": 1,
+  "observation_id": "4c3b2a19-0f8e-4d7c-a6b5-9e8d7c6b5a43",
+  "inspection_request_id": "IR-2026-0001",
+  "inspection_run_id": "IRUN-2026-0001-d",
+  "subject": {
+    "lot_id": "L-REENTRANT-2",
+    "lot_revision": "lot-r6",
+    "serialized_component_id": "C-REENTRANT-1",
+    "serialized_component_revision": "component-r7",
+    "route_visit_id": "V-10"
+  },
+  "context": {
+    "world_id": "world-dev-001",
+    "simulation_run_id": "run-0007",
+    "branch_id": null
+  },
+  "source_artifact": {
+    "ref_schema": "cap.artifact-ref/v1",
+    "artifact_id": "3f2b6c1e-8d4a-4e7b-9a21-5c0d7e9f1a42",
+    "version": 1,
+    "artifact_type": "inspection_image",
+    "checksum": {
+      "algorithm": "sha256",
+      "value": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
+    }
+  },
+  "outcome": "DEFECT_CANDIDATES",
+  "review_required": true,
+  "data_quality": {
+    "status": "DEGRADED_INPUT",
+    "flags": [
+      "LOW_CONTRAST"
+    ]
+  },
+  "defects": [
+    {
+      "defect_id": "D-1",
+      "open_set_decision": "KNOWN_CLASS",
+      "class_label": "surface_scratch",
+      "class_confidence": 0.91,
+      "anomaly_score": 0.12,
+      "localization": {
+        "kind": "BBOX",
+        "frame": "IMAGE_NORMALIZED",
+        "x": 0.42,
+        "y": 0.18,
+        "width": 0.07,
+        "height": 0.21
+      },
+      "mask_artifact": {
+        "ref_schema": "cap.artifact-ref/v1",
+        "artifact_id": "a7c3e9d1-2b4f-4e6a-9c8d-1f0e2d3c4b5a",
+        "version": 1,
+        "artifact_type": "inspection_mask",
+        "checksum": {
+          "algorithm": "sha256",
+          "value": "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae"
+        }
+      },
+      "area_fraction": 0.004
+    }
+  ],
+  "image_anomaly_score": 0.15,
+  "confidence_calibration": "UNCALIBRATED",
+  "pipeline_identity": {
+    "models": [
+      {
+        "task": "BASELINE_ALGORITHM",
+        "model_package_id": "vision-baseline-generic",
+        "model_version": "0.1.0"
+      }
+    ],
+    "preprocessing_version": "prep-gray-norm-1",
+    "threshold_policy_version": "tp-dev-1",
+    "output_schema_version": "vision.inspection-observation.v1"
+  },
+  "inference": {
+    "started_at": "2026-10-25T09:00:01Z",
+    "completed_at": "2026-10-25T09:00:02.250Z",
+    "latency_ms": 1250
+  }
+}

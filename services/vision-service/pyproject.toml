@@ -1,0 +1,36 @@
+# WP-VIS-001 — Vision inspection pipeline (02 vision-service). Slice 2 is the pure
+# pipeline: request validation, artifact read by reference, PNG decode, versioned
+# preprocessing, the F2 baseline algorithm and InspectionObservation v1 assembly.
+# Broker consumption, object-storage wiring and persistence are later slices.
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vision-service"
+version = "0.1.0"
+description = "Vision inspection pipeline producing InspectionObservation v1 (WP-VIS-001)"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=2,<3",
+  "cap-artifacts",
+  "cap-observability",
+  "nats-py>=2.9,<3",
+]
+
+[tool.uv.sources]
+cap-observability = { path = "../../packages/observability" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [
+  "src",
+  "../../packages/artifacts/src",
+  "../../packages/contracts/src",
+  "../../packages/observability/src",
+]
+addopts = "-p no:cacheprovider"
+markers = ["integration: needs a real SeaweedFS S3 gateway"]

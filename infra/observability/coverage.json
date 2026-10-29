@@ -54,7 +54,14 @@
       }
     },
     {"name": "digital-twin-service", "owner": "Asrın", "runtime": "python", "path": "services/digital-twin-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
-    {"name": "vision-service", "owner": "Selman", "runtime": "python", "path": "services/vision-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
+    {
+      "name": "vision-service",
+      "owner": "Selman",
+      "runtime": "python",
+      "path": "services/vision-service",
+      "logging": "ADOPTED",
+      "health": "ADOPTED"
+    },
     {"name": "ai-intelligence-service", "owner": "Asrın", "runtime": "python", "path": "services/ai-intelligence-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
     {
       "name": "scheduler-service",
