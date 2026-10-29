@@ -16,6 +16,7 @@ The current generated artifacts are from two clean live rehearsals. Both runs
 used the real Keycloak login and the containerized Playwright fallback because
 host Node/npm is not installed. The current `latest.json` and screenshot are
 the second run; `rehearsal-runs.json` retains both run summaries.
+The WP requirement mapping is `FR-UI-009`, `NFR-PERF-013`, and `NFR-UX-006`.
 
 Existing real runtime fallback evidence from the proven current main slice is
 also retained at:
