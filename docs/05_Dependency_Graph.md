@@ -1630,7 +1630,7 @@ DEP-028:
   precise_requirement: "hold + dispatch commands"
   risk_class: DR-1
   source: "Item 66 #41; Item 67 table (Core hold/dispatch INTEGRATION_READY)"
-  status: NOT_READY
+  status: READY
 DEP-029:
   predecessor: {node: DN-CORE-LIFECYCLE, owner: "Asrın"}
   successor: {node: DN-CORE-GENEALOGY, owner: "Asrın"}
