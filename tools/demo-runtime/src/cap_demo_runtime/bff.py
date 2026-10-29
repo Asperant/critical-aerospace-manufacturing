@@ -8,6 +8,7 @@ from urllib.request import urlopen
 
 import psycopg
 from fastapi import Query, Request
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from operations_bff.api import Session, correlation_id_of
 from operations_bff.composition import RuntimeSettings, build_app
@@ -279,29 +280,35 @@ def create_app():
                 }
             )
         return JSONResponse(
-            {
-                "contract_version": "bff.showcase.v1",
-                "meta": {
-                    "world_id": world_id,
-                    "lot_id": lot_id,
-                    "freshness": revision["status"] if revision else "STALE",
-                    "correlation_id": correlation_id_of(request),
-                },
-                "timeline": timeline,
-                "dispatch": dispatch,
-                "identities": {
-                    "command_id": None if hold is None else str(hold["command_id"]),
-                    "simulator_event_ref": None
-                    if hold is None
-                    else hold.get("causation_id"),
-                    "event_id": None if outbox is None else outbox.get("event_id"),
-                    "outbox_id": None if outbox is None else outbox.get("outbox_id"),
-                    "twin_source_event_id": None
-                    if revision is None
-                    else revision.get("source_event_id"),
-                    "twin_status": None if revision is None else revision.get("status"),
-                },
-            },
+            jsonable_encoder(
+                {
+                    "contract_version": "bff.showcase.v1",
+                    "meta": {
+                        "world_id": world_id,
+                        "lot_id": lot_id,
+                        "freshness": revision["status"] if revision else "STALE",
+                        "correlation_id": correlation_id_of(request),
+                    },
+                    "timeline": timeline,
+                    "dispatch": dispatch,
+                    "identities": {
+                        "command_id": None if hold is None else str(hold["command_id"]),
+                        "simulator_event_ref": None
+                        if hold is None
+                        else hold.get("causation_id"),
+                        "event_id": None if outbox is None else outbox.get("event_id"),
+                        "outbox_id": None
+                        if outbox is None
+                        else outbox.get("outbox_id"),
+                        "twin_source_event_id": None
+                        if revision is None
+                        else revision.get("source_event_id"),
+                        "twin_status": None
+                        if revision is None
+                        else revision.get("status"),
+                    },
+                }
+            ),
             headers={"Cache-Control": "no-store"},
         )
 

@@ -9,6 +9,6 @@ npm notice
 
 Running 1 test using 1 worker
 
-  ✓  1 e2e/demo-runtime.spec.ts:19:1 › real Keycloak login and held lot are visible in the demo UI (3.7s)
+  ✓  1 e2e/demo-runtime.spec.ts:23:1 › real Keycloak login and held lot are visible in the demo UI (998ms)
 
-  1 passed (4.8s)
+  1 passed (3.0s)

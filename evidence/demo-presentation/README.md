@@ -13,12 +13,13 @@ The live command writes these real artifacts here:
 - `runbook` and technical explanation: [`docs/demo/DEMO_RUNBOOK.md`](../../docs/demo/DEMO_RUNBOOK.md)
   and [`docs/demo/TECHNICAL_CHEAT_SHEET.md`](../../docs/demo/TECHNICAL_CHEAT_SHEET.md).
 
-The checked-in generated artifacts predate the WP-DOC-004 integrated showcase
-slice. Regenerate them with `./tools/demo-runtime/demo.sh showcase` after the
-isolated Docker runtime is available; the command fails closed if that runtime
-or its authenticated browser path is unavailable. Do not treat the existing
-artifacts as evidence for the simulator-triggered timeline or dispatch
-rejection.
+The checked-in generated artifacts are from two clean WP-DOC-004 integrated
+showcase rehearsals. Both used the real Keycloak login and the pinned
+containerized Playwright runner; `rehearsal-runs.json` retains the durable
+identities from both runs. Regenerate them with
+`./tools/demo-runtime/demo.sh showcase` when a fresh presentation run is
+needed; the command fails closed if the runtime or authenticated browser path
+is unavailable.
 
 The simulator operational-event contract has no event-ID field. The integrated
 showcase therefore records its deterministic scenario/seed, replay digests,

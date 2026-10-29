@@ -57,10 +57,10 @@ check_line() {
   local label="$1"
   shift
   if "$@" >/dev/null 2>&1; then
-    printf 'PASS  %-24s\n' "${label}"
+    printf 'PASS  %s\n' "${label}"
     return 0
   fi
-  printf 'FAIL  %-24s\n' "${label}"
+  printf 'FAIL  %s\n' "${label}"
   PREFLIGHT_FAILED=1
   return 0
 }

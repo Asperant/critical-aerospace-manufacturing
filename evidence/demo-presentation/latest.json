@@ -12,6 +12,11 @@
       "passed": true
     },
     {
+      "detail": "deterministic simulator trigger and replay identity are present",
+      "name": "simulator_trigger",
+      "passed": true
+    },
+    {
       "detail": "Core PostgreSQL lot is HELD",
       "name": "postgres_state",
       "passed": true
@@ -37,6 +42,11 @@
       "passed": true
     },
     {
+      "detail": "dispatch attempt is durably rejected with ACTIVE_HOLD",
+      "name": "dispatch_active_hold",
+      "passed": true
+    },
+    {
       "detail": "Keycloak realm and UI answer HTTP 200",
       "name": "keycloak_ui",
       "passed": true
@@ -54,7 +64,7 @@
       "correlation_id": "wp-doc-004-demo-hold",
       "effect_verification": "NOT_VERIFIED",
       "error_code": null,
-      "outcome_id": "004cb6d9-398c-4a61-8a8a-2907e7e4458e",
+      "outcome_id": "0d305cc7-f640-4344-abc3-c82cf8f9ab66",
       "status": "ACCEPTED",
       "world_id": "DEMO-WORLD"
     },
@@ -64,8 +74,8 @@
       "detail": null,
       "effect_verification": "NOT_VERIFIED",
       "error_code": null,
-      "event_id": "9353564e-3dc7-4702-b5e4-7bbf349e3be9",
-      "outcome_id": "004cb6d9-398c-4a61-8a8a-2907e7e4458e",
+      "event_id": "32170da8-d2e3-4883-8336-17bcb0aa23bd",
+      "outcome_id": "0d305cc7-f640-4344-abc3-c82cf8f9ab66",
       "status": "ACCEPTED",
       "world_id": "DEMO-WORLD"
     }
@@ -75,23 +85,37 @@
     "held": true,
     "id": "DEMO-LOT-001",
     "lifecycle_state": "CREATED",
-    "revision": "17b81c06a5ee469cb85a650ac73d7ba0",
-    "state_revision": "17b81c06a5ee469cb85a650ac73d7ba0"
+    "revision": "32df96a2c82045b5812c0308e5fcaed5",
+    "state_revision": "32df96a2c82045b5812c0308e5fcaed5"
   },
   "core_before": {
     "execution_state": "DISPATCHED",
     "held": false,
     "id": "DEMO-LOT-001",
     "lifecycle_state": "CREATED",
-    "revision": "17b81c06a5ee469cb85a650ac73d7ba0",
-    "state_revision": "17b81c06a5ee469cb85a650ac73d7ba0"
+    "revision": "32df96a2c82045b5812c0308e5fcaed5",
+    "state_revision": "32df96a2c82045b5812c0308e5fcaed5"
+  },
+  "dispatch": {
+    "id": "a6d3ca2c-279f-59bb-a525-136a823778e7",
+    "response": {
+      "command_id": "a6d3ca2c-279f-59bb-a525-136a823778e7",
+      "correlation_id": "wp-doc-004-demo-dispatch-after-hold",
+      "detail": "active material hold blocks dispatch",
+      "effect_verification": "NOT_VERIFIED",
+      "error_code": "ACTIVE_HOLD",
+      "event_id": null,
+      "outcome_id": "100473ef-88a2-4702-8d68-4f002dd4b856",
+      "status": "REJECTED",
+      "world_id": "DEMO-WORLD"
+    }
   },
   "event": {
     "causation_id": "391a4c22-bdae-522b-b75d-8d3f391548b2",
     "correlation_id": "wp-doc-004-demo-hold",
-    "event_id": "9353564e-3dc7-4702-b5e4-7bbf349e3be9",
+    "event_id": "32170da8-d2e3-4883-8336-17bcb0aa23bd",
     "event_type": "production.lot-held",
-    "trace_id": "96a5bc10-fc1c-4dbc-84ce-71bff559406e",
+    "trace_id": "c1021779-c847-4305-94b2-822514ad314b",
     "world_id": "DEMO-WORLD"
   },
   "lot_id": "DEMO-LOT-001",
@@ -116,15 +140,41 @@
     "aggregate_version": 2,
     "causation_id": "391a4c22-bdae-522b-b75d-8d3f391548b2",
     "correlation_id": "wp-doc-004-demo-hold",
-    "event_id": "9353564e-3dc7-4702-b5e4-7bbf349e3be9",
+    "event_id": "32170da8-d2e3-4883-8336-17bcb0aa23bd",
     "event_type": "production.lot-held",
-    "outbox_id": "611cefd9-b537-4147-abf6-f1297789ef62",
+    "outbox_id": "375c0bd0-07cf-4ff5-8c08-6cb55a59a93c",
     "publication_status": "PUBLISHED",
     "world_id": "DEMO-WORLD"
   },
   "runtime_mode": "REAL",
   "schema": "cap.wp-doc-004.demo-verification/v1",
-  "source_main_sha": "a42fed2d74b999d2956ed4a158b8bd5923269f29",
+  "simulator": {
+    "config_digest": "sha256:520cbd2a32714d7715ca7fa965e809e5d8cc9baf2a69ad67fd2618ab17eb69b3",
+    "correlation_id": "wp-doc-004-showcase/1/seed-4242",
+    "event": {
+      "attributes": {
+        "lot_id": "DEMO-LOT-001",
+        "route_step": "DEMO-VISIT-1"
+      },
+      "correlation_id": "DEMO-LOT-001",
+      "event_id": null,
+      "event_ref": "wp-doc-004-showcase:INSPECTION_FAILED:1",
+      "event_type": "INSPECTION_FAILED",
+      "provenance": "SIMULATION",
+      "time": 1,
+      "world_id": "DEMO-WORLD"
+    },
+    "event_sequence_digest": "bdccf5bfad03c845d9a57f07e444b865e0f4725faed4c0463bdb94aadcb4ca31",
+    "final_state_digest": "d896db8dc1bc581d4b7a8a24bd9e7f8b27c9e7dcaa1a863752e61a740c7f2464",
+    "note": "The simulator operational-event contract has no event identity field; kernel sequence and replay digests are retained instead.",
+    "processed_events": 5,
+    "scenario_id": "wp-doc-004-showcase",
+    "scenario_version": "1",
+    "seed": 4242,
+    "simulation_time": 1,
+    "termination": "QUEUE_EMPTY"
+  },
+  "source_main_sha": "14aa58c9c8070bb7af6121626de131d09c496946",
   "status": "PASS",
   "surfaces": {
     "bff": {
@@ -155,15 +205,15 @@
       "aggregate_version": 2,
       "branch_id": "PRIMARY",
       "consumer_scope": "twin-primary",
-      "event_id": "9353564e-3dc7-4702-b5e4-7bbf349e3be9",
+      "event_id": "32170da8-d2e3-4883-8336-17bcb0aa23bd",
       "world_id": "DEMO-WORLD"
     },
     "projection": {
       "aggregate_id": "DEMO-LOT-001",
       "aggregate_version": 2,
       "branch_id": "PRIMARY",
-      "source_event_id": "9353564e-3dc7-4702-b5e4-7bbf349e3be9",
-      "source_revision": "9353564e-3dc7-4702-b5e4-7bbf349e3be9",
+      "source_event_id": "32170da8-d2e3-4883-8336-17bcb0aa23bd",
+      "source_revision": "32170da8-d2e3-4883-8336-17bcb0aa23bd",
       "state": {
         "aggregate_id": "DEMO-LOT-001",
         "aggregate_type": "Lot",
@@ -172,15 +222,15 @@
         "dispatchable": true,
         "epistemic_class": "OBSERVED",
         "hold_id": "6165d05b-1544-5a01-9543-0b025aac4b65",
-        "hold_reason": "inspection-triggered controlled recovery acceptance slice",
+        "hold_reason": "Simulator inspection anomaly \u2014 inspection-triggered controlled recovery",
         "lifecycle": "HELD",
-        "source_event_id": "9353564e-3dc7-4702-b5e4-7bbf349e3be9",
-        "source_revision": "9353564e-3dc7-4702-b5e4-7bbf349e3be9"
+        "source_event_id": "32170da8-d2e3-4883-8336-17bcb0aa23bd",
+        "source_revision": "32170da8-d2e3-4883-8336-17bcb0aa23bd"
       },
       "world_id": "DEMO-WORLD"
     },
     "projection_revision": {
-      "source_event_id": "9353564e-3dc7-4702-b5e4-7bbf349e3be9",
+      "source_event_id": "32170da8-d2e3-4883-8336-17bcb0aa23bd",
       "status": "FRESH"
     }
   },
