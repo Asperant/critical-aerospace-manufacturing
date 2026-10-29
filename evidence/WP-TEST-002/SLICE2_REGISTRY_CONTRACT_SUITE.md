@@ -11,5 +11,7 @@ The real declarations and hash-verified schemas are also passed through the
 compatibility detector; generic breaking-change/version-policy tests remain in
 the existing contract compatibility suite.
 
-This is static contract evidence only. It does not claim broker, database,
+Acceptance classification: implementation complete for this WP's contract-test
+scope; runtime acceptance is separate. This is static contract evidence only.
+It does not claim broker, database,
 outbox, or end-to-end runtime acceptance.
