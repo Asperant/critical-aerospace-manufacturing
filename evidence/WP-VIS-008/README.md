@@ -4,6 +4,8 @@ Owner: Selman Özdemir · supporting reviewer: Yavuz (advisory, CHG-018) · F1 �
 readiness node DN-VIS-SERVING · requirements FR-VIS-014, NFR-PERF-009, NFR-RES-007.
 Builds on the WP-VIS-001 pipeline (branch `wp/WP-VIS-001-inspection-pipeline`).
 
+Verification families: TEST-VIS-CPUSMOKE, TEST-RES-CPUONLY.
+
 ## Deliverables (04 card)
 
 | Deliverable | Where | State |
