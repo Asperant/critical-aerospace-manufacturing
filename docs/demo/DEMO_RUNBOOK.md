@@ -56,6 +56,8 @@ The scenario uses the real Core HTTP command path. It does not update a hold
 row directly. Core acceptance returns `effect_verification=NOT_VERIFIED`; the
 subsequent published outbox row, JetStream delivery, Twin ledger/projection,
 BFF response, and browser result are the downstream evidence.
+The generated evidence records the source revision used by the rehearsal; keep
+that revision alongside the run identifiers when presenting or archiving it.
 
 ## What to point at
 
