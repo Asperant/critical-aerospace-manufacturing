@@ -153,10 +153,12 @@ def _system_observability(
     keycloak_health = _http_health(
         f"{os.environ.get('OPERATIONS_BFF_OIDC_ISSUER', '').rstrip('/')}/.well-known/openid-configuration"
     )
+    revision_status = None if revision is None else revision.get("status")
+    revision_event_id = None if revision is None else revision.get("source_event_id")
     twin_status = "UP" if revision is not None else "UNKNOWN"
     twin_detail = (
-        f"projection {revision['status']} at {revision['source_event_id']}"
-        if revision is not None
+        f"projection {revision_status} at {revision_event_id}"
+        if revision_status is not None and revision_event_id is not None
         else "no projection revision reported"
     )
     causation_id = None if hold is None else hold.get("causation_id")
@@ -175,7 +177,7 @@ def _system_observability(
             "command outcome read through the internal Core boundary"
             if hold is not None
             else "no hold command outcome reported",
-            command_id=None if hold is None else str(hold["command_id"]),
+            command_id=None if hold is None else str(hold.get("command_id")),
         ),
         _health_item(
             "postgresql",
@@ -208,9 +210,7 @@ def _system_observability(
             "Digital Twin",
             "UPDATED" if applied else twin_status,
             twin_detail,
-            source_event_id=None
-            if revision is None
-            else revision.get("source_event_id"),
+            source_event_id=None if revision is None else revision_event_id,
         ),
         _health_item(
             "bff",
