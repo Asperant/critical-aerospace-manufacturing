@@ -179,12 +179,20 @@ function Health({ items }: { items: ShowcaseSystemItem[] }) {
 }
 
 function Counters({ items }: { items: ShowcaseCounter[] }) {
+  const reported = items.filter((item) => item.value !== null);
+  if (reported.length === 0) {
+    return (
+      <p className="system-counters-unavailable" role="note">
+        Runtime counters are unavailable for this scope.
+      </p>
+    );
+  }
   return (
     <section className="system-counters" aria-label="Runtime counters">
-      {items.map((item) => (
+      {reported.map((item) => (
         <article className="system-counter" key={item.id}>
           <span className="field-label">{item.label}</span>
-          <strong>{item.value === null ? "UNKNOWN" : item.value}</strong>
+          <strong>{item.value}</strong>
           <span className="summary-caption">reported by runtime</span>
         </article>
       ))}
@@ -260,7 +268,12 @@ function Evidence({
                   <strong>{item.label}</strong>
                   <span className="timeline-detail">
                     {item.source} · {item.status}
-                    {item.event_id ? ` · ${item.event_id}` : ""}
+                    {item.event_id ? (
+                      <>
+                        {" · "}
+                        <TechnicalValue value={item.event_id} />
+                      </>
+                    ) : null}
                   </span>
                 </div>
               </li>

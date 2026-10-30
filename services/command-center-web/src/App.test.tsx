@@ -179,10 +179,29 @@ describe("overview", () => {
     expect(
       screen.getByRole("table", { name: "Production lots" }),
     ).toHaveTextContent(lot.lifecycle_state);
+    expect(screen.getByText("Production state")).toBeInTheDocument();
+    expect(screen.getAllByText("Lot lifecycle")).not.toHaveLength(0);
+    expect(screen.getAllByText("Execution state")).not.toHaveLength(0);
+    expect(screen.getAllByText("Hold state")).not.toHaveLength(0);
     const stateCall = bff.calls.find(
       (call) => call.path === "/v1/facility-state",
     );
     expect(stateCall?.query.get("world_id")).toBe("W-SYNTHETIC-TEST");
+  });
+
+  it("hides the empty equipment section while keeping production lots visible", async () => {
+    const bff = new FakeBff();
+    bff.facilityState = () => {
+      const state = structuredClone(contractFacilityState());
+      state.facility.equipment = [];
+      return jsonResponse(200, state);
+    };
+    bff.install();
+    await renderAt("/overview?world_id=W-SYNTHETIC-TEST", bff);
+    await screen.findByRole("table", { name: "Production lots" });
+    expect(
+      screen.queryByRole("table", { name: "Facility equipment" }),
+    ).not.toBeInTheDocument();
   });
 
   it("keeps facility-state unavailability separate from the overview alert", async () => {
@@ -463,6 +482,24 @@ describe("system view", () => {
       "Runtime evidence is unavailable.",
     );
     expect(screen.queryByText("PASS")).not.toBeInTheDocument();
+  });
+
+  it("hides counters that are not reported by the runtime", async () => {
+    const showcase = structuredClone(contractShowcase());
+    showcase.counters = showcase.counters.map((item) => ({
+      ...item,
+      value: null,
+    }));
+    const bff = new FakeBff().withShowcase(showcase).install();
+    await renderAt("/system", bff);
+    expect(
+      await screen.findByText(
+        "Runtime counters are unavailable for this scope.",
+      ),
+    ).toHaveAttribute("role", "note");
+    expect(
+      screen.queryByRole("region", { name: "Runtime counters" }),
+    ).not.toBeInTheDocument();
   });
 });
 
