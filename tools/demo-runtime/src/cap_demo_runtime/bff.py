@@ -130,11 +130,14 @@ def _system_observability(
     try:
         with _connection(settings) as connection:
             connection.execute("SELECT 1").fetchone()
-            twin_update_count = connection.execute(
+            twin_count_row = connection.execute(
                 "SELECT count(*) AS count FROM twin.applied_event "
                 "WHERE world_id=%s AND consumer_scope=%s",
                 (world_id, settings.consumer_scope),
-            ).fetchone()["count"]
+            ).fetchone()
+            twin_update_count = (
+                None if twin_count_row is None else twin_count_row.get("count")
+            )
         postgres = _health_item(
             "postgresql", "PostgreSQL", "UP", "authenticated read completed"
         )
