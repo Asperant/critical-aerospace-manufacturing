@@ -222,7 +222,7 @@ jobs:
         run: uv run --project ci --locked python -m pytest infra/compose/tests -m 'not integration' -q -p pytest_quarantine
       - name: Demo runtime migration tests (WP-DOC-004)
         env:
-          PYTHONPATH: tools/demo-runtime/src:packages/event-consumer/src:services/manufacturing-core/src
+          PYTHONPATH: ci:ci/scripts:tools/demo-runtime/src:packages/event-consumer/src:services/manufacturing-core/src
         run: uv run --project ci --locked python -m pytest tools/demo-runtime/tests -q -p pytest_quarantine
       - name: Host Plane queue tests (offline)
         run: uv run --project ci --locked python -m unittest discover -s tools/host/plane-queue -p 'test_*.py'
