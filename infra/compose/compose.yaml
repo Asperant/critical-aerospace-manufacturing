@@ -176,6 +176,10 @@ services:
     command: ["start-dev", "--http-port=8080", "--health-enabled=true", "--import-realm"]
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: cap-admin
+      # The demo may be reached through the repository-supported Tailscale
+      # exposure.  Keycloak must honor that exact forwarded HTTPS origin when
+      # constructing issuer and redirect responses.
+      KC_PROXY_HEADERS: xforwarded
     env_file:
       - path: ${CAP_PLATFORM_STATE_DIR:-${HOME}/.local/state/cap-platform}/keycloak.env
         required: false
@@ -551,9 +555,12 @@ services:
     environment:
       CAP_CORE_URL: http://demo-core:8081
       OPERATIONS_BFF_OIDC_ISSUER: http://keycloak:8080/realms/cap-platform
-      OPERATIONS_BFF_OIDC_BROWSER_ISSUER: http://localhost:${CAP_KEYCLOAK_PORT:-28080}/realms/cap-platform
+      OPERATIONS_BFF_OIDC_BROWSER_ISSUER: ${CAP_DEMO_OIDC_BROWSER_ISSUER:-http://localhost:${CAP_KEYCLOAK_PORT:-28080}/realms/cap-platform}
+      OPERATIONS_BFF_OIDC_BROWSER_ISSUERS: ${CAP_DEMO_OIDC_BROWSER_ISSUERS:-}
       OPERATIONS_BFF_OIDC_CLIENT_ID: command-center-web
       OPERATIONS_BFF_OIDC_REDIRECT_URI: http://localhost:${CAP_UI_PORT:-29080}/v1/session/callback
+      OPERATIONS_BFF_OIDC_REDIRECT_URIS: ${CAP_DEMO_OIDC_REDIRECT_URIS:-}
+      OPERATIONS_BFF_OIDC_DYNAMIC_REDIRECT: ${CAP_DEMO_OIDC_DYNAMIC_REDIRECT:-1}
       OPERATIONS_BFF_OIDC_ALLOW_INSECURE_HTTP: "1"
       OPERATIONS_BFF_COOKIE_SECURE: "0"
     command: ["uvicorn", "cap_demo_runtime.bff:create_app", "--factory", "--host", "0.0.0.0", "--port", "8082"]

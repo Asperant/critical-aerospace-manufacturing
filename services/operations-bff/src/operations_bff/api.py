@@ -288,6 +288,27 @@ def _clear_login_cookie(response: Response, cookie: CookieSettings) -> None:
     )
 
 
+def _request_redirect_uri(request: Request) -> str | None:
+    """Return the request-bound callback only for an explicit allowlisted mode.
+
+    The demo UI is served from both localhost and a Tailscale hostname.  The
+    BFF still receives only a relative browser request, so the exact origin is
+    selected from the proxy-provided host and scheme.  OIDC settings validate
+    the result against their configured redirect allowlist before use.
+    """
+    if os.environ.get("OPERATIONS_BFF_OIDC_DYNAMIC_REDIRECT") != "1":
+        return None
+    scheme = (
+        request.headers.get("x-forwarded-proto", request.url.scheme)
+        .split(",", 1)[0]
+        .strip()
+    )
+    host = request.headers.get("host", request.url.netloc).strip()
+    if not scheme or not host or "," in host:
+        return None
+    return f"{scheme}://{host}/v1/session/callback"
+
+
 def _add_login_routes(
     app: FastAPI,
     login: LoginService,
@@ -296,8 +317,8 @@ def _add_login_routes(
     landing: str,
 ) -> None:
     @app.get("/v1/session/login", operation_id="startLogin", status_code=302)
-    def start_login() -> Response:  # pyright: ignore[reportUnusedFunction]
-        started = login.start(clock())
+    def start_login(request: Request) -> Response:  # pyright: ignore[reportUnusedFunction]
+        started = login.start(clock(), redirect_uri=_request_redirect_uri(request))
         response = Response(
             status_code=302,
             headers={"Location": started.location, "Cache-Control": "no-store"},

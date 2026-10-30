@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import os
+import time
+from collections.abc import Callable
 from pathlib import Path
 from typing import LiteralString, cast
 
@@ -9,6 +11,47 @@ from cap_event_consumer.migrate import migrate as migrate_consumer
 from manufacturing_core.migrate import migrate as migrate_core
 from psycopg import sql
 from psycopg.rows import DictRow, dict_row
+
+DEFAULT_RETRY_ATTEMPTS = 30
+DEFAULT_RETRY_DELAY_SECONDS = 1.0
+MAX_RETRY_DELAY_SECONDS = 4.0
+
+
+def _retry_database_startup(
+    operation: Callable[[], None],
+    *,
+    attempts: int = DEFAULT_RETRY_ATTEMPTS,
+    sleep: Callable[[float], None] = time.sleep,
+) -> None:
+    """Run a migration once the target PostgreSQL is accepting connections.
+
+    Compose's health check and PostgreSQL's first-init lifecycle are separate
+    events.  A fresh volume can therefore report readiness while the target
+    database is still restarting.  Retrying the complete idempotent migration
+    keeps that transient condition bounded without hiding a real migration
+    failure.
+    """
+    if attempts < 1:
+        raise ValueError("attempts must be positive")
+    for attempt in range(1, attempts + 1):
+        try:
+            operation()
+            return
+        except psycopg.OperationalError as exc:
+            if attempt == attempts:
+                raise RuntimeError(
+                    f"PostgreSQL did not become migration-ready after {attempts} attempts"
+                ) from exc
+            delay = min(
+                DEFAULT_RETRY_DELAY_SECONDS * (2 ** min(attempt - 1, 2)),
+                MAX_RETRY_DELAY_SECONDS,
+            )
+            print(
+                f"migration database not ready; retry {attempt}/{attempts} "
+                f"in {delay:g}s",
+                flush=True,
+            )
+            sleep(delay)
 
 
 def _twin_sql() -> str:
@@ -30,7 +73,7 @@ def _dsn(prefix: str, *, host: str, database: str, password: str) -> str:
     )
 
 
-def main() -> None:
+def _run_once() -> None:
     host = os.environ.get("CAP_PG_HOST", "postgres")
     database = os.environ.get("CAP_PG_DATABASE", "cap")
     admin_dsn = os.environ["CAP_PG_ADMIN_DSN"]
@@ -106,6 +149,13 @@ def main() -> None:
         migrate_consumer(connection, "twin_consumer", twin_runtime)
     Path("/tmp/cap-demo-migrate.done").touch()
     print("demo runtime migrations verified")
+
+
+def main() -> None:
+    attempts = int(
+        os.environ.get("CAP_MIGRATION_RETRY_ATTEMPTS", DEFAULT_RETRY_ATTEMPTS)
+    )
+    _retry_database_startup(_run_once, attempts=attempts)
 
 
 if __name__ == "__main__":

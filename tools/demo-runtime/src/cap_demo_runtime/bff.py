@@ -165,6 +165,12 @@ def create_app():
         allow_insecure_http=os.environ.get("OPERATIONS_BFF_OIDC_ALLOW_INSECURE_HTTP")
         == "1",
         browser_issuer=os.environ.get("OPERATIONS_BFF_OIDC_BROWSER_ISSUER") or None,
+        redirect_uris=tuple(
+            os.environ.get("OPERATIONS_BFF_OIDC_REDIRECT_URIS", "").split()
+        ),
+        browser_issuers=tuple(
+            os.environ.get("OPERATIONS_BFF_OIDC_BROWSER_ISSUERS", "").split()
+        ),
     )
     runtime = RuntimeSettings(
         oidc=oidc,

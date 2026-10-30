@@ -61,24 +61,40 @@ class OidcSettings:
     http_timeout: float = 5.0
     allow_insecure_http: bool = False
     browser_issuer: str | None = None
+    redirect_uris: tuple[str, ...] = ()
+    browser_issuers: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         _require_https(
             self.issuer, "issuer", allow_insecure_http=self.allow_insecure_http
         )
-        _require_https(
-            self.redirect_uri,
-            "redirect_uri",
-            allow_insecure_http=self.allow_insecure_http,
-        )
-        if self.browser_issuer is not None:
+        redirects = (self.redirect_uri, *self.redirect_uris)
+        for index, redirect in enumerate(redirects):
             _require_https(
-                self.browser_issuer,
-                "browser_issuer",
+                redirect,
+                "redirect_uri" if index == 0 else "redirect_uris",
                 allow_insecure_http=self.allow_insecure_http,
             )
-        if not urlparse(self.redirect_uri).path.endswith(CALLBACK_PATH):
-            raise ValueError(f"redirect_uri must end with {CALLBACK_PATH}")
+            if not urlparse(redirect).path.endswith(CALLBACK_PATH):
+                raise ValueError(f"redirect_uri must end with {CALLBACK_PATH}")
+        if len(set(redirects)) != len(redirects):
+            raise ValueError("redirect URIs must be unique")
+        browsers = (
+            () if self.browser_issuer is None else (self.browser_issuer,)
+        ) + self.browser_issuers
+        for index, browser in enumerate(browsers):
+            _require_https(
+                browser,
+                "browser_issuer" if index == 0 else "browser_issuers",
+                allow_insecure_http=self.allow_insecure_http,
+            )
+            if (
+                not urlparse(browser).path.endswith("/realms/")
+                and "/realms/" not in urlparse(browser).path
+            ):
+                raise ValueError("browser issuer must identify an OIDC realm")
+        if browsers and len(browsers) != len(redirects):
+            raise ValueError("browser issuer list must match redirect URI list")
         for name in ("client_id", "environment_id"):
             if not getattr(self, name).strip():
                 raise ValueError(f"{name} must not be blank")
@@ -106,6 +122,8 @@ class OidcSettings:
         algorithms = get("ALGORITHMS")
         allow_insecure = get("ALLOW_INSECURE_HTTP") == "1"
         browser_issuer = get("BROWSER_ISSUER")
+        redirect_uris = get("REDIRECT_URIS")
+        browser_issuers = get("BROWSER_ISSUERS")
         return cls(
             issuer=get("ISSUER") or "",
             client_id=get("CLIENT_ID") or "",
@@ -117,7 +135,20 @@ class OidcSettings:
             algorithms=tuple(algorithms.split()) if algorithms else ("RS256",),
             allow_insecure_http=allow_insecure,
             browser_issuer=browser_issuer,
+            redirect_uris=tuple(redirect_uris.split()) if redirect_uris else (),
+            browser_issuers=tuple(browser_issuers.split()) if browser_issuers else (),
         )
+
+    def _redirects(self) -> tuple[str, ...]:
+        return (self.redirect_uri, *self.redirect_uris)
+
+    def _browser_for(self, redirect_uri: str) -> str | None:
+        browsers = (
+            () if self.browser_issuer is None else (self.browser_issuer,)
+        ) + self.browser_issuers
+        if not browsers:
+            return None
+        return browsers[self._redirects().index(redirect_uri)]
 
 
 @dataclass(frozen=True)
@@ -153,11 +184,14 @@ class OidcIdentityProvider:
     def authorization_url(self, request: AuthorizationRequest) -> str:
         metadata = self._discover()
         s = self._settings
+        redirect_uri = request.redirect_uri or s.redirect_uri
+        if redirect_uri not in s._redirects():
+            raise IdentityProviderUnavailable
         query = urlencode(
             {
                 "response_type": "code",
                 "client_id": s.client_id,
-                "redirect_uri": s.redirect_uri,
+                "redirect_uri": redirect_uri,
                 "scope": " ".join(s.scopes),
                 "state": request.state,
                 "code_challenge": request.code_challenge,
@@ -166,7 +200,7 @@ class OidcIdentityProvider:
             }
         )
         authorization_endpoint = metadata.authorization_endpoint
-        browser_issuer = self._settings.browser_issuer
+        browser_issuer = s._browser_for(redirect_uri)
         if browser_issuer is not None:
             internal_issuer = self._settings.issuer.rstrip("/")
             if not authorization_endpoint.startswith(internal_issuer + "/"):
@@ -178,9 +212,14 @@ class OidcIdentityProvider:
         return f"{authorization_endpoint}?{query}"
 
     def complete(
-        self, *, code: str, code_verifier: str, nonce: str
+        self,
+        *,
+        code: str,
+        code_verifier: str,
+        nonce: str,
+        redirect_uri: str | None = None,
     ) -> AuthenticatedIdentity:
-        id_token = self._exchange(code, code_verifier)
+        id_token = self._exchange(code, code_verifier, redirect_uri)
         claims = self._validate(id_token, nonce)
         return self._identity(claims)
 
@@ -262,12 +301,17 @@ class OidcIdentityProvider:
 
     # -- code exchange and validation ---------------------------------------
 
-    def _exchange(self, code: str, code_verifier: str) -> str:
+    def _exchange(
+        self, code: str, code_verifier: str, redirect_uri: str | None = None
+    ) -> str:
         s = self._settings
+        selected_redirect = redirect_uri or s.redirect_uri
+        if selected_redirect not in s._redirects():
+            raise IdentityProviderError
         form = {
             "grant_type": "authorization_code",
             "code": code,
-            "redirect_uri": s.redirect_uri,
+            "redirect_uri": selected_redirect,
             "client_id": s.client_id,
             "code_verifier": code_verifier,
         }
@@ -305,11 +349,10 @@ class OidcIdentityProvider:
             if header.get("alg") not in s.algorithms or not isinstance(kid, str):
                 raise IdentityProviderError
             key = self._signing_key(kid)
-            issuers = (
-                (s.issuer, s.browser_issuer)
-                if s.browser_issuer is not None
-                else s.issuer
-            )
+            browser_issuers = (
+                () if s.browser_issuer is None else (s.browser_issuer,)
+            ) + s.browser_issuers
+            issuers = (s.issuer, *browser_issuers) if browser_issuers else s.issuer
             claims: dict[str, Any] = jwt.decode(
                 id_token,
                 key=key,

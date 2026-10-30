@@ -28,11 +28,13 @@ export CAP_SEAWEED_MASTER_PORT="${CAP_DEMO_SEAWEED_MASTER_PORT:-${CAP_SEAWEED_MA
 export CAP_KEYCLOAK_PORT="${CAP_DEMO_KEYCLOAK_PORT:-${CAP_KEYCLOAK_PORT:-28090}}"
 export CAP_CORE_PORT="${CAP_DEMO_CORE_PORT:-${CAP_CORE_PORT:-28091}}"
 export CAP_UI_PORT="${CAP_DEMO_UI_PORT:-${CAP_UI_PORT:-29090}}"
+export CAP_DEMO_TAILSCALE_KEYCLOAK_PORT="${CAP_DEMO_TAILSCALE_KEYCLOAK_PORT:-9443}"
 export CAP_AV_NATS_URL="${CAP_AV_NATS_URL:-nats://127.0.0.1:${CAP_NATS_PORT}}"
 export CAP_PLATFORM_STATE_DIR="${STATE_DIR}"
 export CAP_COMPOSE_PROJECT_NAME="${PROJECT}"
 export CAP_DEMO_ARTIFACT_DIR="${ARTIFACT_DIR}"
 export CAP_PLAYWRIGHT_IMAGE="${CAP_DEMO_PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.64.0-noble}"
+EXPOSURE_SCRIPT="${HERE}/scripts/tailscale_expose.py"
 
 compose() {
   docker compose -p "${PROJECT}" -f "${COMPOSE_FILE}" "$@"
@@ -51,6 +53,46 @@ require_docker() {
   require_command docker
   docker info >/dev/null 2>&1 || die "Docker daemon is unavailable or access was denied"
   docker compose version >/dev/null 2>&1 || die "Docker Compose plugin is unavailable"
+}
+
+load_exposure_env() {
+  require_command python3
+  while IFS='=' read -r name value; do
+    [[ -n "${name}" ]] || continue
+    export "${name}=${value}"
+  done < <(
+    python3 "${EXPOSURE_SCRIPT}" env \
+      --state-dir "${STATE_DIR}" \
+      --ui-port "${CAP_UI_PORT}" \
+      --keycloak-port "${CAP_KEYCLOAK_PORT}"
+  )
+}
+
+exposure_configured() {
+  [[ -f "${STATE_DIR}/tailscale-exposure.json" ]]
+}
+
+tailscale_available() {
+  command -v tailscale >/dev/null 2>&1 && tailscale status >/dev/null 2>&1
+}
+
+restore_state_owner() {
+  if [[ "${EUID}" -eq 0 && -n "${SUDO_UID:-}" ]]; then
+    chown -R "${SUDO_UID}:${SUDO_GID:-${SUDO_UID}}" "${STATE_DIR}"
+  fi
+}
+
+reconcile_exposure() {
+  local attempt
+  for attempt in $(seq 1 15); do
+    if python3 "${EXPOSURE_SCRIPT}" reconcile \
+      --state-dir "${STATE_DIR}" --ui-port "${CAP_UI_PORT}" \
+      --keycloak-port "${CAP_KEYCLOAK_PORT}" >/dev/null 2>&1; then
+      return 0
+    fi
+    [[ "${attempt}" -lt 15 ]] && sleep 2
+  done
+  return 1
 }
 
 check_line() {
@@ -136,6 +178,7 @@ assert consumers and any(
 preflight() {
   require_command curl
   require_command python3
+  load_exposure_env
   PREFLIGHT_FAILED=0
   echo "Demo preflight (${PROJECT})"
   check_line "Docker daemon" docker info
@@ -152,6 +195,22 @@ preflight() {
   check_line "Twin consumer" service_health demo-twin
   check_line "BFF health" bff_health
   check_line "UI availability" ui_health
+  check_line "Localhost login redirect" \
+    python3 "${EXPOSURE_SCRIPT}" check-local \
+      --state-dir "${STATE_DIR}" --ui-port "${CAP_UI_PORT}" \
+      --keycloak-port "${CAP_KEYCLOAK_PORT}"
+  if exposure_configured; then
+    if tailscale_available; then
+      check_line "Tailscale UI/Keycloak and exact redirects" \
+        python3 "${EXPOSURE_SCRIPT}" check \
+          --state-dir "${STATE_DIR}" --ui-port "${CAP_UI_PORT}" \
+          --keycloak-port "${CAP_KEYCLOAK_PORT}"
+    else
+      echo "INFO  Tailscale unavailable; core demo remains localhost-capable"
+    fi
+  else
+    echo "INFO  Tailscale exposure not configured (optional for core demo)"
+  fi
   if [[ ${PREFLIGHT_FAILED} -ne 0 ]]; then
     return 1
   fi
@@ -165,19 +224,59 @@ preflight_capture() {
 
 start() {
   require_docker
+  load_exposure_env
   mkdir -p "${STATE_DIR}" "${ARTIFACT_DIR}"
   CAP_PLATFORM_STATE_DIR="${STATE_DIR}" CAP_COMPOSE_PROJECT_NAME="${PROJECT}" \
     "${STACK}" up core
+  restore_state_owner
+  if exposure_configured; then
+    reconcile_exposure || echo "WARN: Tailscale Keycloak client will be reconciled by expose/preflight"
+  fi
+  preflight_capture
+}
+
+expose() {
+  require_docker
+  require_command python3
+  start
+  python3 "${EXPOSURE_SCRIPT}" configure \
+    --state-dir "${STATE_DIR}" --ui-port "${CAP_UI_PORT}" \
+    --keycloak-port "${CAP_KEYCLOAK_PORT}" \
+    --tailscale-keycloak-port "${CAP_DEMO_TAILSCALE_KEYCLOAK_PORT}"
+  restore_state_owner
+  load_exposure_env
+  CAP_PLATFORM_STATE_DIR="${STATE_DIR}" CAP_COMPOSE_PROJECT_NAME="${PROJECT}" \
+    "${STACK}" up core
+  python3 "${EXPOSURE_SCRIPT}" reconcile \
+    --state-dir "${STATE_DIR}" --ui-port "${CAP_UI_PORT}" \
+    --keycloak-port "${CAP_KEYCLOAK_PORT}"
+  preflight_capture
+}
+
+restore_exposure() {
+  require_docker
+  require_command python3
+  exposure_configured || die "no repository-managed Tailscale exposure state exists"
+  python3 "${EXPOSURE_SCRIPT}" restore \
+    --state-dir "${STATE_DIR}" --ui-port "${CAP_UI_PORT}" \
+    --keycloak-port "${CAP_KEYCLOAK_PORT}" \
+    --tailscale-keycloak-port "${CAP_DEMO_TAILSCALE_KEYCLOAK_PORT}"
+  start
+  python3 "${EXPOSURE_SCRIPT}" reconcile \
+    --state-dir "${STATE_DIR}" --ui-port "${CAP_UI_PORT}" \
+    --keycloak-port "${CAP_KEYCLOAK_PORT}"
   preflight_capture
 }
 
 reset() {
   require_docker
+  load_exposure_env
   mkdir -p "${STATE_DIR}" "${ARTIFACT_DIR}"
   # stack.sh reset is safe here because the project name and state directory
   # are demo-specific; it cannot target the default cap-platform project.
   CAP_PLATFORM_STATE_DIR="${STATE_DIR}" CAP_COMPOSE_PROJECT_NAME="${PROJECT}" \
     "${STACK}" reset
+  restore_state_owner
   rm -f "${ARTIFACT_DIR}/scenario-context.json" \
     "${ARTIFACT_DIR}/browser-result.json" \
     "${ARTIFACT_DIR}/latest.json" \
@@ -207,11 +306,16 @@ browser_test() {
 
   require_docker
   echo "INFO: host Node/Playwright unavailable; using ${CAP_PLAYWRIGHT_IMAGE}"
+  local browser_url_arg=()
+  if [[ -n "${CAP_DEMO_UI_URL:-}" ]]; then
+    browser_url_arg=(-e "CAP_DEMO_UI_URL=${CAP_DEMO_UI_URL}")
+  fi
   docker run --rm --network host --user "$(id -u):$(id -g)" \
     -e CAP_PLATFORM_STATE_DIR=/state \
     -e CAP_DEMO_ARTIFACT_DIR=/artifacts \
     -e CAP_DEMO_BROWSER_STAGE="${CAP_DEMO_BROWSER_STAGE:-final}" \
     -e CAP_UI_PORT="${CAP_UI_PORT}" \
+    "${browser_url_arg[@]}" \
     -v "${ROOT}/services/command-center-web:/source:ro" \
     -v "${STATE_DIR}:/state:ro" \
     -v "${ARTIFACT_DIR}:/artifacts" \
@@ -270,6 +374,7 @@ verify() {
 
 status() {
   require_docker
+  load_exposure_env
   CAP_PLATFORM_STATE_DIR="${STATE_DIR}" CAP_COMPOSE_PROJECT_NAME="${PROJECT}" \
     "${STACK}" status
 }
@@ -283,7 +388,7 @@ stop() {
 
 usage() {
   cat >&2 <<EOF
-Usage: $0 {start|preflight|reset|scenario|showcase|verify|status|stop}
+Usage: $0 {start|preflight|expose|restore|reset|scenario|showcase|browser|verify|status|stop}
 
 State: ${STATE_DIR}
 Compose project: ${PROJECT}
@@ -294,10 +399,13 @@ EOF
 
 case "${1:-}" in
   start) start ;;
+  expose) expose ;;
+  restore) restore_exposure ;;
   preflight) preflight_capture ;;
   reset) reset ;;
   scenario) scenario ;;
   showcase) showcase ;;
+  browser) preflight_capture; browser_test ;;
   verify) verify ;;
   status) status ;;
   stop) stop ;;

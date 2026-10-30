@@ -132,6 +132,8 @@
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Scheduler dispatch baselines unit/property tests and typing (WP-SCH-001)"}]},
     {"path": "services/operations-bff/tests", "owner": "Asrın", "work_package": "WP-UI-001", "families": [], "family_note": "family allocation by the owning work package", "test_ids": [],
      "runs": [{"tier": "contract", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Operations BFF v1 contract tests and typing (WP-UI-001)"}]},
+    {"path": "tools/demo-runtime/tests", "owner": "Asrın", "work_package": "WP-DOC-004", "families": [], "family_note": "focused demo-runtime regression owned by the demo infrastructure work package", "test_ids": [],
+     "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Demo runtime migration tests (WP-DOC-004)"}]},
     {"path": "services/command-center-web/src", "owner": "Asrın", "work_package": "WP-UI-001", "families": [], "family_note": "family allocation by the owning work package", "test_ids": [],
      "runs": [{"tier": "unit", "boundary_mode": "STUB_ALLOWED", "ci_step": "Frontend component tests (WP-UI-001)"}]},
     {"path": "services/command-center-web/e2e", "owner": "Asrın", "work_package": "WP-UI-001", "families": ["TEST-UI-BROWSER"], "test_ids": [],
