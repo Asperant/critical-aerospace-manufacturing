@@ -163,12 +163,22 @@ def create_app() -> FastAPI:
                 "ORDER BY created_at DESC LIMIT 1",
                 (lot_id, world_id),
             ).fetchone()
+            observability = connection.execute(
+                "SELECT "
+                "(SELECT count(*) FROM core.command_outcome WHERE world_id=%s) AS commands, "
+                "(SELECT count(*) FROM core.outbox WHERE world_id=%s AND publication_status='PUBLISHED') AS published_events, "
+                "(SELECT count(*) FROM core.material_hold h "
+                "JOIN core.command_idempotency i ON i.command_id=h.placed_command_id "
+                "WHERE h.status='ACTIVE' AND i.world_id=%s) AS active_holds",
+                (world_id, world_id, world_id),
+            ).fetchone()
         return {
             "world_id": world_id,
             "lot_id": lot_id,
             "hold_command": None if hold is None else dict(hold),
             "dispatch_attempt": None if dispatch is None else dict(dispatch),
             "outbox": None if outbox is None else dict(outbox),
+            "observability": {} if observability is None else dict(observability),
         }
 
     return app

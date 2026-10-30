@@ -69,7 +69,8 @@ export function RootLayout() {
             </span>
           </NavLink>
           <nav aria-label="Primary" className="primary-nav">
-            <NavLink to="/overview">Overview</NavLink>
+            <NavLink to="/overview">OPERATOR VIEW</NavLink>
+            <NavLink to="/system">SYSTEM VIEW</NavLink>
           </nav>
           <div className="topbar-right">
             <span className="environment-badge">DEMO</span>

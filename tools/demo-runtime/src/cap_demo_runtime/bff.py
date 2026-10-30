@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import asyncio
+import json
 import os
 from datetime import UTC, datetime
 from typing import Any
 from urllib.parse import quote
 from urllib.request import urlopen
 
+import nats
 import psycopg
 from fastapi import Query, Request
 from fastapi.encoders import jsonable_encoder
@@ -48,12 +51,208 @@ def _core_showcase(settings: Settings, world_id: str, lot_id: str) -> dict[str, 
     with urlopen(url, timeout=5) as response:  # noqa: S310 - configured internal demo boundary
         if response.status != 200:
             raise RuntimeError(f"Core showcase query returned HTTP {response.status}")
-        import json
-
         value = json.loads(response.read())
     if not isinstance(value, dict):
         raise RuntimeError("Core showcase query returned a non-object")
     return value
+
+
+def _http_health(url: str) -> dict[str, Any]:
+    """Probe a configured internal HTTP health/readiness resource."""
+    try:
+        with urlopen(url, timeout=3) as response:  # noqa: S310 - configured demo boundary
+            return {
+                "status": "UP" if 200 <= response.status < 300 else "DEGRADED",
+                "detail": f"HTTP {response.status}",
+            }
+    except Exception as exc:  # noqa: BLE001 - health must report dependency failures
+        return {"status": "DOWN", "detail": f"{type(exc).__name__}: {exc}"}
+
+
+async def _jetstream_health(settings: Settings) -> dict[str, Any]:
+    connection = None
+    try:
+        connection = await nats.connect(settings.nats_url, connect_timeout=3)
+        jetstream = connection.jetstream()
+        stream = await jetstream.stream_info(settings.stream)
+        consumer = await jetstream.consumer_info(settings.stream, settings.durable)
+        delivered = consumer.delivered
+        return {
+            "status": "UP",
+            "detail": f"{settings.stream}/{settings.durable} connected",
+            "stream": stream.config.name,
+            "messages": stream.state.messages,
+            "consumer": consumer.name,
+            "consumer_sequence": None if delivered is None else delivered.consumer_seq,
+            "stream_sequence": None if delivered is None else delivered.stream_seq,
+            "num_ack_pending": consumer.num_ack_pending,
+            "num_redelivered": consumer.num_redelivered,
+        }
+    except Exception as exc:  # noqa: BLE001 - health must report dependency failures
+        return {"status": "DOWN", "detail": f"{type(exc).__name__}: {exc}"}
+    finally:
+        if connection is not None:
+            await connection.drain()
+
+
+def _jetstream_health_sync(settings: Settings) -> dict[str, Any]:
+    try:
+        return asyncio.run(_jetstream_health(settings))
+    except Exception as exc:  # noqa: BLE001 - health must report event-loop failures
+        return {"status": "DOWN", "detail": f"{type(exc).__name__}: {exc}"}
+
+
+def _health_item(
+    component_id: str, label: str, status: str, detail: str, **fields: Any
+) -> dict[str, Any]:
+    return {
+        "id": component_id,
+        "label": label,
+        "status": status,
+        "detail": detail,
+        **fields,
+    }
+
+
+def _system_observability(
+    settings: Settings,
+    world_id: str,
+    lot_id: str,
+    core: dict[str, Any],
+    applied: dict[str, Any] | None,
+    revision: dict[str, Any] | None,
+) -> dict[str, Any]:
+    hold = core.get("hold_command")
+    outbox = core.get("outbox")
+    dispatch = core.get("dispatch_attempt")
+    jetstream = _jetstream_health_sync(settings)
+
+    try:
+        with _connection(settings) as connection:
+            connection.execute("SELECT 1").fetchone()
+            twin_update_count = connection.execute(
+                "SELECT count(*) AS count FROM twin.applied_event "
+                "WHERE world_id=%s AND consumer_scope=%s",
+                (world_id, settings.consumer_scope),
+            ).fetchone()["count"]
+        postgres = _health_item(
+            "postgresql", "PostgreSQL", "UP", "authenticated read completed"
+        )
+    except Exception as exc:  # noqa: BLE001 - expose a truthful degraded view
+        postgres = _health_item(
+            "postgresql", "PostgreSQL", "DOWN", f"{type(exc).__name__}: {exc}"
+        )
+        twin_update_count = None
+
+    core_observability = core.get("observability", {})
+    command_count = core_observability.get("commands")
+    published_count = core_observability.get("published_events")
+    active_hold_count = core_observability.get("active_holds")
+
+    core_health = _http_health(f"{settings.core_url.rstrip('/')}/healthz")
+    keycloak_health = _http_health(
+        f"{os.environ.get('OPERATIONS_BFF_OIDC_ISSUER', '').rstrip('/')}/.well-known/openid-configuration"
+    )
+    twin_status = "UP" if revision is not None else "UNKNOWN"
+    twin_detail = (
+        f"projection {revision['status']} at {revision['source_event_id']}"
+        if revision is not None
+        else "no projection revision reported"
+    )
+    causation_id = None if hold is None else hold.get("causation_id")
+    simulator_status = "OBSERVED" if causation_id else "UNKNOWN"
+    simulator_detail = (
+        f"causation {causation_id}"
+        if causation_id
+        else "no simulator causation reference reported"
+    )
+    architecture = [
+        _health_item("simulator", "Simulator", simulator_status, simulator_detail),
+        _health_item(
+            "core",
+            "Core",
+            "REPORTED" if hold is not None else "NO_EVENT",
+            "command outcome read through the internal Core boundary"
+            if hold is not None
+            else "no hold command outcome reported",
+            command_id=None if hold is None else str(hold["command_id"]),
+        ),
+        _health_item(
+            "postgresql",
+            "PostgreSQL",
+            "READ" if postgres["status"] == "UP" else "UNAVAILABLE",
+            postgres["detail"],
+        ),
+        _health_item(
+            "outbox",
+            "Transactional Outbox",
+            "PUBLISHED"
+            if outbox and outbox.get("publication_status") == "PUBLISHED"
+            else ("PENDING" if outbox is not None else "NOT_REPORTED"),
+            "Core event intent is published"
+            if outbox and outbox.get("publication_status") == "PUBLISHED"
+            else "Core has not reported a published event for this lot",
+            outbox_id=None if outbox is None else outbox.get("outbox_id"),
+            event_id=None if outbox is None else outbox.get("event_id"),
+        ),
+        _health_item(
+            "nats",
+            "NATS / JetStream",
+            "CONNECTED" if jetstream["status"] == "UP" else "UNAVAILABLE",
+            jetstream["detail"],
+            consumer=jetstream.get("consumer"),
+            messages=jetstream.get("messages"),
+        ),
+        _health_item(
+            "twin",
+            "Digital Twin",
+            "UPDATED" if applied else twin_status,
+            twin_detail,
+            source_event_id=None
+            if revision is None
+            else revision.get("source_event_id"),
+        ),
+        _health_item(
+            "bff",
+            "BFF",
+            "SERVING",
+            "authenticated showcase read model is serving this response",
+        ),
+    ]
+    health = [
+        postgres,
+        _health_item("core", "Core", core_health["status"], core_health["detail"]),
+        _health_item(
+            "nats", "NATS / JetStream", jetstream["status"], jetstream["detail"]
+        ),
+        _health_item("digital-twin", "Digital Twin", twin_status, twin_detail),
+        _health_item("bff", "BFF", "UP", "current authenticated response is serving"),
+        _health_item(
+            "keycloak", "Keycloak", keycloak_health["status"], keycloak_health["detail"]
+        ),
+    ]
+    return {
+        "architecture": architecture,
+        "health": health,
+        "counters": [
+            {"id": "commands", "label": "Commands observed", "value": command_count},
+            {
+                "id": "published-events",
+                "label": "Events published",
+                "value": published_count,
+            },
+            {"id": "twin-updates", "label": "Twin updates", "value": twin_update_count},
+            {"id": "active-holds", "label": "Active holds", "value": active_hold_count},
+            {
+                "id": "jetstream-messages",
+                "label": "JetStream messages",
+                "value": jetstream.get("messages"),
+            },
+        ],
+        "selected_lot": lot_id,
+        "world_id": world_id,
+        "dispatch_status": None if dispatch is None else dispatch.get("status"),
+    }
 
 
 class TwinReader(FacilityStateReader):
@@ -285,6 +484,9 @@ def create_app():
                     "error_code": dispatch.get("error_code"),
                 }
             )
+        observability = _system_observability(
+            settings, world_id, lot_id, core, applied, revision
+        )
         return JSONResponse(
             jsonable_encoder(
                 {
@@ -313,6 +515,7 @@ def create_app():
                         if revision is None
                         else revision.get("status"),
                     },
+                    **observability,
                 }
             ),
             headers={"Cache-Control": "no-store"},
