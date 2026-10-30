@@ -1,9 +1,16 @@
 from __future__ import annotations
 
+import sys
+from pathlib import Path
 from typing import Any
 
-from cap_demo_runtime import bff
-from cap_demo_runtime.config import Settings
+sys.path.insert(
+    0,
+    str(Path(__file__).resolve().parents[3] / "services/operations-bff/src"),
+)
+
+from cap_demo_runtime import bff  # noqa: E402
+from cap_demo_runtime.config import Settings  # noqa: E402
 
 
 class _Result:
