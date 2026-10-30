@@ -99,4 +99,6 @@ def test_system_observability_exposes_runtime_facts_and_unknowns(
         {"id": "published-events", "label": "Events published", "value": 2},
         {"id": "twin-updates", "label": "Twin updates", "value": 7},
     ]
+    assert result["world_id"] == "DEMO-WORLD"
+    assert result["selected_lot"] == "DEMO-LOT-001"
     assert all(item["status"] == "UP" for item in result["health"])
