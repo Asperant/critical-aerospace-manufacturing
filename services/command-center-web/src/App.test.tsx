@@ -12,7 +12,12 @@ import { describe, expect, it, vi } from "vitest";
 import { App } from "./App";
 import type { ManufacturingOverviewResponse } from "./contract/generated";
 import { SessionProvider } from "./session/SessionProvider";
-import { envelope, FakeBff, jsonResponse } from "./test/fakeBff";
+import {
+  contractShowcase,
+  envelope,
+  FakeBff,
+  jsonResponse,
+} from "./test/fakeBff";
 import { contractOverview, contractSession } from "./test/fixtures";
 import { contractFacilityState } from "./test/fixtures";
 
@@ -424,6 +429,40 @@ describe("overview", () => {
     expect(screen.getAllByRole("listitem")).toHaveLength(
       first.needs_attention.length,
     );
+  });
+});
+
+describe("system view", () => {
+  it("renders the runtime flow, health readout and persisted identities from the BFF", async () => {
+    const bff = new FakeBff().withShowcase(contractShowcase()).install();
+    await renderAt(
+      "/system?world_id=W-SYNTHETIC-TEST&lot_id=LOT-SYNTHETIC-001",
+      bff,
+    );
+    expect(
+      await screen.findByRole("heading", { level: 2, name: "System flow" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Simulator")).toBeInTheDocument();
+    expect(screen.getAllByText("NATS / JetStream")).not.toHaveLength(0);
+    expect(
+      screen.getByRole("heading", { level: 2, name: "System health" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("CMD-SYNTHETIC-001")).toBeInTheDocument();
+    expect(screen.getAllByText("reported by runtime")).not.toHaveLength(0);
+    const call = bff.calls.find((item) => item.path === "/v1/showcase");
+    expect(call?.query.get("world_id")).toBe("W-SYNTHETIC-TEST");
+    expect(call?.query.get("lot_id")).toBe("LOT-SYNTHETIC-001");
+  });
+
+  it("does not invent a healthy state when the BFF read model is unavailable", async () => {
+    const bff = new FakeBff();
+    bff.showcase = () => jsonResponse(503);
+    bff.install();
+    await renderAt("/system", bff);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Runtime evidence is unavailable.",
+    );
+    expect(screen.queryByText("PASS")).not.toBeInTheDocument();
   });
 });
 
