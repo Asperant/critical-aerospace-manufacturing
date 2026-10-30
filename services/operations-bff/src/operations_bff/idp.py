@@ -26,6 +26,7 @@ class AuthorizationRequest:
     code_challenge: str
     nonce: str
     code_challenge_method: str = "S256"
+    redirect_uri: str | None = None
 
 
 class IdentityProvider(Protocol):
@@ -34,7 +35,12 @@ class IdentityProvider(Protocol):
         ...
 
     def complete(
-        self, *, code: str, code_verifier: str, nonce: str
+        self,
+        *,
+        code: str,
+        code_verifier: str,
+        nonce: str,
+        redirect_uri: str | None = None,
     ) -> AuthenticatedIdentity:
         """Exchange the code server side and return the validated identity.
 

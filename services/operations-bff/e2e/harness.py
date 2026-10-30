@@ -78,8 +78,14 @@ class ScriptedIdentityProvider:
         return code
 
     def complete(
-        self, *, code: str, code_verifier: str, nonce: str
+        self,
+        *,
+        code: str,
+        code_verifier: str,
+        nonce: str,
+        redirect_uri: str | None = None,
     ) -> AuthenticatedIdentity:
+        del redirect_uri
         request = self._codes.pop(code, None)
         if (
             request is None

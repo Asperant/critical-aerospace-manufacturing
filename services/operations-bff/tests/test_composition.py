@@ -212,6 +212,49 @@ def test_wired_flow_keeps_the_security_behaviour(same_site: str) -> None:
     assert oidc_helpers.SECRET not in seen
 
 
+def test_demo_dynamic_redirect_is_exactly_bound_to_the_request_origin(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("OPERATIONS_BFF_OIDC_DYNAMIC_REDIRECT", "1")
+    app, provider = wired(
+        env(
+            OPERATIONS_BFF_OIDC_DYNAMIC_REDIRECT="1",
+            OPERATIONS_BFF_OIDC_ALLOW_INSECURE_HTTP="1",
+            OPERATIONS_BFF_OIDC_REDIRECT_URI=(
+                "http://localhost:29090/v1/session/callback"
+            ),
+            OPERATIONS_BFF_OIDC_REDIRECT_URIS=(
+                "https://ailab.taila9669.ts.net/v1/session/callback"
+            ),
+            OPERATIONS_BFF_OIDC_BROWSER_ISSUER="http://localhost:28090/realms/cap",
+            OPERATIONS_BFF_OIDC_BROWSER_ISSUERS=(
+                "https://ailab.taila9669.ts.net:9443/realms/cap"
+            ),
+        )
+    )
+    local = TestClient(app, base_url="http://localhost:29090", follow_redirects=False)
+    public = TestClient(
+        app, base_url="https://ailab.taila9669.ts.net", follow_redirects=False
+    )
+
+    local_start = local.get("/v1/session/login")
+    public_start = public.get("/v1/session/login")
+    assert local_start.status_code == public_start.status_code == 302
+    local_query = parse_qs(urlparse(local_start.headers["location"]).query)
+    public_query = parse_qs(urlparse(public_start.headers["location"]).query)
+    assert local_query["redirect_uri"] == ["http://localhost:29090/v1/session/callback"]
+    assert public_query["redirect_uri"] == [
+        "https://ailab.taila9669.ts.net/v1/session/callback"
+    ]
+    assert local_start.headers["location"].startswith(
+        "http://localhost:28090/realms/cap/"
+    )
+    assert public_start.headers["location"].startswith(
+        "https://ailab.taila9669.ts.net:9443/realms/cap/"
+    )
+    assert provider.calls == ["/realms/cap/.well-known/openid-configuration"]
+
+
 def test_configured_lifetimes_drive_the_session() -> None:
     provider = oidc_helpers.Provider()
     client = httpx.Client(transport=httpx.MockTransport(provider.handle))

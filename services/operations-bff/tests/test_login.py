@@ -72,8 +72,14 @@ class FakeIdP:
         return code
 
     def complete(
-        self, *, code: str, code_verifier: str, nonce: str
+        self,
+        *,
+        code: str,
+        code_verifier: str,
+        nonce: str,
+        redirect_uri: str | None = None,
     ) -> AuthenticatedIdentity:
+        del redirect_uri
         self.completed.append(code)
         if code == "down-code":
             raise IdentityProviderUnavailable

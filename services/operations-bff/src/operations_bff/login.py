@@ -36,6 +36,7 @@ class LoginTransaction:
     nonce: str
     binding_digest: str
     expires_at: datetime
+    redirect_uri: str | None = None
 
 
 class LoginStore(Protocol):
@@ -96,7 +97,9 @@ class LoginService:
         self._sessions = sessions
         self.config = config or LoginConfig()
 
-    def start(self, now: datetime) -> StartedLogin:
+    def start(
+        self, now: datetime, *, redirect_uri: str | None = None
+    ) -> StartedLogin:
         self._store.purge_expired(now)
         if self._store.count() >= self.config.max_pending:
             raise Unavailable("Too many pending logins")
@@ -107,7 +110,10 @@ class LoginService:
         try:
             location = self._idp.authorization_url(
                 AuthorizationRequest(
-                    state=state, code_challenge=pkce_challenge(verifier), nonce=nonce
+                    state=state,
+                    code_challenge=pkce_challenge(verifier),
+                    nonce=nonce,
+                    redirect_uri=redirect_uri,
                 )
             )
         except IdentityProviderUnavailable:
@@ -120,6 +126,7 @@ class LoginService:
                 nonce=nonce,
                 binding_digest=digest(binding),
                 expires_at=now + self.config.ttl,
+                redirect_uri=redirect_uri,
             ),
         )
         return StartedLogin(location, binding, int(self.config.ttl.total_seconds()))
@@ -144,11 +151,14 @@ class LoginService:
         ):
             raise LoginRejected("Login was not started by this browser")
         try:
-            identity = self._idp.complete(
-                code=code,
-                code_verifier=transaction.code_verifier,
-                nonce=transaction.nonce,
-            )
+            kwargs = {
+                "code": code,
+                "code_verifier": transaction.code_verifier,
+                "nonce": transaction.nonce,
+            }
+            if transaction.redirect_uri is not None:
+                kwargs["redirect_uri"] = transaction.redirect_uri
+            identity = self._idp.complete(**kwargs)  # type: ignore[arg-type]
         except IdentityProviderUnavailable:
             raise Unavailable("Identity provider unavailable") from None
         except IdentityProviderError:
