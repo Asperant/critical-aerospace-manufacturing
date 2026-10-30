@@ -97,9 +97,7 @@ class LoginService:
         self._sessions = sessions
         self.config = config or LoginConfig()
 
-    def start(
-        self, now: datetime, *, redirect_uri: str | None = None
-    ) -> StartedLogin:
+    def start(self, now: datetime, *, redirect_uri: str | None = None) -> StartedLogin:
         self._store.purge_expired(now)
         if self._store.count() >= self.config.max_pending:
             raise Unavailable("Too many pending logins")

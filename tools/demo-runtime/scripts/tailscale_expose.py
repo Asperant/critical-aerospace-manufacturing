@@ -62,7 +62,13 @@ def _read_state(state_dir: Path) -> dict[str, Any]:
         raise ExposureError(f"exposure state is unreadable: {path}") from exc
     if not isinstance(value, dict):
         raise ExposureError("exposure state must be an object")
-    required = ("hostname", "ui_url", "keycloak_url", "ui_redirect_uri", "keycloak_issuer")
+    required = (
+        "hostname",
+        "ui_url",
+        "keycloak_url",
+        "ui_redirect_uri",
+        "keycloak_issuer",
+    )
     if any(not isinstance(value.get(key), str) or not value[key] for key in required):
         raise ExposureError("exposure state is incomplete")
     return value
@@ -119,7 +125,9 @@ def _proxy_for(config: dict[str, Any], key: str) -> str | None:
     return root.get("Proxy") if isinstance(root, dict) else None
 
 
-def _ensure_serve(hostname: str, ui_port: int, keycloak_port: int, local_keycloak_port: int) -> None:
+def _ensure_serve(
+    hostname: str, ui_port: int, keycloak_port: int, local_keycloak_port: int
+) -> None:
     config = _serve_config()
     ui_key = f"{hostname}:443"
     keycloak_key = f"{hostname}:{keycloak_port}"
@@ -212,7 +220,11 @@ def _client(state_dir: Path, keycloak_local_url: str) -> tuple[str, dict[str, An
     if status != 200:
         raise ExposureError("Keycloak client lookup failed")
     document = json.loads(payload)
-    if not isinstance(document, list) or len(document) != 1 or not isinstance(document[0], dict):
+    if (
+        not isinstance(document, list)
+        or len(document) != 1
+        or not isinstance(document[0], dict)
+    ):
         raise ExposureError("Keycloak demo client lookup was not unique")
     internal_id = document[0].get("id")
     if not isinstance(internal_id, str) or not internal_id:
@@ -220,7 +232,9 @@ def _client(state_dir: Path, keycloak_local_url: str) -> tuple[str, dict[str, An
     return token, document[0]
 
 
-def _reconcile(state_dir: Path, ui_port: int, keycloak_port: int, *, check_only: bool) -> None:
+def _reconcile(
+    state_dir: Path, ui_port: int, keycloak_port: int, *, check_only: bool
+) -> None:
     state = _read_state(state_dir)
     local_ui = f"http://localhost:{ui_port}"
     local_keycloak = f"http://localhost:{keycloak_port}"
@@ -235,7 +249,9 @@ def _reconcile(state_dir: Path, ui_port: int, keycloak_port: int, *, check_only:
     missing_origins = [item for item in origins if item not in actual_origins]
     if check_only:
         if missing_redirects or missing_origins:
-            raise ExposureError("Keycloak demo client is missing exact exposure origins")
+            raise ExposureError(
+                "Keycloak demo client is missing exact exposure origins"
+            )
         return
     client["redirectUris"] = list(dict.fromkeys([*actual_redirects, *redirects]))
     client["webOrigins"] = list(dict.fromkeys([*actual_origins, *origins]))
@@ -257,7 +273,9 @@ class _NoRedirect(HTTPRedirectHandler):
         return None
 
 
-def _login_redirect(url: str, *, insecure_tls: bool) -> tuple[str, dict[str, list[str]]]:
+def _login_redirect(
+    url: str, *, insecure_tls: bool
+) -> tuple[str, dict[str, list[str]]]:
     handlers: list[Any] = [_NoRedirect()]
     if insecure_tls:
         handlers.append(HTTPSHandler(context=ssl._create_unverified_context()))
@@ -300,7 +318,8 @@ def _check(state_dir: Path, ui_port: int, keycloak_port: int) -> None:
         if status != 200:
             raise ExposureError(f"UI did not return HTTP 200: {url}")
     status, _ = _request(
-        f"{keycloak_url}/realms/{REALM}", insecure_tls=keycloak_url.startswith("https://")
+        f"{keycloak_url}/realms/{REALM}",
+        insecure_tls=keycloak_url.startswith("https://"),
     )
     if status != 200:
         raise ExposureError("Tailscale Keycloak realm did not return HTTP 200")
@@ -386,7 +405,12 @@ def main() -> int:
         if args.command in ("configure", "restore"):
             configure(args)
         elif args.command == "reconcile":
-            _reconcile(args.state_dir, args.ui_port, args.keycloak_port, check_only=args.check_only)
+            _reconcile(
+                args.state_dir,
+                args.ui_port,
+                args.keycloak_port,
+                check_only=args.check_only,
+            )
             print("Keycloak demo client exact origins reconciled")
         elif args.command == "check":
             _check(args.state_dir, args.ui_port, args.keycloak_port)

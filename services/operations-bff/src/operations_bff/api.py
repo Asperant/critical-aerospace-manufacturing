@@ -298,7 +298,11 @@ def _request_redirect_uri(request: Request) -> str | None:
     """
     if os.environ.get("OPERATIONS_BFF_OIDC_DYNAMIC_REDIRECT") != "1":
         return None
-    scheme = request.headers.get("x-forwarded-proto", request.url.scheme).split(",", 1)[0].strip()
+    scheme = (
+        request.headers.get("x-forwarded-proto", request.url.scheme)
+        .split(",", 1)[0]
+        .strip()
+    )
     host = request.headers.get("host", request.url.netloc).strip()
     if not scheme or not host or "," in host:
         return None

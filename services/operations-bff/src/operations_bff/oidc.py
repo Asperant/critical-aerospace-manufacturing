@@ -79,14 +79,19 @@ class OidcSettings:
                 raise ValueError(f"redirect_uri must end with {CALLBACK_PATH}")
         if len(set(redirects)) != len(redirects):
             raise ValueError("redirect URIs must be unique")
-        browsers = (() if self.browser_issuer is None else (self.browser_issuer,)) + self.browser_issuers
+        browsers = (
+            () if self.browser_issuer is None else (self.browser_issuer,)
+        ) + self.browser_issuers
         for index, browser in enumerate(browsers):
             _require_https(
                 browser,
                 "browser_issuer" if index == 0 else "browser_issuers",
                 allow_insecure_http=self.allow_insecure_http,
             )
-            if not urlparse(browser).path.endswith("/realms/") and "/realms/" not in urlparse(browser).path:
+            if (
+                not urlparse(browser).path.endswith("/realms/")
+                and "/realms/" not in urlparse(browser).path
+            ):
                 raise ValueError("browser issuer must identify an OIDC realm")
         if browsers and len(browsers) != len(redirects):
             raise ValueError("browser issuer list must match redirect URI list")
@@ -138,7 +143,9 @@ class OidcSettings:
         return (self.redirect_uri, *self.redirect_uris)
 
     def _browser_for(self, redirect_uri: str) -> str | None:
-        browsers = (() if self.browser_issuer is None else (self.browser_issuer,)) + self.browser_issuers
+        browsers = (
+            () if self.browser_issuer is None else (self.browser_issuer,)
+        ) + self.browser_issuers
         if not browsers:
             return None
         return browsers[self._redirects().index(redirect_uri)]
@@ -342,7 +349,9 @@ class OidcIdentityProvider:
             if header.get("alg") not in s.algorithms or not isinstance(kid, str):
                 raise IdentityProviderError
             key = self._signing_key(kid)
-            browser_issuers = (() if s.browser_issuer is None else (s.browser_issuer,)) + s.browser_issuers
+            browser_issuers = (
+                () if s.browser_issuer is None else (s.browser_issuer,)
+            ) + s.browser_issuers
             issuers = (s.issuer, *browser_issuers) if browser_issuers else s.issuer
             claims: dict[str, Any] = jwt.decode(
                 id_token,
