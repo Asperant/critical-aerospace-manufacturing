@@ -169,7 +169,9 @@ test("authenticated System View exposes the live runtime path", async ({
   await page.getByLabel("World and lot").fill(`${world} ${lot}`);
   await page.getByRole("button", { name: "Load system view" }).click();
 
-  await expect(page.getByRole("heading", { name: "System View" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "System View" }),
+  ).toBeVisible();
   await expect(page.getByRole("region", { name: "System flow" })).toContainText(
     "Simulator",
   );
@@ -206,7 +208,14 @@ test("authenticated System View exposes the live runtime path", async ({
     ]),
   );
   expect(body.health?.map((item) => item.id)).toEqual(
-    expect.arrayContaining(["core", "postgres", "nats", "twin", "keycloak", "bff"]),
+    expect.arrayContaining([
+      "core",
+      "postgres",
+      "nats",
+      "twin",
+      "keycloak",
+      "bff",
+    ]),
   );
   expect(body.counters?.map((item) => item.id)).toEqual(
     expect.arrayContaining(["commands", "published-events", "twin-updates"]),
