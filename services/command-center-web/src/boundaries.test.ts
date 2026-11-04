@@ -11,6 +11,7 @@ const forbiddenPackages =
 const forbiddenSource =
   /XMLHttpRequest|WebSocket|EventSource|localStorage|sessionStorage|indexedDB|document\.cookie|access_token|refresh_token|id_token|Authorization|Bearer/;
 const networkModules = [
+  "src/demoLab/demoLabClient.ts",
   "src/facilityState/facilityStateClient.ts",
   "src/overview/overviewClient.ts",
   "src/session/sessionClient.ts",
