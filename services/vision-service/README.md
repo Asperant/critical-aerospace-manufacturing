@@ -33,7 +33,8 @@ Behaviour that consumers can rely on:
 - The baseline has no defect taxonomy: every candidate is `UNKNOWN_REVIEW_REQUIRED`
   with no class label or confidence, and scores are `UNCALIBRATED` robust z-scores.
   It is a placeholder that computes from real pixels (05 DEP-059, F2), not a trained
-  model, and carries no accuracy claim.
+  model, and carries no accuracy claim. Zero candidates therefore never means
+  automatic quality acceptance.
 - The magnetic-tile dataset is a methodological evaluation source, not aerospace
   factory data. Its masks are used only for offline evaluation; masks and category
   labels never enter runtime inference.
