@@ -1,3 +1,5 @@
+# pyright: reportMissingImports=false
+
 """Presenter-facing Demo Lab adapters over the real project components.
 
 The module is deliberately a thin demo boundary.  It does not invent state or
@@ -72,18 +74,26 @@ def _connection(settings: Settings) -> psycopg.Connection[DictRow]:
     )
 
 
-def _bounded_int(value: Any, name: str, *, minimum: int, maximum: int, default: int) -> int:
+def _bounded_int(
+    value: Any, name: str, *, minimum: int, maximum: int, default: int
+) -> int:
     if value is None:
         return default
-    if isinstance(value, bool) or not isinstance(value, int) or not minimum <= value <= maximum:
-        raise HTTPException(422, detail=f"{name} must be an integer in {minimum}..{maximum}")
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, int)
+        or not minimum <= value <= maximum
+    ):
+        raise HTTPException(
+            422, detail=f"{name} must be an integer in {minimum}..{maximum}"
+        )
     return value
 
 
 def _json_value(value: Any) -> Any:
     if isinstance(value, dict):
         return {str(key): _json_value(item) for key, item in value.items()}
-    if isinstance(value, (tuple, list)):
+    if isinstance(value, tuple | list):
         return [_json_value(item) for item in value]
     if isinstance(value, Fraction):
         return {"numerator": value.numerator, "denominator": value.denominator}
@@ -92,7 +102,9 @@ def _json_value(value: Any) -> Any:
     return value
 
 
-def _simulation_state(world_id: str, facility: OperationalFacility, now: int) -> dict[str, Any]:
+def _simulation_state(
+    world_id: str, facility: OperationalFacility, now: int
+) -> dict[str, Any]:
     return {
         "world_id": world_id,
         "state_revision": facility.state_revision,
@@ -163,8 +175,14 @@ def _simulation_gantt(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
         route_step = attributes.get("route_step")
         kind = event.get("kind")
         if kind == "EQUIPMENT_FAILED" and machine_id:
-            failures.append({"sequence": sequence, "time": event["time"], "machine_id": machine_id})
-        if not (isinstance(lot_id, str) and isinstance(machine_id, str) and isinstance(route_step, str)):
+            failures.append(
+                {"sequence": sequence, "time": event["time"], "machine_id": machine_id}
+            )
+        if not (
+            isinstance(lot_id, str)
+            and isinstance(machine_id, str)
+            and isinstance(route_step, str)
+        ):
             continue
         key = (lot_id, machine_id, route_step)
         if kind == "DISPATCH_STARTED":
@@ -192,10 +210,18 @@ def _simulation_gantt(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
             and failure["time"] >= bar["start_time"]
             and (end_time is None or failure["time"] <= end_time)
         ]
-    return sorted(bars, key=lambda item: (item["start_time"], item["machine_id"], item["lot_id"]))
+    return sorted(
+        bars, key=lambda item: (item["start_time"], item["machine_id"], item["lot_id"])
+    )
 
 
-def _core_json(settings: Settings, path: str, *, method: str = "GET", body: dict[str, Any] | None = None) -> dict[str, Any]:
+def _core_json(
+    settings: Settings,
+    path: str,
+    *,
+    method: str = "GET",
+    body: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     payload = None if body is None else json.dumps(body).encode("utf-8")
     request = UrlRequest(
         f"{settings.core_url.rstrip('/')}{path}",
@@ -213,7 +239,9 @@ def _core_json(settings: Settings, path: str, *, method: str = "GET", body: dict
             detail = "Core request failed"
         raise HTTPException(exc.code, detail=detail) from None
     except (URLError, TimeoutError) as exc:
-        raise HTTPException(503, detail=f"Core unavailable: {type(exc).__name__}") from exc
+        raise HTTPException(
+            503, detail=f"Core unavailable: {type(exc).__name__}"
+        ) from exc
     if not isinstance(value, dict):
         raise HTTPException(502, detail="Core returned an invalid response")
     return value
@@ -332,7 +360,9 @@ def _vision_store() -> tuple[ArtifactStore, S3Client]:
     try:
         client = S3Client(StoreConfig.from_env(role="writer"))
     except Exception as exc:
-        raise HTTPException(503, detail=f"Vision artifact store unavailable: {type(exc).__name__}") from exc
+        raise HTTPException(
+            503, detail=f"Vision artifact store unavailable: {type(exc).__name__}"
+        ) from exc
     return ArtifactStore(client), client
 
 
@@ -376,7 +406,9 @@ def _lot_state(settings: Settings, lot_id: str) -> dict[str, Any] | None:
     }
 
 
-def _wait_for_projection(settings: Settings, lot_id: str, event_id: str) -> dict[str, Any]:
+def _wait_for_projection(
+    settings: Settings, lot_id: str, event_id: str
+) -> dict[str, Any]:
     deadline = time.monotonic() + 20
     while time.monotonic() < deadline:
         showcase = _core_json(
@@ -402,7 +434,13 @@ def _wait_for_projection(settings: Settings, lot_id: str, event_id: str) -> dict
                 "WHERE world_id=%s AND branch_id=%s",
                 (settings.world_id, settings.branch_id),
             ).fetchone()
-        if outbox_value and outbox_value.get("event_id") == event_id and outbox_value.get("publication_status") == "PUBLISHED" and applied and projection:
+        if (
+            outbox_value
+            and outbox_value.get("event_id") == event_id
+            and outbox_value.get("publication_status") == "PUBLISHED"
+            and applied
+            and projection
+        ):
             return {
                 "outbox": dict(outbox_value),
                 "twin_applied_event": dict(applied),
@@ -421,18 +459,31 @@ def _quality_simulator(world_id: str, lot_id: str, seed: int) -> dict[str, Any]:
             RouteSpec(
                 "DEMO-ROUTE",
                 "route-rev-1",
-                (VisitSpec("DEMO-VISIT-1", "ROUGH-MACHINING", ("DEMO-CNC-01",), 1, inspect=True, defect_per_mille=1000),),
+                (
+                    VisitSpec(
+                        "DEMO-VISIT-1",
+                        "ROUGH-MACHINING",
+                        ("DEMO-CNC-01",),
+                        1,
+                        inspect=True,
+                        defect_per_mille=1000,
+                    ),
+                ),
             ),
         ),
         lots=(LotSpec(lot_id, "DEMO-ORDER-001", "DEMO-ROUTE", release_at=0),),
     )
     publisher = ListPublisher()
     facility = OperationalFacility(config, provider=fifo(), publisher=publisher)
-    scenario = scenario_config(config, seed=seed, horizon=100, scenario_id="demo-lab-quality-excursion")
+    scenario = scenario_config(
+        config, seed=seed, horizon=100, scenario_id="demo-lab-quality-excursion"
+    )
     world = ScenarioEngine(KINDS).initialize(scenario)
     kernel = Kernel(world, facility.handlers())
     result = kernel.run_to_horizon(10_000)
-    event = next((item for item in publisher.events if item.kind == "INSPECTION_FAILED"), None)
+    event = next(
+        (item for item in publisher.events if item.kind == "INSPECTION_FAILED"), None
+    )
     if event is None:
         raise HTTPException(500, detail="Simulator did not produce INSPECTION_FAILED")
     return {
@@ -467,7 +518,10 @@ def capabilities(request: Request, auth: Session) -> dict[str, Any]:
             "scheduling": {"available": True, "mode": "OFFLINE_BASELINES"},
             "event_trace": {"available": True, "mode": "POSTGRESQL_NATS_TWIN_READS"},
         },
-        "ai": {"available": False, "reason": "AI runtime/orchestrator is not implemented"},
+        "ai": {
+            "available": False,
+            "reason": "AI runtime/orchestrator is not implemented",
+        },
     }
 
 
@@ -504,7 +558,11 @@ async def vision_inspect(
             logical_owner="demo-lab",
             producer={"service": "demo-bff", "version": "0.1.0"},
             classification="INTERNAL",
-            context={"world_id": world_id, "simulation_run_id": simulation_run_id, "branch_id": settings.branch_id},
+            context={
+                "world_id": world_id,
+                "simulation_run_id": simulation_run_id,
+                "branch_id": settings.branch_id,
+            },
         )
         work = parse_request(
             {
@@ -533,32 +591,82 @@ async def vision_inspect(
                 max_candidates=max_candidates,
             ),
         )
-        return {"contract_version": "bff.demo-lab.vision.v1", "observation": observation}
+        return {
+            "contract_version": "bff.demo-lab.vision.v1",
+            "observation": observation,
+        }
     finally:
         client.close()
 
 
 @router.post("/simulation/runs", operation_id="runDemoLabSimulation")
-def simulation_run(request: Request, auth: Session, body: dict[str, Any]) -> dict[str, Any]:
+def simulation_run(
+    request: Request, auth: Session, body: dict[str, Any]
+) -> dict[str, Any]:
     del auth
-    seed = _bounded_int(body.get("seed"), "seed", minimum=0, maximum=2**31 - 1, default=4242)
-    horizon = _bounded_int(body.get("horizon"), "horizon", minimum=1, maximum=100_000, default=100)
-    max_events = _bounded_int(body.get("max_events"), "max_events", minimum=1, maximum=50_000, default=10_000)
-    lot_count = _bounded_int(body.get("lot_count"), "lot_count", minimum=1, maximum=20, default=4)
-    defect = _bounded_int(body.get("defect_per_mille"), "defect_per_mille", minimum=0, maximum=1000, default=250)
+    seed = _bounded_int(
+        body.get("seed"), "seed", minimum=0, maximum=2**31 - 1, default=4242
+    )
+    horizon = _bounded_int(
+        body.get("horizon"), "horizon", minimum=1, maximum=100_000, default=100
+    )
+    max_events = _bounded_int(
+        body.get("max_events"), "max_events", minimum=1, maximum=50_000, default=10_000
+    )
+    lot_count = _bounded_int(
+        body.get("lot_count"), "lot_count", minimum=1, maximum=20, default=4
+    )
+    defect = _bounded_int(
+        body.get("defect_per_mille"),
+        "defect_per_mille",
+        minimum=0,
+        maximum=1000,
+        default=250,
+    )
     failure_at = body.get("failure_at")
     if failure_at is not None:
-        failure_at = _bounded_int(failure_at, "failure_at", minimum=1, maximum=horizon, default=10)
-    return {"contract_version": "bff.demo-lab.simulation.v1", "run": _simulator_run(world_id=WORLD_ID, seed=seed, horizon=horizon, max_events=max_events, lot_count=lot_count, defect_per_mille=defect, failure_at=failure_at)}
+        failure_at = _bounded_int(
+            failure_at, "failure_at", minimum=1, maximum=horizon, default=10
+        )
+    return {
+        "contract_version": "bff.demo-lab.simulation.v1",
+        "run": _simulator_run(
+            world_id=WORLD_ID,
+            seed=seed,
+            horizon=horizon,
+            max_events=max_events,
+            lot_count=lot_count,
+            defect_per_mille=defect,
+            failure_at=failure_at,
+        ),
+    }
 
 
 @router.post("/scheduling/compare", operation_id="compareDemoLabScheduling")
-def scheduling_compare(request: Request, auth: Session, body: dict[str, Any]) -> dict[str, Any]:
+def scheduling_compare(
+    request: Request, auth: Session, body: dict[str, Any]
+) -> dict[str, Any]:
     del request, auth
-    seed = _bounded_int(body.get("seed"), "seed", minimum=0, maximum=2**63 - 1, default=4242)
-    job_count = _bounded_int(body.get("job_count"), "job_count", minimum=1, maximum=100, default=12)
-    now = _bounded_int(body.get("decision_tick"), "decision_tick", minimum=0, maximum=100_000, default=20)
-    horizon = _bounded_int(body.get("horizon_ticks"), "horizon_ticks", minimum=0, maximum=100_000, default=100)
+    seed = _bounded_int(
+        body.get("seed"), "seed", minimum=0, maximum=2**63 - 1, default=4242
+    )
+    job_count = _bounded_int(
+        body.get("job_count"), "job_count", minimum=1, maximum=100, default=12
+    )
+    now = _bounded_int(
+        body.get("decision_tick"),
+        "decision_tick",
+        minimum=0,
+        maximum=100_000,
+        default=20,
+    )
+    horizon = _bounded_int(
+        body.get("horizon_ticks"),
+        "horizon_ticks",
+        minimum=0,
+        maximum=100_000,
+        default=100,
+    )
     config = OfflineInstanceConfig(job_count=job_count, horizon_ticks=horizon)
     instance = generate(config, seed)
     context = instance.context_at(now)
@@ -570,7 +678,11 @@ def scheduling_compare(request: Request, auth: Session, body: dict[str, Any]) ->
 
         def key_display(value: Any) -> str:
             if isinstance(value, Fraction):
-                return str(value.numerator) if value.denominator == 1 else f"{value.numerator}/{value.denominator}"
+                return (
+                    str(value.numerator)
+                    if value.denominator == 1
+                    else f"{value.numerator}/{value.denominator}"
+                )
             return str(value)
 
         selected = job_by_id.get(decision.selected_job_id or "")
@@ -590,7 +702,9 @@ def scheduling_compare(request: Request, auth: Session, body: dict[str, Any]) ->
                     if selected is not None
                     else "Uygun aday yok"
                 ),
-                "selected_job": None if selected is None else asdict(selected) | {"state": selected.state.value},
+                "selected_job": None
+                if selected is None
+                else asdict(selected) | {"state": selected.state.value},
                 "ranking": [
                     {
                         "rank": rank,
@@ -612,7 +726,11 @@ def scheduling_compare(request: Request, auth: Session, body: dict[str, Any]) ->
             "generator_version": instance.metadata.generator_version,
             "config_sha256": instance.metadata.config_sha256,
             "decision_tick": now,
-            "jobs": [asdict(job) | {"state": job.state.value, "dispatchable": job.is_dispatchable(now)} for job in instance.jobs],
+            "jobs": [
+                asdict(job)
+                | {"state": job.state.value, "dispatchable": job.is_dispatchable(now)}
+                for job in instance.jobs
+            ],
         },
         "results": results,
     }
@@ -634,11 +752,18 @@ def quality_excursion(
     if before is None:
         raise HTTPException(404, detail="demo lot not found; use the seeded demo world")
     if before["held"]:
-        raise HTTPException(409, detail="clean demo environment required: lot already has ACTIVE_HOLD; use the controlled demo reset")
+        raise HTTPException(
+            409,
+            detail="clean demo environment required: lot already has ACTIVE_HOLD; use the controlled demo reset",
+        )
     simulator = _quality_simulator(settings.world_id, lot_id, seed)
     correlation_id = f"demo-lab-quality-{uuid.uuid4()}"
-    command_id = str(uuid5(NAMESPACE_URL, f"cap-demo/demo-lab/{lot_id}/{correlation_id}/hold"))
-    hold_id = str(uuid5(NAMESPACE_URL, f"cap-demo/demo-lab/{lot_id}/{correlation_id}/hold-id"))
+    command_id = str(
+        uuid5(NAMESPACE_URL, f"cap-demo/demo-lab/{lot_id}/{correlation_id}/hold")
+    )
+    hold_id = str(
+        uuid5(NAMESPACE_URL, f"cap-demo/demo-lab/{lot_id}/{correlation_id}/hold-id")
+    )
     hold = _core_json(
         settings,
         "/v1/commands",
@@ -666,12 +791,19 @@ def quality_excursion(
         body={
             "command_type": "DispatchLot",
             "command_version": 1,
-            "command_id": str(uuid5(NAMESPACE_URL, f"cap-demo/demo-lab/{lot_id}/{correlation_id}/dispatch")),
+            "command_id": str(
+                uuid5(
+                    NAMESPACE_URL,
+                    f"cap-demo/demo-lab/{lot_id}/{correlation_id}/dispatch",
+                )
+            ),
             "idempotency_key": f"{correlation_id}/dispatch",
             "world_id": settings.world_id,
             "correlation_id": f"{correlation_id}/dispatch",
             "target": {"entity_type": "Lot", "entity_id": lot_id},
-            "expected": {"expected_revision": after["revision"] if after else before["revision"]},
+            "expected": {
+                "expected_revision": after["revision"] if after else before["revision"]
+            },
             "operation_id": "DEMO-VISIT-1",
             "resource_id": "DEMO-CNC-01",
         },
@@ -682,7 +814,12 @@ def quality_excursion(
             "world_id": settings.world_id,
             "lot_id": lot_id,
             "simulator": simulator,
-            "core": {"before": before, "hold": hold, "after": after, "dispatch": dispatch},
+            "core": {
+                "before": before,
+                "hold": hold,
+                "after": after,
+                "dispatch": dispatch,
+            },
             "transport": {"outbox": reached["outbox"], "nats": _nats_info(settings)},
             "twin": reached,
             "correlation_id": correlation_id_of(request),
@@ -702,7 +839,10 @@ def event_trace(
     if world_id != settings.world_id:
         raise HTTPException(409, detail="world scope rejected")
     state = _lot_state(settings, lot_id)
-    core = _core_json(settings, f"/v1/showcase/{quote(lot_id, safe='')}?world_id={quote(world_id, safe='')}")
+    core = _core_json(
+        settings,
+        f"/v1/showcase/{quote(lot_id, safe='')}?world_id={quote(world_id, safe='')}",
+    )
     with _connection(settings) as connection:
         latest = connection.execute(
             "SELECT event_id, applied_at FROM twin.applied_event WHERE consumer_scope=%s "
@@ -735,7 +875,9 @@ def event_trace(
                 "label": "Core outbox",
                 "status": str(outbox.get("publication_status", "UNKNOWN")),
                 "source": "PostgreSQL core.outbox",
-                "identity": str(outbox.get("event_id") or outbox.get("outbox_id") or ""),
+                "identity": str(
+                    outbox.get("event_id") or outbox.get("outbox_id") or ""
+                ),
             }
         )
     if latest is not None:
@@ -755,25 +897,38 @@ def event_trace(
                 "label": "Dispatch attempt",
                 "status": str(dispatch.get("status", "UNKNOWN")),
                 "source": "PostgreSQL core.command_outcome",
-                "identity": str(dispatch.get("command_id") or dispatch.get("outcome_id") or ""),
+                "identity": str(
+                    dispatch.get("command_id") or dispatch.get("outcome_id") or ""
+                ),
             }
         )
     core["timeline"] = timeline
     return jsonable_encoder(
         {
             "contract_version": "bff.demo-lab.trace.v1",
-            "meta": {"world_id": world_id, "lot_id": lot_id, "correlation_id": correlation_id_of(request)},
+            "meta": {
+                "world_id": world_id,
+                "lot_id": lot_id,
+                "correlation_id": correlation_id_of(request),
+            },
             "core_state": state,
             "core_showcase": core,
-            "twin": {"latest_applied_event": None if latest is None else dict(latest), "revision": None if revision is None else dict(revision)},
+            "twin": {
+                "latest_applied_event": None if latest is None else dict(latest),
+                "revision": None if revision is None else dict(revision),
+            },
             "nats": _nats_info(settings),
             "identities": {
                 "hold_command_id": None if hold is None else hold.get("command_id"),
                 "hold_outcome_id": None if hold is None else hold.get("outcome_id"),
                 "core_event_id": None if outbox is None else outbox.get("event_id"),
                 "outbox_id": None if outbox is None else outbox.get("outbox_id"),
-                "twin_applied_event_id": None if latest is None else latest.get("event_id"),
-                "dispatch_command_id": None if dispatch is None else dispatch.get("command_id"),
+                "twin_applied_event_id": None
+                if latest is None
+                else latest.get("event_id"),
+                "dispatch_command_id": None
+                if dispatch is None
+                else dispatch.get("command_id"),
             },
         }
     )

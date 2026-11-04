@@ -9,7 +9,9 @@ from vision_service import ImageDecodeError, decode_image, decode_jpeg
 
 
 def _jpeg() -> bytes:
-    image = Image.fromarray(np.arange(32 * 24, dtype=np.uint8).reshape(24, 32), mode="L")
+    image = Image.fromarray(
+        np.arange(32 * 24, dtype=np.uint8).reshape(24, 32), mode="L"
+    )
     stream = BytesIO()
     image.save(stream, format="JPEG", quality=95)
     return stream.getvalue()

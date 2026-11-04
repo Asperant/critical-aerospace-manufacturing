@@ -125,9 +125,8 @@ def create_app() -> FastAPI:
         requests still pass through the normal Core command path below.
         """
         lot_id = body.get("lot_id")
-        if (
-            not isinstance(lot_id, str)
-            or not re.fullmatch(r"DEMO-LAB-[A-F0-9]{12}", lot_id)
+        if not isinstance(lot_id, str) or not re.fullmatch(
+            r"DEMO-LAB-[A-F0-9]{12}", lot_id
         ):
             raise HTTPException(status_code=422, detail="invalid demo lot identity")
         with _connect(settings) as connection:

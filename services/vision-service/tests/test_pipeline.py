@@ -105,9 +105,9 @@ def test_jpeg_image_is_inspected_through_the_same_observation_pipeline(
     clock: Any, observation_validator: BoundaryValidator
 ) -> None:
     stream = BytesIO()
-    Image.fromarray(np.asarray(gray(with_defect()), dtype=np.uint8).squeeze(-1), mode="L").save(
-        stream, format="JPEG", quality=95
-    )
+    Image.fromarray(
+        np.asarray(gray(with_defect()), dtype=np.uint8).squeeze(-1), mode="L"
+    ).save(stream, format="JPEG", quality=95)
     observation = run(
         stream.getvalue(),
         clock,

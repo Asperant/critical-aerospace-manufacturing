@@ -51,7 +51,9 @@ class Detection:
     truncated: bool
 
 
-def _robust_z(values: NDArray[np.float64], center: NDArray[np.float64]) -> NDArray[np.float64]:
+def _robust_z(
+    values: NDArray[np.float64], center: NDArray[np.float64]
+) -> NDArray[np.float64]:
     """Return a one-sided robust z-score against a reference image."""
     residual = values - center
     median = float(np.median(residual))
@@ -95,9 +97,7 @@ def deviation(image: NDArray[np.float64]) -> NDArray[np.float64]:
     return np.maximum(dark, bright * BRIGHT_CONTRAST_WEIGHT)
 
 
-def _bridge_dark_streaks(
-    mask: NDArray[np.bool_], gap: int
-) -> NDArray[np.bool_]:
+def _bridge_dark_streaks(mask: NDArray[np.bool_], gap: int) -> NDArray[np.bool_]:
     """Join short vertical gaps in a thin dark defect without dilating it."""
     if gap <= 0:
         return mask
@@ -140,20 +140,42 @@ def _components(mask: NDArray[np.bool_]) -> list[list[tuple[int, int]]]:
     return components
 
 
-def _is_border_streak(top: int, left: int, bottom: int, right: int, height: int, width: int) -> bool:
+def _is_border_streak(
+    top: int, left: int, bottom: int, right: int, height: int, width: int
+) -> bool:
     """Reject long narrow illumination strips glued to the image boundary."""
     edge_margin = 0.05
-    touches_vertical = left / width <= edge_margin or (width - 1 - right) / width <= edge_margin
-    touches_horizontal = top / height <= edge_margin or (height - 1 - bottom) / height <= edge_margin
+    touches_vertical = (
+        left / width <= edge_margin or (width - 1 - right) / width <= edge_margin
+    )
+    touches_horizontal = (
+        top / height <= edge_margin or (height - 1 - bottom) / height <= edge_margin
+    )
     component_width = right - left + 1
     component_height = bottom - top + 1
-    if touches_vertical and component_width / width < 0.04 and component_height / height > 0.04:
+    if (
+        touches_vertical
+        and component_width / width < 0.04
+        and component_height / height > 0.04
+    ):
         return True
-    if touches_horizontal and component_width / width < 0.04 and component_height / height > 0.04:
+    if (
+        touches_horizontal
+        and component_width / width < 0.04
+        and component_height / height > 0.04
+    ):
         return True
-    if (touches_vertical or touches_horizontal) and component_width / width < 0.04 and component_height / height < 0.04:
+    if (
+        (touches_vertical or touches_horizontal)
+        and component_width / width < 0.04
+        and component_height / height < 0.04
+    ):
         return True
-    return touches_horizontal and component_height / height < 0.04 and component_width / width > 0.04
+    return (
+        touches_horizontal
+        and component_height / height < 0.04
+        and component_width / width > 0.04
+    )
 
 
 def detect(image: NDArray[np.float64], policy: ThresholdPolicy) -> Detection:
@@ -172,7 +194,9 @@ def detect(image: NDArray[np.float64], policy: ThresholdPolicy) -> Detection:
         xs = [x for _, x in pixels]
         top, left = min(ys), min(xs)
         bottom, right = max(ys), max(xs)
-        if _is_border_streak(top, left, bottom, right, working.shape[0], working.shape[1]):
+        if _is_border_streak(
+            top, left, bottom, right, working.shape[0], working.shape[1]
+        ):
             continue
         score = max(float(score_map[y, x]) for y, x in pixels)
         source_left = left * stride
@@ -185,7 +209,10 @@ def detect(image: NDArray[np.float64], policy: ThresholdPolicy) -> Detection:
                 y=source_top / source_height,
                 width=(source_right - source_left + 1) / source_width,
                 height=(source_bottom - source_top + 1) / source_height,
-                area_fraction=len(pixels) * stride * stride / (source_height * source_width),
+                area_fraction=len(pixels)
+                * stride
+                * stride
+                / (source_height * source_width),
                 score=score,
             )
         )
