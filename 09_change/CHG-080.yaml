@@ -84,6 +84,7 @@ CHG-080:
     - No code, runtime, database, broker, identity, deployment or Demo Lab behavior is changed by preparing this record.
   affected_requirements:
     - NONE — no FR/NFR wording, authority rule or acceptance semantics are changed; this CR fixes the scenario and research-protocol instantiation of existing requirements.
+  precise_requirement: NONE — this C3 record fixes the approved scenario and research-protocol instantiation only; no FR/NFR wording, authority rule or acceptance semantics change.
   affected_architecture:
     - NONE — existing service boundaries, canonical-authority placement, Oracle isolation, event spine and Twin projection remain unchanged.
   affected_contracts:
