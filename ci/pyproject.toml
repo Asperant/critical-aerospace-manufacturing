@@ -27,6 +27,7 @@ dependencies = [
     "cryptography==50.0.2",
     "uvicorn==0.54.0",
     "numpy==2.4.6",
+    "Pillow==12.3.0",
     "hypothesis==6.168.1",
 ]
 
