@@ -22,7 +22,8 @@ from vision_service.baseline import (
     ThresholdPolicy,
     detect,
 )
-from vision_service.png import ImageDecodeError, decode_png
+from vision_service.image import SUPPORTED_CONTENT_TYPES, decode_image
+from vision_service.png import ImageDecodeError
 from vision_service.preprocessing import PREPROCESSING_VERSION, preprocess
 from vision_service.request import InspectionWork
 
@@ -92,11 +93,12 @@ def inspect(
     defects: list[dict[str, Any]] = []
     image_score: float | None = None
     truncated = False
-    if work.artifact.data["content_type"] != SUPPORTED_CONTENT_TYPE:
+    content_type = work.artifact.data["content_type"]
+    if content_type not in SUPPORTED_CONTENT_TYPES:
         quality, flags = "INVALID_INPUT", ("UNSUPPORTED_FORMAT",)
     else:
         try:
-            pixels = decode_png(data)
+            pixels = decode_image(data, content_type)
         except ImageDecodeError:
             quality, flags = "INVALID_INPUT", ("UNDECODABLE_IMAGE",)
         else:

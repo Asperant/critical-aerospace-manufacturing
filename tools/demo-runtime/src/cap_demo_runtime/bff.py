@@ -32,6 +32,7 @@ from operations_bff.overview import (
 from psycopg.rows import DictRow, dict_row
 
 from .config import Settings
+from .demo_lab import mount_demo_lab
 
 
 def _connection(settings: Settings) -> psycopg.Connection[DictRow]:
@@ -185,6 +186,7 @@ def create_app():
         overview=OverviewService(OverviewReader(reader)),
         facility_state=FacilityStateService(reader),
     )
+    mount_demo_lab(app, settings)
 
     @app.get("/v1/showcase", operation_id="getShowcase")
     def get_showcase(

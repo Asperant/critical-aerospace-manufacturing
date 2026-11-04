@@ -7,7 +7,7 @@ acceptance authority.
 
 ## Pipeline
 
-`parse_request` → `inspect` (verified artifact read → PNG decode → preprocessing →
+`parse_request` → `inspect` (verified artifact read → PNG/JPEG decode → preprocessing →
 baseline inference) → `InspectionObservation` v1 payload
 (`contracts/v1/inspection-observation.v1.schema.json`).
 
@@ -15,9 +15,9 @@ baseline inference) → `InspectionObservation` v1 payload
 |---|---|---|
 | Request (Vision's consumed view of IC-VIS-001) | `request.py` | request/run ids, Lot/SerializedComponent/RouteVisit ids and revisions |
 | Artifact read | `pipeline.py` via `cap_artifacts.ArtifactStore.read` | artifact id, version, checksum |
-| Decode | `png.py` | — |
+| Decode | `image.py` + `png.py` | PNG, JPG and JPEG; bounded pixel count |
 | Preprocessing | `preprocessing.py` | `vision-prep-gray-unit/1` |
-| Inference (F2 baseline) | `baseline.py` | `vision-baseline-local-deviation` 1.0.0, `vision-tp-baseline-z6/1` |
+| Inference (F2 baseline) | `baseline.py` | `vision-baseline-local-deviation` 1.1.0, local-contrast/MAD policy |
 
 Behaviour that consumers can rely on:
 
@@ -34,6 +34,9 @@ Behaviour that consumers can rely on:
   with no class label or confidence, and scores are `UNCALIBRATED` robust z-scores.
   It is a placeholder that computes from real pixels (05 DEP-059, F2), not a trained
   model, and carries no accuracy claim.
+- The magnetic-tile dataset is a methodological evaluation source, not aerospace
+  factory data. Its masks are used only for offline evaluation; masks and category
+  labels never enter runtime inference.
 
 ## Tests
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 from contextlib import asynccontextmanager
 from typing import Any
 
@@ -11,6 +12,8 @@ from manufacturing_core.commands import (
     OperationalCommandV1,
     PlaceLotOnHold,
 )
+from manufacturing_core.domain import Lot
+from manufacturing_core.repository import CoreRepository
 from manufacturing_core.transitions import CoreTransitionService
 from psycopg.rows import DictRow, dict_row
 from pydantic import TypeAdapter, ValidationError
@@ -112,6 +115,44 @@ def create_app() -> FastAPI:
             "detail": outcome.detail,
         }
 
+    @app.post("/v1/demo/lots")
+    def prepare_demo_lot(body: dict[str, object]) -> dict[str, object]:
+        """Provision one isolated presenter lot inside the Core boundary.
+
+        This is a narrow fixture-preparation surface for Demo Lab.  It creates
+        only explicitly namespaced ``DEMO-LAB-*`` lots and never deletes or
+        resets existing manufacturing data.  The subsequent hold and dispatch
+        requests still pass through the normal Core command path below.
+        """
+        lot_id = body.get("lot_id")
+        if (
+            not isinstance(lot_id, str)
+            or not re.fullmatch(r"DEMO-LAB-[A-F0-9]{12}", lot_id)
+        ):
+            raise HTTPException(status_code=422, detail="invalid demo lot identity")
+        with _connect(settings) as connection:
+            repository = CoreRepository(connection)
+            existing = repository.get(Lot, lot_id)
+            if existing is None:
+                repository.insert(
+                    Lot(id=lot_id, revision=f"{lot_id}-r1", order_id="DEMO-ORDER-001")
+                )
+                connection.execute(
+                    "UPDATE core.lot_state SET lifecycle_state='IN_PRODUCTION', "
+                    "execution_state='QUEUED' WHERE id=%s",
+                    (lot_id,),
+                )
+            row = connection.execute(
+                "SELECT l.id, l.revision, s.lifecycle_state, s.execution_state, "
+                "EXISTS (SELECT 1 FROM core.material_hold h "
+                "WHERE h.lot_id=l.id AND h.status='ACTIVE') AS held "
+                "FROM core.lot l JOIN core.lot_state s ON s.id=l.id WHERE l.id=%s",
+                (lot_id,),
+            ).fetchone()
+        if row is None:
+            raise HTTPException(status_code=503, detail="demo lot preparation failed")
+        return {"world_id": settings.world_id, **dict(row)}
+
     @app.get("/v1/lots/{lot_id}")
     def lot(lot_id: str) -> dict[str, object]:
         with _connect(settings) as connection:
@@ -158,7 +199,8 @@ def create_app() -> FastAPI:
             ).fetchone()
             outbox = connection.execute(
                 "SELECT outbox_id, event_id, event_type, publication_status, "
-                "aggregate_version, occurred_at, created_at "
+                "aggregate_version, world_id, correlation_id, causation_id, "
+                "occurred_at, created_at "
                 "FROM core.outbox WHERE aggregate_id=%s AND world_id=%s "
                 "ORDER BY created_at DESC LIMIT 1",
                 (lot_id, world_id),

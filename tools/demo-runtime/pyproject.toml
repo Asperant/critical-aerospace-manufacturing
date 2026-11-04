@@ -15,6 +15,10 @@ dependencies = [
     "sqlalchemy>=2.0,<3",
     "uvicorn>=0.35,<1",
     "manufacturing-simulator==0.1.0",
+    "manufacturing-scheduler==0.1.0",
+    "vision-service==0.1.0",
+    "cap-artifacts",
+    "numpy>=2,<3",
 ]
 
 [tool.setuptools.packages.find]
