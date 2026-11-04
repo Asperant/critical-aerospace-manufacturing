@@ -10,9 +10,10 @@ CHG-080:
   application_control_item: CTRL-DOC-010
   required_human_approvals: 0
   reviewers: []
-  decision: DRAFT
-  status: UNDER_REVIEW
-  human_decision_basis: Explicit request to prepare this C3 record. The requester has accepted that C3 control is required, but has not yet approved CHG-080 for application to the canonical baseline. CHG-018 makes development-review approvals advisory and zero-count; it does not fabricate project-owner scope acceptance.
+  decision: APPROVED
+  status: APPROVED
+  human_decision_basis: Explicit project-owner approval on 2026-11-04 of the CRB-F/CRB-M, two nominal lines, seven resources, eight lots/thirty-two components and R1-R4 protocol scope, with the existing architecture, Core authority, HITL, Oracle isolation and event-driven structure unchanged. CHG-018 makes development-review approvals advisory and zero-count; this is a project-owner scope decision, not a fabricated GitHub approval.
+  decision_basis: "CHG-080 / CTRL-DOC-010 kapsam ve uygulama onayını veriyorum. CRB-F/CRB-M, iki nominal hat, yedi kaynak, sekiz lot/otuz iki komponent ve R1-R4 araştırma protokolünün; mevcut mimari, Core otoritesi, HITL, Oracle izolasyonu ve olay güdümlü yapı değiştirilmeden canonical dokümanlara uygulanmasını onaylıyorum. HT-01’in koşullu kalmasını ve kaynak doğrulamaları tamamlanmadan gerçek üretim iddiası yapılmamasını kabul ediyorum."
   scope:
     - Freeze two reference products: CRB-F (front-stage compressor rotor blade) and CRB-M (mid-stage compressor rotor blade), subject to source-backed material, route and process claims.
     - Freeze two nominal production lines as scenario groupings, not as a new canonical Line authority or domain aggregate.
@@ -233,12 +234,12 @@ CHG-080:
     - CHG-077
     - CHG-079
   conditions:
-    - Explicit project-owner approval of CHG-080 is required before applying the scope to canonical 01-08 documents.
+    - SATISFIED — explicit project-owner approval of CHG-080 was recorded on 2026-11-04 before applying the scope to canonical documents.
     - Approval does not certify that the public sources, material/process routes or current runtime model already satisfy the final scope.
     - After approval, apply the documentation/WP regeneration as one traceable change; do not mark any WP DONE from this record alone.
     - Keep the two nominal lines as scenario groupings unless a separately approved architecture change introduces a canonical Line entity.
     - Keep HT-01 conditional until the route/material evidence is complete.
-  rollout: Pending approval, keep this record on the control branch only. After approval, update the affected 01/03-08 documentation and research-control artifacts in one traceable change, refresh dependency and milestone projections, then run the required documentation, traceability, protocol and evidence-preflight checks. No service, database, identity, broker or deployment action is part of rollout.
+  rollout: Apply the approved scope through the affected 01-08 and 10 documentation/WP projections in this control branch, refresh dependency and milestone projections, then run the required documentation, traceability, protocol and evidence-preflight checks. No service, database, identity, broker or deployment action is part of rollout.
   rollback: Revert the atomic approved documentation/WP/protocol change and its registry row to the preceding canonical revision; retain this CR and any produced evidence as history. Do not reset runtime data, replay Plane state or delete prior evidence.
   required_rerun:
     - projectctl documentation/traceability validation for the regenerated 01/03-08 projections
@@ -248,17 +249,18 @@ CHG-080:
     - independent validation, leakage and claim-boundary checks before final benchmark execution
   documentation_updates:
     - docs/01_Master_Project_Specification.md — reference factory, products, route assumptions and invariant boundaries
-    - docs/02_System_Architecture.md — scenario instantiation only; architecture and authority boundaries remain unchanged
+    - docs/02_System_Architecture_Specification.md — scenario instantiation only; architecture and authority boundaries remain unchanged
     - docs/03_Requirements_Traceability_Matrix.md — R1-R4 and reference-plant trace projections
     - docs/04_Work_Breakdown_Structure.md — affected WP scope, outputs, DoD and evidence links
     - docs/05_Dependency_Graph.md — dependency review and any approved edge-specific clarification only
     - docs/06A_Asrin_Engineering_Roadmap.md
     - docs/06B_Selman_Engineering_Roadmap.md
-    - docs/06C_Batuhan_Engineering_Roadmap.md
+    - docs/06C_Batu_Engineering_Roadmap.md
     - docs/06D_Yavuz_Engineering_Roadmap.md
     - docs/07_Milestone_and_Release_Plan.md — freeze and benchmark sequencing
     - docs/08_Definition_of_Ready_and_Done.md — only if acceptance/evidence wording changes after trace review
     - docs/10_Pre_Implementation_Red_Team_Review.md — new-scope risks and closure evidence
+    - docs/09_Change_Control_Process.md — approved CR visibility and control-item linkage
     - 09_change/CHG-080.yaml
     - 09_change/change_requests.csv
   freeze_context: PRE_M6

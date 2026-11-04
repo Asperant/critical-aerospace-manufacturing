@@ -7711,3 +7711,16 @@ ARCH-AUTO-WORKFLOW (durable Automation/Temporal layer) coordinates GS-01/E2E acr
 HARD/SOFT refer to declared work/readiness consumers, not automatic runtime/deployment/import relations. Non-CONTRACT F1 entries DEP-025/045/058/076/094 have no fixture fallback: real producer readiness at the declared stage is required, while development stubs are not satisfaction evidence. DN-VIS-MODELS now declares INTEGRATION_READY for DEP-060/194; operational serving must load promoted required-mode artifacts with provenance. Source-supported deadlines and per-consumer scope are defined in05, without shifting canonical ownership or schedules.
 
 GAP-RTM-004/005 remain ACCEPTED_WITH_RATIONALE for this pre-implementation baseline: missing canonical record metadata is not fabricated. FR-GOV-001/004 and the relevant NFR owners must supply/review actual fields and measurement definitions before their declared gates; projectctl retains nulls/warnings and never grants READY/VERIFIED from planned prose. Owner trace confirmation GAP-RTM-006 and final schema/version/card specifics remain ordinary implementation/review prerequisites, not unresolved choices among the eight approved policy groups.
+
+## CHG-080 / CTRL-DOC-010 — Final scope trace projection
+
+CHG-080 adds no new RequirementID and changes no requirement semantics. It fixes the scenario and evidence instantiation of the existing requirement families:
+
+| Research lane | Existing requirement families and scenario responsibilities | Primary WP/evidence projection |
+|---|---|---|
+| R1 / RQ-2 dynamic recovery | FR-CORE, FR-SIM, FR-SCH, FR-TWIN and FR-EVAL; eligible-machine constraints, failure, rescheduling, validation and effect measurement | WP-SIM-003/007/009, WP-SCH-001/003/004/006/007, WP-VALID-001/002, WP-RES-008; paired scenario/seed manifests and recovery metrics |
+| R2 / RQ-4 early quality | FR-VIS, FR-SIM, FR-CORE, FR-ML and FR-EVAL; intermediate inspection, genealogy, quality excursion and downstream-cost comparison | WP-VIS-007, WP-VDATA-005, WP-ML-004/007, WP-RES-010; independent inspection labels, leakage checks and episode evidence |
+| R3 / detection and predictive support | FR-VIS, FR-ML, FR-RAG and FR-AI; source-specific geometric/image/tool-wear lanes, uncertainty and provenance | WP-VDATA-001/002/005, WP-ML-001/004/007, WP-RAG-005/007, WP-RES-006/010; dataset metadata, license and held-out evaluation evidence |
+| R4 / RQ-1 and RQ-3 closed loop | FR-EVT, FR-CORE, FR-TWIN, FR-AI, FR-HITL, FR-AUTO and FR-EVAL; observation → proposal → approval → Core effect → event/Twin projection | WP-CORE-002/003/005/008, WP-EVT-001/002/003, WP-TWIN-001/005/006, WP-AI-003/004/006, WP-HITL-001/002, WP-AUTO-001/003/005/007, WP-RES-007/009 |
+
+The final trace must distinguish planned scope from implementation and evidence state. The presence of a code path, Demo Lab run or fixture does not make an affected WP accepted, does not satisfy a dependency and does not establish a public held-out or real-factory claim.

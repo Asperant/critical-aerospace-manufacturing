@@ -133,7 +133,7 @@ Decomposition: **Program → Capability Area → Work Package → Deliverable �
 | Prefix | Capability area | #WP | F0 | F1 (incl. NFR-driven) | R1 | R2/S | Owners | #Requirements touched |
 |---|---|---|---|---|---|---|---|---|
 | WP-GOV | Requirement Governance & Traceability | 4 | 0 | 4 | 0 | 0 | Asrın:2, Yavuz:2 | 20 |
-| WP-CORE | Manufacturing Core / Backend | 8 | 3 | 5 | 0 | 0 | Asrın:8 | 22 |
+| WP-CORE | Manufacturing Core / Backend | 9 | 3 | 6 | 0 | 0 | Asrın:9 | 22 |
 | WP-EVT | Event Spine & Integration Contracts | 6 | 1 | 5 | 0 | 0 | Asrın:4, Yavuz:2 | 14 |
 | WP-TWIN | Operational Digital Twin | 6 | 2 | 4 | 0 | 0 | Asrın:6 | 16 |
 | WP-SIM | Operational Manufacturing Simulator | 9 | 4 | 4 | 1 | 0 | Batu:9 | 21 |
@@ -161,7 +161,7 @@ Decomposition: **Program → Capability Area → Work Package → Deliverable �
 | WP-R2 | Evidence-Gated Research Candidates | 3 | 0 | 0 | 0 | 3 | Asrın:2, Yavuz:1 | 4 |
 | WP-S | Stretch Register | 1 | 0 | 0 | 0 | 1 | Asrın:1 | 1 |
 | WP-X | Out-of-Scope Guard Rail | 1 | 0 | 0 | 0 | 1 | Asrın:1 | 1 |
-| **Σ** |  | 179 | 26 | 125 | 23 | 5 |  | 306 |
+| **Σ** |  | 180 | 26 | 126 | 23 | 5 |  | 306 |
 
 | Target milestone | Sprint window | #WP | F0 | R1 | Areas |
 |---|---|---|---|---|---|
@@ -8908,7 +8908,7 @@ Every one of the 306 normative requirements maps to at least one accountable wor
 
 | Owner | #WP owned | F0 | F1 (incl. NFR-driven) | R1 | R2/S | #WP supported as reviewer | #Requirements owned through WPs |
 |---|---|---|---|---|---|---|---|
-| Asrın | 73 | 12 | 46 | 11 | 4 | 86 | 139 |
+| Asrın | 74 | 12 | 47 | 11 | 4 | 86 | 139 |
 | Selman | 17 | 2 | 13 | 2 | 0 | 12 | 23 |
 | Batu | 32 | 10 | 20 | 2 | 0 | 32 | 69 |
 | Yavuz | 57 | 2 | 46 | 8 | 1 | 49 | 126 |
@@ -8918,7 +8918,7 @@ Every one of the 306 normative requirements maps to at least one accountable wor
 - **TEAM-R03 (Asrın as universal bottleneck).** Asrın is the predecessor on the largest number of cross-owner HARD dependencies (05 §17). Mitigation is contract-first delivery: the contract packages (WP-CORE-001, WP-CORE-003, WP-EVT-001/002, WP-TWIN-003, WP-AI-004) must reach CONTRACT_READY ahead of their consumers, and supporting-owner review must be scheduled, not improvised.
 - **TEAM-R04 (Yavuz as support queue).** Platform, CI/CD, observability, security, DR, benchmark infrastructure and reproduction lanes are all Yavuz-owned. The S9–S11 window concentrates that load; research lane owners must take their own lane execution (WP-RES-007…010) rather than delegating it.
 
-### 9.1 Asrın — 73 work packages
+### 9.1 Asrın — 74 work packages
 
 | WP | Title | Scope | Milestone | Size band |
 |---|---|---|---|---|
@@ -9435,9 +9435,9 @@ Risk identities come from 01 Item 69; priority is not restated here. A work pack
 | WBS-GAP-03 | RESOLVED | 02 append-only existing-service ARCH allocations and03 traces now cover ML, evaluation and dataset capabilities. | 02 registry append via change control before M4/M5 (05 DEP-GAP-08/09). | INFO — future implementation evidence remains required |
 | WBS-GAP-04 | RESOLVED | Distinct observation/result and canonical command identities are DECIDED in01/02; contract field/version freeze remains assigned implementation work. | Resolve in the contract registry before S3–S4 so the E2E-01 readiness gate is not the first forcing function. | INFO — governed implementation gates retained |
 | WBS-GAP-05 | TIMING (inherited DEP-GAP-04/05) | WP-PLAT-003, WP-SEC-001 and WP-HITL-004 must deliver Keycloak/SeaweedFS by end S4 and Temporal by end S5 — earlier than the Item 66 prose implies; WP-SEC-002 additionally needs an S5 subset for the Oracle negative test. | Roadmaps (06) must schedule these in S3–S5, not M4. | MAJOR |
-| WBS-GAP-06 | RESOLVED | MC-2 accountability is Asrın Dündar in01; all179 WP owners remain unchanged. | Assign via change control before M6. | INFO — future implementation evidence remains required |
+| WBS-GAP-06 | RESOLVED | MC-2 accountability is Asrın Dündar in01; all180 WP owners remain unchanged. | Assign via change control before M6. | INFO — future implementation evidence remains required |
 | WBS-GAP-07 | RESOLVED | 01 final human decision pins the shared-host profile; actual benchmark measurements remain future evidence. | Record profiles in WP-PLAT-005 before M6. | INFO — future implementation evidence remains required |
-| WBS-GAP-08 | LOAD_CONCENTRATION | Asrın owns 73 and Yavuz 57 of 179 packages; S9–S11 concentrates Yavuz-owned evidence infrastructure. | 06 roadmaps must sequence contract-first delivery and move research-lane execution to lane owners; not solved by reassigning ownership (Item 62 is fixed). | MAJOR for 06/07 |
+| WBS-GAP-08 | LOAD_CONCENTRATION | Asrın owns 74 and Yavuz 57 of 180 packages; S9–S11 concentrates Yavuz-owned evidence infrastructure. | 06 roadmaps must sequence contract-first delivery and move research-lane execution to lane owners; not solved by reassigning ownership (Item 62 is fixed). | MAJOR for 06/07 |
 | WBS-GAP-09 | SIZING_UNCERTAINTY | Size bands are indicative and derived from deliverable/task counts, not from estimation sessions. | Owners re-band their packages at DoR; bands never become hour commitments. | INFO |
 | WBS-GAP-10 | TASKID_ALLOCATION | Major tasks are listed but not individually identified (`TASK-<AREA>-NNN` unallocated) to avoid a micro-task registry before implementation. | Allocate TaskIDs only where a task needs independent tracking (00 §8). | INFO |
 
@@ -9445,7 +9445,7 @@ Risk identities come from 01 Item 69; priority is not restated here. A work pack
 
 | File | Content | Rows |
 |---|---|---|
-| `04_wbs/work_packages.csv` | full WP registry with owner, scope, milestone, readiness node, requirements, architecture, verification, gates, risks | 179 |
+| `04_wbs/work_packages.csv` | full WP registry with owner, scope, milestone, readiness node, requirements, architecture, verification, gates, risks | 180 |
 | `04_wbs/requirement_coverage.csv` | requirement → work package mapping | 306 |
 | `04_wbs/deliverables.csv` | deliverable register | 553 |
 | `04_wbs/tasks.csv` | major task register (no TaskIDs allocated yet) | 624 |
@@ -9528,3 +9528,22 @@ ARCH-AUTO-WORKFLOW (durable Automation/Temporal layer) coordinates GS-01/E2E acr
 HARD/SOFT refer to declared work/readiness consumers, not automatic runtime/deployment/import relations. Non-CONTRACT F1 entries DEP-025/045/058/076/094 have no fixture fallback: real producer readiness at the declared stage is required, while development stubs are not satisfaction evidence. DN-VIS-MODELS now declares INTEGRATION_READY for DEP-060/194; operational serving must load promoted required-mode artifacts with provenance. Source-supported deadlines and per-consumer scope are defined in05, without shifting canonical ownership or schedules.
 
 GAP-RTM-004/005 remain ACCEPTED_WITH_RATIONALE for this pre-implementation baseline: missing canonical record metadata is not fabricated. FR-GOV-001/004 and the relevant NFR owners must supply/review actual fields and measurement definitions before their declared gates; projectctl retains nulls/warnings and never grants READY/VERIFIED from planned prose. Owner trace confirmation GAP-RTM-006 and final schema/version/card specifics remain ordinary implementation/review prerequisites, not unresolved choices among the eight approved policy groups.
+
+## CHG-080 / CTRL-DOC-010 — Approved WP scope projection
+
+No WP is added, removed, renumbered or promoted by CHG-080. Existing WPs inherit the following final scenario obligations; their lifecycle, owner, maturity class and DoD remain governed by their individual cards and 08.
+
+| Workstream | Existing WPs | CHG-080-specific output |
+|---|---|---|
+| Canonical factory and event/Twin semantics | WP-CORE-001/002/003/004/005/008, WP-EVT-001/002/003, WP-TWIN-001/002/003/004/005/006 | CRB-F/CRB-M product references, 8-lot/32-component genealogy, event/world identity and rebuildable projections using existing authority rules |
+| Simulator and recovery | WP-SIM-003/004/007/009, WP-SCH-001/002/003/004/006/007, WP-VALID-001/002 | versioned two-flow ReferencePlant, 4+4 lot population, 4 CNC + conditional HT-01 + shared inspection resources, eligibility-aware failure/recovery comparisons and validation |
+| Vision, data and ML | WP-VIS-007, WP-VDATA-001/002/005, WP-ML-001/004/007 | source/provenance/license records, separated geometric/image/tool-wear lanes, early-control episodes and no cross-dataset relabeling |
+| RCA, RAG, AI, HITL and Automation | WP-RAG-005/007, WP-AI-003/004/006, WP-HITL-001/002, WP-AUTO-001/003/005/007 | evidence-grounded R1/R4 proposals, exact plan/approval binding, governed Core commands and verified effects without AI/Vision/Scheduler authority escalation |
+| Research and benchmark governance | WP-RES-002/006/007/008/009/010/011, WP-BENCH-001/002/005, WP-DOC-001/003/006 | fixed scenario/seed/split manifests, paired runs, independent validation, evidence sealing and claim classification for R1-R4 |
+
+### Additional DoR/DoD obligations for the affected WPs
+
+- DoR must identify the ReferencePlant version, product/route assumptions, resource-eligibility predicates, scenario population, seed policy and data/provenance status.
+- DoD must include reproducible run identity, no-Oracle-leakage evidence, negative-path or boundary evidence where applicable, independent validation and a disposition for every failed or unsupported result.
+- HT-01 remains conditional; no WP may turn it into a mandatory real-process claim without source-backed material/route evidence and an explicit follow-up decision.
+- R1-R4 outcomes are research evidence only after the relevant run, split, seed, release and analysis identities are sealed; Demo Lab evidence remains presentation/runtime evidence.

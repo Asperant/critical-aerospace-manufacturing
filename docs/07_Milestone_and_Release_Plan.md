@@ -12,7 +12,7 @@
 | Canonical sources | 01 Items 42, 60, 64–69, 75, 79, 83–85; 02 Deployment/Release architecture |
 | Upstream artifacts | 03 RTM · 04 WBS · 05 Dependency Graph · 06A–D Roadmaps |
 | Milestones | M0 (End S1/W2) … M8 (End S13/W26) — semantics fixed, calendar may be rebaselined |
-| Work packages placed | 174 of 179 work packages have a target milestone; 5 are unscheduled by design (R2/S/guard rails) |
+| Work packages placed | 175 of 180 work packages have a target milestone; 5 are unscheduled by design (R2/S/guard rails) |
 | Status of every milestone today | `NOT_ATTEMPTED` — no gate has been evaluated, no release exists, no evidence has been produced |
 
 > **Reading rule.** A milestone is passed when its gates are demonstrably satisfied, not when its week arrives. Calendar progress can never auto-pass a milestone (Item 65 #198).
@@ -2304,6 +2304,15 @@ Where a role has no owned package in a window, the roadmaps (06A–D) place that
 - Capacity distribution across milestones is unvalidated until real sprints run (PLAN-GAP-07).
 - Milestone records reference work packages and dependency edges by identity; if 04 or 05 change, regenerate this plan and diff `milestones.csv`.
 - Sprint scopes reproduce the Item 65 progression at index level; the authoritative wording stays in 01.
+
+## CHG-080 / CTRL-DOC-010 — Final-scope sequencing
+
+CHG-080 changes no milestone count or WP target. It fixes the order in which the already-planned work becomes evidence-bearing:
+
+1. Before M4/M5 evaluation readiness: record CRB-F/CRB-M product and route assumptions, the two-flow/7-resource ReferencePlant, machine-eligibility rules, conditional HT-01 status and the 8-lot/32-component population.
+2. Through M5: produce source/provenance/license records, scenario versions, seed sets, leakage-aware dataset splits, intermediate/final inspection definitions and R1-R4 preflight artifacts.
+3. At M6: freeze ScenarioSet, RQ-4 split, authority scenario set, model/policy choices and the ExperimentProtocolFreeze. A late route, dataset, seed, metric or eligibility change is a new controlled change, not an informal improvement.
+4. At M7/M8: execute paired benchmark lanes, seal analysis, classify claims and preserve negative/unsupported outcomes. Demo Lab runs remain separate from formal final evidence.
 
 ---
 

@@ -9165,7 +9165,7 @@ Aday manufacturing facility profiles:
 * scheduling scale,
 * load testing.
 
-Kesin machine/lot/serialized component ölçekleri NFR/performance maddelerinde sayısallaştırılacaktır.
+CHG-080 / CTRL-DOC-010 ile final `ReferencePlant` için machine/lot/serialized-component ölçeği artık sayısaldır: 7 kaynak, 8 lot ve 32 temsilî komponent. `MiniPlant` ve `StressPlant` profilleri kendi test/performance amaçları için farklı ölçekler kullanabilir; bu istisna final ReferencePlant kararını değiştirmez.
 
 ---
 
@@ -181739,6 +181739,34 @@ IN_REVIEW means a real non-draft technically reviewable PR, not waiting for a hu
 MERGED requires an actual GitHub merge. VALIDATING requires actual post-merge validation started. DONE requires all applicable DoD, trace/evidence and actual successful post-merge validation; accountable owner assessment and real artifacts remain required, another person's review/confirmation does not. Development peer/methodology review is advisory even for closure; real protocol, scientific reproducibility, measured acceptance and product-authority evidence remain required. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted.
 
 This changes ONLY development/GitHub/repository governance. Product HITL, protected-action approval, AuthorityPolicy, authenticated approvers, runtime self-approval prohibition, exact proposal/plan binding and execution authorization are unchanged. Project-owner scope/cancellation decisions and real product acceptance artifacts are not GitHub review approvals and are not fabricated or waived. No Plane test mutation, merge, commit or push is authorized in this pass. Existing historical approvals remain history, never requirements for a current transition.
+
+## CHG-080 / CTRL-DOC-010 — Approved final ReferencePlant and research scope
+
+The project-owner approval of CHG-080 freezes the final scenario baseline without changing the product identity, authority boundaries or service architecture described above. This section is the canonical scenario instantiation for the final research campaign; it does not claim that the platform is a certified aerospace factory or that the selected routes are proprietary production instructions.
+
+### ReferencePlant
+
+| Dimension | Approved final scenario value | Boundary |
+|---|---|---|
+| Products | CRB-F — front-stage compressor rotor blade; CRB-M — mid-stage compressor rotor blade | Material, exact industrial route and heat-treatment claims remain source-backed decisions, not assumed facts |
+| Nominal flows | 2 | Scenario groupings only; no new canonical `Line` authority is introduced |
+| CNC resources | CNC-A1, CNC-A2, CNC-B1, CNC-B2 | Cross-line use is allowed only after capability, operation, fixture/tooling, setup, qualification, quality and policy checks |
+| Shared process resource | HT-01 | Heat treatment/special-process use is conditional until the selected material and route are documented |
+| Shared inspection resources | CMM-01 and VIS-01 | Intermediate and final inspection observations remain distinct from Core quality-state decisions |
+| Population | 8 lots: 4 CRB-F + 4 CRB-M; 32 representative components: 4 per lot | Controlled experiment population, not an industrial capacity claim |
+
+The canonical hierarchy remains `ProductionOrder → Lot → SerializedComponent`. The route remains re-entrant: rough/multi-axis machining, appropriate intermediate metrology, conditional special process, finish machining, visual/NDT inspection, rework when required, reinspection and final acceptance are modeled only to the level supported by the source and simulator contracts. A public source that describes a related blade, used surface or tool-wear experiment is not silently promoted to a CRB-F/CRB-M production instruction.
+
+### Research bindings
+
+| Final lane | Existing research question binding | Controlled comparison |
+|---|---|---|
+| R1 — dynamic recovery | RQ-2 | normal production; failure without reassignment; eligible-machine baseline recovery; event-triggered rolling-horizon recovery |
+| R2 — early quality | RQ-4 perception-to-operations | final-only control versus intermediate CMM/visual controls plus final control |
+| R3 — real-data detection evaluation | RQ-4 and supporting model-evidence lanes | blade geometric deviation, blade image/surface observation and separate tool-wear/machine-health support lanes |
+| R4 — human-controlled closed loop | RQ-1 and RQ-3 | observation/fault signal → RCA → proposal → independent validation → HITL → governed Core action → Outbox/NATS/Twin → effect verification |
+
+The final protocol requires versioned scenario definitions, explicit seeds, paired comparisons, leakage-aware dataset partitions, independent validation and claim-boundary reporting. Simulator fault injection is a controlled stimulus, not real defect-detection evidence; hidden Oracle labels are never model inputs; different public datasets are not matched records of the same component; and no real-factory performance claim is inferred from simulation.
 
 
 ## CHG-019 — guarded automatic next-work planning
