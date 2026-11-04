@@ -1,0 +1,264 @@
+CHG-080:
+  title: Freeze CRB-F/CRB-M ReferencePlant and R1-R4 research protocol
+  trigger: Explicit project-owner request after reconciliation of the CAP final-scope package with the canonical project specification, WBS, dependency graph and research plan.
+  reason: The approved architecture and research objectives are stable, but the final reference factory, product/route scenario parameters, dataset roles and R1-R4 experiment protocol are not yet recorded as one controlled baseline. Leaving these choices implicit would allow implementation and evidence to diverge from the intended final scope.
+  class: C3
+  review_risk_class: CR-4
+  raised_in: S4
+  raised_on: 2026-11-04
+  owner: Asrın
+  application_control_item: CTRL-DOC-010
+  required_human_approvals: 0
+  reviewers: []
+  decision: DRAFT
+  status: UNDER_REVIEW
+  human_decision_basis: Explicit request to prepare this C3 record. The requester has accepted that C3 control is required, but has not yet approved CHG-080 for application to the canonical baseline. CHG-018 makes development-review approvals advisory and zero-count; it does not fabricate project-owner scope acceptance.
+  scope:
+    - Freeze two reference products: CRB-F (front-stage compressor rotor blade) and CRB-M (mid-stage compressor rotor blade), subject to source-backed material, route and process claims.
+    - Freeze two nominal production lines as scenario groupings, not as a new canonical Line authority or domain aggregate.
+    - Freeze seven reference resources: CNC-A1, CNC-A2, CNC-B1, CNC-B2, HT-01, CMM-01 and VIS-01.
+    - Freeze the reference experiment population at eight lots (four CRB-F and four CRB-M) and thirty-two representative components (four components per lot). These are controlled scenario parameters, not a claim about an industrial plant size.
+    - Permit cross-line CNC sharing only when capability, route operation, fixture/tooling, setup, qualification, quality and policy eligibility all hold. No unconditional machine substitution is introduced.
+    - Model HT-01 as a resource. Treat heat treatment as conditional until material/process literature and the selected route support a mandatory operation; do not promote an unverified process assumption to a real aerospace requirement.
+    - Bind R1 dynamic recovery to normal production, failure without reassignment, baseline eligible-machine dispatch and event-triggered rolling-horizon recovery with validation, HITL and Core verification.
+    - Bind R2 early quality to final-only versus intermediate CMM/visual plus final-control comparisons, including detection lag, avoided downstream work, rework/scrap, escape and normalized cost.
+    - Bind R3 detection evaluation to separated data lanes for compressor-blade geometric deviations, blade imagery/surface measurements and supporting tool-wear or machine-health observations. Cross-dataset records are not treated as paired records of one product.
+    - Bind R4 human-controlled closed loop to observation or fault signal, evidence-grounded RCA, recovery proposal, independent validation, human approval, governed Automation/Core application, Outbox/NATS/Twin projection and effect verification.
+    - Preserve all dataset boundaries: simulator Oracle/fault labels remain hidden from runtime models; fault injection is not real defect detection; synthetic and public data are not proprietary factory evidence.
+  reference_plant:
+    products: [CRB-F, CRB-M]
+    nominal_lines: 2
+    resources:
+      - id: CNC-A1
+        type: multi_axis_cnc
+        nominal_line: A
+      - id: CNC-A2
+        type: multi_axis_cnc
+        nominal_line: A
+      - id: CNC-B1
+        type: multi_axis_cnc
+        nominal_line: B
+      - id: CNC-B2
+        type: multi_axis_cnc
+        nominal_line: B
+      - id: HT-01
+        type: heat_treatment_or_special_process_resource
+        nominal_line: shared
+        qualification: conditional_until_source_validation
+      - id: CMM-01
+        type: coordinate_measurement_machine
+        nominal_line: shared
+      - id: VIS-01
+        type: visual_inspection_or_ndt_resource
+        nominal_line: shared
+    lots: 8
+    representative_components: 32
+    route_semantics: Re-entrant route semantics and canonical product/route/ToolGroup/equipment-eligibility models are reused; no new Line entity is made authoritative by this change.
+  research_protocol:
+    R1:
+      question_binding: RQ-2
+      comparison: normal production; failure without reassignment; baseline eligible-machine recovery; event-triggered rolling-horizon recovery
+      primary_metrics: [total_production_loss, tardiness, throughput, WIP, cycle_time, recovery_time, schedule_churn]
+      controls: paired scenarios, fixed scenario version, seed set, machine-eligibility snapshot, unchanged demand and due dates
+    R2:
+      question_binding: RQ-4 perception-to-operations
+      comparison: final-only inspection versus intermediate CMM/visual controls plus final inspection
+      primary_metrics: [detection_lag, avoided_downstream_processing, rework_or_scrap, quality_escape, inspection_cost, normalized_total_cost]
+      controls: same lot/component genealogy, same route and fault family, independent inspection labels, no Oracle leakage
+    R3:
+      question_binding: detection and predictive evaluation supporting RQ-4 and model evidence
+      lanes: [compressor_blade_geometric_deviation, blade_surface_or_image_observation, tool_wear_and_machine_health_support]
+      validity_rule: Dataset-specific claims only; no cross-dataset product identity or paired production-history claim
+    R4:
+      question_binding: RQ-1 and RQ-3
+      sequence: Sense -> RCA -> Predict -> Recovery -> Validator -> HITL -> Automation -> Core -> Outbox -> NATS -> Twin -> effect verification
+      validity_rule: Recommendation is not execution, Vision does not mutate Core state, and one demo run is not research evidence.
+  invariants_preserved:
+    - Core remains the sole canonical manufacturing-state authority.
+    - Simulator owns simulated physical execution and hidden Oracle state; Oracle labels never become model inputs.
+    - Digital Twin remains a rebuildable projection and cannot become legal manufacturing truth.
+    - Vision produces observations/results and cannot directly apply quality or hold decisions.
+    - AI/RCA and Scheduler may propose or simulate; protected actions still require validation, policy and human approval.
+    - Authentication, business authorization, HITL binding, audit, event identity, provenance and effect verification are unchanged.
+    - No code, runtime, database, broker, identity, deployment or Demo Lab behavior is changed by preparing this record.
+  affected_requirements:
+    - NONE — no FR/NFR wording, authority rule or acceptance semantics are changed; this CR fixes the scenario and research-protocol instantiation of existing requirements.
+  affected_architecture:
+    - NONE — existing service boundaries, canonical-authority placement, Oracle isolation, event spine and Twin projection remain unchanged.
+  affected_contracts:
+    - NONE — no runtime schema, endpoint, event envelope or protected-action contract is changed by this record. Any later contract change requires its own impact assessment.
+  affected_work_packages:
+    - WP-CORE-001
+    - WP-CORE-002
+    - WP-CORE-003
+    - WP-CORE-004
+    - WP-CORE-005
+    - WP-CORE-008
+    - WP-EVT-001
+    - WP-EVT-002
+    - WP-EVT-003
+    - WP-TWIN-001
+    - WP-TWIN-002
+    - WP-TWIN-003
+    - WP-TWIN-004
+    - WP-TWIN-005
+    - WP-TWIN-006
+    - WP-SIM-003
+    - WP-SIM-004
+    - WP-SIM-007
+    - WP-SIM-009
+    - WP-SCH-001
+    - WP-SCH-002
+    - WP-SCH-003
+    - WP-SCH-004
+    - WP-SCH-006
+    - WP-SCH-007
+    - WP-VALID-001
+    - WP-VALID-002
+    - WP-VIS-007
+    - WP-VDATA-001
+    - WP-VDATA-002
+    - WP-VDATA-005
+    - WP-ML-001
+    - WP-ML-004
+    - WP-ML-007
+    - WP-RAG-005
+    - WP-RAG-007
+    - WP-AI-003
+    - WP-AI-004
+    - WP-AI-006
+    - WP-HITL-001
+    - WP-HITL-002
+    - WP-AUTO-001
+    - WP-AUTO-003
+    - WP-AUTO-005
+    - WP-AUTO-007
+    - WP-RES-002
+    - WP-RES-006
+    - WP-RES-007
+    - WP-RES-008
+    - WP-RES-009
+    - WP-RES-010
+    - WP-RES-011
+    - WP-BENCH-001
+    - WP-BENCH-002
+    - WP-BENCH-005
+    - WP-DOC-001
+    - WP-DOC-003
+    - WP-DOC-006
+  affected_dependencies:
+    - NONE — no dependency edge field or readiness state is changed before approval.
+  dependency_review_scope:
+    - DEP-037
+    - DEP-038
+    - DEP-048
+    - DEP-049
+    - DEP-054
+    - DEP-057
+    - DEP-060
+    - DEP-062
+    - DEP-063
+    - DEP-074
+    - DEP-078
+    - DEP-079
+    - DEP-080
+    - DEP-081
+    - DEP-084
+    - DEP-085
+    - DEP-086
+    - DEP-087
+    - DEP-088
+    - DEP-121
+    - DEP-122
+    - DEP-130
+    - DEP-131
+    - DEP-137
+    - DEP-138
+    - DEP-141
+    - DEP-142
+    - DEP-145
+    - DEP-146
+    - DEP-147
+    - DEP-148
+    - DEP-151
+    - DEP-216
+  affected_evidence:
+    - Planned R1-R4 scenario manifests, SeedSet, SplitManifests and ExperimentProtocolFreeze evidence.
+    - Dataset provenance, access and license evidence for the selected public sources.
+    - Route/material/process-source verification for CRB-F/CRB-M claims.
+    - Affected WP acceptance and benchmark evidence after the approved baseline is applied.
+    - Existing Demo Lab/runtime evidence remains demo evidence and is not promoted to final research evidence.
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - Existing code, service, authentication, database, broker and Demo Lab evidence is not invalidated by preparing this pending record.
+      - Existing historical change-control evidence remains historical and is not rewritten.
+    rerun_required:
+      - Documentation and traceability consistency after the approved downstream regeneration.
+      - Public-source metadata/license and small-sample access checks before dataset freeze.
+      - Route/material/process-source verification before any mandatory heat-treatment or aerospace-process claim.
+      - R1-R4 protocol preflight, paired-seed checks, leakage checks and independent validation before final benchmark execution.
+  security_authority_impact: NONE — no identity, credential, authorization, HITL, Oracle-isolation, audit, database, NATS or deployment change.
+  research_integrity:
+    limits:
+      - No real-factory performance claim may be inferred from the simulator.
+      - Fault injection generates controlled faults; it does not prove real defect-detection performance.
+      - Different public datasets are not treated as matched records of the same product/component.
+      - Used-blade surface wear is not relabeled as CNC manufacturing defect data.
+      - Hidden simulator fault/Oracle labels remain excluded from Vision, ML, AI and Scheduler inputs.
+      - Synthetic-only or demo-only results cannot be presented as public held-out evidence.
+    source_validation_required:
+      - Gao et al. compressor-blade machining deviations
+      - Hannover compressor-blade surface-roughness data
+      - AeBAD
+      - NASA Milling Wear
+      - MATWI
+      - Workpieces Image Dataset
+      - MVTec AD as a methodological/auxiliary benchmark only
+  risks:
+    - CRB-F/CRB-M material, heat-treatment and exact production-route claims may exceed what the public sources support.
+    - Four CNC resources may not be interchangeable; capability, tooling, fixture, setup and qualification data must be explicit.
+    - The eight-lot/thirty-two-component population may require a bounded scenario adapter if a current runtime model is lot-level only; no hidden runtime contract change is authorized here.
+    - A late change to products, routes, machine eligibility, datasets, splits, seeds or primary metrics would invalidate the freeze and require another C3 assessment.
+    - WBS/milestone/dependency counts and source projections must be regenerated together; code presence must not be treated as WP acceptance.
+    - Cross-domain data misuse, Oracle leakage, optimistic benchmark selection and overclaiming remain validity threats.
+  related_records:
+    - CHG-002
+    - CHG-003
+    - CHG-007
+    - CHG-008
+    - CHG-010
+    - CHG-046
+    - CHG-077
+    - CHG-079
+  conditions:
+    - Explicit project-owner approval of CHG-080 is required before applying the scope to canonical 01-08 documents.
+    - Approval does not certify that the public sources, material/process routes or current runtime model already satisfy the final scope.
+    - After approval, apply the documentation/WP regeneration as one traceable change; do not mark any WP DONE from this record alone.
+    - Keep the two nominal lines as scenario groupings unless a separately approved architecture change introduces a canonical Line entity.
+    - Keep HT-01 conditional until the route/material evidence is complete.
+  rollout: Pending approval, keep this record on the control branch only. After approval, update the affected 01/03-08 documentation and research-control artifacts in one traceable change, refresh dependency and milestone projections, then run the required documentation, traceability, protocol and evidence-preflight checks. No service, database, identity, broker or deployment action is part of rollout.
+  rollback: Revert the atomic approved documentation/WP/protocol change and its registry row to the preceding canonical revision; retain this CR and any produced evidence as history. Do not reset runtime data, replay Plane state or delete prior evidence.
+  required_rerun:
+    - projectctl documentation/traceability validation for the regenerated 01/03-08 projections
+    - reference-plant and machine-eligibility consistency checks
+    - dataset metadata, access and license verification with small-sample readback
+    - R1-R4 deterministic protocol preflight with fixed scenario versions and seeds
+    - independent validation, leakage and claim-boundary checks before final benchmark execution
+  documentation_updates:
+    - docs/01_Master_Project_Specification.md — reference factory, products, route assumptions and invariant boundaries
+    - docs/02_System_Architecture.md — scenario instantiation only; architecture and authority boundaries remain unchanged
+    - docs/03_Requirements_Traceability_Matrix.md — R1-R4 and reference-plant trace projections
+    - docs/04_Work_Breakdown_Structure.md — affected WP scope, outputs, DoD and evidence links
+    - docs/05_Dependency_Graph.md — dependency review and any approved edge-specific clarification only
+    - docs/06A_Asrin_Engineering_Roadmap.md
+    - docs/06B_Selman_Engineering_Roadmap.md
+    - docs/06C_Batuhan_Engineering_Roadmap.md
+    - docs/06D_Yavuz_Engineering_Roadmap.md
+    - docs/07_Milestone_and_Release_Plan.md — freeze and benchmark sequencing
+    - docs/08_Definition_of_Ready_and_Done.md — only if acceptance/evidence wording changes after trace review
+    - docs/10_Pre_Implementation_Red_Team_Review.md — new-scope risks and closure evidence
+    - 09_change/CHG-080.yaml
+    - 09_change/change_requests.csv
+  freeze_context: PRE_M6
