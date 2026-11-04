@@ -12,6 +12,20 @@ export interface ShowcaseTimelineItem {
   event_ref?: string | null;
 }
 
+export interface ShowcaseSystemItem {
+  id: string;
+  label: string;
+  status: string;
+  detail: string;
+  [key: string]: unknown;
+}
+
+export interface ShowcaseCounter {
+  id: string;
+  label: string;
+  value: number | null;
+}
+
 export interface ShowcaseResponse {
   contract_version: "bff.showcase.v1";
   meta: {
@@ -30,6 +44,9 @@ export interface ShowcaseResponse {
     twin_source_event_id: string | null;
     twin_status: string | null;
   };
+  architecture: ShowcaseSystemItem[];
+  health: ShowcaseSystemItem[];
+  counters: ShowcaseCounter[];
 }
 
 const SHOWCASE_URL = "/v1/showcase";
@@ -70,7 +87,33 @@ function isShowcase(value: unknown): value is ShowcaseResponse {
         text(item.status) &&
         text(item.source),
     ) &&
-    isRecord(identities)
+    isRecord(identities) &&
+    Array.isArray(value.architecture) &&
+    value.architecture.every(
+      (item) =>
+        isRecord(item) &&
+        text(item.id) &&
+        text(item.label) &&
+        text(item.status) &&
+        text(item.detail),
+    ) &&
+    Array.isArray(value.health) &&
+    value.health.every(
+      (item) =>
+        isRecord(item) &&
+        text(item.id) &&
+        text(item.label) &&
+        text(item.status) &&
+        text(item.detail),
+    ) &&
+    Array.isArray(value.counters) &&
+    value.counters.every(
+      (item) =>
+        isRecord(item) &&
+        text(item.id) &&
+        text(item.label) &&
+        (typeof item.value === "number" || item.value === null),
+    )
   );
 }
 

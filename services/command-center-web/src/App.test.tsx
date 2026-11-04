@@ -12,7 +12,12 @@ import { describe, expect, it, vi } from "vitest";
 import { App } from "./App";
 import type { ManufacturingOverviewResponse } from "./contract/generated";
 import { SessionProvider } from "./session/SessionProvider";
-import { envelope, FakeBff, jsonResponse } from "./test/fakeBff";
+import {
+  contractShowcase,
+  envelope,
+  FakeBff,
+  jsonResponse,
+} from "./test/fakeBff";
 import { contractOverview, contractSession } from "./test/fixtures";
 import { contractFacilityState } from "./test/fixtures";
 
@@ -174,10 +179,29 @@ describe("overview", () => {
     expect(
       screen.getByRole("table", { name: "Production lots" }),
     ).toHaveTextContent(lot.lifecycle_state);
+    expect(screen.getByText("Production state")).toBeInTheDocument();
+    expect(screen.getAllByText("Lot lifecycle")).not.toHaveLength(0);
+    expect(screen.getAllByText("Execution state")).not.toHaveLength(0);
+    expect(screen.getAllByText("Hold state")).not.toHaveLength(0);
     const stateCall = bff.calls.find(
       (call) => call.path === "/v1/facility-state",
     );
     expect(stateCall?.query.get("world_id")).toBe("W-SYNTHETIC-TEST");
+  });
+
+  it("hides the empty equipment section while keeping production lots visible", async () => {
+    const bff = new FakeBff();
+    bff.facilityState = () => {
+      const state = structuredClone(contractFacilityState());
+      state.facility.equipment = [];
+      return jsonResponse(200, state);
+    };
+    bff.install();
+    await renderAt("/overview?world_id=W-SYNTHETIC-TEST", bff);
+    await screen.findByRole("table", { name: "Production lots" });
+    expect(
+      screen.queryByRole("table", { name: "Facility equipment" }),
+    ).not.toBeInTheDocument();
   });
 
   it("keeps facility-state unavailability separate from the overview alert", async () => {
@@ -424,6 +448,58 @@ describe("overview", () => {
     expect(screen.getAllByRole("listitem")).toHaveLength(
       first.needs_attention.length,
     );
+  });
+});
+
+describe("system view", () => {
+  it("renders the runtime flow, health readout and persisted identities from the BFF", async () => {
+    const bff = new FakeBff().withShowcase(contractShowcase()).install();
+    await renderAt(
+      "/system?world_id=W-SYNTHETIC-TEST&lot_id=LOT-SYNTHETIC-001",
+      bff,
+    );
+    expect(
+      await screen.findByRole("heading", { level: 2, name: "System flow" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Simulator")).toBeInTheDocument();
+    expect(screen.getAllByText("NATS / JetStream")).not.toHaveLength(0);
+    expect(
+      screen.getByRole("heading", { level: 2, name: "System health" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("CMD-SYNTHETIC-001")).toBeInTheDocument();
+    expect(screen.getAllByText("reported by runtime")).not.toHaveLength(0);
+    const call = bff.calls.find((item) => item.path === "/v1/showcase");
+    expect(call?.query.get("world_id")).toBe("W-SYNTHETIC-TEST");
+    expect(call?.query.get("lot_id")).toBe("LOT-SYNTHETIC-001");
+  });
+
+  it("does not invent a healthy state when the BFF read model is unavailable", async () => {
+    const bff = new FakeBff();
+    bff.showcase = () => jsonResponse(503);
+    bff.install();
+    await renderAt("/system", bff);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Runtime evidence is unavailable.",
+    );
+    expect(screen.queryByText("PASS")).not.toBeInTheDocument();
+  });
+
+  it("hides counters that are not reported by the runtime", async () => {
+    const showcase = structuredClone(contractShowcase());
+    showcase.counters = showcase.counters.map((item) => ({
+      ...item,
+      value: null,
+    }));
+    const bff = new FakeBff().withShowcase(showcase).install();
+    await renderAt("/system", bff);
+    expect(
+      await screen.findByText(
+        "Runtime counters are unavailable for this scope.",
+      ),
+    ).toHaveAttribute("role", "note");
+    expect(
+      screen.queryByRole("region", { name: "Runtime counters" }),
+    ).not.toBeInTheDocument();
   });
 });
 

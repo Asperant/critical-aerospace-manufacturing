@@ -13,11 +13,17 @@
 | Change classes | C0 Editorial · C1 Compatible · C2 Behavior-Affecting · C3 Protocol / Scope / Architecture |
 | Review risk classes | CR-0 … CR-4 (01 Item 63), applied on top of the change class |
 | Registry | `09_change/` companion files; ChangeIDs `CHG-NNN` allocated in order, never reused |
-| Status of the registry today | **16 reconciliation records UNDER_REVIEW**; eight final human policy groups DECIDED, independent change review/ratification pending |
+| Status of the registry today | Historical header snapshot; the live registry is `09_change/change_requests.csv` and includes the approved `CHG-080 / CTRL-DOC-010` final-scope record |
 
-> **CTRL-DOC-006 / CHG-014 registry delta.** The empty-registry counts in this original pre-implementation snapshot are historical. Current reconciliation records are in repository-root `09_change/change_requests.csv` and `CHG-001.yaml` through `CHG-016.yaml`. Current user policy authorizes scoped branch application; formal independent peer reviews and merge gates are not claimed complete. Records remain UNDER_REVIEW and do not certify VERIFIED/CLOSED changes or parent-WP completion.
+> **CTRL-DOC-006 / CHG-014 registry delta.** The empty-registry counts in this original pre-implementation snapshot are historical. The live registry is the repository-root `09_change/change_requests.csv` with one YAML record per ChangeID. Current user policy authorizes scoped branch application; formal independent peer reviews and merge gates are not claimed complete. A record's APPROVED state does not certify VERIFIED/CLOSED change evidence or parent-WP completion.
 
 > **Reading rule.** This process is lightweight but strict. Its purpose is not to slow the team down; it is to guarantee that after 26 weeks every difference between the approved baseline and the delivered system is visible, attributed, reviewed and — where it touches evidence — accounted for.
+
+## CHG-080 / CTRL-DOC-010 — Approved final scope freeze
+
+On 2026-11-04 the project owner approved `CHG-080` as a C3 / CR-4 change. The change freezes the CRB-F/CRB-M ReferencePlant (two nominal flow groupings, seven resources, eight lots and thirty-two representative components) and the R1-R4 research protocol while preserving the existing architecture, Core authority, HITL, Oracle isolation, event model and security controls. `CTRL-DOC-010` is the application control item; the machine-readable record is `09_change/CHG-080.yaml` and the registry row is in `09_change/change_requests.csv`.
+
+The change is applied only through the affected canonical documentation/WP projections and their required trace/evidence checks. It does not authorize code, database, service, identity, broker, deployment or Demo Lab changes. HT-01 remains conditional until material/process/route sources support a mandatory operation. No public dataset is treated as matched production history, no fault injection is treated as real defect detection and no simulator result is used to claim real-factory performance.
 
 ---
 

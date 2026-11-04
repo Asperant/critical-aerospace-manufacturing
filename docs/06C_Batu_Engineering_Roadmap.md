@@ -8,7 +8,7 @@
 | Version | v0.1.0-draft |
 | Generated | 17 Eylül 2026 (pre-implementation) |
 | Canonical role (01 Item 62) | Manufacturing Control, Simulation & Recovery Owner |
-| Owned work packages | 32 of 179 (10 F0 · 20 F1-class · 2 R1 · 0 R2/S) |
+| Owned work packages | 32 of 180 (10 F0 · 20 F1-class · 2 R1 · 0 R2/S) |
 | Owned requirements | 57 (45 FR · 12 NFR) |
 | Owned dependency nodes (05) | 20 |
 | Upstream cross-owner HARD gates | 17 |
@@ -2297,3 +2297,7 @@ ARCH-AUTO-WORKFLOW (durable Automation/Temporal layer) coordinates GS-01/E2E acr
 HARD/SOFT refer to declared work/readiness consumers, not automatic runtime/deployment/import relations. Non-CONTRACT F1 entries DEP-025/045/058/076/094 have no fixture fallback: real producer readiness at the declared stage is required, while development stubs are not satisfaction evidence. DN-VIS-MODELS now declares INTEGRATION_READY for DEP-060/194; operational serving must load promoted required-mode artifacts with provenance. Source-supported deadlines and per-consumer scope are defined in05, without shifting canonical ownership or schedules.
 
 GAP-RTM-004/005 remain ACCEPTED_WITH_RATIONALE for this pre-implementation baseline: missing canonical record metadata is not fabricated. FR-GOV-001/004 and the relevant NFR owners must supply/review actual fields and measurement definitions before their declared gates; projectctl retains nulls/warnings and never grants READY/VERIFIED from planned prose. Owner trace confirmation GAP-RTM-006 and final schema/version/card specifics remain ordinary implementation/review prerequisites, not unresolved choices among the eight approved policy groups.
+
+## CHG-080 / CTRL-DOC-010 — Batu final-scope obligations
+
+The final simulator workload is the versioned 2-flow ReferencePlant with four CNC resources, conditional HT-01, shared CMM-01/VIS-01, four CRB-F lots, four CRB-M lots and four representative components per lot. Simulator truth and hidden Oracle state remain isolated. R1 must use paired, seed-controlled scenarios for normal production, no-reassignment failure, baseline eligible-machine recovery and event-triggered rolling-horizon recovery; Scheduler alternatives must preserve machine eligibility and be independently validated before Core/HITL execution. Simulation ticks and durations are scenario units, never real factory measurements.

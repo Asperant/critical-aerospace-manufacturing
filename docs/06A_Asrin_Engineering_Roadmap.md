@@ -8,7 +8,7 @@
 | Version | v0.1.0-draft |
 | Generated | 17 Eylül 2026 (pre-implementation) |
 | Canonical role (01 Item 62) | Manufacturing Intelligence & Core Systems Owner |
-| Owned work packages | 73 of 179 (12 F0 · 46 F1-class · 11 R1 · 4 R2/S) |
+| Owned work packages | 74 of 180 (12 F0 · 47 F1-class · 11 R1 · 4 R2/S) |
 | Owned requirements | 124 (92 FR · 32 NFR) |
 | Owned dependency nodes (05) | 35 |
 | Upstream cross-owner HARD gates | 23 |
@@ -4548,7 +4548,7 @@ This role is complete at M8 when every line below is true and demonstrable from 
 
 | # | Completion criterion |
 |---|---|
-| C-1 | All 73 owned work packages are at DoD (04 §4.2), with real repository references replacing `TBD_BY_IMPLEMENTATION` |
+| C-1 | All 74 owned work packages are at DoD (04 §4.2), with real repository references replacing `TBD_BY_IMPLEMENTATION` |
 | C-2 | All 124 owned requirements have a final disposition in 03 — VERIFIED, or an explicitly recorded FAIL/MISS/REBASELINED with analysis |
 | C-3 | Every owned F0 requirement is verified on a real integrated path (FR-AI-001, FR-AI-004, FR-CORE-001, FR-CORE-002, FR-EVT-001, FR-HITL-001, FR-TWIN-001, FR-UI-001) |
 | C-4 | Every owned H0 requirement (17) has hard/negative evidence with zero-count assertions satisfied |
@@ -4574,3 +4574,7 @@ ARCH-AUTO-WORKFLOW (durable Automation/Temporal layer) coordinates GS-01/E2E acr
 HARD/SOFT refer to declared work/readiness consumers, not automatic runtime/deployment/import relations. Non-CONTRACT F1 entries DEP-025/045/058/076/094 have no fixture fallback: real producer readiness at the declared stage is required, while development stubs are not satisfaction evidence. DN-VIS-MODELS now declares INTEGRATION_READY for DEP-060/194; operational serving must load promoted required-mode artifacts with provenance. Source-supported deadlines and per-consumer scope are defined in05, without shifting canonical ownership or schedules.
 
 GAP-RTM-004/005 remain ACCEPTED_WITH_RATIONALE for this pre-implementation baseline: missing canonical record metadata is not fabricated. FR-GOV-001/004 and the relevant NFR owners must supply/review actual fields and measurement definitions before their declared gates; projectctl retains nulls/warnings and never grants READY/VERIFIED from planned prose. Owner trace confirmation GAP-RTM-006 and final schema/version/card specifics remain ordinary implementation/review prerequisites, not unresolved choices among the eight approved policy groups.
+
+## CHG-080 / CTRL-DOC-010 — Asrın final-scope obligations
+
+The approved ReferencePlant binds Asrın-owned semantics to CRB-F/CRB-M, eight lots, thirty-two representative serialized components, Core genealogy, quality/hold semantics, RCA/RAG evidence, HITL policy, Automation binding and R1/R4 research evidence. Validate material/route claims against the approved source portfolio; do not create a new Line authority, treat Vision as a state mutator, or promote simulator Oracle labels into AI/RCA inputs. The final hand-off is a versioned scenario/protocol manifest and sealed claim-bound evidence, not a WP completion assertion from this scope decision alone.

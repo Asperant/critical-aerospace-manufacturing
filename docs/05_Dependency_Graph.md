@@ -629,6 +629,20 @@ All 217 edges. Columns follow Item 66 "Dependency Registry" fields. *Pred owner*
 | DEP-214 | DN-RES-BENCH → MS-M7 | EVIDENCE | HARD | MILESTONE_EXIT | FROZEN | M7 (S12) | Yavuz | — | — | EvidenceSeal | DR-7 |
 | DEP-215 | MS-M7 → MS-M8 | EVIDENCE | HARD | MILESTONE_EXIT | — | M8 | — | — | — | M7 PASS | — |
 | DEP-216 | DN-RES-CLAIMS → MS-M8 | EVIDENCE | HARD | MILESTONE_EXIT | FROZEN | M8 (S13) | Asrın | — | — | final evidence / reproduction | DR-7 |
+
+## CHG-080 / CTRL-DOC-010 — ReferencePlant and R1-R4 dependency reconciliation
+
+CHG-080 does not add a new dependency edge and does not change any existing edge's kind, strength, blocking stage, readiness state or need-by. The approved ReferencePlant is an input configuration that must be carried through the existing graph.
+
+| Binding | Existing edges to review at their declared gates | Required interpretation |
+|---|---|---|
+| ReferencePlant → simulator/scenario data | DEP-048, DEP-049, DEP-121 | ScenarioVersion/SeedSet and realism evidence must identify the 2-flow, 7-resource, 8-lot/32-component configuration; simulation time is not wall-clock factory measurement |
+| Core contracts/genealogy → simulator/episodes | DEP-038, DEP-062, DEP-063 | product, route, lot and serialized-component identity remain Core-defined; Oracle labels are not operational inputs |
+| Vision/data → models and RQ-4 | DEP-054, DEP-057, DEP-060, DEP-122, DEP-131, DEP-148, DEP-151 | source-specific datasets, split/leakage rules and operational episodes remain distinct and evidence-bound |
+| Scheduler/recovery → integrated operation | DEP-078, DEP-079, DEP-080, DEP-081, DEP-084, DEP-085, DEP-086, DEP-087, DEP-088 | alternative CNC assignment is eligible only under existing capability/fixture/setup/qualification/quality/policy constraints; planner ≠ validator ≠ Core authority |
+| Freeze/benchmark → claims | DEP-130, DEP-131, DEP-137, DEP-138, DEP-141, DEP-142, DEP-145, DEP-146, DEP-147, DEP-148, DEP-151, DEP-216 | R1-R4 protocol, source portfolio, authority scenario, release/environment, analysis and claim classification must be frozen/sealed in order |
+
+The conditional status of HT-01 is a scenario-level source-validation condition, not a new HARD edge. If later material/process evidence requires a route or contract change, that is a separate change-control assessment; no dependency status is inferred from this documentation update.
 | DEP-217 | DN-PLAT-CLEANREPRO → MS-M8 | EVIDENCE | HARD | MILESTONE_EXIT | EVALUATION_READY | M8 (S13) | Yavuz | — | — | final evidence / reproduction | DR-7 |
 ## 7. Platform Dependency Spine
 

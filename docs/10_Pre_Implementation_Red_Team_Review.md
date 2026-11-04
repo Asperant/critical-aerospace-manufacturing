@@ -2069,3 +2069,19 @@ IN_REVIEW means a real non-draft technically reviewable PR, not waiting for a hu
 MERGED requires an actual GitHub merge. VALIDATING requires actual post-merge validation started. DONE requires all applicable DoD, trace/evidence and actual successful post-merge validation; accountable owner assessment and real artifacts remain required, another person's review/confirmation does not. Development peer/methodology review is advisory even for closure; real protocol, scientific reproducibility, measured acceptance and product-authority evidence remain required. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted.
 
 This changes ONLY development/GitHub/repository governance. Product HITL, protected-action approval, AuthorityPolicy, authenticated approvers, runtime self-approval prohibition, exact proposal/plan binding and execution authorization are unchanged. Project-owner scope/cancellation decisions and real product acceptance artifacts are not GitHub review approvals and are not fabricated or waived. No Plane test mutation, merge, commit or push is authorized in this pass. Existing historical approvals remain history, never requirements for a current transition.
+
+## CHG-080 / CTRL-DOC-010 — Final-scope red-team disposition
+
+The approved final scope is a scenario and research-protocol freeze, not an architecture redesign. The following findings remain explicit review obligations:
+
+| Finding | Risk | Required control |
+|---|---|---|
+| CRB-F/CRB-M route/material semantics are stronger than some public sources | Unsupported aerospace-process claim | Mark unsupported details conditional; require source-backed material, route and heat-treatment evidence before mandatory claims |
+| Two nominal flows may be mistaken for a new legal Line authority | Duplicate or conflicting state authority | Keep flow grouping in ScenarioDefinition/route/resource eligibility; Core remains the only canonical state authority |
+| Four CNCs may be treated as interchangeable | Invalid recovery comparison | Validate capability, operation, fixture/tool, setup, qualification, quality and policy predicates per candidate |
+| Eight lots / 32 components may be confused with plant capacity | Overclaiming scale | Report it as a controlled research workload, not factory throughput or capacity |
+| Public datasets are heterogeneous and unpaired | Leakage, relabeling or false product identity | Keep source-specific lanes, provenance, license, split and claim boundaries; no cross-dataset pairing without evidence |
+| Fault injection or Oracle labels may leak into models | Inflated detection/recovery performance | Enforce hidden Oracle boundary, taint/negative tests and independent inspection labels |
+| Demo evidence may be promoted to final research evidence | Irreproducible or cherry-picked claim | Require frozen scenario/seed/release, paired runs, independent validation, sealing and claim classification |
+
+Architecture authority, security, Core/HITL rules and event provenance are unchanged. Closure requires the evidence and validation obligations above; this section records risk controls, not successful experimental results.

@@ -191,7 +191,7 @@ function MetaSummary({
   if (!meta) return null;
   return (
     <section className="card twin-card" aria-label="Overview metadata">
-      <SectionHeading eyebrow="Projection provenance" title="Digital Twin" />
+      <SectionHeading eyebrow="Data confidence" title="Twin state freshness" />
       <TwinSource sources={meta.sources} />
       <div className="twin-grid">
         <div>
@@ -199,25 +199,17 @@ function MetaSummary({
           <strong>{meta.world.world_id}</strong>
         </div>
         <div>
-          <span className="field-label">Revision</span>
-          <strong>
-            <TechnicalValue value={meta.revision} />
-          </strong>
-        </div>
-        <div>
-          <span className="field-label">Generated / as of</span>
-          <strong>
-            <TechnicalValue value={meta.generated_at} />
-          </strong>
-          <span className="detail-value">
-            As of <TechnicalValue value={meta.as_of} />
-          </span>
-        </div>
-        <div>
           <span className="field-label">Freshness</span>
           <strong>
             <Freshness value={meta.freshness} />
           </strong>
+        </div>
+        <div className="twin-confidence-copy">
+          <span className="field-label">Operator guidance</span>
+          <strong>Live operational state</strong>
+          <span className="detail-value">
+            Technical lineage is available below.
+          </span>
         </div>
       </div>
       {meta.freshness !== "FRESH" ? (
@@ -317,12 +309,10 @@ function SummaryCards({
         <div>
           <span className="field-label">Production state</span>
           <strong>
-            {lot ? <StatusBadge value={lot.hold_state} tone="warning" /> : "—"}
+            {lot ? <StatusBadge value={lot.lifecycle_state} /> : "—"}
           </strong>
           <span className="summary-caption">
-            {lot
-              ? `${lot.lifecycle_state} · ${lot.execution_state}`
-              : "No active lot"}
+            {lot ? "Lot lifecycle" : "No active lot"}
           </span>
         </div>
       </article>
@@ -355,21 +345,26 @@ function LotCard({ lot }: { lot: LotState }) {
       </div>
       <div className="lot-status-row" aria-label={`${lot.lot_id} state`}>
         <div>
-          <span className="field-label">Lifecycle</span>
+          <span className="field-label">Lot lifecycle</span>
           <StatusBadge value={lot.lifecycle_state} />
         </div>
         <div>
-          <span className="field-label">Execution</span>
+          <span className="field-label">Execution state</span>
           <StatusBadge value={lot.execution_state} />
         </div>
         <div>
-          <span className="field-label">Hold</span>
+          <span className="field-label">Hold state</span>
           <StatusBadge
             value={lot.hold_state}
             tone={holdActive ? "warning" : "neutral"}
           />
         </div>
       </div>
+      <p className="state-legend">
+        Production state describes the lot lifecycle. Execution state describes
+        whether work is running or waiting. Hold state describes a quality or
+        material restriction.
+      </p>
       {holdActive ? (
         <div className="hold-alert" role="note">
           <span className="hold-alert-icon" aria-hidden="true">
@@ -583,60 +578,69 @@ function ShowcaseTimeline({ state }: { state: ShowcaseState }) {
 function EquipmentTables({ state }: { state: FacilityStateResponse }) {
   const { facility } = state;
   return (
-    <details className="equipment-details" open>
-      <summary>Equipment state ({facility.equipment.length})</summary>
-      <div className="table-scroll">
-        <table aria-label="Facility equipment">
-          <caption>Equipment</caption>
-          <thead>
-            <tr>
-              <th scope="col">Equipment</th>
-              <th scope="col">Equipment state</th>
-              <th scope="col">Maintenance</th>
-              <th scope="col">Freshness</th>
-            </tr>
-          </thead>
-          <tbody>
-            {facility.equipment.map((item) => (
-              <tr key={item.equipment_id}>
-                <th scope="row">{item.equipment_id}</th>
-                <td>{item.equipment_state}</td>
-                <td>{item.maintenance_state}</td>
-                <td>{item.freshness}</td>
+    <>
+      {facility.equipment.length > 0 ? (
+        <details className="equipment-details" open>
+          <summary>Equipment state ({facility.equipment.length})</summary>
+          <div className="table-scroll">
+            <table aria-label="Facility equipment">
+              <caption>Equipment</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Equipment</th>
+                  <th scope="col">Equipment state</th>
+                  <th scope="col">Maintenance</th>
+                  <th scope="col">Freshness</th>
+                </tr>
+              </thead>
+              <tbody>
+                {facility.equipment.map((item) => (
+                  <tr key={item.equipment_id}>
+                    <th scope="row">{item.equipment_id}</th>
+                    <td>{item.equipment_state}</td>
+                    <td>{item.maintenance_state}</td>
+                    <td>{item.freshness}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      ) : null}
+      <details className="equipment-details" open>
+        <summary>Production lots ({facility.lots.length})</summary>
+        <div className="table-scroll">
+          <table aria-label="Production lots">
+            <caption>Lots</caption>
+            <thead>
+              <tr>
+                <th scope="col">Lot</th>
+                <th scope="col">Lifecycle</th>
+                <th scope="col">Execution</th>
+                <th scope="col">Hold</th>
+                <th scope="col">Route visit</th>
+                <th scope="col">Freshness</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        <table aria-label="Production lots">
-          <caption>Lots</caption>
-          <thead>
-            <tr>
-              <th scope="col">Lot</th>
-              <th scope="col">Lifecycle</th>
-              <th scope="col">Execution</th>
-              <th scope="col">Hold</th>
-              <th scope="col">Route visit</th>
-              <th scope="col">Freshness</th>
-            </tr>
-          </thead>
-          <tbody>
-            {facility.lots.map((item) => (
-              <tr key={item.lot_id}>
-                <th scope="row">{item.lot_id}</th>
-                <td>{item.lifecycle_state}</td>
-                <td>{item.execution_state}</td>
-                <td>{item.hold_state}</td>
-                <td>
-                  {item.route_position.visit_id} ·{" "}
-                  {item.route_position.operation_class_id}
-                </td>
-                <td>{item.freshness}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </details>
+            </thead>
+            <tbody>
+              {facility.lots.map((item) => (
+                <tr key={item.lot_id}>
+                  <th scope="row">{item.lot_id}</th>
+                  <td>{item.lifecycle_state}</td>
+                  <td>{item.execution_state}</td>
+                  <td>{item.hold_state}</td>
+                  <td>
+                    {item.route_position.visit_id} ·{" "}
+                    {item.route_position.operation_class_id}
+                  </td>
+                  <td>{item.freshness}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </>
   );
 }
 
@@ -738,9 +742,7 @@ function FacilityStateViewPanel({
               }
             />
             <p className="state-context">
-              World {meta.world.world_id} · revision{" "}
-              <TechnicalValue value={meta.revision} /> · freshness{" "}
-              {meta.freshness}
+              World {meta.world.world_id} · freshness {meta.freshness}
             </p>
             {facility.lots.length > 0 ? (
               <div className="lot-grid">

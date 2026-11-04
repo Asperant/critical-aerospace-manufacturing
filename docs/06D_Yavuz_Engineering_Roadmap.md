@@ -8,7 +8,7 @@
 | Version | v0.1.0-draft |
 | Generated | 17 Eylül 2026 (pre-implementation) |
 | Canonical role (01 Item 62) | Platform Engineering, Delivery & Reliability Owner |
-| Owned work packages | 57 of 179 (2 F0 · 46 F1-class · 8 R1 · 1 R2/S) |
+| Owned work packages | 57 of 180 (2 F0 · 46 F1-class · 8 R1 · 1 R2/S) |
 | Owned requirements | 106 (32 FR · 74 NFR) |
 | Owned dependency nodes (05) | 24 |
 | Upstream cross-owner HARD gates | 2 |
@@ -3819,3 +3819,7 @@ ARCH-AUTO-WORKFLOW (durable Automation/Temporal layer) coordinates GS-01/E2E acr
 HARD/SOFT refer to declared work/readiness consumers, not automatic runtime/deployment/import relations. Non-CONTRACT F1 entries DEP-025/045/058/076/094 have no fixture fallback: real producer readiness at the declared stage is required, while development stubs are not satisfaction evidence. DN-VIS-MODELS now declares INTEGRATION_READY for DEP-060/194; operational serving must load promoted required-mode artifacts with provenance. Source-supported deadlines and per-consumer scope are defined in05, without shifting canonical ownership or schedules.
 
 GAP-RTM-004/005 remain ACCEPTED_WITH_RATIONALE for this pre-implementation baseline: missing canonical record metadata is not fabricated. FR-GOV-001/004 and the relevant NFR owners must supply/review actual fields and measurement definitions before their declared gates; projectctl retains nulls/warnings and never grants READY/VERIFIED from planned prose. Owner trace confirmation GAP-RTM-006 and final schema/version/card specifics remain ordinary implementation/review prerequisites, not unresolved choices among the eight approved policy groups.
+
+## CHG-080 / CTRL-DOC-010 — Yavuz final-scope obligations
+
+The final research campaign must bind each R1-R4 run to the ReferencePlant version, scenario/seed, release/environment and hardware/resource identity, with dataset/license/provenance records and sealed dispositions. Event, Outbox, NATS, Twin, observability and evidence tooling must preserve the existing identity, world and trace semantics; no runtime reset, credential relaxation, infrastructure expansion or synthetic evidence is authorized by this scope freeze.
