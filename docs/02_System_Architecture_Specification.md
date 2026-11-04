@@ -1900,7 +1900,7 @@ A versioned `SimulationSnapshot` captures (minimum): material state, route posit
 
 ### Manufacturing Profiles
 
-`MiniPlant` (unit/integration testing, fast local debugging), `ReferencePlant` (main development, Golden Scenario, system integration), `StressPlant` (performance/scheduling-scale/load testing). Exact machine/lot/serialized component counts per profile are resource-profile territory (§"Shared Host Resource Architecture").
+`MiniPlant` (unit/integration testing, fast local debugging), `ReferencePlant` (main development, Golden Scenario, system integration), `StressPlant` (performance/scheduling-scale/load testing). CHG-080 freezes the final ReferencePlant at 7 resources, 8 lots and 32 representative components; MiniPlant and StressPlant remain resource-profile territory (§"Shared Host Resource Architecture").
 
 ### Fidelity Policy
 
@@ -9419,3 +9419,20 @@ These are subcomponents of already-approved services/tooling, not new deployable
 ## Development governance binding — CHG-018, 15 October 2026
 
 Final owner policy DEV-REVIEW-2026-10-15-FINAL governs development/GitHub/repository work: required human approval count zero for all classes, including security/authority changes. CODEOWNERS/ADR/domain/methodology review is advisory and never a development workflow/merge/DONE gate. Actual architecture, contract, security, test, trace/evidence and acceptance checks remain; CI alone is not semantic verification. This does not change product HITL, authenticated approvers, runtime self-approval prohibition, exact proposal/plan binding or execution authorization. Historical architectural-review provenance is retained, not reinterpreted as a current GitHub approval gate.
+
+## CHG-080 / CTRL-DOC-010 — ReferencePlant scenario binding
+
+The approved final ReferencePlant is a configuration of the existing architecture, not a new bounded context or authority source. It instantiates the existing `ManufacturingFacility`, `Area/WorkCenter`, `ResourceGroup/MachineGroup`, `ManufacturingResource`, `Product/PartDefinition`, `ManufacturingRoute`, `ToolGroup`, equipment-eligibility and `ScenarioDefinition` models as follows:
+
+| Existing architectural concept | Final scenario binding |
+|---|---|
+| Product/PartDefinition | CRB-F and CRB-M |
+| Nominal flow grouping | two nominal flows; grouping metadata only, never a canonical legal `Line` state |
+| CNC resources | CNC-A1, CNC-A2, CNC-B1, CNC-B2 |
+| Shared process resource | HT-01, conditional until material/route evidence supports a mandatory operation |
+| Shared metrology/inspection | CMM-01 and VIS-01 |
+| Scenario population | 8 lots and 32 representative serialized components |
+
+The architecture law is unchanged: Core is the canonical manufacturing authority; Simulator owns simulated execution and hidden Oracle state; Twin is rebuildable projection; Vision produces observations; AI/RCA and Scheduler propose or simulate; Validator, HITL and Automation govern protected effects. Cross-line CNC assignment is a scheduler candidate only when the existing capability, fixture, setup, qualification, quality and policy predicates pass. No new database, broker, service, canonical Line entity, authority path or runtime contract is introduced by this scope freeze.
+
+The scenario uses the existing world/run/branch isolation and simulation-time semantics. Every final run must bind `ScenarioDefinitionVersion`, seed, simulator/release identity, product/route configuration, machine-eligibility snapshot, dataset/provenance references and analysis disposition. The reference count is a reproducible research workload, not evidence of physical-factory capacity.

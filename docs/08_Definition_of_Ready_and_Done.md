@@ -920,3 +920,22 @@ A lifecycle reconciliation records observed GitHub facts in Plane only. It is no
 ## CHG-033 — the recovery proof is not completion evidence
 
 The deferred-acceptance recovery proof releases the owner's implementation slot only. It is not DoR, DoD, accountable-owner assessment, trace, evidence or integrated-acceptance evidence, it does not satisfy a missing Release, Environment or Hardware identity (DOD-WP-11), and it does not make Merged equal Done. DONE still requires every applicable DoD criterion.
+
+## CHG-080 / CTRL-DOC-010 — ReferencePlant and R1-R4 readiness supplement
+
+For every affected WP, the following conditions are additional interpretation of the existing DoR/DoD, not a replacement for its canonical card:
+
+### Ready
+
+- the WP identifies the ReferencePlant version, CRB-F/CRB-M product context, route assumptions, resource eligibility and whether HT-01 is conditional;
+- the scenario population (8 lots / 32 representative components), scenario version, seed policy, world/run mode and required data/provenance status are explicit;
+- the intended R1, R2, R3 or R4 comparison, primary metrics, baseline and exclusion/leakage rule are named;
+- the owner has identified the required upstream contract/dependency facts without treating code presence, a fixture or a Demo Lab result as readiness evidence.
+
+### Done
+
+- the run or artifact is bound to a release/environment/resource identity and reproducible configuration;
+- the result preserves Core authority, HITL binding, Oracle isolation, event identity and independent validation;
+- failed, unsupported, degraded and negative outcomes are retained with dispositions;
+- dataset-specific claims, synthetic/fault-injected evidence and public held-out evidence are explicitly separated;
+- research claims are not promoted until the applicable freeze, benchmark, analysis and evidence gates are complete. CHG-080 approval alone never marks a WP DONE.

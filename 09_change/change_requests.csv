@@ -66,3 +66,4 @@ CHG-076,Clarify the DEP-002 START requirement and record its current-main readin
 CHG-077,Clarify the DEP-043 START requirement for the Simulator dispatch interface,C2,CR-2,Batuhan,APPROVED_WITH_CONDITIONS,UNDER_REVIEW,WP-SIM-006
 CHG-078,Publish the Core lot operational-semantics contract and bind it to DEP-038,C1,CR-1,Asrın,APPROVED,APPROVED,CTRL-HOST-050
 CHG-079,Bind DEP-037 to the merged kernel and replay APIs,C1,CR-1,Batuhan,APPROVED_WITH_CONDITIONS,UNDER_REVIEW,WP-SIM-003
+CHG-080,Freeze CRB-F/CRB-M ReferencePlant and R1-R4 research protocol,C3,CR-4,Asrın,APPROVED,APPROVED,CTRL-DOC-010
