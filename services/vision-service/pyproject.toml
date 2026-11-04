@@ -20,7 +20,7 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-cap-observability = { path = "../../packages/observability" }
+cap-observability = { path = "../../packages/observability", editable = true }
 
 [tool.setuptools.packages.find]
 where = ["src"]
