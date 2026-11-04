@@ -463,7 +463,11 @@
   justify-content: space-between;
   margin-left: 112px;
   color: #718aa4;
-  font: 10px ui-monospace, SFMono-Regular, Menlo, monospace;
+  font:
+    10px ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
 }
 .simulation-gantt-row {
   display: grid;
@@ -490,7 +494,13 @@
   min-height: 42px;
   border-top: 1px solid #234158;
   border-bottom: 1px solid #234158;
-  background: repeating-linear-gradient(90deg, transparent 0, transparent calc(20% - 1px), #17334a calc(20% - 1px), #17334a 20%);
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent calc(20% - 1px),
+    #17334a calc(20% - 1px),
+    #17334a 20%
+  );
 }
 .simulation-gantt-bar {
   position: absolute;
@@ -536,7 +546,7 @@
   color: #66e0ff;
   font-size: 9px;
   font-weight: 800;
-  letter-spacing: .08em;
+  letter-spacing: 0.08em;
 }
 .demo-event-list > div {
   display: grid;
@@ -593,7 +603,7 @@
 .candidate-ineligible {
   border-color: #294158;
   background: #0a1929;
-  opacity: .65;
+  opacity: 0.65;
 }
 .candidate-ineligible small {
   color: #718aa4;

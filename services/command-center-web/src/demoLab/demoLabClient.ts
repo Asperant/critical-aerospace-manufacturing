@@ -46,8 +46,18 @@ export interface SimulationResponse {
       initial: SimulationState;
       final: SimulationState;
     };
-    records: Array<{ sequence: number; time: number; kind: string; event_id: string; outcome: unknown }>;
-    operational_events: Array<{ kind: string; time: number; attributes: unknown }>;
+    records: Array<{
+      sequence: number;
+      time: number;
+      kind: string;
+      event_id: string;
+      outcome: unknown;
+    }>;
+    operational_events: Array<{
+      kind: string;
+      time: number;
+      attributes: unknown;
+    }>;
     timeline: Array<{
       sequence: number;
       time: number;
@@ -65,7 +75,11 @@ export interface SimulationResponse {
       start_time: number;
       end_time: number | null;
       status: string;
-      failure_events: Array<{ sequence: number; time: number; machine_id: string }>;
+      failure_events: Array<{
+        sequence: number;
+        time: number;
+        machine_id: string;
+      }>;
     }>;
   };
 }
@@ -84,7 +98,13 @@ export interface SimulationState {
     rework_count: number;
     execution_count: number;
   }>;
-  machines: Array<{ machine_id: string; state: string; health: string; usage: number; lot_id: string | null }>;
+  machines: Array<{
+    machine_id: string;
+    state: string;
+    health: string;
+    usage: number;
+    lot_id: string | null;
+  }>;
   provenance: string;
 }
 
@@ -101,7 +121,13 @@ export interface SchedulingResponse {
     rule_description: string;
     selection_reason: string;
     selected_job: SchedulingJob | null;
-    ranking: Array<{ rank: number; job_id: string; key: unknown; priority_value: unknown; priority_display: string }>;
+    ranking: Array<{
+      rank: number;
+      job_id: string;
+      key: unknown;
+      priority_value: unknown;
+      priority_display: string;
+    }>;
   }>;
 }
 
@@ -140,26 +166,66 @@ export interface QualityResponse {
   };
   core: {
     before: { held: boolean; revision: string };
-    hold: { status: string; command_id: string; event_id: string; outcome_id: string };
+    hold: {
+      status: string;
+      command_id: string;
+      event_id: string;
+      outcome_id: string;
+    };
     after: { held: boolean; revision: string };
     dispatch: { status: string; error_code: string | null; command_id: string };
   };
   transport: {
-    outbox: { outbox_id: string; event_id: string; publication_status: string; causation_id: string };
-    nats: { stream: string; consumer: string; num_ack_pending: number; num_redelivered: number };
+    outbox: {
+      outbox_id: string;
+      event_id: string;
+      publication_status: string;
+      causation_id: string;
+    };
+    nats: {
+      stream: string;
+      consumer: string;
+      num_ack_pending: number;
+      num_redelivered: number;
+    };
   };
   twin: {
-    twin_projection: { source_event_id: string; state: Record<string, unknown> };
+    twin_projection: {
+      source_event_id: string;
+      state: Record<string, unknown>;
+    };
     twin_revision: { source_event_id: string; status: string } | null;
   };
 }
 
 export interface TraceResponse {
   contract_version: string;
-  core_state: { held: boolean; revision: string; lifecycle_state: string; execution_state: string } | null;
-  core_showcase: { timeline: Array<{ kind: string; label: string; status: string; source: string; identity?: string }> };
-  twin: { latest_applied_event: { event_id: string; applied_at: string } | null; revision: { source_event_id: string; status: string } | null };
-  nats: { stream?: string; consumer?: string; num_ack_pending?: number; num_redelivered?: number; status?: string };
+  core_state: {
+    held: boolean;
+    revision: string;
+    lifecycle_state: string;
+    execution_state: string;
+  } | null;
+  core_showcase: {
+    timeline: Array<{
+      kind: string;
+      label: string;
+      status: string;
+      source: string;
+      identity?: string;
+    }>;
+  };
+  twin: {
+    latest_applied_event: { event_id: string; applied_at: string } | null;
+    revision: { source_event_id: string; status: string } | null;
+  };
+  nats: {
+    stream?: string;
+    consumer?: string;
+    num_ack_pending?: number;
+    num_redelivered?: number;
+    status?: string;
+  };
   identities: Record<string, string | null>;
 }
 
@@ -187,8 +253,13 @@ async function requestJson<T>(
     });
     if (response.status === 401) return { status: "unauthenticated" };
     if (!response.ok) {
-      const body = (await response.json().catch(() => null)) as { detail?: string } | null;
-      return { status: "error", message: body?.detail ?? `Request failed (${response.status})` };
+      const body = (await response.json().catch(() => null)) as {
+        detail?: string;
+      } | null;
+      return {
+        status: "error",
+        message: body?.detail ?? `Request failed (${response.status})`,
+      };
     }
     return { status: "ok", value: (await response.json()) as T };
   } catch {
@@ -198,7 +269,12 @@ async function requestJson<T>(
 
 export function runVision(
   file: File,
-  params: { worldId: string; lotId: string; zThreshold: number; minArea: number },
+  params: {
+    worldId: string;
+    lotId: string;
+    zThreshold: number;
+    minArea: number;
+  },
   csrfToken: string,
   signal: AbortSignal,
 ) {
@@ -208,43 +284,81 @@ export function runVision(
     z_threshold: String(params.zThreshold),
     min_area_px: String(params.minArea),
   });
-  return requestJson<VisionResponse>(`/v1/demo-lab/vision/inspect?${query}`, {
-    method: "POST",
-    body: file,
-    signal,
-    headers: {
-      "Content-Type": file.type || (/[.]jpe?g$/i.test(file.name) ? "image/jpeg" : "image/png"),
+  return requestJson<VisionResponse>(
+    `/v1/demo-lab/vision/inspect?${query}`,
+    {
+      method: "POST",
+      body: file,
+      signal,
+      headers: {
+        "Content-Type":
+          file.type ||
+          (/[.]jpe?g$/i.test(file.name) ? "image/jpeg" : "image/png"),
+      },
     },
-  }, csrfToken);
+    csrfToken,
+  );
 }
 
-export function runSimulation(body: Record<string, unknown>, csrfToken: string, signal: AbortSignal) {
-  return requestJson<SimulationResponse>("/v1/demo-lab/simulation/runs", {
-    method: "POST",
-    body: JSON.stringify(body),
-    signal,
-    headers: { "Content-Type": "application/json" },
-  }, csrfToken);
+export function runSimulation(
+  body: Record<string, unknown>,
+  csrfToken: string,
+  signal: AbortSignal,
+) {
+  return requestJson<SimulationResponse>(
+    "/v1/demo-lab/simulation/runs",
+    {
+      method: "POST",
+      body: JSON.stringify(body),
+      signal,
+      headers: { "Content-Type": "application/json" },
+    },
+    csrfToken,
+  );
 }
 
-export function compareScheduling(body: Record<string, unknown>, csrfToken: string, signal: AbortSignal) {
-  return requestJson<SchedulingResponse>("/v1/demo-lab/scheduling/compare", {
-    method: "POST",
-    body: JSON.stringify(body),
-    signal,
-    headers: { "Content-Type": "application/json" },
-  }, csrfToken);
+export function compareScheduling(
+  body: Record<string, unknown>,
+  csrfToken: string,
+  signal: AbortSignal,
+) {
+  return requestJson<SchedulingResponse>(
+    "/v1/demo-lab/scheduling/compare",
+    {
+      method: "POST",
+      body: JSON.stringify(body),
+      signal,
+      headers: { "Content-Type": "application/json" },
+    },
+    csrfToken,
+  );
 }
 
-export function runQualityExcursion(worldId: string, csrfToken: string, signal: AbortSignal) {
+export function runQualityExcursion(
+  worldId: string,
+  csrfToken: string,
+  signal: AbortSignal,
+) {
   const query = new URLSearchParams({ world_id: worldId });
-  return requestJson<QualityResponse>(`/v1/demo-lab/quality-excursion?${query}`, {
-    method: "POST",
-    signal,
-  }, csrfToken);
+  return requestJson<QualityResponse>(
+    `/v1/demo-lab/quality-excursion?${query}`,
+    {
+      method: "POST",
+      signal,
+    },
+    csrfToken,
+  );
 }
 
-export function fetchTrace(worldId: string, lotId: string, signal: AbortSignal) {
+export function fetchTrace(
+  worldId: string,
+  lotId: string,
+  signal: AbortSignal,
+) {
   const query = new URLSearchParams({ world_id: worldId, lot_id: lotId });
-  return requestJson<TraceResponse>(`/v1/demo-lab/event-trace?${query}`, { signal }, null);
+  return requestJson<TraceResponse>(
+    `/v1/demo-lab/event-trace?${query}`,
+    { signal },
+    null,
+  );
 }
