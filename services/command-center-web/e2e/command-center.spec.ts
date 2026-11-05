@@ -125,6 +125,8 @@ test.describe("overview", () => {
     await expect(meta).toContainText(
       "Some data may be out of date (DEGRADED).",
     );
+    // The source provenance table is intentionally collapsed by default.
+    await meta.getByText("Technical provenance", { exact: true }).click();
     const sources = meta.getByRole("table", { name: "Sources" });
     await expect(
       sources.getByRole("row", { name: /digital-twin-service/ }),
