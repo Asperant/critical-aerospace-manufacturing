@@ -51,7 +51,7 @@ LIMITATION = (
 )
 PACKAGE_SCHEMA = "vision.cpu-smoke-package/v1"
 PACKAGE_RELATIVE = Path(
-    "services/vision-service/model-packages/vision-baseline-local-deviation/1.0.0/package.json"
+    "services/vision-service/model-packages/vision-baseline-local-deviation/1.1.0/package.json"
 )
 
 

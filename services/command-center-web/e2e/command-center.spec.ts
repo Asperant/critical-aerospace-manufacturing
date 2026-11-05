@@ -56,9 +56,14 @@ test.describe("sign in through the BFF", () => {
       sameSite: "Lax",
       path: "/",
     });
-    expect(
-      cookies.find((cookie) => cookie.name === "cap_login"),
-    ).toBeUndefined();
+    // Firefox may briefly expose a just-expired, empty deletion tombstone.
+    // Never accept a live or non-empty OAuth login cookie after callback.
+    const loginCookie = cookies.find((cookie) => cookie.name === "cap_login");
+    if (loginCookie) {
+      expect(["", '""']).toContain(loginCookie.value);
+      expect(loginCookie.expires).toBeGreaterThan(0);
+      expect(loginCookie.expires).toBeLessThanOrEqual(Date.now() / 1000);
+    }
 
     await expect(page.getByText("U-E2E-01")).toBeVisible();
     await expect(page.getByText("ops-controller")).toBeVisible();
@@ -125,6 +130,8 @@ test.describe("overview", () => {
     await expect(meta).toContainText(
       "Some data may be out of date (DEGRADED).",
     );
+    // The source provenance table is intentionally collapsed by default.
+    await meta.getByText("Technical provenance", { exact: true }).click();
     const sources = meta.getByRole("table", { name: "Sources" });
     await expect(
       sources.getByRole("row", { name: /digital-twin-service/ }),

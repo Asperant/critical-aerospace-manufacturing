@@ -2,6 +2,7 @@
 baseline inference -> InspectionObservation v1, validated against the
 registered contract. Artifacts are SYNTHETIC TEST images built in the test."""
 
+from io import BytesIO
 from typing import Any
 
 import numpy as np
@@ -10,6 +11,7 @@ from cap_artifacts import IntegrityError
 from cap_contracts import BoundaryValidator
 from conftest import encode_png, gray, reference_for, request_for, store_with, textured
 from numpy.typing import NDArray
+from PIL import Image
 from vision_service import ThresholdPolicy, inspect, parse_request
 
 OBSERVATION_ID = "6d1f0a52-3c7e-4b9a-8f21-0e4d5c6b7a81"
@@ -74,11 +76,11 @@ def test_observation_carries_identity_provenance_and_timing(
             {
                 "task": "BASELINE_ALGORITHM",
                 "model_package_id": "vision-baseline-local-deviation",
-                "model_version": "1.0.0",
+                "model_version": "1.1.0",
             }
         ],
         "preprocessing_version": "vision-prep-gray-unit/1",
-        "threshold_policy_version": "vision-tp-baseline-z6/1",
+        "threshold_policy_version": "vision-tp-local-contrast-z6/2",
         "output_schema_version": "vision.inspection-observation.v1",
     }
     assert observation["confidence_calibration"] == "UNCALIBRATED"
@@ -97,6 +99,23 @@ def test_clean_texture_has_no_defect_candidates(
     assert observation["defects"] == []
     assert observation["review_required"] is False
     assert observation["image_anomaly_score"] is not None
+
+
+def test_jpeg_image_is_inspected_through_the_same_observation_pipeline(
+    clock: Any, observation_validator: BoundaryValidator
+) -> None:
+    stream = BytesIO()
+    Image.fromarray(
+        np.asarray(gray(with_defect()), dtype=np.uint8).squeeze(-1), mode="L"
+    ).save(stream, format="JPEG", quality=95)
+    observation = run(
+        stream.getvalue(),
+        clock,
+        observation_validator,
+        {"content_type": "image/jpeg"},
+    )
+    assert observation["data_quality"] == {"status": "VALID", "flags": []}
+    assert observation["outcome"] == "DEFECT_CANDIDATES"
 
 
 def test_low_contrast_input_is_degraded_and_sent_to_review(

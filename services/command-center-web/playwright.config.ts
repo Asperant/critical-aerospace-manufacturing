@@ -11,7 +11,7 @@ export default defineConfig({
   testDir: "e2e",
   testMatch: bench
     ? /bench\.spec\.ts$/
-    : /^(?!.*bench)(?!.*demo-runtime).*\.spec\.ts$/,
+    : /^(?!.*bench)(?!.*demo-runtime)(?!.*demo-lab).*\.spec\.ts$/,
   fullyParallel: false,
   workers: 1,
   retries: 0,

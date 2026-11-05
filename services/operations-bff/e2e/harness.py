@@ -30,6 +30,14 @@ from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from operations_bff.api import create_app
 from operations_bff.config import CookieSettings, LoginConfig, SessionConfig
+from operations_bff.facility_state import (
+    EquipmentState,
+    FacilityStateQuery,
+    FacilityStateService,
+    FacilityStateSnapshot,
+    LotState,
+    RoutePosition,
+)
 from operations_bff.idp import AuthorizationRequest, IdentityProviderError
 from operations_bff.login import InMemoryLoginStore, LoginService, pkce_challenge
 from operations_bff.observability import configure_access_log
@@ -106,6 +114,64 @@ class FixtureReader:
         self.freshness: str | None = None
 
     def read(self, query: OverviewQuery) -> SourceSnapshot:
+        del query
+        if self.down:
+            raise SourceUnavailable
+        if self.freshness is not None:
+            return replace(self._base, freshness=self.freshness)
+        return self._base
+
+
+class FacilityFixtureReader:
+    """Fixture-backed Twin state for the facility-state browser surface."""
+
+    name = "digital-twin-service"
+
+    def __init__(self) -> None:
+        payload: dict[str, Any] = json.loads(
+            (CONTRACTS / "facility-state.normal.json").read_text("utf-8")
+        )
+        meta = payload["meta"]
+        facility = payload["facility"]
+        self._base = FacilityStateSnapshot(
+            source=self.name,
+            revision=meta["sources"][0]["revision"],
+            as_of=datetime.fromisoformat(meta["as_of"]),
+            freshness=meta["freshness"],
+            equipment=tuple(
+                EquipmentState(
+                    equipment_id=item["equipment_id"],
+                    revision=item["revision"],
+                    equipment_state=item["equipment_state"],
+                    maintenance_state=item["maintenance_state"],
+                    epistemic_class=item["epistemic_class"],
+                    freshness=item["freshness"],
+                )
+                for item in facility["equipment"]
+            ),
+            lots=tuple(
+                LotState(
+                    lot_id=item["lot_id"],
+                    revision=item["revision"],
+                    lifecycle_state=item["lifecycle_state"],
+                    execution_state=item["execution_state"],
+                    hold_state=item["hold_state"],
+                    route_position=RoutePosition(
+                        route_id=item["route_position"]["route_id"],
+                        visit_id=item["route_position"]["visit_id"],
+                        position=item["route_position"]["position"],
+                        operation_class_id=item["route_position"]["operation_class_id"],
+                    ),
+                    epistemic_class=item["epistemic_class"],
+                    freshness=item["freshness"],
+                )
+                for item in facility["lots"]
+            ),
+        )
+        self.down = False
+        self.freshness: str | None = None
+
+    def read(self, query: FacilityStateQuery) -> FacilityStateSnapshot:
         del query
         if self.down:
             raise SourceUnavailable
@@ -193,11 +259,13 @@ def build(origin: str, dist: Path) -> Any:
     provider = ScriptedIdentityProvider(origin)
     readers = fixture_readers()
     core, twin = readers["manufacturing-core"], readers["digital-twin-service"]
+    facility_reader = FacilityFixtureReader()
     app = create_app(
         manager,
         cookie=CookieSettings(same_site="lax"),
         login=LoginService(provider, logins_store, manager, LoginConfig()),
         overview=OverviewService(core, [twin]),
+        facility_state=FacilityStateService(facility_reader),
     )
 
     @app.get("/__fake-idp/authorize", include_in_schema=False)
@@ -214,6 +282,8 @@ def build(origin: str, dist: Path) -> Any:
         for reader in readers.values():
             reader.down = False
             reader.freshness = None
+        facility_reader.down = False
+        facility_reader.freshness = None
         return {"status": "reset"}
 
     @app.post("/__control/mode/{mode}", include_in_schema=False)
@@ -222,12 +292,16 @@ def build(origin: str, dist: Path) -> Any:
             for reader in readers.values():
                 reader.down = False
                 reader.freshness = None
+            facility_reader.down = False
+            facility_reader.freshness = None
         elif mode == "twin_down":
             twin.down = True
+            facility_reader.down = True
         elif mode == "core_down":
             core.down = True
         elif mode == "twin_stale":
             twin.freshness = "STALE"
+            facility_reader.freshness = "STALE"
         else:
             raise HTTPException(status_code=404)
         return {"status": mode}
