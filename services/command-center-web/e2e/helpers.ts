@@ -47,6 +47,7 @@ export async function signIn(page: Page): Promise<void> {
   await expect(
     page.getByRole("banner").getByText("E2E Operator"),
   ).toBeVisible();
+  await page.getByText("Operator context", { exact: true }).click();
 }
 
 export async function loadOverview(
