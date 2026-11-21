@@ -18,6 +18,22 @@ Do not silently redesign the project.
 
 ---
 
+## 1A. Delivery Mode — Finish Existing WPs First (owner direction, 2026-11-21)
+
+**Implementation-first.** Continue and complete the existing canonical WPs; do not invent a parallel task catalog, extra work packages or speculative scope. Choose the next actionable WP by real dependencies and owner responsibility. Resume partially implemented work before starting a duplicate implementation.
+
+**Sequence.** Finish the currently implementable WP functionality and cross-service integration before expanding the demonstration to the full CHG-080 CRB-F/CRB-M ReferencePlant configuration. CHG-080 remains approved scope; do not cancel it, change its semantics or claim an entire WP DONE when its acceptance depends on that full-scale configuration or final evaluation. Mark such remaining work explicitly pending and advance another unblocked WP. The intent is to postpone scale-out work, not remove it.
+
+**Minimum documentation.** Spend effort on working code, integration and required tests rather than prose. Do not create standalone planning reports, per-slice Markdown status/evidence narratives, duplicate checklists, broad repository audits or cosmetic documentation updates by default. Reuse existing contracts, schemas, code comments, test outputs, PR descriptions and machine-produced artifacts. Write or update the *smallest necessary* documentation only when a real contract/API change, migration, operational instruction, approved change-control requirement, research reproducibility obligation, or canonical DoD gate requires it. Never fabricate or waive required proof.
+
+**Small, continuous delivery.** Inspect only the current WP's relevant files and blockers; implement the smallest complete working slice; run the relevant focused tests and any mandatory integration/security/negative-path checks; merge through the existing technical gates; then immediately take the next unblocked existing WP. Do not run repo-wide audits, broad regressions or unrelated refactors unless a specific failure or acceptance gate requires them.
+
+**Reporting.** Keep coding-agent replies short: WP, implemented behavior, tests/result, remaining blocker or next WP. No lengthy reports, speculative roadmaps, repetitive context summaries or new documentation tasks without an identified need.
+
+These are execution and writing preferences, **not** an exception to canonical scope, architecture, product HITL, security, traceability, required acceptance tests or verified DONE. If a required gate still demands an artifact, satisfy it minimally or report the concrete blocker rather than silently bypassing it.
+
+---
+
 ## 2. Source of Truth
 
 Canonical project decisions live in repository documentation.
@@ -592,13 +608,11 @@ Do not overwrite failed experimental evidence.
 
 Before coding:
 
-1. identify the active WP
-2. read its canonical scope
-3. inspect relevant architecture and contracts
-4. inspect existing implementation
-5. inspect dependencies
-6. state the implementation plan
-7. identify affected tests and evidence
+1. identify the existing canonical WP and check its real START blockers
+2. read only its relevant scope, contracts, and existing code
+3. choose one implementable slice and the smallest adequate verification
+
+Do not write a separate plan or report unless necessary for a concrete architectural decision or blocker.
 
 While coding:
 
@@ -614,13 +628,10 @@ While coding:
 
 After coding:
 
-1. run relevant tests
-2. run negative-path tests where required
-3. inspect failures
-4. update evidence
-5. report exactly what changed
-6. report what was not completed
-7. report any discovered architecture or specification conflict
+1. run focused tests plus any required negative/integration/security checks
+2. fix failures, and preserve mandatory reproducible evidence with the least prose possible
+3. report what works, what remains and any real blocker in a few lines
+4. advance the next unblocked existing WP after the applicable technical merge/DONE gates
 
 ---
 
@@ -791,19 +802,14 @@ Plane itself is management infrastructure and may be stopped during controlled b
 
 ## 23. Response Format for Coding Tasks
 
-For substantial implementation tasks, the coding agent should finish with:
+For implementation tasks, give a brief factual closeout:
 
-    WP:
-    Implemented:
-    Files changed:
-    Tests run:
-    Tests passed:
-    Evidence produced:
-    Known limitations:
-    Spec conflicts:
-    Recommended next action:
+    WP: <ID>
+    Done: <working behavior>
+    Checks: <focused tests and results>
+    Remaining/Next: <actual blocker or next eligible WP>
 
-Do not claim success when required verification has not completed.
+Mention changed files, evidence references, spec conflicts and failed checks only where material. Do not generate a standalone report just to restate the PR. Do not claim success when required verification has not completed.
 
 ---
 
