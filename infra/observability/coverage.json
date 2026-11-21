@@ -9,9 +9,9 @@
       "logging": "PENDING",
       "health": "PENDING",
       "exemption": {
-        "reason": "Created by WP-UI-001 before the standard existed; a browser deployable has no Python helper, so its log and health mapping to cap.log/v1 and cap.health/v1 is agreed with the owner (WP-OBS-001).",
+        "reason": "Created by WP-UI-001 before the standard existed; a browser deployable has no Python helper, so its log and health mapping to cap.log/v1 and cap.health/v1 is agreed with the owner (WP-OBS-001). Reviewed 2026-11-21; remains PENDING through 2026-12-21.",
         "owner": "Yavuz",
-        "expires_on": "2026-11-20"
+        "expires_on": "2026-12-21"
       }
     },
     {
@@ -22,9 +22,9 @@
       "logging": "PENDING",
       "health": "PENDING",
       "exemption": {
-        "reason": "Created by WP-UI-001 with its own structured access log and /healthz; replacing them with configure() and health_report() is agreed with the owner before changing services/operations-bff (WP-OBS-001).",
+        "reason": "Created by WP-UI-001 with its own structured access log and /healthz; replacing them with configure() and health_report() is agreed with the owner before changing services/operations-bff (WP-OBS-001). Reviewed 2026-11-21; remains PENDING through 2026-12-21.",
         "owner": "Yavuz",
-        "expires_on": "2026-11-20"
+        "expires_on": "2026-12-21"
       }
     },
     {
@@ -35,9 +35,9 @@
       "logging": "PENDING",
       "health": "PENDING",
       "exemption": {
-        "reason": "Adoption of configure() and health_report() is agreed with the service owner before changing services/manufacturing-core (WP-OBS-001 slice C/D).",
+        "reason": "Adoption of configure() and health_report() is agreed with the service owner before changing services/manufacturing-core (WP-OBS-001 slice C/D). Reviewed 2026-11-21; remains PENDING through 2026-12-21.",
         "owner": "Yavuz",
-        "expires_on": "2026-11-20"
+        "expires_on": "2026-12-21"
       }
     },
     {
@@ -48,9 +48,9 @@
       "logging": "PENDING",
       "health": "PENDING",
       "exemption": {
-        "reason": "In-memory kernel library (WP-SIM-001) with no process, endpoint or log sink; DOD-WP-06 adoption follows with the simulator service runtime. Exemption confirmed by the platform owner (Yavuz, WP-OBS-001) on 2026-10-25; renewed or closed by 2026-11-20.",
+        "reason": "In-memory kernel library (WP-SIM-001) with no process, endpoint or log sink; DOD-WP-06 adoption follows with the simulator service runtime. Exemption confirmed by the platform owner (Yavuz, WP-OBS-001) on 2026-10-25; Reviewed 2026-11-21; remains PENDING through 2026-12-21.",
         "owner": "Yavuz",
-        "expires_on": "2026-11-20"
+        "expires_on": "2026-12-21"
       }
     },
     {"name": "digital-twin-service", "owner": "Asrın", "runtime": "python", "path": "services/digital-twin-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"},
@@ -71,9 +71,9 @@
       "logging": "PENDING",
       "health": "PENDING",
       "exemption": {
-        "reason": "Offline scheduling library (WP-SCH-001, WP-SCH-002) with no process, endpoint or log sink; adopting configure() and health_report() follows with a scheduler service runtime. Decision of the platform owner (Yavuz, WP-OBS-001) on 2026-10-28; renewed or closed by 2026-11-20.",
+        "reason": "Offline scheduling library (WP-SCH-001, WP-SCH-002) with no process, endpoint or log sink; adopting configure() and health_report() follows with a scheduler service runtime. Decision of the platform owner (Yavuz, WP-OBS-001) on 2026-10-28; Reviewed 2026-11-21; remains PENDING through 2026-12-21.",
         "owner": "Yavuz",
-        "expires_on": "2026-11-20"
+        "expires_on": "2026-12-21"
       }
     },
     {"name": "automation-service", "owner": "Batu", "runtime": "python", "path": "services/automation-service", "logging": "NOT_PRESENT", "health": "NOT_PRESENT"}
