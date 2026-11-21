@@ -32,7 +32,7 @@ BLOCKER = {"owner": "asrin", "wp_id": None, "external_dependency": "Real accepta
 
 
 def coverage(**exemption):
-    data = {"owner": "Yavuz", "expires_on": "2026-11-20"} | exemption
+    data = {"owner": "Yavuz", "expires_on": "2026-12-21"} | exemption
     entry = {"name": "manufacturing-simulator", "exemption": data}
     return json.dumps({"deployables": [entry]}).encode()
 
@@ -83,7 +83,7 @@ def recovery_block(wp, profile, recon, audit_id, producers):
         "owner": "yavuz",
         "path": COVERAGE_PATH,
         "deployable": "manufacturing-simulator",
-        "expires_on": "2026-11-20",
+        "expires_on": "2026-12-21",
     }
     case = {
         "case_id": "DEFER-TEST",
@@ -431,7 +431,7 @@ class RecoveryProofTests(RecoveryBase):
 
     def test_expiry_denies_and_the_diagnosis_is_a_bare_code(self):
         wp, policy, plane, gh = self.fixture()
-        late = dt.date(2026, 11, 21)
+        late = dt.date(2026, 12, 22)
         self.assertEqual(
             self.code(wp, policy, gh, today=late), "RECOVERY_DISPOSITION_EXPIRED"
         )
