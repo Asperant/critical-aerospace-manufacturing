@@ -11,7 +11,7 @@ from collections.abc import Mapping
 from typing import Any
 
 from .postgres_projection import PostgresProjectionStore
-from .projector import AdmissionError, ProjectionEvent, Projector
+from .projector import AdmissionError, ProjectionEvent, ProjectionGap, Projector
 
 
 def decode_projection_event(
@@ -134,7 +134,30 @@ def build_consumer(
         )
         projection_store.apply(connection, projector, projection_event)
 
-    return Consumer(
+    class _TwinConsumer(Consumer):
+        def _apply(self, event: Event, context: DeliveryContext) -> Any:
+            try:
+                return super()._apply(event, context)
+            except ProjectionGap:
+                # The delivery transaction must roll back so the event is NAKed.
+                # Persist the stale marker in a separate transaction afterward.
+                with connect() as connection, connection.transaction():
+                    projection_store.mark_stale(
+                        connection,
+                        decode_projection_event(
+                            json.dumps(event.body).encode(),
+                            expected_world_id=expected_world_id,
+                            expected_branch_id=expected_branch_id,
+                        ),
+                    )
+                    projector.state = projection_store.restore_projector(
+                        connection,
+                        world_id=expected_world_id,
+                        branch_id=expected_branch_id,
+                    ).state
+                raise
+
+    return _TwinConsumer(
         ledger=ledger,
         scope=scope,
         connect=connect,

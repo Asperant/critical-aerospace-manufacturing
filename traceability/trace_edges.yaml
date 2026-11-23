@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: 39ecd2156f818f08a69c11f42684c6a378ccc0bc419af1d58e2a5d55bf437c04
+  sha256: adf59332def466bbbd58d33732f160364919f2800ff4e18fb15a198f464b9e67
 requirements:
   FR-GOV-001:
     meta:
@@ -827,13 +827,13 @@ requirements:
       env: CI + INTEGRATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
+      coverage: IMPLEMENTED
       planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      evidence: EVIDENCE_PENDING
     realization:
-      surface: sequence-gap detector + stale marking
+      surface: sequence-gap detector + persisted stale marking
       deployable: digital-twin-service
-      ref: TBD_BY_IMPLEMENTATION
+      ref: services/operational-twin/src/operational_twin/projector.py; services/operational-twin/src/operational_twin/postgres_projection.py; services/operational-twin/src/operational_twin/nats_consumer.py; services/operational-twin/migrations/0001_twin.sql; tools/demo-runtime/src/cap_demo_runtime/migrate.py; services/operational-twin/tests/test_postgres_projection.py
   FR-TWIN-006:
     meta:
       class: F1
@@ -6423,7 +6423,12 @@ edges:
 - {"from": "FR-TWIN-005", "relation": "DERIVED_FROM", "to": "UI-INV-13", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-005", "relation": "ALLOCATED_TO", "to": "ARCH-TWIN-FRESHNESS", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-005", "relation": "EXPOSED_BY", "to": "Twin Query API (staleness)", "applicability": "PLANNED"}
-- {"from": "FR-TWIN-005", "relation": "REALIZED_BY", "to": "TBD_BY_IMPLEMENTATION", "applicability": "PLANNED"}
+- {"from": "FR-TWIN-005", "relation": "REALIZED_BY", "to": "repo:services/operational-twin/src/operational_twin/projector.py", "applicability": "RECORDED"}
+- {"from": "FR-TWIN-005", "relation": "REALIZED_BY", "to": "repo:services/operational-twin/src/operational_twin/postgres_projection.py", "applicability": "RECORDED"}
+- {"from": "FR-TWIN-005", "relation": "REALIZED_BY", "to": "repo:services/operational-twin/src/operational_twin/nats_consumer.py", "applicability": "RECORDED"}
+- {"from": "FR-TWIN-005", "relation": "REALIZED_BY", "to": "repo:services/operational-twin/migrations/0001_twin.sql", "applicability": "RECORDED"}
+- {"from": "FR-TWIN-005", "relation": "REALIZED_BY", "to": "repo:tools/demo-runtime/src/cap_demo_runtime/migrate.py", "applicability": "RECORDED"}
+- {"from": "FR-TWIN-005", "relation": "REALIZED_BY", "to": "repo:services/operational-twin/tests/test_postgres_projection.py", "applicability": "RECORDED"}
 - {"from": "FR-TWIN-005", "relation": "EXERCISED_IN", "to": "AV-SCEN-07", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-005", "relation": "VERIFIED_BY", "to": "TEST-TWIN-FRESHNESS", "applicability": "PLANNED"}
 - {"from": "FR-TWIN-005", "relation": "MITIGATES", "to": "PERF-R03", "applicability": "PLANNED"}

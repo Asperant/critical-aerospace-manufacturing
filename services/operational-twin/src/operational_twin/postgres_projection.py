@@ -147,6 +147,37 @@ class PostgresProjectionStore:
         )
         connection.execute(
             """
+            DELETE FROM twin.projection_gap
+            WHERE consumer_scope = %s AND world_id = %s AND branch_id = %s
+              AND aggregate_type = %s AND aggregate_id = %s
+              AND required_version <= %s
+            """,
+            (
+                self.consumer_scope,
+                event.world_id,
+                event.branch_id,
+                event.aggregate_type,
+                event.aggregate_id,
+                event.aggregate_version,
+            ),
+        )
+        pending_gap = _fetchone(
+            connection,
+            """
+            SELECT 1 FROM twin.projection_gap
+            WHERE consumer_scope = %s AND world_id = %s AND branch_id = %s
+            LIMIT 1
+            """,
+            (self.consumer_scope, event.world_id, event.branch_id),
+        )
+        if pending_gap is not None:
+            candidate.state.status = "STALE"
+            candidate.state.degraded_reason = "projection gap requires reconciliation"
+        else:
+            candidate.state.status = "FRESH"
+            candidate.state.degraded_reason = None
+        connection.execute(
+            """
             INSERT INTO twin.projection_revision (
                 world_id, branch_id, source_event_id, status
             ) VALUES (%s, %s, %s, %s)
@@ -164,7 +195,77 @@ class PostgresProjectionStore:
             ),
         )
         projector.state = candidate.state
-        return result
+        return ApplyResult(
+            result.outcome,
+            result.event_id,
+            result.source_revision,
+            candidate.state.status,
+        )
+
+    def mark_stale(self, connection: Any, event: ProjectionEvent) -> bool:
+        """Persist an unresolved sequence gap after its delivery transaction rolls back.
+
+        A gap marker must not claim the rejected event as the current source
+        revision. If another delivery closed the gap before this marker obtains
+        the scope lock, the projection is left at that newer state instead.
+        """
+        self._require_transaction(connection)
+        lock_key = json.dumps(
+            [self.consumer_scope, event.world_id, event.branch_id],
+            ensure_ascii=True,
+            separators=(",", ":"),
+        )
+        connection.execute(
+            "SELECT pg_advisory_xact_lock(hashtextextended(%s, 0))", (lock_key,)
+        )
+        row = _fetchone(
+            connection,
+            """
+            SELECT aggregate_version
+            FROM twin.projection_entity
+            WHERE world_id = %s AND branch_id = %s
+              AND aggregate_type = %s AND aggregate_id = %s
+            """,
+            (event.world_id, event.branch_id, event.aggregate_type, event.aggregate_id),
+        )
+        current_version = row[0] if row is not None else 0
+        if event.aggregate_version <= current_version + 1:
+            return False
+
+        connection.execute(
+            """
+            INSERT INTO twin.projection_gap (
+                consumer_scope, world_id, branch_id, aggregate_type,
+                aggregate_id, required_version
+            ) VALUES (%s, %s, %s, %s, %s, %s)
+            ON CONFLICT (
+                consumer_scope, world_id, branch_id, aggregate_type, aggregate_id
+            ) DO UPDATE SET
+                required_version = GREATEST(
+                    twin.projection_gap.required_version, EXCLUDED.required_version
+                ),
+                detected_at = now()
+            """,
+            (
+                self.consumer_scope,
+                event.world_id,
+                event.branch_id,
+                event.aggregate_type,
+                event.aggregate_id,
+                event.aggregate_version,
+            ),
+        )
+        connection.execute(
+            """
+            INSERT INTO twin.projection_revision (
+                world_id, branch_id, source_event_id, status
+            ) VALUES (%s, %s, NULL, 'STALE')
+            ON CONFLICT (world_id, branch_id)
+            DO UPDATE SET status = 'STALE', updated_at = now()
+            """,
+            (event.world_id, event.branch_id),
+        )
+        return True
 
     @staticmethod
     def _require_transaction(connection: Any) -> None:
@@ -254,4 +355,16 @@ class PostgresProjectionStore:
                 state.degraded_reason = "persisted projection requires reconciliation"
             elif state.status == "DEGRADED":
                 state.degraded_reason = "persisted projection is degraded"
+        pending_gap = _fetchone(
+            connection,
+            """
+            SELECT 1 FROM twin.projection_gap
+            WHERE consumer_scope = %s AND world_id = %s AND branch_id = %s
+            LIMIT 1
+            """,
+            (self.consumer_scope, world_id, branch_id),
+        )
+        if pending_gap is not None:
+            state.status = "STALE"
+            state.degraded_reason = "projection gap requires reconciliation"
         return state
