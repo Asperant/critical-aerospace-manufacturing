@@ -41,7 +41,7 @@ jobs:
         run: timeout --signal=TERM 90s projectctl validate
       - name: Requirement catalog lint
         env:
-          CATALOG_BASE: ${{ github.event.before }}
+          CATALOG_BASE: ${{ github.event.before || github.sha }}
         run: timeout --signal=TERM 90s projectctl catalog-lint --base "$CATALOG_BASE"
       - name: Whitespace and repository hygiene
         run: timeout --signal=TERM 90s git diff --check
