@@ -204,7 +204,9 @@ def test_health_reports_disabled_capabilities_truthfully() -> None:
         "facility_state": "UNAVAILABLE",
     }
     bare = Rig(overview=False).client.get("/healthz").json()
-    assert {check["name"]: check["status"] for check in bare["checks"]}["overview"] == "UNAVAILABLE"
+    assert {check["name"]: check["status"] for check in bare["checks"]}[
+        "overview"
+    ] == "UNAVAILABLE"
 
 
 def test_health_is_not_a_browser_contract_operation() -> None:
