@@ -107,3 +107,27 @@ Earlier development runs exposed lint/type issues and a NATS client fetch
 cancellation coroutine warning. Bounded fetch settlement corrected that warning;
 the final test command treats RuntimeWarning as an error. No required CI retry
 loop, test deletion, quarantine or weakened assertion was used.
+
+## Post-merge implementation update — 2026-11-23
+
+This is a technical update to the dated assessment above, not a new owner
+certification. PR #230 (`e5ae179cb0c2ffc37e150bc90898542d6738a1f7`) added a real
+Core outbox → JetStream → durable Twin consumer path. PR #234 added current-head
+assertions that capture the envelope received by Twin and compare its event,
+correlation, causation, trace, world and UTC timestamps with the committed Core
+event.
+
+Exact main `b9ef0c56724f86892c86a205104d0684819e7cdd` passed T1 integration in run
+`45235694349`, including both “Core outbox to durable Twin projection” and
+“Consumer idempotency acceptance (REAL PostgreSQL and JetStream, WP-EVT-003)”.
+Thus the earlier statement that no actual Twin application consumer exists, and
+the claim that no Core→NATS→application-consumer integration evidence exists, are
+superseded for the Twin path only.
+
+The repository still has no corresponding Vision, AI, Scheduler or Automation
+application consumer adoption in this test path. Full RES-DUP-001 protected-effect
+aggregation, Automation retry/restart acceptance, AV-SCEN-05 scenario composition,
+deployed routing readiness and full WP acceptance remain open. The event/effect
+rows in this CI test are integration probes, not accepted protected manufacturing
+execution. No DN readiness, owner certification, DONE or Plane transition is
+claimed.
