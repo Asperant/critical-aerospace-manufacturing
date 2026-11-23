@@ -97,6 +97,30 @@ slot. The WP stays incomplete; no VALIDATING, DONE or deferred-wait claim is mad
 Schema/Python input-language limitations remain as documented in SCHEMA-SLICE.md
 and the package README; this trace edit neither changes nor hides them.
 
+## Later implementation update — 2026-11-23
+
+This update supersedes only the earlier NATS-boundary finding for the current
+main revision. PR #230 (`e5ae179cb0c2ffc37e150bc90898542d6738a1f7`) added the real
+Core transactional-outbox → JetStream publisher and durable Twin consumer path.
+PR #234 added assertions in `ci/integration/test_core_outbox_twin.py` that capture
+the envelope received by that consumer and compare EventID, CorrelationID,
+CausationID, TraceID, WorldID, OccurredAt and ObservedAt with the committed Core
+event. The test therefore verifies preservation across the actual NATS transport;
+it does not infer metadata from the broker configuration.
+
+The PR-head real PostgreSQL 18 + JetStream integration passed in run
+`45234081049` at `9fa0f57cb681dd6433835360f1c29e88f9509eab`. After merge, exact
+main `b9ef0c56724f86892c86a205104d0684819e7cdd` passed T1 integration in run
+`45235694349` and the full project-control regression in run `45235694236`.
+These are source-bound CI results, not sealed EvidenceIDs or whole-WP acceptance.
+
+Remaining boundaries are unchanged: the Operations BFF has no real Core backend
+reader/HTTP propagation binding; no Temporal workflow/activity hooks exist; and
+the string TraceID field is preserved without W3C span-context/link propagation
+(the envelope has no span_id). TEST-OBS-TRACEPROP, persisted formal time evidence,
+downstream adoption, AV-SCEN-01/09/10 and full WP acceptance remain
+NOT_YET_EXECUTED. No DONE or owner-acceptance claim is made.
+
 ## Reconciliation validation
 
 Only canonical trace/catalog validation, scoped reference/change checks and diff
