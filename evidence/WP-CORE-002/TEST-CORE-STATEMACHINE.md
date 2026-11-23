@@ -52,8 +52,9 @@ It covers migration creation/replay, role grants, foreign keys, atomic
 hold/release, retained history, revision preservation, idempotency, duplicate
 hold rejection, target binding and authorization denial.
 
-This workspace had no `CI_PG_DSN` and no `CORE_TEST_DISPOSABLE=1`, so the
-disposable PostgreSQL run was not executed locally. The required command is:
+At the 2026-10-27 evidence capture, this workspace had no `CI_PG_DSN` and no
+`CORE_TEST_DISPOSABLE=1`, so the disposable PostgreSQL run was not executed
+locally. The required command is:
 
 ```text
 CORE_TEST_DISPOSABLE=1 CI_PG_DSN='<disposable-admin-dsn>' \
@@ -67,7 +68,27 @@ executed the disposable PostgreSQL 18 suite and the `Core initial migration and
 persistence` step passed. The same run was later cancelled by the 20-minute
 integration job timeout while installing shared Playwright browsers; therefore
 the push `ci-gate`, PR mergeability, merge SHA and post-merge main validation
-remain unverified.
+remained unverified at that capture.
+
+### Current-main post-merge run — 2026-11-23
+
+At source `main` SHA `d6b7c980223432a5efcd92b8c0c969fc3efb91b4`, the focused
+transition persistence integration suite was run against a disposable,
+loopback-only PostgreSQL 18.6 container. The container was removed after the
+run. Command and result:
+
+```text
+CORE_TEST_DISPOSABLE=1 CI_PG_DSN='<disposable PostgreSQL 18 admin DSN>' \
+  uv run --project ci --locked python -m pytest \
+  -c services/manufacturing-core/pyproject.toml \
+  services/manufacturing-core/tests/persistence/test_transitions_persistence.py \
+  -m integration -q
+3 passed in 2.04s
+```
+
+This verifies the local Core/PostgreSQL migration and transition-persistence
+boundary. Simulator, Scheduler, Automation and full E2E consumer acceptance
+remain outstanding; this run does not claim `INTEGRATION_READY` or `DONE`.
 
 ## Boundary evidence
 
