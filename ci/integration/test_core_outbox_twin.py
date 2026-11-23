@@ -9,7 +9,7 @@ from __future__ import annotations
 import asyncio
 import os
 import uuid
-from collections.abc import Iterator
+from collections.abc import Iterator, Mapping
 from contextlib import suppress
 from datetime import UTC, datetime
 from pathlib import Path
@@ -18,7 +18,8 @@ from typing import LiteralString, cast
 import nats
 import psycopg
 import pytest
-from cap_event_consumer.consumer import DeliveryContext
+from cap_contracts.envelope import EventEnvelope
+from cap_event_consumer.consumer import DeliveryContext, Event
 from cap_event_consumer.jetstream import Binding, JetStreamConsumer
 from cap_event_consumer.ledger import Outcome, ProcessedMessageLedger
 from manufacturing_core.events_v1 import EntityReference, UtcOccurrence
@@ -170,6 +171,18 @@ async def _publish_and_project(dsn: str, nats_url: str) -> None:
             projection_store=store,
             expected_world_id="OUTBOX-TEST-WORLD",
         )
+        received_envelopes: list[EventEnvelope] = []
+        identify = consumer.identify
+
+        def capture_envelope(data: bytes) -> Event:
+            event = identify(data)
+            envelope = event.body.get("envelope")
+            if not isinstance(envelope, Mapping):
+                raise AssertionError("published EVT-002 envelope is missing")
+            received_envelopes.append(EventEnvelope.from_mapping(envelope))
+            return event
+
+        consumer.identify = capture_envelope
         subscription = await JetStreamConsumer.bind(
             js,
             Binding(
@@ -185,6 +198,15 @@ async def _publish_and_project(dsn: str, nats_url: str) -> None:
             ack_timeout=5,
         )
         assert await subscription.receive_once(timeout=10) is Outcome.PROCESSED
+        assert len(received_envelopes) == 1
+        received = received_envelopes[0]
+        assert received.event_id == record.event.event_id
+        assert received.correlation_id == record.event.correlation_id
+        assert received.causation_id == record.event.causation_id
+        assert received.trace_id == record.event.trace_id
+        assert received.world_id == record.event.world_id
+        assert received.occurred_at == record.event.occurred_at.value
+        assert received.observed_at == record.event.observed_at
 
         with connect_dict(dsn) as connection:
             applied = connection.execute(
