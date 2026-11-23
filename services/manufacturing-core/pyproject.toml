@@ -7,9 +7,10 @@ name = "manufacturing-core"
 version = "0.1.0"
 description = "Core-owned canonical manufacturing domain"
 requires-python = ">=3.11"
-dependencies = ["pydantic>=2.7,<3", "cap-observability[otel]"]
+dependencies = ["pydantic>=2.7,<3", "cap-contracts", "cap-observability[otel]"]
 
 [tool.uv.sources]
+cap-contracts = { path = "../../packages/contracts", editable = true }
 cap-observability = { path = "../../packages/observability", editable = true }
 
 [project.optional-dependencies]

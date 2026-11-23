@@ -289,10 +289,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      PYTHONPATH: ci:ci/scripts
+      PYTHONPATH: ci:ci/scripts:packages/contracts/src:packages/event-consumer/src:services/manufacturing-core/src:services/operational-twin/src
       CI_POSTGRES_IMAGE: postgres:18-alpine
       CORE_TEST_DISPOSABLE: "1"
       TWIN_TEST_DISPOSABLE: "1"
+      OUTBOX_TWIN_TEST_DISPOSABLE: "1"
       CORE_STATUS_ARTIFACT: ${{ github.workspace }}/.ci-artifacts/core-migration-status.json
     steps:
       - uses: actions/checkout@v4
@@ -311,6 +312,8 @@ jobs:
         run: uv run --project ci --locked python -m pytest ci/integration -m integration -p pytest_quarantine
       - name: Core initial migration and persistence (real PostgreSQL 18)
         run: uv run --project ci --locked python -m pytest -c services/manufacturing-core/pyproject.toml services/manufacturing-core/tests/persistence -m integration -q -p pytest_quarantine
+      - name: Core outbox to durable Twin projection (real PostgreSQL and JetStream)
+        run: uv run --project ci --locked python -m pytest ci/integration/test_core_outbox_twin.py -m integration -q -p pytest_quarantine
       - name: Upload Core migration status artifact
         if: always()
         uses: actions/upload-artifact@v4
