@@ -116,6 +116,7 @@ def test_temporal_namespace_health_checks_registered_state_over_http() -> None:
     assert "api/v1/namespaces/$$CAP_TEMPORAL_NAMESPACE" in probe[1]
     assert '"state":"NAMESPACE_STATE_REGISTERED"' in probe[1]
     assert "temporal operator namespace describe" not in probe[1]
+    assert SERVICES["temporal-namespace"]["healthcheck"]["timeout"] == "10s"
 
 
 # --------------------------------------------- mfgctl registry (DEP-003) ---
