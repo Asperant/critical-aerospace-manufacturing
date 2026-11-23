@@ -43,6 +43,10 @@ class OutboxPublisher(Protocol):
     def publish(self, event: dict[str, object]) -> None: ...
 
 
+class AsyncOutboxPublisher(Protocol):
+    async def publish(self, record: OutboxRecord) -> object: ...
+
+
 class OutboxRepository:
     def __init__(self, connection: psycopg.Connection[DictRow]) -> None:
         self.connection = connection
@@ -161,6 +165,26 @@ class OutboxRelay:
                 except Exception as error:
                     OutboxRepository(self.connection).mark_failed(
                         record.outbox_id, f"{type(error).__name__}: {error}"
+                    )
+                else:
+                    OutboxRepository(self.connection).mark_published(record.outbox_id)
+                    published += 1
+        return published
+
+    async def publish_pending_async(
+        self, publisher: AsyncOutboxPublisher, *, limit: int = 100
+    ) -> int:
+        """Relay committed events through an async transport after acknowledgement."""
+        with self.connection.transaction():
+            records = OutboxRepository(self.connection).pending(limit=limit)
+        published = 0
+        for record in records:
+            with self.connection.transaction():
+                try:
+                    await publisher.publish(record)
+                except Exception as error:
+                    OutboxRepository(self.connection).mark_failed(
+                        record.outbox_id, type(error).__name__
                     )
                 else:
                     OutboxRepository(self.connection).mark_published(record.outbox_id)

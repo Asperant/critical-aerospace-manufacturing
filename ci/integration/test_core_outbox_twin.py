@@ -24,7 +24,7 @@ from cap_event_consumer.jetstream import Binding, JetStreamConsumer
 from cap_event_consumer.ledger import Outcome, ProcessedMessageLedger
 from manufacturing_core.events_v1 import EntityReference, UtcOccurrence
 from manufacturing_core.events_v2 import LotHeldEventV2, LotHeldPayloadV2
-from manufacturing_core.outbox import OutboxRecord, OutboxRepository
+from manufacturing_core.outbox import OutboxRecord, OutboxRelay, OutboxRepository
 from manufacturing_core.outbox_publisher import JetStreamOutboxPublisher
 from nats.errors import TimeoutError as NatsTimeoutError
 from nats.js.api import DeliverPolicy
@@ -145,20 +145,42 @@ async def _publish_and_project(dsn: str, nats_url: str) -> None:
         with connect_dict(dsn) as connection, connection.transaction():
             OutboxRepository(connection).insert(record)
 
-        # The committed intent is still pending after a simulated relay restart.
-        with connect_dict(dsn) as connection, connection.transaction():
-            pending = OutboxRepository(connection).pending(limit=25)
-        assert [item.outbox_id for item in pending] == [record.outbox_id]
-
         publisher = JetStreamOutboxPublisher(js, stream, subject)
-        first_ack = await publisher.publish(pending[0])
-        # Simulate a process crash after JetStream ACK but before marking the row.
-        restarted_publisher = JetStreamOutboxPublisher(js, stream, subject)
-        retry_ack = await restarted_publisher.publish(pending[0])
-        assert first_ack.seq == retry_ack.seq
 
+        class FailAfterAck:
+            ack_seq: int | None = None
+
+            async def publish(self, outbox_record: OutboxRecord) -> object:
+                ack = await publisher.publish(outbox_record)
+                self.ack_seq = ack.seq
+                raise RuntimeError("simulated relay crash after JetStream ACK")
+
+        # A crash after ACK leaves a retryable row; JetStream deduplicates the
+        # restart by EventID, then the relay marks it published after the next ACK.
+        failed_attempt = FailAfterAck()
+        with connect_dict(dsn) as connection:
+            relay = OutboxRelay(connection)
+            assert await relay.publish_pending_async(failed_attempt, limit=25) == 0
+            with connection.transaction():
+                failed = OutboxRepository(connection).get(record.outbox_id)
+        assert failed is not None
+        assert failed.publication_status == "PENDING"
+        assert failed.attempt_count == 1
+        assert failed.last_error == "RuntimeError"
+        assert failed_attempt.ack_seq is not None
+
+        with connect_dict(dsn) as connection:
+            assert (
+                await OutboxRelay(connection).publish_pending_async(publisher, limit=25)
+                == 1
+            )
         with connect_dict(dsn) as connection, connection.transaction():
-            OutboxRepository(connection).mark_published(record.outbox_id)
+            published = OutboxRepository(connection).get(record.outbox_id)
+        assert published is not None
+        assert published.publication_status == "PUBLISHED"
+        assert published.attempt_count == 1
+        info = await js.stream_info(stream)
+        assert info.state.last_seq == failed_attempt.ack_seq
 
         scope = "twin-outbox-test"
         store = PostgresProjectionStore(scope)
@@ -232,6 +254,7 @@ async def _publish_and_project(dsn: str, nats_url: str) -> None:
         assert revision is not None and revision["status"] == "FRESH"
         assert revision["source_event_id"] == record.event.event_id
         assert outbox is not None and outbox.publication_status == "PUBLISHED"
+        assert outbox.attempt_count == 1
 
         with pytest.raises(NatsTimeoutError):
             await subscription.receive_once(timeout=0.25)
