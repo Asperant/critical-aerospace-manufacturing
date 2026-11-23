@@ -261,7 +261,18 @@ jobs:
         env:
           PYTHONPATH: packages/contracts/src
           CONTRACT_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
-        run: uv run --project ci --locked python -m cap_contracts.ci_gate
+        run: |
+          if [[ -z "${CONTRACT_BASE}" ]] || ! git cat-file -e "${CONTRACT_BASE}^{commit}" 2>/dev/null; then
+            if [[ -n "${GITHUB_BASE_REF:-}" ]]; then
+              CONTRACT_BASE="$(git merge-base HEAD "origin/${GITHUB_BASE_REF}")"
+            elif [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+              CONTRACT_BASE="$(git rev-parse --verify HEAD^ 2>/dev/null)"
+            else
+              CONTRACT_BASE="$(git merge-base HEAD origin/main)"
+            fi
+            echo "Using reachable contract baseline ${CONTRACT_BASE}"
+          fi
+          CONTRACT_BASE="${CONTRACT_BASE}" uv run --project ci --locked python -m cap_contracts.ci_gate
       - name: JSON Schema contracts
         run: uv run --project ci --locked python ci/scripts/check_contracts.py
       - name: Operations BFF v1 contract tests and typing (WP-UI-001)
