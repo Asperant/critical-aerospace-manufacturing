@@ -7,6 +7,7 @@ name = "operational-twin"
 version = "0.1.0"
 description = "Read-only event-derived operational Twin projection"
 requires-python = ">=3.11"
+dependencies = ["psycopg[binary]==3.2.3"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -15,3 +16,4 @@ where = ["src"]
 testpaths = ["tests"]
 pythonpath = ["src", "../../packages/contracts/src", "../../packages/event-consumer/src"]
 addopts = "-p no:cacheprovider"
+markers = ["integration: requires real disposable PostgreSQL"]

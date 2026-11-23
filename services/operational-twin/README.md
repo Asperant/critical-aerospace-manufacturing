@@ -18,16 +18,18 @@ fail-closed `STALE`. Unknown epistemic values are rejected before projection
 state changes.
 
 `migrations/0001_twin.sql` defines the `twin` read model, applied-event ledger,
-and projection revision tables. The SQL is a model/migration artifact only until
-the runtime PostgreSQL binding is supplied by DEP-033.
+and projection revision tables. `PostgresProjectionStore` restores and advances
+that model using the caller-owned transaction, so projection state and the
+EVT-003 delivery ledger commit before ACK. Deployment applies this migration and
+supplies a schema-scoped runtime connection.
 
 ## Runtime boundary
 
-`nats_consumer.py` reuses the EVT-002 envelope validator and exposes an adapter
-for the EVT-003 transaction-owning consumer. Stream, subject, durable and ACK
-settings are explicit inputs; this package does not provision or alter NATS
-durables. Real Core publication and JetStream delivery remain DEP-032/CHG-035
-integration work.
+`nats_consumer.py` reuses the EVT-002 envelope validator and binds the EVT-003
+consumer to `PostgresProjectionStore` in the same caller-owned transaction.
+Stream, subject, durable and ACK settings remain explicit inputs; this package
+does not provision or alter NATS durables. Real Core publication and deployed
+JetStream delivery remain DEP-032/CHG-035 integration work.
 
 ## Recovery
 

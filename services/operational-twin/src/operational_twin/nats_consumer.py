@@ -10,6 +10,7 @@ import json
 from collections.abc import Mapping
 from typing import Any
 
+from .postgres_projection import PostgresProjectionStore
 from .projector import AdmissionError, ProjectionEvent, Projector
 
 
@@ -83,19 +84,30 @@ def build_consumer(
     scope: str,
     connect: Any,
     projector: Projector,
+    projection_store: PostgresProjectionStore,
     expected_world_id: str,
+    expected_branch_id: str = "PRIMARY",
 ):
     """Build the EVT-003 transaction-owning boundary around local projection.
 
     The application supplies the database connection and JetStream binding. The
-    generic consumer owns transaction/ledger/ACK sequencing; this adapter owns
-    world admission and the local projector effect.
+    generic consumer owns transaction/ledger/ACK sequencing; this adapter applies
+    each admitted event to the persisted Twin projection in that same transaction.
     """
     try:
         from cap_event_consumer.consumer import AdmissionError as ConsumerAdmissionError
         from cap_event_consumer.consumer import Consumer, DeliveryContext, Event
     except ImportError as exc:
         raise RuntimeError("EVT-003 consumer primitive unavailable") from exc
+
+    if projection_store.consumer_scope != scope:
+        raise ValueError("projection store and consumer scopes must match")
+    with connect() as connection, connection.transaction():
+        projector.state = projection_store.restore_projector(
+            connection,
+            world_id=expected_world_id,
+            branch_id=expected_branch_id,
+        ).state
 
     def identify(data: bytes) -> Event:
         try:
@@ -109,15 +121,18 @@ def build_consumer(
 
     def admit(_connection: Any, event: Event, _context: DeliveryContext) -> None:
         decode_projection_event(
-            json.dumps(event.body).encode(), expected_world_id=expected_world_id
-        )
-
-    def effect(_connection: Any, event: Event, _context: DeliveryContext) -> None:
-        apply_delivery(
-            projector,
             json.dumps(event.body).encode(),
             expected_world_id=expected_world_id,
+            expected_branch_id=expected_branch_id,
         )
+
+    def effect(connection: Any, event: Event, _context: DeliveryContext) -> None:
+        projection_event = decode_projection_event(
+            json.dumps(event.body).encode(),
+            expected_world_id=expected_world_id,
+            expected_branch_id=expected_branch_id,
+        )
+        projection_store.apply(connection, projector, projection_event)
 
     return Consumer(
         ledger=ledger,

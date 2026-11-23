@@ -1,5 +1,6 @@
 """Read-only Digital Twin projection primitives."""
 
+from .postgres_projection import PostgresProjectionStore
 from .projector import (
     AdmissionError,
     ApplyResult,
@@ -24,6 +25,7 @@ __all__ = [
     "ProjectionGap",
     "ProjectionOrderError",
     "ProjectionState",
+    "PostgresProjectionStore",
     "Projector",
     "SCHEDULING_SNAPSHOT_READ",
     "ReadScopeDenied",

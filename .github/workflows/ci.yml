@@ -158,7 +158,7 @@ jobs:
           uv run --project ci --locked pyright --project services/manufacturing-core/pyrightconfig.json
       - name: Twin local projection tests and typing (WP-TWIN-001)
         run: |
-          uv run --project ci --locked python -m pytest -c services/operational-twin/pyproject.toml services/operational-twin/tests -q -p pytest_quarantine
+          uv run --project ci --locked python -m pytest -c services/operational-twin/pyproject.toml services/operational-twin/tests -m 'not integration' -q -p pytest_quarantine
           uv run --project ci --locked pyright --project services/operational-twin/pyrightconfig.json
       - name: Simulator kernel unit/property tests and typing (WP-SIM-001)
         run: |
@@ -280,6 +280,7 @@ jobs:
       PYTHONPATH: ci:ci/scripts
       CI_POSTGRES_IMAGE: postgres:18-alpine
       CORE_TEST_DISPOSABLE: "1"
+      TWIN_TEST_DISPOSABLE: "1"
       CORE_STATUS_ARTIFACT: ${{ github.workspace }}/.ci-artifacts/core-migration-status.json
     steps:
       - uses: actions/checkout@v4
@@ -305,6 +306,8 @@ jobs:
           name: core-migration-status
           path: ${{ github.workspace }}/.ci-artifacts/core-migration-status.json
           if-no-files-found: error
+      - name: Twin durable projection persistence (real PostgreSQL, WP-TWIN-001)
+        run: uv run --project ci --locked python -m pytest -c services/operational-twin/pyproject.toml services/operational-twin/tests/test_postgres_projection.py -m integration -q -p pytest_quarantine
       - name: Consumer idempotency acceptance (REAL PostgreSQL and JetStream, WP-EVT-003)
         env:
           EVT_TEST_DISPOSABLE: "1"
