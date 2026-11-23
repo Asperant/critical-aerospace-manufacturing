@@ -164,6 +164,45 @@ def test_projection_revision_and_event_ledger_survive_restart(
     assert row is not None and row[0] == 2
 
 
+def test_gap_marker_is_ignored_after_the_missing_revision_wins_the_race(
+    twin_database_dsn: str,
+) -> None:
+    store = PostgresProjectionStore("twin-test-resolved-gap")
+    projector = restore(twin_database_dsn, store, "RACE")
+
+    assert (
+        apply_event(
+            twin_database_dsn,
+            store,
+            projector,
+            event("E-1", 1, world_id="RACE", aggregate_id="LOT-RACE"),
+        )
+        == "PROCESSED"
+    )
+    assert (
+        apply_event(
+            twin_database_dsn,
+            store,
+            projector,
+            event("E-2", 2, world_id="RACE", aggregate_id="LOT-RACE"),
+        )
+        == "PROCESSED"
+    )
+
+    with connect_dict(twin_database_dsn) as connection, connection.transaction():
+        assert (
+            store.mark_stale(
+                connection,
+                event("E-3", 3, world_id="RACE", aggregate_id="LOT-RACE"),
+            )
+            is False
+        )
+
+    caught_up = restore(twin_database_dsn, store, "RACE")
+    assert caught_up.health()["status"] == "FRESH"
+    assert caught_up.health()["source_revision"] == "E-2"
+
+
 def test_world_and_branch_projections_restore_independently(
     twin_database_dsn: str,
 ) -> None:
