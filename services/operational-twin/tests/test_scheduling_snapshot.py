@@ -81,6 +81,45 @@ def test_hidden_oracle_fields_and_shape_drift_fail_closed() -> None:
         api(missing).get_scheduling_snapshot_v1(context(), world_id="PRIMARY")
 
 
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("generated_at", "2026-02-30T08:00:00Z"),
+        ("generated_at", "2026-10-27T08:00:00+03:00"),
+        ("freshness.valid_until", "2026-10-27T08:05:00"),
+        ("lots[0].due_at", "not-a-timestamp"),
+    ],
+)
+def test_invalid_or_non_utc_timestamps_are_rejected(field: str, value: str) -> None:
+    invalid = snapshot()
+    if field == "generated_at":
+        invalid[field] = value
+    elif field == "freshness.valid_until":
+        invalid["freshness"]["valid_until"] = value  # type: ignore[index]
+    else:
+        invalid["lots"][0]["due_at"] = value  # type: ignore[index]
+
+    with pytest.raises(SnapshotQueryError, match="timestamp"):
+        api(invalid).get_scheduling_snapshot_v1(context(), world_id="PRIMARY")
+
+
+def test_utc_timestamps_accept_zero_offset_and_fractional_seconds() -> None:
+    valid = snapshot()
+    valid["generated_at"] = "2026-10-27T08:00:00.25+00:00"
+    valid["freshness"]["valid_until"] = "2026-10-27T08:05:00.5+00:00"  # type: ignore[index]
+    valid["lots"][0]["due_at"] = "2026-10-28T12:00:00.125+00:00"  # type: ignore[index]
+
+    assert api(valid).get_scheduling_snapshot_v1(context(), world_id="PRIMARY") == valid
+
+
+def test_snapshot_freshness_window_must_be_positive() -> None:
+    invalid = snapshot()
+    invalid["freshness"]["valid_until"] = invalid["generated_at"]  # type: ignore[index]
+
+    with pytest.raises(SnapshotQueryError, match="after generated_at"):
+        api(invalid).get_scheduling_snapshot_v1(context(), world_id="PRIMARY")
+
+
 def test_query_api_has_no_command_or_mutation_surface() -> None:
     query = api()
     assert not hasattr(query, "mutate")

@@ -7,15 +7,21 @@ manufacturing state, execute commands, or expose simulator-only Oracle data.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Callable, Mapping
 from copy import deepcopy
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from typing import Any
 
 SCHEDULING_SNAPSHOT_READ = "twin:scheduling-snapshot:read"
 _FRESHNESS_STATUSES = frozenset({"FRESH", "DEGRADED", "STALE"})
 _MAINTENANCE_STATES = frozenset(
     {"AVAILABLE", "PLANNED_MAINTENANCE", "IN_MAINTENANCE", "UNAVAILABLE"}
+)
+_UTC_TIMESTAMP = re.compile(
+    r"([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})"
+    r"(?:\.([0-9]{1,6}))?(Z|[+-]00:00)"
 )
 
 
@@ -42,6 +48,26 @@ def _nonblank(value: Any, field: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise SnapshotQueryError(f"{field}: nonblank string required")
     return value
+
+
+def _utc_timestamp(value: Any, field: str) -> datetime:
+    match = _UTC_TIMESTAMP.fullmatch(value) if isinstance(value, str) else None
+    if match is None:
+        raise SnapshotQueryError(f"{field}: aware UTC timestamp required")
+    year, month, day, hour, minute, second, fraction, _zone = match.groups()
+    try:
+        return datetime(
+            int(year),
+            int(month),
+            int(day),
+            int(hour),
+            int(minute),
+            int(second),
+            int((fraction or "").ljust(6, "0")),
+            tzinfo=UTC,
+        )
+    except ValueError:
+        raise SnapshotQueryError(f"{field}: valid UTC timestamp required") from None
 
 
 def _exact_keys(value: Mapping[str, Any], required: set[str], field: str) -> None:
@@ -73,7 +99,7 @@ def _validate_snapshot(
     if _nonblank(snapshot["world_id"], "world_id") != expected_world_id:
         raise SnapshotQueryError("world_id: query scope mismatch")
     _nonblank(snapshot["snapshot_revision"], "snapshot_revision")
-    _nonblank(snapshot["generated_at"], "generated_at")
+    generated_at = _utc_timestamp(snapshot["generated_at"], "generated_at")
 
     freshness = snapshot["freshness"]
     if not isinstance(freshness, Mapping):
@@ -81,7 +107,9 @@ def _validate_snapshot(
     _exact_keys(freshness, {"status", "valid_until"}, "freshness")
     if freshness["status"] not in _FRESHNESS_STATUSES:
         raise SnapshotQueryError("freshness.status: unsupported status")
-    _nonblank(freshness["valid_until"], "freshness.valid_until")
+    valid_until = _utc_timestamp(freshness["valid_until"], "freshness.valid_until")
+    if valid_until <= generated_at:
+        raise SnapshotQueryError("freshness.valid_until: must be after generated_at")
 
     lots = snapshot["lots"]
     if not isinstance(lots, list):
@@ -106,7 +134,7 @@ def _validate_snapshot(
         _nonblank(lot["revision"], f"{field}.revision")
         if type(lot["priority"]) is not int or lot["priority"] < 0:
             raise SnapshotQueryError(f"{field}.priority: non-negative integer required")
-        _nonblank(lot["due_at"], f"{field}.due_at")
+        _utc_timestamp(lot["due_at"], f"{field}.due_at")
         route = lot["route_position"]
         if not isinstance(route, Mapping):
             raise SnapshotQueryError(f"{field}.route_position: object required")
