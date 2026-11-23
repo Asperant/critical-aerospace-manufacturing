@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import json
 from contextlib import suppress
 from pathlib import Path
 from typing import Any
@@ -9,6 +8,7 @@ from typing import Any
 import nats
 import psycopg
 from manufacturing_core.outbox import OutboxRepository
+from manufacturing_core.outbox_publisher import JetStreamOutboxPublisher
 from psycopg.rows import DictRow, dict_row
 
 from .config import Settings
@@ -32,25 +32,29 @@ async def run() -> None:
     nc = await nats.connect(settings.nats_url)
     js = nc.jetstream()
     await _ensure_stream(js, settings)
+    publisher = JetStreamOutboxPublisher(js, settings.stream, settings.subject)
     Path("/tmp/cap-demo-relay.ready").touch()
     try:
         while True:
             with psycopg.Connection[DictRow].connect(
                 settings.pg_dsn, row_factory=dict_row, connect_timeout=10
             ) as connection:
-                records = OutboxRepository(connection).pending(limit=25)
+                with connection.transaction():
+                    records = OutboxRepository(connection).pending(limit=25)
                 for record in records:
-                    event = record.event.model_dump(mode="json")
-                    envelope = {
-                        key: value for key, value in event.items() if key != "payload"
-                    }
-                    data = json.dumps(
-                        {"envelope": envelope, "payload": event["payload"]},
-                        separators=(",", ":"),
-                    ).encode()
-                    await js.publish(settings.subject, data)
-                    with connection.transaction():
-                        OutboxRepository(connection).mark_published(record.outbox_id)
+                    try:
+                        await publisher.publish(record)
+                    except Exception as error:
+                        with connection.transaction():
+                            OutboxRepository(connection).mark_failed(
+                                record.outbox_id,
+                                f"JetStream publication failed ({type(error).__name__})",
+                            )
+                    else:
+                        with connection.transaction():
+                            OutboxRepository(connection).mark_published(
+                                record.outbox_id
+                            )
             await asyncio.sleep(0.25)
     finally:
         await nc.drain()
