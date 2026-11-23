@@ -8,12 +8,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping
-from typing import Any, LiteralString
-
-from psycopg import Connection
-from psycopg.pq import TransactionStatus
-from psycopg.rows import tuple_row
-from psycopg.types.json import Jsonb
+from typing import Any
 
 from .projector import (
     AdmissionError,
@@ -25,24 +20,29 @@ from .projector import (
 )
 
 
+def _row_values(row: tuple[Any, ...] | Mapping[str, Any]) -> tuple[Any, ...]:
+    return tuple(row.values()) if isinstance(row, Mapping) else row
+
+
 def _fetchone(
-    connection: Connection[Any],
-    query: LiteralString,
+    connection: Any,
+    query: str,
     parameters: tuple[Any, ...],
 ) -> tuple[Any, ...] | None:
-    with connection.cursor(row_factory=tuple_row) as cursor:
+    with connection.cursor() as cursor:
         cursor.execute(query, parameters)
-        return cursor.fetchone()
+        row = cursor.fetchone()
+        return _row_values(row) if row is not None else None
 
 
 def _fetchall(
-    connection: Connection[Any],
-    query: LiteralString,
+    connection: Any,
+    query: str,
     parameters: tuple[Any, ...],
 ) -> list[tuple[Any, ...]]:
-    with connection.cursor(row_factory=tuple_row) as cursor:
+    with connection.cursor() as cursor:
         cursor.execute(query, parameters)
-        return cursor.fetchall()
+        return [_row_values(row) for row in cursor.fetchall()]
 
 
 class PostgresProjectionStore:
@@ -55,7 +55,7 @@ class PostgresProjectionStore:
 
     def restore_projector(
         self,
-        connection: Connection[Any],
+        connection: Any,
         *,
         world_id: str,
         branch_id: str = "PRIMARY",
@@ -66,7 +66,7 @@ class PostgresProjectionStore:
 
     def apply(
         self,
-        connection: Connection[Any],
+        connection: Any,
         projector: Projector,
         event: ProjectionEvent,
     ) -> ApplyResult:
@@ -125,7 +125,7 @@ class PostgresProjectionStore:
             INSERT INTO twin.projection_entity (
                 aggregate_type, aggregate_id, world_id, branch_id,
                 aggregate_version, state, source_event_id, source_revision
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s::jsonb, %s, %s)
             ON CONFLICT (world_id, branch_id, aggregate_type, aggregate_id)
             DO UPDATE SET
                 aggregate_version = EXCLUDED.aggregate_version,
@@ -140,7 +140,7 @@ class PostgresProjectionStore:
                 event.world_id,
                 event.branch_id,
                 event.aggregate_version,
-                Jsonb(entity),
+                json.dumps(entity),
                 entity["source_event_id"],
                 entity["source_revision"],
             ),
@@ -167,13 +167,11 @@ class PostgresProjectionStore:
         return result
 
     @staticmethod
-    def _require_transaction(connection: Connection[Any]) -> None:
-        if connection.info.transaction_status != TransactionStatus.INTRANS:
+    def _require_transaction(connection: Any) -> None:
+        if connection.info.transaction_status.name != "INTRANS":
             raise ValueError("projection persistence requires an active transaction")
 
-    def _check_replay_identity(
-        self, connection: Connection[Any], event: ProjectionEvent
-    ) -> None:
+    def _check_replay_identity(self, connection: Any, event: ProjectionEvent) -> None:
         row = _fetchone(
             connection,
             """
@@ -205,7 +203,7 @@ class PostgresProjectionStore:
 
     def _load_state(
         self,
-        connection: Connection[Any],
+        connection: Any,
         world_id: str,
         branch_id: str,
     ) -> ProjectionState:
