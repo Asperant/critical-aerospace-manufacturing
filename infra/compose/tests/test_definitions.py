@@ -110,6 +110,14 @@ def test_stack_script_knows_the_canonical_profiles() -> None:
     assert "--wait" in script and "add-mask" in script and "smoke)" in script
 
 
+def test_temporal_namespace_health_checks_registered_state_over_http() -> None:
+    probe = SERVICES["temporal-namespace"]["healthcheck"]["test"]
+    assert probe[0] == "CMD-SHELL"
+    assert "api/v1/namespaces/$$CAP_TEMPORAL_NAMESPACE" in probe[1]
+    assert '"state":"NAMESPACE_STATE_REGISTERED"' in probe[1]
+    assert "temporal operator namespace describe" not in probe[1]
+
+
 # --------------------------------------------- mfgctl registry (DEP-003) ---
 
 REPO = HERE.parents[1]
