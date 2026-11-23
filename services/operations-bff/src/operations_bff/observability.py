@@ -1,22 +1,23 @@
-"""Structured access logging with correlation ids, and the health surface body.
+"""Standard access telemetry, correlation ids, and process health reporting.
 
-One JSON object per request on the ``operations_bff.access`` logger: method,
-route template, operation, status, outcome, duration and the correlation id that
-is also returned to the caller and passed to every read port. Query strings,
-cookies, headers and bodies are never logged.
+Only method, route template, operation, status, outcome, duration and the
+correlation id are logged. Query strings, cookies, headers and bodies are never
+logged.
 """
 
 from __future__ import annotations
 
-import json
 import logging
-import sys
 import uuid
-from typing import Any, TextIO
+from typing import Any
+
+from cap_observability.health import Check, health_report
+from cap_observability.telemetry import resource_from_env
 
 ACCESS_LOGGER = "operations_bff.access"
 CORRELATION_HEADER = "X-Correlation-Id"
 SERVICE = "operations-bff"
+SERVICE_VERSION = "0.1.0"
 
 
 def new_correlation_id() -> str:
@@ -55,34 +56,62 @@ def access_record(
 
 def log_access(record: dict[str, Any]) -> None:
     logging.getLogger(ACCESS_LOGGER).info(
-        json.dumps(record, sort_keys=True, separators=(",", ":"))
+        "HTTP request",
+        extra={
+            "event_name": "http.request",
+            "correlation_id": record["correlation_id"],
+            "attributes": {
+                key: value
+                for key, value in record.items()
+                if key not in {"event", "service", "correlation_id"}
+            },
+        },
     )
 
 
-def configure_access_log(stream: TextIO | None = None) -> None:
-    """Send access records to stdout as bare JSON lines (idempotent)."""
+def configure_access_log() -> None:
+    """Route access records through the shared root telemetry handlers."""
     logger = logging.getLogger(ACCESS_LOGGER)
-    if any(getattr(h, "_operations_bff", False) for h in logger.handlers):
-        return
-    handler = logging.StreamHandler(stream or sys.stdout)
-    handler.setFormatter(logging.Formatter("%(message)s"))
-    handler._operations_bff = True  # type: ignore[attr-defined]
-    logger.addHandler(handler)
     logger.setLevel(logging.INFO)
-    logger.propagate = False
+    logger.propagate = True
 
 
 def health_body(
-    *, login: bool, overview: bool, facility_state: bool = False
+    *,
+    environment: str,
+    login: bool,
+    overview: bool,
+    facility_state: bool = False,
+    correlation_id: str | None = None,
 ) -> dict[str, Any]:
-    """Process and configuration health. It makes no backend or provider call."""
-    return {
-        "service": SERVICE,
-        "status": "ok",
-        "capabilities": {
-            "session": "ready",
-            "login": "enabled" if login else "disabled",
-            "overview": "enabled" if overview else "disabled",
-            "facility_state": "enabled" if facility_state else "disabled",
-        },
-    }
+    """Standard process and capability health; makes no backend/provider call."""
+    checks = [Check("session", "readiness", "REQUIRED", "READY")]
+    checks.extend(
+        Check(
+            name,
+            "capability",
+            "OPTIONAL",
+            "READY" if enabled else "UNAVAILABLE",
+            detail="enabled" if enabled else "disabled",
+        )
+        for name, enabled in (
+            ("login", login),
+            ("overview", overview),
+            ("facility_state", facility_state),
+        )
+    )
+    return health_report(
+        SERVICE,
+        environment,
+        checks,
+        correlation_id=correlation_id,
+    )
+
+
+def health_environment() -> str:
+    """Return the same validated environment identity used by telemetry."""
+    import os
+
+    return resource_from_env(SERVICE, SERVICE_VERSION, os.environ)[
+        "deployment.environment.name"
+    ]

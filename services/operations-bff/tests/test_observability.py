@@ -7,9 +7,12 @@ import logging
 import re
 from collections.abc import Iterator
 from datetime import UTC, datetime
+from io import StringIO
 from typing import Any
 
 import pytest
+from cap_observability.standard import check_health_report, check_log_lines
+from cap_observability.telemetry import configure
 from fakes_overview import from_fixture
 from fastapi.testclient import TestClient
 from operations_bff.api import create_app
@@ -20,6 +23,8 @@ from operations_bff.observability import (
     access_record,
     configure_access_log,
     health_body,
+    health_environment,
+    log_access,
     outcome_of,
 )
 from operations_bff.overview import OverviewService
@@ -54,10 +59,18 @@ class Rig:
 class Capture(logging.Handler):
     def __init__(self) -> None:
         super().__init__(logging.INFO)
-        self.lines: list[str] = []
+        self.records: list[logging.LogRecord] = []
 
     def emit(self, record: logging.LogRecord) -> None:
-        self.lines.append(record.getMessage())
+        self.records.append(record)
+
+    @property
+    def lines(self) -> list[str]:
+        return [
+            record.getMessage()
+            + json.dumps(getattr(record, "attributes", {}), sort_keys=True)
+            for record in self.records
+        ]
 
 
 @pytest.fixture
@@ -72,7 +85,15 @@ def caplog() -> Iterator[Capture]:
 
 
 def records(captured: Capture) -> list[dict[str, Any]]:
-    return [json.loads(line) for line in captured.lines]
+    return [
+        {
+            "event": "http_request",
+            "service": "operations-bff",
+            **getattr(record, "attributes", {}),
+            "correlation_id": getattr(record, "correlation_id", None),
+        }
+        for record in captured.records
+    ]
 
 
 def test_every_request_logs_one_structured_record(
@@ -157,29 +178,33 @@ def test_health_surface_needs_no_session_and_makes_no_backend_call() -> None:
     response = rig.client.get("/healthz")
     assert response.status_code == 200
     assert response.headers["cache-control"] == "no-store"
-    assert response.json() == {
-        "service": "operations-bff",
-        "status": "ok",
-        "capabilities": {
-            "session": "ready",
-            "login": "disabled",
-            "overview": "enabled",
-            "facility_state": "disabled",
-        },
-    }
+    health = response.json()
+    assert check_health_report(health) == []
+    assert health["schema"] == "cap.health/v1"
+    assert health["service"] == "operations-bff"
+    assert health["environment"] == health_environment()
+    assert health["status"] == "READY" and health["live"] is True
+    assert health["correlation_id"] == response.headers[CORRELATION_HEADER]
+    checks = {check["name"]: check for check in health["checks"]}
+    assert checks["session"]["status"] == "READY"
+    assert checks["login"]["status"] == "UNAVAILABLE"
+    assert checks["overview"]["status"] == "READY"
+    assert checks["facility_state"]["status"] == "UNAVAILABLE"
     assert rig.core.queries == [] and rig.twin.queries == []
     assert rig.client.post("/healthz").status_code == 405
 
 
 def test_health_reports_disabled_capabilities_truthfully() -> None:
-    assert health_body(login=True, overview=False)["capabilities"] == {
-        "session": "ready",
-        "login": "enabled",
-        "overview": "disabled",
-        "facility_state": "disabled",
+    report = health_body(environment="test", login=True, overview=False)
+    assert check_health_report(report) == []
+    assert {check["name"]: check["status"] for check in report["checks"]} == {
+        "session": "READY",
+        "login": "READY",
+        "overview": "UNAVAILABLE",
+        "facility_state": "UNAVAILABLE",
     }
     bare = Rig(overview=False).client.get("/healthz").json()
-    assert bare["capabilities"]["overview"] == "disabled"
+    assert {check["name"]: check["status"] for check in bare["checks"]}["overview"] == "UNAVAILABLE"
 
 
 def test_health_is_not_a_browser_contract_operation() -> None:
@@ -214,5 +239,43 @@ def test_access_log_configuration_is_idempotent() -> None:
     logger.handlers[:] = []
     configure_access_log()
     configure_access_log()
-    assert len(logger.handlers) == 1
-    assert logger.propagate is False
+    assert logger.handlers == []
+    assert logger.propagate is True
+
+
+def test_access_logs_use_the_shared_cap_log_standard() -> None:
+    stream = StringIO()
+    telemetry = configure(
+        "operations-bff",
+        "0.1.0",
+        environ={"CAP_ENVIRONMENT": "bff-test", "CAP_ENVIRONMENT_CLASS": "LOCAL"},
+        stream=stream,
+    )
+    try:
+        log_access(
+            access_record(
+                method="GET",
+                route="/v1/session",
+                operation_id="getSession",
+                status=200,
+                duration_ms=1.5,
+                correlation_id="0123456789abcdef0123456789abcdef",
+            )
+        )
+    finally:
+        telemetry.shutdown()
+    (line,) = stream.getvalue().splitlines()
+    assert check_log_lines([line]) == []
+    record = json.loads(line)
+    assert record["event_name"] == "http.request"
+    assert record["service"] == "operations-bff"
+    assert record["environment"] == "bff-test"
+    assert record["correlation_id"] == "0123456789abcdef0123456789abcdef"
+    assert record["attributes"] == {
+        "method": "GET",
+        "route": "/v1/session",
+        "operation_id": "getSession",
+        "status": 200,
+        "outcome": "success",
+        "duration_ms": 1.5,
+    }

@@ -27,6 +27,7 @@ from .observability import (
     CORRELATION_HEADER,
     access_record,
     health_body,
+    health_environment,
     log_access,
     new_correlation_id,
 )
@@ -118,6 +119,7 @@ def create_app(
     lifespan: Lifespan[FastAPI] | None = None,
     overview: OverviewService | None = None,
     facility_state: FacilityStateService | None = None,
+    health_environment_id: str | None = None,
 ) -> FastAPI:
     if not post_login_redirect.startswith("/") or post_login_redirect.startswith("//"):
         raise ValueError("post_login_redirect must be a same-origin absolute path")
@@ -126,6 +128,7 @@ def create_app(
 
     app.state.sessions = manager
     app.state.clock = clock
+    environment_id = health_environment_id or health_environment()
 
     @app.middleware("http")
     async def observe(  # pyright: ignore[reportUnusedFunction]
@@ -166,13 +169,15 @@ def create_app(
         )
 
     @app.get("/healthz")
-    def healthz() -> JSONResponse:  # pyright: ignore[reportUnusedFunction]
+    def healthz(request: Request) -> JSONResponse:  # pyright: ignore[reportUnusedFunction]
         # Operational surface, not part of the browser contract.
         return JSONResponse(
             health_body(
+                environment=environment_id,
                 login=login is not None,
                 overview=overview is not None,
                 facility_state=facility_state is not None,
+                correlation_id=correlation_id_of(request),
             ),
             headers={"Cache-Control": "no-store"},
         )

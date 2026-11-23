@@ -12,6 +12,7 @@ from urllib.parse import parse_qs, urlparse
 import httpx
 import pytest
 import test_oidc as oidc_helpers
+from cap_observability.standard import check_health_report
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from operations_bff.composition import (
@@ -74,6 +75,20 @@ def test_valid_environment_builds_settings_and_an_app() -> None:
     app, provider = wired()
     assert isinstance(app, FastAPI)
     assert provider.calls == []  # building never contacts the provider
+
+
+def test_composed_app_uses_the_configured_telemetry_environment(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("CAP_ENVIRONMENT", "bff-demo-test")
+    monkeypatch.setenv("CAP_ENVIRONMENT_CLASS", "DEMO")
+    monkeypatch.setenv("CAP_RELEASE_ID", "test-0.1.0")
+    app, _ = wired()
+    with TestClient(app, base_url="https://cc.invalid") as browser:
+        response = browser.get("/healthz")
+    assert response.status_code == 200
+    assert response.json()["environment"] == "bff-demo-test"
+    assert check_health_report(response.json()) == []
 
 
 @pytest.mark.parametrize("name", REQUIRED)
