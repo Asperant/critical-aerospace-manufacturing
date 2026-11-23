@@ -384,7 +384,9 @@ def test_health_fails_closed_when_a_required_table_is_unavailable(
                         LotTraceRequest(world_id="W", lot_id="L"),
                         correlation_id="failed-query",
                     )
-                assert getattr(caplog.records[-1], "attributes", {})["outcome"] == "FAILED"
+                assert (
+                    getattr(caplog.records[-1], "attributes", {})["outcome"] == "FAILED"
+                )
         finally:
             admin.execute(
                 "ALTER TABLE core.lineage_lot_unavailable RENAME TO lineage_lot"
