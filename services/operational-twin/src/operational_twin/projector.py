@@ -128,7 +128,9 @@ def _set_entity(state: ProjectionState, event: ProjectionEvent, **fields: Any) -
         aggregate_id=event.aggregate_id,
         aggregate_version=event.aggregate_version,
         source_event_id=event.event_id,
-        source_revision=event.payload.get("source_revision", event.event_id),
+        source_revision=event.payload.get(
+            "source_revision", event.payload.get("lot_revision", event.event_id)
+        ),
         epistemic_class=epistemic_class,
     )
     state.entities[key] = current
