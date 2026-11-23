@@ -90,9 +90,7 @@ def test_hidden_oracle_fields_and_shape_drift_fail_closed() -> None:
         ("lots[0].due_at", "not-a-timestamp"),
     ],
 )
-def test_invalid_or_non_utc_timestamps_are_rejected(
-    field: str, value: str
-) -> None:
+def test_invalid_or_non_utc_timestamps_are_rejected(field: str, value: str) -> None:
     invalid = snapshot()
     if field == "generated_at":
         invalid[field] = value

@@ -109,9 +109,7 @@ def _validate_snapshot(
         raise SnapshotQueryError("freshness.status: unsupported status")
     valid_until = _utc_timestamp(freshness["valid_until"], "freshness.valid_until")
     if valid_until <= generated_at:
-        raise SnapshotQueryError(
-            "freshness.valid_until: must be after generated_at"
-        )
+        raise SnapshotQueryError("freshness.valid_until: must be after generated_at")
 
     lots = snapshot["lots"]
     if not isinstance(lots, list):
