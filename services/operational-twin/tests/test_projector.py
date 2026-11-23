@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 from operational_twin import (
     ProjectionEvent,
@@ -50,6 +52,56 @@ def test_production_projection_is_traceable_and_read_only() -> None:
     assert query["epistemic_class"] == "OBSERVED"
     assert query["freshness"] == "FRESH"
     assert not hasattr(projector, "mutate")
+
+
+def test_core_lot_revision_is_preserved_from_registered_event_fixture() -> None:
+    import json
+
+    fixture_path = (
+        Path(__file__).parents[2]
+        / "manufacturing-core/contracts/v1/lot-held.v2.twin.json"
+    )
+    payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+    event_id = "CORE-EVENT-7"
+    wire = {
+        "envelope": {
+            "event_id": event_id,
+            "event_type": payload["event_type"],
+            "schema_version": 1,
+            "producer": "manufacturing-core",
+            "world_id": "PRIMARY",
+            "correlation_id": "CORR-7",
+            "causation_id": None,
+            "trace_id": "TRACE-7",
+            "occurred_at": {"clock": "UTC", "value": "2026-01-01T00:00:00Z"},
+            "observed_at": "2026-01-01T00:00:01Z",
+            "entity_refs": [
+                {
+                    "entity_type": payload["aggregate_type"],
+                    "id": payload["aggregate_id"],
+                    "revision": payload["lot_revision"],
+                }
+            ],
+        },
+        "payload": payload,
+    }
+    state = ProjectionState("PRIMARY")
+    state.aggregate_revisions[("Lot", payload["aggregate_id"])] = (
+        payload["aggregate_version"] - 1
+    )
+    projector = Projector(state)
+
+    result = apply_delivery(
+        projector,
+        json.dumps(wire).encode(),
+        expected_world_id="PRIMARY",
+    )
+
+    assert result.outcome == "PROCESSED"
+    projected = projector.query("Lot", payload["aggregate_id"])
+    assert projected is not None
+    assert projected["source_event_id"] == event_id
+    assert projected["source_revision"] == payload["lot_revision"]
 
 
 def test_duplicate_is_idempotent() -> None:
