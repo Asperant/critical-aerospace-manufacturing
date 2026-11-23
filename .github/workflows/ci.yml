@@ -45,7 +45,7 @@ jobs:
           persist-credentials: false
       - id: scope
         env:
-          BASE_SHA: ${{ github.event.before || github.event.pull_request.base.sha }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || (github.ref == 'refs/heads/main' && github.event.before) || '' }}
           HEAD_SHA: ${{ github.sha }}
         run: |
           python3 - <<'PY'
