@@ -20,7 +20,7 @@ services:
     volumes:
       - openobserve-data:/data
     ports:
-      - "127.0.0.1:${O2_HTTP_PORT:-55080}:5080"
+      - "127.0.0.1:${O2_HTTP_PORT-55080}:5080"
     deploy:
       resources:
         limits:
@@ -38,9 +38,9 @@ services:
     volumes:
       - ./otel-collector.yaml:/etc/otelcol/config.yaml:ro
     ports:
-      - "127.0.0.1:${OTLP_GRPC_PORT:-54317}:4317"
-      - "127.0.0.1:${OTLP_HTTP_PORT:-54318}:4318"
-      - "127.0.0.1:${OTEL_HEALTH_PORT:-53133}:13133"
+      - "127.0.0.1:${OTLP_GRPC_PORT-54317}:4317"
+      - "127.0.0.1:${OTLP_HTTP_PORT-54318}:4318"
+      - "127.0.0.1:${OTEL_HEALTH_PORT-53133}:13133"
     depends_on:
       - openobserve
     deploy:

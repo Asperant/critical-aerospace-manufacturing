@@ -21,10 +21,20 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 COMPOSE=(docker compose -f "${HERE}/compose.yaml")
 STATE_DIR="${CAP_OBS_STATE_DIR:-${XDG_STATE_HOME:-${HOME}/.local/state}/cap-observability}"
 CREDENTIALS="${STATE_DIR}/credentials.env"
-O2_HTTP_PORT="${O2_HTTP_PORT:-55080}"
-OTLP_GRPC_PORT="${OTLP_GRPC_PORT:-54317}"
-OTLP_HTTP_PORT="${OTLP_HTTP_PORT:-54318}"
-OTEL_HEALTH_PORT="${OTEL_HEALTH_PORT:-53133}"
+# Keep predictable defaults for local development. Fresh CI runners instead
+# ask Docker to allocate loopback-only ephemeral ports, avoiding collisions
+# with other services on shared runners.
+if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then
+  O2_HTTP_PORT="${O2_HTTP_PORT-}"
+  OTLP_GRPC_PORT="${OTLP_GRPC_PORT-}"
+  OTLP_HTTP_PORT="${OTLP_HTTP_PORT-}"
+  OTEL_HEALTH_PORT="${OTEL_HEALTH_PORT-}"
+else
+  O2_HTTP_PORT="${O2_HTTP_PORT:-55080}"
+  OTLP_GRPC_PORT="${OTLP_GRPC_PORT:-54317}"
+  OTLP_HTTP_PORT="${OTLP_HTTP_PORT:-54318}"
+  OTEL_HEALTH_PORT="${OTEL_HEALTH_PORT:-53133}"
+fi
 CAP_OBS_UID="${CAP_OBS_UID:-$(id -u)}"
 CAP_OBS_GID="${CAP_OBS_GID:-$(id -g)}"
 export O2_HTTP_PORT OTLP_GRPC_PORT OTLP_HTTP_PORT OTEL_HEALTH_PORT CAP_OBS_UID CAP_OBS_GID
@@ -122,12 +132,30 @@ wait_for() {
   echo "${name} healthy"
 }
 
+resolve_port() {
+  local service="$1" container_port="$2" configured="$3" mapped
+  mapped="$("${COMPOSE[@]}" port "${service}" "${container_port}" 2>/dev/null | head -n 1)" || mapped=""
+  if [[ -n "${mapped}" ]]; then
+    printf '%s\n' "${mapped##*:}"
+  else
+    printf '%s\n' "${configured}"
+  fi
+}
+
+resolve_ports() {
+  O2_HTTP_PORT="$(resolve_port openobserve 5080 "${O2_HTTP_PORT:-55080}")"
+  OTLP_GRPC_PORT="$(resolve_port otel-collector 4317 "${OTLP_GRPC_PORT:-54317}")"
+  OTLP_HTTP_PORT="$(resolve_port otel-collector 4318 "${OTLP_HTTP_PORT:-54318}")"
+  OTEL_HEALTH_PORT="$(resolve_port otel-collector 13133 "${OTEL_HEALTH_PORT:-53133}")"
+}
+
 case "${1:-}" in
   up)
     load_credentials
     mask_in_ci
     ensure_images
     "${COMPOSE[@]}" up --detach --pull never
+    resolve_ports
     wait_for openobserve "http://127.0.0.1:${O2_HTTP_PORT}/healthz"
     wait_for otel-collector "http://127.0.0.1:${OTEL_HEALTH_PORT}/"
     "${COMPOSE[@]}" images --format json 2>/dev/null \
@@ -146,6 +174,7 @@ case "${1:-}" in
     ;;
   env)
     load_credentials
+    resolve_ports
     echo "O2_URL=http://127.0.0.1:${O2_HTTP_PORT}"
     echo "OTLP_HTTP_URL=http://127.0.0.1:${OTLP_HTTP_PORT}"
     echo "OTLP_GRPC_URL=http://127.0.0.1:${OTLP_GRPC_PORT}"
@@ -162,6 +191,7 @@ case "${1:-}" in
     ;;
   dashboards)
     load_credentials
+    resolve_ports
     O2_URL="http://127.0.0.1:${O2_HTTP_PORT}" python3 "${HERE}/dashboards.py" import
     ;;
   *)
