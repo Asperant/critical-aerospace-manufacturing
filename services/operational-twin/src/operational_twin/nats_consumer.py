@@ -158,8 +158,12 @@ def build_consumer(
                 raise
 
     return _TwinConsumer(
-        ledger=ledger, scope=scope, connect=connect, admit=admit,
-        effect=effect, identify=identify,
+        ledger=ledger,
+        scope=scope,
+        connect=connect,
+        admit=admit,
+        effect=effect,
+        identify=identify,
     )
 
 

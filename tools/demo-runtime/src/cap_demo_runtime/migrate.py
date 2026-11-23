@@ -137,9 +137,9 @@ def _run_once() -> None:
                 )
             )
         connection.execute(
-            sql.SQL("GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE twin.{} TO {}").format(
-                sql.Identifier("projection_gap"), sql.Identifier(twin_runtime)
-            )
+            sql.SQL(
+                "GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE twin.{} TO {}"
+            ).format(sql.Identifier("projection_gap"), sql.Identifier(twin_runtime))
         )
         connection.execute(
             sql.SQL("CREATE SCHEMA IF NOT EXISTS {} AUTHORIZATION {}").format(

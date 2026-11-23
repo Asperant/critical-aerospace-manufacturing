@@ -53,7 +53,11 @@ def twin_database_dsn() -> Iterator[str]:
             for statement in consumer_migration.split(";\n"):
                 if statement.strip():
                     connection.execute(
-                        sql.SQL(cast(LiteralString, statement.format(schema="twin_consumer")))
+                        sql.SQL(
+                            cast(
+                                LiteralString, statement.format(schema="twin_consumer")
+                            )
+                        )
                     )
         yield dsn
     finally:
@@ -216,7 +220,11 @@ def _wire_event(
                 "occurred_at": {"clock": "UTC", "value": "2026-01-01T00:00:00Z"},
                 "observed_at": "2026-01-01T00:00:01Z",
                 "entity_refs": [
-                    {"entity_type": "Lot", "id": aggregate_id, "revision": f"CORE-{version}"}
+                    {
+                        "entity_type": "Lot",
+                        "id": aggregate_id,
+                        "revision": f"CORE-{version}",
+                    }
                 ],
             },
             "payload": {
@@ -278,9 +286,7 @@ def test_consumer_persists_gap_staleness_until_the_missing_event_arrives(
         asyncio.run(consumer.handle(later_gap, context))
     assert later_gap.naked and not later_gap.acked
 
-    unrelated = _Delivery(
-        _wire_event("E-OTHER", 1, aggregate_id="LOT-OTHER")
-    )
+    unrelated = _Delivery(_wire_event("E-OTHER", 1, aggregate_id="LOT-OTHER"))
     assert asyncio.run(consumer.handle(unrelated, context)) == Outcome.PROCESSED
     assert projector.health()["status"] == "STALE"
 
@@ -336,7 +342,9 @@ def test_initial_gap_persists_without_fabricating_a_source_revision(
     assert asyncio.run(consumer.handle(first, context)) == Outcome.PROCESSED
     assert restore(twin_database_dsn, store, "EMPTY").health()["status"] == "STALE"
 
-    recovered = _Delivery(_wire_event("E-2", 2, world_id="EMPTY", aggregate_id="LOT-FIRST"))
+    recovered = _Delivery(
+        _wire_event("E-2", 2, world_id="EMPTY", aggregate_id="LOT-FIRST")
+    )
     assert asyncio.run(consumer.handle(recovered, context)) == Outcome.PROCESSED
     fresh = restore(twin_database_dsn, store, "EMPTY")
     assert fresh.health()["status"] == "FRESH"
