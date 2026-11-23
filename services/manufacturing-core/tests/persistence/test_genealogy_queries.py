@@ -339,10 +339,10 @@ def test_correlated_logs(
             LotTraceRequest(world_id=h.world_id, lot_id="FINAL"),
             correlation_id="genealogy-test",
         )
-    log = json.loads(caplog.records[-1].message)
-    assert log["correlation_id"] == "genealogy-test"
-    assert log["operation"] == "genealogy.lot"
-    assert log["outcome"] == "SUCCESS"
+    record = caplog.records[-1]
+    assert record.correlation_id == "genealogy-test"
+    assert record.attributes["operation"] == "genealogy.lot"
+    assert record.attributes["outcome"] == "SUCCESS"
     assert "ROOT" not in caplog.text
 
 
@@ -383,7 +383,7 @@ def test_health_fails_closed_when_a_required_table_is_unavailable(
                         LotTraceRequest(world_id="W", lot_id="L"),
                         correlation_id="failed-query",
                     )
-                assert json.loads(caplog.records[-1].message)["outcome"] == "FAILED"
+                assert caplog.records[-1].attributes["outcome"] == "FAILED"
         finally:
             admin.execute(
                 "ALTER TABLE core.lineage_lot_unavailable RENAME TO lineage_lot"
