@@ -103,6 +103,15 @@ def test_invalid_or_non_utc_timestamps_are_rejected(field: str, value: str) -> N
         api(invalid).get_scheduling_snapshot_v1(context(), world_id="PRIMARY")
 
 
+def test_utc_timestamps_accept_zero_offset_and_fractional_seconds() -> None:
+    valid = snapshot()
+    valid["generated_at"] = "2026-10-27T08:00:00.25+00:00"
+    valid["freshness"]["valid_until"] = "2026-10-27T08:05:00.5+00:00"  # type: ignore[index]
+    valid["lots"][0]["due_at"] = "2026-10-28T12:00:00.125+00:00"  # type: ignore[index]
+
+    assert api(valid).get_scheduling_snapshot_v1(context(), world_id="PRIMARY") == valid
+
+
 def test_snapshot_freshness_window_must_be_positive() -> None:
     invalid = snapshot()
     invalid["freshness"]["valid_until"] = invalid["generated_at"]  # type: ignore[index]
