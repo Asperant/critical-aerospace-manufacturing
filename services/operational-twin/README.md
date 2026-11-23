@@ -17,11 +17,15 @@ Recoverable dependency lag is marked `DEGRADED`; revision gaps remain
 fail-closed `STALE`. Unknown epistemic values are rejected before projection
 state changes.
 
-`migrations/0001_twin.sql` defines the `twin` read model, applied-event ledger,
-and projection revision tables. `PostgresProjectionStore` restores and advances
-that model using the caller-owned transaction, so projection state and the
-EVT-003 delivery ledger commit before ACK. Deployment applies this migration and
-supplies a schema-scoped runtime connection.
+`migrations/0001_twin.sql` defines the `twin` read model, applied-event and
+unresolved-gap ledgers, and projection revision tables. `PostgresProjectionStore`
+restores and advances that model using the caller-owned transaction, so
+projection state and the EVT-003 delivery ledger commit before ACK. A detected
+sequence gap rolls back and NAKs the delivery, then records `STALE` in a
+separate transaction without claiming the rejected event as applied. Markers
+survive restart, and unrelated aggregate updates cannot clear them. The world
+returns to `FRESH` only after all marked revisions are accepted. Deployment
+applies this migration and supplies a schema-scoped runtime connection.
 
 ## Runtime boundary
 

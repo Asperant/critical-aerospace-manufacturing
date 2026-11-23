@@ -2523,7 +2523,7 @@ The table fixes, per requirement, **what kind of evidence will be acceptable** s
 | FR-TWIN-002 | F1 | TE | CI | EV-L2 | — | — | NOT_YET_EXECUTED |
 | FR-TWIN-003 | F1 | TE/EE | CI + INTEGRATION | EV-L3 | — | — | NOT_YET_EXECUTED |
 | FR-TWIN-004 | F1 | TE/EE | CI + INTEGRATION + EVALUATION | EV-L4 | — | — | NOT_YET_EXECUTED |
-| FR-TWIN-005 | F1 | TE | CI + INTEGRATION | EV-L3 | — | — | NOT_YET_EXECUTED |
+| FR-TWIN-005 | F1 | TE | CI + INTEGRATION | EV-L3 | — | — | EVIDENCE_PENDING |
 | FR-TWIN-006 | F1 | TE/RE | CI + INTEGRATION | EV-L3 | — | — | NOT_YET_EXECUTED |
 | FR-TWIN-007 | F1 | TE | CI + INTEGRATION | EV-L3 | — | — | NOT_YET_EXECUTED |
 | FR-TWIN-008 | F1 | TE/EE | CI + INTEGRATION | EV-L3 | — | — | NOT_YET_EXECUTED |
@@ -4149,7 +4149,7 @@ FR-TWIN-005:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-TWIN-005 L169897"}
   DERIVED_FROM: [ITEM-11, EVTINF-INV-09, OBS-INV-11, UI-INV-13]
   ALLOCATED_TO: [ARCH-TWIN-FRESHNESS]
-  REALIZED_BY: {surface: "sequence-gap detector + stale marking", deployable: "digital-twin-service", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "sequence-gap detector + persisted stale marking", deployable: "digital-twin-service", ref: "services/operational-twin/src/operational_twin/projector.py; services/operational-twin/src/operational_twin/postgres_projection.py; services/operational-twin/src/operational_twin/nats_consumer.py; services/operational-twin/migrations/0001_twin.sql; tools/demo-runtime/src/cap_demo_runtime/migrate.py; services/operational-twin/tests/test_postgres_projection.py"}
   EXPOSED_BY: ["Twin Query API (staleness)"]
   VERIFIED_BY: [TEST-TWIN-FRESHNESS]
   EXERCISED_IN: [AV-SCEN-07]
@@ -4157,7 +4157,7 @@ FR-TWIN-005:
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: IMPLEMENTED, planning: VERIFY_PLANNED, evidence: EVIDENCE_PENDING}
 FR-TWIN-006:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-TWIN-006 L169898"}
   DERIVED_FROM: [ITEM-11, ITEM-53, DB-INV-13, DR-INV-08]
