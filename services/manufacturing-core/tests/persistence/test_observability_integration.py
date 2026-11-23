@@ -1,4 +1,3 @@
-import json
 import logging
 
 import pytest
@@ -37,7 +36,8 @@ def test_query_failure_propagates_correlation(
             ),
             correlation_id="caller-123",
         )
-    event = json.loads(caplog.records[-1].message)
-    assert event["correlation_id"] == "caller-123"
-    assert event["outcome"] == "FAILED"
-    assert event["operation"] == "order-query.v1"
+    record = caplog.records[-1]
+    fields = getattr(record, "attributes", {})
+    assert getattr(record, "correlation_id", None) == "caller-123"
+    assert fields["outcome"] == "FAILED"
+    assert fields["operation"] == "order-query.v1"
