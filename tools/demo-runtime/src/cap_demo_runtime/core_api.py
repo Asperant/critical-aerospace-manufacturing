@@ -2,17 +2,31 @@ from __future__ import annotations
 
 import os
 import re
+import time
+from collections.abc import Awaitable, Callable
 from contextlib import asynccontextmanager
 from typing import Any
 
 import psycopg
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request, Response
+from fastapi.responses import JSONResponse
 from manufacturing_core.commands import (
     DispatchLot,
     OperationalCommandV1,
     PlaceLotOnHold,
 )
 from manufacturing_core.domain import Lot
+from manufacturing_core.observability import (
+    CORRELATION_HEADER,
+    CoreHealth,
+    configure_core_telemetry,
+    core_health_report,
+    correlation,
+    record_http_access,
+)
+from manufacturing_core.observability import (
+    health as core_health,
+)
 from manufacturing_core.repository import CoreRepository
 from manufacturing_core.transitions import CoreTransitionService
 from psycopg.rows import DictRow, dict_row
@@ -45,22 +59,60 @@ def create_app() -> FastAPI:
         ).split(",")
         if value.strip()
     )
+    telemetry = configure_core_telemetry()
 
     @asynccontextmanager
     async def lifespan(_: FastAPI):
-        yield
+        try:
+            yield
+        finally:
+            telemetry.shutdown()
 
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
 
+    @app.middleware("http")
+    async def observe(  # pyright: ignore[reportUnusedFunction]
+        request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
+        try:
+            correlation_id = correlation(request.headers.get(CORRELATION_HEADER))
+        except ValueError:
+            correlation_id = correlation(None)
+        request.state.correlation_id = correlation_id
+        started = time.perf_counter()
+        status = 500
+        try:
+            response = await call_next(request)
+            status = response.status_code
+            response.headers[CORRELATION_HEADER] = correlation_id
+            return response
+        finally:
+            route = request.scope.get("route")
+            record_http_access(
+                correlation_id=correlation_id,
+                method=request.method,
+                route=getattr(route, "path", None) or "unmatched",
+                operation_id=getattr(route, "operation_id", None),
+                status=status,
+                duration_ms=(time.perf_counter() - started) * 1000,
+            )
+
     @app.get("/healthz")
-    def healthz() -> dict[str, object]:
-        with _connect(settings) as connection:
-            connection.execute("SELECT 1")
-        return {
-            "status": "UP",
-            "service": "manufacturing-core",
-            "world_id": settings.world_id,
-        }
+    def healthz(request: Request) -> JSONResponse:
+        result: CoreHealth = core_health(
+            settings.pg_dsn,
+            correlation_id=request.state.correlation_id,
+        )
+        report = core_health_report(
+            environment=telemetry.resource["deployment.environment.name"],
+            database_status=result.status,
+            correlation_id=result.correlation_id,
+        )
+        return JSONResponse(
+            report,
+            status_code=200 if result.status == "READY" else 503,
+            headers={"Cache-Control": "no-store"},
+        )
 
     @app.post("/v1/commands")
     def command(body: dict[str, object]) -> dict[str, object]:

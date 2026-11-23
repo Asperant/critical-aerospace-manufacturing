@@ -27,13 +27,8 @@
       "owner": "Asrın",
       "runtime": "python",
       "path": "services/manufacturing-core",
-      "logging": "PENDING",
-      "health": "PENDING",
-      "exemption": {
-        "reason": "Adoption of configure() and health_report() is agreed with the service owner before changing services/manufacturing-core (WP-OBS-001 slice C/D). Reviewed 2026-11-21; remains PENDING through 2026-12-21.",
-        "owner": "Yavuz",
-        "expires_on": "2026-12-21"
-      }
+      "logging": "ADOPTED",
+      "health": "ADOPTED"
     },
     {
       "name": "manufacturing-simulator",

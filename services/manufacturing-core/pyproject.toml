@@ -7,7 +7,10 @@ name = "manufacturing-core"
 version = "0.1.0"
 description = "Core-owned canonical manufacturing domain"
 requires-python = ">=3.11"
-dependencies = ["pydantic>=2.7,<3"]
+dependencies = ["pydantic>=2.7,<3", "cap-observability[otel]"]
+
+[tool.uv.sources]
+cap-observability = { path = "../../packages/observability", editable = true }
 
 [project.optional-dependencies]
 postgres = ["psycopg[binary]>=3.2,<4", "alembic>=1.14,<2"]

@@ -472,6 +472,10 @@ services:
     env_file:
       - path: ${CAP_PLATFORM_STATE_DIR:-${HOME}/.local/state/cap-platform}/demo-core.env
         required: false
+    environment:
+      CAP_ENVIRONMENT: demo
+      CAP_ENVIRONMENT_CLASS: DEMO
+      CAP_RELEASE_ID: "0.1.0"
     command: ["uvicorn", "cap_demo_runtime.core_api:create_app", "--factory", "--host", "0.0.0.0", "--port", "8081"]
     ports:
       - "127.0.0.1:${CAP_CORE_PORT:-28081}:8081"
