@@ -15,12 +15,14 @@ from datetime import datetime, timedelta
 from typing import Literal, cast
 
 import httpx
+from cap_observability.telemetry import configure
 from fastapi import FastAPI
 
 from .api import create_app, utc_now
 from .config import CookieSettings, LoginConfig, SessionConfig
 from .facility_state import FacilityStateService
 from .login import InMemoryLoginStore, LoginService
+from .observability import SERVICE, SERVICE_VERSION
 from .oidc import OidcIdentityProvider, OidcSettings
 from .overview import OverviewService
 from .session import InMemorySessionStore, SessionManager
@@ -137,14 +139,18 @@ def build_app(
     """
     client = http_client or httpx.Client()
     owned = http_client is None
+    telemetry = configure(SERVICE, SERVICE_VERSION)
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         try:
             yield
         finally:
-            if owned:
-                client.close()
+            try:
+                telemetry.shutdown()
+            finally:
+                if owned:
+                    client.close()
 
     sessions = SessionManager(InMemorySessionStore(), settings.session)
     login = LoginService(
@@ -162,4 +168,5 @@ def build_app(
         lifespan=lifespan,
         overview=overview,
         facility_state=facility_state,
+        health_environment_id=telemetry.resource["deployment.environment.name"],
     )

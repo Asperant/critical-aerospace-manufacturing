@@ -2,18 +2,23 @@
 
 from __future__ import annotations
 
+import json
 import re
 import subprocess
 import sys
 from datetime import timedelta
+from io import StringIO
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 import httpx
 import pytest
 import test_oidc as oidc_helpers
+from cap_observability.standard import check_health_report, check_log_lines
+from cap_observability.telemetry import configure
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from operations_bff import composition
 from operations_bff.composition import (
     ConfigurationError,
     RuntimeSettings,
@@ -74,6 +79,42 @@ def test_valid_environment_builds_settings_and_an_app() -> None:
     app, provider = wired()
     assert isinstance(app, FastAPI)
     assert provider.calls == []  # building never contacts the provider
+
+
+def test_composed_app_uses_the_configured_telemetry_environment(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    stream = StringIO()
+
+    def configure_test_telemetry(service_name: str, service_version: str):
+        return configure(
+            service_name,
+            service_version,
+            environ={
+                "CAP_ENVIRONMENT": "bff-demo-test",
+                "CAP_ENVIRONMENT_CLASS": "DEMO",
+                "CAP_RELEASE_ID": "test-0.1.0",
+            },
+            stream=stream,
+        )
+
+    monkeypatch.setattr(composition, "configure", configure_test_telemetry)
+    app, _ = wired()
+    with TestClient(app, base_url="https://cc.invalid") as browser:
+        response = browser.get("/healthz")
+    assert response.status_code == 200
+    report = response.json()
+    assert report["environment"] == "bff-demo-test"
+    assert check_health_report(report) == []
+    lines = stream.getvalue().splitlines()
+    assert check_log_lines(lines) == []
+    access = next(
+        record
+        for record in map(json.loads, lines)
+        if record["event_name"] == "http.request"
+    )
+    assert access["correlation_id"] == response.headers["X-Correlation-Id"]
+    assert access["attributes"]["route"] == "/healthz"
 
 
 @pytest.mark.parametrize("name", REQUIRED)

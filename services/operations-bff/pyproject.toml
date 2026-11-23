@@ -11,7 +11,11 @@ dependencies = [
     "fastapi>=0.142,<1",
     "httpx>=0.28,<1",
     "PyJWT[crypto]>=2.15,<3",
+    "cap-observability[otel]",
 ]
+
+[tool.uv.sources]
+cap-observability = { path = "../../packages/observability", editable = true }
 
 [tool.setuptools.packages.find]
 where = ["src"]

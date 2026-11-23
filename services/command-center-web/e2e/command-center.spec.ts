@@ -284,11 +284,30 @@ test.describe("browser boundaries", () => {
   }) => {
     const health = await request.get("/healthz");
     expect(health.status()).toBe(200);
-    expect(await health.json()).toMatchObject({
+    const report = (await health.json()) as {
+      schema: string;
+      service: string;
+      live: boolean;
+      status: string;
+      correlation_id: string;
+      checks: Array<Record<string, unknown>>;
+    };
+    expect(report).toMatchObject({
+      schema: "cap.health/v1",
       service: "operations-bff",
-      status: "ok",
+      live: true,
+      status: "READY",
     });
     expect(health.headers()["x-correlation-id"]).toMatch(/^[0-9a-f]{32}$/);
+    expect(report.correlation_id).toBe(health.headers()["x-correlation-id"]);
+    expect(report.checks).toContainEqual(
+      expect.objectContaining({
+        name: "session",
+        kind: "readiness",
+        class: "REQUIRED",
+        status: "READY",
+      }),
+    );
     const denied = await request.get("/v1/session");
     expect(
       ((await denied.json()) as { correlation_id: string }).correlation_id,
