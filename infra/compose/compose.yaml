@@ -297,7 +297,12 @@ services:
         echo "namespace $$CAP_TEMPORAL_NAMESPACE registered";
         exec sleep infinity
     healthcheck:
-      test: ["CMD-SHELL", "temporal operator namespace describe -n \"$$CAP_TEMPORAL_NAMESPACE\" >/dev/null"]
+      # The admin CLI can take longer than a healthcheck interval while the
+      # server is recovering. Check the same registered-namespace state through
+      # Temporal's HTTP API instead; this remains bounded by the 10s probe timeout.
+      test:
+        - "CMD-SHELL"
+        - "wget -qO- \"http://temporal:7243/api/v1/namespaces/$$CAP_TEMPORAL_NAMESPACE\" | grep -q '\"state\":\"NAMESPACE_STATE_REGISTERED\"'"
       start_period: 10s
       interval: 30s
       timeout: 10s
