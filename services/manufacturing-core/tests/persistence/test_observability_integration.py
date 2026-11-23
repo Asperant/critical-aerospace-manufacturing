@@ -37,6 +37,7 @@ def test_query_failure_propagates_correlation(
             correlation_id="caller-123",
         )
     record = caplog.records[-1]
-    assert record.correlation_id == "caller-123"
-    assert record.attributes["outcome"] == "FAILED"
-    assert record.attributes["operation"] == "order-query.v1"
+    fields = getattr(record, "attributes", {})
+    assert getattr(record, "correlation_id", None) == "caller-123"
+    assert fields["outcome"] == "FAILED"
+    assert fields["operation"] == "order-query.v1"
