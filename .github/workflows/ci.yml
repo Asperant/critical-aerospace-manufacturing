@@ -71,6 +71,7 @@ jobs:
               "packages/observability/",
               "services/command-center-web/",
               "services/manufacturing-core/",
+              "services/operational-twin/",
               "services/operations-bff/",
           )
           required = any(
