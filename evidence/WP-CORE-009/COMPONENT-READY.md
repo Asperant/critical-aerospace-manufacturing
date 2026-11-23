@@ -16,7 +16,7 @@ readiness.
 - Consumer: `WP-CORE-002` / `DN-CORE-TRANSITIONS`
 - Implementation PR: #146
 - Implementation merge SHA: `84bebc4d925e0c0c093edeb980195d0b37de4721`
-- Final validated current-main SHA: `dda541038d6289b8ed79c0c4c80092c9263847c9`
+- Final validated current-main SHA: `e5ae179cb0c2ffc37e150bc90898542d6738a1f7`
 - Evidence change control: `CHG-059`
 
 ## Implemented component
@@ -41,8 +41,8 @@ rework, split/merge, or CORE-002 transition-engine behavior is implemented.
 - Local pyright, Ruff and format checks: PASS
 - Product PR push CI: run `40474885983`, exact head `16b2184d9f7e8f2bf294214d6faad4b3e829f5a5`, including real PostgreSQL 18 migration/persistence: PASS
 - Product merge-main CI: run `40475355234`, exact head `84bebc4d925e0c0c093edeb980195d0b37de4721`, T1 and real PostgreSQL/browser/integration jobs: PASS
-- Final current-main T1 CI: run `40476475004`, exact head `dda541038d6289b8ed79c0c4c80092c9263847c9`: PASS
-- Final current-main project-control regression: run `40476474980`, exact head `dda541038d6289b8ed79c0c4c80092c9263847c9`: PASS
+- Final current-main T1 CI: run `45229917551`, exact head `e5ae179cb0c2ffc37e150bc90898542d6738a1f7`: PASS, including Core lifecycle unit/typing and real PostgreSQL 18 persistence.
+- Final current-main project-control regression: run `45229917873`, exact head `e5ae179cb0c2ffc37e150bc90898542d6738a1f7`: PASS
 
 ## Remaining boundary
 
