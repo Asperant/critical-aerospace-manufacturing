@@ -1,0 +1,45 @@
+{
+  "schema": "cap.post-merge-evidence/v1",
+  "work_package": "WP-CORE-009",
+  "main_sha": "716127f818ebcb80f2b24a05c5ad6b8c9f40d203",
+  "technical_closure_sha": "716127f818ebcb80f2b24a05c5ad6b8c9f40d203",
+  "required_ci": [
+    {
+      "name": "ci",
+      "run_id": 45607150849,
+      "conclusion": "success",
+      "main_sha": "716127f818ebcb80f2b24a05c5ad6b8c9f40d203"
+    },
+    {
+      "name": "projectctl-full-regression",
+      "run_id": 45607150886,
+      "conclusion": "success",
+      "main_sha": "716127f818ebcb80f2b24a05c5ad6b8c9f40d203"
+    },
+    {
+      "name": "release",
+      "run_id": 45607151029,
+      "conclusion": "success",
+      "main_sha": "716127f818ebcb80f2b24a05c5ad6b8c9f40d203"
+    }
+  ],
+  "dod": {
+    "assessments": {
+      "DOD-WP-01": "PASS",
+      "DOD-WP-02": "PASS",
+      "DOD-WP-03": "PASS",
+      "DOD-WP-05": "PASS",
+      "DOD-WP-06": "PASS",
+      "DOD-WP-12": "PASS"
+    }
+  },
+  "trace": {
+    "result": "PASS",
+    "validated_main_sha": "716127f818ebcb80f2b24a05c5ad6b8c9f40d203",
+    "registry": "traceability/trace_edges.yaml",
+    "evidence_coverage": "traceability/generated/evidence_coverage.csv",
+    "requirements": [
+      "FR-CORE-003"
+    ]
+  }
+}
