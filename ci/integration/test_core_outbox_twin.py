@@ -8,9 +8,11 @@ from __future__ import annotations
 
 import asyncio
 import os
+import secrets
 import uuid
 from collections.abc import Iterator, Mapping
 from contextlib import suppress
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import LiteralString, cast
@@ -22,10 +24,12 @@ from cap_contracts.envelope import EventEnvelope
 from cap_event_consumer.consumer import DeliveryContext, Event
 from cap_event_consumer.jetstream import Binding, JetStreamConsumer
 from cap_event_consumer.ledger import Outcome, ProcessedMessageLedger
-from manufacturing_core.events_v1 import EntityReference, UtcOccurrence
-from manufacturing_core.events_v2 import LotHeldEventV2, LotHeldPayloadV2
+from manufacturing_core.commands import OutcomeStatus, PlaceLotOnHold
+from manufacturing_core.database import connect_runtime
+from manufacturing_core.migrate import migrate
 from manufacturing_core.outbox import OutboxRecord, OutboxRelay, OutboxRepository
 from manufacturing_core.outbox_publisher import JetStreamOutboxPublisher
+from manufacturing_core.transitions import CoreTransitionService
 from nats.errors import TimeoutError as NatsTimeoutError
 from nats.js.api import DeliverPolicy
 from nats.js.errors import NotFoundError
@@ -34,38 +38,68 @@ from operational_twin.postgres_projection import PostgresProjectionStore
 from operational_twin.projector import ProjectionState, Projector
 from psycopg.conninfo import make_conninfo
 from psycopg.rows import DictRow, dict_row
-from psycopg.sql import SQL, Identifier
+from psycopg.sql import SQL, Identifier, Literal
 
 pytestmark = pytest.mark.integration
 
 
+@dataclass(frozen=True)
+class OutboxTwinDatabase:
+    admin_dsn: str
+    core_runtime_dsn: str
+
+
 @pytest.fixture(scope="module")
-def outbox_twin_dsn() -> Iterator[str]:
+def outbox_twin_dsn() -> Iterator[OutboxTwinDatabase]:
     admin_dsn = os.environ.get("CI_PG_DSN")
     if not admin_dsn or os.environ.get("OUTBOX_TWIN_TEST_DISPOSABLE") != "1":
         pytest.fail("real disposable PostgreSQL DSN and explicit opt-in required")
-    name = "outbox_twin_" + uuid.uuid4().hex[:12]
+    suffix = uuid.uuid4().hex[:12]
+    name = "outbox_twin_" + suffix
+    migration_role = name + "_migration"
+    runtime_role = name + "_runtime"
+    migration_password = secrets.token_urlsafe(32)
+    runtime_password = secrets.token_urlsafe(32)
     with psycopg.connect(admin_dsn, autocommit=True) as admin:
         if admin.info.server_version < 180000:
             pytest.fail("this integration requires PostgreSQL 18")
+        for role, password in (
+            (migration_role, migration_password),
+            (runtime_role, runtime_password),
+        ):
+            admin.execute(
+                SQL(
+                    "CREATE ROLE {} LOGIN PASSWORD {} NOSUPERUSER NOCREATEDB "
+                    "NOCREATEROLE NOINHERIT NOREPLICATION NOBYPASSRLS"
+                ).format(Identifier(role), Literal(password))
+            )
         admin.execute(SQL("CREATE DATABASE {}").format(Identifier(name)))
-    dsn = make_conninfo(admin_dsn, dbname=name)
+        admin.execute(
+            SQL("GRANT CREATE ON DATABASE {} TO {}").format(
+                Identifier(name), Identifier(migration_role)
+            )
+        )
+    migration_dsn = make_conninfo(
+        admin_dsn, dbname=name, user=migration_role, password=migration_password
+    )
+    runtime_dsn = make_conninfo(
+        admin_dsn, dbname=name, user=runtime_role, password=runtime_password
+    )
+    admin_database_dsn = make_conninfo(admin_dsn, dbname=name)
     root = Path(__file__).parents[2]
     try:
-        with psycopg.connect(dsn) as connection:
-            connection.execute("CREATE SCHEMA core")
-            connection.execute("CREATE TABLE core.lot (id text PRIMARY KEY)")
-            migration_paths = (
-                root
-                / "services/manufacturing-core/src/manufacturing_core/migrations/0005_outbox.sql",
-                root / "services/operational-twin/migrations/0001_twin.sql",
+        assert migrate(migration_dsn, runtime_role) is True
+        with psycopg.connect(admin_dsn, autocommit=True) as admin:
+            admin.execute(
+                SQL("REVOKE CREATE ON DATABASE {} FROM {}").format(
+                    Identifier(name), Identifier(migration_role)
+                )
             )
-            for migration_path in migration_paths:
-                for statement in migration_path.read_text(encoding="utf-8").split(
-                    ";\n"
-                ):
-                    if statement.strip():
-                        connection.execute(SQL(cast(LiteralString, statement)))
+        with psycopg.connect(admin_database_dsn) as connection:
+            twin_migration = root / "services/operational-twin/migrations/0001_twin.sql"
+            for statement in twin_migration.read_text(encoding="utf-8").split(";\n"):
+                if statement.strip():
+                    connection.execute(SQL(cast(LiteralString, statement)))
             connection.execute("CREATE SCHEMA twin_consumer")
             consumer_migration = (
                 root
@@ -80,51 +114,71 @@ def outbox_twin_dsn() -> Iterator[str]:
                             )
                         )
                     )
-        yield dsn
+        yield OutboxTwinDatabase(
+            admin_dsn=admin_database_dsn, core_runtime_dsn=runtime_dsn
+        )
     finally:
         with psycopg.connect(admin_dsn, autocommit=True) as admin:
             admin.execute(SQL("DROP DATABASE {} WITH (FORCE)").format(Identifier(name)))
+            for role in (runtime_role, migration_role):
+                admin.execute(SQL("DROP ROLE {}").format(Identifier(role)))
 
 
 def connect_dict(dsn: str) -> psycopg.Connection[DictRow]:
     return psycopg.Connection[DictRow].connect(dsn, row_factory=dict_row)
 
 
-def outbox_record() -> OutboxRecord:
+def core_hold_outbox_record(dsn: str) -> OutboxRecord:
     occurred = datetime(2026, 11, 23, 12, tzinfo=UTC)
-    payload = LotHeldPayloadV2(
-        event_type="production.lot-held",
-        schema_version=2,
-        aggregate_type="Lot",
-        aggregate_id="LOT-OUTBOX-1",
-        aggregate_version=1,
-        lot_id="LOT-OUTBOX-1",
-        lot_revision="CORE-REV-1",
-        material_hold_id="HOLD-OUTBOX-1",
-        reason="inspection anomaly",
-    )
-    event = LotHeldEventV2(
-        event_id="EVT-OUTBOX-1",
-        producer="manufacturing-core",
-        world_id="OUTBOX-TEST-WORLD",
-        correlation_id="CORR-OUTBOX-1",
-        causation_id="CMD-OUTBOX-1",
-        trace_id="TRACE-OUTBOX-1",
-        occurred_at=UtcOccurrence(clock="UTC", value=occurred),
-        observed_at=occurred,
-        entity_refs=(
-            EntityReference(
-                entity_type="Lot", id="LOT-OUTBOX-1", revision="CORE-REV-1"
-            ),
-        ),
-        event_type="production.lot-held",
-        schema_version=2,
-        payload=payload,
-    )
-    return OutboxRecord.new(event, created_at=occurred)
+    with connect_runtime(dsn) as connection, connection.transaction():
+        connection.execute(
+            "INSERT INTO core.manufacturing_route(id, revision) VALUES (%s, %s)",
+            ("ROUTE-OUTBOX-1", "route-r1"),
+        )
+        connection.execute(
+            "INSERT INTO core.production_order(id, revision, route_id) VALUES (%s, %s, %s)",
+            ("ORDER-OUTBOX-1", "order-r1", "ROUTE-OUTBOX-1"),
+        )
+        connection.execute(
+            "INSERT INTO core.lot(id, revision, order_id) VALUES (%s, %s, %s)",
+            ("LOT-OUTBOX-1", "CORE-REV-1", "ORDER-OUTBOX-1"),
+        )
+        connection.execute(
+            "INSERT INTO core.lot_state(id, revision) VALUES (%s, %s)",
+            ("LOT-OUTBOX-1", "CORE-REV-1"),
+        )
+        command = PlaceLotOnHold.model_validate(
+            {
+                "idempotency_key": "hold-outbox-1",
+                "world_id": "OUTBOX-TEST-WORLD",
+                "correlation_id": "CORR-OUTBOX-1",
+                "causation_id": "INCIDENT-OUTBOX-1",
+                "target": {"entity_type": "Lot", "entity_id": "LOT-OUTBOX-1"},
+                "expected": {"expected_revision": "CORE-REV-1"},
+                "hold_reason": "inspection anomaly",
+                "material_hold_id": "HOLD-OUTBOX-1",
+            }
+        )
+        outcome = CoreTransitionService(connection).place_lot_on_hold(
+            {"core.lot.place_hold"}, command, now=occurred
+        )
+        assert outcome.status is OutcomeStatus.ACCEPTED
+        records = OutboxRepository(connection).pending()
+        assert len(records) == 1
+        record = records[0]
+        hold = connection.execute(
+            "SELECT status, placed_command_id FROM core.material_hold WHERE id = %s",
+            ("HOLD-OUTBOX-1",),
+        ).fetchone()
+        assert hold is not None and hold["status"] == "ACTIVE"
+        assert str(hold["placed_command_id"]) == str(command.command_id)
+        assert record.event.causation_id == str(command.command_id)
+        assert record.event.correlation_id == command.correlation_id
+        return record
 
 
-async def _publish_and_project(dsn: str, nats_url: str) -> None:
+async def _publish_and_project(database: OutboxTwinDatabase, nats_url: str) -> None:
+    record = core_hold_outbox_record(database.core_runtime_dsn)
     nc = await nats.connect(nats_url, connect_timeout=10)
     js = nc.jetstream()
     stream, subject, durable = "CAP_EVENTS", "cap.core.events", "twin-outbox-test"
@@ -141,10 +195,6 @@ async def _publish_and_project(dsn: str, nats_url: str) -> None:
                 "dedicated CAP_EVENTS fixture already exists; refusing to reuse it"
             )
 
-        record = outbox_record()
-        with connect_dict(dsn) as connection, connection.transaction():
-            OutboxRepository(connection).insert(record)
-
         publisher = JetStreamOutboxPublisher(js, stream, subject)
 
         class FailAfterAck:
@@ -158,7 +208,7 @@ async def _publish_and_project(dsn: str, nats_url: str) -> None:
         # A crash after ACK leaves a retryable row; JetStream deduplicates the
         # restart by EventID, then the relay marks it published after the next ACK.
         failed_attempt = FailAfterAck()
-        with connect_dict(dsn) as connection:
+        with connect_dict(database.core_runtime_dsn) as connection:
             relay = OutboxRelay(connection)
             assert await relay.publish_pending_async(failed_attempt, limit=25) == 0
             with connection.transaction():
@@ -169,12 +219,12 @@ async def _publish_and_project(dsn: str, nats_url: str) -> None:
         assert failed.last_error == "RuntimeError"
         assert failed_attempt.ack_seq is not None
 
-        with connect_dict(dsn) as connection:
+        with connect_dict(database.core_runtime_dsn) as connection:
             assert (
                 await OutboxRelay(connection).publish_pending_async(publisher, limit=25)
                 == 1
             )
-        with connect_dict(dsn) as connection, connection.transaction():
+        with connect_dict(database.admin_dsn) as connection, connection.transaction():
             published = OutboxRepository(connection).get(record.outbox_id)
         assert published is not None
         assert published.publication_status == "PUBLISHED"
@@ -188,7 +238,7 @@ async def _publish_and_project(dsn: str, nats_url: str) -> None:
         consumer = build_consumer(
             ledger=ProcessedMessageLedger("twin_consumer"),
             scope=scope,
-            connect=lambda: connect_dict(dsn),
+            connect=lambda: connect_dict(database.admin_dsn),
             projector=projector,
             projection_store=store,
             expected_world_id="OUTBOX-TEST-WORLD",
@@ -230,7 +280,7 @@ async def _publish_and_project(dsn: str, nats_url: str) -> None:
         assert received.occurred_at == record.event.occurred_at.value
         assert received.observed_at == record.event.observed_at
 
-        with connect_dict(dsn) as connection:
+        with connect_dict(database.admin_dsn) as connection:
             applied = connection.execute(
                 "SELECT event_id, world_id, aggregate_version FROM twin.applied_event "
                 "WHERE consumer_scope=%s AND event_id=%s",
@@ -269,7 +319,7 @@ async def _publish_and_project(dsn: str, nats_url: str) -> None:
 
 
 def test_real_core_outbox_to_durable_twin_projection(
-    outbox_twin_dsn: str,
+    outbox_twin_dsn: OutboxTwinDatabase,
 ) -> None:
     nats_url = os.environ.get("CI_NATS_URL")
     if not nats_url:

@@ -14,7 +14,7 @@ bindings:
   requirement: Provide the Core backend query HTTP context boundary with operation/version-bound trusted ingress
     and exact world, causal/trace and UTC/simulation semantics for BFF and shared envelope integration.
   provenance:
-    docs/04_Work_Breakdown_Structure.md: 507e7b20bd1be946ee6d9ace36f6f66d4f28816244101ef0c43b4bad80abe92a
+    docs/04_Work_Breakdown_Structure.md: 53545d5af24f6168c1d29dad5b86ca63abfc44bf95c97fb6d6826a98f9818ccd
   binding_paths:
   - services/manufacturing-core/src/manufacturing_core/http_context.py
 - id: BIND-EVT002-HTTP-BFF
@@ -27,7 +27,7 @@ bindings:
   requirement: Provide the BFF backend client context adapter consuming the Core query API contract, preserving
     exact world and causal/trace context and explicitly typed time metadata across the HTTP boundary.
   provenance:
-    docs/04_Work_Breakdown_Structure.md: 507e7b20bd1be946ee6d9ace36f6f66d4f28816244101ef0c43b4bad80abe92a
+    docs/04_Work_Breakdown_Structure.md: 53545d5af24f6168c1d29dad5b86ca63abfc44bf95c97fb6d6826a98f9818ccd
   binding_paths:
   - services/operations-bff/src/operations_bff/backend_context.py
 - id: BIND-EVT002-TEMPORAL
@@ -40,7 +40,7 @@ bindings:
   requirement: Provide replay-deterministic workflow context carriage and activity-side restoration with exact workflow/activity/worker
     binding and preserved world, causal/trace and UTC versus simulation-time semantics.
   provenance:
-    docs/04_Work_Breakdown_Structure.md: 507e7b20bd1be946ee6d9ace36f6f66d4f28816244101ef0c43b4bad80abe92a
+    docs/04_Work_Breakdown_Structure.md: 53545d5af24f6168c1d29dad5b86ca63abfc44bf95c97fb6d6826a98f9818ccd
   binding_paths:
   - services/automation/src/automation/workflow_context.py
   - services/automation/src/automation/activity_context.py
