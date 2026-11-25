@@ -73,7 +73,7 @@ test("real Keycloak login and held lot are visible in the demo UI", async ({
       stage,
       world_id: world,
       lot_id: lot,
-      freshness: facilityBody.meta.freshness,
+      freshness: facilityBody.meta?.freshness,
       stale_warning_visible: true,
       current_freshness_claim_visible: false,
     });
