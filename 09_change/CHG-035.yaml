@@ -26,8 +26,9 @@ CHG-035:
     or operation is implemented
   - Transport contracts must bind exact operations, trusted context and versions before integration; this change
     adds no headers, routes, payload schemas or protected-action authorization
-  - Concrete paths in the producing WBS cards are FUTURE_NOT_IMPLEMENTED; absence never proves producer readiness
-    or completed propagation
+  - At approval time the concrete paths in producing WBS cards were FUTURE_NOT_IMPLEMENTED; later implementation
+    is reconciled as observed below and in the WBS. Artifact presence and a bounded integration test do not prove
+    producer readiness, full acceptance or completed propagation.
   - Preserve identity/causality/trace roles, exact WorldID and UTC versus simulation meanings; Core authority, Twin
     rebuildability, workflow determinism and HITL remain unchanged
   - Registry digests and canonical provenance are recomputed from the resulting documents; existing CHG-034 validation
@@ -66,7 +67,9 @@ CHG-035:
     readiness_certified: false
     producer_owner: asrin
     introduces_readiness_edge: false
-    artifact_status: FUTURE_NOT_IMPLEMENTED
+    artifact_status: IMPLEMENTATION_PRESENT
+    acceptance_status: PENDING
+    observed_evidence: commit 27b2269d971fe15b30b784a5b1e11e8a9116a81c; main CI run 45266348282, step "Core outbox to durable Twin projection"
   - binding: BIND-EVT002-NATS-CONSUMER
     producer_wp: WP-TWIN-001
     consumer_wp: WP-EVT-002
@@ -75,7 +78,9 @@ CHG-035:
     readiness_certified: false
     producer_owner: asrin
     introduces_readiness_edge: false
-    artifact_status: FUTURE_NOT_IMPLEMENTED
+    artifact_status: IMPLEMENTATION_PRESENT
+    acceptance_status: PENDING
+    observed_evidence: commit 27b2269d971fe15b30b784a5b1e11e8a9116a81c; main CI run 45266348282, step "Core outbox to durable Twin projection"
   - binding: BIND-EVT002-TEMPORAL
     producer_wp: WP-AUTO-001
     consumer_wp: WP-EVT-002
