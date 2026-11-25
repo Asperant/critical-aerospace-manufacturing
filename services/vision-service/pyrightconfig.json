@@ -4,6 +4,7 @@
     "src",
     "../../packages/artifacts/src",
     "../../packages/contracts/src",
+    "../../packages/event-consumer/src",
     "../../packages/observability/src"
   ],
   "pythonVersion": "3.11",

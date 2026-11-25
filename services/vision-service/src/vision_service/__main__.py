@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 from datetime import UTC, datetime
 
+from cap_event_consumer.database import connect_runtime
 from cap_observability.telemetry import configure
 
 from vision_service.worker import (
@@ -26,6 +27,9 @@ async def serve() -> None:
             publisher=_NoopPublisher(),
             config=config,
             clock=lambda: datetime.now(UTC),
+            connect=lambda: connect_runtime(
+                config.database_dsn, application_name="vision-service"
+            ),
         )
         await run_nats(config, worker)
     finally:
@@ -35,7 +39,7 @@ async def serve() -> None:
 
 
 class _NoopPublisher:
-    async def publish(self, subject: str, data: bytes) -> None:
+    async def publish(self, subject: str, data: bytes, *, message_id: str) -> None:
         raise RuntimeError("JetStream publisher is installed by run_nats")
 
 
