@@ -290,7 +290,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      PYTHONPATH: ci:ci/scripts:packages/contracts/src:packages/event-consumer/src:services/manufacturing-core/src:services/operational-twin/src
+      PYTHONPATH: ci:ci/scripts:packages/contracts/src:packages/event-consumer/src:services/manufacturing-core/src:services/operational-twin/src:tools/demo-runtime/src
       CI_POSTGRES_IMAGE: postgres:18-alpine
       CORE_TEST_DISPOSABLE: "1"
       TWIN_TEST_DISPOSABLE: "1"

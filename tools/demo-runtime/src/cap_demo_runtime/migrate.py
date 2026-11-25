@@ -73,6 +73,41 @@ def _dsn(prefix: str, *, host: str, database: str, password: str) -> str:
     )
 
 
+def migrate_twin_state(
+    connection: psycopg.Connection[DictRow],
+    migration_sql: str,
+    migration_role: str,
+    runtime_role: str,
+) -> None:
+    """Install Twin tables and consumer ledger with the production runtime grants."""
+    if not migration_role.strip() or not runtime_role.strip():
+        raise ValueError("explicit Twin migration and runtime roles are required")
+    for statement in migration_sql.split(";\n"):
+        if statement.strip():
+            connection.execute(sql.SQL(cast(LiteralString, statement)))
+    connection.execute(
+        sql.SQL("GRANT USAGE ON SCHEMA twin TO {}").format(sql.Identifier(runtime_role))
+    )
+    for table in ("projection_entity", "applied_event", "projection_revision"):
+        connection.execute(
+            sql.SQL("GRANT SELECT, INSERT, UPDATE ON TABLE twin.{} TO {}").format(
+                sql.Identifier(table), sql.Identifier(runtime_role)
+            )
+        )
+    connection.execute(
+        sql.SQL("GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE twin.{} TO {}").format(
+            sql.Identifier("projection_gap"), sql.Identifier(runtime_role)
+        )
+    )
+    connection.execute(
+        sql.SQL("CREATE SCHEMA IF NOT EXISTS {} AUTHORIZATION {}").format(
+            sql.Identifier("twin_consumer"), sql.Identifier(migration_role)
+        )
+    )
+    connection.execute("REVOKE ALL ON SCHEMA twin_consumer FROM PUBLIC")
+    migrate_consumer(connection, "twin_consumer", runtime_role)
+
+
 def _run_once() -> None:
     host = os.environ.get("CAP_PG_HOST", "postgres")
     database = os.environ.get("CAP_PG_DATABASE", "cap")
@@ -122,36 +157,7 @@ def _run_once() -> None:
         ) as connection,
         connection.transaction(),
     ):
-        for statement in twin_sql.split(";\n"):
-            if statement.strip():
-                connection.execute(sql.SQL(cast(LiteralString, statement)))
-        connection.execute(
-            sql.SQL("GRANT USAGE ON SCHEMA twin TO {}").format(
-                sql.Identifier(twin_runtime)
-            )
-        )
-        for table in ("projection_entity", "applied_event", "projection_revision"):
-            connection.execute(
-                sql.SQL("GRANT SELECT, INSERT, UPDATE ON TABLE twin.{} TO {}").format(
-                    sql.Identifier(table), sql.Identifier(twin_runtime)
-                )
-            )
-        connection.execute(
-            sql.SQL(
-                "GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE twin.{} TO {}"
-            ).format(sql.Identifier("projection_gap"), sql.Identifier(twin_runtime))
-        )
-        connection.execute(
-            sql.SQL("CREATE SCHEMA IF NOT EXISTS {} AUTHORIZATION {}").format(
-                sql.Identifier("twin_consumer"), sql.Identifier(migrator)
-            )
-        )
-        connection.execute(
-            sql.SQL("REVOKE ALL ON SCHEMA {} FROM PUBLIC").format(
-                sql.Identifier("twin_consumer")
-            )
-        )
-        migrate_consumer(connection, "twin_consumer", twin_runtime)
+        migrate_twin_state(connection, twin_sql, migrator, twin_runtime)
     Path("/tmp/cap-demo-migrate.done").touch()
     print("demo runtime migrations verified")
 

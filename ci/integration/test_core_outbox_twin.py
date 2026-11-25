@@ -14,13 +14,12 @@ from collections.abc import Iterator, Mapping
 from contextlib import suppress
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from pathlib import Path
-from typing import LiteralString, cast
 
 import nats
 import psycopg
 import pytest
 from cap_contracts.envelope import EventEnvelope
+from cap_demo_runtime.migrate import _twin_sql, migrate_twin_state
 from cap_event_consumer.consumer import DeliveryContext, Event
 from cap_event_consumer.jetstream import Binding, JetStreamConsumer
 from cap_event_consumer.ledger import Outcome, ProcessedMessageLedger
@@ -47,6 +46,7 @@ pytestmark = pytest.mark.integration
 class OutboxTwinDatabase:
     admin_dsn: str
     core_runtime_dsn: str
+    twin_runtime_dsn: str
 
 
 @pytest.fixture(scope="module")
@@ -57,15 +57,18 @@ def outbox_twin_dsn() -> Iterator[OutboxTwinDatabase]:
     suffix = uuid.uuid4().hex[:12]
     name = "outbox_twin_" + suffix
     migration_role = name + "_migration"
-    runtime_role = name + "_runtime"
+    core_runtime_role = name + "_core_runtime"
+    twin_runtime_role = name + "_twin_runtime"
     migration_password = secrets.token_urlsafe(32)
-    runtime_password = secrets.token_urlsafe(32)
+    core_runtime_password = secrets.token_urlsafe(32)
+    twin_runtime_password = secrets.token_urlsafe(32)
     with psycopg.connect(admin_dsn, autocommit=True) as admin:
         if admin.info.server_version < 180000:
             pytest.fail("this integration requires PostgreSQL 18")
         for role, password in (
             (migration_role, migration_password),
-            (runtime_role, runtime_password),
+            (core_runtime_role, core_runtime_password),
+            (twin_runtime_role, twin_runtime_password),
         ):
             admin.execute(
                 SQL(
@@ -82,45 +85,48 @@ def outbox_twin_dsn() -> Iterator[OutboxTwinDatabase]:
     migration_dsn = make_conninfo(
         admin_dsn, dbname=name, user=migration_role, password=migration_password
     )
-    runtime_dsn = make_conninfo(
-        admin_dsn, dbname=name, user=runtime_role, password=runtime_password
+    core_runtime_dsn = make_conninfo(
+        admin_dsn,
+        dbname=name,
+        user=core_runtime_role,
+        password=core_runtime_password,
+    )
+    twin_runtime_dsn = make_conninfo(
+        admin_dsn,
+        dbname=name,
+        user=twin_runtime_role,
+        password=twin_runtime_password,
     )
     admin_database_dsn = make_conninfo(admin_dsn, dbname=name)
-    root = Path(__file__).parents[2]
     try:
-        assert migrate(migration_dsn, runtime_role) is True
+        assert migrate(migration_dsn, core_runtime_role) is True
+        with (
+            psycopg.Connection[DictRow].connect(
+                migration_dsn, row_factory=dict_row
+            ) as connection,
+            connection.transaction(),
+        ):
+            migrate_twin_state(
+                connection,
+                _twin_sql(),
+                migration_role,
+                twin_runtime_role,
+            )
         with psycopg.connect(admin_dsn, autocommit=True) as admin:
             admin.execute(
                 SQL("REVOKE CREATE ON DATABASE {} FROM {}").format(
                     Identifier(name), Identifier(migration_role)
                 )
             )
-        with psycopg.connect(admin_database_dsn) as connection:
-            twin_migration = root / "services/operational-twin/migrations/0001_twin.sql"
-            for statement in twin_migration.read_text(encoding="utf-8").split(";\n"):
-                if statement.strip():
-                    connection.execute(SQL(cast(LiteralString, statement)))
-            connection.execute("CREATE SCHEMA twin_consumer")
-            consumer_migration = (
-                root
-                / "packages/event-consumer/src/cap_event_consumer/migrations/0001_processed_message.sql"
-            ).read_text(encoding="utf-8")
-            for statement in consumer_migration.split(";\n"):
-                if statement.strip():
-                    connection.execute(
-                        SQL(
-                            cast(
-                                LiteralString, statement.format(schema="twin_consumer")
-                            )
-                        )
-                    )
         yield OutboxTwinDatabase(
-            admin_dsn=admin_database_dsn, core_runtime_dsn=runtime_dsn
+            admin_dsn=admin_database_dsn,
+            core_runtime_dsn=core_runtime_dsn,
+            twin_runtime_dsn=twin_runtime_dsn,
         )
     finally:
         with psycopg.connect(admin_dsn, autocommit=True) as admin:
             admin.execute(SQL("DROP DATABASE {} WITH (FORCE)").format(Identifier(name)))
-            for role in (runtime_role, migration_role):
+            for role in (core_runtime_role, twin_runtime_role, migration_role):
                 admin.execute(SQL("DROP ROLE {}").format(Identifier(role)))
 
 
@@ -235,10 +241,15 @@ async def _publish_and_project(database: OutboxTwinDatabase, nats_url: str) -> N
         scope = "twin-outbox-test"
         store = PostgresProjectionStore(scope)
         projector = Projector(ProjectionState("OUTBOX-TEST-WORLD"))
+        with (
+            psycopg.connect(database.twin_runtime_dsn, autocommit=True) as twin_runtime,
+            pytest.raises(psycopg.errors.InsufficientPrivilege),
+        ):
+            twin_runtime.execute("SELECT id FROM core.lot LIMIT 1")
         consumer = build_consumer(
             ledger=ProcessedMessageLedger("twin_consumer"),
             scope=scope,
-            connect=lambda: connect_dict(database.admin_dsn),
+            connect=lambda: connect_dict(database.twin_runtime_dsn),
             projector=projector,
             projection_store=store,
             expected_world_id="OUTBOX-TEST-WORLD",
