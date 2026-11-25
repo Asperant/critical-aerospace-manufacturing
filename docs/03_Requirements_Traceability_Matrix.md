@@ -3884,7 +3884,7 @@ FR-CORE-015:
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
-  note: "Real PostgreSQL tests verify accepted hold plus outbox persistence and rollback when the outbox constraint fails; the main PostgreSQL/JetStream/Twin integration verifies one directly seeded LotHeld.v2 row through ACK retry and projection. The five-minute broker interruption/backlog-drain drill remains unexecuted, and the delay histogram is instrumentation only, not NFR-PERF-003 measurement."
+  note: "Real PostgreSQL tests verify accepted hold plus outbox persistence and rollback when the outbox constraint fails. The PostgreSQL 18/JetStream/Twin integration now invokes PlaceLotOnHold through CoreTransitionService and verifies its accepted mutation, same-transaction LotHeld.v2 outbox record, ACK-retry deduplication and durable Twin projection (PR #247). The five-minute broker interruption/backlog-drain drill remains unexecuted, and the delay histogram is instrumentation only, not NFR-PERF-003 measurement."
 FR-CORE-016:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-016 L169864"}
   DERIVED_FROM: [ITEM-22, ITEM-34, INT-INV-15, EV-INV-06]
@@ -3905,9 +3905,11 @@ real PostgreSQL 18 validation are bound to `DEP-022` by
 `evidence/readiness/DN-CORE-OUTBOX-DEP-022.json` and
 `evidence/WP-CORE-005/CURRENT-MAIN-VALIDATION-2026-10-27.md`. This is an
 edge-readiness projection only: the FR-CORE-014/015 structured records above
-remain `VERIFY_PLANNED` / `NOT_YET_EXECUTED` for their full EV-L3 scope until
-the later relay, broker, scenario and immutable EvidenceBundle obligations are
-executed. No final RTM EvidenceID is invented.
+remain `EVIDENCE_PENDING` for their full EV-L3 scope. The later real
+PostgreSQL/JetStream/Twin path exercises one accepted hold event and relay retry;
+the five-minute broker outage/drain drill, broader event scenarios, AV acceptance
+and immutable EvidenceBundle obligations remain unexecuted. No final RTM
+EvidenceID is invented.
 
 ### 17.FC FR-SIM
 
@@ -4253,12 +4255,12 @@ FR-EVT-002:
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: FIXTURE_ALLOWED, evidence_target: EV-L2, env: "CI", m6_freeze_sensitive: false}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
-  note: "EventID generation, preservation and strict envelope validation have scoped fixture/unit evidence; implementation-head CI passed at ea8f6043b23588b496eda593e8c306b0b5c3c357. Final requirement acceptance remains pending; no accepted EvidenceID or complete durable-producer adoption is claimed."
+  note: "EventID generation, preservation and strict envelope validation have scoped fixture/unit evidence. The real Core PlaceLotOnHold → transactional outbox → JetStream → durable Twin path also asserts the same EventID at the consumer (WP-CORE-005, ci/integration/test_core_outbox_twin.py; PR #247). This is one producer/consumer path, not complete durable-producer adoption or final requirement acceptance; no accepted EvidenceID is claimed."
 FR-EVT-003:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-EVT-003 L169912"}
   DERIVED_FROM: [ITEM-12, ITEM-47, BE-INV-09, OBS-INV-05]
   ALLOCATED_TO: [ARCH-EVT-SCHEMA, ARCH-OBS-TRACE]
-  REALIZED_BY: {surface: "CorrelationID/CausationID propagation middleware", deployable: "contracts package + observability SDK wrapper", ref: "packages/contracts/src/cap_contracts/envelope.py (CorrelationID/CausationID/TraceID metadata only, fb552ba17acf62a009046794b5a87f7f9b2f8139); ci/tests/test_event_envelope.py:TEST-EVT-002-001; evidence/WP-EVT-002/TRACE-RECONCILIATION.md; HTTP/NATS/Temporal propagation middleware remains TBD_BY_IMPLEMENTATION"}
+  REALIZED_BY: {surface: "CorrelationID/CausationID envelope and one Core outbox → JetStream → Twin propagation path", deployable: "contracts package + manufacturing-core outbox publisher + operational-twin consumer", ref: "packages/contracts/src/cap_contracts/envelope.py; ci/integration/test_core_outbox_twin.py::test_real_core_outbox_to_durable_twin_projection (WP-CORE-005, PR #247); evidence/WP-EVT-002/TRACE-RECONCILIATION.md; HTTP and Temporal propagation remain TBD_BY_IMPLEMENTATION"}
   EXPOSED_BY: ["event envelope", "IC-SHARED-003 ActorContext"]
   VERIFIED_BY: [TEST-EVT-ENVELOPE, TEST-OBS-TRACEPROP]
   EXERCISED_IN: [AV-SCEN-01]
@@ -4266,12 +4268,12 @@ FR-EVT-003:
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
-  note: "Only metadata preservation/round-trip cases have run. TEST-OBS-TRACEPROP, real HTTP/NATS/Temporal propagation, downstream adoption and AV-SCEN-01 remain NOT_YET_EXECUTED. No propagation middleware or REAL acceptance is claimed."
+  note: "The real Core PlaceLotOnHold → outbox → JetStream → durable Twin test asserts CorrelationID, CausationID and TraceID preservation for one event (WP-CORE-005, PR #247). HTTP and Temporal propagation, TEST-OBS-TRACEPROP, broader downstream adoption and AV-SCEN-01 remain NOT_YET_EXECUTED. This single NATS path is partial evidence; REAL requirement acceptance is still pending."
 FR-EVT-004:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-EVT-004 L169913"}
   DERIVED_FROM: [ITEM-12, ITEM-84, SEC-INV-20, DX-INV-59]
   ALLOCATED_TO: [ARCH-WORLD-SCOPE, ARCH-EVT-SCHEMA]
-  REALIZED_BY: {surface: "WorldID scope-tagging middleware", deployable: "contracts package", ref: "packages/contracts/src/cap_contracts/envelope.py:EventEnvelope/validate_world_scope (ea8f6043b23588b496eda593e8c306b0b5c3c357); ci/tests/test_event_envelope.py:TEST-EVT-002-001; evidence/WP-EVT-002/TRACE-RECONCILIATION.md; runtime scope-tagging middleware/consumer adoption remains TBD_BY_IMPLEMENTATION"}
+  REALIZED_BY: {surface: "WorldID scope guard and expected-world Twin consumer admission", deployable: "contracts package + operational-twin consumer", ref: "packages/contracts/src/cap_contracts/envelope.py:EventEnvelope/validate_world_scope; ci/integration/test_core_outbox_twin.py::test_real_core_outbox_to_durable_twin_projection (same-world positive path, WP-CORE-005, PR #247); evidence/WP-EVT-002/TRACE-RECONCILIATION.md; general scope-tagging middleware remains TBD_BY_IMPLEMENTATION"}
   EXPOSED_BY: ["event envelope (WorldID)"]
   VERIFIED_BY: [TEST-EVT-ENVELOPE]
   EXERCISED_IN: [AV-SCEN-10, AV-SCEN-09]
@@ -4280,7 +4282,7 @@ FR-EVT-004:
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
-  note: "Explicit WorldID and pure exact expected-world validation exist with scoped unit negatives. Runtime tagging/admission, actual downstream consumer enforcement and REAL AV-SCEN-09/10 remain pending / NOT_YET_EXECUTED; static guard success is not integrated isolation acceptance."
+  note: "The real Core → JetStream → Twin integration accepts one event with matching WorldID through the consumer's expected-world configuration. Mismatched-world rejection is covered only by pure guard tests; a real cross-world mutation/isolation negative, broader runtime tagging/admission and AV-SCEN-09/10 remain pending / NOT_YET_EXECUTED. The positive path is not integrated isolation acceptance."
 FR-EVT-005:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-EVT-005 L169914"}
   DERIVED_FROM: [ITEM-36, EV-INV-03, EVTINF-INV-05, TEST-INV-09]

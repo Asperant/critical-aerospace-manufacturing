@@ -114,6 +114,31 @@ main `b9ef0c56724f86892c86a205104d0684819e7cdd` passed T1 integration in run
 `45235694349` and the full project-control regression in run `45235694236`.
 These are source-bound CI results, not sealed EvidenceIDs or whole-WP acceptance.
 
+## Current Core → NATS → Twin path — 2026-11-25
+
+PR #247 (`97f9b1d23f4c6b77a4542b05bbd7114d989c6ee6`) merged as
+`18d7b7408b39ce0eedc95c681d9835d23d2d4031`. The integration source now invokes
+`PlaceLotOnHold` through `CoreTransitionService`, verifies the accepted hold and
+command identity, reads the same-transaction `LotHeld.v2` outbox record, exercises
+PostgreSQL 18 + JetStream ACK/retry deduplication, and verifies envelope fields at
+the durable Twin consumer and persisted projection.
+
+The PR-head real PostgreSQL + JetStream T1 integration passed in run
+`45619550778`. At exact main SHA `18d7b7408b39ce0eedc95c681d9835d23d2d4031`,
+T1 integration passed in CI run `45620641498` (job `139227628311`), the full
+projectctl regression passed in run `45620641481` (job `139227535494`), and the
+release workflow passed in run `45620641478`. These exact-main checks are
+source-bound validation, not sealed EvidenceIDs or whole-WP acceptance.
+
+The integration uses an administrative connection for Twin persistence in its
+disposable test database; it does not prove deployed consumer-role permissions.
+It covers one matching-world `LotHeld.v2` path only. A real mismatched-world
+negative, other event types, HTTP/Temporal propagation, the five-minute broker
+outage/drain, TEST-OBS-TRACEPROP and AV-SCEN-01/09/10 remain unexecuted. This
+update supersedes the earlier direct-insert/no-command description for current
+main. WP-EVT-002 and WP-CORE-005 remain incomplete; no EvidenceID or DONE claim
+is created.
+
 Remaining boundaries are unchanged: the Operations BFF has no real Core backend
 reader/HTTP propagation binding; no Temporal workflow/activity hooks exist; and
 the string TraceID field is preserved without W3C span-context/link propagation
