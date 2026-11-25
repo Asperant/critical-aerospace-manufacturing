@@ -631,7 +631,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 **Inputs / required contracts.** gated by DEP-022 (DN-CORE-LIFECYCLE → DN-CORE-OUTBOX, HARD/INTEGRATION@COMPONENT_READY, need-by M1 (S2))
 
 **Deliverables.**
-- CHG-035 / BIND-EVT002-NATS-PUBLISHER future binding obligation: Core outbox publisher context and transport binding at `services/manufacturing-core/src/manufacturing_core/outbox_publisher.py`; first explicitly bound application consumer is WP-TWIN-001, with WP-EVT-002 owning shared context integration. FUTURE_NOT_IMPLEMENTED; subject/stream/version contracts and real publication remain required.
+- CHG-035 / BIND-EVT002-NATS-PUBLISHER implementation is present at `services/manufacturing-core/src/manufacturing_core/outbox_publisher.py`. The real `ci/integration/test_core_outbox_twin.py::test_real_core_outbox_to_durable_twin_projection` run exercises one `LotHeld` v2 event through PostgreSQL 18, JetStream, the Core outbox relay and Twin projection, including ACK retry deduplication and envelope identifier/world/time preservation. This is implementation evidence for that path only; broader Core-005 and EVT-002 acceptance/readiness remain pending.
 - outbox table + relay worker
 - domain event schemas per namespace
 - crash-consistency test suite on real PostgreSQL
@@ -1083,7 +1083,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 **Inputs / required contracts.** gated by DEP-031 (DN-EVT-CONTRACTS → DN-TWIN-SKELETON, HARD/START@CONTRACT_READY, need-by S2), DEP-032 (DN-EVT-SPINE → DN-TWIN-SKELETON, HARD/INTEGRATION@INTEGRATION_READY, need-by M1 (S2)), DEP-033 (DN-RT-PG → DN-TWIN-SKELETON, HARD/INTEGRATION@INTEGRATION_READY, need-by M1 (S2))
 
 **Deliverables.**
-- CHG-035 / BIND-EVT002-NATS-CONSUMER future binding obligation: application NATS projection consumer at `services/operational-twin/src/operational_twin/nats_consumer.py`, receiving WP-CORE-005 domain events using EVT-003 primitives and the EVT-002 shared envelope. FUTURE_NOT_IMPLEMENTED; durable/handler binding, world validation and real projection evidence remain required.
+- CHG-035 / BIND-EVT002-NATS-CONSUMER implementation is present at `services/operational-twin/src/operational_twin/nats_consumer.py`, using EVT-003 delivery primitives and the EVT-002 envelope. The same real integration test verifies expected-world admission, original event identifiers/context and the persisted Twin ledger/projection for one `LotHeld` v2 event. This does not establish unexecuted event scenarios or full Twin-001/EVT-002 acceptance/readiness; those remain pending.
 - twin-projector worker
 - `twin` schema + read models
 - source-revision ledger
