@@ -753,7 +753,7 @@ Blocker evidence: repo:evidence/test.json
             )
 
         self.assertEqual(
-            denied.exception.code, "CANONICAL_CONFIRMATION_MISSING_OR_AMBIGUOUS"
+            denied.exception.code, "CRITERION_NOT_CONFIRMED"
         )
 
 
