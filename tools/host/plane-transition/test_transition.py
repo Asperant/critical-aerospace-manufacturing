@@ -157,7 +157,8 @@ def fixture(profile='asrin',source='READY',target='IN_PROGRESS'):
         contexts[identity]={'work_package':{'id':identity,'primary_owner':{'canonical_name':names[p][0]},
                              'supporting_reviewers':[{'canonical_name':v[0]} for key,v in names.items() if key!=p],
                              'dor_refs':['DOR-WP-01'],'dod_refs':['DOD-WP-01'],'size_band':'M','scope_class':'F1'},
-                            'dependency_edges':[], 'scope_criteria':['docs/08#9:F1'],'cycle_ids':['S1']}
+                            'dependency_edges':[], 'completion_assessments':{
+                                'verification_families':[],'owner_semantic_requirements':[]},'cycle_ids':['S1']}
     policy={'contexts':contexts,'source_manifest':{'docs/08':'canonical-sha'},'required_ci':['projectctl'], 'required_technical_steps':['Canonical validation','Changed-scope focused tests and regressions','Requirement catalog lint','Whitespace and repository hygiene'],
             'review_policy':json.loads((HERE.parents[2]/'09_change/development_review_policy.json').read_text()),
             'policy_digest':'fixture-policy-digest','dor_task':['DOR-TASK-01','DOR-WP-01'],'dor_pr':['DOR-PR-01'],'dod_pr':['DOD-PR-01'],
@@ -251,7 +252,6 @@ class TransitionTests(unittest.TestCase):
         proof=t.automatic_readiness_attestation(gh,context,edge,HEAD,policy)
         self.assertEqual(proof['status'],'PASS')
         self.assertRegex(proof['proof_digest'],r'^[0-9a-f]{64}$')
-        t.dependencies(gh,[],context,{},HEAD,policy)
 
     def test_automatic_contract_readiness_fail_closed_cases(self):
         cases={
@@ -334,7 +334,6 @@ class TransitionTests(unittest.TestCase):
         proof = t.automatic_readiness_attestation(gh, context, edge, HEAD, policy)
         self.assertEqual(proof['status'], 'PASS')
         self.assertEqual(proof['level'], 'SKELETON_READY')
-        t.dependencies(gh, [], context, {}, HEAD, policy)
 
     def test_automatic_runtime_readiness_fails_closed_on_stale_or_missing_health(self):
         context, edge, policy, gh, basis = self.runtime_fixture()
@@ -374,15 +373,18 @@ class TransitionTests(unittest.TestCase):
 
     def test_mechanical_forward_transitions_need_no_confirmation_comment(self):
         for source,target in [('READY','IN_PROGRESS'),('IN_PROGRESS','IN_REVIEW'),
-                              ('IN_REVIEW','MERGE_READY'),('MERGE_READY','MERGED'),('MERGED','VALIDATING')]:
-            def no_comments(policy,plane,gh,envelope):
-                envelope['evidence_refs']=['pr:1','run:4']
+                              ('IN_REVIEW','MERGE_READY'),('MERGE_READY','MERGED'),('MERGED','VALIDATING'),
+                              ('VALIDATING','DONE')]:
+            def no_comments(policy,plane,gh,envelope,target=target):
+                envelope['evidence_refs']=['pr:1']+(['run:4'] if target=='VALIDATING' else [])
                 gh.comments={}
+                if target=='DONE':
+                    gh.pr_data['body'] += '\n| DOD-WP-01 | PASS | [selected DoD evidence](evidence/test.json) |'
             with self.subTest(source=source):
                 result,plane,logs,gh=run_case(source=source,target=target,mutate=no_comments)
                 self.assertEqual(result['result'],'VERIFIED')
                 self.assertEqual(len(plane.patches),1)
-                if target not in {'MERGE_READY','MERGED'}: self.assertFalse(gh.artifacts)
+                if target not in {'MERGE_READY','MERGED','DONE'}: self.assertFalse(gh.artifacts)
 
     def test_work_can_start_on_real_owned_wp_branch_before_pr_exists(self):
         def commit(policy,plane,gh,envelope): envelope['evidence_refs']=['commit:'+HEAD]
@@ -470,6 +472,12 @@ class TransitionTests(unittest.TestCase):
     def test_existing_repository_assessment_is_reused_by_owner_and_reviewer(self):
         def linked(policy,plane,gh,envelope):
             checks=json.loads(gh.comments[2]['body'])['cap_plane_transition']['checks']
+            wp=plane.item['external_id']
+            policy['contexts'][wp]['completion_assessments']={
+                'verification_families':['BENCH-SIMVAL-001'],
+                'owner_semantic_requirements':[]}
+            checks['BENCH-SIMVAL-001']={'result':'PASS','reason':'Recorded benchmark result',
+                                        'evidence_refs':['repo:evidence/result.json']}
             gh.documents['evidence/accepted-assessment.md']='\n'.join(
                 '| '+k+' | PASS | Existing analysis [result](evidence/result.json) |' for k in checks)
             gh.pr_data['body']+='\nAssessment: [accepted evidence](evidence/accepted-assessment.md)'
@@ -510,30 +518,25 @@ class TransitionTests(unittest.TestCase):
                 result,*_=run_case(source=source,target=target,mutate=native)
                 self.assertEqual(result['result'],'VERIFIED')
 
-    def test_semantic_native_evidence_wrong_author_revision_missing_or_ambiguous_denied(self):
-        # DONE still consumes native owner assessments (READY no longer does, CHG-054).
-        for what in ['none','author','revision','coverage','duplicate']:
-            def mutate(policy,plane,gh,envelope,what=what):
-                wp=plane.item['external_id']
-                for comment in gh.comments.values():
-                    old=json.loads(comment['body'])['cap_plane_transition']
-                    rows=['- [x] '+identity+': '+check['reason']+' '+check['evidence_refs'][0]
-                          for identity,check in old['checks'].items()]
-                    if what=='coverage':
-                        rows=rows[:1]
-                    if what=='duplicate':
-                        rows.append(rows[0].replace('Observed','Conflicting'))
-                    sha='f'*40 if what=='revision' else MERGE
-                    comment['body']=wp+' '+sha+'\n'+'\n'.join(rows)
-                    comment['issue_url']='https://api.github.com/'+t.REPO+'/issues/1'
-                if what=='author':
-                    gh.comments[2]['user']['login']='Ejlonn'
-            if what=='none':
-                result,*_=run_case(source='VALIDATING',target='DONE',mutate=mutate)
-                self.assertEqual(result['result'],'VERIFIED')  # positive control
-                continue
-            with self.subTest(what=what),self.assertRaises(t.Denied):
-                run_case(source='VALIDATING',target='DONE',mutate=mutate)
+    def test_done_uses_selected_wp_dod_not_global_research_or_owner_certification(self):
+        def unrelated_gates(policy,plane,gh,envelope):
+            envelope['evidence_refs']=['pr:1']
+            gh.comments={}
+            policy['contexts'][plane.item['external_id']]['work_package']['dod_refs']=['DOD-WP-01']
+            policy['dod_research']=['DOD-RES-01','DOD-RES-02']
+            gh.pr_data['body'] += '\n| DOD-WP-01 | PASS | [selected DoD evidence](evidence/test.json) |'
+        result,*_=run_case(source='VALIDATING',target='DONE',mutate=unrelated_gates)
+        self.assertEqual(result['result'],'VERIFIED')
+
+    def test_done_does_not_wait_for_later_stage_dependency_readiness(self):
+        def later_stage(policy,plane,gh,envelope):
+            envelope['evidence_refs']=['pr:1']
+            gh.pr_data['body'] += '\n| DOD-WP-01 | PASS | [selected DoD evidence](evidence/test.json) |'
+            policy['contexts'][plane.item['external_id']]['dependency_edges']=[{
+                'id':'DEP-001','predecessor':{'node':'MS-ONE'},
+                'semantics':{'strength':'HARD','blocking_stage':'MILESTONE_EXIT','required_readiness':None}}]
+        result,*_=run_case(source='VALIDATING',target='DONE',mutate=later_stage)
+        self.assertEqual(result['result'],'VERIFIED')
 
     def test_review_risk_metadata_is_not_a_workflow_input(self):
         for risk in ['CR-0','CR-1','CR-2','CR-3','CR-4','UNKNOWN ADVISORY CLASSIFICATION']:
@@ -634,7 +637,7 @@ class TransitionTests(unittest.TestCase):
         def not_owner(policy,plane,gh,envelope): gh.comments[2]['user']['login']='Ejlonn'
         with self.assertRaises(t.Denied): run_case(source='BACKLOG',target='CANCELED',mutate=not_owner)
 
-    def test_no_gate_pass_from_caller_boolean_or_missing_artifact(self):
+    def test_na_cannot_replace_selected_dod_and_missing_artifact_fails_closed(self):
         def fabricated(policy,plane,gh,envelope): envelope['evidence_refs']=['pr:1','comment:99']
         with self.assertRaises(t.Denied): run_case(source='BACKLOG',target='READY',mutate=fabricated)
         def missing(policy,plane,gh,envelope): gh.missing_artifact=True
@@ -643,7 +646,8 @@ class TransitionTests(unittest.TestCase):
             for record in gh.comments.values():
                 data=json.loads(record['body']);data['cap_plane_transition']['checks']['DOD-WP-01']['result']='N/A'
                 record['body']=json.dumps(data)
-        with self.assertRaises(t.Denied): run_case(source='VALIDATING',target='DONE',mutate=na)
+        with self.assertRaisesRegex(t.Denied,'MANDATORY_CRITERION_CANNOT_BE_NA'):
+            run_case(source='VALIDATING',target='DONE',mutate=na)
 
     def test_normal_risk_zero_approvals_and_optional_review_request(self):
         for classification in ['CR-0','CR-1','CR-2','CR-4']:
@@ -1002,27 +1006,61 @@ class TransitionTests(unittest.TestCase):
         result,*_=run_case(mutate=actual_small_band)
         self.assertEqual(result['result'],'VERIFIED')
 
-    def test_missing_ci_and_missing_actual_done_evidence_fail_closed(self):
+    def test_missing_ci_fails_closed_without_generic_owner_acceptance(self):
         def missing_ci(policy,plane,gh,envelope): gh.check_data=([],[])
         with self.assertRaises(t.Denied): run_case(source='IN_PROGRESS',target='IN_REVIEW',mutate=missing_ci)
-        def no_assessment(policy,plane,gh,envelope): envelope['evidence_refs']=['pr:1','run:4']
-        with self.assertRaises(t.Denied): run_case(source='VALIDATING',target='DONE',mutate=no_assessment)
+        def selected_dod(policy,plane,gh,envelope):
+            envelope['evidence_refs']=['pr:1']
+            policy['contexts'][plane.item['external_id']]['work_package']['dod_refs']=['DOD-WP-01']
+            policy['dod_research']=['DOD-RES-01']
+            policy['contexts'][plane.item['external_id']]['completion_assessments']={
+                'verification_families':[],'owner_semantic_requirements':[]}
+            gh.comments={}
+            gh.pr_data['body'] += '\n| DOD-WP-01 | PASS | [selected DoD evidence](evidence/test.json) |'
+        result,*_=run_case(source='VALIDATING',target='DONE',mutate=selected_dod)
+        self.assertEqual(result['result'],'VERIFIED')
+
+    def test_only_explicit_wp_manual_verification_requires_owner_assessment(self):
+        def require_benchmark(policy,plane,gh,envelope):
+            context=policy['contexts'][plane.item['external_id']]
+            context['completion_assessments']={
+                'verification_families':['BENCH-SIMVAL-001'],
+                'owner_semantic_requirements':[]}
+            envelope['evidence_refs']=['pr:1']
+            gh.comments={}
+            gh.pr_data['body'] += '\n| DOD-WP-01 | PASS | [selected DoD evidence](evidence/test.json) |'
+        with self.assertRaisesRegex(t.Denied,'CRITERION_NOT_CONFIRMED'):
+            run_case(source='VALIDATING',target='DONE',mutate=require_benchmark)
+
+        def owner_evidence(policy,plane,gh,envelope):
+            require_benchmark(policy,plane,gh,envelope)
+            gh.pr_data['body'] += '\n| BENCH-SIMVAL-001 | PASS | [run manifest](evidence/test.json) |'
+            envelope['evidence_refs']=['pr:1']
+        result,*_=run_case(source='VALIDATING',target='DONE',mutate=owner_evidence)
+        self.assertEqual(result['result'],'VERIFIED')
+
+    def test_done_requires_each_selected_dod_with_a_real_artifact_reference(self):
+        def missing_selected(policy,plane,gh,envelope):
+            context=policy['contexts'][plane.item['external_id']]
+            context['work_package']['dod_refs']=['DOD-WP-06']
+            gh.pr_data['body'] += '\n| DOD-WP-01 | PASS | [other criterion](evidence/test.json) |'
+            envelope['evidence_refs']=['pr:1']
+            gh.comments={}
+        with self.assertRaisesRegex(t.Denied,'CRITERION_NOT_CONFIRMED'):
+            run_case(source='VALIDATING',target='DONE',mutate=missing_selected)
+
+        def selected_pass(policy,plane,gh,envelope):
+            missing_selected(policy,plane,gh,envelope)
+            gh.pr_data['body'] += '\n| DOD-WP-06 | PASS | [observability evidence](evidence/test.json) |'
+        result,*_=run_case(source='VALIDATING',target='DONE',mutate=selected_pass)
+        self.assertEqual(result['result'],'VERIFIED')
 
     def test_milestone_dependency_is_not_blindly_a_wp_closure_blocker(self):
         def milestone(policy,plane,gh,envelope):
             policy['contexts'][plane.item['external_id']]['dependency_edges']=[{
                 'id':'DEP-001','predecessor':{'node':'MS-ONE'},
                 'semantics':{'strength':'HARD','blocking_stage':'MILESTONE_EXIT','required_readiness':None}}]
-        with self.assertRaises(t.Denied): run_case(source='VALIDATING',target='DONE',mutate=milestone)
-        def assessed(policy,plane,gh,envelope):
-            milestone(policy,plane,gh,envelope)
-            record=gh.comments[2]
-            data=json.loads(record['body'])
-            data['cap_plane_transition']['dependency_stage_dispositions']={'DEP-001':{
-                'applies_to_wp_completion':False,'reason':'This gate belongs to the later milestone, not this WP closure',
-                'evidence_refs':['repo:docs/05_Dependency_Graph.md']}}
-            record['body']=json.dumps(data)
-        result,*_=run_case(source='VALIDATING',target='DONE',mutate=assessed)
+        result,*_=run_case(source='VALIDATING',target='DONE',mutate=milestone)
         self.assertEqual(result['result'],'VERIFIED')
 
     def test_launcher_rejects_invalid_arguments_before_sudo(self):

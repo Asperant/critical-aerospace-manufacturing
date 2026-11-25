@@ -380,11 +380,13 @@ Twelve dimensions from 00 §16. Every DoR level in §5 is a selection of these w
 
 | Field | Value |
 |---|---|
-| Confirming owner | WP owner with complete actual DoD/trace/evidence; supporting review advisory, not required |
+| Completion evidence | Actual merged PR, required CI, applicable WP-specific tests/integrations, trace and selected DoD; no blanket owner certification. Human judgment remains required only where the WP's own canonical acceptance explicitly requires it. |
 | State transition | VALIDATING → DONE |
 | Criteria count | 12 |
 
 The twelve criteria below carry the meanings fixed in 04 §4.2, because 179 work package cards already select subsets of these IDs as their completion contract. The wording is refined here; the obligation behind each ID is unchanged (§14).
+
+**WP boundary.** A work package is assessed against its declared deliverables, its own `DoD` references in 04, and acceptance evidence for the requirement slice it owns. A downstream service integration, platform-wide scenario, final research campaign, capability/milestone gate or release acceptance remains at that owning gate unless the WP's own deliverable explicitly includes it. This rule does not waive a WP-owned real-boundary integration, security/contract test, required NFR measurement, reproducibility result, evidence identity binding, or explicit human/product acceptance. Requirement and release trace dispositions stay honest; closing an implementation WP does not promote its requirement to globally VERIFIED.
 
 | ID | Criterion | Applies to |
 |---|---|---|
@@ -540,11 +542,11 @@ The level DoD is the floor. The requirement class adds obligations that cannot b
 |---|---|---|---|
 | F0 | 17 requirements | verified on at least one real integrated acceptance path; no fixture anywhere in that path; participates in an AV-SCEN or E2E scenario | product identity is incomplete — expansion stops until repaired |
 | F1 | 159 requirements | verification executed at the boundary mode declared in 03; E2E only where the catalogue verification code demands it | mandatory capability missing at M4; requires change control |
-| R1 | 10 requirements | mechanism runs reproducibly by a non-author; outcome direction irrelevant | research infrastructure gap — claims become unverifiable |
-| H0 | 52 NFRs | hard/negative evidence with zero-count assertions; happy-path evidence is insufficient by definition | acceptance blocked; cannot be averaged away |
-| A1 | 41 NFRs | measured PASS in the correct HardwareProfile and WorkloadProfile, or formally rebaselined with measured justification | acceptance blocked unless rebaselined through 09 |
-| S2 | 23 NFRs | measured with PASS or MISS recorded plus analysis | a MISS is a valid recorded outcome, not a silent adjustment |
-| C3 | 4 NFRs | measured and characterized; absence of a threshold does not excuse absence of measurement | unmeasured characterization is an incomplete deliverable |
+| R1 | 10 requirements | when the WP itself delivers the reproducibility mechanism or research result: runs reproducibly by a non-author; outcome direction irrelevant | the owning research acceptance remains open until this evidence exists |
+| H0 | 52 NFRs | for an H0 requirement delivered by this WP: hard/negative evidence with zero-count assertions; happy-path evidence is insufficient by definition | the owning acceptance remains blocked; it cannot be averaged away |
+| A1 | 41 NFRs | for an A1 measurement delivered by this WP: measured PASS in the correct HardwareProfile and WorkloadProfile, or formally rebaselined with measured justification | the owning acceptance remains blocked unless rebaselined through 09 |
+| S2 | 23 NFRs | for measurement work delivered by this WP: measured with PASS or MISS recorded plus analysis | a MISS is a valid recorded outcome, not a silent adjustment |
+| C3 | 4 NFRs | for characterization delivered by this WP: measured and characterized; absence of a threshold does not excuse absence of measurement | unmeasured characterization is an incomplete deliverable |
 
 ## 10. Per-Capability-Area Completion Requirements
 
@@ -903,7 +905,11 @@ Every repository development PR, CR-0 through CR-4, normal/high risk, security/a
 
 IN_REVIEW means a real non-draft technically reviewable PR, not waiting for a human. MERGE_READY requires correct canonical WP/approved control scope and branch/PR/head binding, required actual CI/tests/canonical validation, mergeability/no conflict against current main, no out-of-scope changes, applicable DoR-PR/PR DoD, trace/evidence and applicable security/secret/static checks, and no real BLOCKED condition. Actual technical/canonical failures or ambiguity fail closed; a review state alone neither proves nor disproves these facts. Material revisions re-run technical checks/evidence. Rework follows actual revision/technical evidence, not approval invalidation.
 
-MERGED requires an actual GitHub merge. VALIDATING requires actual post-merge validation started. DONE requires all applicable DoD, trace/evidence and actual successful post-merge validation; accountable owner assessment and real artifacts remain required, another person's review/confirmation does not. Development peer/methodology review is advisory even for closure; real protocol, scientific reproducibility, measured acceptance and product-authority evidence remain required. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted.
+MERGED requires an actual GitHub merge. VALIDATING requires actual post-merge validation started. DONE requires the WP's selected DoD and owned acceptance, actual merged PR, exact-revision required CI and applicable post-merge validation. A general accountable-owner certification, later-stage dependency readiness, another WP's future integration, platform-wide E2E, final research campaign or release acceptance is not an additional WP gate unless explicitly in that WP's own deliverables. Human decision evidence remains required for acceptance that is inherently a named human/product-owner decision. Development peer/methodology review remains advisory. Product HITL, protected-action authentication and authorization, exact proposal binding, security, real integration and research integrity remain unchanged. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted.
+
+## CHG-081 — scope-aware work-package completion
+
+Approved project-owner decision on 2026-11-25. Evaluate each WP against its own canonical DoD references and owned deliverables. The live transition verifies the merged PR, PR scope, required post-merge CI at the exact merge SHA, and tests/integrations actually required for that WP. Do not require every global WP/research criterion, every HARD dependency's later-stage readiness, or a generic owner certification for every WP. Preserve a human decision where the WP's own acceptance explicitly requires one. Capability, milestone, final research and release acceptance remain at their existing gates; this policy alone never marks work complete. Machine-readable record: `09_change/CHG-081.yaml`; control item: `CTRL-HOST-051`.
 
 This changes ONLY development/GitHub/repository governance. Product HITL, protected-action approval, AuthorityPolicy, authenticated approvers, runtime self-approval prohibition, exact proposal/plan binding and execution authorization are unchanged. Project-owner scope/cancellation decisions and real product acceptance artifacts are not GitHub review approvals and are not fabricated or waived. No Plane test mutation, merge, commit or push is authorized in this pass. Existing historical approvals remain history, never requirements for a current transition.
 
@@ -915,11 +921,11 @@ Explicit owner decision, 22 October 2026: `project_control/execution_preferences
 
 ## CHG-031 — reconciliation is not readiness or completion evidence
 
-A lifecycle reconciliation records observed GitHub facts in Plane only. It is not DoR, DoD, accountable-owner assessment, trace, evidence or integrated-acceptance evidence, and it does not satisfy any criterion in this document. A work package reconciled to MERGED or VALIDATING still needs completed actual post-merge validation, every applicable DoD criterion and attributable owner assessment before DONE. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted. Reconciliation does not alter the transition predicates for ordinary work.
+A lifecycle reconciliation records observed GitHub facts in Plane only. It is not DoR, DoD, trace or integrated-acceptance evidence, and it does not satisfy a technical criterion in this document. A work package reconciled to MERGED or VALIDATING still needs its selected DoD, owned acceptance and exact-revision post-merge checks before DONE under CHG-081. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted. Reconciliation does not alter the transition predicates for ordinary work.
 
 ## CHG-033 — the recovery proof is not completion evidence
 
-The deferred-acceptance recovery proof releases the owner's implementation slot only. It is not DoR, DoD, accountable-owner assessment, trace, evidence or integrated-acceptance evidence, it does not satisfy a missing Release, Environment or Hardware identity (DOD-WP-11), and it does not make Merged equal Done. DONE still requires every applicable DoD criterion.
+The deferred-acceptance recovery proof releases the owner's implementation slot only. It is not DoR, DoD, trace, evidence or integrated-acceptance evidence, it does not satisfy a missing Release, Environment or Hardware identity when DOD-WP-11 is selected, and it does not make Merged equal Done. DONE still requires the WP's applicable DoD criteria under CHG-081.
 
 ## CHG-080 / CTRL-DOC-010 — ReferencePlant and R1-R4 readiness supplement
 

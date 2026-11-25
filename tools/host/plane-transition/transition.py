@@ -929,7 +929,7 @@ def native_record(text, wp, sha):
         identity,result=cells[:2]
         if result not in {'PASS','N/A'}: continue
         refs=artifact_refs(' '.join(cells[2:]))
-        if re.fullmatch(r'(?:DOR|DOD)-[A-Z]+-[0-9]{2}|docs/08#[0-9]+:[A-Z0-9-]+|BLOCKER-(?:OBSERVED|RESOLVED)',identity):
+        if re.fullmatch(r'(?:DOR|DOD)-[A-Z]+-[0-9]{2}|(?:FR|NFR)-[A-Z0-9]+-[0-9]{3}|docs/08#[0-9]+:[A-Z0-9-]+|BLOCKER-(?:OBSERVED|RESOLVED)|AV-SCEN-[0-9]{2}|E2E-[0-9]{2}|(?:BENCH|DEMO|REPRO|RES|INSP|RESTORE)-[A-Z0-9-]+',identity):
             need(identity not in data['checks'], 'AMBIGUOUS_SEMANTIC_EVIDENCE')
             data['checks'][identity]={'result':result,'reason':' '.join(cells[2:]),'evidence_refs':refs}
     # Ordinary project-owner decisions and blocker notes; no policy/from/to copy.
@@ -1081,47 +1081,6 @@ def blocker_evidence(gh,record,criterion,sha):
         criteria(gh,record,[criterion],sha)  # Optional legacy assessment.
 
 
-def dependencies(gh, rows, context, record, sha, policy, final=False):
-    for edge in context['dependency_edges']:
-        semantics=edge['semantics']
-        if semantics['strength']!='HARD' or not final and semantics['blocking_stage']!='START': continue
-        if final and semantics['blocking_stage'] in {'MILESTONE_EXIT','FREEZE'}:
-            # A milestone/freeze gate is not automatically a WP closure gate.
-            # Its applicability requires actual accountable-owner assessment/evidence, not a reviewer.
-            disposition=record.get('dependency_stage_dispositions',{}).get(edge['id'])
-            need(isinstance(disposition,dict) and type(disposition.get('applies_to_wp_completion')) is bool,
-                 'DEPENDENCY_STAGE_APPLICABILITY_UNKNOWN')
-            safe_text(disposition.get('reason'))
-            artifacts=disposition.get('evidence_refs',[])
-            need(isinstance(artifacts,list) and artifacts, 'DEPENDENCY_STAGE_EVIDENCE_MISSING')
-            for artifact in artifacts: gh.artifact(artifact,sha)
-            if not disposition['applies_to_wp_completion']: continue
-        producer=policy['node_owners'].get(edge['predecessor']['node'])
-        need(producer in q.PEOPLE, 'DEPENDENCY_CONFIRMING_OWNER_UNKNOWN')
-        matches=[data.get('dependency_readiness',{}).get(edge['id']) for author,data in rows
-                 if author.casefold()==GITHUB[producer].casefold() and data.get('wp_id')==context['work_package']['id']
-                 and data.get('head_sha')==sha and (data.get('_native') or
-                 data.get('source_manifest')==policy['source_manifest'] and data.get('policy_digest')==policy['policy_digest'])]
-        matches=[m for m in matches if isinstance(m,dict)]
-        need(len(matches)<=1,'DEPENDENCY_READINESS_AMBIGUOUS')
-        if not matches:
-            automatic=automatic_readiness_attestation(
-                gh,context,edge,gh.main_sha(),policy
-            )
-            need(automatic.get('status')=='PASS', automatic.get('reasons',['DEPENDENCY_READINESS_UNKNOWN'])[0])
-            continue
-        data=matches[0]
-        levels=policy['node_levels'].get(edge['predecessor']['node'],[])
-        required=semantics['required_readiness']
-        need(required in levels and data.get('readiness') in levels and
-             levels.index(data['readiness'])>=levels.index(required), 'HARD_DEPENDENCY_NOT_READY')
-        # Merely marking a producer WP DONE is deliberately not a readiness proof.
-        safe_text(data.get('precise_consumer_requirement'))
-        refs=data.get('evidence_refs',[])
-        need(isinstance(refs,list) and refs, 'DEPENDENCY_ARTIFACTS_MISSING')
-        for ref in refs: gh.artifact(ref,sha)
-
-
 def pr_scope_paths(files):
     """Reject unsafe, secret or runtime paths in a complete PR file inventory."""
     for file in files:
@@ -1232,7 +1191,7 @@ def product_startability(context):
 def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=None,projection=None):
     policy_checks(policy)
     context=policy['contexts'][wp]
-    card=own(item,profile,wp,policy)
+    own(item,profile,wp,policy)
     need(source!='CANCELED' or target=='UNBLOCKED', 'CANCELED_IS_TERMINAL')
     need(source!='DONE' or target in {'VALIDATING','UNBLOCKED'}, 'DONE_REQUIRES_STALENESS_REOPEN')
     need(target in {'BLOCKED','UNBLOCKED','CANCELED'} or FORWARD.get(source)==target or (source,target) in REWORK,
@@ -1253,8 +1212,20 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
     need(isinstance(sha,str) and SHA.fullmatch(sha), 'REVISION_UNAVAILABLE')
     if post and pr: need(pr.get('merged') is True, 'PR_NOT_ACTUALLY_MERGED')
     owner=GITHUB[profile]
-    # Only semantic operations/readiness actually consume assessment records.
-    rows=records(gh,refs,wp,sha,pr) if target in {'BLOCKED','UNBLOCKED','CANCELED','DONE'} or source=='DONE' else []
+    completion_assessments=context.get('completion_assessments',{})
+    selected_dod=context.get('work_package',{}).get('dod_refs',[])
+    required_completion_assessments=sorted(set(
+        (selected_dod if isinstance(selected_dod,list) else [])
+        + (completion_assessments.get('verification_families',[])
+           + completion_assessments.get('owner_semantic_requirements',[])
+           if isinstance(completion_assessments,dict) else [])
+    ))
+    # Require evidence for only this WP's selected DoD and explicitly declared
+    # non-CI/owner-semantic acceptance; generic project-wide criteria are excluded.
+    rows=records(gh,refs,wp,sha,pr) if (
+        target in {'BLOCKED','UNBLOCKED','CANCELED'} or source=='DONE'
+        or target=='DONE' and required_completion_assessments
+    ) else []
     if target=='CANCELED':
         decision=confirmation(rows,['Asperant'],wp,source,target,sha,policy)
         need(decision.get('owner_decision')=='CANCEL', 'EXPLICIT_OWNER_CANCELLATION_REQUIRED')
@@ -1334,16 +1305,19 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
                  and r.get('event')!='pull_request' for r in runs), 'POST_MERGE_VALIDATION_NOT_RUNNING')
     elif target=='DONE':
         post_merge_ci(gh,sha,policy)
+        # A completed WP is bound to the exact merged revision and current main.
+        # Capability/milestone/release and other-WP dependency acceptance remain
+        # at their canonical later-stage gates (CHG-081).
+        gh.ancestor(sha,gh.main_sha())
         gh.merged_shape(pr)
-        owner_record=confirmation(rows,[owner],wp,source,target,sha,policy)
-        ids=sorted(set(policy['dod_wp']+card['dod_refs']+context['scope_criteria']))
-        if card.get('scope_class')=='R1': ids+=policy['dod_research']
-        criteria(gh,owner_record,ids,sha)
         pr_governance(gh,pr,wp,context,policy)
-        dependencies(gh,rows,context,owner_record,sha,policy,final=True)
-        runs=[gh.run(int(r.split(':')[1])) for r in refs if r.startswith('run:')]
-        need(any(r.get('head_sha')==sha and r.get('head_branch')=='main' and r.get('status')=='completed'
-                 and r.get('conclusion')=='success' and r.get('event')!='pull_request' for r in runs), 'POST_MERGE_VALIDATION_NOT_PASSED')
+        if required_completion_assessments:
+            owner_record=confirmation(rows,[owner],wp,source,target,sha,policy)
+            criteria(gh,owner_record,required_completion_assessments,sha)
+            checks=owner_record.get('checks',{})
+            need(all(checks.get(identity,{}).get('result')=='PASS'
+                     for identity in required_completion_assessments),
+                 'WP_OWNED_ACCEPTANCE_NOT_PASS')
 
     if pr: return {'observed_pr_head':pr['head']['sha'],'observed_pr_number':pr['number'],
                    'pr_facts':pr_facts(pr)}

@@ -22,7 +22,7 @@ Do not silently redesign the project.
 
 **Implementation-first.** Continue and complete the existing canonical WPs; do not invent a parallel task catalog, extra work packages or speculative scope. Choose the next actionable WP by real dependencies and owner responsibility. Resume partially implemented work before starting a duplicate implementation.
 
-**Sequence.** Finish the currently implementable WP functionality and cross-service integration before expanding the demonstration to the full CHG-080 CRB-F/CRB-M ReferencePlant configuration. CHG-080 remains approved scope; do not cancel it, change its semantics or claim an entire WP DONE when its acceptance depends on that full-scale configuration or final evaluation. Mark such remaining work explicitly pending and advance another unblocked WP. The intent is to postpone scale-out work, not remove it.
+**Sequence.** Finish the currently implementable WP functionality and cross-service integration before expanding the demonstration to the full CHG-080 CRB-F/CRB-M ReferencePlant configuration. CHG-080 remains approved scope; do not cancel it or change its semantics. Under CHG-081, a WP waits for the full-scale configuration or final evaluation only when that work is an explicit part of the WP's own deliverable; otherwise retain it at the owning capability/milestone/release gate. Mark genuine WP-local gaps pending and advance another unblocked WP. The intent is to postpone scale-out work, not remove it.
 
 **Minimum documentation.** Spend effort on working code, integration and required tests rather than prose. Do not create standalone planning reports, per-slice Markdown status/evidence narratives, duplicate checklists, broad repository audits or cosmetic documentation updates by default. Reuse existing contracts, schemas, code comments, test outputs, PR descriptions and machine-produced artifacts. Write or update the *smallest necessary* documentation only when a real contract/API change, migration, operational instruction, approved change-control requirement, research reproducibility obligation, or canonical DoD gate requires it. Never fabricate or waive required proof.
 
@@ -125,7 +125,7 @@ Important:
 
 A merged change must not be considered complete until required post-merge validation and evidence are complete.
 
-Development policy `DEV-REVIEW-2026-10-15-FINAL` / CHG-018: ALL repository development PRs, CR-0 through CR-4 including high-risk security/auth/protected-authority/migration work, require **0 human approvals**. Review, comments, CODEOWNERS and supporting reviewers are advisory; APPROVED/CHANGES_REQUESTED/DISMISSED, reviewer presence, independent quotas, self-approval, owner override and stale/current-head approval mechanisms never gate workflow, merge or DONE. IN_REVIEW means technically reviewable, not waiting for a human. MERGE_READY requires actual correct WP/control scope/branch/head, non-draft PR, required CI/tests/canonical validation, mergeability, trace/evidence, applicable DoR-PR/PR DoD and security/secret/static checks, and no real BLOCKED condition. Actual technical/canonical ambiguity fails closed. DONE still requires all actual DoD/trace/evidence/post-merge validation. Product HITL/protected-action authentication, self-approval prohibition, exact binding and execution authorization remain unchanged.
+Development policy `DEV-REVIEW-2026-10-15-FINAL` / CHG-018: ALL repository development PRs, CR-0 through CR-4 including high-risk security/auth/protected-authority/migration work, require **0 human approvals**. Review, comments, CODEOWNERS and supporting reviewers are advisory; APPROVED/CHANGES_REQUESTED/DISMISSED, reviewer presence, independent quotas, self-approval, owner override and stale/current-head approval mechanisms never gate workflow, merge or DONE. IN_REVIEW means technically reviewable, not waiting for a human. MERGE_READY requires actual correct WP/control scope/branch/head, non-draft PR, required CI/tests/canonical validation, mergeability, trace/evidence, applicable DoR-PR/PR DoD and security/secret/static checks, and no real BLOCKED condition. Actual technical/canonical ambiguity fails closed. Under CHG-081, DONE requires the WP's selected DoD and owned acceptance, actual merged PR, exact-revision required CI and applicable post-merge validation; no unrelated later-stage dependency, platform-wide E2E, final research or release gate and no generic owner certification may be added. Keep every WP-owned security, contract, real-integration, measurement, reproducibility and explicit human acceptance requirement. Product HITL/protected-action authentication, self-approval prohibition, exact binding and execution authorization remain unchanged.
 
 ---
 
@@ -713,7 +713,9 @@ candidates, not permission to start; it is not a replacement for canonical
 context. Plane may be reconciled later. Lifecycle transitions, MERGE_READY and
 DONE must still satisfy their actual technical/CI/evidence facts; UNKNOWN is
 never PASS. BLOCKED is orthogonal, CANCELED still requires an explicit
-project-owner decision, and Merged != Done.
+project-owner decision, and Merged != Done. Under CHG-081, DONE is evaluated
+against the WP's selected DoD and own delivery; later-stage dependency and
+capability/release acceptance remain at their owning gates.
 
 
 ---
@@ -840,8 +842,10 @@ visible as orthogonal `BLOCKED`/`VALIDATING` state; when local work is complete,
 the developer may select another canonical WP without Slot Release proof.
 
 `projectctl startability <WP-ID>` is the exact start check. MERGE_READY and DONE
-remain fail-closed with exact merged revision, CI, real evidence, dependency
-acceptance, traceability and runtime/integration verification; `UNKNOWN != PASS`.
+remain fail-closed with exact merged revision, CI, real evidence, traceability and
+the WP's own runtime/integration verification; `UNKNOWN != PASS`. Under CHG-081,
+capability, later-stage dependency, final research and release acceptance remain
+at their owning gates unless they are explicit deliverables of this WP.
 AUTO_NEXT and preparation are advisory/on-demand, and automatic preparation is
 disabled by default. This control never starts or mutates WP-CORE-009.
 

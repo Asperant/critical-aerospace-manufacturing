@@ -1,0 +1,66 @@
+CHG-081:
+  title: Scope DONE gates to each work package's own accepted delivery
+  trigger: Explicit project-owner decision on 2026-11-25 to close technically complete work without waiting on unrelated downstream, platform-wide, final research or release acceptance.
+  reason: The lifecycle evaluator currently applies every generic WP and research criterion, every HARD dependency at DONE, and a blanket accountable-owner certification to each WP. These duplicate or out-of-scope gates keep completed technical deliveries open even when the WP's own canonical deliverables and acceptance have passed.
+  class: C2
+  review_risk_class: CR-2
+  raised_in: S4
+  raised_on: 2026-11-25
+  owner: Asrın
+  application_control_item: CTRL-HOST-051
+  required_human_approvals: 0
+  reviewers: []
+  decision: APPROVED
+  status: APPROVED
+  human_decision_basis: The project owner explicitly approved scope-aware WP completion while retaining each WP's own canonical technical, security, contract, real-integration, measurement and research obligations. This is a project-management policy decision and does not certify any WP or substitute for another person's technical acceptance.
+  decision_basis: "Project owner instruction, 2026-11-25: A WP may be DONE when its own scoped code and function, required tests, required integrations and own security/contract/acceptance conditions are complete. Future work owned by other WPs, platform-wide E2E, final research benchmarks and release acceptance remain at their owning WP/capability/milestone/release gates unless explicitly part of this WP's own deliverable. Do not fabricate owner decisions or test outcomes."
+  scope:
+    - Use only the WP's canonical DoD references and requirement-specific acceptance that belongs to its declared deliverables.
+    - Verify actual merged PR identity, scope, required PR CI, post-merge aggregate CI at the exact merge SHA, and applicable test/integration jobs.
+    - Keep a real integration, security, contract, measurement, research or human decision gate when the WP's own acceptance contract requires it.
+    - Keep unrelated downstream integration, capability E2E, final research campaign and release acceptance at their existing owning lifecycle level.
+    - Keep Plane identity, canonical owner/assignee/profile guards, protected fields, audit/readback, product HITL, Core authority, authentication and execution-authorization gates unchanged.
+    - Keep CANCELED terminal and never fabricate historical lifecycle events or acceptance.
+  affected_requirements:
+    - NONE — product requirement semantics, thresholds and authority rules are unchanged.
+  precise_requirement: NONE — changes the applicability boundary of work-package lifecycle evidence only; requirement acceptance remains governed by its canonical WP and release/capability gates.
+  affected_architecture:
+    - NONE — no service boundary, data authority or runtime contract changes.
+  affected_contracts:
+    - NONE — no product or external runtime contract changes.
+  affected_work_packages:
+    - ALL EXISTING WORK PACKAGES — only their completion evidence applicability is clarified; no WP scope or deliverable is removed.
+  affected_dependencies:
+    - DONE no longer requires every HARD edge's later-stage readiness. Edges retain their canonical stage and remain enforced at the applicable consumer/integration/milestone/freeze gate.
+  affected_evidence:
+    - Existing PR, required CI, changed-scope tests, integration jobs, canonical WP DoD, trace and post-merge evidence are evaluated directly where available.
+    - A blanket owner certification and a separate run/bundle are not required for objective code/test WPs; identity-bound bundles remain required where the WP's own selected DoD produces measured/research evidence.
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - Existing PR, CI, test, integration, research and owner-acceptance records remain bound to their actual revisions and retain their original meaning.
+    rerun_required:
+      - Focused projectctl gate and Plane transition policy tests for the changed evaluator.
+      - CI for this control PR and an installed-policy readback after merge.
+  security_authority_impact: NONE — product HITL, identity, authorization, secrets, audit, Core authority and protected-action binding are unchanged; the change removes only generic WP-close certification and out-of-scope dependency gates.
+  risks:
+    - Misclassifying a WP-owned integration or evidence obligation as downstream could permit premature closure; use canonical WP DoD references and retain their explicit acceptance.
+    - Current PR/main CI facts do not replace a WP-specific human judgment where its canonical acceptance explicitly requires one.
+  conditions:
+    - No WP becomes DONE from this policy change alone.
+    - Each DONE transition must still pass actual GitHub/Plane checks and the WP's own canonical acceptance.
+    - Other developers' Plane assignments and lifecycle states may only be changed through their own profile/identity mechanism.
+  rollout: Merge the policy and evaluator through this control PR; regenerate/install only the existing root-owned transition policy using its supported installer; verify source hashes and focused tests. Do not mutate Plane as part of deployment.
+  rollback: Revert this control PR and reinstall the transition helper from the preceding merged reference source. Do not roll back Plane lifecycle history.
+  required_rerun:
+    - focused tools/projectctl post-merge evidence tests
+    - focused tools/host/plane-transition transition tests
+  documentation_updates:
+    - AGENTS.md — clarify scope-aware DONE and retain existing safety and identity boundaries
+    - docs/08_Definition_of_Ready_and_Done.md — WP vs capability/milestone/release acceptance boundary
+    - docs/09_Change_Control_Process.md — record this approved C2 governance change
+    - tools/projectctl/README.md — explain offline gate vs live lifecycle evaluation
+    - 09_change/CHG-081.yaml
+    - 09_change/change_requests.csv
+  freeze_context: PRE_M6
