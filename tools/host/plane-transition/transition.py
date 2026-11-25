@@ -929,7 +929,7 @@ def native_record(text, wp, sha):
         identity,result=cells[:2]
         if result not in {'PASS','N/A'}: continue
         refs=artifact_refs(' '.join(cells[2:]))
-        if re.fullmatch(r'(?:DOR|DOD)-[A-Z]+-[0-9]{2}|(?:FR|NFR)-[A-Z0-9]+-[0-9]{3}|docs/08#[0-9]+:[A-Z0-9-]+|BLOCKER-(?:OBSERVED|RESOLVED)|AV-SCEN-[0-9]{2}|E2E-[0-9]{2}|(?:BENCH|DEMO|REPRO|RES|INSP|RESTORE)-[A-Z0-9-]+',identity):
+        if re.fullmatch(r'(?:DOR|DOD)-[A-Z]+-[0-9]{2}|(?:FR|NFR)-[A-Z0-9]+-[0-9]{3}|docs/08#[0-9]+:[A-Z0-9-]+|BLOCKER-(?:OBSERVED|RESOLVED)|AV-SCEN-[0-9]{2}|E2E-[0-9]{2}|(?:TEST|BENCH|DEMO|REPRO|RES|INSP|RESTORE)-[A-Z0-9-]+',identity):
             need(identity not in data['checks'], 'AMBIGUOUS_SEMANTIC_EVIDENCE')
             data['checks'][identity]={'result':result,'reason':' '.join(cells[2:]),'evidence_refs':refs}
     # Ordinary project-owner decisions and blocker notes; no policy/from/to copy.
