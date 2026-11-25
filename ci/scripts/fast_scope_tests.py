@@ -88,48 +88,35 @@ def main() -> int:
         projectctl_test_paths = {
             path for path in paths if path.startswith("tools/projectctl/tests/")
         }
-        if "tools/projectctl/src/projectctl/gates.py" in paths:
-            selected.append(
-                (
-                    "projectctl-gates",
-                    [*PYTEST, "tools/projectctl/tests/test_gates.py", "-q"],
-                )
-            )
+        projectctl_suite: list[str] = []
+        if any(
+            path
+            in {
+                "tools/projectctl/src/projectctl/gates.py",
+                "tools/projectctl/src/projectctl/post_merge_evidence.py",
+            }
+            for path in paths
+        ):
+            projectctl_suite.append("tools/projectctl/tests/test_gates.py")
         elif "tools/projectctl/src/projectctl/plane_import.py" in paths:
-            selected.append(
-                (
-                    "projectctl-plane-import",
-                    [
-                        *PYTEST,
-                        "tools/projectctl/tests/test_plane_import.py",
-                        "tools/projectctl/tests/test_control_plane.py",
-                        "-q",
-                    ],
-                )
+            projectctl_suite.extend(
+                [
+                    "tools/projectctl/tests/test_plane_import.py",
+                    "tools/projectctl/tests/test_control_plane.py",
+                ]
             )
-        elif projectctl_test_paths == {"tools/projectctl/tests/test_dependencies.py"}:
-            selected.append(
-                (
-                    "projectctl-dependencies",
-                    [
-                        *PYTEST,
-                        "tools/projectctl/tests/test_dependencies.py",
-                        "-q",
-                    ],
-                )
+        projectctl_suite.extend(sorted(projectctl_test_paths - set(projectctl_suite)))
+        if not projectctl_suite:
+            projectctl_suite = [
+                "tools/projectctl/tests/test_cli.py",
+                "tools/projectctl/tests/test_project.py",
+            ]
+        selected.append(
+            (
+                "projectctl-changed-scope",
+                [*PYTEST, *projectctl_suite, "-q"],
             )
-        else:
-            selected.append(
-                (
-                    "projectctl-focused",
-                    [
-                        *PYTEST,
-                        "tools/projectctl/tests/test_cli.py",
-                        "tools/projectctl/tests/test_project.py",
-                        "-q",
-                    ],
-                )
-            )
+        )
     if any(
         path.startswith("ci/") or path.startswith(".github/workflows/")
         for path in paths
