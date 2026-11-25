@@ -6,13 +6,8 @@
       "owner": "Asrın",
       "runtime": "typescript",
       "path": "services/command-center-web",
-      "logging": "PENDING",
-      "health": "PENDING",
-      "exemption": {
-        "reason": "Created by WP-UI-001 before the standard existed; a browser deployable has no Python helper, so its log and health mapping to cap.log/v1 and cap.health/v1 is agreed with the owner (WP-OBS-001). Reviewed 2026-11-21; remains PENDING through 2026-12-21.",
-        "owner": "Yavuz",
-        "expires_on": "2026-12-21"
-      }
+      "logging": "ADOPTED",
+      "health": "ADOPTED"
     },
     {
       "name": "operations-bff",

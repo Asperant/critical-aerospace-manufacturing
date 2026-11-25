@@ -156,6 +156,42 @@ def test_adopted_and_used_counts(tmp_path: Path) -> None:
     assert "logging 1/1 adopted" in result.summary()
 
 
+def test_typescript_adoption_requires_schema_wiring(tmp_path: Path) -> None:
+    path = tmp_path / "services" / "command-center-web"
+    path.mkdir(parents=True)
+    claim = {
+        "command-center-web": {
+            "runtime": "typescript",
+            "logging": "ADOPTED",
+            "health": "ADOPTED",
+        }
+    }
+    result = check(registry(**claim), tmp_path, TODAY)
+    assert any(
+        "logging ADOPTED" in item and "cap.log/v1" in item for item in result.violations
+    )
+    assert any(
+        "health ADOPTED" in item and "cap.health/v1" in item
+        for item in result.violations
+    )
+
+    (path / "nginx.conf").write_text("# cap.log/v1 access record\n")
+    result = check(registry(**claim), tmp_path, TODAY)
+    assert len(result.violations) == 2
+
+    (path / "nginx.conf").write_text(
+        "log_format cap_log_json escape=json '...';\n"
+        "access_log /dev/stdout cap_log_json;\n"
+        '"event_name":"web.http_request" "request_id":"$request_id" '
+        '"path":"$uri"\n'
+        "location = /healthz { return 200 "
+        '\'{"schema":"cap.health/v1","checked_at":"$cap_checked_at",'
+        '"live":true}\'; }\n'
+    )
+    result = check(registry(**claim), tmp_path, TODAY)
+    assert result.violations == []
+
+
 @pytest.mark.parametrize(
     ("exemption", "problem"),
     [

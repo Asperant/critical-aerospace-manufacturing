@@ -7,5 +7,6 @@ COPY services/command-center-web ./
 RUN npm run build
 
 FROM nginx:1.29.1-alpine
+ENV TZ=UTC
 COPY services/command-center-web/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
