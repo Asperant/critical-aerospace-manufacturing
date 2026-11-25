@@ -6,7 +6,7 @@
     "pyright": "pyright 1.1.389"
   },
   "totals": {
-    "ruff": 278,
+    "ruff": 277,
     "pyright": 181,
     "unformatted_files": 52
   },
@@ -37,9 +37,6 @@
       "F401": 1,
       "I001": 1,
       "SIM117": 4
-    },
-    "tools/host/plane-transition/build_policy.py": {
-      "I001": 1
     },
     "tools/host/plane-transition/install.py": {
       "E701": 12,
