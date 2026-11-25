@@ -1,7 +1,7 @@
 # CHG-034/035: only concrete external outputs still absent on main are mapped.
 # NATS publisher/consumer outputs now exist; their WP acceptance/readiness remains
 # separate and unclaimed by this missing-output map.
-# WBS provenance refreshed for the WP-CORE-009 source-reference update; binding scopes are unchanged.
+# WBS provenance refreshed for the WP-CORE-005 implementation-reference update; binding scopes are unchanged.
 schema: cap-merged-external-bindings-v1
 bindings:
 - id: BIND-EVT002-HTTP-CORE
@@ -14,7 +14,7 @@ bindings:
   requirement: Provide the Core backend query HTTP context boundary with operation/version-bound trusted ingress
     and exact world, causal/trace and UTC/simulation semantics for BFF and shared envelope integration.
   provenance:
-    docs/04_Work_Breakdown_Structure.md: 299f3da2043242a476dab606f88d2286310f69d5205002ea244526715853c999
+    docs/04_Work_Breakdown_Structure.md: 507e7b20bd1be946ee6d9ace36f6f66d4f28816244101ef0c43b4bad80abe92a
   binding_paths:
   - services/manufacturing-core/src/manufacturing_core/http_context.py
 - id: BIND-EVT002-HTTP-BFF
@@ -27,7 +27,7 @@ bindings:
   requirement: Provide the BFF backend client context adapter consuming the Core query API contract, preserving
     exact world and causal/trace context and explicitly typed time metadata across the HTTP boundary.
   provenance:
-    docs/04_Work_Breakdown_Structure.md: 299f3da2043242a476dab606f88d2286310f69d5205002ea244526715853c999
+    docs/04_Work_Breakdown_Structure.md: 507e7b20bd1be946ee6d9ace36f6f66d4f28816244101ef0c43b4bad80abe92a
   binding_paths:
   - services/operations-bff/src/operations_bff/backend_context.py
 - id: BIND-EVT002-TEMPORAL
@@ -40,7 +40,7 @@ bindings:
   requirement: Provide replay-deterministic workflow context carriage and activity-side restoration with exact workflow/activity/worker
     binding and preserved world, causal/trace and UTC versus simulation-time semantics.
   provenance:
-    docs/04_Work_Breakdown_Structure.md: 299f3da2043242a476dab606f88d2286310f69d5205002ea244526715853c999
+    docs/04_Work_Breakdown_Structure.md: 507e7b20bd1be946ee6d9ace36f6f66d4f28816244101ef0c43b4bad80abe92a
   binding_paths:
   - services/automation/src/automation/workflow_context.py
   - services/automation/src/automation/activity_context.py

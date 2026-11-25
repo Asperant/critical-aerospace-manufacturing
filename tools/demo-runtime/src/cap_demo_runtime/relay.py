@@ -7,6 +7,7 @@ from typing import Any
 
 import nats
 import psycopg
+from manufacturing_core.observability import configure_core_telemetry
 from manufacturing_core.outbox import OutboxRepository
 from manufacturing_core.outbox_publisher import JetStreamOutboxPublisher
 from psycopg.rows import DictRow, dict_row
@@ -29,12 +30,14 @@ async def _ensure_stream(js: Any, settings: Settings) -> None:
 
 async def run() -> None:
     settings = Settings.from_env()
-    nc = await nats.connect(settings.nats_url)
-    js = nc.jetstream()
-    await _ensure_stream(js, settings)
-    publisher = JetStreamOutboxPublisher(js, settings.stream, settings.subject)
-    Path("/tmp/cap-demo-relay.ready").touch()
+    telemetry = configure_core_telemetry()
+    nc = None
     try:
+        nc = await nats.connect(settings.nats_url)
+        js = nc.jetstream()
+        await _ensure_stream(js, settings)
+        publisher = JetStreamOutboxPublisher(js, settings.stream, settings.subject)
+        Path("/tmp/cap-demo-relay.ready").touch()
         while True:
             with psycopg.Connection[DictRow].connect(
                 settings.pg_dsn, row_factory=dict_row, connect_timeout=10
@@ -57,7 +60,11 @@ async def run() -> None:
                             )
             await asyncio.sleep(0.25)
     finally:
-        await nc.drain()
+        try:
+            if nc is not None:
+                await nc.drain()
+        finally:
+            telemetry.shutdown()
 
 
 if __name__ == "__main__":

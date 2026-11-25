@@ -13,6 +13,7 @@ from typing import Any, Protocol
 
 from cap_contracts.envelope import EnvelopeError, EventEnvelope
 
+from .observability import record_outbox_publication_delay
 from .outbox import OutboxRecord
 
 
@@ -70,4 +71,5 @@ class JetStreamOutboxPublisher:
             ) from exc
         if getattr(acknowledgement, "stream", None) != self.stream:
             raise OutboxPublicationError("JetStream ACK came from an unexpected stream")
+        record_outbox_publication_delay(record.created_at)
         return acknowledgement

@@ -3,7 +3,8 @@
 import logging
 import re
 from dataclasses import dataclass
-from typing import Literal
+from datetime import UTC, datetime
+from typing import Any, Literal
 from uuid import uuid4
 
 from cap_observability.health import Check
@@ -17,11 +18,39 @@ LOGGER = logging.getLogger("manufacturing_core")
 SERVICE = "manufacturing-core"
 SERVICE_VERSION = "0.1.0"
 CORRELATION_HEADER = "X-Correlation-Id"
+_OUTBOX_PUBLICATION_DELAY: Any = None
 
 
 def configure_core_telemetry() -> Telemetry:
     """Install standard structured logs and optional OTLP exporters."""
     return configure(SERVICE, SERVICE_VERSION)
+
+
+def record_outbox_publication_delay(
+    created_at: datetime, *, published_at: datetime | None = None
+) -> None:
+    """Record the committed-row-to-ACK delay estimate without event labels.
+
+    ``created_at`` is written in the same transaction as the outbox row, so it
+    precedes commit by only the remainder of that transaction. The measurement
+    is therefore a conservative upper bound on commit-to-durable-ACK delay.
+    """
+    global _OUTBOX_PUBLICATION_DELAY
+    if created_at.tzinfo is None or created_at.utcoffset() is None:
+        raise ValueError("outbox created_at must be timezone-aware")
+    end = published_at or datetime.now(UTC)
+    if end.tzinfo is None or end.utcoffset() is None:
+        raise ValueError("publication time must be timezone-aware")
+    if _OUTBOX_PUBLICATION_DELAY is None:
+        from opentelemetry import metrics
+
+        _OUTBOX_PUBLICATION_DELAY = metrics.get_meter(SERVICE).create_histogram(
+            "core.outbox.publication_delay",
+            unit="s",
+            description="Outbox row creation to durable broker acknowledgement",
+        )
+    delay_seconds = max(0.0, (end - created_at).total_seconds())
+    _OUTBOX_PUBLICATION_DELAY.record(delay_seconds)
 
 
 def correlation(value: str | None) -> str:

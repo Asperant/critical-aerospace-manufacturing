@@ -620,7 +620,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-CORE-OUTBOX |
 | Size band (indicative, no hour estimates) | M (≈4–7 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `services/manufacturing-core/src/manufacturing_core/command_persistence.py`; `services/manufacturing-core/src/manufacturing_core/transitions.py`; `services/manufacturing-core/src/manufacturing_core/outbox.py`; `services/manufacturing-core/src/manufacturing_core/outbox_publisher.py`; `services/manufacturing-core/src/manufacturing_core/observability.py`; `services/manufacturing-core/tests/persistence/test_transitions_persistence.py`; `ci/integration/test_core_outbox_twin.py`; `tools/demo-runtime/src/cap_demo_runtime/relay.py`; `infra/compose/compose.yaml`; `infra/compose/tests/test_definitions.py` |
 
 **Purpose.** Publish every accepted state change exactly once from the same transaction that mutates state, forming the factual basis of the event spine.
 
@@ -631,7 +631,9 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 **Inputs / required contracts.** gated by DEP-022 (DN-CORE-LIFECYCLE → DN-CORE-OUTBOX, HARD/INTEGRATION@COMPONENT_READY, need-by M1 (S2))
 
 **Deliverables.**
-- CHG-035 / BIND-EVT002-NATS-PUBLISHER implementation is present at `services/manufacturing-core/src/manufacturing_core/outbox_publisher.py`. The real `ci/integration/test_core_outbox_twin.py::test_real_core_outbox_to_durable_twin_projection` run exercises one `LotHeld` v2 event through PostgreSQL 18, JetStream, the Core outbox relay and Twin projection, including ACK retry deduplication and envelope identifier/world/time preservation. This is implementation evidence for that path only; broader Core-005 and EVT-002 acceptance/readiness remain pending.
+- Accepted hold and dispatch commands persist their typed domain event through the same PostgreSQL command transaction. `services/manufacturing-core/tests/persistence/test_transitions_persistence.py` exercises the real hold path and outbox-constraint rollback. `ReleaseMaterialHold` currently changes hold state without an event; 01 §70–74 defines no release-event contract, so FR-CORE-014 is not fully realized and no release event is inferred here.
+- CHG-035 / BIND-EVT002-NATS-PUBLISHER is implemented at `services/manufacturing-core/src/manufacturing_core/outbox_publisher.py`. `ci/integration/test_core_outbox_twin.py::test_real_core_outbox_to_durable_twin_projection` inserts a persisted `LotHeld.v2` row directly, then exercises PostgreSQL 18, JetStream, ACK-retry deduplication and the durable Twin projection with envelope context preservation. It does not invoke a Core mutation; the separate Core persistence tests cover that boundary.
+- The JetStream publisher records `core.outbox.publication_delay` after a matching durable ACK. Its timestamp starts at row creation in the mutation transaction, making it an upper-bound estimate for commit-to-ACK delay. The Demo relay exports it when `OTEL_EXPORTER_OTLP_ENDPOINT` is configured. This is instrumentation only; the NFR-PERF-003 benchmark is not claimed.
 - outbox table + relay worker
 - domain event schemas per namespace
 - crash-consistency test suite on real PostgreSQL

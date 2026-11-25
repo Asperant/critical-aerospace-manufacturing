@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
 
+import manufacturing_core.observability as observability_module
+import manufacturing_core.outbox_publisher as publisher_module
 import pytest
 from cap_contracts.envelope import EventEnvelope
 from manufacturing_core.events_v1 import EntityReference, UtcOccurrence
@@ -77,11 +79,18 @@ def record() -> OutboxRecord:
     return OutboxRecord.new(event, created_at=occurred)
 
 
-def test_publisher_emits_evt002_envelope_and_jetstream_dedup_identity() -> None:
+def test_publisher_emits_evt002_envelope_and_jetstream_dedup_identity(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     js = FakeJetStream()
     publisher = JetStreamOutboxPublisher(js, "CAP_EVENTS", "cap.core.events")
+    recorded: list[datetime] = []
+    monkeypatch.setattr(
+        publisher_module, "record_outbox_publication_delay", recorded.append
+    )
+    outbox = record()
 
-    asyncio.run(publisher.publish(record()))
+    asyncio.run(publisher.publish(outbox))
 
     assert js.call is not None
     assert js.call["subject"] == "cap.core.events"
@@ -94,6 +103,7 @@ def test_publisher_emits_evt002_envelope_and_jetstream_dedup_identity() -> None:
     assert envelope.event_type == "production.lot-held"
     assert wire["payload"]["schema_version"] == 2
     assert wire["payload"]["aggregate_version"] == 1
+    assert recorded == [outbox.created_at]
 
 
 def test_publisher_rejects_ack_from_wrong_stream() -> None:
@@ -103,6 +113,50 @@ def test_publisher_rejects_ack_from_wrong_stream() -> None:
 
     with pytest.raises(OutboxPublicationError, match="unexpected stream"):
         asyncio.run(publisher.publish(record()))
+
+
+def test_outbox_publication_delay_records_seconds_without_event_labels(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from manufacturing_core.observability import record_outbox_publication_delay
+
+    class Histogram:
+        def __init__(self) -> None:
+            self.name: str | None = None
+            self.unit: str | None = None
+            self.description: str | None = None
+            self.values: list[float] = []
+
+        def create_histogram(
+            self, name: str, *, unit: str, description: str
+        ) -> Histogram:
+            self.name = name
+            self.unit = unit
+            self.description = description
+            return self
+
+        def record(self, value: float) -> None:
+            self.values.append(value)
+
+    histogram = Histogram()
+    monkeypatch.setattr(observability_module, "_OUTBOX_PUBLICATION_DELAY", None)
+    monkeypatch.setattr("opentelemetry.metrics.get_meter", lambda service: histogram)
+    created = datetime(2026, 11, 25, 12, tzinfo=UTC)
+    record_outbox_publication_delay(
+        created, published_at=datetime(2026, 11, 25, 12, 0, 1, 250000, tzinfo=UTC)
+    )
+
+    assert histogram.name == "core.outbox.publication_delay"
+    assert histogram.unit == "s"
+    assert "durable broker acknowledgement" in str(histogram.description)
+    assert histogram.values == [1.25]
+
+
+def test_outbox_publication_delay_rejects_naive_timestamps() -> None:
+    from manufacturing_core.observability import record_outbox_publication_delay
+
+    with pytest.raises(ValueError, match="timezone-aware"):
+        record_outbox_publication_delay(datetime(2026, 11, 25, 12))
 
 
 @pytest.mark.parametrize(("stream", "subject"), [("", "events"), ("stream", " ")])
