@@ -18,7 +18,7 @@ DIAGNOSTIC_SUDOERS = "/etc/sudoers.d/cap-plane-slot-release-diagnostic"
 PROJECTION_SUDOERS = "/etc/sudoers.d/cap-plane-projection-reconcile"
 PROJECTION_LIBEXEC = "/usr/local/libexec/cap-plane-projection-reconcile.py"
 PROFILES = ("asrin", "selman", "batuhan", "yavuz")
-RECONCILE_TARGETS = ("MERGED", "VALIDATING")
+RECONCILE_TARGETS = ("MERGED", "VALIDATING", "DONE")
 
 
 def deployment_mapping():
@@ -81,7 +81,7 @@ IMPLEMENTATION_TARGETS = {
 def reconcile_grants(policy):
     """Profile-scoped generic grants; the root helper proves WP ownership and evidence."""
     config = policy["lifecycle_reconciliation"]
-    if config.get("schema_version") != "cap-lifecycle-reconciliation-v2":
+    if config.get("schema_version") != "cap-lifecycle-reconciliation-v3":
         raise ValueError("Invalid generic reconciliation policy")
     targets = config.get("targets")
     if targets != list(RECONCILE_TARGETS):

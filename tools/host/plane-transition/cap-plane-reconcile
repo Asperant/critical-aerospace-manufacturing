@@ -1,7 +1,7 @@
 #!/bin/sh
 # Trusted-team operational guard; CAP_PROFILE is not an authentication boundary.
-# Narrow lifecycle reconciliation only: <WP-ID> <MERGED|VALIDATING>. The root helper
-# additionally requires an exact allow-listed case in the generated policy.
+# Profile-scoped lifecycle reconciliation: <WP-ID> <MERGED|VALIDATING|DONE>.
+# DONE uses the live WP-owned acceptance evaluator and leaves skipped history unasserted.
 if [ "$#" -ne 2 ]; then
     printf '%s\n' '{"result":"DENIED","reason_code":"EXPECTED_WP_ID_AND_TARGET_STATE"}'
     exit 2
@@ -15,7 +15,7 @@ if ! /usr/bin/expr "$1" : 'WP-[A-Z0-9][A-Z0-9]*-[0-9][0-9][0-9]$' >/dev/null; th
     exit 2
 fi
 case "$2" in
-    MERGED|VALIDATING) ;;
+    MERGED|VALIDATING|DONE) ;;
     *) printf '%s\n' '{"result":"DENIED","reason_code":"INVALID_TARGET_STATE"}'; exit 2 ;;
 esac
 exec /usr/bin/sudo -n "/usr/local/libexec/cap-plane-reconcile-$CAP_PROFILE" "$1" "$2"

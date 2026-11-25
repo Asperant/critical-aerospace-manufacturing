@@ -68,3 +68,4 @@ CHG-078,Publish the Core lot operational-semantics contract and bind it to DEP-0
 CHG-079,Bind DEP-037 to the merged kernel and replay APIs,C1,CR-1,Batuhan,APPROVED_WITH_CONDITIONS,UNDER_REVIEW,WP-SIM-003
 CHG-080,Freeze CRB-F/CRB-M ReferencePlant and R1-R4 research protocol,C3,CR-4,Asrın,APPROVED,APPROVED,CTRL-DOC-010
 CHG-081,Scope DONE gates to each work package's own accepted delivery,C2,CR-2,Asrın,APPROVED,APPROVED,CTRL-HOST-051
+CHG-082,Audited reconciliation of historically completed work to DONE,C2,CR-2,Asrın,APPROVED,APPROVED,CTRL-HOST-052

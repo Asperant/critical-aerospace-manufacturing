@@ -1188,8 +1188,10 @@ def product_startability(context):
             need(edge.get('status') == 'READY', 'HARD_START_DEPENDENCY_UNRESOLVED:' + str(edge.get('id', 'UNKNOWN')))
 
 
-def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=None,projection=None):
+def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=None,projection=None,
+             reconcile_done=False):
     policy_checks(policy)
+    need(not reconcile_done or target=='DONE', 'INVALID_DONE_RECONCILIATION_EVALUATION')
     context=policy['contexts'][wp]
     own(item,profile,wp,policy)
     need(source!='CANCELED' or target=='UNBLOCKED', 'CANCELED_IS_TERMINAL')
@@ -1205,7 +1207,7 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
     commits=[r.split(':')[1] for r in refs if r.startswith('commit:')]
     starting_commit=target=='IN_PROGRESS' and source=='READY' and len(commits)==1
     pr=pr_fact(gh,refs,wp,profile) if not prework and not starting_commit or any(r.startswith('pr:') for r in refs) else None
-    post=source in {'MERGED','VALIDATING','DONE'} or target=='MERGED'
+    post=source in {'MERGED','VALIDATING','DONE'} or target=='MERGED' or (target=='DONE' and reconcile_done)
     sha=(pr.get('merge_commit_sha') if post else pr['head']['sha']) if pr else (commits[0] if starting_commit else gh.main_sha())
     if target == 'READY' and not post:
         sha=gh.main_sha()
@@ -1220,8 +1222,9 @@ def evaluate(profile,wp,source,target,item,plane,policy,gh,envelope,previous=Non
            + completion_assessments.get('owner_semantic_requirements',[])
            if isinstance(completion_assessments,dict) else [])
     ))
-    # Require evidence for only this WP's selected DoD and explicitly declared
-    # non-CI/owner-semantic acceptance; generic project-wide criteria are excluded.
+    # Evaluate only IDs selected on this WP plus explicit supplemental families and
+    # open owner-semantic notes. Reuse the merged PR/linked evidence; do not require
+    # a separate blanket or transition-only owner certification (CHG-081).
     rows=records(gh,refs,wp,sha,pr) if (
         target in {'BLOCKED','UNBLOCKED','CANCELED'} or source=='DONE'
         or target=='DONE' and required_completion_assessments

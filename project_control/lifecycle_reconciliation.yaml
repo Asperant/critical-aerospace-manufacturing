@@ -1,11 +1,9 @@
 # Generic evidence policy for cap-plane-reconcile (tools/host/plane-transition/reconcile.py).
-# Reconciliation authorization is derived from live evidence: the accountable owner's
-# canonical WP assessment, the merged PR binding, exact merge SHA, required CI and (for
-# VALIDATING) successful main runs at that merge SHA. These historical cases are retained
-# only for CHG-033 deferred-recovery compatibility; they are not lifecycle authorization.
-schema_version: cap-lifecycle-reconciliation-v2
-targets: [MERGED, VALIDATING]
-sources: [READY, IN_PROGRESS, IN_REVIEW, MERGE_READY]
+# DONE reconciliation uses the same live WP-owned evaluator as the ordinary transition.
+# Legacy cases are retained only for CHG-033 deferred-recovery compatibility.
+schema_version: cap-lifecycle-reconciliation-v3
+targets: [MERGED, VALIDATING, DONE]
+sources: [BACKLOG, READY, IN_PROGRESS, IN_REVIEW, MERGE_READY, MERGED, VALIDATING]
 require_successful_runs: true
 assessment_fields:
 - Owner assessment

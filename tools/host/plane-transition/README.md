@@ -350,12 +350,14 @@ intent and scope meaning remain owner-authored semantic fields. Missing, stale, 
 explicitly uncertified or UNKNOWN input remains UNKNOWN. Manual readiness evidence is
 unchanged; an automatic UNKNOWN never writes Plane or releases work.
 
-## Lifecycle reconciliation — CHG-031 (proposed, UNDER_REVIEW)
+## Lifecycle reconciliation — CHG-031 / CHG-082
 
-`cap-plane-reconcile <WP-ID> <MERGED|VALIDATING>` repairs one narrow situation: a work
-package's pull request really merged to main but Plane never advanced. It records the
-CURRENT observed GitHub facts. It is not a bypass of `cap-plane-transition`, whose adjacent
-edges, open-PR predicates and DONE validator are unchanged.
+`cap-plane-reconcile <WP-ID> <MERGED|VALIDATING|DONE>` repairs a narrow mismatch where a
+real merged WP's Plane state did not catch up to the currently verified facts. MERGED and
+VALIDATING retain the existing behavior. Under CHG-082, DONE is available from BACKLOG or
+another nonterminal state only when the same live WP-owned DONE evaluator used by
+`cap-plane-transition` passes. It records the actual source state and never writes or
+implies skipped intermediate events.
 
 ### CTRL-HOST-026 — Slot Release v2 diagnosis
 
@@ -364,20 +366,26 @@ GET-only diagnostic surface. It uses the installed AUTO_NEXT evaluator and
 returns one redacted first-failing predicate plus bounded evidence fingerprints;
 it does not write Plane, cache, audit or policy state.
 
-- **Allow-list**: only cases in `project_control/lifecycle_reconciliation.yaml` (embedded in the
-  generated policy and hash-bound) work: one profile, WP, PR, head, merge commit, parents,
-  file count, scope prefixes and, for VALIDATING, the exact workflow run IDs.
+- **Policy**: the generic target/source matrix is in `project_control/lifecycle_reconciliation.yaml`
+  and is hash-bound in the generated policy. Each use still proves the current profile, canonical
+  WP owner and Plane assignee, actual merged PR identity, complete scope, merge ancestry and
+  deleted branch. Legacy per-PR entries remain only for the CHG-033 recovery compatibility path.
 - **Invocation**: `CAP_PROFILE` and the sudo caller must match, exactly as the other helpers.
-  Stdin carries the existing bounded envelope; evidence refs must be exactly `pr:N` (plus the
-  policy's `run:N` refs for VALIDATING). No URL, endpoint, body, timestamp or state list is
-  accepted from the caller. The sudoers grant is one exact argv line per allow-listed target.
+  Stdin carries the existing bounded envelope; MERGED takes `pr:N`, VALIDATING takes `pr:N` plus
+  policy `run:N` refs, and DONE takes `pr:N` plus only evidence comments needed for the WP's own
+  non-CI/owner-semantic acceptance. No URL, endpoint, body, timestamp or state list is accepted.
 - **Owner queue**: a write is refused while the same owner has another READY or IN_PROGRESS item
   (an ambiguous queue needs a planning-owner decision); BACKLOG, review, merged and finished work
   is not a conflict and nothing is selected or changed. The queue is re-read immediately before
   the write, and a verified no-op is exempt.
-- **Sources**: only READY, IN_PROGRESS, IN_REVIEW or MERGE_READY. The same target is a checked
-  no-op (facts are re-proved, nothing is written). Terminal, backwards and BLOCKED work is
-  denied; a blocker is surfaced and never cleared.
+- **Sources**: MERGED/VALIDATING reconciliation accepts READY, IN_PROGRESS, IN_REVIEW or
+  MERGE_READY. DONE reconciliation accepts BACKLOG, READY, IN_PROGRESS, IN_REVIEW,
+  MERGE_READY, MERGED or VALIDATING. CANCELED, DONE, and actively blocked work is denied.
+  No intermediate state is written. A valid DONE reconciliation proves the exact WP PR and
+  complete safe scope, deleted branch, exact merge ancestry/current main, required PR CI,
+  exact-merge post-merge aggregate CI and only the WP's selected DoD plus its explicit
+  non-CI/owner-semantic acceptance. Existing PR/linked evidence is reused; no separate
+  transition-only owner certification or duplicate checklist is required.
 - **Proofs** (every proof starts from an invalidated adapter cache, and the same snapshot is taken
   again immediately before the write; only immutable SHA-addressed commits may stay cached): PR identity, author, base, head and merge SHA; the complete
   bounded file inventory (see below) with safe paths and WP scope; merge commit parents
@@ -390,10 +398,10 @@ it does not write Plane, cache, audit or policy state.
   as seen; validation having run is not acceptance.
 - **Write**: durable `INTENT` audit row, GitHub recheck, one state PATCH, fresh exact readback
   of unchanged protected fields, then `VERIFIED` or `UNCONFIRMED_REQUIRES_READBACK`. A lost
-  response is read back, never retried. The audit operation is `LIFECYCLE_RECONCILE` at the
-  current time with `skipped_state_history_not_asserted`, the approval and change-record
-  references and the outstanding gaps. No historical transition is faked, DONE is never
-  written, AUTO_NEXT and preparation are never called, and no other work is touched.
+  response is read back, never retried. DONE records operation `LIFECYCLE_RECONCILE_DONE`,
+  `from_state`, `change_record: CHG-082` and `skipped_state_history_not_asserted`; it does not
+  state that intermediate events happened. No AUTO_NEXT or preparation runs, and no other
+  work or protected field is touched.
 - **Shared adapter change**: `GitHub.files` now reads every page (ceiling 10 pages / 1000
   files), reconciles the count with the PR's `changed_files`, rejects duplicate, malformed,
   missing or changing inventories and proves the end with an empty terminal page. Larger PRs
