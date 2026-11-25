@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: adf59332def466bbbd58d33732f160364919f2800ff4e18fb15a198f464b9e67
+  sha256: 9f1d0be1baa845ca221d7393123ae2483ddcb3572221fc6b616a68117e23d8e2
 requirements:
   FR-GOV-001:
     meta:
@@ -239,7 +239,7 @@ requirements:
       coverage: EVIDENCE_PENDING
       planning: EVIDENCE_PENDING
       evidence: EVIDENCE_PENDING
-    note: Real AV-SCEN-01 Core/outbox/JetStream/Twin acceptance slice; wider inspection-triggered recovery portfolio remains outside this WP slice.
+    note: WP-CORE-009 contributes lifecycle-state records and PostgreSQL persistence only; legal transition enforcement remains separate. Real AV-SCEN-01 Core/outbox/JetStream/Twin acceptance slice; wider inspection-triggered recovery portfolio remains outside this WP slice.
     realization:
       surface: manufacturing state machine / transition guard module
       deployable: manufacturing-core

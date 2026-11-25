@@ -443,7 +443,7 @@ Each card below is one work package. `Status` is `NOT_STARTED` for all of them; 
 | Readiness node (05) | DN-CORE-LIFECYCLE |
 | Size band (indicative, no hour estimates) | S (≈1–3 focused days) |
 | Status | NOT_STARTED |
-| Repository reference | TBD_BY_IMPLEMENTATION |
+| Repository reference | `services/manufacturing-core/src/manufacturing_core/lifecycle.py`; `services/manufacturing-core/src/manufacturing_core/repository.py`; `services/manufacturing-core/src/manufacturing_core/migrations/0003_lifecycle.sql`; `services/manufacturing-core/alembic/versions/0003_lifecycle.py`; `services/manufacturing-core/tests/test_lifecycle.py`; `services/manufacturing-core/tests/persistence/test_persistence.py`; `evidence/WP-CORE-009/COMPONENT-READY.md` |
 
 **Purpose.** Provide the independently executable producer slice for the canonical minimal lifecycle component consumed by WP-CORE-002. This slice is limited to the lifecycle/state model and its component-level proof; legal transition semantics, hold/release handlers, rework and split/merge remain in WP-CORE-002 and downstream packages.
 
