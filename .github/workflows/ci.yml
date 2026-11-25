@@ -73,6 +73,7 @@ jobs:
               "services/manufacturing-core/",
               "services/operational-twin/",
               "services/operations-bff/",
+              "services/vision-service/tests/test_worker_idempotency.py",
           )
           required = any(
               any(path.startswith(prefix) for prefix in integration_prefixes)
@@ -294,6 +295,7 @@ jobs:
       CORE_TEST_DISPOSABLE: "1"
       TWIN_TEST_DISPOSABLE: "1"
       OUTBOX_TWIN_TEST_DISPOSABLE: "1"
+      VISION_TEST_DISPOSABLE: "1"
       CORE_STATUS_ARTIFACT: ${{ github.workspace }}/.ci-artifacts/core-migration-status.json
     steps:
       - uses: actions/checkout@v4
@@ -347,7 +349,9 @@ jobs:
           CAP_ARTIFACT_TEST_DISPOSABLE: "1"
         run: uv run --project ci --locked python -m pytest -c packages/artifacts/pyproject.toml packages/artifacts/tests -m integration -q -p pytest_quarantine
       - name: Vision pipeline over REAL SeaweedFS (WP-VIS-001)
-        run: uv run --project ci --locked python -m pytest -c services/vision-service/pyproject.toml services/vision-service/tests -m integration -q -p pytest_quarantine
+        run: uv run --project ci --locked python -m pytest -c services/vision-service/pyproject.toml services/vision-service/tests/test_pipeline_integration.py -m integration -q -p pytest_quarantine
+      - name: Vision idempotent consumer over real PostgreSQL and JetStream (WP-EVT-003)
+        run: uv run --project ci --locked python -m pytest -c services/vision-service/pyproject.toml services/vision-service/tests/test_worker_idempotency.py -m integration -q -p pytest_quarantine
       - name: Set up Node (version pinned in .node-version)
         uses: actions/setup-node@v4
         with:

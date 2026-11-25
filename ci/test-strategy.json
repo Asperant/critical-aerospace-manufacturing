@@ -39,6 +39,8 @@
     {"path": "services/vision-service/tests", "owner": "Selman", "work_package": "WP-VIS-001", "families": ["TEST-VIS-PIPELINE"], "test_ids": ["TEST-VIS-001-002", "TEST-VIS-001-003"],
      "runs": [{"tier": "unit", "boundary_mode": "STUB_ALLOWED", "ci_step": "Vision inspection pipeline tests and typing (WP-VIS-001)"},
               {"tier": "integration", "boundary_mode": "REAL", "ci_step": "Vision pipeline over REAL SeaweedFS (WP-VIS-001)"}]},
+    {"path": "services/vision-service/tests/test_worker_idempotency.py", "owner": "Asrın", "work_package": "WP-EVT-003", "families": ["TEST-EVT-CONSUMER-IDEMP"], "family_note": "Vision app-consumer adapter acceptance in the existing EVT-003 verification family", "test_ids": [],
+     "runs": [{"tier": "integration", "boundary_mode": "REAL", "ci_step": "Vision idempotent consumer over real PostgreSQL and JetStream (WP-EVT-003)"}]},
     {"path": "services/vision-service/tests/test_smoke.py", "owner": "Selman", "work_package": "WP-VIS-008", "families": ["TEST-VIS-CPUSMOKE", "TEST-RES-CPUONLY"], "test_ids": ["TEST-VIS-008-001"],
      "runs": [{"tier": "unit", "boundary_mode": "FIXTURE_ALLOWED", "ci_step": "Vision inspection pipeline tests and typing (WP-VIS-001)"}]},
     {"path": "infra/observability/tests", "owner": "Yavuz", "work_package": "WP-OBS-001", "families": ["TEST-OBS-TELEMETRY"], "test_ids": ["TEST-OBS-001-002"],
