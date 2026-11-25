@@ -1,4 +1,4 @@
-CREATE TABLE vision.inspection_observation_outbox (
+CREATE TABLE {schema}.inspection_observation_outbox (
     source_event_id text PRIMARY KEY CHECK (source_event_id !~ '^[[:space:]]*$'),
     event_id text NOT NULL UNIQUE CHECK (event_id !~ '^[[:space:]]*$'),
     subject text NOT NULL CHECK (subject !~ '^[[:space:]]*$'),
@@ -11,9 +11,9 @@ CREATE TABLE vision.inspection_observation_outbox (
     CHECK ((claim_token IS NULL) = (claimed_until IS NULL))
 );
 CREATE INDEX inspection_observation_outbox_pending
-    ON vision.inspection_observation_outbox (created_at, event_id)
+    ON {schema}.inspection_observation_outbox (created_at, event_id)
     WHERE published_at IS NULL;
-CREATE TABLE vision.schema_migration (
+CREATE TABLE {schema}.schema_migration (
     version text PRIMARY KEY,
     sha256 text NOT NULL,
     runtime_role text NOT NULL

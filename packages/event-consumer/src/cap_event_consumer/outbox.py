@@ -1,4 +1,4 @@
-"""Transactional Vision event outbox and bounded, retryable JetStream relay."""
+"""Service-owned transactional outbox primitives shared by event consumers."""
 
 from __future__ import annotations
 
@@ -24,8 +24,9 @@ class PendingPublication:
 
 
 @dataclass(frozen=True)
-class VisionOutbox:
-    schema: str = "vision"
+class EventOutbox:
+    schema: str
+    table_name: str
 
     def enqueue(
         self,
@@ -36,7 +37,7 @@ class VisionOutbox:
         subject: str,
         payload: Mapping[str, object],
     ) -> None:
-        table = sql.Identifier(self.schema, "inspection_observation_outbox")
+        table = sql.Identifier(self.schema, self.table_name)
         connection.execute(
             sql.SQL(
                 "INSERT INTO {} (source_event_id, event_id, subject, payload) "
@@ -51,9 +52,9 @@ class VisionOutbox:
             (source_event_id,),
         ).fetchone()
         if row is None or row["event_id"] != event_id or row["subject"] != subject:
-            raise ValueError("Vision outbox identity conflicts with source event")
+            raise ValueError("event outbox identity conflicts with source event")
         if row["payload"] != dict(payload):
-            raise ValueError("Vision outbox payload conflicts with source event")
+            raise ValueError("event outbox payload conflicts with source event")
 
     def claim_one(
         self, connect: Callable[[], Connection[DictRow]], *, lease_seconds: int = 60
@@ -61,7 +62,7 @@ class VisionOutbox:
         if lease_seconds < 1:
             raise ValueError("positive outbox claim lease required")
         token = uuid.uuid4()
-        table = sql.Identifier(self.schema, "inspection_observation_outbox")
+        table = sql.Identifier(self.schema, self.table_name)
         with connect() as connection, connection.transaction():
             row = connection.execute(
                 sql.SQL(
@@ -96,7 +97,7 @@ class VisionOutbox:
         *,
         published: bool,
     ) -> None:
-        table = sql.Identifier(self.schema, "inspection_observation_outbox")
+        table = sql.Identifier(self.schema, self.table_name)
         with connect() as connection, connection.transaction():
             if published:
                 connection.execute(
@@ -120,7 +121,7 @@ class VisionOutbox:
 
 
 async def publish_one(
-    outbox: VisionOutbox,
+    outbox: EventOutbox,
     connect: Callable[[], Connection[DictRow]],
     publisher: Any,
 ) -> bool:
@@ -139,7 +140,7 @@ async def publish_one(
 
 
 async def publish_pending(
-    outbox: VisionOutbox,
+    outbox: EventOutbox,
     connect: Callable[[], Connection[DictRow]],
     publisher: Any,
     *,

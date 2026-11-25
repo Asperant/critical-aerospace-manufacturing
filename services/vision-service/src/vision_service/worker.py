@@ -32,11 +32,9 @@ from cap_event_consumer.consumer import (
     Event,
 )
 from cap_event_consumer.ledger import Outcome, ProcessedMessageLedger
+from cap_event_consumer.outbox import EventOutbox, publish_pending
 from cap_observability.health import Check, health_report
-from psycopg import Connection
-from psycopg.rows import DictRow
 
-from vision_service.outbox import VisionOutbox, publish_pending
 from vision_service.pipeline import EVENT_TYPE, inspect
 from vision_service.request import InspectionWork, parse_request
 
@@ -214,7 +212,7 @@ class VisionWorker:
         self.config = config
         self.clock = clock
         self.connect = connect
-        self.outbox = VisionOutbox()
+        self.outbox = EventOutbox("vision", "inspection_observation_outbox")
         self.consumer = Consumer(
             ledger=ProcessedMessageLedger("vision_consumer"),
             scope=CONSUMER_SCOPE,
@@ -260,9 +258,7 @@ class VisionWorker:
             },
         )
 
-    def _admit(
-        self, _connection: Connection[DictRow], event: Event, context: DeliveryContext
-    ) -> None:
+    def _admit(self, _connection: Any, event: Event, context: DeliveryContext) -> None:
         if context.replay:
             raise WorkerError("Vision live effects reject replay context")
         if event.body.get("source_event_id") != event.event_id:
@@ -288,9 +284,7 @@ class VisionWorker:
         ):
             raise WorkerError("Vision output identity is inconsistent")
 
-    def _effect(
-        self, connection: Connection[DictRow], event: Event, _context: DeliveryContext
-    ) -> None:
+    def _effect(self, connection: Any, event: Event, _context: DeliveryContext) -> None:
         output = event.body["output"]
         if not isinstance(output, Mapping):
             raise WorkerError("inspection observation output is invalid")

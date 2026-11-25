@@ -5,9 +5,8 @@ from __future__ import annotations
 import asyncio
 from datetime import UTC, datetime
 
-import psycopg
+from cap_event_consumer.database import connect_runtime
 from cap_observability.telemetry import configure
-from psycopg.rows import DictRow, dict_row
 
 from vision_service.worker import (
     VisionWorker,
@@ -28,10 +27,8 @@ async def serve() -> None:
             publisher=_NoopPublisher(),
             config=config,
             clock=lambda: datetime.now(UTC),
-            connect=lambda: psycopg.Connection[DictRow].connect(
-                config.database_dsn,
-                row_factory=dict_row,
-                application_name="vision-service",
+            connect=lambda: connect_runtime(
+                config.database_dsn, application_name="vision-service"
             ),
         )
         await run_nats(config, worker)
