@@ -114,14 +114,16 @@ The boundary does not close the caller's NATS connection or delete broker state.
 | Consumer | Generic hook available | Remaining application-owned integration |
 |---|---|---|
 | Twin | Transactional projection and isolated replay-target callback | Real projector, aggregate sequence/freshness/rebuild policy |
-| Vision | Local inspection-result effect and local outbox intent | Inspection contract and result publication |
+| Vision | PostgreSQL processed-message ledger + immutable inspection outbox; real JetStream binding and stable output identity | Inspection contract validation and runtime-owned stream/ACL provisioning |
 | AI | Local investigation/proposal effect | Evidence/RCA schema and read/propose authority checks |
 | Scheduler | Local candidate-plan effect | Planning contract; activation remains separately governed |
 | Automation | Local workflow intent, live-only replay rejection | Exact approval binding, authorization and effect verification |
 
-No such application consumer is implemented in the current checkout. Its owner
-supplies contract/world admission, callbacks, private schema, stable scope and
-runtime bindings. This library never directly mutates another service's state.
+Twin and Vision application adapters use the framework in this checkout. AI,
+Scheduler and Automation adapters remain service-owned work until their runtime
+consumers exist. Each adapter supplies contract/world admission, callbacks,
+private schema, stable scope and runtime bindings. This library never directly
+mutates another service's state.
 No claim of those downstream services' adoption is made.
 
 `DeliveryContext` is trusted adapter input, never a payload flag. Replay is rejected

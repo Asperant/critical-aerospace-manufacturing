@@ -13,7 +13,7 @@ dependencies = ["psycopg[binary]>=3.2,<4", "nats-py>=2.9,<3"]
 where = ["src"]
 
 [tool.setuptools.package-data]
-cap_event_consumer = ["migrations/*.sql"]
+cap_event_consumer = ["migrations/*.sql", "py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

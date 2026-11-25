@@ -50,9 +50,15 @@ Images and references in the tests are SYNTHETIC TEST data built in the tests; r
 go through the real `ArtifactStore.read` verification path over an in-memory S3
 client (STUB_ALLOWED).
 
-## Not yet
+## Event consumer
 
-Broker consumption of `InspectionRequested`/`RunInspection`, event publication,
-SeaweedFS integration test, `vision` schema persistence, telemetry
-(`configure()`/`health_report()`), promoted ModelPackages (WP-VIS-002/003) and the
-formal Oracle-taint guard (WP-VIS-009) are later work.
+The JetStream worker requires a restricted `CAP_VISION_DATABASE_URL` runtime
+credential. The migration owner installs `vision` and `vision_consumer` schemas
+with `vision_service.migrate.migrate()` inside its caller-owned transaction.
+Input ACK follows the committed processed-message ledger and immutable output
+outbox row; the outbox relay publishes outside SQL transactions using the stable
+output event ID. Stream and durable provisioning remain runtime-owned.
+
+SeaweedFS integration evidence, telemetry (`configure()`/`health_report()`),
+promoted ModelPackages (WP-VIS-002/003) and the formal Oracle-taint guard
+(WP-VIS-009) remain separate work.

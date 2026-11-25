@@ -15,15 +15,21 @@ dependencies = [
   "numpy>=2,<3",
   "Pillow>=12,<13",
   "cap-artifacts",
+  "cap-event-consumer",
   "cap-observability",
   "nats-py>=2.9,<3",
+  "psycopg[binary]>=3.2,<4",
 ]
 
 [tool.uv.sources]
 cap-observability = { path = "../../packages/observability", editable = true }
+cap-event-consumer = { path = "../../packages/event-consumer", editable = true }
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+vision_service = ["migrations/*.sql"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
