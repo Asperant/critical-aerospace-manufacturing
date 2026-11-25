@@ -268,6 +268,45 @@ restore_exposure() {
   preflight_capture
 }
 
+set_twin_freshness() {
+  local status="$1"
+  [[ "${status}" == FRESH || "${status}" == STALE ]] || die "unsupported Twin test freshness"
+  require_command uv
+  PYTHONPATH="${ROOT}/tools/demo-runtime/src${PYTHONPATH:+:${PYTHONPATH}}" \
+    CAP_TWIN_TEST_FRESHNESS="${status}" \
+    uv run --project "${ROOT}/ci" --locked --quiet python -c '
+import os
+from cap_demo_runtime.av_scenarios import BRANCH_ID, WORLD_ID, _connect, _twin_dsn
+
+status = os.environ["CAP_TWIN_TEST_FRESHNESS"]
+with _connect(_twin_dsn()) as connection, connection.transaction():
+    row = connection.execute(
+        "SELECT status FROM twin.projection_revision "
+        "WHERE world_id=%s AND branch_id=%s FOR UPDATE",
+        (WORLD_ID, BRANCH_ID),
+    ).fetchone()
+    if row is None:
+        raise SystemExit("Twin projection revision is absent")
+    expected = "FRESH" if status == "STALE" else "STALE"
+    if row["status"] != expected:
+        raise SystemExit(
+            f"Twin freshness test expected {expected}, found {row['status']}"
+        )
+    connection.execute(
+        "UPDATE twin.projection_revision SET status=%s "
+        "WHERE world_id=%s AND branch_id=%s",
+        (status, WORLD_ID, BRANCH_ID),
+    )
+    print(row["status"])
+'
+}
+
+restore_twin_test_state() {
+  if [[ -n "${CAP_DEMO_STALE_RESTORE_STATUS:-}" ]]; then
+    set_twin_freshness "${CAP_DEMO_STALE_RESTORE_STATUS}" >/dev/null
+  fi
+}
+
 reset() {
   require_docker
   load_exposure_env
@@ -287,6 +326,7 @@ reset() {
     "${ARTIFACT_DIR}/browser-output.txt" \
     "${ARTIFACT_DIR}/browser-initial-output.txt" \
     "${ARTIFACT_DIR}/browser-initial-result.json" \
+    "${ARTIFACT_DIR}/browser-stale-result.json" \
     "${ARTIFACT_DIR}/browser-initial.png" \
     "${ARTIFACT_DIR}/browser-anomaly.png" \
     "${ARTIFACT_DIR}/browser-final.png"
@@ -338,6 +378,17 @@ scenario() {
   run_flow
   if [[ "${CAP_DEMO_SKIP_BROWSER:-0}" != 1 ]]; then
     browser_test 2>&1 | tee "${ARTIFACT_DIR}/browser-output.txt"
+    if [[ "${CAP_DEMO_STALE_INTEGRATION:-0}" == 1 ]]; then
+      CAP_DEMO_STALE_RESTORE_STATUS="$(set_twin_freshness STALE)"
+      [[ "${CAP_DEMO_STALE_RESTORE_STATUS}" == FRESH ]] || die "Twin was not fresh before stale-state injection"
+      trap restore_twin_test_state EXIT
+      if ! CAP_DEMO_BROWSER_STAGE=stale browser_test 2>&1 | tee "${ARTIFACT_DIR}/browser-stale-output.txt"; then
+        return 1
+      fi
+      restore_twin_test_state
+      CAP_DEMO_STALE_RESTORE_STATUS=""
+      trap - EXIT
+    fi
   else
     echo "WARN: browser step skipped by CAP_DEMO_SKIP_BROWSER=1; verify will fail closed"
   fi

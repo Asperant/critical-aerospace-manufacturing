@@ -367,6 +367,19 @@ jobs:
       - name: Browser acceptance against a real BFF process (TEST-UI-BROWSER, WP-UI-001)
         working-directory: services/command-center-web
         run: npm run e2e
+      - name: Core/Twin stale-state browser acceptance (WP-TWIN-002, NFR-UX-002)
+        run: |
+          CAP_DEMO_COMPOSE_PROJECT_NAME=cap-platform \
+          CAP_DEMO_STATE_DIR="${HOME}/.local/state/cap-platform" \
+          CAP_DEMO_ARTIFACT_DIR="${RUNNER_TEMP}/cap-twin002-demo" \
+          CAP_DEMO_STALE_INTEGRATION=1 \
+          CAP_DEMO_PG_PORT=25432 \
+          CAP_DEMO_NATS_PORT=24222 \
+          CAP_DEMO_NATS_MON_PORT=28222 \
+          CAP_DEMO_KEYCLOAK_PORT=28080 \
+          CAP_DEMO_CORE_PORT=28081 \
+          CAP_DEMO_UI_PORT=29080 \
+          tools/demo-runtime/demo.sh scenario
       - name: Service logs on failure
         if: failure()
         run: |

@@ -12,7 +12,9 @@ function record(result: Record<string, unknown>): void {
   const filename =
     process.env["CAP_DEMO_BROWSER_STAGE"] === "initial"
       ? "browser-initial-result.json"
-      : "browser-result.json";
+      : process.env["CAP_DEMO_BROWSER_STAGE"] === "stale"
+        ? "browser-stale-result.json"
+        : "browser-result.json";
   writeFileSync(
     join(directory, filename),
     `${JSON.stringify(result, null, 2)}\n`,
@@ -55,8 +57,30 @@ test("real Keycloak login and held lot are visible in the demo UI", async ({
   const facilityBody = (await facility.json()) as {
     meta?: { freshness?: string; sources?: Array<{ source?: string }> };
   };
-  expect(facilityBody.meta?.freshness).toBe("FRESH");
   expect(facilityBody.meta?.sources?.[0]?.source).toBe("digital-twin-service");
+
+  if (stage === "stale") {
+    expect(facilityBody.meta?.freshness).toBe("STALE");
+    await expect(
+      page.getByText(
+        "Some data may be out of date (STALE). Twin data is stale. Review before acting.",
+      ),
+    ).toBeVisible();
+    await expect(page.getByText("freshness STALE")).toBeVisible();
+    await expect(page.getByText("freshness FRESH")).toHaveCount(0);
+    record({
+      status: "PASS",
+      stage,
+      world_id: world,
+      lot_id: lot,
+      freshness: facilityBody.meta?.freshness,
+      stale_warning_visible: true,
+      current_freshness_claim_visible: false,
+    });
+    return;
+  }
+
+  expect(facilityBody.meta?.freshness).toBe("FRESH");
 
   const lots = page.getByRole("table", { name: "Production lots" });
   await expect(lots).toContainText(lot);
