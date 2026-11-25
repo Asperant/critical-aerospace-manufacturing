@@ -98,6 +98,26 @@ def test_exporter_targets_the_compose_service() -> None:
     assert "openobserve" in SERVICES
 
 
+def test_command_center_web_uses_the_approved_log_and_health_schemas() -> None:
+    root = HERE.parents[1]
+    config = (root / "services/command-center-web/nginx.conf").read_text("utf-8")
+    assert "cap.log/v1 access record" in config
+    assert '"service":"command-center-web"' in config
+    assert '"environment":"demo"' in config
+    assert '"request_id":"$request_id"' in config
+    assert '"path":"$uri"' in config  # query strings and headers are not logged
+    assert config.count("access_log /dev/stdout cap_log_json;") == 1
+    assert "access_log /dev/stdout cap_log_json;" in config
+    assert "location = /healthz" in config
+    assert '"schema":"cap.health/v1"' in config
+    assert SERVICES["otel-collector"] is not None
+    platform = yaml.safe_load((root / "infra/compose/compose.yaml").read_text("utf-8"))
+    assert (
+        platform["services"]["demo-ui"]["healthcheck"]["test"][-1]
+        == "http://127.0.0.1:8080/healthz"
+    )
+
+
 def test_stack_script_is_valid_bash_and_prints_secrets_only_in_env() -> None:
     script = HERE / "stack.sh"
     subprocess.run(["bash", "-n", str(script)], check=True)

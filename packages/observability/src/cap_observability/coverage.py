@@ -81,6 +81,30 @@ def _uses_package(path: Path) -> bool:
     return pyproject.is_file() and "cap-observability" in pyproject.read_text("utf-8")
 
 
+def _uses_typescript_standard(path: Path, signal: str) -> bool:
+    """Check the static-web wiring, rather than a schema-name comment."""
+    config = path / "nginx.conf"
+    if not config.is_file():
+        return False
+    source = config.read_text("utf-8")
+    if signal == "logging":
+        required = (
+            "log_format cap_log_json escape=json",
+            "access_log /dev/stdout cap_log_json;",
+            '"event_name":"web.http_request"',
+            '"request_id":"$request_id"',
+            '"path":"$uri"',
+        )
+    else:
+        required = (
+            "location = /healthz",
+            '"schema":"cap.health/v1"',
+            '"live":true',
+            '"checked_at":"$cap_checked_at"',
+        )
+    return all(marker in source for marker in required)
+
+
 def check(registry: dict[str, Any], root: Path, today: date) -> Coverage:
     result = Coverage()
     entries: list[dict[str, Any]] = registry.get("deployables", [])
@@ -117,6 +141,13 @@ def check(registry: dict[str, Any], root: Path, today: date) -> Coverage:
                     result.violations.append(
                         f"{name}: {signal} ADOPTED but {path} does not depend on "
                         f"cap-observability and call {marker}...)"
+                    )
+                elif entry.get(
+                    "runtime"
+                ) == "typescript" and not _uses_typescript_standard(path, signal):
+                    schema = "cap.log/v1" if signal == "logging" else "cap.health/v1"
+                    result.violations.append(
+                        f"{name}: {signal} ADOPTED but {path}/nginx.conf does not emit {schema}"
                     )
                 else:
                     result.adopted[signal].append(name)
