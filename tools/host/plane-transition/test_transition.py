@@ -1039,6 +1039,22 @@ class TransitionTests(unittest.TestCase):
         result,*_=run_case(source='VALIDATING',target='DONE',mutate=owner_evidence)
         self.assertEqual(result['result'],'VERIFIED')
 
+        def owner_test_family_evidence(policy,plane,gh,envelope):
+            context=policy['contexts'][plane.item['external_id']]
+            context['completion_assessments']={
+                'verification_families':['TEST-CORE-LIFECYCLE'],
+                'owner_semantic_requirements':[]}
+            envelope['evidence_refs']=['pr:1']
+            gh.comments={}
+            gh.pr_data['body'] += (
+                '\n| DOD-WP-01 | PASS | [component evidence](evidence/test.json) |'
+                '\n| TEST-CORE-LIFECYCLE | PASS | [lifecycle test evidence](evidence/test.json) |'
+            )
+
+        result,*_=run_case(
+            source='VALIDATING',target='DONE',mutate=owner_test_family_evidence)
+        self.assertEqual(result['result'],'VERIFIED')
+
     def test_done_requires_each_selected_dod_with_a_real_artifact_reference(self):
         def missing_selected(policy,plane,gh,envelope):
             context=policy['contexts'][plane.item['external_id']]
