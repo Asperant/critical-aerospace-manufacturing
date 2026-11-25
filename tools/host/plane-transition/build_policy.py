@@ -56,12 +56,23 @@ def test_minimum_environments(markdown):
     return result
 
 
-def required_completion_families(expectations, minimum_environments):
-    # Unknown TEST identities and every non-CI family fail closed to attributable
-    # owner evidence. Only registered CI families are covered by required CI.
-    return sorted(family for family in verification_families(expectations)
-                  if not family.startswith('TEST-')
-                  or minimum_environments.get(family) != 'CI')
+def required_completion_families(work_package, minimum_environments):
+    # Verification work includes downstream/capability campaigns; the WP's
+    # integration checkpoint is the exact direct scenario acceptance.
+    planned=verification_families(work_package.get('verification_expectations') or '')
+    required={family for family in planned
+              if family.startswith('TEST-') and minimum_environments.get(family)!='CI'}
+    required.update(verification_families(work_package.get('integration_checkpoint') or ''))
+    selected_dod=set(work_package.get('dod_refs') or [])
+    if work_package.get('scope_class')=='R1' or 'DOD-WP-10' in selected_dod:
+        required.update(family for family in planned if family.startswith('REPRO-'))
+    nfr_class=work_package.get('nfr_class')
+    measured_output=(isinstance(nfr_class,str) and nfr_class in {'A1','S2','C3'}
+                     or any(ref.startswith('DOD-RES-') for ref in selected_dod))
+    if measured_output:
+        required.update(family for family in planned
+                        if family.startswith(('BENCH-','RES-')))
+    return sorted(required)
 
 
 ROOT=Path('/srv/ailab/project')
@@ -80,7 +91,6 @@ family_minimum_environments=test_minimum_environments(
 for w in p.catalog.work_packages:
     c=context(p,w.id)
     c.pop('diagnostics',None)
-    verification=c['work_package'].get('verification_expectations') or ''
     requirements=trace_registry.get('requirements',{}) if isinstance(trace_registry,dict) else {}
     owner_semantic=[]
     for requirement in c['work_package'].get('requirement_refs') or []:
@@ -89,7 +99,8 @@ for w in p.catalog.work_packages:
         if isinstance(note,str) and 'owner semantic confirmation pending' in note.casefold():
             owner_semantic.append(requirement)
     c['completion_assessments']={
-        'verification_families':required_completion_families(verification,family_minimum_environments),
+        'verification_families':required_completion_families(
+            c['work_package'],family_minimum_environments),
         'owner_semantic_requirements':sorted(owner_semantic),
     }
     contexts[w.id]=c
