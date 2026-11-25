@@ -239,7 +239,7 @@ requirements:
       coverage: EVIDENCE_PENDING
       planning: EVIDENCE_PENDING
       evidence: EVIDENCE_PENDING
-    note: Real AV-SCEN-01 Core/outbox/JetStream/Twin acceptance slice; wider inspection-triggered recovery portfolio remains outside this WP slice.
+    note: WP-CORE-009 contributes lifecycle-state records and PostgreSQL persistence only; legal transition enforcement remains separate. Real AV-SCEN-01 Core/outbox/JetStream/Twin acceptance slice; wider inspection-triggered recovery portfolio remains outside this WP slice.
     realization:
       surface: manufacturing state machine / transition guard module
       deployable: manufacturing-core

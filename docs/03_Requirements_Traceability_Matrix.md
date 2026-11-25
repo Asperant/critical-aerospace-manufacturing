@@ -2253,7 +2253,7 @@ For FRs the **declared verification codes** come from the Item 81 catalog (T/E/N
 
 Backward trace (Item 83 #44): every acceptance-relevant family maps to ≥1 requirement — **acceptance-critical ORPHAN-TEST (planning) = 0**. `Named in source = Y` marks identities that literally appear in 01; all others are Derived Planning Detail. Owner = capability owner responsible for semantic correctness of the asset (Item 83 #122); Yavuz owns execution tooling.
 
-#### TEST (101)
+#### TEST (102)
 
 | Asset family | Owner | Scope | FBC-01 lane / tier | Min env | EV target | Source Items | Named in source | #Req | Requirements (backward trace) |
 |---|---|---|---|---|---|---|---|---|---|
@@ -2261,6 +2261,7 @@ Backward trace (Item 83 #44): every acceptance-relevant family maps to ≥1 requ
 | TEST-GOV-TRACELINT | Yavuz | Trace-registry linter (Item 83 CI Trace Validation checks 1–10) incl. VERIFIED-without-evidence rejection | ENG-A | CI | EV-L2 | ITEM-83 | — | 10 | FR-GOV-002, FR-GOV-004, FR-GOV-005, FR-GOV-006, FR-GOV-009, FR-GOV-010, NFR-GOV-002, NFR-GOV-008, NFR-GOV-009, NFR-GOV-010 |
 | TEST-ARCH-BOUNDARY | Asrın | Architecture-rules-as-code: import boundaries, schema ownership, forbidden cross-service credentials, contract producer uniqueness | ENG-B | CI | EV-L2 | ITEM-84, ITEM-40, ITEM-41 | — | 5 | FR-CORE-013, FR-EVT-001, FR-EVT-007, FR-EVT-008, FR-RAG-002 |
 | TEST-CORE-DOMAIN | Asrın | Canonical entity model: order/lot/serialized component/route/step/equipment incl. reentrant route representation | ENG-A | CI | EV-L2 | ITEM-08, ITEM-09, ITEM-15 | — | 2 | FR-CORE-001, FR-CORE-002 |
+| TEST-CORE-LIFECYCLE | Asrın | Lifecycle and execution-state records with immutable identity/revision plus PostgreSQL lifecycle-state persistence round-trip; no transition legality | ENG-B | CI | EV-L2 | ITEM-09, ITEM-15 | — | 1 | FR-CORE-003 |
 | TEST-CORE-STATEMACHINE | Asrın | Legal/illegal manufacturing transitions incl. hold/release/rework/split/merge (negative-path mandatory, TEST-INV-08) | ENG-B | CI | EV-L2 | ITEM-09, ITEM-15, ITEM-50 | — | 4 | FR-CORE-003, FR-CORE-007, FR-CORE-008, FR-CORE-009 |
 | TEST-CORE-REVISION | Asrın | Revision/freshness precondition rejection (STALE/CONFLICT outcomes) | ENG-B | CI | EV-L2 | ITEM-15, ITEM-22 | — | 1 | FR-CORE-004 |
 | TEST-CORE-IDEMP | Asrın | Command idempotency + durable command-outcome persistence (completed/rejected/unresolved) | ENG-B | CI | EV-L2 | ITEM-15, ITEM-36 | — | 2 | FR-CORE-005, FR-CORE-006 |
