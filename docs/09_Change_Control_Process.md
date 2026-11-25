@@ -13,7 +13,7 @@
 | Change classes | C0 Editorial · C1 Compatible · C2 Behavior-Affecting · C3 Protocol / Scope / Architecture |
 | Review risk classes | CR-0 … CR-4 (01 Item 63), applied on top of the change class |
 | Registry | `09_change/` companion files; ChangeIDs `CHG-NNN` allocated in order, never reused |
-| Status of the registry today | Historical header snapshot; the live registry is `09_change/change_requests.csv` and includes approved changes through `CHG-081 / CTRL-HOST-051` |
+| Status of the registry today | Historical header snapshot; the live registry is `09_change/change_requests.csv` and includes approved changes through `CHG-082 / CTRL-HOST-052` |
 
 > **CTRL-DOC-006 / CHG-014 registry delta.** The empty-registry counts in this original pre-implementation snapshot are historical. The live registry is the repository-root `09_change/change_requests.csv` with one YAML record per ChangeID. Current user policy authorizes scoped branch application; formal independent peer reviews and merge gates are not claimed complete. A record's APPROVED state does not certify VERIFIED/CLOSED change evidence or parent-WP completion.
 
@@ -28,6 +28,10 @@ The change is applied only through the affected canonical documentation/WP proje
 ## CHG-081 / CTRL-HOST-051 — Scope DONE evidence to owned WP acceptance
 
 Approved project-owner decision on 2026-11-25, recorded in `09_change/CHG-081.yaml`. The WP lifecycle evaluator uses the canonical DoD references selected on that WP's card and actual merged PR/required CI/post-merge facts. It does not add all generic WP/research criteria, all later-stage HARD dependency readiness, or a blanket owner certification to every closure. A WP-owned real integration, security/contract condition, NFR measurement, reproducibility result, evidence identity binding or explicit human decision remains required. Downstream integration, capability/milestone, final research and release gates remain open at their respective owners when this WP's own delivery is complete. Product HITL, Core authority, execution authentication, safety controls and transition identity/audit protections are unchanged. This is a lifecycle evidence-applicability change; it does not itself certify or transition any WP.
+
+## CHG-082 / CTRL-HOST-052 — Audited DONE reconciliation for historical completions
+
+Approved project-owner decision on 2026-11-25, recorded in `09_change/CHG-082.yaml`. The existing `cap-plane-reconcile` path may record an already completed WP's current state as DONE from BACKLOG or another nonterminal state, without synthesizing intermediate lifecycle events. It uses the same live DONE evaluator as the ordinary transition, including exact merged PR/scope, current-main ancestry, branch deletion, exact-merge required CI and only that WP's applicable acceptance. Existing PR or linked evidence for the selected DoD is reused; explicit non-CI verification families and open owner-semantic requirements remain attributable and evidence-bound. No separate blanket or transition-only owner certification is required. The helper preserves profile/assignee guards, blockers and protected fields, records the real source state and skipped-history fact, writes one PATCH after a durable INTENT audit row and requires exact fresh readback. CANCELED and blocked work are excluded. This reconciliation does not itself establish capability, milestone, research or release acceptance.
 
 ---
 

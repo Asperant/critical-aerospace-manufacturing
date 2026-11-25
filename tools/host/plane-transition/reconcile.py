@@ -1,19 +1,20 @@
 #!/usr/bin/python3 -I
-"""Narrow, audited lifecycle reconciliation for an already merged WP.
+"""Narrow, audited lifecycle reconciliation for already merged WP work.
 
 This is NOT a general transition bypass. It records CURRENT observed GitHub facts
 in Plane for exactly the cases allow-listed in the generated policy
-(project_control/lifecycle_reconciliation.yaml): a named profile, WP, pull request,
-head, merge commit and parents. It never asserts that skipped historical
-transitions happened, never marks DONE, never clears BLOCKED and never calls
-AUTO_NEXT. CAP_PROFILE is an operational guard, not a security boundary.
+(project_control/lifecycle_reconciliation.yaml): a named profile, WP, real PR and
+the live facts required by the selected target. It never asserts that skipped
+historical transitions happened, never clears BLOCKED and never calls AUTO_NEXT.
+CAP_PROFILE is an operational guard, not a security boundary.
 
-Only MERGED or VALIDATING can be requested. The only mutation is the constructed
-state PATCH of the existing Plane adapter, preceded by a durable INTENT audit row
-and followed by a fresh exact readback. A merged PR may reconcile an already
-blocked IN_PROGRESS item directly to VALIDATING; the BLOCKED label is preserved
-and the blocker is never cleared. The ordinary cap-plane-transition rules
-(adjacent edges, open-PR predicates) are unchanged.
+MERGED, VALIDATING or DONE can be requested under the pinned policy. DONE
+reconciliation uses the same live WP-owned evaluator as an ordinary DONE
+transition, records the actual source state, and explicitly leaves skipped history
+unasserted. The only mutation is one state PATCH, preceded by a durable INTENT
+audit row and followed by a fresh exact readback. The existing blocked
+IN_PROGRESS-to-VALIDATING recovery preserves the BLOCKED label. Ordinary
+cap-plane-transition rules and their adjacent edges are unchanged.
 """
 
 import contextlib
@@ -33,11 +34,16 @@ from typing import Any
 
 TRANSITION_PATH = "/usr/local/libexec/cap-plane-transition"
 POLICY_SCHEMA = "cap-lifecycle-reconciliation-v1"  # fixture/recovery compatibility
-GENERIC_POLICY_SCHEMA = "cap-lifecycle-reconciliation-v2"
+GENERIC_POLICY_SCHEMA = "cap-lifecycle-reconciliation-v3"
+PREVIOUS_GENERIC_POLICY_SCHEMA = "cap-lifecycle-reconciliation-v2"
 OPERATION = "LIFECYCLE_RECONCILE"
-TARGETS = ("MERGED", "VALIDATING")
-# Only these premerge states can be reconciled; nothing terminal, nothing backwards.
+DONE_OPERATION = "LIFECYCLE_RECONCILE_DONE"
+DONE_CHANGE_RECORD = "CHG-082"
+DONE_CHANGE_SOURCE = "09_change/CHG-082.yaml"
+TARGETS = ("MERGED", "VALIDATING", "DONE")
+# MERGED/VALIDATING use these sources; DONE has a separate CHG-082 source set.
 SOURCES = ("READY", "IN_PROGRESS", "IN_REVIEW", "MERGE_READY")
+DONE_SOURCES = ("BACKLOG",) + SOURCES + ("MERGED", "VALIDATING")
 # A run only proves validation started if it reached one of these observable states.
 STARTED_RUN_STATUSES = ("in_progress", "completed")
 TERMINAL_RUN_CONCLUSIONS = ("success", "failure", "timed_out")
@@ -80,6 +86,7 @@ OUTSTANDING = (
     "integrated_acceptance_not_established",
     "done_not_claimed",
 )
+DONE_RECONCILIATION_OUTSTANDING = ("skipped_state_history_not_asserted",)
 t: Any = None  # transition module; tests inject it, production loads the root copy
 
 
@@ -162,7 +169,7 @@ def validate_legacy_policy(
             isinstance(targets, list)
             and targets
             and len(set(targets)) == len(targets)
-            and all(x in TARGETS for x in targets),
+            and all(x in {"MERGED", "VALIDATING"} for x in targets),
             "RECONCILIATION_CASE_INVALID",
         )
         runs = case["validating_runs"]
@@ -213,23 +220,16 @@ def validate_policy(
     """Validate generic reconciliation policy and legacy recovery fixtures."""
     if isinstance(block, dict) and block.get("schema_version") == POLICY_SCHEMA:
         return validate_legacy_policy(block, contexts, people)
+    need(isinstance(block, dict) and set(block) == {
+        "schema_version", "targets", "sources", "require_successful_runs",
+        "assessment_fields", "legacy_recovery_cases",
+    } and block.get("schema_version") in {
+        GENERIC_POLICY_SCHEMA, PREVIOUS_GENERIC_POLICY_SCHEMA,
+    }, "RECONCILIATION_POLICY_INVALID")
+    is_current = block["schema_version"] == GENERIC_POLICY_SCHEMA
     need(
-        isinstance(block, dict)
-        and set(block)
-        == {
-            "schema_version",
-            "targets",
-            "sources",
-            "require_successful_runs",
-            "assessment_fields",
-            "legacy_recovery_cases",
-        }
-        and block["schema_version"] == GENERIC_POLICY_SCHEMA,
-        "RECONCILIATION_POLICY_INVALID",
-    )
-    need(
-        block["targets"] == list(TARGETS)
-        and block["sources"] == list(SOURCES)
+        block["targets"] == (list(TARGETS) if is_current else ["MERGED", "VALIDATING"])
+        and block["sources"] == (list(DONE_SOURCES) if is_current else list(SOURCES))
         and block["require_successful_runs"] is True,
         "RECONCILIATION_POLICY_INVALID",
     )
@@ -682,8 +682,40 @@ def generic_gather(
     }
 
 
+def generic_done_gather(
+    profile: str, wp: str, source: str, envelope: dict, policy: dict,
+    plane: Any, gh: Any,
+) -> dict:
+    """Reuse the live transition DONE evaluator without inventing an intermediate state."""
+    refs = envelope.get("evidence_refs")
+    need(
+        isinstance(refs, list)
+        and all(isinstance(ref, str) for ref in refs)
+        and len(refs) == len(set(refs))
+        and sum(bool(re.fullmatch(r"pr:[1-9][0-9]{0,15}", ref)) for ref in refs) == 1
+        and all(re.fullmatch(r"(?:pr|comment):[1-9][0-9]{0,15}", ref) for ref in refs),
+        "RECONCILIATION_EVIDENCE_REFS_INVALID",
+    )
+    item = t.find(plane, profile, wp, policy)
+    gh.invalidate()
+    assessed = t.evaluate(
+        profile, wp, source, "DONE", item, plane, policy, gh, envelope,
+        reconcile_done=True,
+    )
+    need(isinstance(assessed, dict) and assessed.get("pr_facts", {}).get("merged") is True,
+         "DONE_ACCEPTANCE_NOT_VERIFIED")
+    return {
+        "done_gate": "PASS",
+        "observed_source_state": source,
+        "change_record": DONE_CHANGE_RECORD,
+        "transition_facts": assessed,
+    }
+
+
 def stable(facts: dict) -> dict:
     """Facts that must not change between proof and write; main may legitimately move."""
+    if "merge" not in facts:
+        return facts
     merge = {k: v for k, v in facts["merge"].items() if k != "main_sha_observed"}
     return {**facts, "merge": merge}
 
@@ -773,6 +805,13 @@ def reconcile(
             set(envelope["evidence_refs"]) == expected_refs(case, target),
             "RECONCILIATION_EVIDENCE_REFS_MISMATCH",
         )
+    else:
+        need(target in lifecycle["targets"], "RECONCILIATION_TARGET_NOT_AUTHORIZED")
+        if target == "DONE":
+            need(
+                DONE_CHANGE_SOURCE in policy.get("source_manifest", {}),
+                "DONE_RECONCILIATION_CHANGE_UNPINNED",
+            )
     item = t.find(
         plane, profile, wp, policy
     )  # unique canonical mapping, owner, assignee
@@ -783,7 +822,10 @@ def reconcile(
     # path only repairs a missed post-merge lifecycle edge and deliberately retains
     # the active blocker for downstream validation.
     need(not blocked or blocked_post_merge, "ACTIVE_BLOCKER_UNRESOLVED")
-    need(source == target or source in SOURCES, "SOURCE_STATE_NOT_RECONCILABLE")
+    if target == "DONE":
+        need(source in DONE_SOURCES, "SOURCE_STATE_NOT_RECONCILABLE")
+    else:
+        need(source == target or source in SOURCES, "SOURCE_STATE_NOT_RECONCILABLE")
     if source != target:
         # A no-op is exempt: after a reconcile the owner normally has a next READY item.
         conflicts = owner_queue_conflicts(plane, profile, item)
@@ -793,11 +835,12 @@ def reconcile(
                 not owner_queue_conflicts(plane, profile, item, released),
                 "OWNER_QUEUE_CONFLICT",
             )
-    facts = (
-        gather(gh, case, profile, wp, target)
-        if legacy
-        else generic_gather(gh, envelope["evidence_refs"], profile, wp, target, policy)
-    )
+    if legacy:
+        facts = gather(gh, case, profile, wp, target)
+    elif target == "DONE":
+        facts = generic_done_gather(profile, wp, source, envelope, policy, plane, gh)
+    else:
+        facts = generic_gather(gh, envelope["evidence_refs"], profile, wp, target, policy)
     stamp = (now or t.now)()
     record = {
         "timestamp": stamp,
@@ -805,7 +848,7 @@ def reconcile(
         "wp_id": wp,
         "from_state": source,
         "to_state": target,
-        "operation": OPERATION,
+        "operation": DONE_OPERATION if target == "DONE" else OPERATION,
         "reason": envelope["reason"],
         "evidence_refs": envelope["evidence_refs"],
         "policy_digest": policy["policy_digest"],
@@ -815,7 +858,7 @@ def reconcile(
     ).hexdigest()
     record.update(
         facts=facts,
-        outstanding=list(OUTSTANDING),
+        outstanding=list(DONE_RECONCILIATION_OUTSTANDING if target == "DONE" else OUTSTANDING),
         skipped_state_history_not_asserted=True,
     )
     if legacy:
@@ -826,6 +869,8 @@ def reconcile(
         )
     else:
         record["reconciliation_mode"] = "GENERIC_EVIDENCE"
+        if target == "DONE":
+            record["change_record"] = DONE_CHANGE_RECORD
     if blocked_post_merge:
         record["blocked_preserved"] = True
     if source == target:
@@ -834,11 +879,12 @@ def reconcile(
         record["result"] = "UNCHANGED"
         audit(record, key)
         return record
-    again = (
-        gather(gh, case, profile, wp, target)
-        if legacy
-        else generic_gather(gh, envelope["evidence_refs"], profile, wp, target, policy)
-    )
+    if legacy:
+        again = gather(gh, case, profile, wp, target)
+    elif target == "DONE":
+        again = generic_done_gather(profile, wp, source, envelope, policy, plane, gh)
+    else:
+        again = generic_gather(gh, envelope["evidence_refs"], profile, wp, target, policy)
     need(stable(again) == stable(facts), "CONCURRENT_GITHUB_CHANGE")
     plane.refresh_items()  # fresh queue snapshot immediately before writing
     released = verified_slot_releases(plane, profile, item, policy, gh)
@@ -922,6 +968,8 @@ def main() -> int:
             and lifecycle.get("schema_version") == POLICY_SCHEMA
         ):
             find_case(lifecycle, profile, wp, target)
+        else:
+            need(target in lifecycle["targets"], "RECONCILIATION_TARGET_NOT_AUTHORIZED")
         lockfd = os.open(
             "/run/cap-plane-queue.lock", os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600
         )

@@ -779,14 +779,25 @@ class TransitionTests(unittest.TestCase):
         def not_merged(policy,plane,gh,envelope): gh.pr_data['merged']=False
         with self.assertRaises(t.Denied): run_case(source='MERGE_READY',target='MERGED',mutate=not_merged)
 
-    def test_done_no_peer_or_approval_but_all_actual_dod_and_postmerge_evidence(self):
+    def test_done_reuses_selected_dod_evidence_without_reviewer_comment(self):
         for profile in t.q.PEOPLE:
             def no_peer(policy,plane,gh,envelope):
                 gh.review_data=[];gh.pr_data['requested_reviewers']=[]
-                envelope['evidence_refs'].remove('comment:3')
+                # Selected DoD evidence remains in the accountable author's PR
+                # comment; no reviewer comment or transition-only checklist is needed.
+                envelope['evidence_refs']=['pr:1','comment:2']
             with self.subTest(profile=profile):
                 result,*_=run_case(profile,source='VALIDATING',target='DONE',mutate=no_peer)
                 self.assertEqual(result['result'],'VERIFIED')
+
+    def test_done_still_requires_explicit_wp_owned_non_ci_assessment(self):
+        def required(policy,plane,gh,envelope):
+            policy['contexts'][plane.item['external_id']]['completion_assessments']={
+                'verification_families':['BENCH-SIMVAL-001'],
+                'owner_semantic_requirements':[]}
+            envelope['evidence_refs']=['pr:1']
+        with self.assertRaises(t.Denied):
+            run_case(source='VALIDATING',target='DONE',mutate=required)
 
     def test_pairing_and_self_review_metadata_do_not_gate_workflow(self):
         def advisory(policy,plane,gh,envelope):

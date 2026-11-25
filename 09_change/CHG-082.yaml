@@ -1,0 +1,66 @@
+CHG-082:
+  title: Audited reconciliation of historically completed work to DONE
+  trigger: Explicit project-owner decision on 2026-11-25 to reconcile already completed WP delivery without fabricating skipped lifecycle history.
+  reason: CHG-081 scopes DONE acceptance to each WP but the existing lifecycle reconciler cannot record a verified DONE state when a merged and validated WP remains at BACKLOG or another nonterminal state.
+  class: C2
+  review_risk_class: CR-2
+  raised_in: S4
+  raised_on: 2026-11-25
+  owner: Asrın
+  application_control_item: CTRL-HOST-052
+  required_human_approvals: 0
+  reviewers: []
+  decision: APPROVED
+  status: APPROVED
+  human_decision_basis: The project owner authorized code, tests, CI, Plane and project-control changes for scope-aware DONE completion. This policy authorization does not certify any individual WP or replace its required acceptance.
+  decision_basis: "Project owner instruction, 2026-11-25: Reconcile previously developed work to DONE only when its own code, functions, required tests, integrations and acceptance are complete. Preserve real own-scope security, contract, integration, measurement, research and human decisions. Do not fabricate lifecycle history or acceptance."
+  scope:
+    - Permit the existing profile-scoped lifecycle reconciler to set DONE from BACKLOG, READY, IN_PROGRESS, IN_REVIEW, MERGE_READY, MERGED or VALIDATING only after the same live WP-owned DONE evaluator passes.
+    - Re-prove exact WP PR identity and complete safe scope, actual merge, current-main ancestry, deleted branch, required PR checks and exact-merge post-merge aggregate CI before a write.
+    - Require attributable evidence only for WP-owned non-CI verification families and explicit open owner-semantic acceptance; do not duplicate generic DoD certification.
+    - Preserve actual Plane owner/profile/assignee checks, active-blocker denial, owner queue guard, protected fields, durable INTENT, one PATCH and exact readback.
+    - Record the observed source state and skipped workflow-history fact; never synthesize or backdate intermediate transitions.
+    - Keep CANCELED terminal and do not establish another WP's, capability's, milestone's, research campaign's or release's acceptance.
+  affected_requirements:
+    - NONE — product behavior and acceptance semantics are unchanged.
+  precise_requirement: NONE — lifecycle reconciliation records only a currently verified state; it does not alter product requirements or waive WP-owned acceptance.
+  affected_architecture:
+    - NONE — no product service, authority boundary, runtime or external contract changes.
+  affected_contracts:
+    - NONE — no product or external runtime contract changes.
+  affected_work_packages:
+    - ALL EXISTING WORK PACKAGES — eligible only when each individual WP's live DONE gate passes; no WP status changes are authorized by this policy alone.
+  affected_dependencies:
+    - Later-stage dependency and release acceptance remain at their declared consumer, capability, milestone or release gates.
+  affected_evidence:
+    - Existing immutable PR, CI, integration and WP-owned acceptance evidence is reused at its actual revision; no duplicate run or owner decision is generated.
+  evidence_staleness:
+    question_answered: true
+    stale: []
+    unaffected:
+      - Existing lifecycle audit rows and all source-bound technical evidence retain their original meaning.
+    rerun_required:
+      - Focused transition and reconciliation tests.
+      - CI for this control PR and installed helper/policy hash readback after merge.
+  security_authority_impact: NONE — exact profile identity, authorization, secret handling, audit, Core authority and product HITL remain unchanged.
+  risks:
+    - Misbinding a PR or owner could reconcile unrelated work; exact profile, owner, assignee, PR and scope checks remain mandatory.
+    - Treating intermediate history as real could corrupt the lifecycle audit; the operation records the actual source and explicitly does not assert skipped states.
+  conditions:
+    - No WP becomes DONE from this policy change alone.
+    - Every reconciliation must pass actual WP-owned DONE acceptance and live GitHub verification.
+    - Other developers' assignments and Plane states may be changed only by their matching profile mechanism.
+  rollout: Merge the control PR, then use the existing root-owned installer from merged main to refresh pinned helper hashes and sudo policy. Verify installed hashes before any profile-owned DONE reconciliation.
+  rollback: Revert this control PR and reinstall the preceding merged helper. Do not roll back or rewrite Plane lifecycle audit history.
+  required_rerun:
+    - focused tools/host/plane-transition tests
+    - projectctl check-done against real WP evidence before each DONE write
+  documentation_updates:
+    - AGENTS.md — audited historical DONE reconciliation boundary
+    - docs/09_Change_Control_Process.md — record this approved C2 change
+    - tools/host/plane-transition/README.md — supported reconciliation operation
+    - tools/host/plane-transition/cap-plane-reconcile — accepted target argument
+    - project_control/lifecycle_reconciliation.yaml — target/source policy
+    - 09_change/CHG-082.yaml
+    - 09_change/change_requests.csv
+  freeze_context: PRE_M6
