@@ -1,9 +1,11 @@
+import csv
 import json
 import shutil
 import socket
 from pathlib import Path
 
 import pytest
+import yaml
 from projectctl.cli import app
 from projectctl.gates import evaluate, parse_assessment
 from projectctl.post_merge_evidence import evaluate_post_merge_evidence
@@ -116,12 +118,13 @@ def test_gate_evidence_has_no_mandatory_development_review(project, root, gate):
     assert result["criteria_refs"]
     explanation = json.dumps([result["reason"], result["missing_evidence"]]).lower()
     assert "evidence" in explanation
-    assert "owner" in explanation
     assert "review" not in explanation
     assert "approval" not in explanation
     if gate == "done":
-        assert "required CI and canonical validation" in result["missing_evidence"]
-        assert "post-merge target-environment validation" in result["missing_evidence"]
+        assert "owner" not in explanation
+        assert any(
+            "WP-scoped merged revision" in item for item in result["missing_evidence"]
+        )
 
 
 MAIN_SHA = "359dbfd176925de4e9fbec0edeed21a1545deb53"
@@ -155,7 +158,7 @@ def _json_record(fixture_root, relative):
     return path, value
 
 
-def test_post_merge_adapter_accepts_structured_certified_evidence(
+def test_post_merge_adapter_accepts_structured_wp_scoped_evidence(
     project, post_merge_fixture
 ):
     result = _post_merge_result(project, post_merge_fixture)
@@ -163,7 +166,74 @@ def test_post_merge_adapter_accepts_structured_certified_evidence(
     assert result["bundle_id"] == "EVID-WP-CORE-008-TECH-20261029"
 
 
-def test_post_merge_adapter_requires_owner_certification(project, post_merge_fixture):
+def test_post_merge_adapter_accepts_current_trace_only_when_run_and_bundle_are_bound(
+    project, post_merge_fixture
+):
+    _, post = _json_record(
+        post_merge_fixture, "evidence/WP-CORE-008/POST-MERGE-2026-10-29.json"
+    )
+    requirement = post["trace"]["requirements"][0]
+    registry_path = post_merge_fixture / post["trace"]["registry"]
+    registry = yaml.safe_load(registry_path.read_text(encoding="utf-8"))
+    registry["requirements"][requirement]["state"]["evidence"] = "CURRENT"
+    registry_path.write_text(
+        yaml.safe_dump(registry, sort_keys=False), encoding="utf-8"
+    )
+
+    coverage_path = post_merge_fixture / post["trace"]["evidence_coverage"]
+    with coverage_path.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        rows = list(reader)
+        fields = reader.fieldnames or []
+    row = next(item for item in rows if item["requirement_id"] == requirement)
+    row["evidence_state"] = "CURRENT"
+    row["executed_as"] = post["run_id"]
+    row["evidenced_by"] = post["evidence_bundle"]
+    with coverage_path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+
+    result = _post_merge_result(project, post_merge_fixture)
+    assert result["result"] == "PASS"
+
+
+def test_post_merge_adapter_keeps_stale_trace_evidence_open(
+    project, post_merge_fixture
+):
+    _, post = _json_record(
+        post_merge_fixture, "evidence/WP-CORE-008/POST-MERGE-2026-10-29.json"
+    )
+    requirement = post["trace"]["requirements"][0]
+    registry_path = post_merge_fixture / post["trace"]["registry"]
+    registry = yaml.safe_load(registry_path.read_text(encoding="utf-8"))
+    registry["requirements"][requirement]["state"]["evidence"] = "STALE"
+    registry_path.write_text(
+        yaml.safe_dump(registry, sort_keys=False), encoding="utf-8"
+    )
+    coverage_path = post_merge_fixture / post["trace"]["evidence_coverage"]
+    with coverage_path.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        rows = list(reader)
+        fields = reader.fieldnames or []
+    next(item for item in rows if item["requirement_id"] == requirement)[
+        "evidence_state"
+    ] = "STALE"
+    with coverage_path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+
+    result = _post_merge_result(project, post_merge_fixture)
+    assert result["result"] == "UNKNOWN"
+    assert any(
+        "supported WP disposition" in item for item in result["missing_evidence"]
+    )
+
+
+def test_post_merge_adapter_does_not_require_generic_owner_certification(
+    project, post_merge_fixture
+):
     path, run = _json_record(
         post_merge_fixture, "evidence/WP-CORE-008/RUN-CORE-008-AV-20261029.json"
     )
@@ -171,10 +241,8 @@ def test_post_merge_adapter_requires_owner_certification(project, post_merge_fix
     run["accountable_acceptance"] = "NOT_CERTIFIED"
     path.write_text(json.dumps(run), encoding="utf-8")
     result = _post_merge_result(project, post_merge_fixture)
-    assert result["result"] == "UNKNOWN"
-    assert any(
-        "accountable owner certification" in item for item in result["missing_evidence"]
-    )
+    assert result["result"] == "PASS"
+    assert result["bundle_id"] == "EVID-WP-CORE-008-TECH-20261029"
 
 
 def test_post_merge_adapter_rejects_wrong_sha_and_stale_main(
@@ -215,8 +283,33 @@ def test_post_merge_adapter_rejects_missing_bundle(project, post_merge_fixture):
     post.pop("evidence_bundle")
     path.write_text(json.dumps(post), encoding="utf-8")
     result = _post_merge_result(project, post_merge_fixture)
+    assert result["result"] == "PASS"
+    assert result["bundle_id"] is None
+
+
+def test_post_merge_adapter_keeps_bundle_for_selected_measurement_research_or_evidence_dod(
+    project, post_merge_fixture
+):
+    canonical = project.catalog.work_packages[
+        [wp.id for wp in project.catalog.work_packages].index("WP-CORE-008")
+    ].model_dump(mode="json")
+    canonical["dod_refs"].append("DOD-WP-10")
+    path, post = _json_record(
+        post_merge_fixture, "evidence/WP-CORE-008/POST-MERGE-2026-10-29.json"
+    )
+    post.pop("evidence_bundle")
+    path.write_text(json.dumps(post), encoding="utf-8")
+    result = evaluate_post_merge_evidence(
+        project,
+        {"work_package": canonical},
+        post_merge_fixture,
+        current_main_sha=MAIN_SHA,
+    )
     assert result["result"] == "UNKNOWN"
-    assert any("evidence_bundle" in item for item in result["missing_evidence"])
+    assert (
+        "selected measurement/research/evidence DoD requires an EvidenceBundle"
+        in result["missing_evidence"]
+    )
 
 
 def test_post_merge_adapter_fails_closed_on_malformed_record(

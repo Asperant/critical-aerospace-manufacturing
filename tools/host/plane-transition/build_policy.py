@@ -24,12 +24,26 @@ for line in text.splitlines():
     if re.match(r'\| (?:DOR|DOD)-[A-Z]+-[0-9]{2} \|',line):
         cells=[c.strip() for c in line.strip('|').split('|')]
         criteria.setdefault(cells[0],cells[1:])
-classes={r.id:r.scope_class or r.quality_class for r in p.catalog.requirements.requirements}
 contexts={}
+trace_registry=yaml.safe_load((ROOT/'traceability/trace_edges.yaml').read_text())
 for w in p.catalog.work_packages:
     c=context(p,w.id)
     c.pop('diagnostics',None)
-    c['scope_criteria']=sorted({'docs/08#9:'+str(classes[r]) for r in w.requirement_refs})
+    verification=c['work_package'].get('verification_expectations') or ''
+    families=set(re.findall(r'\b(?:BENCH|AV|E2E|DEMO|REPRO|RES|INSP|RESTORE)-[A-Z0-9-]+\b',verification))
+    for prefix,start,end in re.findall(r'\b(AV-SCEN)-(\d{2})(?:…|\.\.\.)(\d{2})\b',verification):
+        families.update(f'{prefix}-{number:02d}' for number in range(int(start),int(end)+1))
+    requirements=trace_registry.get('requirements',{}) if isinstance(trace_registry,dict) else {}
+    owner_semantic=[]
+    for requirement in c['work_package'].get('requirement_refs') or []:
+        record=requirements.get(requirement,{}) if isinstance(requirements,dict) else {}
+        note=record.get('note','') if isinstance(record,dict) else ''
+        if isinstance(note,str) and 'owner semantic confirmation pending' in note.casefold():
+            owner_semantic.append(requirement)
+    c['completion_assessments']={
+        'verification_families':sorted(family for family in families if not family.startswith('TEST-')),
+        'owner_semantic_requirements':sorted(owner_semantic),
+    }
     contexts[w.id]=c
 nodes={n.id:n for n in p.catalog.dependencies.nodes}
 people={'Asrın Dündar':'asrin','Selman Özdemir':'selman','Batuhan Kaya':'batuhan','Yavuz Gümüş':'yavuz'}
@@ -49,9 +63,11 @@ node_producers={n.id:sorted(w.id for w in p.catalog.work_packages
 manifest=dict(p.source_manifest)
 for name in ['AGENTS.md','docs/02_System_Architecture_Specification.md','docs/08_Definition_of_Ready_and_Done.md',
              'docs/09_Change_Control_Process.md',POLICY_PATH,'09_change/CHG-018.yaml','09_change/CHG-017.yaml','09_change/CHG-054.yaml',
+             '09_change/CHG-081.yaml',
+             'traceability/trace_edges.yaml',
              '09_change/history/CHG-017-development_review_policy.json','.github/pull_request_template.md','.github/workflows/projectctl.yml']:
     manifest[name]=sha256((ROOT/name).read_bytes()).hexdigest()
-policy={'schema_version':'cap-transition-policy-v1','evaluation_revision':'chg018-advisory-only','source_manifest':manifest,'contexts':contexts,
+policy={'schema_version':'cap-transition-policy-v1','evaluation_revision':'chg081-scope-aware-done','source_manifest':manifest,'contexts':contexts,
         'criteria_definitions':criteria, 'node_owners':node_owners,
         'node_levels':{n.id:[str(v) for v in n.readiness_levels] for n in nodes.values()},
         'node_requirements':{n.id:sorted(set(re.findall(r'(?:FR|NFR)-[A-Z0-9]+-[0-9]{3}',

@@ -502,6 +502,10 @@ class DeferredAcceptanceTests(unittest.TestCase):
         }
         policy["contexts"][wp]["source_manifest"] = {"docs/08": "digest"}
         policy["contexts"][wp]["work_package"]["requirement_refs"] = ["FR-TEST-001"]
+        gh.pr_data["body"] = gh.pr_data["body"].replace(
+            "Requirements: NONE — fixture has no source requirements",
+            "Requirements: FR-TEST-001",
+        )
         wbs, rtm = scope_docs(wp)
         policy["scope_projection_schema"] = "cap-scope-projection-v1"
         policy["scope_projections"] = {

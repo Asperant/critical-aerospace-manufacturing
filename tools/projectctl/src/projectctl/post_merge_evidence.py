@@ -21,11 +21,7 @@ POST_MERGE_SCHEMA = "cap.post-merge-evidence/v1"
 RUN_SCHEMA = "cap.run-record/v1"
 BUNDLE_SCHEMA = "cap.evidence-bundle/v1"
 UNAVAILABLE_MISSING = [
-    "actual deliverables and requirement verification at required boundaries",
-    "required CI and canonical validation",
-    "post-merge target-environment validation",
-    "trace dispositions and identity-bound accepted evidence",
-    "applicable WP/capability/research/scope DoD confirmations",
+    "WP-scoped merged revision, required CI, selected DoD and trace evidence",
 ]
 
 
@@ -118,18 +114,14 @@ def _validate_bundle(
 ) -> dict[str, Any] | None:
     evidence_id = post.get("evidence_bundle")
     if not isinstance(evidence_id, str) or not evidence_id:
-        errors.append("post-merge evidence_bundle is missing")
         return None
-    cert = run.get("accountable_certification")
-    if not isinstance(cert, dict) or cert.get("evidence_bundle") != evidence_id:
-        errors.append(
-            "accountable certification and post-merge EvidenceBundle do not match"
-        )
+    if not run or run.get("run_id") != post.get("run_id"):
+        errors.append("EvidenceBundle run binding is missing or mismatched")
         return None
     manifest_path = root / "evidence" / wp / evidence_id / "manifest.json"
     manifest, error = _json(manifest_path)
     if error:
-        errors.append(error)
+        errors.append(f"EvidenceBundle manifest unavailable or malformed: {error}")
         return None
     assert manifest is not None
     if manifest.get("schema") != BUNDLE_SCHEMA:
@@ -173,7 +165,9 @@ def _validate_bundle(
     return manifest
 
 
-def _validate_trace(root: Path, wp: str, post: dict, errors: list[str]) -> None:
+def _validate_trace(
+    root: Path, wp: str, requirements_expected: list[str], post: dict, errors: list[str]
+) -> None:
     trace = post.get("trace")
     if not isinstance(trace, dict) or trace.get("result") != "PASS":
         errors.append("post-merge trace validation is not PASS")
@@ -190,10 +184,10 @@ def _validate_trace(root: Path, wp: str, post: dict, errors: list[str]) -> None:
     requirements = trace.get("requirements")
     if (
         not isinstance(requirements, list)
-        or not requirements
         or not all(isinstance(item, str) for item in requirements)
+        or set(requirements) != set(requirements_expected)
     ):
-        errors.append("trace requirement binding is missing or malformed")
+        errors.append("trace requirement binding does not match the canonical WP scope")
         requirements = []
     if (
         not isinstance(registry, dict)
@@ -212,8 +206,6 @@ def _validate_trace(root: Path, wp: str, post: dict, errors: list[str]) -> None:
     except (OSError, UnicodeDecodeError, csv.Error) as exc:
         errors.append(f"generated evidence coverage unavailable or malformed ({exc})")
         rows = []
-    evidence_id = post.get("evidence_bundle")
-    run_id = post.get("run_id")
     for requirement in requirements:
         matches = [row for row in rows if row.get("requirement_id") == requirement]
         if len(matches) != 1:
@@ -222,8 +214,32 @@ def _validate_trace(root: Path, wp: str, post: dict, errors: list[str]) -> None:
             )
             continue
         row = matches[0]
-        if row.get("executed_as") != run_id or row.get("evidenced_by") != evidence_id:
-            errors.append(f"trace evidence coverage binding mismatch for {requirement}")
+        registry_requirements = (
+            registry.get("requirements", {}) if isinstance(registry, dict) else {}
+        )
+        registry_record = registry_requirements.get(requirement, {})
+        registry_state = (
+            registry_record.get("state", {}).get("evidence")
+            if isinstance(registry_record, dict)
+            and isinstance(registry_record.get("state"), dict)
+            else None
+        )
+        evidence_state = row.get("evidence_state")
+        if evidence_state != registry_state:
+            errors.append(
+                f"trace evidence view is stale or mismatched for {requirement}"
+            )
+        if evidence_state not in {"NOT_YET_EXECUTED", "EVIDENCE_PENDING", "CURRENT"}:
+            errors.append(
+                f"trace evidence state is not a supported WP disposition for {requirement}"
+            )
+        if evidence_state == "CURRENT" and (
+            row.get("executed_as") != post.get("run_id")
+            or row.get("evidenced_by") != post.get("evidence_bundle")
+        ):
+            errors.append(
+                f"current trace evidence is not bound to the post-merge run/bundle for {requirement}"
+            )
 
 
 def _validate_dod_source(root: Path, post: dict, errors: list[str]) -> None:
@@ -232,6 +248,8 @@ def _validate_dod_source(root: Path, post: dict, errors: list[str]) -> None:
         return
     source = dod.get("source")
     expected = dod.get("source_sha256")
+    if source is None and expected is None:
+        return
     if (
         not isinstance(source, str)
         or not isinstance(expected, str)
@@ -251,7 +269,7 @@ def _validate_dod_source(root: Path, post: dict, errors: list[str]) -> None:
 def evaluate_post_merge_evidence(
     project: Any, canonical: dict, root: Path, *, current_main_sha: str | None = None
 ) -> dict[str, Any]:
-    """Evaluate one generic structured post-merge record for a canonical WP."""
+    """Evaluate one compact, WP-scoped offline post-merge record."""
     del project  # reserved for future schema adapters; evaluation is repository-local.
     wp = canonical["work_package"]
     wp_id = wp["id"]
@@ -261,7 +279,7 @@ def evaluate_post_merge_evidence(
         return {
             "result": "UNKNOWN",
             "missing_evidence": sorted(set(scan_errors + UNAVAILABLE_MISSING)),
-            "reason": "Post-merge evidence is malformed or unavailable; accountable owner evidence unavailable",
+            "reason": "WP-scoped post-merge evidence is malformed or unavailable",
             "execution_status": "EVIDENCE_ASSESSED",
         }
     if len(posts) != 1:
@@ -273,7 +291,7 @@ def evaluate_post_merge_evidence(
         return {
             "result": "UNKNOWN",
             "missing_evidence": [reason],
-            "reason": f"{reason}; accountable owner evidence unavailable",
+            "reason": reason,
             "execution_status": "EVIDENCE_ASSESSED",
         }
     post_path, post = posts[0]
@@ -283,74 +301,35 @@ def evaluate_post_merge_evidence(
     for field in ("main_sha", "technical_closure_sha"):
         _sha(post.get(field), f"post-merge {field}", errors)
     run_id = post.get("run_id")
-    if not isinstance(run_id, str) or not run_id:
-        errors.append("post-merge run_id is missing")
-    runs, run_errors = _find_records(evidence_dir, RUN_SCHEMA, wp_id)
-    errors.extend(run_errors)
-    matching_runs = [
-        (path, value) for path, value in runs if value.get("run_id") == run_id
-    ]
-    if len(matching_runs) != 1:
-        errors.append("post-merge run binding is missing or ambiguous")
-        run_path, run = (None, {})
-    else:
-        run_path, run = matching_runs[0]
-    if (
-        run.get("work_package") != wp_id
-        or run.get("boundary_mode") != "REAL"
-        or run.get("result", "") == ""
-    ):
-        errors.append("run record is incomplete or not a real execution record")
-    _sha(run.get("source_main_sha"), "run source_main_sha", errors)
-    cert = run.get("accountable_certification")
-    cert_record = cert if isinstance(cert, dict) else {}
-    if (
-        run.get("accountable_acceptance") != "CERTIFIED"
-        or not isinstance(cert, dict)
-        or cert.get("status") != "CERTIFIED"
-    ):
-        errors.append("accountable owner certification is missing")
-    else:
-        owner = (wp.get("primary_owner") or {}).get("canonical_name")
-        if cert.get("owner") != owner:
-            errors.append(
-                "accountable owner certification is not bound to the canonical owner"
-            )
-        selected = (
-            cert.get("assertions", {}).get("selected_dod_satisfied")
-            if isinstance(cert.get("assertions"), dict)
-            else None
-        )
-        if not isinstance(selected, list) or set(selected) != set(
-            wp.get("dod_refs") or []
-        ):
-            errors.append(
-                "accountable certification does not cover the canonical WP DoD references"
-            )
-        for key, value in (cert.get("assertions") or {}).items():
-            if (
-                key != "selected_dod_satisfied"
-                and isinstance(value, bool)
-                and not value
+    run_path = None
+    run = {}
+    run_required = bool(
+        {"DOD-WP-08", "DOD-WP-09", "DOD-WP-10", "DOD-WP-11"}
+        & set(wp.get("dod_refs") or [])
+    )
+    if run_id is not None:
+        if not isinstance(run_id, str) or not run_id:
+            errors.append("post-merge run_id is malformed")
+        runs, run_errors = _find_records(evidence_dir, RUN_SCHEMA, wp_id)
+        errors.extend(run_errors)
+        matching_runs = [
+            (path, value) for path, value in runs if value.get("run_id") == run_id
+        ]
+        if len(matching_runs) != 1:
+            errors.append("post-merge run binding is missing or ambiguous")
+        else:
+            run_path, run = matching_runs[0]
+            if run.get("boundary_mode") != "REAL" or not run.get("result"):
+                errors.append("run record is incomplete or not a real execution record")
+            _sha(run.get("source_main_sha"), "run source_main_sha", errors)
+            if run.get("technical_closure_sha") not in (
+                None,
+                post.get("technical_closure_sha"),
             ):
-                errors.append(f"accountable certification assertion is false: {key}")
-        for field in (
-            "current_main_sha",
-            "technical_closure_sha",
-            "historical_runtime_evidence_sha",
-        ):
-            _sha(cert_record.get(field), f"accountable certification {field}", errors)
-        if cert_record.get("technical_closure_sha") != post.get(
-            "technical_closure_sha"
-        ):
-            errors.append("technical closure SHA mismatch")
-        if cert_record.get("evidence_bundle") != post.get("evidence_bundle"):
-            errors.append("accountable certification EvidenceBundle mismatch")
-    if post.get("run_id") != run.get("run_id"):
-        errors.append("post-merge and run IDs do not match")
-    if post.get("technical_closure_sha") != cert_record.get("technical_closure_sha"):
+                errors.append("run technical closure SHA mismatch")
+    elif run_required:
         errors.append(
-            "post-merge technical closure is not bound to the run certification"
+            "selected measurement/research/evidence DoD requires a real run record"
         )
 
     target = (
@@ -375,7 +354,6 @@ def evaluate_post_merge_evidence(
     if target:
         for field, value in (
             ("run source_main_sha", run.get("source_main_sha")),
-            ("certification current_main_sha", cert_record.get("current_main_sha")),
             ("technical closure SHA", post.get("technical_closure_sha")),
         ):
             if isinstance(value, str) and SHA.fullmatch(value):
@@ -394,6 +372,7 @@ def evaluate_post_merge_evidence(
                 not isinstance(item, dict)
                 or not item.get("name")
                 or not item.get("run_id")
+                or not (type(item.get("run_id")) is int and item["run_id"] > 0)
             ):
                 errors.append("post-merge CI entry is malformed")
                 continue
@@ -413,7 +392,11 @@ def evaluate_post_merge_evidence(
             if assessments.get(criterion) != "PASS":
                 errors.append(f"required DoD assessment is not PASS: {criterion}")
     _validate_dod_source(root, post, errors)
-    _validate_trace(root, wp_id, post, errors)
+    _validate_trace(root, wp_id, wp.get("requirement_refs") or [], post, errors)
+    if run_required and not post.get("evidence_bundle"):
+        errors.append(
+            "selected measurement/research/evidence DoD requires an EvidenceBundle"
+        )
     manifest = _validate_bundle(root, wp_id, run, post, errors)
     if errors:
         return {
@@ -435,12 +418,12 @@ def evaluate_post_merge_evidence(
         },
         "run_id": run_id,
         "run_path": str(run_path),
-        "bundle_id": post["evidence_bundle"],
+        "bundle_id": post.get("evidence_bundle"),
         "main_sha": post["main_sha"],
         "ci_runs": [item["run_id"] for item in post["required_ci"]],
         "trace_requirements": post["trace"]["requirements"],
         "dod_refs": sorted(wp.get("dod_refs") or []),
         "bundle_status": manifest.get("status") if manifest else None,
         "missing_evidence": [],
-        "reason": "Structured post-merge evidence, trace, CI and accountable DoD certification verified",
+        "reason": "WP-scoped post-merge CI, selected DoD and trace evidence verified",
     }

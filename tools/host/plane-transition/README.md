@@ -46,9 +46,15 @@ Review is advisory for every development risk class. The helper does not query G
 - BACKLOG → READY needs no semantic assessment under CHG-054 (see the table above). The
   owner's DoR assessment, a free slot and scheduling remain advisory diagnostics, and
   later HARD INTEGRATION, MILESTONE_EXIT and FREEZE edges keep their later gates.
-- VALIDATING → DONE: actual accountable-owner assessment of all
-  applicable WP/scope/research DoD, accepted trace/evidence, successful actual
-  merge-revision validation, actual CI/technical checks and applicable dependency gates.
+- VALIDATING → DONE: exact merged PR/current-main binding, deleted branch,
+  required main CI at the merge SHA, WP-selected DoD and its own acceptance.
+  Every selected DoD criterion needs its own attributable PASS and real artifact
+  links; there is no additional blanket owner certification or global DoD list.
+  CI-executed `TEST-*` families are verified by the aggregate required pipeline.
+  Explicit non-CI verification families (scenario, benchmark, reproduction,
+  inspection, demo or restore) and open owner-semantic trace notes also need an
+  attributable canonical-owner PASS with real artifact links. Other WP, later-stage
+  dependency, capability, final research and release gates remain at their owners.
 - CANCELED: explicit human project-owner cancellation decision, not an agent's
   scope decision. Account attribution alone cannot distinguish a human from an
   agent using the same accepted account; this limitation is not concealed.
@@ -92,10 +98,11 @@ with their original revision/policy bindings; they are not required.
 
 Producer readiness can be an existing `DEP-ID | readiness | precise consumer and
 artifact links` table. Root policy checks canonical ordered readiness levels; a
-producer WP's DONE state alone is insufficient. At closure, MILESTONE_EXIT/FREEZE
-applicability needs an accountable-owner assessment (a justified
-`DEP-ID | NOT_APPLICABLE | reason and evidence` table is supported). Unknown gates
-fail closed; no fixture is promoted to actual readiness.
+producer WP's DONE state alone is insufficient. HARD dependencies remain enforced
+at their declared consumer/integration/milestone/freeze stages; they are not all
+rechecked as a blanket WP-closure gate. A WP-owned integration remains required
+through its selected verification family and actual evidence. Unknown gates fail
+closed; no fixture is promoted to actual readiness.
 
 Conservative canonical rework remains: IN_REVIEW → IN_PROGRESS only with draft
 rework, WIP and dependencies; MERGE_READY → IN_REVIEW with actual reviewable work
@@ -157,9 +164,20 @@ Every repository development PR, CR-0 through CR-4, normal/high risk, security/a
 
 IN_REVIEW means a real non-draft technically reviewable PR, not waiting for a human. MERGE_READY requires correct canonical WP/approved control scope and branch/PR/head binding, required actual CI/tests/canonical validation, mergeability/no conflict against current main, no out-of-scope changes, applicable DoR-PR/PR DoD, trace/evidence and applicable security/secret/static checks, and no real BLOCKED condition. Actual technical/canonical failures or ambiguity fail closed; a review state alone neither proves nor disproves these facts. Material revisions re-run technical checks/evidence. Rework follows actual revision/technical evidence, not approval invalidation.
 
-MERGED requires an actual GitHub merge. VALIDATING requires actual post-merge validation started. DONE requires all applicable DoD, trace/evidence and actual successful post-merge validation; accountable owner assessment and real artifacts remain required, another person's review/confirmation does not. Development peer/methodology review is advisory even for closure; real protocol, scientific reproducibility, measured acceptance and product-authority evidence remain required. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted.
+MERGED requires an actual GitHub merge. VALIDATING requires actual post-merge validation started. Under CHG-081, DONE uses only the WP's selected DoD and owned acceptance, actual merged PR/scope, exact-merge-SHA required CI and relevant post-merge integration. It has no blanket owner certification or all-dependency gate. Owner evidence remains only for an explicit non-CI verification family or canonical open owner-semantic note, with real artifacts. Development peer/methodology review is advisory. Product HITL, security, real WP-owned integrations, research integrity and explicit human acceptance remain unchanged. Merged != Done; Implemented != Tested; Tested != Verified; Demoed != Accepted.
 
 This changes ONLY development/GitHub/repository governance. Product HITL, protected-action approval, AuthorityPolicy, authenticated approvers, runtime self-approval prohibition, exact proposal/plan binding and execution authorization are unchanged. Project-owner scope/cancellation decisions and real product acceptance artifacts are not GitHub review approvals and are not fabricated or waived. No Plane test mutation, merge, commit or push is authorized in this pass. Existing historical approvals remain history, never requirements for a current transition.
+
+## CHG-081 / CTRL-HOST-051 — scope-aware WP completion
+
+An offline `projectctl check-done` result validates a compact WP-scoped evidence
+record but does not authorize a Plane write. The live transition verifies current
+GitHub facts. The canonical WP card's selected DoD references determine objective
+checks. `TEST-*` families run in required CI; non-CI families listed on the card
+and explicit open owner-semantic trace notes require owner-attributed PASS evidence.
+Later-stage dependencies and another WP's downstream, capability, final research
+or release acceptance are not inherited as WP closure gates. No Plane mutation,
+identity guard, protected field, product HITL or CANCELED rule changes.
 
 
 CI verification follows the real check → Actions run → job → named steps at the
@@ -268,7 +286,8 @@ The blocker must match its audited assessment; actual squash merge, deleted bran
 post-merge main CI and unchanged canonical inputs/architecture are verified live.
 The proof includes the assessment digest and is recomputed before AUTO_NEXT writes.
 UNKNOWN retains the slot. Health exposes `deferred_waits`; readiness never sees a
-synthetic DONE for these WPs. No DONE evaluator or canonical preference changes.
+synthetic DONE for these WPs. CHG-034 itself did not change the DONE evaluator;
+the later scope-aware completion policy is recorded under CHG-081.
 
 CHG-023 / CTRL-HOST-008: the deferred proof's canonical-scope check compares
 `docs/03` and `docs/04` through `execution_queue.scope_projection` (the WP's own WBS

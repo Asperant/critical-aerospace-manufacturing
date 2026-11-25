@@ -6,8 +6,8 @@
     "pyright": "pyright 1.1.389"
   },
   "totals": {
-    "ruff": 286,
-    "pyright": 185,
+    "ruff": 278,
+    "pyright": 181,
     "unformatted_files": 52
   },
   "ruff": {
@@ -48,14 +48,14 @@
     },
     "tools/host/plane-transition/test_transition.py": {
       "B023": 25,
-      "E701": 70,
+      "E701": 67,
       "E702": 23,
       "F841": 1,
       "I001": 1
     },
     "tools/host/plane-transition/transition.py": {
       "B905": 1,
-      "E701": 26,
+      "E701": 21,
       "I001": 1,
       "SIM105": 1,
       "SIM300": 1,
@@ -204,9 +204,8 @@
     },
     "tools/host/plane-transition/build_policy.py": {
       "reportArgumentType": 1,
-      "reportAttributeAccessIssue": 2,
-      "reportOptionalIterable": 1,
-      "reportOptionalMemberAccess": 2
+      "reportAttributeAccessIssue": 1,
+      "reportOptionalMemberAccess": 1
     },
     "tools/host/plane-transition/test_transition.py": {
       "reportArgumentType": 2,
@@ -216,7 +215,7 @@
     "tools/host/plane-transition/transition.py": {
       "reportArgumentType": 1,
       "reportOptionalIterable": 1,
-      "reportOptionalMemberAccess": 40,
+      "reportOptionalMemberAccess": 39,
       "reportOptionalSubscript": 4
     },
     "tools/projectctl/src/projectctl/cli.py": {

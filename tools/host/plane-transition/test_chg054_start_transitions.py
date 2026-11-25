@@ -265,7 +265,7 @@ class AdjacentStepsAndRealWorkFacts(unittest.TestCase):
             ):
                 run_case(source=source, target=target)
 
-    def test_start_correction_leaves_merge_and_done_gates_fail_closed(self):
+    def test_start_correction_leaves_merge_and_wp_owned_done_gates_fail_closed(self):
         def failing_ci(policy, plane, gh, envelope):
             gh.check_data[0][0]["conclusion"] = "failure"
 
@@ -274,9 +274,14 @@ class AdjacentStepsAndRealWorkFacts(unittest.TestCase):
 
         def no_owner_assessment(policy, plane, gh, envelope):
             envelope["evidence_refs"] = ["pr:1", "run:4"]
+            gh.pr_data["body"] += (
+                "\n| DOD-WP-01 | PASS | [selected acceptance](evidence/test.json) |"
+            )
 
-        with self.assertRaises(t.Denied):
-            run_case(source="VALIDATING", target="DONE", mutate=no_owner_assessment)
+        result, *_ = run_case(
+            source="VALIDATING", target="DONE", mutate=no_owner_assessment
+        )
+        self.assertEqual(result["result"], "VERIFIED")
 
         def unresolved_hard_edge(policy, plane, gh, envelope):
             with_edges(hard_start("NOT_READY", stage="INTEGRATION"))(

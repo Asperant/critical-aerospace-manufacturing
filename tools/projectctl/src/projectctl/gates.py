@@ -124,7 +124,7 @@ def evaluate(project, wp_id: str, gate: Literal["ready", "done"], root: Path) ->
     payload = {
         "schema_version": "projectctl-gate-v1", "wp_id": wp_id, "gate": gate,
         "result": "UNKNOWN", "transition_authorized": False,
-        "execution_status": "EVIDENCE_ASSESSED" if gate == "ready" else "UNAVAILABLE (documentation only)",
+        "execution_status": "EVIDENCE_ASSESSED",
         "source_manifest": project.source_manifest,
         "criteria_refs": [],
     }
@@ -142,11 +142,11 @@ def evaluate(project, wp_id: str, gate: Literal["ready", "done"], root: Path) ->
     wp = canonical["work_package"]
     payload.update(governance_source={"path": source, "sha256": sha256(governance).hexdigest()},
                    criteria_refs=wp["dor_refs" if gate == "ready" else "dod_refs"],
-                   criteria_scope="WP references plus all applicable docs/08 level and scope supplements")
+                   criteria_scope="canonical WP references and that WP's owned acceptance")
     if gate == "ready":
         evidence = _ready_evidence(canonical, root)
         payload.update(evidence, transition_authorized=evidence["result"] == "PASS")
         return payload
     evidence = evaluate_post_merge_evidence(project, canonical, root)
-    payload.update(evidence, transition_authorized=evidence["result"] == "PASS")
+    payload.update(evidence, transition_authorized=False)
     return payload
