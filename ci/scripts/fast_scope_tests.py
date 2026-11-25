@@ -111,12 +111,22 @@ def main() -> int:
                 "tools/projectctl/tests/test_cli.py",
                 "tools/projectctl/tests/test_project.py",
             ]
-        selected.append(
-            (
-                "projectctl-changed-scope",
-                [*PYTEST, *projectctl_suite, "-q"],
-            )
-        )
+        if "tools/projectctl/src/projectctl/plane_import.py" in paths:
+            label = "projectctl-plane-import"
+        elif any(
+            path
+            in {
+                "tools/projectctl/src/projectctl/gates.py",
+                "tools/projectctl/src/projectctl/post_merge_evidence.py",
+            }
+            for path in paths
+        ):
+            label = "projectctl-gates"
+        elif projectctl_test_paths:
+            label = "projectctl-changed-tests"
+        else:
+            label = "projectctl-focused"
+        selected.append((label, [*PYTEST, *projectctl_suite, "-q"]))
     if any(
         path.startswith("ci/") or path.startswith(".github/workflows/")
         for path in paths
