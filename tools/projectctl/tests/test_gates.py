@@ -166,6 +166,81 @@ def test_post_merge_adapter_accepts_structured_wp_scoped_evidence(
     assert result["bundle_id"] == "EVID-WP-CORE-008-TECH-20261029"
 
 
+def test_post_merge_adapter_accepts_evidence_bound_na_for_nonmandatory_dod(
+    project, post_merge_fixture
+):
+    path, post = _json_record(
+        post_merge_fixture, "evidence/WP-CORE-008/POST-MERGE-2026-10-29.json"
+    )
+    scope_evidence = post_merge_fixture / "evidence/WP-CORE-008/NA-SCOPE.md"
+    scope_evidence.write_text("The selected scope is not an R1 research package.\n")
+    post["dod"]["assessments"]["DOD-WP-10"] = {
+        "result": "N/A",
+        "reason": "DOD-WP-10 applies only to R1 research packages.",
+        "evidence_refs": ["repo:evidence/WP-CORE-008/NA-SCOPE.md"],
+    }
+    path.write_text(json.dumps(post), encoding="utf-8")
+
+    canonical = project.catalog.work_packages[
+        [wp.id for wp in project.catalog.work_packages].index("WP-CORE-008")
+    ].model_dump(mode="json")
+    canonical["dod_refs"].append("DOD-WP-10")
+    result = evaluate_post_merge_evidence(
+        project,
+        {"work_package": canonical},
+        post_merge_fixture,
+        current_main_sha=MAIN_SHA,
+    )
+    assert result["result"] == "PASS"
+
+
+def test_post_merge_adapter_keeps_mandatory_dod_at_pass(project, post_merge_fixture):
+    path, post = _json_record(
+        post_merge_fixture, "evidence/WP-CORE-008/POST-MERGE-2026-10-29.json"
+    )
+    scope_evidence = post_merge_fixture / "evidence/WP-CORE-008/NA-SCOPE.md"
+    scope_evidence.write_text("Evidence for an N/A scope.\n")
+    post["dod"]["assessments"]["DOD-WP-01"] = {
+        "result": "N/A",
+        "reason": "Not applicable.",
+        "evidence_refs": ["repo:evidence/WP-CORE-008/NA-SCOPE.md"],
+    }
+    path.write_text(json.dumps(post), encoding="utf-8")
+
+    result = _post_merge_result(project, post_merge_fixture)
+    assert result["result"] == "UNKNOWN"
+    assert (
+        "required DoD assessment is not PASS: DOD-WP-01" in result["missing_evidence"]
+    )
+
+
+def test_post_merge_adapter_rejects_na_without_existing_evidence(
+    project, post_merge_fixture
+):
+    path, post = _json_record(
+        post_merge_fixture, "evidence/WP-CORE-008/POST-MERGE-2026-10-29.json"
+    )
+    post["dod"]["assessments"]["DOD-WP-10"] = {
+        "result": "N/A",
+        "reason": "DOD-WP-10 applies only to R1 research packages.",
+        "evidence_refs": ["repo:evidence/WP-CORE-008/MISSING-SCOPE.md"],
+    }
+    path.write_text(json.dumps(post), encoding="utf-8")
+
+    canonical = project.catalog.work_packages[
+        [wp.id for wp in project.catalog.work_packages].index("WP-CORE-008")
+    ].model_dump(mode="json")
+    canonical["dod_refs"].append("DOD-WP-10")
+    result = evaluate_post_merge_evidence(
+        project,
+        {"work_package": canonical},
+        post_merge_fixture,
+        current_main_sha=MAIN_SHA,
+    )
+    assert result["result"] == "UNKNOWN"
+    assert "N/A DoD evidence is unavailable: DOD-WP-10" in result["missing_evidence"]
+
+
 def test_post_merge_adapter_accepts_current_trace_only_when_run_and_bundle_are_bound(
     project, post_merge_fixture
 ):

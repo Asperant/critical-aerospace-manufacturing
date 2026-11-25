@@ -23,6 +23,7 @@ BUNDLE_SCHEMA = "cap.evidence-bundle/v1"
 UNAVAILABLE_MISSING = [
     "WP-scoped merged revision, required CI, selected DoD and trace evidence",
 ]
+NON_NA_DOD = {"DOD-WP-01", "DOD-WP-02", "DOD-WP-03", "DOD-WP-12"}
 
 
 def _json(path: Path) -> tuple[dict[str, Any] | None, str | None]:
@@ -266,6 +267,56 @@ def _validate_dod_source(root: Path, post: dict, errors: list[str]) -> None:
         errors.append("structured DoD source hash mismatch")
 
 
+def _validate_dod_assessments(
+    root: Path, selected: list[str], assessments: Any, errors: list[str]
+) -> None:
+    if not isinstance(assessments, dict):
+        errors.append("structured DoD assessments are missing")
+        return
+    for criterion in selected:
+        assessment = assessments.get(criterion)
+        if assessment == "PASS":
+            continue
+        if criterion in NON_NA_DOD:
+            errors.append(f"required DoD assessment is not PASS: {criterion}")
+            continue
+        if (
+            not isinstance(assessment, dict)
+            or set(assessment)
+            != {
+                "result",
+                "reason",
+                "evidence_refs",
+            }
+            or assessment.get("result") != "N/A"
+        ):
+            errors.append(f"required DoD assessment is not PASS: {criterion}")
+            continue
+        reason = assessment.get("reason")
+        refs = assessment.get("evidence_refs")
+        if not isinstance(reason, str) or not reason.strip() or len(reason) > 1000:
+            errors.append(f"N/A DoD assessment lacks a bounded rationale: {criterion}")
+        if not isinstance(refs, list) or not 1 <= len(refs) <= 8:
+            errors.append(f"N/A DoD assessment lacks repository evidence: {criterion}")
+            continue
+        for ref in refs:
+            if not isinstance(ref, str) or not ref.startswith("repo:"):
+                errors.append(f"N/A DoD evidence reference is invalid: {criterion}")
+                continue
+            relative = Path(ref.removeprefix("repo:"))
+            if relative.is_absolute() or ".." in relative.parts:
+                errors.append(f"N/A DoD evidence is unavailable: {criterion}")
+                continue
+            try:
+                evidence_path = (root / relative).resolve(strict=True)
+                evidence_path.relative_to(root.resolve())
+            except (OSError, RuntimeError, ValueError):
+                errors.append(f"N/A DoD evidence is unavailable: {criterion}")
+                continue
+            if not evidence_path.is_file():
+                errors.append(f"N/A DoD evidence is unavailable: {criterion}")
+
+
 def evaluate_post_merge_evidence(
     project: Any, canonical: dict, root: Path, *, current_main_sha: str | None = None
 ) -> dict[str, Any]:
@@ -385,12 +436,7 @@ def evaluate_post_merge_evidence(
 
     dod = post.get("dod")
     assessments = dod.get("assessments") if isinstance(dod, dict) else None
-    if not isinstance(assessments, dict):
-        errors.append("structured DoD assessments are missing")
-    else:
-        for criterion in wp.get("dod_refs") or []:
-            if assessments.get(criterion) != "PASS":
-                errors.append(f"required DoD assessment is not PASS: {criterion}")
+    _validate_dod_assessments(root, wp.get("dod_refs") or [], assessments, errors)
     _validate_dod_source(root, post, errors)
     _validate_trace(root, wp_id, wp.get("requirement_refs") or [], post, errors)
     if run_required and not post.get("evidence_bundle"):

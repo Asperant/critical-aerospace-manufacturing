@@ -10,7 +10,10 @@ def test_fast_scope_has_bounded_timeout_and_no_full_projectctl_suite() -> None:
     assert "TIMEOUT = 90" in text
     assert "tools/projectctl/tests/test_execution_queue.py" in text
     assert "projectctl-plane-import" in text
+    assert "projectctl-gates" in text
+    assert "projectctl/tests/test_gates.py" in text
     assert "tools/projectctl/tests/test_plane_import.py" in text
+    assert "projectctl_test_paths - set(projectctl_suite)" in text
     assert "tools/projectctl/tests -q" not in text
 
 
