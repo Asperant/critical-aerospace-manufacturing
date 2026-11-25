@@ -3740,7 +3740,7 @@ FR-CORE-003:
   EVIDENCED_BY: [EVID-WP-CORE-008-TECH-20261029]
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
   state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
-  note: "Real AV-SCEN-01 Core/outbox/JetStream/Twin acceptance slice; wider inspection-triggered recovery portfolio remains outside this WP slice."
+  note: "WP-CORE-009 contributes lifecycle-state records and PostgreSQL persistence only; legal transition enforcement remains separate. Real AV-SCEN-01 Core/outbox/JetStream/Twin acceptance slice; wider inspection-triggered recovery portfolio remains outside this WP slice."
 FR-CORE-004:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-004 L169852"}
   DERIVED_FROM: [ITEM-15, ITEM-22, BE-INV-07, INT-INV-07]
