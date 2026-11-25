@@ -1,0 +1,50 @@
+{
+  "schema": "cap.post-merge-evidence/v1",
+  "work_package": "WP-OBS-001",
+  "main_sha": "087804cf2a8f2969e660c2188ee8f54316a53f80",
+  "technical_closure_sha": "087804cf2a8f2969e660c2188ee8f54316a53f80",
+  "required_ci": [
+    {
+      "name": "ci",
+      "run_id": 45580482056,
+      "conclusion": "success",
+      "main_sha": "087804cf2a8f2969e660c2188ee8f54316a53f80"
+    },
+    {
+      "name": "projectctl-full-regression",
+      "run_id": 45580482507,
+      "conclusion": "success",
+      "main_sha": "087804cf2a8f2969e660c2188ee8f54316a53f80"
+    },
+    {
+      "name": "release",
+      "run_id": 45580482071,
+      "conclusion": "success",
+      "main_sha": "087804cf2a8f2969e660c2188ee8f54316a53f80"
+    }
+  ],
+  "dod": {
+    "source": "evidence/WP-OBS-001/DOD-ASSESSMENT-2026-11-25.md",
+    "source_sha256": "57aca1f15f3af93dc7e5ee9a5ddf6adbee1090b1472a3465e00b0a48b263e2b7",
+    "assessments": {
+      "DOD-WP-01": "PASS",
+      "DOD-WP-02": "PASS",
+      "DOD-WP-03": "PASS",
+      "DOD-WP-04": "PASS",
+      "DOD-WP-06": "PASS",
+      "DOD-WP-07": "PASS",
+      "DOD-WP-12": "PASS"
+    }
+  },
+  "trace": {
+    "result": "PASS",
+    "validated_main_sha": "087804cf2a8f2969e660c2188ee8f54316a53f80",
+    "registry": "traceability/trace_edges.yaml",
+    "evidence_coverage": "traceability/generated/evidence_coverage.csv",
+    "requirements": [
+      "FR-PLAT-006",
+      "NFR-OBS-001",
+      "NFR-OBS-002"
+    ]
+  }
+}

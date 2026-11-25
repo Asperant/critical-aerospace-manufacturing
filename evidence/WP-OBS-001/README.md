@@ -85,13 +85,16 @@ transition has returned VERIFIED.
 ## Limitations and follow-ups
 
 - **NFR-OBS-001/002 are coverage measures over the nine mandatory
-  deployables.** Three exist today: `manufacturing-core`, and
-  `operations-bff` and `command-center-web` from WP-UI-001 (which bring their
-  own access log and `/healthz`). Their adoption of the standard is PENDING
-  with owned exemptions in `coverage.json` (owner agreement needed, Asrın). The
-  other six are NOT_PRESENT and adopt the helpers when they are created; CI
-  prints the current figure on every run. `observed` stays `null` in 03.
-  RUN-OBS-001-DEV-001 was recorded before main was merged and shows 1/9.
+  deployables.** At main `087804cf2a8f2969e660c2188ee8f54316a53f80`, six
+  deployable directories exist: `manufacturing-core`, `operations-bff`,
+  `command-center-web`, and `vision-service` are ADOPTED; the simulator and
+  scheduler libraries are PENDING under owner-recorded exemptions through
+  2026-12-21 because neither has a service process, endpoint, or log sink.
+  `digital-twin-service`, `ai-intelligence-service`, and `automation-service`
+  are NOT_PRESENT and adopt the helpers with their owning runtime work. CI
+  validates this registry; it does not claim a final 100% measurement, and
+  `observed` stays `null` in 03. The historical DEV run predates the later
+  service adoptions and is not used as current coverage evidence.
 - **INTEGRATION host:** the stack runs on a developer or shared host and in CI;
   composition into the capability profiles and the shared Integration host is
   WP-PLAT-001 / WP-PLAT-003 (DEP-011, DEP-109).
