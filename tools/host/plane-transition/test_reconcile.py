@@ -5,8 +5,8 @@ import json
 import unittest
 from copy import deepcopy
 from pathlib import Path
-from unittest.mock import patch
 from typing import Any
+from unittest.mock import patch
 
 import yaml
 
@@ -104,12 +104,21 @@ def make_generic_policy():
         id=WP, dod_refs=["DOD-WP-01", "DOD-WP-02"]
     )
     policy["contexts"][WP]["completion_assessments"] = {
-        "verification_families": [], "owner_semantic_requirements": []
+        "verification_families": [],
+        "owner_semantic_requirements": [],
     }
     policy["lifecycle_reconciliation"] = {
         "schema_version": "cap-lifecycle-reconciliation-v3",
         "targets": ["MERGED", "VALIDATING", "DONE"],
-        "sources": ["BACKLOG", "READY", "IN_PROGRESS", "IN_REVIEW", "MERGE_READY", "MERGED", "VALIDATING"],
+        "sources": [
+            "BACKLOG",
+            "READY",
+            "IN_PROGRESS",
+            "IN_REVIEW",
+            "MERGE_READY",
+            "MERGED",
+            "VALIDATING",
+        ],
         "require_successful_runs": True,
         "assessment_fields": ["Owner assessment", "Owner work"],
         "legacy_recovery_cases": [make_case()],
@@ -427,34 +436,65 @@ class PolicyTests(unittest.TestCase):
 
 
 class ReconcileFlowTests(unittest.TestCase):
-    def test_historical_done_reconcile_uses_live_done_evaluator_and_records_skipped_history(self):
+    def test_historical_done_reconcile_uses_live_done_evaluator_and_records_skipped_history(
+        self,
+    ):
         policy = make_generic_policy()
         plane, gh = FakePlane("BACKLOG"), FakeGH()
-        envelope = {"reason": "Observed WP-owned completion", "evidence_refs": [f"pr:{make_case()['pr']}"]}
+        envelope = {
+            "reason": "Observed WP-owned completion",
+            "evidence_refs": [f"pr:{make_case()['pr']}"],
+        }
         assessed = {
             "observed_pr_head": HEAD,
             "observed_pr_number": make_case()["pr"],
             "pr_facts": {
-                "head": HEAD, "branch": f"wp/{WP}-slice", "base": "main",
-                "draft": False, "state": "closed", "merged": True,
+                "head": HEAD,
+                "branch": f"wp/{WP}-slice",
+                "base": "main",
+                "draft": False,
+                "state": "closed",
+                "merged": True,
                 "merge_commit": MERGE,
             },
         }
 
-        def accept(profile, wp, source, target, item, current_plane, current_policy,
-                   current_gh, current_envelope, previous=None, projection=None,
-                   reconcile_done=False):
-            self.assertEqual((profile, wp, source, target), (PROFILE, WP, "BACKLOG", "DONE"))
+        def accept(
+            profile,
+            wp,
+            source,
+            target,
+            item,
+            current_plane,
+            current_policy,
+            current_gh,
+            current_envelope,
+            previous=None,
+            projection=None,
+            reconcile_done=False,
+        ):
+            self.assertEqual(
+                (profile, wp, source, target), (PROFILE, WP, "BACKLOG", "DONE")
+            )
             self.assertTrue(reconcile_done)
-            self.assertEqual(current_policy["contexts"][wp]["work_package"]["dod_refs"],
-                             ["DOD-WP-01", "DOD-WP-02"])
+            self.assertEqual(
+                current_policy["contexts"][wp]["work_package"]["dod_refs"],
+                ["DOD-WP-01", "DOD-WP-02"],
+            )
             return deepcopy(assessed)
 
         logs = []
         with patch.object(t, "evaluate", side_effect=accept) as evaluate:
             result = r.reconcile(
-                PROFILE, WP, "DONE", envelope, policy, plane, gh,
-                lambda record, key: logs.append(deepcopy(record)), SECRET,
+                PROFILE,
+                WP,
+                "DONE",
+                envelope,
+                policy,
+                plane,
+                gh,
+                lambda record, key: logs.append(deepcopy(record)),
+                SECRET,
                 now=lambda: NOW,
             )
 
@@ -470,15 +510,32 @@ class ReconcileFlowTests(unittest.TestCase):
         self.assertEqual(evaluate.call_count, 2)
         self.assertNotIn(SECRET, json.dumps(logs))
 
-    def test_done_reconcile_requires_pinned_change_and_rejects_terminal_or_blocked_work(self):
+    def test_done_reconcile_requires_pinned_change_and_rejects_terminal_or_blocked_work(
+        self,
+    ):
         policy = make_generic_policy()
         policy["source_manifest"].clear()
         plane, gh = FakePlane("BACKLOG"), FakeGH()
-        envelope = {"reason": "Observed WP-owned completion", "evidence_refs": [f"pr:{make_case()['pr']}"]}
-        with patch.object(t, "evaluate", return_value={"pr_facts": {"merged": True}}):
-            with self.assertRaises(t.Denied) as caught:
-                r.reconcile(PROFILE, WP, "DONE", envelope, policy, plane, gh,
-                            lambda *args: None, SECRET, now=lambda: NOW)
+        envelope = {
+            "reason": "Observed WP-owned completion",
+            "evidence_refs": [f"pr:{make_case()['pr']}"],
+        }
+        with (
+            patch.object(t, "evaluate", return_value={"pr_facts": {"merged": True}}),
+            self.assertRaises(t.Denied) as caught,
+        ):
+            r.reconcile(
+                PROFILE,
+                WP,
+                "DONE",
+                envelope,
+                policy,
+                plane,
+                gh,
+                lambda *args: None,
+                SECRET,
+                now=lambda: NOW,
+            )
         self.assertEqual(caught.exception.code, "DONE_RECONCILIATION_CHANGE_UNPINNED")
         self.assertEqual(plane.patches, [])
 
@@ -487,11 +544,25 @@ class ReconcileFlowTests(unittest.TestCase):
             ("BACKLOG", ["BLOCKED-LABEL"], "ACTIVE_BLOCKER_UNRESOLVED"),
         ]:
             plane = FakePlane(state, labels=labels)
-            with self.subTest(state=state, labels=labels), patch.object(
-                t, "evaluate", return_value={"pr_facts": {"merged": True}}
-            ), self.assertRaises(t.Denied) as caught:
-                r.reconcile(PROFILE, WP, "DONE", envelope, make_generic_policy(),
-                            plane, gh, lambda *args: None, SECRET, now=lambda: NOW)
+            with (
+                self.subTest(state=state, labels=labels),
+                patch.object(
+                    t, "evaluate", return_value={"pr_facts": {"merged": True}}
+                ),
+                self.assertRaises(t.Denied) as caught,
+            ):
+                r.reconcile(
+                    PROFILE,
+                    WP,
+                    "DONE",
+                    envelope,
+                    make_generic_policy(),
+                    plane,
+                    gh,
+                    lambda *args: None,
+                    SECRET,
+                    now=lambda: NOW,
+                )
             self.assertEqual(caught.exception.code, expected)
             self.assertEqual(plane.patches, [])
 

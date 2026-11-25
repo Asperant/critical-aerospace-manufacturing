@@ -220,12 +220,24 @@ def validate_policy(
     """Validate generic reconciliation policy and legacy recovery fixtures."""
     if isinstance(block, dict) and block.get("schema_version") == POLICY_SCHEMA:
         return validate_legacy_policy(block, contexts, people)
-    need(isinstance(block, dict) and set(block) == {
-        "schema_version", "targets", "sources", "require_successful_runs",
-        "assessment_fields", "legacy_recovery_cases",
-    } and block.get("schema_version") in {
-        GENERIC_POLICY_SCHEMA, PREVIOUS_GENERIC_POLICY_SCHEMA,
-    }, "RECONCILIATION_POLICY_INVALID")
+    need(
+        isinstance(block, dict)
+        and set(block)
+        == {
+            "schema_version",
+            "targets",
+            "sources",
+            "require_successful_runs",
+            "assessment_fields",
+            "legacy_recovery_cases",
+        }
+        and block.get("schema_version")
+        in {
+            GENERIC_POLICY_SCHEMA,
+            PREVIOUS_GENERIC_POLICY_SCHEMA,
+        },
+        "RECONCILIATION_POLICY_INVALID",
+    )
     is_current = block["schema_version"] == GENERIC_POLICY_SCHEMA
     need(
         block["targets"] == (list(TARGETS) if is_current else ["MERGED", "VALIDATING"])
@@ -683,8 +695,13 @@ def generic_gather(
 
 
 def generic_done_gather(
-    profile: str, wp: str, source: str, envelope: dict, policy: dict,
-    plane: Any, gh: Any,
+    profile: str,
+    wp: str,
+    source: str,
+    envelope: dict,
+    policy: dict,
+    plane: Any,
+    gh: Any,
 ) -> dict:
     """Reuse the live transition DONE evaluator without inventing an intermediate state."""
     refs = envelope.get("evidence_refs")
@@ -699,11 +716,22 @@ def generic_done_gather(
     item = t.find(plane, profile, wp, policy)
     gh.invalidate()
     assessed = t.evaluate(
-        profile, wp, source, "DONE", item, plane, policy, gh, envelope,
+        profile,
+        wp,
+        source,
+        "DONE",
+        item,
+        plane,
+        policy,
+        gh,
+        envelope,
         reconcile_done=True,
     )
-    need(isinstance(assessed, dict) and assessed.get("pr_facts", {}).get("merged") is True,
-         "DONE_ACCEPTANCE_NOT_VERIFIED")
+    need(
+        isinstance(assessed, dict)
+        and assessed.get("pr_facts", {}).get("merged") is True,
+        "DONE_ACCEPTANCE_NOT_VERIFIED",
+    )
     return {
         "done_gate": "PASS",
         "observed_source_state": source,
@@ -840,7 +868,9 @@ def reconcile(
     elif target == "DONE":
         facts = generic_done_gather(profile, wp, source, envelope, policy, plane, gh)
     else:
-        facts = generic_gather(gh, envelope["evidence_refs"], profile, wp, target, policy)
+        facts = generic_gather(
+            gh, envelope["evidence_refs"], profile, wp, target, policy
+        )
     stamp = (now or t.now)()
     record = {
         "timestamp": stamp,
@@ -858,7 +888,9 @@ def reconcile(
     ).hexdigest()
     record.update(
         facts=facts,
-        outstanding=list(DONE_RECONCILIATION_OUTSTANDING if target == "DONE" else OUTSTANDING),
+        outstanding=list(
+            DONE_RECONCILIATION_OUTSTANDING if target == "DONE" else OUTSTANDING
+        ),
         skipped_state_history_not_asserted=True,
     )
     if legacy:
@@ -884,7 +916,9 @@ def reconcile(
     elif target == "DONE":
         again = generic_done_gather(profile, wp, source, envelope, policy, plane, gh)
     else:
-        again = generic_gather(gh, envelope["evidence_refs"], profile, wp, target, policy)
+        again = generic_gather(
+            gh, envelope["evidence_refs"], profile, wp, target, policy
+        )
     need(stable(again) == stable(facts), "CONCURRENT_GITHUB_CHANGE")
     plane.refresh_items()  # fresh queue snapshot immediately before writing
     released = verified_slot_releases(plane, profile, item, policy, gh)

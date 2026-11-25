@@ -24,10 +24,10 @@ GRANT = re.compile(
 )
 
 
-def policy_block(targets=("MERGED", "VALIDATING")):
+def policy_block(targets=("MERGED", "VALIDATING", "DONE")):
     return {
         "lifecycle_reconciliation": {
-            "schema_version": "cap-lifecycle-reconciliation-v2",
+            "schema_version": "cap-lifecycle-reconciliation-v3",
             "targets": list(targets),
         }
     }
@@ -48,6 +48,7 @@ class GrantTests(unittest.TestCase):
 
     def test_the_launcher_command_line_matches_the_granted_argv(self):
         text = LAUNCHER.read_text()
+        self.assertIn("MERGED|VALIDATING|DONE", text)
         match = re.search(r"exec /usr/bin/sudo -n (.+)$", text, re.M)
         self.assertIsNotNone(match)
         assert match is not None
@@ -122,7 +123,7 @@ class LauncherTests(unittest.TestCase):
             (["WP-SIM-001", "MERGED"], None, "INVALID_CAP_PROFILE"),
             (["WP-SIM-001", "MERGED"], "root", "INVALID_CAP_PROFILE"),
             (["not-a-wp", "MERGED"], "batuhan", "INVALID_CANONICAL_WP_ID"),
-            (["WP-SIM-001", "DONE"], "batuhan", "INVALID_TARGET_STATE"),
+            (["WP-SIM-001", "CANCELED"], "batuhan", "INVALID_TARGET_STATE"),
             (["WP-SIM-001", "READY"], "batuhan", "INVALID_TARGET_STATE"),
             (["WP-SIM-001", "BLOCKED"], "batuhan", "INVALID_TARGET_STATE"),
             (["WP-SIM-001", "merged"], "batuhan", "INVALID_TARGET_STATE"),
