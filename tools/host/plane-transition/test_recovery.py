@@ -661,7 +661,38 @@ class PolicyPinningTests(unittest.TestCase):
         self.assertEqual(
             policy["merged_external_bindings"]["schema"], auto.MERGED_BINDINGS_SCHEMA
         )
+        assessments = {
+            wp: context["completion_assessments"]
+            for wp, context in policy["contexts"].items()
+        }
+        self.assertEqual(
+            assessments["WP-DOC-002"]["owner_semantic_requirements"],
+            ["FR-GOV-004"],
+        )
+        self.assertEqual(assessments["WP-DOC-002"]["verification_families"], [])
+        self.assertEqual(
+            assessments["WP-TEST-002"]["verification_families"],
+            ["TEST-DATA-CONTRACTVALID"],
+        )
+        self.assertEqual(
+            assessments["WP-EVT-005"]["verification_families"],
+            ["TEST-SEC-SVCID"],
+        )
+        self.assertEqual(
+            assessments["WP-OBS-001"]["verification_families"],
+            ["AV-SCEN-01", "TEST-OBS-HEALTH", "TEST-OBS-TELEMETRY"],
+        )
+        # This WBS family has no RTM asset row; lack of a mapping fails closed.
+        self.assertEqual(
+            assessments["WP-CORE-009"]["verification_families"],
+            ["TEST-CORE-LIFECYCLE"],
+        )
+        self.assertNotIn(
+            "TEST-CORE-DOMAIN",
+            assessments["WP-CORE-001"]["verification_families"],
+        )
         for name in (
+            "tools/host/plane-transition/build_policy.py",
             "project_control/deferred_recovery.yaml",
             "09_change/CHG-033.yaml",
             "project_control/merged_external_bindings.yaml",
