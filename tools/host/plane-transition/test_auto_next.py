@@ -752,9 +752,7 @@ Blocker evidence: repo:evidence/test.json
                 },
             )
 
-        self.assertEqual(
-            denied.exception.code, "CRITERION_NOT_CONFIRMED"
-        )
+        self.assertEqual(denied.exception.code, "CRITERION_NOT_CONFIRMED")
 
 
 class ExternalIntegrationWaitTests(unittest.TestCase):
