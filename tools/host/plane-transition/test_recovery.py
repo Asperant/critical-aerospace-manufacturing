@@ -644,11 +644,15 @@ class PolicyPinningTests(unittest.TestCase):
         script = (HERE / "build_policy.py").read_text()
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "policy.json"
-            patched = script.replace(
-                "ROOT=Path('/srv/ailab/project')", f"ROOT=Path({str(root)!r})"
+            patched = re.sub(
+                r"(?m)^ROOT\s*=\s*Path\(['\"]/srv/ailab/project['\"]\)$",
+                f"ROOT = Path({str(root)!r})",
+                script,
             )
             patched = re.sub(
-                r"(?m)^output=Path\(.*\)$", f"output=Path({str(out)!r})", patched
+                r"(?m)^output\s*=\s*Path\(.*\)$",
+                f"output = Path({str(out)!r})",
+                patched,
             )
             self.assertNotEqual(patched, script)
             done = subprocess.run(
@@ -680,7 +684,7 @@ class PolicyPinningTests(unittest.TestCase):
         )
         self.assertEqual(
             assessments["WP-OBS-001"]["verification_families"],
-            ["AV-SCEN-01", "TEST-OBS-HEALTH", "TEST-OBS-TELEMETRY"],
+            ["TEST-OBS-HEALTH", "TEST-OBS-TELEMETRY"],
         )
         # This WBS family has no RTM asset row; lack of a mapping fails closed.
         self.assertEqual(
@@ -690,6 +694,22 @@ class PolicyPinningTests(unittest.TestCase):
         self.assertNotIn(
             "TEST-CORE-DOMAIN",
             assessments["WP-CORE-001"]["verification_families"],
+        )
+        self.assertEqual(
+            assessments["WP-CORE-001"]["verification_families"],
+            ["TEST-SEC-SVCID"],
+        )
+        self.assertEqual(
+            assessments["WP-CORE-008"]["verification_families"],
+            ["AV-SCEN-01", "AV-SCEN-03", "E2E-01"],
+        )
+        self.assertEqual(
+            assessments["WP-BENCH-002"]["verification_families"],
+            ["BENCH-E2E-001", "TEST-OBS-TRACEPROP"],
+        )
+        self.assertEqual(
+            assessments["WP-RES-001"]["verification_families"],
+            ["REPRO-NONOWNER-001"],
         )
         for name in (
             "tools/host/plane-transition/build_policy.py",
