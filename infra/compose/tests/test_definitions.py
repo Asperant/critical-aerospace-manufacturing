@@ -165,6 +165,14 @@ def test_credentials_never_in_the_definition() -> None:
         assert entry["path"].startswith("${CAP_PLATFORM_STATE_DIR:-${HOME}/"), entry
 
 
+def test_demo_relay_uses_demo_telemetry_resource() -> None:
+    environment = SERVICES["demo-relay"]["environment"]
+    assert environment["CAP_ENVIRONMENT"] == "demo"
+    assert environment["CAP_ENVIRONMENT_CLASS"] == "DEMO"
+    assert environment["CAP_RELEASE_ID"] == "0.1.0"
+    assert "OTEL_EXPORTER_OTLP_ENDPOINT" in environment
+
+
 EPHEMERAL_PORT_FLOOR = 32768  # Linux default ip_local_port_range starts here
 
 

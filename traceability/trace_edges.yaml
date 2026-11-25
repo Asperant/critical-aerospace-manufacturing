@@ -4,7 +4,7 @@ schema: cap.trace-registry/v1
 seeded_from:
   document: docs/03_Requirements_Traceability_Matrix.md
   section: '17'
-  sha256: 9f1d0be1baa845ca221d7393123ae2483ddcb3572221fc6b616a68117e23d8e2
+  sha256: 5512f7922d5b5d076265d8a5f73fa69e5db2172258f824c9f36b86256619e928
 requirements:
   FR-GOV-001:
     meta:
@@ -437,13 +437,14 @@ requirements:
       env: CI + INTEGRATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: Accepted hold and dispatch commands persist typed events in the Core transaction and the real PostgreSQL persistence tests cover the hold path. ReleaseMaterialHold currently mutates hold state without emitting an event; 01 §70–74 defines no release-event contract. FR-CORE-014 remains partial; no event name or payload is inferred.
     realization:
-      surface: domain-event emission per accepted transition
+      surface: typed domain-event emission within accepted command transaction
       deployable: manufacturing-core
-      ref: TBD_BY_IMPLEMENTATION
+      ref: repo:services/manufacturing-core/src/manufacturing_core/command_persistence.py; repo:services/manufacturing-core/src/manufacturing_core/transitions.py; repo:services/manufacturing-core/src/manufacturing_core/outbox.py
   FR-CORE-015:
     meta:
       class: F1
@@ -455,13 +456,14 @@ requirements:
       env: CI + INTEGRATION
       m6_freeze_sensitive: false
     state:
-      coverage: ALLOCATED
-      planning: VERIFY_PLANNED
-      evidence: NOT_YET_EXECUTED
+      coverage: EVIDENCE_PENDING
+      planning: EVIDENCE_PENDING
+      evidence: EVIDENCE_PENDING
+    note: Real PostgreSQL tests verify accepted hold plus outbox persistence and rollback when the outbox constraint fails; the main PostgreSQL/JetStream/Twin integration verifies one directly seeded LotHeld.v2 row through ACK retry and projection. The five-minute broker interruption/backlog-drain drill remains unexecuted, and the delay histogram is instrumentation only, not NFR-PERF-003 measurement.
     realization:
-      surface: transactional outbox table + relay
+      surface: transactional outbox table + at-least-once JetStream relay
       deployable: manufacturing-core
-      ref: TBD_BY_IMPLEMENTATION
+      ref: repo:services/manufacturing-core/src/manufacturing_core/command_persistence.py; repo:services/manufacturing-core/src/manufacturing_core/outbox.py; repo:services/manufacturing-core/src/manufacturing_core/outbox_publisher.py; repo:tools/demo-runtime/src/cap_demo_runtime/relay.py; repo:services/manufacturing-core/src/manufacturing_core/migrations/0005_outbox.sql
   FR-CORE-016:
     meta:
       class: F1

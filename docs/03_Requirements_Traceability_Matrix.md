@@ -3863,26 +3863,28 @@ FR-CORE-014:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-014 L169862"}
   DERIVED_FROM: [ITEM-12, ITEM-15, EV-INV-10, BE-INV-03]
   ALLOCATED_TO: [ARCH-CORE-OUTBOX, ARCH-EVT-OUTBOX]
-  REALIZED_BY: {surface: "domain-event emission per accepted transition", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "typed domain-event emission within accepted command transaction", deployable: "manufacturing-core", ref: "repo:services/manufacturing-core/src/manufacturing_core/command_persistence.py; repo:services/manufacturing-core/src/manufacturing_core/transitions.py; repo:services/manufacturing-core/src/manufacturing_core/outbox.py"}
   EXPOSED_BY: ["Core domain event schemas (Production/Equipment/Quality/Schedule namespaces)"]
   VERIFIED_BY: [TEST-CORE-OUTBOX, TEST-EVT-SCHEMA]
   EXERCISED_IN: [AV-SCEN-01]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Accepted hold and dispatch commands persist typed events in the Core transaction and the real PostgreSQL persistence tests cover the hold path. ReleaseMaterialHold currently mutates hold state without emitting an event; 01 §70–74 defines no release-event contract. FR-CORE-014 remains partial; no event name or payload is inferred."
 FR-CORE-015:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-015 L169863"}
   DERIVED_FROM: [ITEM-15, ITEM-36, EVTINF-INV-06, TECH-INV-10]
   ALLOCATED_TO: [ARCH-CORE-OUTBOX, ARCH-CORE-DB, ARCH-EVT-OUTBOX]
-  REALIZED_BY: {surface: "transactional outbox table + relay", deployable: "manufacturing-core", ref: TBD_BY_IMPLEMENTATION}
+  REALIZED_BY: {surface: "transactional outbox table + at-least-once JetStream relay", deployable: "manufacturing-core", ref: "repo:services/manufacturing-core/src/manufacturing_core/command_persistence.py; repo:services/manufacturing-core/src/manufacturing_core/outbox.py; repo:services/manufacturing-core/src/manufacturing_core/outbox_publisher.py; repo:tools/demo-runtime/src/cap_demo_runtime/relay.py; repo:services/manufacturing-core/src/manufacturing_core/migrations/0005_outbox.sql"}
   EXPOSED_BY: ["Outbox record schema"]
   VERIFIED_BY: [TEST-CORE-OUTBOX, RES-BROKER-001]
   EXERCISED_IN: [AV-SCEN-07]
   EXECUTED_AS: []  # NOT_YET_EXECUTED
   EVIDENCED_BY: []  # no EvidenceID may be invented
   acceptance: {boundary_mode_final: REAL, evidence_target: EV-L3, env: "CI + INTEGRATION", m6_freeze_sensitive: false}
-  state: {coverage: ALLOCATED, planning: VERIFY_PLANNED, evidence: NOT_YET_EXECUTED}
+  state: {coverage: EVIDENCE_PENDING, planning: EVIDENCE_PENDING, evidence: EVIDENCE_PENDING}
+  note: "Real PostgreSQL tests verify accepted hold plus outbox persistence and rollback when the outbox constraint fails; the main PostgreSQL/JetStream/Twin integration verifies one directly seeded LotHeld.v2 row through ACK retry and projection. The five-minute broker interruption/backlog-drain drill remains unexecuted, and the delay histogram is instrumentation only, not NFR-PERF-003 measurement."
 FR-CORE-016:
   meta: {class: F1, owner: Asrın, anchor: "01 Item81 FR-CORE-016 L169864"}
   DERIVED_FROM: [ITEM-22, ITEM-34, INT-INV-15, EV-INV-06]

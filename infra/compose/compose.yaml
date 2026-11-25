@@ -507,6 +507,11 @@ services:
     env_file:
       - path: ${CAP_PLATFORM_STATE_DIR:-${HOME}/.local/state/cap-platform}/demo-relay.env
         required: false
+    environment:
+      CAP_ENVIRONMENT: demo
+      CAP_ENVIRONMENT_CLASS: DEMO
+      CAP_RELEASE_ID: "0.1.0"
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
     command: ["python", "-m", "cap_demo_runtime.relay"]
     depends_on:
       demo-seed:

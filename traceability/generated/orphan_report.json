@@ -9,8 +9,8 @@
   "without_recorded_realization": 239,
   "without_run": 251,
   "coverage_states": {
-    "ALLOCATED": 246,
-    "EVIDENCE_PENDING": 55,
+    "ALLOCATED": 244,
+    "EVIDENCE_PENDING": 57,
     "IMPLEMENTED": 5
   }
 }
